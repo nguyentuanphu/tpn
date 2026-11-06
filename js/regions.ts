@@ -139,9 +139,11 @@ export function createRegions(G) {
   for (const v of VENDORS.filter(v => v.region !== 'au')) {
     const s = rowSlot(v.row.place, v.row.i, v.row.d), f = (k, n) => [s.x + s.fx * k + s.ax * n, s.z + s.fz * k + s.az * n];
     if (v.stall) {
-      { const g = stall(v.stall[0], v.stall[1], 2.8); worldTag(put(g, s.x, s.z, s.face), 'st-' + geoKey(g)); }   // (v1.08e places)
+      // (v1.08g props, owner 6 Nov 2026 AEDT) each stall its own Blender picture-book stall with its food on the counter
+      // (pp-stall-<seller>); the food pictures ride on the code shape, so they go when the model comes
+      const sm = worldTag(put(stall(v.stall[0], v.stall[1], 2.8), s.x, s.z, s.face), 'pp-stall-' + v.id); sm.updateMatrixWorld(true);
       const [nx, nz] = f(1.15, 0); signAt(v.sign, nx, 3.2, nz, s.face, v.stall[0], '#fff8e0', 2.8, .55);
-      v.goods.forEach((gd, k) => { const sp = sprite(gd, .55), [gx, gz] = f(0, -.6 + k * 1.2); sp.position.set(gx, M.h + 1.25, gz); scene.add(sp); });
+      v.goods.forEach((gd, k) => { const sp = sprite(gd, .55), [gx, gz] = f(0, -.6 + k * 1.2); sp.position.set(gx, M.h + 1.25, gz); scene.add(sp); sm.attach(sp); });
       boxAround(s.x, s.z, 2.8, 1.6, s.face);
       world.stalls.push({ id: v.id, place: 'market', kind: 'stall', x: s.x, z: s.z, w: 2.8, d: 1.6, face: s.face, tap: 'v_' + v.id });
     } else if (v.pole) world.stalls.push({ id: v.id, place: 'market', kind: 'pole', x: s.x, z: s.z, w: .8, d: 2.4, face: s.face, tap: 'v_' + v.id });
@@ -149,6 +151,8 @@ export function createRegions(G) {
     if (v.pole) { // gánh hàng rong: a bamboo pole with two baskets on her shoulder
       const pole = new THREE.Mesh(merge([P(Box(2.4, .07, .07), '#c9a35a', [0, 0, 0]), ...[-1.1, 1.1].flatMap(x => [P(Cyl(.32, .25, .35, 10), '#b98a4a', [x, -.75, 0]), P(new THREE.SphereGeometry(.26, 8, 5), '#7fc45a', [x, -.55, 0], [0, 0, 0], [1, .5, 1]), P(Box(.02, .6, .02), '#7a5a3a', [x, -.3, 0])])]), mat);
       pole.position.set(0, 1.18, .02); A.root.add(pole);
+      // (v1.08g props) the Blender pole with the com in lotus leaves near the child
+      worldTag(pole, 'pp-pole-' + v.id);
     }
     tag(scene, v.name, v.x, M.h + 2.5, v.z);
     const [tx, tz] = f(v.row.d / 2 + .75, 0); I('v_' + v.id, tx, tz, 3, v.food[0], () => nm(v.name), h => vendorTalk(G, h, v));
@@ -197,7 +201,8 @@ export function createRegions(G) {
   { const p = [P(Box(2.4, .9, 1.2), '#4a4a4a', [0, .45, 0]), P(Box(2.2, .06, 1), '#2a2a2a', [0, .93, 0]), ...[-.6, -.2, .2, .6].map(x => P(Cyl(.08, .08, .9, 6), '#b5483c', [x, 1, .1], [0, 0, Math.PI / 2])),
       ...[[-1.6, -1.4], [1.6, -1.4], [-1.6, 1.4], [1.6, 1.4]].map(([x, z]) => P(Box(.08, 2.6, .08), '#dddddd', [x, 1.3, z])), P(Box(3.4, .1, 3), '#2f7ac8', [0, 2.6, 0]), P(new THREE.ConeGeometry(2.4, .7, 4), '#ffffff', [0, 3, 0], [0, Math.PI / 4, 0])];
     const R = VENDORS.find(v => v.id === 'robbo').row, s = rowSlot(R.place, R.i, R.d);   // (T1b) in the market row, facing the street
-    put(merge(p), s.x, s.z, s.face); boxAround(s.x, s.z, 2.6, 1.4, s.face); world.stalls.push({ id: 'robbo', place: 'aussie', kind: 'tent', x: s.x, z: s.z, w: 3.4, d: 3, face: s.face, tap: 'v_robbo' }); const smoke = sprite('💨', .8); smoke.position.set(s.x, A.h + 1.6, s.z); scene.add(smoke); world.updaters.push((dt, t) => { smoke.position.y = A.h + 1.5 + (t * .6 % 1); smoke.material.opacity = 1 - (t * .6 % 1); }); }
+    // (v1.08g props) the Blender sausage sizzle near the child
+    worldTag(put(merge(p), s.x, s.z, s.face), 'pp-sizzle'); boxAround(s.x, s.z, 2.6, 1.4, s.face); world.stalls.push({ id: 'robbo', place: 'aussie', kind: 'tent', x: s.x, z: s.z, w: 3.4, d: 3, face: s.face, tap: 'v_robbo' }); const smoke = sprite('💨', .8); smoke.position.set(s.x, A.h + 1.6, s.z); scene.add(smoke); world.updaters.push((dt, t) => { smoke.position.y = A.h + 1.5 + (t * .6 % 1); smoke.material.opacity = 1 - (t * .6 % 1); }); }
 
   // the playground: flying fox, merry-go-round, see-saw
   const play = [];

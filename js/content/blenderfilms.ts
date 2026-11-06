@@ -251,4 +251,25 @@ export const BLENDER_FILMS: Record<string, BlenderFilm> = {
     { s: 20.42, e: 31.29 },
     { s: 31.29, e: 41.17, help: { t: 39.14, x: 50, y: 44, en: 'Tap to help the monkey jump to the tree!', vi: 'Chạm để khỉ nhảy lên cây nào!' } },
     { s: 41.17, e: 53.12 }] },
+  hoguom: { v: 'v1', bytes: 2972405, pages: [
+    { s: 0, e: 16.71 },
+    { s: 16.71, e: 41.33, help: { t: 30.11, x: 60, y: 38, en: 'Tap to help Lê Lợi reach the handle!', vi: 'Chạm để giúp Lê Lợi lấy chuôi gươm nhé!' } },
+    { s: 41.33, e: 50.46 },
+    { s: 50.46, e: 59.42 },
+    { s: 59.42, e: 64.21, help: { t: 61.14, x: 69, y: 53, en: 'Tap to give the sword back to the Golden Turtle!', vi: 'Chạm để trả gươm cho Rùa Vàng nhé!' } },
+    { s: 64.21, e: 76.75 }] },
+  caykhe: { v: 'v1', bytes: 3791062, pages: [
+    { s: 0, e: 18.71 },
+    { s: 18.71, e: 27.75, help: { t: 23.43, x: 31, y: 46, en: 'Tap to give the bird a starfruit!', vi: 'Chạm để cho chim ăn một quả khế nhé!' } },
+    { s: 27.75, e: 40.79, help: { t: 35.31, x: 34, y: 53, en: 'Tap to take just a little gold!', vi: 'Chạm để lấy một ít vàng thôi nhé!' } },
+    { s: 40.79, e: 57.92 },
+    { s: 57.92, e: 72.04 },
+    { s: 72.04, e: 78.67, help: { t: 73.08, x: 49, y: 54, en: 'Tap to share a starfruit!', vi: 'Chạm để chia quả khế nào!' } }] },
+  duahau: { v: 'v1', bytes: 4111651, pages: [
+    { s: 0, e: 17.04 },
+    { s: 17.04, e: 32.08 },
+    { s: 32.08, e: 47.96, help: { t: 38.08, x: 47, y: 59, en: 'Tap to water the seeds!', vi: 'Chạm để tưới nước cho hạt nhé!' } },
+    { s: 47.96, e: 54.58, help: { t: 50.84, x: 50, y: 62, en: 'Tap the watermelon to open it!', vi: 'Chạm vào quả dưa để bổ ra nào!' } },
+    { s: 54.58, e: 59.21, help: { t: 55.36, x: 48, y: 51, en: 'Tap to push the melon out to sea!', vi: 'Chạm để thả quả dưa ra biển nào!' } },
+    { s: 59.21, e: 81.75 }] },
 };

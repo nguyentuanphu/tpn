@@ -94,12 +94,37 @@ const mat = toonVC(), nightMat = new THREE.MeshBasicMaterial({ vertexColors: tru
 // (v1.08e places) Blender props (models/world/pr-*.glb, tools/blender/world-places.py) in place of some code pieces: their
 // corners join the same patch merge, so the draws stay the same; until they arrive (or with no network) the code pieces stay
 const PROPS: Record<string, THREE.BufferGeometry> = {}, PROP_NAMES = ['pr-peach', 'pr-mai', 'pr-banhchung', 'pr-mamnguqua', 'pr-xmastree', 'pr-eggs', 'pr-starlantern', 'pr-lantern'];
-const _pm = new THREE.Matrix4(), _pq = new THREE.Quaternion(), _py = new THREE.Vector3(0, 1, 0);
-const prop = (name: string, x: number, y: number, z: number, rot = 0, s = 1) => { const g = PROPS[name]; if (!g) return null;
-  _pm.compose(new THREE.Vector3(x, y, z), _pq.setFromAxisAngle(_py, rot), new THREE.Vector3(s, s, s)); return { g: g.clone().applyMatrix4(_pm), color: null }; };
+// (v1.08g festivals, owner 6 Nov 2026 AEDT: "Go, but richer") each festival's own pieces and the four shared ones, made in
+// Blender (models/world/fe-*.glb, tools/blender/world-festivals.py); a festival loads only its theme's models and the
+// shared ones, when its decorations are built near a child. "-glow" models are the parts lit at night (drawn as glows).
+export const FEST_MODELS: Record<string, string[]> = {
+  shared: ['fe-lanternpost', 'fe-lanternpost-glow', 'fe-pennantpole', 'fe-flowertub', 'fe-arch', 'fe-arch-glow'],
+  tet: ['fe-caudoi', 'fe-caudoi-glow'], pumpkins: ['fe-pumpkins', 'fe-pumpkins-glow', 'fe-skeleton', 'fe-web', 'fe-ghost', 'fe-cat', 'fe-cauldron', 'fe-cauldron-glow', 'fe-scarecrow', 'fe-witchhat'],
+  xmas: ['fe-presents'], hearts: ['fe-heartpole', 'fe-pot'], diyas: ['fe-diyas', 'fe-diyas-glow'], colours: ['fe-colours'], poppies: ['fe-poppy'], ochre: ['fe-ochre'],
+  harmony: ['fe-balloons'], kids: ['fe-balloons'], sparkle: ['fe-balloons'], clean: ['fe-bins'], kitchen: ['fe-carpbasin', 'fe-carpbasin-glow'], dragonboat: ['fe-dragonboat'],
+  teacher: ['fe-teacher', 'fe-pot'], 'flags-vn': ['fe-flag-vn', 'fe-flag-vn-glow'], 'flags-au': ['fe-flag-au']
+};
+// (v1.08g) the colour slots of a model: corners painted pure red, blue or green take the festival's colours (pal[0..2]),
+// at the brightness the painted light gave them
+const SLOTS: Record<string, { i: number[], k: number[] }[]> = {};
+function findSlots(name: string, g: THREE.BufferGeometry) {
+  const c = g.getAttribute('color'); if (!c) return;
+  const out = [{ i: [], k: [] }, { i: [], k: [] }, { i: [], k: [] }];
+  for (let i = 0; i < c.count; i++) { const r = c.getX(i), gg = c.getY(i), b = c.getZ(i);
+    if (r > .04 && gg < .002 && b < .002) { out[0].i.push(i); out[0].k.push(r); } else if (b > .04 && r < .002 && gg < .002) { out[1].i.push(i); out[1].k.push(b); } else if (gg > .04 && r < .002 && b < .002) { out[2].i.push(i); out[2].k.push(gg); } }
+  if (out.some(o => o.i.length)) SLOTS[name] = out;
+}
+const _pm = new THREE.Matrix4(), _pq = new THREE.Quaternion(), _py = new THREE.Vector3(0, 1, 0), _pc = new THREE.Color();
+const prop = (name: string, x: number, y: number, z: number, rot = 0, s = 1, pal: string[] = null) => { const g = PROPS[name]; if (!g) return null;
+  _pm.compose(new THREE.Vector3(x, y, z), _pq.setFromAxisAngle(_py, rot), new THREE.Vector3(s, s, s)); const out = g.clone().applyMatrix4(_pm);
+  const sl = SLOTS[name], col = out.getAttribute('color') as THREE.BufferAttribute;
+  if (sl && col) sl.forEach((o, j) => { _pc.set((pal && pal[j % pal.length]) || ['#ff4f9a', '#ffd23f', '#3cc7e8'][j]); o.i.forEach((i, n) => col.setXYZ(i, _pc.r * o.k[n], _pc.g * o.k[n], _pc.b * o.k[n])); });
+  return { g: out, color: null }; };
 export const festivalPropsReady = () => Object.keys(PROPS);
-async function loadProps() { const K = await import('./modelkit.js');
-  await Promise.all(PROP_NAMES.map(async n => { const r = await K.worldModelParts(n); if (r && r[0]) PROPS[n] = r[0].geometry.index ? r[0].geometry.toNonIndexed() : r[0].geometry; })); }
+async function loadProps(names: string[] = PROP_NAMES) { const K = await import('./modelkit.js');
+  await Promise.all(names.filter(n => !PROPS[n] && !K.worldModelFailed(n)).map(async n => { const r = await K.worldModelParts(n); if (r && r[0]) { const g = r[0].geometry.index ? r[0].geometry.toNonIndexed() : r[0].geometry; PROPS[n] = g; findSlots(n, g); } })); }
+// the models the festivals on now need (their themes and the shared pieces), not yet here
+const propsFor = (list: { F: { theme: string } }[]) => [...new Set([...PROP_NAMES, ...(list.length ? FEST_MODELS.shared : []), ...list.flatMap(a => FEST_MODELS[a.F.theme] || [])])].filter(n => !PROPS[n]);
 const Sph = (r, w = 8, h = 6) => new THREE.SphereGeometry(r, w, h), Cyl = (a, b, h, s = 8) => new THREE.CylinderGeometry(a, b, h, s), Box = (w, h, d) => new THREE.BoxGeometry(w, h, d);
 // a string of little flags (or lanterns, or friendly bats) hanging between two posts, with a gentle sag
 function bunting(a, b, cols, kind = 'flag', wall = false, supports = null) {
@@ -130,6 +155,9 @@ const pumpkin = (x, y, z, s = 1, rot = 0) => {
 // 5x the pieces never looks like one piece over and over: a lantern post, a pennant pole, a flower tub, a garland arch
 function shared(theme, k, x, y, z, rot) {
   const parts = [], glows = [], cols = (THEME_BUNTING[theme] || [['#ff4f9a', '#ffd23f']])[0], c = j => cols[j % cols.length];
+  // (v1.08g festivals) the Blender pieces, repainted in the festival's colours
+  const pal = [c(0), c(1), c(2)], name = ['fe-lanternpost', 'fe-pennantpole', 'fe-flowertub', 'fe-arch'][k];
+  if (PROPS[name]) { parts.push(prop(name, x, y, z, rot, 1, pal)); if (PROPS[name + '-glow']) glows.push(prop(name + '-glow', x, y, z, rot, 1, [c(0), c(1), c(1)])); return { parts, glows }; }
   if (k === 0) { parts.push(P(Cyl(.04, .05, 2.1, 5), '#5a4a3a', [x, y + 1.05, z]), P(Box(.7, .05, .05), '#5a4a3a', [x, y + 2.05, z], [0, rot, 0]));
     for (const s of [-1, 1]) { const lx = x + Math.cos(rot) * .3 * s, lz = z - Math.sin(rot) * .3 * s; glows.push(P(Sph(.16, 8, 6), c(s > 0 ? 0 : 1), [lx, y + 1.78, lz], [0, 0, 0], [1, 1.25, 1])); } }
   else if (k === 1) { parts.push(P(Cyl(.03, .03, 2.4, 4), '#c9d0d4', [x, y + 1.2, z]));
@@ -149,6 +177,21 @@ function piece(theme, i, x, y, z, rot) {
 function own(theme, i, x, y, z, rot) {
   const parts = [], glows = [], add = r => { parts.push(...r.parts); glows.push(...r.glows); };
   const pot = (col, flowers) => { parts.push(P(Cyl(.32, .24, .45, 10), '#b8643a', [x, y + .22, z])); flowers.forEach((c, k) => { const a = k * 2.4; parts.push(P(Sph(.13, 6, 5), c, [x + Math.cos(a) * .2, y + .62 + (k % 2) * .12, z + Math.sin(a) * .2])); }); parts.push(P(Sph(.26, 8, 6), col, [x, y + .55, z])); };
+  // (v1.08g festivals) a theme's own Blender piece (with its glow), if this festival's models are here
+  const fe = (name: string, pal: string[] = null, dx = 0, dz = 0) => { if (!PROPS[name]) return false; const px = x + Math.cos(rot) * dx + Math.sin(rot) * dz, pz = z - Math.sin(rot) * dx + Math.cos(rot) * dz;
+    parts.push(prop(name, px, y, pz, rot, 1, pal)); if (PROPS[name + '-glow']) glows.push(prop(name + '-glow', px, y, pz, rot, 1, pal)); return true; };
+  const model = (() => { switch (theme) {
+    case 'tet': return i % 3 === 2 && fe('fe-caudoi');
+    case 'pumpkins': return fe(['fe-pumpkins', 'fe-skeleton', 'fe-web', 'fe-ghost', 'fe-cat', 'fe-cauldron', 'fe-scarecrow', 'fe-witchhat'][i % 8]);
+    case 'xmas': return i % 3 !== 0 && fe('fe-presents');
+    case 'hearts': return i % 2 ? fe('fe-pot', ['#ff6b8a', '#ff4f6a', '#ff9ab8']) : fe('fe-heartpole');
+    case 'diyas': return fe('fe-diyas'); case 'colours': return fe('fe-colours'); case 'poppies': return fe('fe-poppy'); case 'ochre': return fe('fe-ochre');
+    case 'harmony': return fe('fe-balloons', ['#ff9a2e', '#ffb35a', '#ff8a1a']); case 'kids': case 'sparkle': return fe('fe-balloons', ['#ff4f9a', '#3cc7e8', '#5fd36a']);
+    case 'clean': return fe('fe-bins'); case 'kitchen': return fe('fe-carpbasin'); case 'dragonboat': return fe('fe-dragonboat');
+    case 'teacher': return fe('fe-teacher') && (fe('fe-pot', ['#ffb3c8', '#ff4f6a', '#ffd23f'], .55, -.1) || true);
+    case 'flags-vn': return fe('fe-flag-vn'); case 'flags-au': return fe('fe-flag-au');
+    default: return false; } })();
+  if (model) return { parts, glows };
   const balloons = cols => cols.forEach((c, k) => { const a = k * 2.1, bx = x + Math.cos(a) * .25, bz = z + Math.sin(a) * .25, h = 1.9 + (k % 3) * .25; parts.push(P(Cyl(.008, .008, h, 3), '#ffffff', [bx, y + h / 2, bz]), P(Sph(.22, 10, 8), c, [bx, y + h + .2, bz], [0, 0, 0], [1, 1.2, 1])); });
   switch (theme) {
     case 'tet':
@@ -237,7 +280,7 @@ export function createFestivals(G) {
   const glowTex = (() => { const c = document.createElement('canvas'); c.width = c.height = 64; const g = c.getContext('2d'); const r = g.createRadialGradient(32, 32, 0, 32, 32, 32); r.addColorStop(0, 'rgba(255,255,255,1)'); r.addColorStop(.4, 'rgba(255,255,255,.5)'); r.addColorStop(1, 'rgba(255,255,255,0)'); g.fillStyle = r; g.fillRect(0, 0, 64, 64); return new THREE.CanvasTexture(c); })();
   const group = new THREE.Group(); scene.add(group); group.userData.noSolid = true; // (decorations come and go with the dates: never part of the solid map)
   const bursts = [], tables = [], doors = [];
-  let active = [], glowMeshes = [];
+  let active = [], glowMeshes = [], loadingProps = false;
   // (#797, tester on iPhone v1.06: "stuck, cannot walk up to some decorations" at Làng Sen (232, -12)) the ground is free
   // only where a child can walk up to it: inside the valley's edge (world.js EDGE), never past it, where pots and lamps
   // stood over the sea beyond the drawn ground and nobody could reach them
@@ -245,7 +288,7 @@ export function createFestivals(G) {
   // (owner, 10 Oct) the street spots: js/festdecor.js, loaded once a child plays (PERF-001), then the decorations are built
   let D = null, loadingD = null, waitD = false;
   const loadD = () => loadingD || (loadingD = import('./festdecor.js').then(m => { D = { ...m.createDecor(free), tell: m.tell, decoOf: m.decoOf, FRAC: m.FRAC }; build();
-    loadProps().then(() => { if (Object.keys(PROPS).length && active.length) build(); }).catch(e => console.warn('festival props', e && e.message)); }).catch(e => { loadingD = null; console.warn('festdecor', e); window.svModuleGone?.(e); }));
+    loadProps(propsFor(active)).then(() => { if (Object.keys(PROPS).length && active.length) build(); }).catch(e => console.warn('festival props', e && e.message)); }).catch(e => { loadingD = null; console.warn('festdecor', e); window.svModuleGone?.(e); }));
   const streetSpots = (key, o) => D ? D.streetSpots(key, o) : [];
   const unhook = list => { list.forEach(it => { const k = G.interactables.indexOf(it); if (k >= 0) G.interactables.splice(k, 1); }); list.length = 0; };
   // (owner, 13 Oct: 5x the decorations) the decorations are drawn in 12 m patches: the ones nearest the children first,
@@ -279,6 +322,8 @@ export function createFestivals(G) {
     group.traverse(o => { if (o instanceof THREE.Mesh && o.geometry && !o.userData.outline) o.geometry.dispose(); });
     group.clear(); places3.length = 0; placed.length = 0; bursts.length = 0; glowMeshes = []; unhook(tables); unhook(doors);
     active = activeFestivals();
+    // (v1.08g festivals) a festival that starts while playing: its models are fetched, then the decorations built again
+    { const need = propsFor(active); if (need.length && !loadingProps) { loadingProps = true; loadProps(need).then(() => { loadingProps = false; if (propsFor(active).length < need.length) build(); }, () => { loadingProps = false; }); } }
     D.begin();const supports=new Map(),drawBunting=(a,b,cols,kind,wall=false)=>bunting(a,b,cols,kind,wall,supports);
     for (const A of active) if (A.F.id === 'halloween' && A.on) doorSpots(A.F).forEach(q => D.claim(q));
     const places = PLACES(), taken = new Set(), hunts = [];

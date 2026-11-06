@@ -72,6 +72,7 @@ def prim(spec, res):
     t, p = spec['type'], spec['p']
     if t == 'SphereGeometry':
         r = p['radius']; ws = max(res, 8); hs = max(res * 2 // 3, 6)
+        if res <= 5: ws, hs = 6, 4   # (v1.08g creatures: a feather's light oval)
         ps, pl, ts, tl = p.get('phiStart', 0), p.get('phiLength', TAU), p.get('thetaStart', 0), p.get('thetaLength', math.pi)
         full = pl >= TAU - 1e-4
         V, rows = [], []
@@ -134,6 +135,11 @@ def prim(spec, res):
         return V, F
     if t == 'ShapeGeometry':    # the dragon's wing (js/companion.ts dragon(): the same outline), a little thick
         pts = [(0, 0), (.32, .12), (.28, -.04), (.18, -.02), (.1, -.08)]; n = len(pts); th = .008
+        V = [(x, y, z) for z in (-th, th) for x, y in pts]
+        F = [list(range(n))[::-1], list(range(n, 2 * n))] + [[k, (k + 1) % n, n + (k + 1) % n, n + k] for k in range(n)]
+        return V, F
+    if t == 'Wing':   # (v1.08g creatures) a wing of its own outline, a little thick
+        pts = p['pts']; n = len(pts); th = p.get('th', .008)
         V = [(x, y, z) for z in (-th, th) for x, y in pts]
         F = [list(range(n))[::-1], list(range(n, 2 * n))] + [[k, (k + 1) % n, n + (k + 1) % n, n + k] for k in range(n)]
         return V, F
@@ -593,12 +599,188 @@ def companion_moves(kind, A, arm, bones, F, size):
     return [('idle', 6.0, idle), ('fly', 3.0, fly), ('flap', 2.4, happy), ('follow', 2.4, follow), ('cheer', 1.6, cheer),
             ('sad', 4.0, sad), ('surprised', 1.2, surprised), ('sleep', 4.0, sleep)]
 
+
+# ---- (v1.08g creatures, owner 6 Nov 2026 AEDT: "Cac con rong, con chim deu etc phai blender thiet dep") hand-drawn
+# picture-book shapes for the birds, the Little Dragon and Sparkle the firefly, in place of the code shape's parts. Each
+# keeps its pivots (the bones), its eye markers (a dark ball and its 0.35 sparkle, or the companions' white eyes, which the
+# v1.08e face replaces with soft eyes with lids), its size and its facing; restyle() then gives the birds their plush
+# proportions as before. Layered feathers are flat capsules laid along a direction; long curves are tubes.
+def H_cap(r, length, col, pos, rot=(0, 0, 0), scl=(1, 1, 1)):
+    return {'type': 'CapsuleGeometry', 'p': {'radius': r, 'length': length}, 'color': col, 'pos': list(pos), 'rot': list(rot), 'scl': list(scl)}
+def H_cone(r, h, col, pos, rot=(0, 0, 0), scl=(1, 1, 1)):
+    return {'type': 'ConeGeometry', 'p': {'radius': r, 'height': h}, 'color': col, 'pos': list(pos), 'rot': list(rot), 'scl': list(scl)}
+def H_cyl(rt, rb, h, col, pos, rot=(0, 0, 0)):
+    return {'type': 'CylinderGeometry', 'p': {'radiusTop': rt, 'radiusBottom': rb, 'height': h}, 'color': col, 'pos': list(pos), 'rot': list(rot), 'scl': [1, 1, 1]}
+def H_tube(pts, radii, col, pos=(0, 0, 0), rot=(0, 0, 0), scl=(1, 1, 1)):
+    line = spline(pts, 6) if len(pts) > 2 else [Vector(p) for p in pts]; n = len(line)
+    rad = [radii[0] + (radii[-1] - radii[0]) * i / max(1, n - 1) for i in range(n)] if len(radii) == 2 else radii
+    return {'type': 'Tube', 'p': {'pts': [tuple(v) for v in line], 'radii': rad}, 'color': col, 'pos': list(pos), 'rot': list(rot), 'scl': list(scl)}
+def H_eye(x, y, z, r):
+    """the code shape's eye marker: a dark ball and its sparkle (0.35 of it); the v1.08e face puts the soft eye with lids there"""
+    return [sph(r, '#1a1a1a', (x, y, z)), sph(r * .35, '#ffffff', (x + r * .3, y + r * .3, z + r * .5))]
+def H_rot(d, n=(0, 1, 0)):
+    """the turn that lays a part's y along d with its z (its flat side) towards n, as three's Euler (the ZYX order here)"""
+    y = Vector(d).normalized(); z = Vector(n) - y * Vector(n).dot(y)
+    if z.length < 1e-4: z = Vector((0, 0, 1)) - y * y.z
+    z.normalize(); x = y.cross(z)
+    R = Matrix((x, y, z)).transposed(); e = R.to_euler('ZYX'); return (e.x, e.y, e.z)
+def H_feather(base, d, length, width, col, n=(0, 1, 0), flat=.3):
+    """a soft feather: a flat capsule from base along d"""
+    dd = Vector(d).normalized(); c = Vector(base) + dd * length * .5
+    out = sph(.5, col, c, (width, length, width * flat), H_rot(dd, n)); out['res'] = 5; return out   # (a flattened oval: light)
+def H_wing(pts, col, pos, rot, scl, th=.008):
+    return {'type': 'Wing', 'p': {'pts': pts, 'th': th}, 'color': col, 'pos': list(pos), 'rot': list(rot), 'scl': list(scl)}
+def H_set(piv, role, parts, extra=None):
+    for p in piv:
+        if p['role'] == role:
+            p['parts'] = parts
+            if extra is not None: p['extra'] = extra
+
+def hand_chicken(piv):
+    W, W2, W3 = '#fbf8f2', '#efe8da', '#e2d8c6'
+    body = [sph(.24, W, (0, .36, 0), (1, .95, 1.2)), sph(.17, '#ffffff', (0, .37, .13), (1, 1, .9)), sph(.12, W, (0, .45, -.22), (.8, 1.1, .7), (.5, 0, 0))]
+    for k in range(9):   # the tail fan, up and back
+        a = (k - 4) / 4; body.append(H_feather((a * .04, .5, -.25), (a * .45, .85, -.55), .22 + .05 * (1 - abs(a)), .075, [W, W2, '#ffffff'][k % 3], n=(0, .3, -1)))
+    for s in (-1, 1):    # folded wings: feathers layered from the shoulder back
+        for k in range(6):
+            body.append(H_feather((s * .2, .45 - k * .022, .1 - k * .015), (s * .1, -.3 - k * .05, -1), .28 - k * .025, .095, [W2, W, W3][k % 3], n=(s, 0, 0), flat=.28))
+        body.append(sph(.11, W2, (s * .19, .4, .02), (.35, .75, 1.05)))
+    for k in range(5): a = k * 1.256; body.append(sph(.06, '#ffffff', (math.cos(a) * .12, .19, math.sin(a) * .1 + .02), (1, .7, 1)))   # fluffy underneath
+    head = [sph(.13, W, (0, 0, 0)), sph(.085, '#ffffff', (0, -.07, .02), (1.2, .8, 1)),
+            H_cone(.036, .09, '#ffb52e', (0, -.005, .15), (1.57, 0, 0)), H_cone(.026, .06, '#f29a1a', (0, -.035, .13), (1.75, 0, 0)),
+            sph(.045, '#e8332a', (0, .135, .0), (.55, 1, 1)), sph(.04, '#ee4a3a', (0, .14, .05), (.55, 1, 1)), sph(.034, '#e8332a', (0, .125, .095), (.55, .9, 1)), sph(.03, '#e8332a', (0, .12, -.05), (.55, .8, 1)),
+            sph(.026, '#e8332a', (.012, -.09, .1), (.6, 1.25, .6)), sph(.024, '#e8332a', (-.012, -.088, .098), (.6, 1.2, .6))]
+    head += H_eye(-.07, .03, .085, .022) + H_eye(.07, .03, .085, .022)
+    H_set(piv, 'body', body); H_set(piv, 'head', head)
+    for leg in ('leg0', 'leg1'):
+        H_set(piv, leg, [H_cyl(.02, .017, .16, '#ffb52e', (0, -.08, 0))] + [H_cap(.011, .05, '#ffa21e', (dx * .03, -.155, .035), H_rot((dx * .4, 0, 1))) for dx in (-1, 0, 1)] + [H_cap(.01, .035, '#ffa21e', (0, -.155, -.025), H_rot((0, 0, -1)))])
+
+def hand_penguin(piv):
+    N, N2 = '#2f4a6e', '#263d5c'
+    body = [sph(.17, N, (0, .25, 0), (1, 1.35, .95)), sph(.137, '#ffffff', (0, .23, .068), (1, 1.3, .72)), sph(.09, '#fff8ec', (0, .14, .1), (1, .9, .7)),
+            H_cone(.05, .08, N2, (0, .06, -.15), (-2.3, 0, 0), (1.3, 1, .5))]
+    body.append(sph(.12, N2, (0, .32, -.075), (1.1, 1.4, .55)))   # a soft darker back
+    head = [sph(.115, N, (0, 0, 0)), sph(.058, '#ffffff', (-.045, .005, .07), (1, 1.15, .6)), sph(.058, '#ffffff', (.045, .005, .07), (1, 1.15, .6)),
+            sph(.03, '#ffc23a', (-.085, -.035, .035), (.5, 1, 1.1)), sph(.03, '#ffc23a', (.085, -.035, .035), (.5, 1, 1.1)),
+            H_cone(.024, .075, '#2a2a2e', (0, -.022, .135), (1.6, 0, 0), (1.1, 1, .8)), H_cone(.016, .05, '#ff8a3a', (0, -.033, .128), (1.75, 0, 0))]
+    head += H_eye(-.048, .03, .095, .02) + H_eye(.048, .03, .095, .02)
+    H_set(piv, 'body', body); H_set(piv, 'head', head)
+    for leg, s in (('leg0', -1), ('leg1', 1)):   # the flippers: a soft flat paddle, white underneath
+        H_set(piv, leg, [H_cap(.045, .13, N, (0, -.09, 0), (0, 0, -s * .12), (.35, 1, 1)), H_cap(.034, .1, '#ffffff', (-s * .012, -.1, 0), (0, 0, -s * .12), (.25, 1, .9))])
+    for leg in ('leg2', 'leg3'):   # the feet: three plump toes and a pad
+        H_set(piv, leg, [sph(.034, '#ff9a5a', (0, -.035, .02), (1, .4, 1.2))] + [H_cap(.015, .04, '#ff9a5a', (dx * .024, -.037, .055), H_rot((dx * .3, 0, 1))) for dx in (-1, 0, 1)])
+
+def hand_emu(piv):
+    B = ['#5e4f40', '#6f5e4c', '#7d6a55', '#544637']
+    body = [sph(.3, '#5a4a3a', (0, .95, 0), (.85, .8, 1.25))]
+    k = 0
+    for ring in range(5):   # a shaggy coat: broad drooping feathers lying close over the body, in rings like shingles
+        t = ring / 4; y = 1.2 - t * .32; rr = .2 + t * .07
+        for j in range(12 - ring):
+            a = j / (12 - ring) * TAU + ring * .45; o = Vector((math.cos(a) * rr * .85, 0, math.sin(a) * rr * 1.25))
+            body.append(H_feather((o.x, y, o.z), (o.x * .9, -1, o.z * .9 - .35), .2 + .04 * t, .13, B[k % 4], n=(o.x, .25, o.z), flat=.35)); k += 1
+    head = [H_tube([(0, -.02, -.02), (0, .3, .02), (0, .55, .045)], [.06, .038], '#5f86b0'), sph(.07, '#6a5a4a', (0, .05, -.01), (1.2, .9, 1.2)),
+            sph(.075, '#6a5a4a', (0, .6, .05), (.9, 1, 1.1)), sph(.05, '#6f95bd', (-.045, .6, .085), (.6, 1, .8)), sph(.05, '#6f95bd', (.045, .6, .085), (.6, 1, .8)),
+            H_cone(.03, .1, '#3a3a3e', (0, .585, .15), (1.57, 0, 0), (1.35, 1, .6))]
+    for j in range(5): a = (j - 2) * .4; head.append(H_feather((a * .03, .66, .03), (a * .5, 1, -.4), .07, .03, B[j % 4], n=(0, .3, -1)))   # a little tuft
+    head += H_eye(-.05, .62, .085, .018) + H_eye(.05, .62, .085, .018)
+    tail = [sph(.11, '#5a4a3a', (0, 0, -.04))] + [H_feather((dx * .05, .02, -.05), (dx * .3, -.7, -.7), .24, .09, B[j % 4], n=(dx, .3, -1)) for j, dx in enumerate((-1.5, -.75, 0, .75, 1.5, -.4, .4))]
+    H_set(piv, 'body', body); H_set(piv, 'head', head); H_set(piv, 'tail', tail)
+    for leg in ('leg0', 'leg1'):
+        H_set(piv, leg, [H_cyl(.04, .03, .72, '#8a7a6a', (0, -.36, 0))] + [sph(.032, '#7a6a5a', (0, -.2 - j * .12, .005), (1.1, .5, 1.1)) for j in range(4)]
+              + [H_cap(.02, .09, '#7a6a5a', (dx * .045, -.715, .06), H_rot((dx * .45, 0, 1))) for dx in (-1, 0, 1)])
+
+def hand_crane(piv):
+    Wh, Bl = '#f6f3ec', '#2a2a2e'
+    body = [sph(.26, Wh, (0, 1.05, 0), (.75, .72, 1.3)), sph(.17, '#ffffff', (0, 1.08, .18), (.8, .9, .9))]
+    for s in (-1, 1):   # long folded wings, the flight feathers black at the tips
+        for k in range(7):
+            base = (s * .16, 1.16 - k * .025, .12 - k * .04)
+            body.append(H_feather(base, (s * .08, -.18, -1), .36 - k * .02, .1, Wh if k < 4 else '#ebe6dc', n=(s, .4, 0)))
+        for k in range(4): body.append(H_feather((s * .14, 1.06 - k * .02, -.2), (s * .1, -.35, -1), .2, .07, Bl, n=(s, .4, 0)))
+    for k in range(9):   # the black bustle of the tail, drooping
+        a = (k - 4) / 4; body.append(H_feather((a * .08, 1.08, -.3), (a * .35, -.5, -1), .22, .07, Bl if k % 3 else '#3a3a3e', n=(0, 1, -.3)))
+    head = [H_tube([(0, 0, 0), (0, .25, .02), (0, .45, .07), (0, .58, .1)], [.045, .035], Bl), sph(.05, Wh, (0, .02, 0), (1.3, .7, 1.3)),
+            sph(.07, Wh, (0, .63, .1), (.9, .95, 1.15)), sph(.034, '#e8332a', (0, .68, .085), (1.1, .5, 1.3)), sph(.042, Bl, (0, .61, .14), (1, .85, .75)),
+            H_cone(.022, .22, '#c9b46a', (0, .605, .25), (1.57, 0, 0), (1, 1, .8))]
+    head += H_eye(-.042, .645, .137, .016) + H_eye(.042, .645, .137, .016)
+    H_set(piv, 'body', body); H_set(piv, 'head', head)
+    for leg in ('leg0', 'leg1'):
+        H_set(piv, leg, [H_cyl(.022, .019, .85, '#3a3a3e', (0, -.42, 0)), sph(.026, '#3a3a3e', (0, -.42, 0), (1, 1.3, 1))]
+              + [H_cap(.011, .08, '#3a3a3e', (dx * .04, -.845, .05), H_rot((dx * .5, 0, 1))) for dx in (-1, 0, 1)] + [H_cap(.01, .05, '#3a3a3e', (0, -.845, -.03), H_rot((0, 0, -1)))])
+
+def hand_peacock(piv):
+    B, B2, G = '#1f5fbf', '#2a78d8', '#2f9a6a'
+    body = [sph(.22, B, (0, .5, 0), (.85, 1, 1.15)), sph(.16, B2, (0, .56, .12), (1, 1.05, .9))]
+    for s in (-1, 1):   # the wings: brown flight feathers under blue-green coverts
+        for k in range(5): body.append(H_feather((s * .17, .58 - k * .03, .06 - k * .03), (s * .1, -.3, -1), .3 - k * .02, .09, ['#8a6a4a', '#a8865a'][k % 2], n=(s, .3, 0)))
+        for k in range(4): body.append(H_feather((s * .18, .62 - k * .03, .1), (s * .1, -.4, -1), .14, .07, ['#2fae8a', '#1f8a8a'][k % 2], n=(s, .3, 0)))
+    head = [H_cap(.06, .2, B, (0, .05, 0)), sph(.08, B, (0, .2, .04)), sph(.024, '#ffffff', (-.05, .2, .085), (1, .4, .5)), sph(.024, '#ffffff', (.05, .2, .085), (1, .4, .5)),
+            H_cone(.02, .08, '#d9c9a0', (0, .19, .13), (1.57, 0, 0))]
+    for j in range(5):   # the crest: little fans on fine stems
+        a = (j - 2) * .25; tip = (a * .1, .36, .0 + (2 - abs(j - 2)) * .01)
+        head += [H_tube([(a * .02, .26, .03), tip], [.004, .003], B), sph(.017, '#2fae8a', tip, (1, 1.2, .5)), sph(.008, B, (tip[0], tip[1], tip[2] + .008), (1, 1.2, .5))]
+    head += H_eye(-.045, .22, .075, .015) + H_eye(.045, .22, .075, .015)
+    tail = []
+    for row, (n, L, eyer, cols) in enumerate([(15, .86, .066, (G, '#36a874')), (11, .62, .05, ('#2a8a5e', G))]):
+        for k in range(n):   # the fan: long feathers, each with its eye spot
+            a = -1.3 + 2.6 * k / (n - 1); d = Vector((math.sin(a), math.cos(a), -.08 - row * .05)); base = Vector((0, .05, row * .02))
+            tail.append(H_feather(base, d, L, .085, cols[k % 2], n=(0, 0, 1), flat=.22))
+            tip = base + d.normalized() * (L - .06); z = tip.z + .012
+            for r_, c in ((eyer, '#ffd23f'), (eyer * .62, '#2fae8a'), (eyer * .32, '#14306f')):
+                e = sph(r_, c, (tip.x, tip.y, z), (1, 1.25, .25)); e['res'] = 5; tail.append(e); z += .009
+    H_set(piv, 'body', body); H_set(piv, 'head', head); H_set(piv, 'tail', tail)
+    for leg in ('leg0', 'leg1'):
+        H_set(piv, leg, [H_cyl(.02, .019, .3, '#c9b08a', (0, -.15, 0))] + [H_cap(.011, .06, '#c9b08a', (dx * .03, -.295, .04), H_rot((dx * .45, 0, 1))) for dx in (-1, 0, 1)])
+
+def hand_dragon(piv):
+    T, T2, C_, G_ = '#3cb8a0', '#46c8ae', '#f2e2a8', '#ffd23f'
+    body = [H_cap(.13, .22, T, (0, 0, 0), (1.57, 0, 0)), sph(.1, C_, (0, -.04, .05), (1, .8, 1.4))]
+    for k in range(5): z = .13 - k * .065; body.append(sph(.072, C_ if k % 2 else '#f6e8b8', (0, -.088, z), (1, .35, .62)))   # belly plates
+    body += [sph(.135, T, (0, .14, .2)), H_cap(.07, .08, T2, (0, .1, .33), (1.57, 0, 0)), sph(.06, C_, (0, .068, .32), (1, .6, 1.2)),
+             sph(.011, '#1a3a32', (.028, .115, .405)), sph(.011, '#1a3a32', (-.028, .115, .405)),
+             sph(.035, '#ffffff', (.06, .2, .3)), sph(.035, '#ffffff', (-.06, .2, .3)), sph(.018, '#1a1a1a', (.065, .205, .325)), sph(.018, '#1a1a1a', (-.065, .205, .325))]
+    for s in (-1, 1):
+        body.append(H_tube([(s * .06, .25, .15), (s * .085, .32, .1), (s * .095, .37, .03)], [.024, .006], G_))   # horns
+        body.append(H_cone(.035, .09, T2, (s * .12, .2, .17), (0, 0, -s * 1.1), (1, 1, .35)))                    # little fin ears
+        body.append(H_tube([(s * .045, .1, .37), (s * .12, .085, .41), (s * .19, .12, .39)], [.006, .003], G_))  # whiskers
+        for fz in (.06, -.08): body += [H_cap(.032, .06, T, (s * .08, -.13, fz)), H_cap(.008, .016, C_, (s * .095, -.17, fz + .03), H_rot((s * .3, -.2, 1)))]   # stubby legs with a claw
+    for k in range(6): z = .1 - k * .085; y = .14 - abs(k - 1) * .012; body.append(H_cone(.03 - k * .002, .075, G_, (0, y, z), (-.3, 0, 0), (.45, 1, 1)))   # back spines
+    body += [H_tube([(0, -.02, -.15), (0, -.05, -.29), (0, -.005, -.41), (0, .06, -.46)], [.07, .016], T), H_cone(.045, .08, G_, (0, .09, -.48), (-.6, 0, 0), (1.2, 1, .35))]
+    H_set(piv, 'body', body)
+    pts = [(0, 0), (.1, .05), (.2, .1), (.34, .15), (.31, .07), (.28, .01), (.24, .03), (.2, -.03), (.15, -.01), (.1, -.08), (.05, -.05)]
+    for role, sx in (('wing0', -1), ('wing1', 1)):
+        rot, scl = (-1.5708, 0, 0), (sx, 1, 1)
+        parts = [H_wing(pts, '#7fe0c8', (0, 0, 0), rot, scl)]
+        for tip in ((.34, .15), (.28, .01), (.2, -.03), (.1, -.08)):   # the finger bones
+            parts.append(H_tube([(0, 0, 0), (tip[0] * .5, tip[1] * .5 + .01, .0), (tip[0], tip[1], 0)], [.012, .005], '#2a9a86', (0, 0, 0), rot, scl))
+        parts.append(H_cone(.012, .035, G_, (sx * .35, 0, -.16), (0, 0, -sx * 1.2)))   # a claw at the wing's tip
+        H_set(piv, role, parts, [])
+
+def hand_firefly(piv):
+    D, D2 = '#3a3f66', '#4a4f7a'
+    body = [sph(.125, D, (0, 0, .08)), sph(.1, D2, (0, -.01, -.02), (1, .95, 1.05)),
+            sph(.035, '#ffffff', (.06, .04, .18)), sph(.035, '#ffffff', (-.06, .04, .18)), sph(.017, '#1a1a1a', (.07, .04, .21)), sph(.017, '#1a1a1a', (-.07, .04, .21))]
+    # (its glowing tail is the game's own glow, drawn beside this model: js/companion.ts)
+    for s in (-1, 1):
+        body += [H_tube([(s * .04, .1, .12), (s * .07, .19, .13), (s * .1, .23, .16)], [.008, .006], D), sph(.024, '#ffd23f', (s * .1, .235, .165))]   # antennae
+        for k in range(3): body.append(H_cap(.008, .05, D, (s * .06, -.1, .04 - k * .05), H_rot((s * .5, -1, .1))))   # little legs
+    H_set(piv, 'body', body)
+    pts = [(0, 0), (.08, .06), (.17, .08), (.26, .06), (.31, .02), (.3, -.03), (.22, -.06), (.12, -.06), (.05, -.04)]
+    for role, sx in (('wing0', -1), ('wing1', 1)):
+        rot, scl = (-1.5708, 0, 0), (sx, 1, 1)
+        parts = [H_wing(pts, '#dff4ff', (0, 0, 0), rot, scl, .005)] + [H_tube([(.02, 0, 0), (v[0] * .6, v[1] * .6, .002), v + (.002,)], [.004, .002], '#a8d8f0', (0, 0, 0), rot, scl) for v in ((.28, .05), (.27, -.03), (.18, .07))]
+        H_set(piv, role, parts, [])
+
+HAND = {'chicken': hand_chicken, 'penguin': hand_penguin, 'emu': hand_emu, 'crane': hand_crane, 'peacock': hand_peacock, 'dragon': hand_dragon, 'firefly': hand_firefly}
+
 # ---- one creature ----
 def build(kind, A, companion=False):
     bpy.ops.wm.read_factory_settings(use_empty=True)
     sc = bpy.context.scene; sc.render.fps = FPS
     mn, mx = A['box']['min'], A['box']['max']; size = max(mx[i] - mn[i] for i in range(3))
     piv = json.loads(json.dumps(A['pivots'])); A = dict(A, legs=[dict(l) for l in A['legs']]) if not companion else A
+    if kind in HAND: HAND[kind](piv)   # (v1.08g creatures: the hand-drawn shapes)
     restyle(kind, A, piv)
     F = add_face(kind, piv, size, companion)
     if not companion:   # the legs' heights (how low it lies down to sleep) and which legs are in front
@@ -615,6 +797,7 @@ def build(kind, A, companion=False):
             e, _ = extents(s); m = max(e)
             res = 16 if m > size * .35 else (12 if m > size * .1 else (11 if p['role'].startswith('eye') else (8 if m > size * .05 else 6)))
             if p['role'] == 'body' and m <= size * .35: res = min(res, 10)   # (patches and puffs on the body: fewer triangles)
+            if s.get('res'): res = s['res']   # (v1.08g creatures: a flat feather needs few sides)
             V, Fc = prim(s, res)
             special = s['type'] == 'ConeGeometry' and s['p'].get('radialSegments') == 4 and not s['rot'][0] and not s['rot'][2] and s['scl'][0] != s['scl'][2]
             M = C @ W[i] @ s.get('pre', Matrix.Identity(4)) @ three_matrix(s['pos'], s['rot'], s['scl'], special)

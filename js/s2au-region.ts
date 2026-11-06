@@ -112,7 +112,8 @@ const SCENERY: Record<string, (G, R: S2Region, ctx: Ctx, put: Put, block: Block)
       const x = L.x + dx, z = L.z + dz; if (heightAt(x, z) < WATER + .3) continue; const t = sprite(p, s); t.position.set(x, heightAt(x, z) + .45, z); G.scene.add(t); }
     // black swans on the Swan River (its pond, js/content/map.ts WATERS 'swan')
     const sw = anchorOf('perth')!, pond = [-222, 168];
-    for (let i = 0; i < 4; i++) { const a = i * 1.7, t = sprite('au:swan', .9); t.position.set(pond[0] + Math.cos(a) * 2.6, WATER + .45, pond[1] + Math.sin(a) * 2.6); G.scene.add(t); }
+    for (let i = 0; i < 4; i++) { const a = i * 1.7, t = sprite('au:swan', .9); t.position.set(pond[0] + Math.cos(a) * 2.6, WATER + .45, pond[1] + Math.sin(a) * 2.6); G.scene.add(t); (G.world.swans = G.world.swans || []).push(t); }
+    // (v1.08g creatures: the line above lists the swans, so js/flocks.ts draws them with their Blender model)
     { const s = ctx.at([12, -2]); put([P(C(.05, .05, 2.4, 6), '#e8e4dc', [0, 1.2, 0]), P(new THREE.ConeGeometry(1.6, .7, 10), '#3b6fe0', [0, 2.5, 0]), P(B(1.6, .1, .7), '#ffd23f', [1.4, .08, .6])], s.x, s.z, .5); block(s.x, s.z, .2); }
     for (const dx of [-4, 4]) { const s = ctx.at([dx, 8]); if (heightAt(s.x, s.z) < WATER + .3) continue; put([P(C(.05, .05, 2.6, 6), '#e8e4dc', [0, 1.3, 0]), P(B(.9, .3, .05), '#e8433a', [.45, 2.35, 0]), P(B(.9, .3, .05), '#ffd23f', [.45, 2.05, 0])], s.x, s.z, 0); block(s.x, s.z, .2); }
     // Perth's city towers, far behind the beach (on the hill north of the Murray)

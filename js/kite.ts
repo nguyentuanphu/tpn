@@ -2,7 +2,7 @@
 // and behind you wherever you go. Like the kites of northern Vietnam it carries a little bamboo flute (sáo
 // diều) that hums in the wind: the faster you run, the more often it sings. Switch it on and off in the
 // Backpack. Tap the kite button there to make it whistle.
-import { THREE, toonVC, P, merge } from './gfx.js';
+import { THREE, toonVC, P, merge, worldTag } from './gfx.js';
 import { tone } from './audio.js';
 import { settings, reduceMotion } from './state.js';
 
@@ -18,6 +18,8 @@ function kiteModel() {
   for (const x of [-.32, 0, .32]) parts.push(P(new THREE.CylinderGeometry(.11, .11, .05, 8), '#7a4a2a', [x, .85, -.12], [0, 0, Math.PI / 2]));
   const m = new THREE.Mesh(merge(parts), toonVC()); m.material.side = THREE.DoubleSide;
   const kite = new THREE.Group(); kite.add(m);
+  // (v1.08g festivals) the sail's Blender model when the kite flies near a child (the tail of bows stays)
+  worldTag(m, 'fe-kite');
   // a wiggly tail of little bows
   const tail = [];
   for (let k = 0; k < 7; k++) { const b = new THREE.Mesh(new THREE.BoxGeometry(.32, .16, .02), new THREE.MeshToonMaterial({ color: k % 2 ? '#3cc7e8' : '#ff7eb8', side: THREE.DoubleSide })); b.position.y = -1.8 - k * .45; kite.add(b); tail.push(b); }

@@ -116,6 +116,8 @@ await check('wading', async () => (await import('./wading.mts')).wadingCheck(b))
 await check('worldnature', async () => (await import('./world-nature.mts')).worldNatureCheck(b));
 // (v1.08e places) the landmarks, bridges and buildings remade in Blender stand where their code shapes stood (tests/world-places.mts)
 await check('worldplaces', async () => (await import('./world-places.mts')).worldPlacesCheck(b));
+// (v1.08g props) the story and street props' Blender models fit their code shapes (tests/props-fit.mts)
+await check('propsfit', async () => (await import('./props-fit.mts')).propsFitCheck(b));
 
 // (v1.08f settings) Grown-ups: Two players, Fit the screen and Money on one row at 390 px in EN and VI; tapping a choice
 // keeps the scroll; captions off on a fresh start; no AI chat offer; no TURN relay (tests/grownups-row.mts)
@@ -126,6 +128,13 @@ await check('testertryagain', async () => (await import('./tester-tryagain.mts')
 // (v1.08e villagers) the 11 named villagers wear their Blender models near the child: height, ground, blinks, eyes to
 // the child, tags and talk kept, the code person when blocked (tests/villager-models.mts)
 await check('villagermodels', async () => (await import('./villager-models.mts')).villagerModelsCheck(b));
+
+// (v1.08g festivals) the festivals' Blender pieces: every model loads, each theme fetches and uses its models with its
+// colours painted, Lotus Village's draws on Tet, the quest lantern and the folk show's models, blocked models (tests/festival-models.mts)
+await check('festmodels', async () => (await import('./festival-models.mts')).festivalModelsCheck(b));
+// (v1.08g creatures) the little flocks as Blender models near the child: one InstancedMesh per kind, where their pictures
+// are, pictures hidden but kept for taps, the new little birds, blocked models keep the pictures (tests/flocks.mts)
+await check('flocks', async () => (await import('./flocks.mts')).flocksCheck(b));
 
 await b.close();
 const failed = results.filter(r => !r[1]);
