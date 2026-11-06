@@ -1,5 +1,7 @@
 # v1.08e hair round 3: status
 
+**ready for Release** (7 Nov 2026, 00:37 AEDT): approved by Release for tonight; the faces helper merges it and rebuilds all 33 models. The fringe-to-eyes and the friends' fewer, bigger locks go to v1.09 (Release).
+
 Branch `work/v108e-hair` (from `work/v108e-faces`). Asked by Release, 6 Nov 2026 AEDT, after the owner (6 Nov, 9 pm AEDT)
 said the hair, with the eyes and cheeks, "will 100% scare the kids": sharp faceted shards and spikes.
 
