@@ -8,10 +8,27 @@ from PIL import Image
 ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / 'docs/meshy-production-20261107'
 
-def main():
+def submitted_assets(jobs):
+    """(8 Nov 2026, owner corrections handoff) every asset already sent to Meshy: a task in CREDIT-LEDGER.json (synced
+    from the private journal by ledger_sync.py; the spec files themselves were not updated by the runner) or a spec file
+    marked submitted / with a task. Their specifications record the images that were actually submitted and are never
+    rewritten; a later image correction goes to a separate <nn>-<id>-current-reference.json draft (unsubmitted)."""
+    sent = {}
+    led = OUT/'CREDIT-LEDGER.json'
+    if led.exists():
+        L = json.loads(led.read_text(encoding='utf-8'))
+        for e in L.get('entries', []):
+            if e.get('taskId'): sent[e['assetId']] = e['taskId']
+    for p in jobs.glob('*.json'):
+        s = json.loads(p.read_text(encoding='utf-8'))
+        if s.get('submitted') or s.get('taskId'): sent.setdefault(s.get('assetId'), s.get('taskId'))
+    return sent
+
+def main(check=False):
     manifest = json.loads((OUT/'ASSET-MANIFEST.json').read_text())
     jobs = OUT/'job-specifications'
     jobs.mkdir(exist_ok=True)
+    sent, report = submitted_assets(jobs), {'kept_submitted': [], 'current_reference_drafts': [], 'written': []}
     cards, markdown, ledger = [], ['# Character and creature reference gallery', '',
         '43 generated sheets and 128 separate views. Technical reference review complete; final owner review pending. These are pictures, not new 3D models. Tap a picture to open it and zoom.', ''], []
     for a in manifest['assets']:
@@ -36,7 +53,19 @@ def main():
             'accountVerified': False, 'privateSettingsVerified': False,
             'rawDownloadDestination': f"raw-models/{a['group']}/{a['id']}.glb",
             'runtimeDestinationAfterFittingAndValidation': a['runtimeModelPath']}
-        (jobs/f"{a['number']:02d}-{a['id']}.json").write_text(json.dumps(spec, indent=2)+'\n')
+        path = jobs/f"{a['number']:02d}-{a['id']}.json"
+        if a['id'] in sent:
+            report['kept_submitted'].append(a['id'])
+            old = json.loads(path.read_text(encoding='utf-8')) if path.exists() else {}
+            if [i['sha256'] for i in old.get('inputImages', [])] != [i['sha256'] for i in images]:
+                draft = jobs/f"{a['number']:02d}-{a['id']}-current-reference.json"
+                if not draft.exists():   # (a hand-written draft, such as Clara's, is kept as it is)
+                    spec['draftNote'] = 'Unsubmitted draft from the corrected reference images; the submitted job keeps ' + path.name + '. Needs separate owner authorisation.'
+                    report['current_reference_drafts'].append(draft.name)
+                    if not check: draft.write_text(json.dumps(spec, indent=2)+'\n')
+        else:
+            report['written'].append(path.name)
+            if not check: path.write_text(json.dumps(spec, indent=2)+'\n')
         ledger.append({'assetId':a['id'], 'plannedCredits':a['plannedCredits'], 'reservedCredits':0,
             'chargedCredits':0, 'taskId':None, 'state':'not_submitted'})
         title = f"{a['number']:02d}. {a['name']}"
@@ -44,6 +73,8 @@ def main():
         markdown.extend([f'## {title}', '', f'![{title} turnaround]({a["turnaround"]})', '', links, ''])
         views = ''.join(f'<a href="{html.escape(p)}"><img loading="lazy" src="{html.escape(p)}" alt="{html.escape(a["name"])} {v}"><span>{v}</span></a>' for v,p in zip(a['views'],a['separateViews']))
         cards.append(f'<article id="{a["id"]}"><h2>{html.escape(title)}</h2><p>Group {a["group"]} · {a["plannedCredits"]} planned credits · technical review passed</p><a href="{a["turnaround"]}"><img class="sheet" loading="lazy" src="{a["turnaround"]}" alt="{html.escape(title)} full turnaround"></a><div class="views">{views}</div></article>')
+    if check:
+        print(json.dumps({'check': True, 'submitted': len(sent), **report, 'paidCalls': 0}, indent=1)); return
     ledger_path = OUT/'CREDIT-LEDGER.json'
     if not ledger_path.exists():
         ledger_path.write_text(json.dumps({'budget':1000,'planned':990,'reserve':10,'charged':0,'entries':ledger},indent=2)+'\n')
@@ -55,4 +86,5 @@ def main():
     print(json.dumps({'jobSpecifications':43,'galleryCards':len(cards),'viewInputs':sum(len(a['views']) for a in manifest['assets']),'paidCalls':0}))
 
 if __name__ == '__main__':
-    main()
+    import sys
+    main(check='--check' in sys.argv)   # --check: report what would be written, write nothing
