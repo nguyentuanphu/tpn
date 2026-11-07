@@ -41,8 +41,11 @@ export const stageOf = en => STAGES.find(([re]) => re.test(en))?.[1] || 'meadow'
 // sync (round H, reading together online): { send(page), listen(fn) } — a page turned here turns for every friend reading
 export async function openTheatre(tale, { name = '', onDone = undefined, startPage = 0, sync = null }: {name?: string;onDone?: (...args: any[])=>void;startPage?:number;sync?:any} = {}) {
   if (!itemEnabled('story', tale.id) || heldTale(tale.id)) return null;
+  // (v1.08) the story's music bed starts the moment the story is tapped, not after its pages have loaded (a slow phone
+  // takes a while to load them, and the valley's music played on under the film); a story that cannot load gives it back
+  const prev = Music.key; Music.play('story');
   try { ({ tale, sync, startPage } = await loadTale(tale, sync, startPage)); }
-  catch (e) { window.svModuleGone?.(e); return null; }
+  catch (e) { Music.play(prev || 'field'); window.svModuleGone?.(e); return null; }
   const storyId = typeof tale.id === 'string' && !tale.id.startsWith('my_') ? tale.id : '';
   const storyAttempt = storyId ? managementEvidence.emit('story.opened',{storyId}) : null;
   return new Promise(resolve => {
@@ -50,9 +53,9 @@ export async function openTheatre(tale, { name = '', onDone = undefined, startPa
     let displayed = false;
     // Both friends already start on page zero. Publishing a late initial render can undo real Next taps.
     const publish = fromFriend => { const initial = !displayed; displayed = true; if (sync && !fromFriend && (!initial || k !== startPage)) sync.send(k); };
-    // (owner, 13 Oct) a soft music bed under the story, lowered while the narrator speaks; the music before comes back on
-    // close. Music.play follows the music switch, and the music's loudness calm mode.
-    const prev = Music.key; Music.play('story'); const offTalk = onSpeaking(n => Music.under(n > 0));
+    // (owner, 13 Oct) a soft music bed under the story (started above), lowered while the narrator speaks; the music before
+    // comes back on close. Music.play follows the music switch, and the music's loudness calm mode.
+    const offTalk = onSpeaking(n => Music.under(n > 0));
     const m = el('div', 'theatre', `
       <div class="th-top"><span class="th-flag">${tale.flag}</span><b class="th-title">${esc(tale.title())}</b>${tale.story && featureOn('shortTalk', true) ? `<button class="th-skip">${pic('⏩')} ${T('Skip', 'Bỏ qua')}</button>` : ''}<button class="th-x" aria-label="${T('Close', 'Đóng')}">✕</button></div>
       <div class="th-stage"><div class="th-bg"></div><div class="th-actors"></div><div class="th-fx"></div></div>
