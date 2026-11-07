@@ -402,10 +402,14 @@ await check('padmap', async () => {
       // visit the first clouded place, then open the map again: its cloud puffs away, once
       const h = __sv.heroes[0], c = clouds[0], W = await import('/js/world.js');
       h.profile.visited = h.profile.visited || {}; h.profile.visited[c.region] = true;
+      // (v1.08 release fix, padmap red on GitHub) the puffs are counted as they are added: a puff lives 0.9 s and removes
+      // itself, so on a busy machine it could already be gone when the count was read 200 ms later
+      let added = new Set(); const seen = new MutationObserver(list => list.forEach(m => m.addedNodes.forEach(n => { if (n instanceof Element) [n, ...n.querySelectorAll('*')].forEach(e => { if (e.matches('.mapcloud.puff')) added.add(e); }); })));
+      seen.observe(document.body, { childList: true, subtree: true });
       document.querySelectorAll('.modal').forEach(e => e.remove()); __sv.paused = false; __sv.openPad(0, 'map'); await new Promise(r => setTimeout(r, 200));
-      const after = document.querySelector('canvas.bigmap').clouds, puff = document.querySelectorAll('.mapcloud.puff').length;
+      const after = document.querySelector('canvas.bigmap').clouds, puff = added.size; added = new Set();
       document.querySelectorAll('.modal').forEach(e => e.remove()); __sv.paused = false; __sv.openPad(0, 'map'); await new Promise(r => setTimeout(r, 200));
-      const again = document.querySelectorAll('.mapcloud.puff').length;
+      const again = added.size; seen.disconnect();
       return { n: L.length, missing, over, clouds: clouds.length, region: c.region, still: after.some(o => o.region === c.region), puff, again, pic };
     });
     ok(r.pic && !r.missing.length, `${w}px: places missing from the drawn map: ${r.missing.join(', ')}`);

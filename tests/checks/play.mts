@@ -1116,6 +1116,8 @@ await check('friendoutfits', async () => {
     const w = ms => new Promise(r => setTimeout(r, ms)), G = __sv, p = G.heroes[0].profile, S = await import('/js/state.js'), F = await import('/js/content/friends.js');
     S.farm.coins = 500; G.shop.openShop(0); await w(400);
     const card = document.querySelector('.modal.shopk .card'); (card.querySelector('[data-stab]') as HTMLElement).click(); await w(200);
+    // (v1.08 release fix 2) the Outfits tab draws when its code is in: waited for (200 ms was short on GitHub's machines)
+    for (let k = 0; k < 50 && !card.querySelector('[data-suit]'); k++) await w(100);
     const ids = [...card.querySelectorAll('[data-suit]')].map((e: HTMLElement) => e.dataset.suit), f = F.friendOf(p.look), aodai = F.suitId(f, 'aodai');
     (card.querySelector(`[data-suit="${aodai}"]`) as HTMLElement).click(); await w(150); const afterOne = { coins: S.farm.coins, worn: p.look.suit };
     (card.querySelector(`[data-suit="${aodai}"]`) as HTMLElement).click(); await w(300);

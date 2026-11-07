@@ -69,3 +69,8 @@ test('offline completion ignores unselected EN/VI but includes explicitly loaded
   assert.equal(voicePackSignature(pack, ['en']), 'en:english|hi:hindi');
   assert.equal(voicePackSignature({ lines: { test: 'fm' }, version: 2, made: 'test' }, ['en']), '1:2:test');
 });
+
+test('the language lists keep the formats the pack has when they are written again (v1.08 fix, check voiceopus)', () => {
+  for (const j of Object.values(manifests.splitManifest({ ...all, formats: ['mp3', 'opus'] }))) assert.deepEqual(j.formats, ['mp3', 'opus']);
+  for (const j of Object.values(manifests.splitManifest({ ...all, formats: undefined }))) assert.equal(j.formats, undefined);
+});
