@@ -518,8 +518,17 @@ await check('soundsw', async () => {
   }
   // the valley: the dock's Sound button (computer size, where the dock shows it)
   const Q = await open(b, { w: 1280, h: 800 }); await clear(Q.page);
-  await Q.page.click('.hud .dk.snd'); const v = await Q.page.waitForSelector('.soundsheet .ss-sw', { timeout: 5000 }).then(() => true, () => false);
-  if (!v) out.push('valley: the Sound button opens no switches');
+  // (v1.08 release fix 5) timed inside the page, from the moment the tap reaches the Sound button to the moment the
+  // switches are there: they must come within 1 s (they used to load at the tap, 2 to 14 s late on a busy machine). The
+  // test's own wait only collects the result: Playwright's waitForSelector needs several of the valley's frames, and with
+  // GitHub's half-second software-drawn frames it took 3.5 to 4.6 s for switches that were already there (its 5 s was
+  // spent on the test tool, not the game)
+  await Q.page.evaluate(() => { const w = window as unknown as { __sndTap?: number; __sndOpen?: number }; addEventListener('click', e => { if ((e.target as Element).closest?.('.hud .dk.snd') && w.__sndTap == null) w.__sndTap = performance.now(); }, true);
+    new MutationObserver(() => { if (w.__sndOpen == null && document.querySelectorAll('.soundsheet .ss-sw').length === 3) w.__sndOpen = performance.now(); }).observe(document.body, { childList: true, subtree: true }); });
+  await Q.page.click('.hud .dk.snd'); await Q.page.waitForSelector('.soundsheet .ss-sw', { state: 'attached', timeout: 20000 }).catch(() => { });
+  const v = await Q.page.evaluate(() => { const w = window as unknown as { __sndTap?: number; __sndOpen?: number }, sw = [...document.querySelectorAll('.soundsheet .ss-sw')].map(b => b.getBoundingClientRect());
+    return { tapped: w.__sndTap != null, ms: w.__sndOpen != null && w.__sndTap != null ? Math.round(w.__sndOpen - w.__sndTap) : null, shown: sw.length === 3 && sw.every(r => r.width >= 44 && r.height >= 44 && r.bottom > 0 && r.top < innerHeight && r.right > 0 && r.left < innerWidth) }; });
+  if (!v.tapped || v.ms == null || v.ms > 1000 || !v.shown) out.push('valley: the Sound button opens no switches ' + JSON.stringify(v));
   const errs = P.errors.concat(Q.errors); await P.ctx.close(); await Q.ctx.close();
   ok(!out.length && !errs.length, out.join(' | ') + JSON.stringify(errs));
   return 'Sound on the Simple screen and in the valley: music, sounds and voice, each switched on its own';
