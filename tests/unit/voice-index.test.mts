@@ -71,6 +71,7 @@ test('offline completion ignores unselected EN/VI but includes explicitly loaded
 });
 
 test('the language lists keep the formats the pack has when they are written again (v1.08 fix, check voiceopus)', () => {
-  for (const j of Object.values(manifests.splitManifest({ ...all, formats: ['mp3', 'opus'] }))) assert.deepEqual(j.formats, ['mp3', 'opus']);
-  for (const j of Object.values(manifests.splitManifest({ ...all, formats: undefined }))) assert.equal(j.formats, undefined);
+  const split = (manifests as unknown as VoiceManifests).splitManifest;
+  for (const j of Object.values(split({ ...all, formats: ['mp3', 'opus'] }))) assert.deepEqual(j.formats, ['mp3', 'opus']);
+  for (const j of Object.values(split({ ...all, formats: undefined }))) assert.equal(j.formats, undefined);
 });
