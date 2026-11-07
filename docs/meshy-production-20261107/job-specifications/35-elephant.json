@@ -1,0 +1,42 @@
+{
+  "assetId": "elephant",
+  "group": "F",
+  "endpoint": "https://api.meshy.ai/openapi/v1/multi-image-to-3d",
+  "method": "POST",
+  "parameters": {
+    "ai_model": "meshy-6-lite",
+    "geometry_resolution": "standard",
+    "should_texture": true,
+    "texture_resolution": "2k",
+    "enable_pbr": false,
+    "pose_mode": "",
+    "target_formats": [
+      "glb"
+    ]
+  },
+  "inputImages": [
+    {
+      "view": "front",
+      "localPath": "reference-images/35-elephant/front.png",
+      "sha256": "5e50e81b4eeab1bb3091a257b2dca4ddb920633a48cf2b4fa7e13bd8748653b2"
+    },
+    {
+      "view": "left-side",
+      "localPath": "reference-images/35-elephant/left-side.png",
+      "sha256": "657e8285aac82e3ffdc63ccfd7be558cd8aac3ceede32c8ddd616cd1e3e389b8"
+    },
+    {
+      "view": "back",
+      "localPath": "reference-images/35-elephant/back.png",
+      "sha256": "6dcf419f724774b22028c09010155d99fbdd53416626de1317c989c0da67f4b1"
+    }
+  ],
+  "transportNote": "Runner must populate image_urls with public URLs or data URIs in this order. Local paths are not accepted by the API.",
+  "plannedCredits": 15,
+  "submitted": false,
+  "taskId": null,
+  "accountVerified": false,
+  "privateSettingsVerified": false,
+  "rawDownloadDestination": "raw-models/F/elephant.glb",
+  "runtimeDestinationAfterFittingAndValidation": "models/world/creature-elephant.glb"
+}

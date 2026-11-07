@@ -1,0 +1,24 @@
+{
+  "manifestValid": true,
+  "assets": 43,
+  "plannedCredits": 990,
+  "reserveCredits": 10,
+  "requiredStyleReferencePresent": true,
+  "turnaroundsPresent": 43,
+  "separateViewsPresent": 128,
+  "requiredSeparateViews": 128,
+  "assetsReviewedAndApproved": 0,
+  "assetsTechnicallyReviewed": 43,
+  "originalUserImageAvailableLocally": false,
+  "MeshyAPIKeyPresent": false,
+  "keyValuePrinted": false,
+  "paidCallsMadeByThisCheck": 0,
+  "referenceGenerationReady": true,
+  "paidSubmissionReady": false,
+  "paidSubmissionBlockers": [
+    "MESHY_API_KEY must be bound securely; never paste it into chat or source.",
+    "Verify actual account API balance, private settings and usable subscription entitlements.",
+    "Web-app free retries are not assumed to apply to API tasks.",
+    "Runner is offline-tested only; validate the authenticated Clara pilot before continuing."
+  ]
+}

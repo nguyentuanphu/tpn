@@ -1,0 +1,56 @@
+{
+ "id": "bom",
+ "reference_prefix": "villager-",
+ "source": "auto_joints.py from Meshy rig bom.glb",
+ "top": [
+  300.0,
+  33.3
+ ],
+ "neck": [
+  300.0,
+  293.4
+ ],
+ "hip": [
+  300.0,
+  429.1
+ ],
+ "shoulderL": [
+  366.5,
+  309.8
+ ],
+ "elbowL": [
+  404.3,
+  399.7
+ ],
+ "wristL": [
+  451.0,
+  473.4
+ ],
+ "hipL": [
+  331.1,
+  472.5
+ ],
+ "kneeL": [
+  344.9,
+  646.0
+ ],
+ "ankleL": [
+  348.5,
+  791.6
+ ],
+ "facebox": [
+  [
+   214.2,
+   129.5
+  ],
+  [
+   385.8,
+   270.0
+  ]
+ ],
+ "trim_back_hair": false,
+ "original_skin": true,
+ "keep_meshy_uvs": true,
+ "skin_shift": true,
+ "skin_ref": "#f6c7a5"
+}

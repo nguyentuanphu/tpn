@@ -1,0 +1,43 @@
+{
+  "assetId": "teo",
+  "group": "B",
+  "endpoint": "https://api.meshy.ai/openapi/v1/multi-image-to-3d",
+  "method": "POST",
+  "parameters": {
+    "ai_model": "meshy-7.1",
+    "geometry_resolution": "standard",
+    "should_texture": true,
+    "texture_resolution": "2k",
+    "enable_pbr": false,
+    "pose_mode": "",
+    "target_formats": [
+      "glb"
+    ],
+    "image_enhancement": false
+  },
+  "inputImages": [
+    {
+      "view": "front",
+      "localPath": "reference-images/07-teo/front.png",
+      "sha256": "ffa976a36e796f564a052c130fc9b1432db6a94948f0bc507996b7a333c3e8a3"
+    },
+    {
+      "view": "left-side",
+      "localPath": "reference-images/07-teo/left-side.png",
+      "sha256": "0f3935437a7e2749332585bdaa8d9d727fe641c3efdf7b9b70fd9292b84f28f4"
+    },
+    {
+      "view": "back",
+      "localPath": "reference-images/07-teo/back.png",
+      "sha256": "b6c2d611e8ab8d15d9a54ed8c0f5f5edfd72a0152aee6a1eb965dcc9bb670207"
+    }
+  ],
+  "transportNote": "Runner must populate image_urls with public URLs or data URIs in this order. Local paths are not accepted by the API.",
+  "plannedCredits": 30,
+  "submitted": false,
+  "taskId": null,
+  "accountVerified": false,
+  "privateSettingsVerified": false,
+  "rawDownloadDestination": "raw-models/B/teo.glb",
+  "runtimeDestinationAfterFittingAndValidation": "models/villager-teo.glb"
+}

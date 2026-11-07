@@ -1085,7 +1085,12 @@ await check('friendmodel', async () => {
     for (const id of ['finn', 'sol', 'clara', 'lumi']) {
       const ok = await A.loadFriendModels(id), av = A.buildAvatar({ set: id === 'clara' || id === 'lumi' ? 'girl' : 'boy', friend: id, skin: '#b47a55', hat: 'cap' });
       const m = av.model, meshes = []; let skin = null, faces = 0, tris = 0;
-      m.obj.traverse((o: any) => { if (o.isMesh) { meshes.push(o); if (/^skin(-shade)?$/.test(o.material.name) && !o.userData.face3d) skin = '#' + o.material.color.getHexString(); if (/^face-/.test(o.material.name)) faces++; } });
+      // (Meshy characters, 7 Nov 2026) a skin painted in its own tone (skinRef) is tinted relative to it: the tone is recovered
+      // as tint x painted tone; their faces are nine pictures (smile, blink, half, happy, surprised, sad, lookL, lookR, excited)
+      let pic = false;
+      m.obj.traverse((o: any) => { if (o.isMesh) { meshes.push(o); const mt = o.material, n = mt.name;
+        if (/^skin(-shade|-tex)?$/.test(n) && !o.userData.face3d) { const ref = mt.userData.skinRef; skin = ref ? '#' + new THREE.Color(ref).multiply(mt.color).getHexString() : '#' + mt.color.getHexString(); }
+        if (/^face-/.test(n)) { faces++; if (mt.map) pic = true; } } });
       // (v1.08e faces, part 3) a sculpted face is one mesh whose moods are its shape keys: its mood count (12 keys and the rest smile)
       if (m.face3d) faces = Object.keys(m.face3d[0].morphTargetDictionary).length + 1;
       // a turn of the code person's arm and knee shows on the model's bones; a mood shows the matching face
@@ -1095,7 +1100,7 @@ await check('friendmodel', async () => {
       // (v1.08e faces, part 2) the thin outlines (one per part, the same shape drawn again) are counted on their own
       meshes.filter(o => o.visible && !o.userData.outline && (o.material.name !== 'skin-grip')).forEach(o => { tris += o.geometry.index.count / 3; });
       const hat = av.rig.getObjectByProperty('isMesh', true) && (() => { let n = 0; av.rig.traverse((o: any) => { if (o.isMesh && !o.isSkinnedMesh && o.parent && o.parent !== m.obj) n++; }); return n; })();
-      out[id] = { ok, skin, faces, turned, face, tris, draws: meshes.filter(o => o.visible && !o.userData.outline).length, lines: meshes.filter(o => o.visible && o.userData.outline).length, hat };
+      out[id] = { ok, skin, pic, faces, turned, face, tris, draws: meshes.filter(o => o.visible && !o.userData.outline).length, lines: meshes.filter(o => o.visible && o.userData.outline).length, hat };
     }
     // the child in the valley plays with the model once it has arrived
     const G = __sv; for (let k = 0; k < 40 && !G.heroes[0].av.model; k++) await new Promise(r => setTimeout(r, 250));
@@ -1108,7 +1113,9 @@ await check('friendmodel', async () => {
   const errs = [...P.errors, ...Q.errors.filter(e => !/glb|friend model|Failed to fetch|aborted/i.test(e))]; await P.ctx.close(); await Q.ctx.close();
   const bad = [];
   sizes.forEach((n, i) => { if (n > 500 * 1024) bad.push(`model ${i} is ${Math.round(n / 1024)} KB`); });
-  for (const id of ['finn', 'sol', 'clara', 'lumi']) { const x = r[id]; if (!x.ok || x.skin !== '#b47a55' || x.faces < 13 || x.turned < 1 || x.face !== 'face-happy' || x.tris > (id === 'lumi' ? 17500 : 12000) || x.draws > 7 || x.lines > 6 || !x.hat) bad.push(id + ' ' + JSON.stringify(x)); }
+  // (a relative tint rounds: the recovered tone is within 3 of 255 per channel)
+  const near = (a: string, b: string) => [1, 3, 5].every(i => Math.abs(parseInt(a.slice(i, i + 2), 16) - parseInt(b.slice(i, i + 2), 16)) <= 3);
+  for (const id of ['finn', 'sol', 'clara', 'lumi']) { const x = r[id]; if (!x.ok || !(x.skin === '#b47a55' || x.pic && near(x.skin, '#b47a55')) || x.faces < (x.pic ? 9 : 13) || x.turned < 1 || x.face !== 'face-happy' || x.tris > (id === 'lumi' ? 17500 : 12000) || x.draws > 7 || x.lines > 6 || !x.hat) bad.push(id + ' ' + JSON.stringify(x)); }
   if (!r.hero) bad.push('the child in the valley has no model'); if (f.ok || f.model || f.hero || f.look !== '#e0762a') bad.push('no model: ' + JSON.stringify(f));
   ok(!bad.length && !errs.length, JSON.stringify({ bad, errs, r }).slice(0, 2000));
   return `${sizes.map(n => Math.round(n / 1024)).join(', ')} KB; ${['finn', 'sol', 'clara', 'lumi'].map(id => `${id} ${r[id].tris} triangles in ${r[id].draws} parts (+${r[id].lines} outlines)`).join(', ')}; skin tone, joints and moods follow; the cap is worn; without the files the code person stays`;

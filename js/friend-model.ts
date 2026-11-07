@@ -16,6 +16,13 @@ function litCorners(name: string) {
   m.onBeforeCompile = sh => { sh.fragmentShader = sh.fragmentShader.replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\n#ifdef USE_COLOR\ntotalEmissiveRadiance *= vColor.rgb;\n#endif'); };
   return m;
 }
+/** (Meshy characters) a face picture whose skin texels (alpha below .9) take the child's tone, relative to the painted one */
+function faceTint(m) {
+  m.userData.faceTint = true; m.userData.tint = { value: new THREE.Color(1, 1, 1) };
+  m.onBeforeCompile = sh => { sh.uniforms.uTint = m.userData.tint;
+    sh.fragmentShader = 'uniform vec3 uTint;\n' + sh.fragmentShader.replace('#include <map_fragment>', '#include <map_fragment>\nif (diffuseColor.a < .9) diffuseColor.rgb *= uTint;\ndiffuseColor.a = 1.0;'); };
+  return m;
+}
 const ready: Record<string, Loaded> = {}, loading: Record<string, Promise<boolean>> = {}, failed = new Set<string>();
 let bands: THREE.Texture = null;
 export const friendModelReady = (id: string) => !!ready[id];
@@ -41,6 +48,16 @@ export function loadFriendModel(id: FriendId | `${FriendId}-hd`): Promise<boolea
         const m = o.material, name = m.name || '';
         // (v1.08e faces, part 2) a high-detail model's parts carry their painted picture (m.map) instead of corner colours
         // (v1.08e, owner 6 Nov: "skin-shade": the skin's corners carry its soft form shading, times the child's skin tone)
+        // (Meshy characters, owner 7 Nov 2026: "skin toned phai giu nhu original", shifted from it for other tones) a model's
+        // painted skin ("skin-tex", its picture) and its corner-coloured skin ("skin-shade" with extras skin_ref) are tinted
+        // by the child's tone relative to the tone they were painted in, so the painted tone shows exactly as painted;
+        // a "face-" picture with skin_ref marks its skin texels with alpha below .9, and only those are tinted
+        const ref = m.userData && m.userData.skin_ref;
+        if (!mats.has(m) && ref && (name.startsWith('skin-tex') && m.map || name.startsWith('face-') && m.map)) {
+          const t = new THREE.MeshToonMaterial({ name, map: m.map, gradientMap: bands }); t.userData.skinRef = ref;
+          if (name.startsWith('face-')) faceTint(t);
+          mats.set(m, t);
+        }
         if (!mats.has(m)) mats.set(m, name.startsWith('skin') ? new THREE.MeshToonMaterial({ name, color: '#f6c7a5', gradientMap: bands, vertexColors: name.startsWith('skin-shade') && !!(o.geometry && o.geometry.attributes.color) })
           // (v1.08e villagers) "lit-": the gallery's studio light is baked into the picture, so it is drawn mostly by its own light
           // (emissive), with a little of the valley's light on top, so day and night still show
@@ -49,7 +66,9 @@ export function loadFriendModel(id: FriendId | `${FriendId}-hd`): Promise<boolea
           : name.startsWith('lit-') ? litCorners(name)
           : m.map ? new THREE.MeshToonMaterial({ name, map: m.map, gradientMap: bands }) : new THREE.MeshToonMaterial({ name, vertexColors: true, gradientMap: bands }));
         if (/^cloth-(hat|hair)/.test(name)) mats.get(m).side = THREE.DoubleSide; // (v1.08e villagers) a hat is a thin shell, and a lock of hair a thin card: both sides drawn
-        o.material = personLook(mats.get(m)); }); // (v1.08e faces, part 2) the people's soft ramp and rim light
+        if (ref && !mats.get(m).userData.skinRef) mats.get(m).userData.skinRef = ref;   // (a corner-coloured "skin-shade" painted in its own tone)
+        o.material = personLook(mats.get(m));
+        if (o.material.userData.faceTint) o.material.customProgramCacheKey = () => 'person-facetint'; }); // (v1.08e faces, part 2) the people's soft ramp and rim light
       ready[id] = { scene: g.scene, clone };
       return true;
     } catch (e) { failed.add(id); console.warn('friend model', id, e && e.message); return false; }
@@ -82,6 +101,8 @@ export function attachFriendModel(A, id: string, skinHex: string, wear: FriendMo
       if (o.morphTargetDictionary && 'blink' in o.morphTargetDictionary) { face3.push(o); o.userData.face3d = true; }
       if (n.startsWith('face-')) (faces[n] = faces[n] || []).push(o);
       if (n.startsWith('skin')) { o.material = o.material.clone(); o.material.userData.person = false; personLook(o.material); skinMats.push(o.material); }
+      // (Meshy characters) each child's copy of a skin-tinted face picture has its own tint
+      else if (o.material.userData.faceTint) { const c = faceTint(o.material.clone()); c.userData.person = false; personLook(c); c.customProgramCacheKey = () => 'person-facetint'; o.material = c; skinMats.push(c); }
       if (n === 'skin-grip' || n === 'cloth-hands-grip') grips.push(o); // (the hands that hold handlebars: shown only when riding)
       if (n === 'cloth-item') o.visible = !!wear.item; // (v1.08d polish) the item in the hand: only once earned
       if (n === 'cloth-shoes') o.visible = !wear.shoes; // (v1.08d polish) the model's boots, unless shop shoes are worn
@@ -119,7 +140,12 @@ export function attachFriendModel(A, id: string, skinHex: string, wear: FriendMo
     grips.forEach(o => { o.visible = riding; });
     for (const [o, h] of lines) if (h.visible !== o.visible && A._ol !== false) h.visible = o.visible;
   };
-  const skin = (hex: string) => skinMats.forEach(m => m.color.set(hex));
+  // (Meshy characters) a painted skin (skinRef) is tinted by the tone relative to the tone it was painted in
+  const skin = (hex: string) => skinMats.forEach(m => {
+    const r = m.userData.skinRef; if (!r) { m.color.set(hex); return; }
+    const t = new THREE.Color(hex), c = new THREE.Color(r), k = new THREE.Color(t.r / Math.max(c.r, .05), t.g / Math.max(c.g, .05), t.b / Math.max(c.b, .05));
+    if (m.userData.faceTint) m.userData.tint.value.copy(k); else m.color.copy(k);
+  });
   skin(skinHex); follow();
   // the joints are copied just before each drawing, after everything that moves the code person this frame (the walk, a
   // rider's seat, a film's pose): the renderer updates every object's place first, and this copy goes with the model's
