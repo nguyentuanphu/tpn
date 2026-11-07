@@ -5,5 +5,8 @@
   "note": "Original was provided inline, without a downloadable local file ID. This anchor is a generated turnaround derived from it, not a renamed copy of the original.",
   "generatedStyleAnchor": "reference-images/style/clara-generated-style-anchor.png",
   "generatedStyleAnchorSHA256": "03492f7f5480c99b4bebc5549b63af9624300a2a5d44f841c420ea9a656654c2",
-  "initialCorrection": "First generation faced right in side view; retained as attempt-01, corrected through image-generation edit to face left."
+  "initialCorrection": "First generation faced right in side view; retained as attempt-01, corrected through image-generation edit to face left.",
+  "currentClaraGeometryReference": "reference-images/01-clara/turnaround.png",
+  "ownerCorrectionNotes": "OWNER-CORRECTIONS-20261107.md",
+  "historicalAnchorNote": "Historical anchor retained unchanged as source provenance; its rear braids are superseded by the current Clara turnaround."
 }

@@ -1,5 +1,8 @@
 # Production status — 7 November 2026 AEDT
 
+**Latest combined update:** reference corrections merged with pilot work through 48a4fdca8. CREDIT-LEDGER.json records 70 credits total (pilot 30, revision 30, remesh 5, rig 5), with reported balance 2,979 on the owner PC. Existing tasks/raw downloads/fitting tools are preserved. The corrected Clara sheet and kaftan sheet are uploaded separately from historical submitted inputs; no additional Meshy task was made by this correction. Read CLARA-PILOT.md and OWNER-CORRECTIONS-20261107.md before continuing. Earlier zero-spend/account-blocked paragraphs below describe the initial reference phase and are superseded by these pilot records. No runtime replacement or deployment.
+
+
 **Update, 7 Nov 2026 evening: account verified, Clara pilot generated and fitted, not integrated.** See
 [CLARA-PILOT.md](CLARA-PILOT.md). Key bound on the owner's PC; balance 3,049 → 3,019 after the one 30-credit pilot job
 (task `01a1b551-4e41-7544-a5da-564f88acc6f3`); raw GLB outside the repository. Pilot quality is high but has four

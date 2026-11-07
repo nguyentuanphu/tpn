@@ -9,7 +9,7 @@
   "plannedCredits": 990,
   "reserveCredits": 10,
   "generationServicesCalled": true,
-  "MeshySpend": 0,
+  "MeshySpend": 70,
   "assets": [
     {
       "number": 1,
@@ -41,7 +41,7 @@
       "reviewStatus": "technical_pass",
       "meshyTaskId": "01a1b551-4e41-7544-a5da-564f88acc6f3",
       "modelStatus": "raw_downloaded_pilot_under_review",
-      "reviewNotes": "Visual reference review: full-body views, left-facing profile (firefly front/dorsal top), empty hands, no labels, consistent outfit/species and grey background. Crops use individually checked gaps. This is technical reference review, not owner approval or 3D model validation.",
+      "reviewNotes": "Owner correction: both braids drape forward over the shoulders; rear view shows no hanging braids. Front, left profile, back and unchanged identity/outfit visually checked.",
       "ownerReviewStatus": "pending",
       "cropBoundaries": [
         0,
@@ -58,7 +58,7 @@
             576,
             1024
           ],
-          "sha256": "dcb41577591597bf702ba504895abfc7410b8d911334a2f5b2e62de063b515b5"
+          "sha256": "be7dece239591e22363aae132c0b4c891c861df0731f6d30d32605c475643037"
         },
         {
           "path": "reference-images/01-clara/left-side.png",
@@ -68,7 +68,7 @@
             960,
             1024
           ],
-          "sha256": "65b062b10bda3a92a11e1e349eb9e082bb20be0a46091dc9a54aee33d6798e5d"
+          "sha256": "90fa844d9a839d96fa866cec8bc90063c8110b47048d218b4a1ec418aaa2c606"
         },
         {
           "path": "reference-images/01-clara/back.png",
@@ -78,11 +78,11 @@
             1536,
             1024
           ],
-          "sha256": "d92118b821f2f4d3b604ab27bc01760b084c3b694cd1279fc55a22bafefe5f71"
+          "sha256": "6e51c52f0669a093037e73e1fbaaf39879c6789f1552a7ea731e22b51a89dd93"
         }
       ],
-      "turnaroundSHA256": "03492f7f5480c99b4bebc5549b63af9624300a2a5d44f841c420ea9a656654c2",
-      "sourceGenerationFile": "/workspace/generated_images/exec-752131a1-bb11-4cef-9a21-f3b30e5c0d28.png",
+      "turnaroundSHA256": "c238e20dac0bc194d7cf57eaf45884f3f7a5d062fb3ccf6ff6353ca2c0905a4c",
+      "sourceGenerationFile": "/workspace/generated_images/exec-3ec0edf6-35cc-4f49-8619-6af97d081721.png",
       "pilot": {
         "submittedAt": "2026-11-07T20:22+11:00",
         "finishedAt": "2026-11-07T20:24+11:00",
@@ -93,8 +93,30 @@
         "triangles": 1840250,
         "texture": "one 2048x2048 base colour (plus Meshy detail maps)",
         "review": "Outfit, face, satchel, petal skirt, boots and pendant match the reviewed sheet. Four braids: the reviewed back view puts the braids down the back while the front/side put them in front, and Meshy built both; tools/meshy/fit_people.py trim_back_hair removes the back pair in fitting. Owner acceptance pending.",
-        "claraPilotAccepted": false
-      }
+        "claraPilotAccepted": false,
+        "submittedReferenceSHA256": "03492f7f5480c99b4bebc5549b63af9624300a2a5d44f841c420ea9a656654c2",
+        "submittedInputImages": [
+          {
+            "view": "front",
+            "localPath": "reference-images/01-clara/front.png",
+            "sha256": "dcb41577591597bf702ba504895abfc7410b8d911334a2f5b2e62de063b515b5"
+          },
+          {
+            "view": "left-side",
+            "localPath": "reference-images/01-clara/left-side.png",
+            "sha256": "65b062b10bda3a92a11e1e349eb9e082bb20be0a46091dc9a54aee33d6798e5d"
+          },
+          {
+            "view": "back",
+            "localPath": "reference-images/01-clara/back.png",
+            "sha256": "d92118b821f2f4d3b604ab27bc01760b084c3b694cd1279fc55a22bafefe5f71"
+          }
+        ],
+        "currentCorrectedReferenceNotSubmitted": true,
+        "referenceCorrectionNote": "OWNER-CORRECTIONS-20261107.md; existing pilot/task history preserved, corrected views require a separately authorized revision."
+      },
+      "separateViewStatus": "current",
+      "latestOwnerCorrection": "2026-11-07"
     },
     {
       "number": 2,
