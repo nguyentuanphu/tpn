@@ -60,6 +60,26 @@ Recreated in the repository from the owner's local Clara test workflow, with the
 
 Known flaws: a faint shadow of the open eyes shows through the closed-eye moods; the look-left/right irises are rough.
 
+## Braid fix and in-game look (7 Nov 2026, later)
+
+`trim_back_hair` now works in three steps: the back braids come off the full-detail model before the colour bake (so
+the dress behind them is baked, not hair), the reduced model loses any hair-coloured surface behind the body between the
+waist and the neck (wide enough to reach the locks lying on the sleeves) and any small loose pieces left there, and
+cloth triangles behind the back that Meshy painted hair-coloured are repainted from the cloth around them. Texels the
+bake misses are filled from their neighbours (this also removed dark slits on the skirt).
+
+![after the braid fix: front, side, back three-quarter, back](pilot/fitted-braid-fix.jpg)
+
+In the game (temporary local swap of models/clara*.glb plus the face-picture see-through change, both reverted, not
+committed; the game paused and one frame drawn by its own renderer from a camera in front of her):
+
+![in the game, full length](pilot/in-game-full-body.jpg)
+![in the game, close-up](pilot/in-game-closeup.jpg)
+![in the game, darker skin tone, blink](pilot/in-game-closeup-dark-skin-blink.jpg)
+
+Visible up close: the reduced braids are blocky with a few strap-coloured patches, and the face layer's edge shows a
+faint light rim along the jaw. Skin tone, blink, the cheer and walking all follow the game.
+
 ## Not integrated: the face decision
 
 v1.08's tests (`tests/faces.mts`, `friendmodel` in `tests/checks/play.mts`) require each friend's face to be the

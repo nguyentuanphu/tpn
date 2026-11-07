@@ -62,6 +62,46 @@ bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
 L = {k: T(v) for k, v in L.items()}; FB = (T(FACEBOX[0]), T(FACEBOX[1]))
 fx0, fx1, fz0, fz1 = FB[0].x, FB[1].x, FB[1].z, FB[0].z
 print('FIT facebox x', round(fx0, 3), round(fx1, 3), 'z', round(fz0, 3), round(fz1, 3))
+def px(img):
+    w, h = img.size; arr = np.empty(w * h * 4, np.float32); img.pixels.foreach_get(arr); return arr.reshape(h, w, 4)
+def hsv_np(rgb):
+    v = rgb.max(-1); mn = rgb.min(-1); d = np.maximum(v - mn, 1e-4); s_ = (v - mn) / np.maximum(v, 1e-4)
+    r, g, b = rgb[..., 0], rgb[..., 1], rgb[..., 2]
+    h_ = np.where(v == r, ((g - b) / d) % 6, np.where(v == g, (b - r) / d + 2, (r - g) / d + 4)) / 6
+    return h_, s_, v
+def back_hair(cz, cy, cx, rgb):   # hair-coloured surface behind the body between the neck and the waist
+    h_, s_, v = hsv_np(rgb)
+    return ((cz > L['hip'].z) & (cz < L['neck'].z - .02) & (cy > .02) & (np.abs(cx) < abs(L['shoulderL'].x) + .22)
+            & ((h_ < .09) | (h_ > .97)) & (s_ > .35) & (v > .3))
+def fill_missing(img):   # texels the bake missed (left black) take the colour of their neighbours: no dark slits
+    A = px(img); miss = A[..., :3].max(-1) < .02; n0 = int(miss.sum())
+    for _ in range(48):
+        if not miss.any(): break
+        ok = ~miss; acc = np.zeros_like(A[..., :3]); cnt = np.zeros(miss.shape, np.float32)
+        for dy, dx in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            acc += np.roll(np.roll(A[..., :3] * ok[..., None], dy, 0), dx, 1); cnt += np.roll(np.roll(ok, dy, 0), dx, 1)
+        fix = miss & (cnt > 0); A[fix, :3] = acc[fix] / cnt[fix, None]; A[fix, 3] = 1; miss &= ~fix
+    img.pixels.foreach_set(A.ravel()); img.update(); print('FIT filled missed texels', n0)
+
+# ---- (joints.json "trim_back_hair") the duplicate back braids come off the full-detail model first, so the colour
+# baked onto the dress behind them is the dress, not hair
+if J.get('trim_back_hair'):
+    me = high.data
+    base_img = None
+    for m in me.materials:
+        if m and m.node_tree:
+            for l in m.node_tree.links:
+                if l.to_socket.name == 'Base Color' and l.from_node.type == 'TEX_IMAGE': base_img = l.from_node.image
+    n = len(me.polygons); cen = np.empty(n * 3, np.float32); me.polygons.foreach_get('center', cen); cen = cen.reshape(n, 3)
+    ls = np.empty(n, np.int32); me.polygons.foreach_get('loop_start', ls)
+    uv = np.empty(len(me.loops) * 2, np.float32); me.uv_layers.active.data.foreach_get('uv', uv); uv = uv.reshape(-1, 2)[ls]
+    HI = px(base_img); hh, ww = HI.shape[:2]
+    rgb = HI[np.clip((uv[:, 1] % 1 * hh).astype(int), 0, hh - 1), np.clip((uv[:, 0] % 1 * ww).astype(int), 0, ww - 1), :3]
+    sel = back_hair(cen[:, 2], cen[:, 1], cen[:, 0], rgb)
+    activate(high); bpy.ops.object.mode_set(mode='EDIT'); bpy.ops.mesh.select_all(action='DESELECT'); bpy.ops.object.mode_set(mode='OBJECT')
+    me.polygons.foreach_set('select', sel); me.update()
+    bpy.ops.object.mode_set(mode='EDIT'); bpy.ops.mesh.select_mode(type='FACE'); bpy.ops.mesh.delete(type='FACE'); bpy.ops.object.mode_set(mode='OBJECT')
+    print('FIT trimmed back hair on the full model', int(sel.sum()), 'of', n)
 
 # ---- 1. the reduced mesh with its own UVs, the colour baked from the full model (no bleeding edges)
 body = high.copy(); body.data = high.data.copy(); body.name = ID + '-body'; sc.collection.objects.link(body)
@@ -85,10 +125,8 @@ def bake(target, img, ext=.012, dist=.035):
     bpy.ops.object.select_all(action='DESELECT'); high.select_set(True); target.select_set(True); VL.objects.active = target
     bpy.ops.object.bake(type='DIFFUSE', pass_filter={'COLOR'}, use_selected_to_active=True, cage_extrusion=ext, max_ray_distance=dist, use_clear=True)
     return m
-colour = bpy.data.images.new(ID + '-colour', 1024, 1024, alpha=True); bake(body, colour)
+colour = bpy.data.images.new(ID + '-colour', 1024, 1024, alpha=True); bake(body, colour); fill_missing(colour)
 colour.filepath_raw = os.path.join(RDIR, 'colour-bake.png'); colour.file_format = 'PNG'; colour.save()
-def px(img):
-    w, h = img.size; arr = np.empty(w * h * 4, np.float32); img.pixels.foreach_get(arr); return arr.reshape(h, w, 4)
 CA = px(bpy.data.images.load(os.path.join(RDIR, 'colour-bake.png'))); print('FIT colour mean', np.round(CA[..., :3].mean((0, 1)), 3))
 def sample(arr, u, v):
     h, w = arr.shape[:2]; u = u if math.isfinite(u) else 0; v = v if math.isfinite(v) else 0
@@ -101,13 +139,48 @@ if J.get('trim_back_hair'):
     me_ = body.data; uvt = me_.uv_layers[0].data; cut = []
     for p in me_.polygons:
         pc = p.center
-        if not (L['hip'].z < pc.z < L['neck'].z - .02 and pc.y > .02 and abs(pc.x) < abs(L['shoulderL'].x) + .06): continue
+        if not (L['hip'].z < pc.z < L['neck'].z - .02 and pc.y > .02 and abs(pc.x) < abs(L['shoulderL'].x) + .22): continue
         col_ = np.mean([sample(CA, *uvt[li].uv) for li in p.loop_indices], axis=0)
         h_, s__, v_ = colorsys.rgb_to_hsv(*[float(x) for x in col_])
         if (h_ < .09 or h_ > .97) and s__ > .4 and v_ > .55: cut.append(p.index)   # the peach hair, not straps, cloth or skin
     bm = bmesh.new(); bm.from_mesh(me_); bm.faces.ensure_lookup_table()
     bmesh.ops.delete(bm, geom=[bm.faces[i] for i in cut], context='FACES_ONLY'); bm.to_mesh(me_); bm.free()
     print('FIT trimmed back hair triangles', len(cut))
+    # small loose pieces left behind the back (shadowed ends of the braids): any part of fewer than 300 triangles there
+    bm = bmesh.new(); bm.from_mesh(me_); bm.faces.ensure_lookup_table(); seen = set(); drop = []
+    for f in bm.faces:
+        if f.index in seen: continue
+        comp = [f]; seen.add(f.index); st = [f]
+        while st:
+            g = st.pop()
+            for e in g.edges:
+                for k in e.link_faces:
+                    if k.index not in seen: seen.add(k.index); comp.append(k); st.append(k)
+        if len(comp) < 300:
+            c_ = sum((x.calc_center_median() for x in comp), Vector()) / len(comp)
+            if c_.y > 0 and L['hip'].z < c_.z < L['neck'].z + .02: drop += comp
+    bmesh.ops.delete(bm, geom=drop, context='FACES_ONLY'); bm.to_mesh(me_); bm.free()
+    print('FIT removed loose pieces behind the back', len(drop))
+    # hair colour Meshy painted onto the cloth under the braids (backs of the sleeves, the upper back): those triangles'
+    # texels are repainted from the cloth around them
+    me_ = body.data; uvt = me_.uv_layers[0].data; A = px(colour); hh, ww = A.shape[:2]; miss = np.zeros((hh, ww), bool); nrep = 0
+    for p in me_.polygons:
+        pc = p.center
+        if not (pc.y > 0 and L['hip'].z - .1 < pc.z < L['neck'].z - .01): continue
+        uvs = np.array([uvt[li].uv[:] for li in p.loop_indices], np.float32)
+        if not np.isfinite(uvs).all() or len(uvs) != 3: continue
+        col_ = np.mean([sample(CA, *u) for u in uvs], axis=0); h_, s__, v_ = colorsys.rgb_to_hsv(*[float(x) for x in col_])
+        if not ((h_ < .09 or h_ > .97) and s__ > .35 and v_ > .3): continue
+        P_ = uvs * [ww, hh]; x0, y0 = np.floor(P_.min(0)).astype(int) - 1; x1, y1 = np.ceil(P_.max(0)).astype(int) + 1
+        x0, y0 = max(0, x0), max(0, y0); x1, y1 = min(ww, x1), min(hh, y1)
+        gy, gx = np.mgrid[y0:y1, x0:x1] + .5; (ax, ay), (bx, by), (cx, cy) = P_
+        den = (by - cy) * (ax - cx) + (cx - bx) * (ay - cy)
+        if abs(den) < 1e-9: continue
+        l1 = ((by - cy) * (gx - cx) + (cx - bx) * (gy - cy)) / den; l2 = ((cy - ay) * (gx - cx) + (ax - cx) * (gy - cy)) / den
+        inside = (l1 >= -.05) & (l2 >= -.05) & (1 - l1 - l2 >= -.05); miss[y0:y1, x0:x1] |= inside; nrep += 1
+    A[miss, :3] = 0; colour.pixels.foreach_set(A.ravel()); colour.update(); fill_missing(colour)
+    colour.save(); CA = px(colour)
+    print('FIT repainted cloth triangles behind the back', nrep)
 
 # ---- 2. the face layer: the face's front surface, lifted a little, its own front-facing picture
 activate(body); bm = bmesh.new(); bm.from_mesh(body.data); bm.faces.ensure_lookup_table()
@@ -128,7 +201,7 @@ for lp in dme.loops:
     p = dme.vertices[lp.vertex_index].co
     uvl.data[lp.index].uv = (min(1, max(0, (p.x - fx0) / (fx1 - fx0))), min(1, max(0, (p.z - fz0) / (fz1 - fz0))))
 bm.free()
-fimg = bpy.data.images.new('face-smile-src', TILE, TILE, alpha=True); bake(decal, fimg, ext=.03, dist=.06)
+fimg = bpy.data.images.new('face-smile-src', TILE, TILE, alpha=True); bake(decal, fimg, ext=.03, dist=.06); fill_missing(fimg)
 fimg.filepath_raw = os.path.join(RDIR, 'face-bake.png'); fimg.file_format = 'PNG'; fimg.save(); fimg = bpy.data.images.load(os.path.join(RDIR, 'face-bake.png'))
 F = px(fimg)[::-1].copy()   # top-down rows
 activate(decal); dd = decal.modifiers.new('dec', 'DECIMATE'); dd.ratio = min(1, 300 / max(1, len(decal.data.polygons))); bpy.ops.object.modifier_apply(modifier='dec')
