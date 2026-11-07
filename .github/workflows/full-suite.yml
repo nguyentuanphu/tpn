@@ -4,6 +4,8 @@
 # "Full suite", and keeps the refreshed code map (tests/check-map.json, tests/check-times.json) as an artifact for Release
 # to commit. The speed checks (perf, startup, battery) are not run here: GitHub's machines are shared, so the Release chat
 # runs them on its own machine. Free for a public repository. Uses no Claude usage.
+# (Release, 7 Nov 2026 AEDT) the machines are pinned to Ubuntu 24.04: GitHub moved ubuntu-latest to 26.04, where
+# Playwright 1.56 cannot install Chromium (run 42343027491 ran no check). Move up once Playwright supports 26.04.
 name: Full suite
 on:
   pull_request:
@@ -33,7 +35,7 @@ permissions:
 
 jobs:
   which:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     outputs:
       sha: ${{ steps.pr.outputs.sha }}
       pr: ${{ steps.pr.outputs.pr }}
@@ -53,7 +55,7 @@ jobs:
   postgres:
     name: Management PostgreSQL
     needs: which
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     services:
       postgres:
@@ -104,7 +106,7 @@ jobs:
 
   share:
     needs: which
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 170   # (Release, 7 Nov 2026 AEDT) v1.08 has about 374 checks: 16 machines (GitHub runs up to 20 jobs at once) and more time each, nothing skipped
     strategy:
       fail-fast: false
@@ -157,7 +159,7 @@ jobs:
     needs: [which, share, postgres]
     # (not when the run was cancelled, e.g. by a newer push: it would report every check as "did not run")
     if: ${{ !cancelled() && needs.which.result == 'success' }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     permissions:
       contents: write
