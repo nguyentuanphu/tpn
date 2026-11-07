@@ -160,7 +160,10 @@ G.drawOnlinePanel = (body, redraw) => {
     body.querySelectorAll<HTMLElement>('[data-rm]').forEach(b => b.onclick = () => { settings.friends = settings.friends.filter(f => f.code !== b.dataset.rm); saveSettings(); redraw(); });
     body.querySelectorAll<HTMLElement>('[data-joinf]').forEach(b => b.onclick = async () => { SFX.tap(); const f = settings.friends.find(x => x.code === b.dataset.fc), st = Net.friends.status[b.dataset.fc] || {}; await G.joinFriend(b.dataset.joinf, f && st.host ? f.pub : null); redraw(); });
     body.querySelectorAll<HTMLButtonElement>('[data-inv]').forEach(b => b.onclick = async () => { b.disabled = true; inviteToast(await G.inviteFriend(b.dataset.inv)); b.disabled = false; });
-    body.querySelectorAll<HTMLElement>('[data-mictest]').forEach(b => b.onclick = () => { SFX.tap(); import('../mictest.js').then(M => M.openMicTest()); });
+    // (v1.08 release fix 2, check mictest on GitHub) the test's code is fetched as soon as its button shows, so a grown-up's
+    // tap opens it at once (on a slow device the window came only after the fetch)
+    const micBtns = body.querySelectorAll<HTMLElement>('[data-mictest]'); if (micBtns.length) import('../mictest.js').catch(() => { });
+    micBtns.forEach(b => b.onclick = () => { SFX.tap(); import('../mictest.js').then(M => M.openMicTest()); });
   };
   if (Net.connected || Net.role === 'host') {
     const list = Object.values(Net.remotes);
