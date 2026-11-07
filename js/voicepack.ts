@@ -42,7 +42,7 @@ export function startPack(pack, emit, here) {
   if (packStarted) { if (changed) checkPack().catch(() => { }); return; }
   packStarted = true;
   setTimeout(() => { checkPack().catch(() => { }); }, 6000);
-  let againT: ReturnType<typeof setTimeout> | 0 = 0; const again = () => { if (mayFetchRest()) close(); clearTimeout(againT); againT = setTimeout(() => checkPack().catch(() => { }), 1500); };
+  let againT: ReturnType<typeof setTimeout> | 0 = 0; const again = () => { if (mayFetchRest()) close(); clearTimeout(againT); checkSoon = true; againT = setTimeout(() => checkPack().catch(() => { }), 1500); };
   addEventListener('online', again);
   try { const c = navigator.connection; if (c && c.addEventListener) c.addEventListener('change', again); } catch (e) { } // (onto Wi-Fi: the rest goes on)
   events.on('LanguageChanged', again); // (a new language, or both spoken: its core, then its areas)
@@ -203,6 +203,9 @@ export function festivalPacks(pack = PACK, now = new Date()) {
       delete packs[id];
     }
     const list = await festivalsDue(now);
+    // (v1.08 fix, check voicearea) the area download goes first: onto Wi-Fi, the place the child is in comes before a
+    // festival pack (a festival has days; the pack's own order already has the festivals after the places)
+    if (packNet() === 'wifi' && list.some(d => d.files.length)) await areasFirst();
     for (const d of list) {
       due.push(d.id);
       if (packNet() !== 'wifi') continue; // (Wi-Fi only: a festival can wait for it, it has days)
@@ -214,7 +217,9 @@ export function festivalPacks(pack = PACK, now = new Date()) {
   });
   festChain = run; return run;
 }
-let checking = false, recheck = false;
+let checking = false, recheck = false, checkSoon = false;
+// a festival pack waits while the area download runs or is about to start (js/voicepack.ts again)
+const areasFirst = async () => { while (checking || checkSoon) await rest(500); };
 // (battery round, owner 12 Oct AEDT: "my phone gets very hot") the download is spread out: nothing while the valley is
 // being built (the busiest seconds of a start), then 6 files at a time with a short rest between (longer once the small
 // core is in), so the phone's radio and processor are never kept flat out
@@ -222,6 +227,7 @@ const PACK_REST = { core: 150, rest: 400 };
 const valleyBuilt = async () => { for (let i = 0; i < 240 && !(window.__sv && window.__sv.bootTimes); i++) await new Promise(r => setTimeout(r, 500)); };
 const rest = ms => new Promise(r => setTimeout(r, ms));
 async function checkPack() {
+  checkSoon = false;
   if (!PACK) return;
   if (!autoPackOn()) return; // (v1.08c voices: a grown-up moved to Automatic, voices online: the download stops here)
   if (manualSave) { recheck = true; return; }
@@ -287,7 +293,7 @@ async function checkPack() {
     await voiceStore('sv-voices').flush().catch(() => { }); // (what came in so far is kept, whatever stopped the download)
     checking = false;
     // A language/connection/settings event during an in-flight request must not be lost.
-    if (!manualSave && (recheck || languageChanged())) { recheck = false; setTimeout(() => checkPack().catch(() => { }), 0); }
+    if (!manualSave && (recheck || languageChanged())) { recheck = false; checkSoon = true; setTimeout(() => checkPack().catch(() => { }), 0); }
   }
 }
 function donePack(want, langs) {
