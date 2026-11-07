@@ -2,7 +2,7 @@
   "budget": 1000,
   "planned": 990,
   "reserve": 10,
-  "charged": 750,
+  "charged": 755,
   "entries": [
     {
       "assetId": "clara",
@@ -602,7 +602,14 @@
       "source": "puppy",
       "chargedCredits": 5,
       "taskId": "01a1b637-f249-75c2-acae-8f9cf1146c24",
-      "state": "IN_PROGRESS"
+      "state": "SUCCEEDED"
+    },
+    {
+      "kind": "remesh",
+      "source": "puppy@9000",
+      "chargedCredits": 5,
+      "taskId": "01a1b639-3e4e-75db-b06b-ebd246a6dd46",
+      "state": "SUCCEEDED"
     },
     {
       "kind": "rigging",
