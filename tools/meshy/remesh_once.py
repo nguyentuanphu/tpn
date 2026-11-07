@@ -45,7 +45,8 @@ def main():
         if a.command == 'submit':
             if not a.approved: raise ValueError('Remesh needs the owner approval flag')
             if not 100 <= a.polycount <= 300000: raise ValueError('polycount outside 100-300000')
-            src = db.execute("SELECT task_id, state FROM jobs WHERE asset=?", (a.source_asset,)).fetchone()
+            # (a second remesh of the same model is keyed "<asset>@<polycount>", e.g. clara-r2@9000)
+            src = db.execute("SELECT task_id, state FROM jobs WHERE asset=?", (a.source_asset.split('@')[0],)).fetchone()
             if not src or src[1] != 'SUCCEEDED' or not src[0]: raise ValueError('Source asset has no succeeded task in this journal')
             params = {'input_task_id': src[0], 'target_formats': ['glb'], 'topology': 'triangle', 'target_polycount': a.polycount}
             db.execute('BEGIN IMMEDIATE')
@@ -69,7 +70,7 @@ def main():
             if not row or row[0] != 'SUCCEEDED': raise ValueError('Poll a successful remesh first')
             url = json.loads(row[1])['model_urls']['glb']; u = urlparse(url)
             if u.scheme != 'https' or u.hostname != 'assets.meshy.ai': raise ValueError('Unrecognized asset host')
-            target = a.raw_root.resolve() / 'remesh' / (a.source_asset + '.glb'); target.parent.mkdir(parents=True, exist_ok=True)
+            target = a.raw_root.resolve() / 'remesh' / (a.source_asset.replace('@', '-') + '.glb'); target.parent.mkdir(parents=True, exist_ok=True)
             if target.exists(): raise ValueError('Raw download exists; preserve it')
             tmp = target.with_suffix('.' + uuid.uuid4().hex + '.partial'); size = 0
             try:

@@ -22,7 +22,10 @@ ID, REFP = J.get('id', 'person'), J.get('reference_prefix', 'clara-')
 # (owner, 7 Nov 2026: "skin toned phai giu nhu original") original_skin: the skin keeps Meshy's own painted colour exactly
 # (no skin-tone part); the face layers and moods stay ("mat va mat phai co emotion")
 ORIGINAL = bool(J.get('original_skin'))
-TILE = 512 if TEX else 160   # the face picture: sharp lashes and eye rims up close (the light model's is smaller)
+# (owner 7 Nov 2026: shifted from the original) skin_shift with original_skin: the painted look is kept exactly, and the skin
+# (body skin triangles and the face pictures' skin texels) is tinted in the game by the tone relative to skin_ref
+SHIFT = bool(J.get('skin_shift')) and ORIGINAL; SKIN_REF = J.get('skin_ref')
+TILE = 512 if TEX >= 1024 else 128   # the face picture: sharp lashes and eye rims up close (the light model's is smaller)
 os.makedirs(RDIR, exist_ok=True)
 bpy.ops.wm.read_factory_settings(use_empty=True)
 sc = bpy.context.scene; VL = bpy.context.view_layer
@@ -424,6 +427,10 @@ M['lookR'] = im
 im = M['happy'].copy(); M['excited'] = mouth_o(im, True)
 ORDER = ['smile', 'blink', 'half', 'happy', 'surprised', 'sad', 'lookL', 'lookR', 'excited']
 for k in M: M[k][M[k][..., 3] < .02, :3] = 0
+if SHIFT:   # the face pictures' skin texels are marked (alpha .75) for the game's tint; eyes, brows, lashes and lips stay 1
+    for k in M:
+        _hk, _sk, _vk = hsv_np(M[k][..., :3]); _sm = skin_mask(M[k]) & (_vk > .55) & ~(((_hk < .03) | (_hk > .95)) & (_sk > .38))
+        M[k][..., 3] = np.where(_sm & (M[k][..., 3] > .5), .75, M[k][..., 3])
 atlas = np.zeros((TILE * 3, TILE * 3, 4), np.float32)
 for i, k in enumerate(ORDER):
     r, cc = divmod(i, 3); atlas[r * TILE:(r + 1) * TILE, cc * TILE:(cc + 1) * TILE] = M[k]
@@ -439,6 +446,7 @@ for i, k in enumerate(ORDER):
     for lp in o.data.uv_layers[0].data:
         u, v = lp.uv; lp.uv = ((cc + u) / 3, (2 - r + v) / 3)
     m = bpy.data.materials.new('face-' + k); m.use_nodes = True; nt = m.node_tree; bs = nt.nodes['Principled BSDF']
+    if SHIFT: m['skin_ref'] = SKIN_REF or '#f6c7a5'
     t = nt.nodes.new('ShaderNodeTexImage'); t.image = aimg
     nt.links.new(t.outputs['Color'], bs.inputs['Base Color']); nt.links.new(t.outputs['Alpha'], bs.inputs['Alpha'])
     bs.inputs['Roughness'].default_value = 1
@@ -470,7 +478,7 @@ if EYEBOX:
 from mathutils.bvhtree import BVHTree
 _btree = BVHTree.FromObject(body, bpy.context.evaluated_depsgraph_get())
 _otree = BVHTree.FromObject(moods[0], bpy.context.evaluated_depsgraph_get()) if moods else None   # the old layer's outline
-GN = 44 if TEX else 24   # (9 moods share the size: light model small enough for phones)
+GN = 44 if TEX >= 1024 else 28   # (9 moods share the size: light model small enough for phones)
 gx = np.linspace(fx0, fx1, GN + 1); gz = np.linspace(fz0, fz1, GN + 1); gp = {}
 EYEW = [wbox(b, 14) for b in eyes.values()]   # the eye areas: one smooth lid surface over each socket, not its folds
 ineye = lambda x_, z_: any(xa <= x_ <= xb and za <= z_ <= zb for xa, xb, za, zb in EYEW)
@@ -558,15 +566,15 @@ for p in me.polygons:
     neckzone = pc.z > L['neck'].z - .06 and abs(pc.x) < .1
     zone = (pc.z > L['neck'].z + .02 and not hairzone) or armzone or neckzone
     # below the face, cream and ivory cloth (sleeves, collars) can sit in the skin hue range: skin there needs more colour
-    isskin = (not ORIGINAL) and (infaceregion or (zone and bool(skin_mask(avg[None])[0]) and (pc.z > L['neck'].z + .02 or hsv(avg)[1] > .2)))
+    isskin = ((not ORIGINAL) or SHIFT) and (infaceregion or (zone and bool(skin_mask(avg[None])[0]) and (pc.z > L['neck'].z + .02 or hsv(avg)[1] > .2)))
     p.material_index = 1 if isskin else 0; nskin += isskin
     for li, cv in zip(p.loop_indices, cs):
         if isskin:
-            r_ = np.clip(cv / REF, 0, 1) if bool(skin_mask(cv[None])[0]) else np.ones(3)
-            col.data[li].color = (*r_, 1)
+            r_ = (np.clip(cv, 0, 1) if SHIFT else np.clip(cv / REF, 0, 1)) if (SHIFT or bool(skin_mask(cv[None])[0])) else np.ones(3)
+            (setattr(col.data[li], 'color_srgb', (*r_, 1)) if SHIFT else setattr(col.data[li], 'color', (*r_, 1)))
         else: col.data[li].color_srgb = (*cv, 1) if TEX == 0 else (1, 1, 1, 1)   # light model: the clothes' colour in the corners, no picture
 print('FIT skin faces', nskin, 'of', len(me.polygons))
-SKIN_TEX = TEX > 0 and not ORIGINAL   # (original_skin: no skin part at all)
+SKIN_TEX = TEX > 0 and (not ORIGINAL or SHIFT)   # (original_skin alone: no skin part at all)
 CLEAR_FACE = TEX > 0 and not ORIGINAL   # (an opaque face layer needs no clearing underneath)
 # the high-detail model keeps Meshy's painted skin ("skin-tex"); the light one its corner colours
 def uv_texels(polys, shape):   # texels covered by these faces' UV triangles
@@ -614,7 +622,7 @@ for m_, img in (((clothm, colour),) if TEX else ()):
     nt.links.new(t.outputs['Color'], bs.inputs['Base Color']); bs.inputs['Roughness'].default_value = 1
 skinm.use_nodes = True; nt = skinm.node_tree; bs = nt.nodes['Principled BSDF']
 if SKIN_TEX:
-    skinm.name = 'skin-tex'; skinm['skin_ref'] = '#%02x%02x%02x' % tuple(int(round(min(1, max(0, float(x))) * 255)) for x in REF)
+    skinm.name = 'skin-tex'; skinm['skin_ref'] = SKIN_REF or '#%02x%02x%02x' % tuple(int(round(min(1, max(0, float(x))) * 255)) for x in REF)
     at = nt.nodes.new('ShaderNodeTexImage'); at.image = colour; at.name = 'skinpic'
 else:
     at = nt.nodes.new('ShaderNodeVertexColor'); at.layer_name = 'Color'
@@ -624,6 +632,7 @@ nt.links.new(at.outputs['Color'], mul.inputs[6]); nt.links.new(tone.outputs[0], 
 if TEX == 0:
     clothm.use_nodes = True; nt = clothm.node_tree; bs = nt.nodes['Principled BSDF']; vc = nt.nodes.new('ShaderNodeVertexColor'); vc.layer_name = 'Color'
     nt.links.new(vc.outputs['Color'], bs.inputs['Base Color']); bs.inputs['Roughness'].default_value = 1
+if SHIFT and not SKIN_TEX: skinm['skin_ref'] = SKIN_REF or '#f6c7a5'   # (light model: corner colours as painted)
 bpy.data.objects.remove(high, do_unlink=True)
 
 # ---- 4. the game's joints, region weights (as round 1), the face layers on the head

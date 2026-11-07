@@ -14,5 +14,7 @@
   "facebox": [[226, 118], [374, 238]],
   "trim_back_hair": false,
   "original_skin": true,
-  "keep_meshy_uvs": true
+  "keep_meshy_uvs": true,
+  "skin_shift": true,
+  "skin_ref": "#f6c7a5"
 }
