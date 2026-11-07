@@ -519,7 +519,7 @@ export function wearVillagerModel(A: SvAvatar, key: string): boolean {
   const box = new THREE.Box3(), codeParts: THREE.Object3D[] = [];
   // (only what is drawn: a hidden group, such as the folded glider over the head, made the code person seem far taller)
   A.rig.traverse(o => { if (o instanceof THREE.Mesh && shown(o, A.rig) && !o.userData.outline) { box.expandByObject(o); codeParts.push(o); } }); // (inside the rig: it is hidden while the far still copy shows)
-  const codeH = box.max.y - box.min.y, m = FRIEND_MODELS.attach(A, key, String(A.look.skin || '#f6c7a5'), {}); // (attached in the rest pose, as a friend's is when built)
+  const codeH = box.max.y - box.min.y, m = FRIEND_MODELS.attach(A, key, '', {}); // (attached in the rest pose, as a friend's is when built; owner 8 Nov 2026: a villager's Meshy model keeps the skin it was painted with, no code-person tone)
   const back = () => { JOINTS.forEach((j, i) => { if (keep[i]) A[j].rotation.copy(keep[i]); }); A.rig.position.y = lift; A.rig.scale.copy(sc); };
   if (!m) { back(); return false; }
   codeParts.forEach(o => { o.visible = false; o.children.forEach(c => { if (c.userData.outline) c.visible = false; }); });

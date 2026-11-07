@@ -397,6 +397,9 @@ def lid(img, b, top=0., bot=1.):   # (original_skin) a closed lid painted over t
     # replaced by the mean of their neighbours, the skin round them held fixed
     ya, yb = max(0, int(cy_ - ry) - 3), min(H_, int(cy_ + ry) + 4); xa, xb = max(0, int(cx_ - rx) - 3), min(W_, int(cx_ + rx) + 4)
     sub = img[ya:yb, xa:xb, :3].copy(); hm = hole[ya:yb, xa:xb]; sub[hm] = sk
+    # (owner 8 Nov 2026: dark smudges round the closed eyes in the game) only skin flows in: lashes, brows and hair round
+    # the eye are held at her skin colour while the lid is filled (they themselves stay as they are outside the lid)
+    _sm = skin_mask(img[ya:yb, xa:xb]) & (hsv_np(img[ya:yb, xa:xb, :3])[2] > .55); sub[~hm & ~_sm] = sk
     for _ in range(220):
         P = np.pad(sub, ((1, 1), (1, 1), (0, 0)), mode='edge')
         av = (P[:-2, 1:-1] + P[2:, 1:-1] + P[1:-1, :-2] + P[1:-1, 2:]) / 4; sub[hm] = av[hm]

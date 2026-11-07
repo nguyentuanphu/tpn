@@ -1,5 +1,8 @@
 # Production status — 7 November 2026 AEDT
 
+**Update 8 Nov 2026 (owner): Meshy people taken off the branch.** In-game close-ups showed broken faces on every Meshy friend and villager (hair shards and black eyes from one-sided drawing and the ink shell, orange skin, square closed-eye patches, a band across the forehead, broken light models); the earlier checks were Blender renders and eye-white counts only. The previous friend and villager models are restored from 923c16c6c (friend and villager checks pass); the Meshy files are kept in D:\WorkSpace\meshy\fitted (branch-copies-20261108). Owner decision: rebuild the faces on Meshy's own painted face, changing only small soft-edged eye and mouth pieces per mood (no separate face layer); each person returns only after in-game close-ups pass the owner's review. Loader fixes kept for Meshy models: both sides drawn, no ink shell, drawn by their own painted light; villagers keep their painted skin.
+
+
 **Overnight update, 8 Nov 2026 (owner asleep; authorised: up to 1,000 credits, skin shifted from the original, on the
 branch, puppy too).** `tools/meshy/overnight.ps1` ran the people in plan order (model 30, remesh 30k 5, remesh 9k 5,
 Meshy rig 5 = 45 each), never retrying a paid call. CREDIT-LEDGER.json is now synced from the private journal by

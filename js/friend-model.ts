@@ -20,8 +20,22 @@ function litCorners(name: string) {
 function faceTint(m) {
   m.userData.faceTint = true; m.userData.tint = { value: new THREE.Color(1, 1, 1) };
   m.onBeforeCompile = sh => { sh.uniforms.uTint = m.userData.tint;
-    sh.fragmentShader = 'uniform vec3 uTint;\n' + sh.fragmentShader.replace('#include <map_fragment>', '#include <map_fragment>\nif (diffuseColor.a < .9) diffuseColor.rgb *= uTint;\ndiffuseColor.a = 1.0;'); };
+    sh.fragmentShader = 'uniform vec3 uTint;\n' + sh.fragmentShader
+      .replace('#include <map_fragment>', '#include <map_fragment>\nfloat skT = diffuseColor.a < .9 ? 1.0 : 0.0;\nif (skT > .5) diffuseColor.rgb *= uTint;\ndiffuseColor.a = 1.0;')
+      .replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\nif (skT > .5) totalEmissiveRadiance *= uTint;'); }; // (a baked picture's own light takes the tone too)
   return m;
+}
+// (Meshy characters, owner 8 Nov 2026: "all friends and villagers have facial issues") a Meshy model is one painted picture
+// with its light already painted in, its hair thin cards and its face a picture layer just in front of the head. Drawn
+// like the code people it went wrong in the game: the toon bands on top of the painted light made the skin orange-red,
+// one-sided cards showed the scalp through the hair, and the ink shell poked through the hair and the face as black
+// slivers and black eyes. So such a model ("baked": it has face pictures) is drawn by its own light (emissive, as the
+// gallery villagers' "lit-" pictures are) with a little of the valley's light on top, both sides, and with no ink shell.
+// The valley's light on top is smooth (Lambert): the toon steps drew hard bright and dark bands across faces and necks.
+const BAKED_EMISSIVE = .72, BAKED_COLOR = new THREE.Color('#2a2928'); // (mostly its own painted light: the sun on top clipped the skin to glowing orange)
+function baked(name: string, map: THREE.Texture) {
+  const m = new THREE.MeshLambertMaterial({ name, map, emissiveMap: map, emissive: '#ffffff', emissiveIntensity: BAKED_EMISSIVE, color: BAKED_COLOR.clone(), side: THREE.DoubleSide });
+  m.userData.baked = true; return m;
 }
 const ready: Record<string, Loaded> = {}, loading: Record<string, Promise<boolean>> = {}, failed = new Set<string>();
 let bands: THREE.Texture = null;
@@ -44,8 +58,15 @@ export function loadFriendModel(id: FriendId | `${FriendId}-hd`): Promise<boolea
       if (!bands) { const d = new Uint8Array([90, 170, 255]); bands = new THREE.DataTexture(d, 3, 1, THREE.RedFormat); bands.minFilter = bands.magFilter = THREE.NearestFilter; bands.needsUpdate = true; }
       // the picture-book look: toon shading in a few bands, colours from the corners; skin in one colour (set per child)
       const mats = new Map();
+      let isBaked = false; g.scene.traverse((o: any) => { if (o.isMesh && /^face-/.test(o.material.name || '') && o.material.map) isBaked = true; });
+      g.scene.userData.baked = isBaked;
       g.scene.traverse((o: any) => { if (!o.isMesh) return; o.frustumCulled = false; o.castShadow = true;
         const m = o.material, name = m.name || '';
+        if (isBaked && m.map && !mats.has(m)) {   // (a Meshy model: see baked() above)
+          const t = baked(name, m.map), ref = m.userData && m.userData.skin_ref;
+          if (ref && (name.startsWith('skin-tex') || name.startsWith('face-'))) { t.userData.skinRef = ref; if (name.startsWith('face-')) faceTint(t); }
+          mats.set(m, t);
+        }
         // (v1.08e faces, part 2) a high-detail model's parts carry their painted picture (m.map) instead of corner colours
         // (v1.08e, owner 6 Nov: "skin-shade": the skin's corners carry its soft form shading, times the child's skin tone)
         // (Meshy characters, owner 7 Nov 2026: "skin toned phai giu nhu original", shifted from it for other tones) a model's
@@ -112,7 +133,7 @@ export function attachFriendModel(A, id: string, skinHex: string, wear: FriendMo
   // (v1.08e faces, part 2) the same thin ink outline as the code people, bent by the model's bones (not on the faces);
   // each follows its part's visibility (the item in the hand, the riding hands) and hides far away with the others
   const lines: [THREE.Object3D, THREE.Object3D][] = [];
-  obj.traverse((o: any) => { if (o.isSkinnedMesh && !o.userData.outline && !o.userData.face3d && !/^(face-|cloth-hat|cloth-hair)/.test(o.material.name || '')) lines.push([o, null]); }); // (no shell behind a thin hat, none on the face, none round the locks of hair: it poked out between them, Release 6 Nov)
+  if (!L.scene.userData.baked) obj.traverse((o: any) => { if (o.isSkinnedMesh && !o.userData.outline && !o.userData.face3d && !/^(face-|cloth-hat|cloth-hair)/.test(o.material.name || '')) lines.push([o, null]); }); // (none on a Meshy model: see baked()) // (no shell behind a thin hat, none on the face, none round the locks of hair: it poked out between them, Release 6 Nov)
   lines.forEach(l => { l[1] = outlineSkinned(l[0], .009); });
   if (Array.isArray(A.outlines)) A.outlines.push(...lines.map(l => l[1]));
   // the rest turn of each joint, the code person's and the model's (both in the rig's space)
@@ -142,9 +163,12 @@ export function attachFriendModel(A, id: string, skinHex: string, wear: FriendMo
   };
   // (Meshy characters) a painted skin (skinRef) is tinted by the tone relative to the tone it was painted in
   const skin = (hex: string) => skinMats.forEach(m => {
-    const r = m.userData.skinRef; if (!r) { m.color.set(hex); return; }
+    const r = m.userData.skinRef; if (!r) { if (hex) m.color.set(hex); return; }
+    if (!hex) hex = r; // (no tone given, a villager: exactly as painted)
     const t = new THREE.Color(hex), c = new THREE.Color(r), k = new THREE.Color(t.r / Math.max(c.r, .05), t.g / Math.max(c.g, .05), t.b / Math.max(c.b, .05));
-    if (m.userData.faceTint) m.userData.tint.value.copy(k); else m.color.copy(k);
+    if (m.userData.faceTint) m.userData.tint.value.copy(k);
+    else if (m.userData.baked) { m.color.copy(BAKED_COLOR).multiply(k); m.emissive.copy(k); } // (its own light takes the tone too)
+    else m.color.copy(k);
   });
   skin(skinHex); follow();
   // the joints are copied just before each drawing, after everything that moves the code person this frame (the walk, a
