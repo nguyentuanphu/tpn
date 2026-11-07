@@ -10,7 +10,16 @@ import { untilRight, choiceButtons, HINT_AFTER } from './frame.js';
 import { settings } from '../state.js';
 import { sayAsync, hush, spoken } from '../voice.js';
 import { pic } from '../art.js';
-import { shuffle, pick, el, wait, esc } from '../util.js';
+import { shuffle, pick as pickAny, el, wait, esc } from '../util.js';
+// (v1.08 release, check roundvariety: rd_rhyme and rd_tones repeated a round) each list hands out its items in turn, in a
+// fresh order each time it starts again, so a round only comes back once every other one has been played
+const dealt = new WeakMap<readonly unknown[], unknown[]>();
+const pick = <X>(list: readonly X[]): X => {
+  if (!Array.isArray(list) || list.length < 2) return pickAny(list);
+  let left = dealt.get(list) as X[] | undefined;
+  if (!left || !left.length) { left = shuffle([...list]); dealt.set(list, left); }
+  return left.pop() as X;
+};
 // (30 Oct 2026 AEDT) on a big screen the game's stage may be zoomed to fill it (js/games/frame.ts): a dragged tile
 // follows the finger in the stage's own units
 const stageZoom = (e: Element) => parseFloat(e.closest<HTMLElement>('.gl-stage')?.style.zoom || '') || 1;

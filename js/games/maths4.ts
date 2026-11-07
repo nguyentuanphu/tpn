@@ -113,9 +113,10 @@ const ladybird = (left: number, right: number | null) => svgBox(220, 170, `<path
 register({
   id: 'mx_doubles', learn: true, icon: 'mx:doubles', name: () => T('Doubles', 'Gấp Đôi'),
   run: api => {
-    // (levels) Easy: doubles to 3 with both wings shown; Medium: to 5, one wing; Hard: to 10, the number only; Talent: halves of
+    // (levels) Easy: doubles to 4 with both wings shown; Medium: to 5, one wing; Hard: to 10, the number only; Talent: halves of
     // doubles to 20
-    const L = lv(api, { max: 3, mode: 'both' }, { max: 5, mode: 'one' }, { max: 10, mode: 'sum' }, { max: 10, mode: 'half' });
+    // (v1.08 release, check roundvariety) Easy has 4 rounds, so it doubles up to 4: with numbers to 3 a round came twice
+    const L = lv(api, { max: 4, mode: 'both' }, { max: 5, mode: 'one' }, { max: 10, mode: 'sum' }, { max: 10, mode: 'half' });
     api.stage.dataset.lv = `${L.max},${L.mode}`;
     const list: Round[] = mix(range(1, L.max)).concat(mix(range(1, L.max))).slice(0, rounds(api)).map(n => {
       if (L.mode === 'half') return { ask: () => api.say(`Half of ${n * 2} is how many?`, `Một nửa của ${n * 2} là bao nhiêu?`), answer: String(n), others: near(n, 0, 12, wrongs(api)), key: 'h' + n, draw: stage => { stage.appendChild(el('div', 'mx-big', `${n * 2} ÷ 2 = <b>?</b>`)); } };
