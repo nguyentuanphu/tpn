@@ -10,7 +10,7 @@
 // built the spot is checked with the valley's own placement rule (G.goodSpot: dry land, no house, wall, tree or
 // collider) and kept off every road and its verge (edgeDist, roadDist: HANDOFF G5/R4); if the valley changed and the
 // spot is taken, the nearest free spot a few metres along the road is used instead.
-import { THREE, toonVC, P, merge, outline } from './gfx.js';
+import { THREE, toonVC, P, merge, outline, worldTag } from './gfx.js';
 import { gable, win, Box, Cyl } from './town.js';
 import { T, nm, onLang, registerName } from './i18n.js';
 import { heightAt, edgeDist, roadDist, TOWN, WATER } from './world.js';
@@ -22,6 +22,12 @@ import { TOWN_SCHOOL } from './content/map.js';
 
 /** the school's place: the building's middle (x, z), its size, the yard in front (north, -z) and where Cô Tam stands */
 import { SCHOOL } from './content/school-place.js';
+// (v1.08 maths) the 21 new maths games and the 7 numbers games switched on in v1.08 are found at the school
+const MATHS_AT_SCHOOL = ['numline', 'tenframe', 'dice', 'evenodd', 'measure', 'beforeafter', 'halves', 'mx_bonds', 'mx_takeaway', 'mx_skip', 'mx_patterns', 'mx_shapehunt', 'mx_symmetry', 'mx_heavy', 'mx_full', 'mx_pizza', 'mx_graph',
+  'mx_calendar', 'mx_quarter', 'mx_sudoku', 'mx_bigger', 'mx_doubles', 'mx_tens', 'mx_missing', 'mx_solids3d', 'mx_leftright', 'mx_sprint', 'mx_grouping'];
+// (v1.08 vietnamese) the map pin of the new Tiếng Việt games (the ids only: js/content/tiengviet2.ts holds all their words,
+// about 17 KB, and is not part of the start, PERF-001; keep this list in step with VI2_IDS there)
+const VI2_IDS = ['vi_tonemean', 'vi_rhyme', 'vi_letters', 'vi_opposite', 'vi_cadao', 'vi_tucngu', 'vi_readalong', 'vi_sentence', 'vi_dictation', 'vi_riddle'];
 export { SCHOOL };
 export const SCHOOL_GREETING = ['Welcome to the Fun Learning School! Shall we learn something fun today?', 'Chào mừng con đến Trường Học Vui! Hôm nay mình học điều gì vui nhé?'];
 
@@ -112,7 +118,7 @@ export function createSchool(G) {
   const { x, z, w, d, yard } = SCHOOL, y0 = heightAt(x, z), rot = Math.PI;   // (front to -z: the road)
   const mat = toonVC();
   const house = new THREE.Mesh(schoolHouse(w, d), mat); house.position.set(x, y0, z); house.rotation.y = rot; house.castShadow = house.receiveShadow = true; scene.add(house);
-  outline(house, .03, '#4a3a3f'); house.userData.school = true;
+  outline(house, .03, '#4a3a3f'); house.userData.school = true; worldTag(house, 'hs-school', { outline: [.03, '#4a3a3f'] });   // (v1.08e places)
   const box = { x0: x - w / 2 - .25, x1: x + w / 2 + .25, z0: z - d / 2 - .25, z1: z + d / 2 + .25 }; world.boxes.push(box);
   // the yard (local +z is world -z, local +x is world -x: the hopscotch on the west side, away from Cô Tam)
   const yardM = new THREE.Mesh(schoolYard(w, yard, [3.6, 0]), mat); yardM.position.set(x, y0, SCHOOL.front - .02); yardM.rotation.y = rot; yardM.receiveShadow = true; scene.add(yardM);
@@ -147,6 +153,12 @@ export function createSchool(G) {
   const s = SCHOOL.spot;
   const it = { id: 'school', x: s.x, z: s.z, r: 3, icon: '👩‍🏫', label: () => T('Fun learning with ' + nm('Cô Tam'), 'Học vui cùng Cô Tam'), act: h => talk(h) };
   G.interactables.push(it);
+  // (v1.08 maths) the maths games' place in the valley for the map pin: Cô Tam's school (no place on the map moves); a game
+  // that already has a place keeps it
+  G.GAME_SPOT = G.GAME_SPOT || {};
+  for (const id of MATHS_AT_SCHOOL) if (!G.GAME_SPOT[id]) G.GAME_SPOT[id] = 'school';
+  // (v1.08 vietnamese) the map pin of the Tiếng Việt games goes to the school, where Cô Tam opens the Học vui tab
+  G.GAME_SPOT = G.GAME_SPOT || {}; for (const id of VI2_IDS) if (!G.GAME_SPOT[id]) G.GAME_SPOT[id] = 'school';
   // life: she gestures as she talks to the class, the flag flutters (only while a child is near)
   world.updaters.push((dt, time) => {
     if (!G.heroes.some(h => dist2(h.pos.x, h.pos.z, x, z) < 45)) return;

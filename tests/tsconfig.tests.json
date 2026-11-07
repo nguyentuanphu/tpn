@@ -1,0 +1,11 @@
+{
+  "extends": "../tsconfig.base.json",
+  "//": "(v1.08b quality, owner 3 Nov 2026 AEDT: 'Make sure everything is built in ts') the test code (tests/*.mts, tests/checks, tests/unit) and the marketing video code (marketing/source), as Node runs them. The light check, like tsconfig.server.json. tests/run.mts 'types'.",
+  "compilerOptions": {
+    "module": "nodenext", "moduleResolution": "nodenext", "allowImportingTsExtensions": true, "noEmit": true, "allowJs": true, "checkJs": false,
+    "strict": false, "noImplicitAny": false, "noImplicitThis": true, "types": ["node"], "typeRoots": ["./node_modules/@types"], "lib": ["es2023", "dom", "dom.iterable"],
+    "resolveJsonModule": true, "skipLibCheck": true,
+    "paths": { "@netlify/blobs": ["./node_modules/@netlify/blobs/dist/main.d.ts"], "/js/*": ["../js/*"] }
+  },
+  "include": ["./*.mts", "./checks/*.mts", "./unit/*.mts", "../marketing/source/*.ts", "../marketing/source/*.mts", "../types/globals.d.ts", "./types/test-globals.d.ts"]
+}

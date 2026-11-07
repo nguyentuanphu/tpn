@@ -79,7 +79,7 @@ export async function packedSite() {
   const path = await import('path'), { execFileSync } = await import('child_process'), dir = path.resolve('out/packed'), repo = path.resolve('..');
   fs.rmSync(dir, { recursive: true, force: true }); fs.mkdirSync(dir, { recursive: true });
   for (const f of ['index.html', 'sw.js']) fs.copyFileSync(path.join(repo, f), path.join(dir, f));
-  for (const f of ['manifest.webmanifest', 'css', 'fonts', 'icons', 'js', 'vendor', 'content', 'videos', 'voices', 'photos', 'sounds']) if (fs.existsSync(path.join(repo, f))) fs.symlinkSync(path.join(repo, f), path.join(dir, f));
+  for (const f of ['manifest.webmanifest', 'css', 'fonts', 'icons', 'js', 'vendor', 'models', 'content', 'videos', 'voices', 'photos', 'sounds']) if (fs.existsSync(path.join(repo, f))) fs.symlinkSync(path.join(repo, f), path.join(dir, f));
   execFileSync(process.execPath, [path.join(repo, 'tools/bundle.mts'), dir], { encoding: 'utf8' });
   ok(fs.existsSync(path.join(dir, 'bundle')), 'the packed copy was not built (tools/bundle.mts: esbuild missing?)');
   return (packedDir = dir);
@@ -108,9 +108,9 @@ export const testerSite = async (ctx, status) => { const got = []; await ctx.rou
   return rt.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(status()) }); }); return got; };
 export const ACCEPTED = `localStorage.setItem('sv2_tester', JSON.stringify({ at: 1, b: 'r1' }));`;
 // Owner-approved interface contracts: end-to-end screen, privacy and composed-capture regressions.
-export async function ownerSmoke(file, args = []) {
+export async function ownerSmoke(file, args = [], timeout = 600000) {
   const { execFileSync } = await import('node:child_process');
-  try { return execFileSync(process.execPath, [file, ...args], { encoding:'utf8', timeout:600000, maxBuffer:1048576 }).trim().replace(/\s+/g,' '); }
+  try { return execFileSync(process.execPath, [file, ...args], { encoding:'utf8', timeout, maxBuffer:1048576 }).trim().replace(/\s+/g,' '); }
   catch (error) {
     // Preserve assertion/timeout diagnostics from the synthetic owner fixtures; the wrapper's
     // generic 'Command failed' otherwise hides the reason in shard and isolated retries.

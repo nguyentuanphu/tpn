@@ -385,8 +385,9 @@ register({
 
       const anywhere = side === 1 && !api.little && api.smart > 0;   // the friend's return kick lands somewhere new
       ball.style.transition = `left ${flyS}s ease, top ${flyS}s ease`;
-      ball.style.left = (anywhere ? rand(20, 260) : targetX) + 'px';
-      ball.style.top = (anywhere ? rand(30, 200) : side === 0 ? 100 : 180) + 'px';
+      // (v1.08 variety) even a plain kick lands somewhere a little different each time, on the right side
+      ball.style.left = (anywhere ? rand(20, 260) : targetX + rand(-20, 20)) + 'px';
+      ball.style.top = (anywhere ? rand(30, 200) : (side === 0 ? 100 : 180) + rand(-25, 25)) + 'px';
       await wait(flyS * 1000 + 100);
       api.sfx.pop(p);
       api.dots(passes, p + 1);
@@ -417,15 +418,20 @@ register({
     stage.style.background = '#d9f2f7';
     const spots = [[20, 30], [130, 20], [235, 40], [30, 160], [135, 150], [235, 170]];
     let rescued = 0;
+    const seen = new Set<string>();   // (v1.08 variety) the swimmers and the one who needs help are never placed the same way twice
     while (rescued < target && !api.closed) {
       stage.innerHTML = '';
-      const swimmers = shuffle(spots).slice(0, nSwim).map(([x, y]) => {
+      let chosen = shuffle(spots).slice(0, nSwim), helpAt = Math.floor(Math.random() * nSwim);
+      const placeKey = () => chosen.map(String).sort().join(';') + '|' + chosen[helpAt];
+      for (let t = 0; t < 30 && seen.has(placeKey()); t++) { chosen = shuffle(spots).slice(0, nSwim); helpAt = Math.floor(Math.random() * nSwim); }
+      seen.add(placeKey());
+      const swimmers = chosen.map(([x, y]) => {
         const b = el('button', 'out-float', pic('🏊'));
         b.style.left = x + 'px'; b.style.top = y + 'px'; b.style.fontSize = '44px';
         b.setAttribute('aria-label', T('Swimmer', 'Bạn đang bơi'));
         stage.appendChild(b); return b;
       });
-      const help = swimmers[Math.floor(Math.random() * swimmers.length)];
+      const help = swimmers[helpAt];
       help.innerHTML = pic('🙋'); help.setAttribute('aria-label', T('Swimmer needs help', 'Bạn bơi cần giúp đỡ'));
       api.plan(() => help.isConnected ? help : null, { maxActions: 4 });
       let up = true; const blink = api.talent ? setInterval(() => { up = !up; help.innerHTML = pic(up ? '🙋' : '🏊'); }, 1200) : 0;

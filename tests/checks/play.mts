@@ -18,27 +18,32 @@ await check('bagpals', async () => {
       const G = __sv, hero = G.heroes[0], p = hero.profile, wt = t => new Promise(r => setTimeout(r, t)), S = await import('/js/state.js'), out = {};
       p.age = 'little'; p.lanterns = { companion: 'firefly', done: { p_owl: true }, chapters: {} }; p.pets = [{ kind: 'puppy', name: 'Mochi' }, { kind: 'kitty', name: '' }];
       G.pets.sync(); G.pets.refreshInteractables(); G.lanterns.companions.sync(); G.addCoins(100 - S.farm.coins); await wt(600);
+      // (v1.08 companion, owner's plan E, 3 Nov 2026 AEDT) the section left the Bag for its own tab, Companions / Bạn đồng
+      // hành, straight after the Backpack (and before the Shop): the Bag keeps food, things, clothes, kites and gliders
       G.openPad(0, 'bag'); await wt(900);
+      out.tabs = [...document.querySelectorAll('.modal.pad .pad-tabs button')].map(x => x.dataset.t);
+      out.bagHasPals = !!document.querySelector('.modal.pad .pad-body .bag-pals, .modal.pad .pad-body [data-phat]');
+      const tabB = document.querySelector('.modal.pad .pad-tabs [data-t="pals"]'), tq = tabB ? tabB.getBoundingClientRect() : null;
+      out.tabSize = tq ? Math.round(Math.min(tq.width, tq.height)) : 0; out.tabName = tabB ? tabB.textContent.replace(/\s+/g, ' ').trim() : '';
+      tabB?.click(); await wt(900);
       const body = document.querySelector('.modal.pad .pad-body'), br = body.getBoundingClientRect(), hs = [...body.querySelectorAll('h3')];
       out.oldButton = !!body.querySelector('#bagPets');
       out.firstHeading = hs[0] ? hs[0].textContent.replace(/\s+/g, ' ').trim() : '';
-      out.firstChip = body.querySelector('.jumpnav button')?.textContent.trim() || '';
+      out.headings = hs.length;
       const tiles = [...body.querySelectorAll('.bag-pals .slot')];
-      out.tiles = tiles.map(t => t.dataset.pal ?? (t.dataset.adopt ? 'adopt' : '?'));
+      out.tiles = tiles.map(t => t.dataset.pal ?? (t.dataset.adopt ? 'adopt' : t.dataset.palfeed ? 'feed' : '?'));
+      out.goal = body.querySelector('.pal-goal')?.textContent.replace(/\s+/g, ' ').trim() || '';
+      out.goalSmall = (() => { const q = body.querySelector('.pal-goal')?.getBoundingClientRect(); return !q || q.height < 64; })();
       out.small = [...tiles, ...body.querySelectorAll('.bag-pal-hats .slot')].map(t => t.getBoundingClientRect()).filter(q => q.width < 64 || q.height < 64).length;
       // seen when the Bag opens, without scrolling: the first friend's tile starts inside the visible Bag
       out.seenAtOpen = tiles[0] ? tiles[0].getBoundingClientRect().top < br.bottom - 24 : false;
-      // the jump chip brings the section back after scrolling to the bottom
-      body.scrollTop = body.scrollHeight; await wt(300); body.querySelector('.jumpnav button')?.click(); await wt(900);
-      const nav = body.querySelector('.jumpnav').getBoundingClientRect(), t0 = body.querySelector('.bag-pals .slot').getBoundingClientRect();
-      out.jumpBack = t0.top >= nav.bottom - 2 && t0.top < br.bottom - 24;
       // buy the first hat: a tap explains, only Buy spends
       const hatTile = id => body.querySelector(`.bag-pal-hats [data-phat="${id}"]`);
       out.lockedBuy = (() => { hatTile('crown').click(); return !!body.querySelector('.bag-help .bh-buy'); })();
       hatTile('party').click(); await wt(150); out.tapKeepsCoins = S.farm.coins === 100 && !(p.lanterns.pet && (p.lanterns.pet.hats || []).length);
       body.querySelector('.bag-help .bh-buy')?.click(); await wt(700);
       // (the companion is drawn while the valley runs: close the Bag to see its hat, then open it again)
-      const reopen = async () => { document.querySelector('.modal.pad .pad-head .x')?.click(); await wt(900); const seen = !!G.lanterns.companions.of(hero).hat; G.openPad(0, 'bag'); await wt(900); return seen; };
+      const reopen = async () => { document.querySelector('.modal.pad .pad-head .x')?.click(); await wt(900); const seen = !!G.lanterns.companions.of(hero).hat; G.openPad(0, 'pals'); await wt(900); return seen; };
       out.coinsAfter = S.farm.coins; out.hats = [...(p.lanterns.pet.hats || [])]; out.buddyHat = p.lanterns.pet.hat; out.buddy3d = await reopen();
       // put it on Mochi: it leaves the companion; the 3D hat is on the puppy
       const b2 = document.querySelector('.modal.pad .pad-body'); b2.querySelector('.bag-pal-hats [data-phat="party"]').click(); await wt(150);
@@ -53,13 +58,16 @@ await check('bagpals', async () => {
       return out;
     });
     await P.page.screenshot({ path: `out/bagpals-${dev}.png` });
-    const bad = [], heading = lang === 'vi' ? 'Thú cưng & Bạn đồng hành' : 'Pets & Buddy';
+    const bad = [], heading = lang === 'vi' ? 'Bạn đồng hành' : 'Your companion', tabName = lang === 'vi' ? 'Bạn đồng hành' : 'Companions';
     if (r.oldButton) bad.push('the old lone pets button is still there');
-    if (!r.firstHeading.includes(heading) || !r.firstChip.includes(heading)) bad.push(`"${heading}" is not the first section and jump chip: "${r.firstHeading}", "${r.firstChip}"`);
-    if (r.tiles.join(',') !== 'buddy,0,1,adopt') bad.push('the friends row is ' + r.tiles.join(','));
+    if (r.bagHasPals) bad.push('the Bag still holds the pets and hats');
+    if (r.tabs.indexOf('pals') !== r.tabs.indexOf('bag') + 1 || (r.tabs.includes('shop') && r.tabs.indexOf('shop') !== r.tabs.indexOf('pals') + 1)) bad.push('the tabs are ' + r.tabs.join(','));
+    if (!r.tabName.includes(tabName) || r.tabSize < 44) bad.push(`the Companions tab: "${r.tabName}", ${r.tabSize} px`);
+    if (!r.firstHeading.includes(heading) || r.headings !== 3) bad.push(`"${heading}" is not the first of 3 sections: "${r.firstHeading}", ${r.headings}`);
+    if (r.tiles.join(',') !== 'buddy,feed,0,1,adopt') bad.push('the friends rows are ' + r.tiles.join(','));
+    if (!/(Party hat|Mũ sinh nhật)/.test(r.goal) || r.goalSmall) bad.push('the coin goal card: ' + r.goal);
     if (r.small) bad.push(r.small + ' tiles under 64 px for an under-5');
-    if (!r.seenAtOpen) bad.push('the pets are not in sight when the Bag opens');
-    if (!r.jumpBack) bad.push('the jump chip does not bring the pets back into view');
+    if (!r.seenAtOpen) bad.push('the pets are not in sight when the tab opens');
     if (r.lockedBuy) bad.push('a locked hat can be bought before the ones before it');
     if (!r.tapKeepsCoins || r.coinsAfter !== 70 || r.hats.join() !== 'party' || r.buddyHat !== 'party' || !r.buddy3d) bad.push('buying the hat ' + JSON.stringify(r));
     if (r.wearers.join(',') !== 'buddy,0,1' || r.petHat !== 'party' || r.buddyAfter || !r.pet3d || r.buddy3dAfter || !r.badge) bad.push('putting the hat on a pet ' + JSON.stringify(r));
@@ -69,7 +77,7 @@ await check('bagpals', async () => {
     if (bad.length) throw new Error(dev + ': ' + bad.join('; '));
     rows.push(`${dev} ${w}x${h}`);
   }
-  return `Pets & Buddy first in the Bag and its jump row (${rows.join(', ')}): companion, 2 pets and adopting, tiles 64 px+; a hat bought only with Buy (100 to 70), moved from the companion to a pet and off again, the 3D hat following; screenshots out/bagpals-*.png`;
+  return `The Companions tab after the Backpack (${rows.join(', ')}): companion, Feed and the coin goal, 2 pets and adopting, tiles 64 px+, none left in the Bag; a hat bought only with Buy (100 to 70), moved from the companion to a pet and off again, the 3D hat following; screenshots out/bagpals-*.png`;
 });
 
 await check('shop', async () => {
@@ -81,7 +89,7 @@ await check('shop', async () => {
   const r = await P.page.evaluate(async () => {
     const G = __sv, h = G.heroes[0], p = h.profile, w = t => new Promise(r => setTimeout(r, t)), S = await import('/js/state.js'), W = await import('/js/world.js');
     const C = (await import('/js/custom.js')).CUSTOM, SH = await import('/js/content/shop.js'), { buildAvatar } = await import('/js/avatar.js');
-    const out = {}, sp = G.shop.spot, rd = W.roadDist(sp.x, sp.z), M = W.MARKET;
+    const out: Record<string, any> = {}, sp = G.shop.spot, rd = W.roadDist(sp.x, sp.z), M = W.MARKET;
     out.spot = [Math.round(sp.x), Math.round(sp.z)]; out.offRoad = !rd.road || rd.d > rd.road.w / 2 + 1.5;
     out.nearMarket = Math.hypot(Math.max(M.x0 - sp.x, 0, sp.x - M.x1), Math.max(M.z0 - sp.z, 0, sp.z - M.z1)) < 40;
     out.dry = W.heightAt(sp.x, sp.z) > W.WATER + .3; out.tap = !!G.interactables.find(i => i.id === 'shop_clothes');
@@ -89,9 +97,10 @@ await check('shop', async () => {
     // shop right there, no travel; the stall in the valley stays
     p.age = 'big'; G.addCoins(500 - S.farm.coins); const pos0 = { x: h.pos.x, z: h.pos.z }; G.huds[0].root.querySelector('.dk.bag').click(); await w(500);
     // (Round V, owner 13 Oct: "the shop button should be within the bag right next to the bag icon") a Shop tab straight
-    // after Backpack in the Pad; no Shop button in the dock
+    // after Backpack in the Pad; no Shop button in the dock. (v1.08 companion, owner's plan E) the Companions tab now sits
+    // between them: Backpack, Companions, Shop
     const tabsK = [...document.querySelectorAll('.modal.pad .pad-tabs button')].map(b => b.dataset.t), sb = document.querySelector('.modal.pad .pad-tabs [data-t="shop"]');
-    out.bagOpens = !!document.querySelector('.modal.pad') && !document.querySelector('.modal.shopk') && tabsK.indexOf('shop') === tabsK.indexOf('bag') + 1 && !G.huds[0].root.querySelector('.dk.shop');
+    out.bagOpens = !!document.querySelector('.modal.pad') && !document.querySelector('.modal.shopk') && tabsK.indexOf('pals') === tabsK.indexOf('bag') + 1 && tabsK.indexOf('shop') === tabsK.indexOf('pals') + 1 && !G.huds[0].root.querySelector('.dk.shop');
     out.bagShopBtn = sb ? (() => { const q = sb.getBoundingClientRect(); return q.width >= 44 && q.height >= 44; })() : false;
     sb && sb.click(); await w(700);
     out.there = Math.hypot(h.pos.x - pos0.x, h.pos.z - pos0.z) < 1 && !!document.querySelector('.modal.pad'); const card = document.querySelector('.pad .shop-content');
@@ -125,7 +134,7 @@ await check('shop', async () => {
       out.wardClear = chips.every(c => !hit(c, dn)) && chips.every((c, k) => chips.every((d, j) => j <= k || !hit(c, d))) && wd.scrollWidth <= wd.clientWidth + 1;
       const grid = wd.querySelector('.wgrid').getBoundingClientRect();
       out.wardRowsFit = [...wd.querySelectorAll('.wit')].every(c => { const z = c.getBoundingClientRect(); return z.left >= grid.left - 1 && z.right <= grid.right + 1; }); }
-    out.wardrobe = !!wd && wd.querySelectorAll('[data-wtab]').length === 6 && !!wd.querySelector('.wbig') && !!wd.querySelector('[data-v="tiara"]') && !wd.querySelector('[data-v="dragon"]') && !/\bRemove\b/.test(wd.textContent);
+    out.wardrobe = !!wd && wd.querySelectorAll('[data-wtab]').length === 7 && !!wd.querySelector('.wbig') && !!wd.querySelector('[data-v="tiara"]') && !wd.querySelector('[data-v="dragon"]') && !/\bRemove\b/.test(wd.textContent);
     wd.querySelector('.wit.on[data-k="hat"]').click(); await w(200); out.off = p.look.hat === 'none';
     document.querySelector('.wardrobe.kward .x').click(); await w(300);
     // a child who already wore wings and a crown keeps them (r79: a girl, in her own set's version of the crown)
@@ -151,7 +160,8 @@ await check('shop', async () => {
   if (!r.offRoad || !r.nearMarket || !r.dry || !r.tap) bad.push('the shop is not by the market on dry ground off the road ' + JSON.stringify(r.spot));
   if (!r.bagOpens || !r.bagShopBtn) bad.push('the Bag button does not open the backpack, or no Shop tab right after Backpack (or a Shop button still in the dock) ' + JSON.stringify({ o: r.bagOpens, b: r.bagShopBtn }));
   if (!r.there || !r.opened) bad.push('the shop button in the bag did not open the shop right there (no travel)');
-  if (r.tabs !== 7 || !r.noBagTab || !r.pics || r.small) bad.push(`the shop card: ${r.tabs} tabs, pictures ${r.pics}, ${r.small} buttons under 44 px`);
+  // (v1.08b friends) 9 tabs: the seven kinds (glasses and masks added), the friend's outfits and the mirror
+  if (r.tabs !== 9 || !r.noBagTab || !r.pics || r.small) bad.push(`the shop card: ${r.tabs} tabs, pictures ${r.pics}, ${r.small} buttons under 44 px`);
   if (!r.bought || !r.poorKept || !r.closed) bad.push('buying ' + JSON.stringify({ bought: r.bought, poor: r.poorKept, closed: r.closed }));
   if (r.little) bad.push(`${r.little} buttons under 64 px for an under-5`);
   if (!r.wardrobe || !r.off) bad.push('the wardrobe does not show what is owned');
@@ -161,7 +171,7 @@ await check('shop', async () => {
   if (!r.offBag || !r.offStall || !r.offWard) bad.push('the Studio switch did not put the old Bag and wardrobe back ' + JSON.stringify(r));
   if (errs.length) bad.push(...errs.slice(0, 2));
   if (bad.length) throw new Error(bad.join('; '));
-  return `the shop at ${r.spot} by the market, off the road; the Bag opens the backpack and the Shop tab right after Backpack opens the shop without travel; 7 picture tabs, coin prices, 64 px for under-5s; bought ${r.boughtId}, could not buy without coins; the wardrobe; worn things kept; every piece drawn in 3D (at most ${Math.max(...Object.values(r.drawn))} extra parts); the switch puts the old Bag back`;
+  return `the shop at ${r.spot} by the market, off the road; the Bag opens the backpack and the Shop tab right after Backpack opens the shop without travel; 9 picture tabs, coin prices, 64 px for under-5s; bought ${r.boughtId}, could not buy without coins; the wardrobe; worn things kept; every piece drawn in 3D (at most ${Math.max(...(Object.values(r.drawn) as number[]))} extra parts); the switch puts the old Bag back`;
 });
 
 // (round S) surprises: at most 3 a session, only when free, never missed (they follow the child), each gives a sticker
@@ -197,7 +207,12 @@ await check('surprises', async () => {
     S.settings.calm = true; Sp.reset(); const cs = Sp.place('stars', h); out.calmStreaks = cs ? cs.streaks.length : -1; S.settings.calm = false;
     // the Studio switch
     G.heroes.forEach(x => { delete x.profile.tried; });   // (batch rollout, owner 8 Oct rule: off keeps a feature for a child who used it; here the child never did, the check 'rollout' covers the keeping)
+    // (v1.08 release) surprises has a release rule (content/custom.json, from 7 Nov 2026): Studio's Releases tab switches
+    // it off (releases.surprises.on = false), which js/custom.ts featureOn reads before CUSTOM.features; both are off here
+    const relWas = { ...(C.releases || {}) }; C.releases = { ...relWas };
+    if (C.releases.surprises) C.releases.surprises = { ...C.releases.surprises, on: false };
     C.features.surprises = false; await w(1500); out.off = !Sp.current();
+    C.releases = relWas;
     return out;
   });
   const errs = P.errors; await P.ctx.close(); const bad = [...r.bad];
@@ -677,14 +692,14 @@ await check('secondset', async () => {
     const plays = root => [...root.querySelectorAll('[data-play]')].map(b => b.dataset.play);
     const out = {};
     C.releases = { ...(C.releases || {}), newGames: { on: false }, newStories: { on: false } };
-    let body = await hub('learn');
+    let body = await hub('hocvui');
     // (30 Oct 2026 AEDT) the Coming soon tile names its group now (data-soon="learn"), so it is found by its tile
     out.offSoon = !!body.querySelector('.hsoon [data-soon]'); out.offNoNew = !plays(body).some(id => newIds.includes(id)); out.offNoFold = !body.querySelector('[data-fold]');
     out.offSimple = !A.gamesIn(F.GAMES, 'numbers', false).some(g => newIds.includes(g.id)); out.offTales = !__sv.TALES.some(t => Object.values(U.SECOND_SET_TALES).flat().includes(t.id));
-    out.offShut = !U.isOpen({ unlockAll: true }, 'numline', 'game', 'numbers');
+    out.offShut = !U.isOpen({ unlockAll: true }, 'solids', 'game', 'shapes');   // (v1.08 maths: the numbers set is switched on, so a shapes game is the sample)
     body = await hub('tales'); out.offTaleSoon = !!body.querySelector('[data-soon="tale"]');
     C.releases.newGames = { on: true }; C.releases.newStories = { on: true }; p.unlockAll = false; p.admin = false;
-    body = await hub('learn');
+    body = await hub('hocvui');
     const fold = body.querySelector('[data-fold]'); out.onFold = !!fold; out.onHidden = !body.querySelector('.hcard.locked'); out.onNoSoon = !body.querySelector('.hsoon [data-soon]');
     fold?.click(); await wait(300); body = document.querySelector('.hubbody'); out.onShown = body.querySelectorAll('.hcard.locked').length; out.onGuide = body.querySelectorAll('.hlockguide .hsoonrow').length; // (owner, 1 Nov 2026 AEDT) the unfolded padlock says what to do first
     body = await hub('tales'); const tf = body.querySelector('[data-fold-tale]'); out.taleFold = !!tf; tf?.click(); await wait(300); out.taleShown = document.querySelectorAll('.hubbody .talecard.locked').length;
@@ -878,7 +893,7 @@ await check('r79clothes', async () => {
     await P.page.waitForSelector('.mirror .wbig'); await P.page.waitForTimeout(400);
     const mr = await P.page.evaluate(() => { const M = document.querySelector('.mirror'), img = M.querySelector('.wbig').getBoundingClientRect();
       return { img: img.width, tabs: M.querySelectorAll('[data-wtab]').length, remove: /\bRemove\b|Bỏ ra/.test(M.textContent), items: [...M.querySelectorAll('.wit')].map(b => b.dataset.v) }; });
-    if (mr.img < 150) bad.push('the mirror picture is small (' + Math.round(mr.img) + ' px)'); if (mr.tabs !== 6) bad.push('the mirror should have 6 tabs'); if (mr.remove) bad.push('the mirror still says Remove');
+    if (mr.img < 150) bad.push('the mirror picture is small (' + Math.round(mr.img) + ' px)'); if (mr.tabs !== 7) bad.push('the mirror should have 7 tabs'); // (v1.08b friends: glasses and masks are the seventh kind) if (mr.remove) bad.push('the mirror still says Remove');
     if (mr.items.includes('cap')) bad.push('the boys\' cap shows in her mirror'); if (!mr.items.includes('bow')) bad.push('her bow is missing from the mirror');
     const t = await P.page.evaluate(async () => { const p = __sv.heroes[0].profile, w = ms => new Promise(r => setTimeout(r, ms)), pick = () => [...document.querySelectorAll('.mirror .wit')].find(b => b.dataset.v === 'sunhat');
       pick().click(); await w(200); const on = p.look.hat, tick = !!pick().querySelector('.ktick'); pick().click(); await w(200); const off = p.look.hat;
@@ -912,7 +927,7 @@ await check('r79clothes', async () => {
     fs.mkdirSync('out/r79', { recursive: true }); await P.page.screenshot({ path: `out/r79/clothes-${dev}.png` });
     rows.push(dev); ok(!bad.length, dev + ': ' + bad.join('; ')); ok(!P.errors.length, P.errors.join(' | ')); await P.ctx.close();
   }
-  return rows.join(', ') + ': mirror (big picture, 6 tabs, own set only, tap on/off, no Remove, Done keeps the Shop\'s place); boys\' collection marked as gifts; gift box given to a brother; small "Eat it?"; Bag things explain themselves; Pad game returns to the Pad';
+  return rows.join(', ') + ': mirror (big picture, 7 tabs, own set only, tap on/off, no Remove, Done keeps the Shop\'s place); boys\' collection marked as gifts; gift box given to a brother; small "Eat it?"; Bag things explain themselves; Pad game returns to the Pad';
 });
 
 // (owner, 30 Oct 2026 AEDT: "where do I manage accessories for companions?") the companion's hats in the shop and the mirror
@@ -930,3 +945,306 @@ await check('companionhats', async () => {
   ok(locked && bought && off && on && !errors.length, JSON.stringify({ locked, bought, off, on, errors }));
   return 'the shop sells the next hat (45 coins), later hats wait locked; the mirror takes a hat off and puts another on';
 });
+
+// ---- (v1.08b friends) the four new friends: Welcome, old saves, changing friend, wearables on every friend ----
+await check('newfriends', async () => {
+  // (plan docs/plans/new-friends-characters.md, owner 3 Nov 2026 AEDT) a new player: name, "boy or girl?" (two big cards),
+  // the two friends of that set, a skin tone (5), then the editor (age, start screen, difficulty) with the name filled in.
+  // On a phone (both ways), a tablet and a computer every step fits on one screen with 44 px buttons and 16 px text.
+  const rows = [], bad = [];
+  for (const [dev, w, h, touch] of [['phone', 390, 844, true], ['phone-land', 844, 390, true], ['tablet', 1024, 768, true], ['computer', 1280, 800, false]]) {
+    const P = await open(b, { w: w as number, h: h as number, touch: touch as boolean, play: false, pre: () => { localStorage.setItem('sv2_profiles', '[]'); } });
+    await P.page.click('.screen.title .press', { force: true }); await P.page.waitForSelector('.screen.who');
+    await P.page.click('.who .make'); await P.page.waitForSelector('.modal.friendpick .fr-name');
+    const fit = () => P.page.evaluate(() => { const c = document.querySelector('.modal.friendpick .card'), r = c.getBoundingClientRect(), small = [], tiny = [];
+      c.querySelectorAll('button, input').forEach((e: HTMLElement) => { const q = e.getBoundingClientRect(); if (q.width && (q.width < 44 || q.height < 44)) small.push(e.className + ' ' + Math.round(q.width) + 'x' + Math.round(q.height)); });
+      c.querySelectorAll('h2, b, small, p, button, input').forEach((e: HTMLElement) => { if (e.textContent.trim() && parseFloat(getComputedStyle(e).fontSize) < 16) tiny.push(e.className || e.tagName); });
+      return { inside: r.top >= 0 && r.bottom <= innerHeight + 1 && r.left >= 0 && r.right <= innerWidth + 1, scroll: c.scrollHeight > c.clientHeight + 2 || document.querySelector('.modal.friendpick').scrollHeight > innerHeight + 2, small, tiny }; });
+    const steps = {};
+    await P.page.fill('.fr-name', 'An'); steps['name'] = await fit();
+    await P.page.click('.friendpick [data-go="next"]'); steps['gender'] = await fit();
+    await P.page.click('.friendpick [data-set="boy"]');
+    const boys = await P.page.$$eval('.friendpick [data-friend]', e => e.map((x: HTMLElement) => x.dataset.friend));
+    await P.page.click('.friendpick [data-go="back"]'); await P.page.click('.friendpick [data-set="girl"]');
+    const girls = await P.page.$$eval('.friendpick [data-friend]', e => e.map((x: HTMLElement) => x.dataset.friend));
+    const doneOff = await P.page.$eval('.friendpick [data-go="done"]', (e: HTMLButtonElement) => e.disabled);
+    await P.page.click('.friendpick [data-friend="lumi"]'); await P.page.click('.friendpick .fr-skin:nth-child(3)'); steps['friend'] = await fit();
+    const side = await P.page.evaluate(() => { const c = [...document.querySelectorAll('.friendpick .fr-card')].map(e => e.getBoundingClientRect()); return c.length === 2 && Math.abs(c[0].top - c[1].top) < 2; });
+    await P.page.click('.friendpick [data-go="done"]'); await P.page.waitForSelector('.modal.editor #nm');
+    const ed = await P.page.evaluate(() => ({ name: (document.querySelector('#nm') as HTMLInputElement).value, friendRow: [...document.querySelectorAll('#cFriend [data-friend]')].map((e: HTMLElement) => e.dataset.friend + (e.classList.contains('on') ? '*' : '')) }));
+    await P.page.evaluate(() => (document.querySelector('#eSave') as HTMLElement).click());
+    await P.page.waitForSelector('.who .go:not([disabled])'); await P.page.evaluate(() => { window.__sv._owlAuto = true; }); await P.page.click('.who .go');
+    await P.page.waitForFunction(() => window.__sv && window.__sv.heroes.length > 0);
+    const r = await P.page.evaluate(async () => { const S = await import('/js/state.js'), p = __sv.heroes[0].profile; return { friend: p.look.friend, set: p.look.set, skin: p.look.skin === S.SKIN[2], card: p.friendCard, newCard: !!document.querySelector('.modal.newfriends'), name: p.name }; });
+    const errs = P.errors; await P.ctx.close();
+    for (const [k, v] of Object.entries<any>(steps)) if (!v.inside || v.scroll || v.small.length || v.tiny.length) bad.push(`${dev} ${k}: ${JSON.stringify(v)}`);
+    if (boys.join() !== 'finn,sol' || girls.join() !== 'clara,lumi' || !doneOff || !side) bad.push(`${dev}: ${JSON.stringify({ boys, girls, doneOff, side })}`);
+    if (ed.name !== 'An' || ed.friendRow.join() !== 'clara,lumi*') bad.push(`${dev} editor: ${JSON.stringify(ed)}`);
+    if (r.friend !== 'lumi' || r.set !== 'girl' || !r.skin || r.card !== 'seen' || r.newCard || r.name !== 'An') bad.push(`${dev} saved: ${JSON.stringify(r)}`);
+    if (errs.length) bad.push(`${dev} errors: ${errs.join(' | ')}`);
+    rows.push(dev);
+  }
+  ok(!bad.length, bad.join('\n'));
+  return `${rows.join(', ')}: name, boy or girl (Finn and Sol, Clara and Lumi side by side), Lumi with the third skin tone, then the editor; every step on one screen`;
+});
+
+await check('friendmigrate', async () => {
+  // old saves move once: boys to Finn, girls to Clara, a save with no set guessed from its clothes; the skin tone and every
+  // old field stay; tops and bottoms bought become free outfits of the same colour; the card shows once and lets the child
+  // take the other friend; an online friend on an older version is drawn as the default friend of their set
+  const P = await open(b, { w: 1180, h: 820, play: false, pre: () => { if (!sessionStorage.getItem('fm')) sessionStorage.setItem('fm', '1'), localStorage.setItem('sv2_profiles', JSON.stringify([
+    { id: 'kg', name: 'Girl', photo: null, age: 'big', difficulty: 'easy', look: { style: 'shirt', color: '#3b6fe0', set: 'girl', hair: '#3b2618', hairStyle: 'long', skin: '#7a4e33', hat: 'bow', top: 'none' }, owned: { hats: ['none', 'bow'], clothes: ['bow'] }, stickers: ['s1'], created: 1 },
+    { id: 'kb', name: 'Boy', photo: null, age: 'little', difficulty: 'easy', look: { style: 'shirt', color: '#3b6fe0', set: 'boy', skin: '#e0aa80' }, created: 2 },
+    { id: 'kn', name: 'NoSet', photo: null, age: 'little', difficulty: 'easy', look: { style: 'dress', color: '#ff5fa2', skin: '#ffe3d1' }, created: 3 }])); } });
+  const r = await P.page.evaluate(async () => {
+    // (the friends' data loads as Who's playing opens, and moves every old save then)
+    await (await import('/js/avatar.js')).friendsReady();
+    const S = await import('/js/state.js'), F = await import('/js/content/friends.js'), C = await import('/js/content/shop.js');
+    const g = S.profiles.find(p => p.id === 'kg'), bo = S.profiles.find(p => p.id === 'kb'), n = S.profiles.find(p => p.id === 'kn');
+    const top = C.CLOTHES.find(it => it.slot === 'top' && it.for === 'g'), q = S.normalizeProfile({ id: 'kt', name: 'T', look: { set: 'girl', top: top.id }, owned: { clothes: [top.id] } });
+    return { g: [g.look.friend, g.look.skin, g.look.hair, g.look.hairStyle, g.look.hat, g.owned.hats.join(), g.stickers.join(), g.friendCard], bo: [bo.look.friend, bo.look.skin, bo.friendCard], n: [n.look.friend, n.look.set],
+      old: [q.look.top, q.owned.suits.join(), q.look.suit, q.newSuits, F.friendLook(q.look).color === top.color] };
+  });
+  await start(P.page, 'solo', 'valley'); // (the harness taps "Let's play" on the card: Finn stays)
+  const after = await P.page.evaluate(() => ({ friend: __sv.heroes[0].profile.look.friend, card: __sv.heroes[0].profile.friendCard }));
+  // the card again after a reload: not shown; a new child of the old save's set is not asked either
+  await P.page.reload(); await P.page.waitForSelector('.screen.title'); await P.page.click('.screen.title .press', { force: true }); await P.page.waitForSelector('.screen.who');
+  await P.page.locator('.pick[data-id]').nth(0).click(); await P.page.evaluate(() => { window.__sv._owlAuto = true; }); await P.page.click('.who .go');
+  await P.page.waitForFunction(() => window.__sv && window.__sv.heroes.length > 0); const again = await P.page.evaluate(() => !!document.querySelector('.modal.newfriends'));
+  // the card lets a child take the other friend
+  const pick = await P.page.evaluate(async () => { const U = await import('/js/ui/friends-ui.js'), S = await import('/js/state.js'), p = S.profiles.find(x => x.id === 'kb'); p.friendCard = 'due';
+    return new Promise(res => { U.newFriendsCard(p, () => res([p.look.friend, p.friendCard])); (document.querySelector('.newfriends [data-friend="sol"]') as HTMLElement).click(); (document.querySelector('.newfriends [data-go="play"]') as HTMLElement).click(); }); });
+  // an online friend on an older version (a hello with no friend) is drawn as the default friend of their set
+  const online = await P.page.evaluate(async () => { const F = await import('/js/content/friends.js'); return [F.friendOf({ style: 'dress', color: '#ff5fa2' }), F.friendOf({ set: 'boy' }), F.friendOf({ set: 'girl', friend: 'sol' })]; });
+  const errs = P.errors; await P.ctx.close();
+  const good = r.g.join('|') === 'clara|#7a4e33|#3b2618|long|bow|none,bow|s1|due' && r.bo.join('|') === 'finn|#e0aa80|due' && r.n.join('|') === 'clara|girl'
+    && r.old[0] !== 'none' && /^c:/.test(r.old[1]) && r.old[2] === r.old[1] && r.old[3] === 1 && r.old[4] && after.card === 'seen' && !again && pick.join() === 'sol,seen' && online.join() === 'clara,finn,clara' && !errs.length;
+  ok(good, JSON.stringify({ r, after, again, pick, online, errs }));
+  return 'girls to Clara, boys to Finn, no set guessed from a dress; old fields, hats and stickers kept; an old top became a free outfit; the card once; old online looks as the default friend';
+});
+
+await check('friendswap', async () => {
+  // the Backpack's "Character & Outfits": one tap changes friend (free, only the two of the child's set), the character is
+  // drawn again with that friend's hair and clothes, and changing set is not offered there (Grown-ups › Children › Edit only)
+  const P = await open(b, { w: 1180, h: 820 }); await clear(P.page);
+  const r = await P.page.evaluate(async () => {
+    const w = ms => new Promise(r => setTimeout(r, ms)), G = __sv, p = G.heroes[0].profile, U = await import('/js/ui/friends-row.js'), F = await import('/js/content/friends.js');
+    G.openPad(0, 'bag'); for (let k = 0; k < 20 && !document.querySelector('.pad [data-befriend]'); k++) await w(200);
+    const row = [...document.querySelectorAll('.pad [data-befriend]')].map((e: HTMLElement) => e.dataset.befriend), set = p.look.set, other = F.friendsOf(set).find(id => id !== F.friendOf(p.look));
+    const heading = [...document.querySelectorAll('.pad h3')].some(h => /Character & Outfits/.test(h.textContent));
+    const before = G.heroes[0].av.root; (document.querySelector(`.pad [data-befriend="${other}"]`) as HTMLElement).click(); await w(300);
+    // (the builder merges the parts into a few shapes coloured per corner, so the look it drew from is read back)
+    const hairOf = av => av.look && av.look.hair === F.FRIENDS[other].hair && av.look.hairStyle === F.FRIENDS[other].hairStyle;
+    const swapped = p.look.friend === other && G.heroes[0].av.root !== before && hairOf(G.heroes[0].av), on = !!document.querySelector(`.pad [data-befriend="${other}"].on`);
+    const locked = !U.setFriend(p, set === 'girl' ? 'finn' : 'clara') && p.look.friend === other, suits = [...document.querySelectorAll('.pad [data-suit]')].map((e: HTMLElement) => e.dataset.suit);
+    await w(1500); const saved = JSON.parse(localStorage.getItem('sv2_profiles')).find(x => x.id === p.id).look.friend === other;
+    return { row, set, heading, swapped, on, locked, suits, saved };
+  });
+  const errs = P.errors; await P.ctx.close();
+  const pair = r.set === 'girl' ? 'clara,lumi' : 'finn,sol';
+  ok(r.row.join() === pair && r.heading && r.swapped && r.on && r.locked && r.saved && r.suits.length >= 1 && !errs.length, JSON.stringify({ r, errs }));
+  return `the Bag shows ${pair}; one tap changed friend, drew the new hair and saved it; the other set cannot be chosen there`;
+});
+
+await check('wearfit', async () => {
+  // every hat, pair of glasses, neck, back and shoe the shop sells (and the passport and tester hats) is drawn on each of the four friends
+  // with no error, the hat sits on the head (above the eyes, not floating far above), and the back items sit behind
+  const r = await (async () => { const P = await open(b, { w: 900, h: 700, play: false });
+    const out = await P.page.evaluate(async () => {
+      const A = await import('/js/avatar.js'), C = await import('/js/content/shop.js'), F = await import('/js/content/friends.js'), D = await import('/js/data.js'), THREE = (await import('/js/gfx.js')).THREE;
+      const bad = [], n = { hat: 0, face: 0, neck: 0, back: 0, feet: 0 }, box = a => { a.root.updateMatrixWorld(true); return new THREE.Box3().setFromObject(a.head || a.root); };
+      const hats = [...C.CLOTHES.filter(it => it.slot === 'hat').map(it => it.id), ...(D.REWARD_HATS || [])];
+      for (const f of F.FRIEND_IDS) {
+        const base = { set: F.FRIENDS[f].set, friend: f, skin: '#f6c7a5' }, plain = A.buildAvatar(base), h0 = box(plain);
+        for (const slot of ['hat', 'face', 'neck', 'back', 'feet']) for (const id of (slot === 'hat' ? hats : C.CLOTHES.filter(it => it.slot === slot).map(it => it.id))) {
+          try { const a = A.buildAvatar({ ...base, [slot]: id }); n[slot]++;
+            if (slot === 'hat') { const hb = box(a); if (hb.max.y > h0.max.y + .9 || hb.max.y < h0.max.y - .05) bad.push(`${f} ${id}: hat top ${hb.max.y.toFixed(2)} vs head ${h0.max.y.toFixed(2)}`); }
+          } catch (e) { bad.push(`${f} ${slot} ${id}: ${e.message}`); }
+        }
+      }
+      return { bad, n };
+    });
+    const errs = P.errors; await P.ctx.close(); return { ...out, errs }; })();
+  ok(!r.bad.length && !r.errs.length && r.n.hat > 18, JSON.stringify(r).slice(0, 1500));
+  return `on Finn, Sol, Clara and Lumi: ${r.n.hat / 4} hats, ${r.n.face / 4} glasses and masks, ${r.n.neck / 4} neck things, ${r.n.back / 4} backs and ${r.n.feet / 4} shoes, all drawn and in place`;
+});
+await check('friendmodel', async () => {
+  // the friends' light 3D models (models/<id>.glb): each loads after the start, is small (meshopt, under 500 KB), has its
+  // eleven faces (v1.08e faces: half, lookL and lookR joined the eight moods), draws in a
+  // few parts, takes the child's skin tone, follows the code person's joints and moods, and the child plays with it; when
+  // a model cannot load, the code person in the friend's colours stays (no error). Triangles shown: about 8,200 for Finn,
+  // Sol and Clara (limit 9,000); Lumi's hair is about a thousand felt leaves that cannot be thinned further, so about
+  // 14,000 (limit 14,500; the owner chose that hair, docs/cores/tasks/v108/lumi.md).
+  // (v1.08e faces, part 3, owner 6 Nov 2026 AEDT: sculpted faces, "a sculpted head adds about 2-4k triangles", faces-brief.md)
+  // the face is one mesh of real shapes with 13 moods as shape keys (about 2,600 triangles): limits 12,000 and 17,500, and
+  // one more draw (the face's own colours, and its lids in the child's skin tone)
+  const fs2 = await import('fs'), sizes = ['finn', 'sol', 'clara', 'lumi'].map(id => fs2.statSync(new URL(`../../models/${id}.glb`, import.meta.url)).size);
+  const P = await open(b, { w: 1180, h: 820 }); await clear(P.page);
+  const r = await P.page.evaluate(async () => {
+    const A = await import('/js/avatar.js'), THREE = (await import('/js/gfx.js')).THREE, out: Record<string, any> = {};
+    for (const id of ['finn', 'sol', 'clara', 'lumi']) {
+      const ok = await A.loadFriendModels(id), av = A.buildAvatar({ set: id === 'clara' || id === 'lumi' ? 'girl' : 'boy', friend: id, skin: '#b47a55', hat: 'cap' });
+      const m = av.model, meshes = []; let skin = null, faces = 0, tris = 0;
+      m.obj.traverse((o: any) => { if (o.isMesh) { meshes.push(o); if (/^skin(-shade)?$/.test(o.material.name) && !o.userData.face3d) skin = '#' + o.material.color.getHexString(); if (/^face-/.test(o.material.name)) faces++; } });
+      // (v1.08e faces, part 3) a sculpted face is one mesh whose moods are its shape keys: its mood count (12 keys and the rest smile)
+      if (m.face3d) faces = Object.keys(m.face3d[0].morphTargetDictionary).length + 1;
+      // a turn of the code person's arm and knee shows on the model's bones; a mood shows the matching face
+      const bone = n => { let x = null; m.obj.traverse((o: any) => { if (o.isBone && o.name === n) x = o; }); return x; }, q0 = new THREE.Quaternion(), q1 = new THREE.Quaternion();
+      av.root.updateMatrixWorld(true); bone('armL').getWorldQuaternion(q0); av.armL.rotation.x = -1.2; av.life = av.life || ({} as typeof av.life); av.life.mood = 'happy'; av.root.updateMatrixWorld(true); bone('armL').getWorldQuaternion(q1);
+      const turned = +q0.angleTo(q1).toFixed(2), face = m.face3d ? 'face-' + m.mood : meshes.filter(o => /^face-/.test(o.material.name) && o.visible).map(o => o.material.name).join();
+      // (v1.08e faces, part 2) the thin outlines (one per part, the same shape drawn again) are counted on their own
+      meshes.filter(o => o.visible && !o.userData.outline && (o.material.name !== 'skin-grip')).forEach(o => { tris += o.geometry.index.count / 3; });
+      const hat = av.rig.getObjectByProperty('isMesh', true) && (() => { let n = 0; av.rig.traverse((o: any) => { if (o.isMesh && !o.isSkinnedMesh && o.parent && o.parent !== m.obj) n++; }); return n; })();
+      out[id] = { ok, skin, faces, turned, face, tris, draws: meshes.filter(o => o.visible && !o.userData.outline).length, lines: meshes.filter(o => o.visible && o.userData.outline).length, hat };
+    }
+    // the child in the valley plays with the model once it has arrived
+    const G = __sv; for (let k = 0; k < 40 && !G.heroes[0].av.model; k++) await new Promise(r => setTimeout(r, 250));
+    out.hero = !!G.heroes[0].av.model;
+    return out;
+  });
+  // no model (an old phone, no network): the code person stays, nothing breaks
+  const Q = await open(b, { w: 900, h: 700, route: async ctx => { await ctx.route('**/models/*.glb', r => r.abort()); } }); await clear(Q.page);
+  const f = await Q.page.evaluate(async () => { const A = await import('/js/avatar.js'), ok = await A.loadFriendModels('sol'), av = A.buildAvatar({ set: 'boy', friend: 'sol', skin: '#f6c7a5' }); await new Promise(r => setTimeout(r, 500)); return { ok, model: !!av.model, hero: !!__sv.heroes[0].av.model, look: av.look.hair }; });
+  const errs = [...P.errors, ...Q.errors.filter(e => !/glb|friend model|Failed to fetch|aborted/i.test(e))]; await P.ctx.close(); await Q.ctx.close();
+  const bad = [];
+  sizes.forEach((n, i) => { if (n > 500 * 1024) bad.push(`model ${i} is ${Math.round(n / 1024)} KB`); });
+  for (const id of ['finn', 'sol', 'clara', 'lumi']) { const x = r[id]; if (!x.ok || x.skin !== '#b47a55' || x.faces < 13 || x.turned < 1 || x.face !== 'face-happy' || x.tris > (id === 'lumi' ? 17500 : 12000) || x.draws > 7 || x.lines > 6 || !x.hat) bad.push(id + ' ' + JSON.stringify(x)); }
+  if (!r.hero) bad.push('the child in the valley has no model'); if (f.ok || f.model || f.hero || f.look !== '#e0762a') bad.push('no model: ' + JSON.stringify(f));
+  ok(!bad.length && !errs.length, JSON.stringify({ bad, errs, r }).slice(0, 2000));
+  return `${sizes.map(n => Math.round(n / 1024)).join(', ')} KB; ${['finn', 'sol', 'clara', 'lumi'].map(id => `${id} ${r[id].tris} triangles in ${r[id].draws} parts (+${r[id].lines} outlines)`).join(', ')}; skin tone, joints and moods follow; the cap is worn; without the files the code person stays`;
+});
+await check('friendoutfits', async () => {
+  // the shop's Outfits tab (a child with a friend): the friend's four outfits, the everyday one worn free, one tap shows a
+  // price, a second buys it with game coins and puts it on; the character is drawn in it; glasses are bought and worn
+  const P = await open(b, { w: 1180, h: 820 }); await clear(P.page);
+  const r = await P.page.evaluate(async () => {
+    const w = ms => new Promise(r => setTimeout(r, ms)), G = __sv, p = G.heroes[0].profile, S = await import('/js/state.js'), F = await import('/js/content/friends.js');
+    S.farm.coins = 500; G.shop.openShop(0); await w(400);
+    const card = document.querySelector('.modal.shopk .card'); (card.querySelector('[data-stab]') as HTMLElement).click(); await w(200);
+    // (v1.08 release fix 2) the Outfits tab draws when its code is in: waited for (200 ms was short on GitHub's machines)
+    for (let k = 0; k < 50 && !card.querySelector('[data-suit]'); k++) await w(100);
+    const ids = [...card.querySelectorAll('[data-suit]')].map((e: HTMLElement) => e.dataset.suit), f = F.friendOf(p.look), aodai = F.suitId(f, 'aodai');
+    (card.querySelector(`[data-suit="${aodai}"]`) as HTMLElement).click(); await w(150); const afterOne = { coins: S.farm.coins, worn: p.look.suit };
+    (card.querySelector(`[data-suit="${aodai}"]`) as HTMLElement).click(); await w(300);
+    const bought = { coins: S.farm.coins, worn: p.look.suit, owned: (p.owned.suits || []).includes(aodai), drawn: G.heroes[0].av.look.style };
+    (card.querySelector(`[data-suit="${F.suitId(f, 'everyday')}"]`) as HTMLElement).click(); await w(200); const back = p.look.suit;
+    (card.querySelector('[data-tab="face"]') as HTMLElement).click(); await w(200); const faces = [...card.querySelectorAll('.kitem')].map((e: HTMLElement) => e.dataset.id);
+    return { ids, f, afterOne, bought, back, faces };
+  });
+  const errs = P.errors; await P.ctx.close();
+  const good = r.ids.length === 4 && r.afterOne.coins === 500 && r.afterOne.worn !== `${r.f}-aodai` && r.bought.coins === 380 && r.bought.worn === `${r.f}-aodai` && r.bought.owned && r.bought.drawn === 'aodai' && r.back === `${r.f}-everyday` && r.faces.length >= 3 && !errs.length;
+  ok(good, JSON.stringify({ r, errs }));
+  return `${r.f}: ${r.ids.length} outfits; the áo dài bought on the second tap (120 coins) and drawn; back to everyday free; ${r.faces.length} glasses and masks in the shop`;
+});
+// ---- (v1.08b friends) end ----
+// ---- (v1.08d polish) the friends' quests and items ----
+await check('frienditems', async () => {
+  // each friend has a quest of three steps at places that stand in the valley (EN and VI); the model carries its item
+  // (compass, sun crystal, flower staff, star lantern) only once the quest is done; the quest is a side story the child can
+  // follow on the goal bar; shop shoes take the place of the model's boots
+  const P = await open(b, { w: 1180, h: 820 }); await clear(P.page);
+  const r = await P.page.evaluate(async () => {
+    const w = ms => new Promise(r => setTimeout(r, ms)), G = __sv, h = G.heroes[0], p = h.profile, Q = await import('/js/content/friendquests.js'), A = await import('/js/avatar.js');
+    for (let k = 0; k < 60 && !(G.friendQuests && h.av.model); k++) await w(250);
+    const item = av => { let v = null; av.model && av.model.obj.traverse(o => { if (o.isMesh && o.material.name === 'cloth-item') v = o.visible; }); return v; };
+    const boots = av => { let v = null; av.model && av.model.obj.traverse(o => { if (o.isMesh && o.material.name === 'cloth-shoes') v = o.visible; }); return v; };
+    const f = p.look.friend, out: any = { f, model: !!h.av.model };
+    // every quest: three steps, each at a place that stands in the valley, lines in English and Vietnamese
+    out.places = Object.values(Q.FRIEND_QUESTS).flatMap(q => q.steps.map(s => s.spot)).filter(id => !G.interactables.some(it => it.id === id));
+    out.lines = Q.friendQuestLines().filter(([en, vi]) => !(en && vi && en.length > 10 && vi.length > 10 && en !== vi)).length;
+    out.steps = Object.values(Q.FRIEND_QUESTS).map(q => q.steps.length);
+    out.before = { item: item(h.av), side: G.sideStories().map(sd => sd.id).includes('fq'), started: G.friendQuests.side.status(p).started,
+      spark: G.interactables.filter(it => /^fq_/.test(it.id) && it.visible(h)).map(it => it.id) };
+    p.follow = 'fq'; out.goal = G.currentQuest(p) && G.currentQuest(p).id;
+    const t = G.currentQuest(p).target(), s0 = G.friendQuests.sparkAt(p); out.target = !!t && t.x === s0.x && t.z === s0.z;
+    // play the three steps, tapping through what is said
+    const tap = setInterval(() => { const d = document.querySelector('.dialog:not(.out)') as HTMLElement, rw = document.querySelector('.reward:not(.out)') as HTMLElement; if (d) d.click(); else if (rw) rw.click(); }, 120);
+    for (let k = 0; k < 3; k++) { await G.friendQuests.doStep(h, f, k); out['after' + k] = G.interactables.filter(it => /^fq_/.test(it.id) && it.visible(h)).map(it => it.id); }
+    clearInterval(tap); await w(300);
+    for (let k = 0; k < 40 && item(h.av) !== true; k++) await w(150);
+    out.after = { item: item(h.av), fitems: p.look.fitems, step: p.friendQuest[f], done: G.friendQuests.side.status(p).done, follow: p.follow || null, goal: (G.currentQuest(p) || {}).id || '' };
+    // the other friends' items stay hidden; their quests have not been played
+    const set = f === 'clara' || f === 'lumi' ? 'girl' : 'boy', other = set === 'girl' ? (f === 'clara' ? 'lumi' : 'clara') : (f === 'finn' ? 'sol' : 'finn');
+    await A.loadFriendModels(other); const o = A.buildAvatar({ set, friend: other, skin: '#f6c7a5', fitems: p.look.fitems });
+    out.other = item(o);
+    // shop shoes take the place of the model's boots; the model shows its own boots otherwise
+    const sh = A.buildAvatar({ ...p.look, feet: 'sneakers_red' }); let codeShoes = 0; sh.rig.traverse((x: any) => { if (x.isMesh && !x.isSkinnedMesh && x.parent && x.parent !== sh.model.obj && (x.parent === sh.kneeL || x.parent === sh.kneeR || x.parent === sh.legL || x.parent === sh.legR)) codeShoes++; });
+    out.shoes = { boots: boots(sh), code: codeShoes, plain: boots(h.av) };
+    let draws = 0; h.av.model.obj.traverse(x => { if (x.isMesh && x.visible && !x.userData.outline && x.material.name !== 'skin-grip') draws++; }); out.draws = draws; // (v1.08e faces, part 2: outlines apart, friendmodel limits them)
+    return out;
+  });
+  const errs = P.errors; await P.ctx.close();
+  const bad = [];
+  if (!r.model) bad.push('no model'); if (r.places.length) bad.push('places not in the valley: ' + r.places); if (r.lines) bad.push(r.lines + ' lines not in EN and VI');
+  if (r.steps.some(n => n !== 3)) bad.push('steps ' + r.steps);
+  if (r.before.item !== false || !r.before.side || !r.before.started || r.before.spark.join() !== `fq_${r.f}_0`) bad.push('before ' + JSON.stringify(r.before));
+  if (r.goal !== `FQ_${r.f}_0` || !r.target) bad.push('goal ' + r.goal + ' ' + r.target);
+  if (r.after0.join() !== `fq_${r.f}_1` || r.after1.join() !== `fq_${r.f}_2` || r.after2.length) bad.push('steps ' + JSON.stringify([r.after0, r.after1, r.after2]));
+  if (r.after.item !== true || !String(r.after.fitems).split(' ').includes(r.f) || r.after.step !== 3 || !r.after.done || r.after.follow || /^FQ_/.test(r.after.goal)) bad.push('after ' + JSON.stringify(r.after));
+  if (r.other !== false) bad.push('another friend carries an item not earned');
+  if (r.shoes.boots !== false || r.shoes.code < 2 || r.shoes.plain !== true) bad.push('shoes ' + JSON.stringify(r.shoes));
+  if (r.draws > 8) bad.push('draws ' + r.draws); // (v1.08e part 3: the sculpted face draws in two parts, its colours and its lids in the skin tone)
+  ok(!bad.length && !errs.length, JSON.stringify({ bad, errs, r }).slice(0, 2000));
+  return `${r.f}: three steps at places in the valley, followed on the goal bar; the item shows only after the third; shop shoes replace the boots; ${r.draws} parts drawn with the item`;
+});
+await check('handson', async () => {
+  // the hands-on games: the Tết bánh chưng (leaves, filling in the real order, folding, the string) and the Maze Builder
+  // (stepping stones round the rocks). Each level plays differently and is won by tapping what the game asks for, like
+  // a child's finger; everything fits one screen with no scrolling on a phone (both ways), a tablet (both) and a computer
+  const P = await open(b, { w: 390, h: 844, touch: true }); await clear(P.page);
+  await P.page.emulateMedia({ reducedMotion: 'reduce' });
+  const IDS = ['fg_tet', 'mazebuild'], bad = [], played = {};
+  await P.page.evaluate(async () => { const C = (await import('/js/custom.js')).CUSTOM, d = new Date(); C.festivals = C.festivals || {};
+    C.festivals.tet = { ...(C.festivals.tet || {}), date: d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0') }; await (await import('/js/art.js')).moreArt(); });
+  const openGame = (id, d) => P.page.evaluate(([id, d]) => { document.querySelectorAll('.gl, .modal').forEach(g => g.remove()); __sv.paused = false; const p = __sv.heroes[0].profile; p.age = 'big'; p.gameDiff = { ...(p.gameDiff || {}), [id]: d }; __sv.playGame(0, id, 'hub'); }, [id, d]);
+  for (const id of IDS) for (const d of ['easy', 'medium', 'hard', 'talent']) {
+    await openGame(id, d);
+    if (!await P.page.waitForSelector(`.gl[data-game-id="${id}"]:not(.out)`, { timeout: 10000 }).then(() => true, () => false)) { bad.push(`${id} ${d}: did not open`); continue; }
+    let taps = 0, won = false, stuck = 0, lv = '';
+    for (let k = 0; k < 600 && !won; k++) {
+      const t = await P.page.evaluate(async () => {
+        const { playWatch } = await import('/js/games/frame.js'), gl = document.querySelector('.gl:not(.out)');
+        if (!gl) return { gone: true }; if (gl.querySelector('.gl-win')) return { won: true };
+        const ok = e => e && e.isConnected && !e.disabled && e.getBoundingClientRect().width > 0;
+        let e = null; const a = playWatch.ask;
+        if (a && a.els.some(ok)) e = a.els.find(x => ok(x) && a.check(x)); else if (playWatch.plan) e = playWatch.plan();
+        if (!ok(e)) return { wait: true };
+        const r = e.getBoundingClientRect(), x = r.left + r.width / 2, y = r.top + r.height / 2, at = document.elementFromPoint(x, y);
+        return { x, y, lv: (gl.querySelector('.gl-stage') as HTMLElement)?.dataset.lv || '', on: !!at && (at === e || e.contains(at)), what: String(e.className) + ' at ' + Math.round(x) + ',' + Math.round(y) + ' under ' + (at ? String(at.className) : 'nothing') };
+      });
+      if (t.won) { won = true; break; } if (t.gone) break;
+      if (t.wait) { if (++stuck > 150) break; await P.page.waitForTimeout(120); continue; }
+      stuck = 0; lv = t.lv || lv; if (!t.on) { bad.push(`${id} ${d}: something covers ${t.what}`); break; }
+      await P.page.touchscreen.tap(t.x, t.y); taps++; await P.page.waitForTimeout(90);
+    }
+    played[id + ':' + d] = { taps, won, lv };
+    if (!won) bad.push(`${id} ${d}: not won (${taps} taps)`);
+    await P.page.evaluate(() => { (document.querySelector('.gl:not(.out) .gl-x') as HTMLElement)?.click(); }); await P.page.waitForTimeout(500);
+  }
+  for (const id of IDS) { const l = ['easy', 'medium', 'hard', 'talent'].map(d => played[id + ':' + d]?.lv); if (new Set(l).size < 3) bad.push(`${id}: the levels play alike ${l}`); }
+  // one screen, no scrolling, every button on screen and 44 px or more, text 16 px or more; pictures for the report
+  fs.mkdirSync('out/handson', { recursive: true });
+  for (const [name, w, h] of [['phone', 390, 844], ['phone-wide', 844, 390], ['tablet', 820, 1180], ['tablet-wide', 1180, 820], ['computer', 1366, 800]] as [string, number, number][]) {
+    await P.page.setViewportSize({ width: w, height: h });
+    for (const id of IDS) {
+      await openGame(id, 'talent'); await P.page.waitForSelector(`.gl[data-game-id="${id}"]:not(.out)`, { timeout: 10000 }).catch(() => {});
+      for (let k = 0; k < 30; k++) { await P.page.waitForTimeout(150); if (await P.page.evaluate(() => document.querySelectorAll('.gl:not(.out) .ho-leaf, .gl:not(.out) .ho-cell').length > 0)) break; }
+      await P.page.waitForTimeout(300);
+      const f = await P.page.evaluate(() => {
+        const st = document.querySelector('.gl:not(.out) .gl-stage') as HTMLElement, out = [];
+        if (!st) return ['no stage'];
+        if (st.scrollHeight > st.clientHeight + 2 || document.scrollingElement.scrollHeight > innerHeight + 2) out.push(`scrolls ${st.scrollHeight}/${st.clientHeight}`);
+        st.querySelectorAll('button').forEach((e: HTMLElement) => { const r = e.getBoundingClientRect(); if (r.width < 43 || r.height < 43) out.push(`small ${e.className} ${Math.round(r.width)}x${Math.round(r.height)}`); if (r.bottom > innerHeight + 1 || r.right > innerWidth + 1 || r.top < 0 || r.left < 0) out.push(`off screen ${e.className}`); });
+        st.querySelectorAll('.ho-say, .ho-bowl span, .ho-left').forEach((e: HTMLElement) => { if (e.textContent.trim() && parseFloat(getComputedStyle(e).fontSize) < 16) out.push(`text ${e.className}`); });
+        return out;
+      });
+      if (f.length) bad.push(`${id} ${name}: ${[...new Set(f)].slice(0, 4).join('; ')}`);
+      await P.page.screenshot({ path: `out/handson/${id}-${name}.png` });
+      await P.page.evaluate(() => { (document.querySelector('.gl:not(.out) .gl-x') as HTMLElement)?.click(); }); await P.page.waitForTimeout(500);
+    }
+  }
+  const errs = P.errors; await P.ctx.close();
+  ok(!bad.length && !errs.length, JSON.stringify({ bad, errs, played }).slice(0, 2000));
+  return `${IDS.map(id => `${id}: ${['easy', 'medium', 'hard', 'talent'].map(d => played[id + ':' + d].lv).join(' / ')}`).join('; ')}; won at every level; one screen on phone, tablet and computer (out/handson)`;
+});
+// ---- (v1.08d polish) end ----

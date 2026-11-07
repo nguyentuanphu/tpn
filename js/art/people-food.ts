@@ -81,6 +81,8 @@ add('💾', `<rect x="6" y="6" width="36" height="36" rx="5" fill="#3b6fe0" ${W}
 add('🎥 📹', `<rect x="4" y="14" width="28" height="22" rx="5" fill="#7a6aff" ${W}/><path d="M32 22l12-6v18l-12-6z" fill="#7a6aff" ${W}/>` + g('a-spin', circ(14, 10, 5, '#c8b6ff'), '14px 10px') + g('a-spin', circ(25, 10, 5, '#c8b6ff'), '25px 10px'));
 add('⏸ ⏸️', `<rect x="12" y="8" width="9" height="32" rx="3" fill="#ffd23f" ${W}/><rect x="27" y="8" width="9" height="32" rx="3" fill="#ffd23f" ${W}/>`);
 add('⏺️ ⏺', g('a-pulse', circ(24, 24, 15, '#ff5a5a')));
+// (Studio Releases: the Switches view) a list of switches: a card with three rows, each a little switch and its line
+add('☰', `<rect x="5" y="6" width="38" height="36" rx="5" fill="#fff" ${W}/>${[14, 24, 34].map((y, i) => `<rect x="10" y="${y - 3.5}" width="11" height="7" rx="3.5" fill="${i === 1 ? '#c8cfd8' : '#5fd36a'}" ${W}/>${circ(i === 1 ? 13.5 : 17.5, y, 2.2, '#fff')}<path d="M25 ${y}h13" stroke="${O}" stroke-width="2.6" stroke-linecap="round"/>`).join('')}`);
 add('◀ ◀️', g('a-nudge', `<path d="M34 8L12 24l22 16z" fill="#5fd3ff" ${W}/>`));
 add('🎯', g('a-pulse', `${circ(24, 24, 18, '#fff')}${circ(24, 24, 13, '#ff5a5a')}${circ(24, 24, 8, '#fff')}${circ(24, 24, 3.5, '#ff5a5a')}`) + `<path d="M24 24L42 6M36 6h6v6" stroke="${O}" stroke-width="2.6" ${N}/>`);
 add('😂 🤣', g('a-shake', `${circ(24, 24, 18, '#ffd23f')}<path d="M14 20q4-4 8 0M26 20q4-4 8 0" ${W} ${N}/><path d="M14 28q10 10 20 0z" fill="#a8304a" ${W}/>` + g('a-drop', `<path d="M10 22c-3 4-3 7 0 8s3-4 0-8zM38 22c3 4 3 7 0 8s-3-4 0-8z" fill="#5fd3ff"/>`, '24px 22px')));

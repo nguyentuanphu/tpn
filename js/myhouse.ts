@@ -40,7 +40,20 @@ export const DECOR: Record<string, Decoration> = {
   pumpkin: { icon: '🎃', price: 0, en: 'Pumpkin lantern (Halloween)', vi: 'Đèn bí ngô (Halloween)', keepsake: true },
   lantern_ch1: { icon: '🏮', price: 0, en: 'The lantern of Lotus Village (story)', vi: 'Đèn lồng Làng Sen (truyện)', keepsake: true },
   lantern_ch2: { icon: '⭐', price: 0, en: 'The star lantern of Hà Nội (story)', vi: 'Đèn ông sao Hà Nội (truyện)', keepsake: true },
-  lantern_ch3: { icon: '🎭', price: 0, en: 'The Opera House night-light of Sydney (story)', vi: 'Đèn ngủ Nhà hát Opera Sydney (truyện)', keepsake: true }
+  lantern_ch3: { icon: '🎭', price: 0, en: 'The Opera House night-light of Sydney (story)', vi: 'Đèn ngủ Nhà hát Opera Sydney (truyện)', keepsake: true },
+  // (v1.08b story) chapters 4, 5 and the finale
+  lantern_ch4: { icon: '⭐', price: 0, en: 'The Christmas star lantern (story)', vi: 'Đèn ngôi sao Giáng sinh (truyện)', keepsake: true },
+  lantern_ch5: { icon: '🪨', price: 0, en: 'The Uluru sunset lantern (story)', vi: 'Đèn hoàng hôn Uluru (truyện)', keepsake: true },
+  lantern_finale: { icon: '🧧', price: 0, en: 'The Tết lantern of the whole valley (story)', vi: 'Đèn lồng Tết của cả thung lũng (truyện)', keepsake: true },
+  // (v1.08d s2vn) Season 2, Vietnam
+  lantern_ch6: { icon: 's2:mekong', price: 0, en: 'The floating market lantern (story)', vi: 'Đèn lồng chợ nổi (truyện)', keepsake: true },
+  lantern_ch7: { icon: 's2:halong', price: 0, en: 'The Hạ Long Bay lantern (story)', vi: 'Đèn lồng Vịnh Hạ Long (truyện)', keepsake: true },
+  lantern_ch8: { icon: 's2:sapa', price: 0, en: 'The Sapa spring lantern (story)', vi: 'Đèn lồng mùa xuân Sapa (truyện)', keepsake: true },
+  lantern_ch9: { icon: 's2:taynguyen', price: 0, en: 'The gong festival lantern (story)', vi: 'Đèn lồng lễ hội cồng chiêng (truyện)', keepsake: true },
+  // (v1.08d s2au) Season 2, Australia: chapters 10 to 12
+  lantern_ch10: { icon: 'au:reef', price: 0, en: 'The Great Barrier Reef lantern (story)', vi: 'Đèn lồng rạn san hô Great Barrier (truyện)', keepsake: true },
+  lantern_ch11: { icon: 'au:cradle', price: 0, en: 'The Cradle Mountain snow lantern (story)', vi: 'Đèn lồng tuyết núi Cradle (truyện)', keepsake: true },
+  lantern_ch12: { icon: 'au:quokka', price: 0, en: 'The Rottnest lighthouse lantern (story)', vi: 'Đèn lồng hải đăng đảo Rottnest (truyện)', keepsake: true }
 };
 // (owner, 13 Oct) each festival's keepsake, won by finding all five things of its festival hunt (js/festhunt.js)
 for (const F of FESTCAL) DECOR['fh_' + F.id] = { icon: F.icon, price: 0, en: F.en + ' (festival hunt)', vi: F.vi + ' (truy tìm lễ hội)', keepsake: true };

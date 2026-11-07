@@ -102,7 +102,9 @@ onInstallChange(updateInstallButtons);
 // A small chip for the title screen and the grown-ups page.
 export function installButton(cls = 'installchip'): HTMLButtonElement | null {
   if (!canOfferInstall() || cls.split(/\s+/).includes('installchip') && reminderHidden()) return null;
-  const b: HTMLButtonElement = el('button', cls, `<span aria-hidden="true">${pic('📲')}</span> ${T('Add to Home Screen', 'Thêm vào màn hình chính')}`);
+  // (v1.08b story) in Grown-ups the chip also says why, and that the children get a gift (never told to a child)
+  const label = cls.includes('installrow') ? T('Install on the home screen to play faster, play offline, and get a gift for your child', 'Cài lên màn hình chính để chơi nhanh hơn, chơi offline, và nhận quà cho bé') : T('Add to Home Screen', 'Thêm vào màn hình chính');
+  const b: HTMLButtonElement = el('button', cls, `<span aria-hidden="true">${pic('📲')}</span> ${label}`);
   b.onclick = e => { e.stopPropagation(); installApp(); };
   updateInstallButtons();
   installButtons.add(new WeakRef(b));

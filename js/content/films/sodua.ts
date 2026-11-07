@@ -4,10 +4,10 @@
 import { L, Pp, LOOK, THREE, P, mesh, PI, H, hop, speak, go, VILLAGER, ELDER, KID, village, animal, basket } from './kit.js';
 
 const MOM = ELDER('aodai', '#7a5a4a', '#5a4a40');
-const RICH = LOOK({ style: 'tunic', color: '#7a3a8a', hat: 'silkcap', hairStyle: 'short', skin: '#e0aa80' });
-const BOY = LOOK({ style: 'tunic', color: '#3a7ac8', hairStyle: 'short', skin: '#e0aa80' });
-const SCHOLAR = LOOK({ style: 'tunic', color: '#c62f2f', hat: 'silkcap', skin: '#e0aa80' });
-const YOUNGEST = LOOK({ style: 'aodai', color: '#ffd0e4', hairStyle: 'long', skin: '#f0c098' });
+const RICH = LOOK({ kit: 'vn-aothe', style: 'tunic', color: '#7a3a8a', hat: 'silkcap', hairStyle: 'short', skin: '#e0aa80' });
+const BOY = LOOK({ kit: 'vn-boy', style: 'tunic', color: '#3a7ac8', hairStyle: 'short', skin: '#e0aa80' });
+const SCHOLAR = LOOK({ kit: 'vn-aothe', style: 'tunic', color: '#c62f2f', hat: 'silkcap', skin: '#e0aa80' });
+const YOUNGEST = LOOK({ kit: 'vn-tuthan', style: 'aodai', color: '#ffd0e4', hairStyle: 'long', skin: '#f0c098' });
 // the coconut-shell boy: a round brown coconut with a little face
 const coconut = (s = 1) => { const g = new THREE.Group(); const m = mesh([P(new THREE.SphereGeometry(.4, 16, 12), '#8a5a32', [0, .4, 0]), ...[-1, 1].flatMap(k => [P(new THREE.SphereGeometry(.07, 8, 6), '#ffffff', [k * .13, .5, .35]), P(new THREE.SphereGeometry(.04, 6, 5), '#1a1a1a', [k * .13, .5, .41])]), P(new THREE.BoxGeometry(.12, .025, .02), '#4a2a1a', [0, .36, .39]), P(new THREE.SphereGeometry(.05, 6, 5), '#6a4a2a', [0, .8, 0])]); g.add(m); g.scale.setScalar(s); return g; };
 const halfShell = () => mesh([P(new THREE.SphereGeometry(.4, 14, 8, 0, PI * 2, 0, PI / 2), '#8a5a32', [0, 0, 0])]);
@@ -94,7 +94,7 @@ export default { pages: [
     S.skyTo(4.4, 1.4, '#7cc8f0', '#e8f6ff'); S.lightTo(4.4, 1.4, 1.05, .85);
     S.at(5.6, () => { boy.o.visible = false; sch.o.visible = true; table.visible = false; book.visible = false; lamp.visible = false; });
     S.mood(sch, 5.6, 'happy'); S.do(sch, 5.8, 'cheer', 2);
-    const fans = [VILLAGER('aodai', '#e86a8a'), VILLAGER('shirt', '#3b6fe0', 'nonla', 'short')].map((l, i) => S.person(l, i ? 2.6 : -2.6, 3.4, i ? -2.6 : 2.6));
+    const fans = [VILLAGER('aodai', '#e86a8a'), VILLAGER('tunic', '#3b6fe0', 'nonla', 'short')].map((l, i) => S.person(l, i ? 2.6 : -2.6, 3.4, i ? -2.6 : 2.6));
     fans.forEach(f => { S.do(f, 6, 'cheer', 1.8); S.mood(f, 6, 'happy'); });
     S.cam(5.4, 2, [0, 2.4, 8], [0, 1.2, 2.2]);
     S.at(8, () => { });
@@ -103,7 +103,7 @@ export default { pages: [
   S => {
     village(S, { house: [0, -6] });
     const co = coconut(.6); S.add(co, -1.4, 0, 2);
-    const boy = S.person(SCHOLAR, 1.4, 1.8, -.3), kids = [KID('dress', '#ff7eb8', 'buns'), KID('shirt', '#43c463', 'spiky')].map((l, i) => S.person(l, i ? .8 : -.4, 3.6, PI, .7));
+    const boy = S.person(SCHOLAR, 1.4, 1.8, -.3), kids = [KID('dress', '#ff7eb8', 'buns'), KID('tunic', '#43c463', 'spiky')].map((l, i) => S.person(l, i ? .8 : -.4, 3.6, PI, .7));
     S.shot([0, 2.2, 7.6], [0, .8, 2]);
     kids.forEach((k, i) => { S.do(k, .4, 'point', 1.6); S.mood(k, .4, 'o'); });
     S.cam(.3, 2.4, [-2, 1.4, 5], [-1.2, .5, 2]);

@@ -3,6 +3,7 @@ import { register, choiceButtons, untilRight } from './frame.js';
 import { T } from '../i18n.js';
 import { pic } from '../art.js';
 import { el, shuffle, wait } from '../util.js';
+import { fresh, mover } from './variety.js';
 
 // (r79 learning, I1) the frame's tier follows the child inside the game (api.tier); simple test frames fall back to the level
 const tier = api => api.tier ? api.tier() : api.little ? 0 : api.level >= 3 ? 3 : api.level >= 2 ? 2 : 1;
@@ -21,18 +22,20 @@ register({ id: 'patternpicnic', icon: '🧺', learn: true, name: () => T('Patter
     const t = tier(api), first = [0, 0, 1, 2][t];
     api.stage.dataset.lv = [rounds, ['AB', 'AAB', 'ABC', 'ABBC'][first], 1 + (t === 0 ? 1 : t === 3 ? (api.talent ? 4 : 3) : 2)].join(',');
   }
+  // (v1.08 variety) each round the pattern is made of a new set of pictures (the same rule, other things), and the right one moves
+  const swapFor = fresh(() => shuffle(SYMBOLS), p => p.join('')), place = mover();
   for (let round = 0; round < rounds; round++) {
     if (api.closed) return; api.stage.innerHTML = ''; api.dots(rounds, round);
     // (points 46-48) each level has its own run of patterns; Medium and Hard no longer open with the under-5 pattern
     // (r79 learning, I1) the level can move between rounds
     const level = round ? nextRound(api) : tier(api);
-    const rule = patterns[[[0, 0, 0], [0, 1, 0, 1], [1, 2, 1, 2], [2, 3, 2, 3]][level][round] ?? [0, 1, 1, 2][level]];
+    const swap = swapFor(), rule = patterns[[[0, 0, 0], [0, 1, 0, 1], [1, 2, 1, 2], [2, 3, 2, 3]][level][round] ?? [0, 1, 1, 2][level]].map(v => swap[SYMBOLS.indexOf(v)]);
     const shift = round % rule.length, model = Array.from({ length: rule.length * 2 }, (_, i) => rule[(i + shift) % rule.length]);
     const answer = rule[(model.length + shift) % rule.length];
     const row = el('div', 'seq', model.map(value => `<span class="seq-item">${pic(value)}</span>`).join('') + '<span class="seq-item q">?</span>');
     api.stage.appendChild(row); repeat(api, () => api.say(...INTRO.patternpicnic)); api.say(...INTRO.patternpicnic);
     // (levels) Talent: a fifth picture (the tree) joins the choices
-    const options = shuffle([answer, ...SYMBOLS.concat(api.talent ? ['🌳'] : []).filter(value => value !== answer).slice(0, level === 0 ? 1 : level === 3 ? (api.talent ? 4 : 3) : 2)]);
+    const options = place([answer, ...shuffle(SYMBOLS.filter(value => value !== answer)).concat(api.talent ? ['🌳'] : []).slice(0, level === 0 ? 1 : level === 3 ? (api.talent ? 4 : 3) : 2)], v => v === answer);
     const buttons = choiceButtons(api, options, value => pic(value)); buttons.forEach(b=>b.setAttribute('aria-label',T(...NAMES[(b._v as string)])));
     if (!await untilRight(api, buttons, b => b._v === answer)) return;
     row.lastElementChild.innerHTML = pic(answer); api.praise(); await wait(300);

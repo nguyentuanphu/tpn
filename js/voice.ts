@@ -1,12 +1,12 @@
-import { createVoiceIndex, voiceLanguages } from './voice-index.js';
+import { createVoiceIndex, voiceLanguages, voiceFormatFor } from './voice-index.js';
 // Talking voice in English and Vietnamese using the device's own natural voices.
 // Premium/enhanced/neural voices are picked first; grown-ups can choose a voice in settings.
-import { settings, saveSettings, profiles, autoPackOn } from './state.js';
+import { settings, saveSettings, profiles, autoPackOn, ASIDE_VOICES_ON } from './state.js';
 import { ac, unlockers } from './audio.js';
 import { swapNames, T } from './i18n.js';
 import { packHash, lineHash, partText } from './packhash.js';
 import { events, managementEvidence } from './core/events.js';
-import { viRuns, mixed } from './viwords.js';
+import { viRuns, mixed, enRuns, enMixed } from './viwords.js';
 import { mixedVoiceFragments } from './voice-fragments.js';
 import { CUSTOM } from './custom.js';
 
@@ -116,6 +116,10 @@ function deviceSpeak(text, lang, my, localVoice:SpeechSynthesisVoice|null=null) 
   // English line are said by the phone's Vietnamese voice when it has one
   chunks = chunks.map(c => [lang, c]);
   if (!localVoice && lang === 'en' && mixed(text) && voicesFor('vi').length) chunks = chunks.flatMap(([, c]) => viRuns(c)).filter(([, c]) => /[\p{L}\d]/u.test(c));
+  // (v1.08 aussie-voice, owner 3 Nov 2026 AEDT: "G'day" read by the Vietnamese voice came out as "gút dờ ay") the other way
+  // round: the English words of a Vietnamese line (js/viwords.ts enRuns) are said by the phone's English voice. The whole
+  // line is cut, not each sentence, so a quoted "No worries, mate!" stays in one piece.
+  else if (!localVoice && lang === 'vi' && enMixed(text) && voicesFor('en').length) chunks = enRuns(text).flatMap(([l, c]) => l === 'vi' ? (c.match(/[^.!?。…]+[.!?。…]*\s*/g) || [c]).map(p => [l, p]) : [[l, c]]).filter(([, c]) => /[\p{L}\d]/u.test(c));
   return new Promise<void>(res => {
     let left = chunks.length, ended = false, failed = false;
     const end = (outcome='success') => { if (!ended) { ended = true; observed({outcome:my!==seq?'cancelled':outcome}); res(); } };
@@ -414,6 +418,7 @@ let packTried = false;
 // Fetch after a click has applied the language choice, or after the valley is ready.
 // Keyboard speech requests its index directly; pointerdown must not fetch the previous language.
 let packReady = null;
+const FMT_SETTLED = typeof caches !== 'undefined' ? settleVoiceFormat() : Promise.resolve();
 const voiceIndex = createVoiceIndex(url => fetch(url), pack => { PACK = pack; voiceDiag.pack = 'ok'; autoSavePack(); }, async () => {
   try { const cached = await (await caches.open('sv-voices')).match('voices/manifest.json'); return cached ? await cached.json() : null; } catch (e) { return null; }
 });
@@ -432,6 +437,7 @@ addEventListener('click', () => loadPack(), { once: true, passive: true });
 for (const ev of ['LanguageChanged', 'SettingsChanged']) events.on(ev, () => { if (packReady) loadPack(); });
 { const t0 = Date.now(), wait = setInterval(() => { const g = window.__sv; if (packReady) return clearInterval(wait); if ((g && g.bootTimes) || Date.now() - t0 > 30000) { clearInterval(wait); setTimeout(() => { if (settings.voice || autoPackOn()) loadPack(); }, 3000); } }, 500); }
 const waitPack = async (langs = voiceLanguages(settings)) => {
+  await FMT_SETTLED;
   if (PACK && langs.every(l => voiceIndex.has(l))) return;
   let timer;
   try { await Promise.race([loadPack(langs), new Promise(r => { timer = setTimeout(r, 12000); })]); } finally { clearTimeout(timer); }
@@ -448,7 +454,8 @@ let hereArea = null;
 events.on('PlayerEnteredVillage', e => { const a = String(e && e.villageId || '').split(':')[1]; if (a) hereArea = a; });
 let hanoiService: ReturnType<typeof import('./hanoi-pack.js').createHanoiPack> | null = null;
 let hanoiLoading: Promise<NonNullable<typeof hanoiService>> | null = null;
-const hanoiSelected=()=>settings.voiceViVariant==='leminh';
+// (v1.08 voices-aside) Lê Minh is put aside: never selected while ASIDE_VOICES_ON (js/state.ts) is off
+const hanoiSelected=()=>ASIDE_VOICES_ON&&settings.voiceViVariant==='leminh';
 // (owner, 31 Oct 2026 AEDT: "voices online; when playing offline without voices, tell the user what to download and how")
 // a recorded line heard over the internet is kept (in a bundle, js/voicestore.ts) so it plays again without it; with no
 // internet and the line not kept, a grown-up is told once a visit what to download and where
@@ -459,7 +466,7 @@ function offlineNote() {
   const card = document.createElement('div'); card.className = 'voice-offline'; card.setAttribute('role', 'status');
   card.style.cssText = 'position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 184px);transform:translateX(-50%);z-index:70;width:min(360px,calc(100% - 32px));box-sizing:border-box;padding:12px 14px;border-radius:16px;background:rgba(255,255,255,.97);box-shadow:0 6px 24px rgba(60,30,90,.25);color:#3a2a20;font:600 14px/1.4 var(--font);text-align:center';
   const p = document.createElement('p'); p.style.margin = '0 0 8px';
-  p.textContent = T('No internet, so the voices can’t play now (lines already heard still do). To play offline with voices, a grown-up goes to Grown-ups → Sound and voices → “Keep all voices on this device”, on Wi-Fi.', 'Không có mạng nên giọng nói chưa phát được (những câu đã nghe vẫn phát). Để chơi offline có giọng nói, người lớn vào Người lớn → Âm thanh và giọng nói → “Lưu tất cả giọng đọc vào máy”, khi có Wi-Fi.');
+  p.textContent = T('No internet, so the voices can’t play now (lines already heard still do). To play offline with voices, a grown-up goes to Grown-ups → Sound and voices → Offline voices → Light or Full, on Wi-Fi.', 'Không có mạng nên giọng nói chưa phát được (những câu đã nghe vẫn phát). Để chơi offline có giọng nói, người lớn vào Người lớn → Âm thanh và giọng nói → Giọng đọc ngoại tuyến → Nhẹ hoặc Đầy đủ, khi có Wi-Fi.');
   const row = document.createElement('div'); row.style.cssText = 'display:flex;gap:8px;justify-content:center;flex-wrap:wrap';
   const btn = (text: string, bg: string, go: () => void) => { const b = document.createElement('button'); b.type = 'button'; b.textContent = text; b.style.cssText = `min-height:48px;min-width:120px;flex:1 1 130px;padding:6px 12px;border:0;border-radius:12px;font:700 14px/1.2 var(--font);color:#fff;background:${bg}`; b.onclick = () => { card.remove(); go(); }; return b; };
   row.append(btn(T('Grown-ups', 'Người lớn'), 'var(--purple, #8a5cf6)', () => { import('./ui.js').then(m => m.openGrownups()).catch(() => { }); }), btn(T('OK', 'Đã hiểu'), '#9a8aa8', () => { }));
@@ -467,7 +474,10 @@ function offlineNote() {
 }
 // fetch a recorded line of the voice pack (through the offline helper: from its bundle when kept)
 async function packFetch(url: string, init?: RequestInit) {
-  try { const r = await fetch(url, init); if (r.ok) keepHeard(url, r.clone()); else if (navigator.onLine === false) offlineNote(); return r; }
+  try { let r = await fetch(url, init);
+    // (v1.08b platform) an Opus copy not there (yet): the MP3 beside it
+    if (!r.ok && r.status === 404 && url.endsWith('.opus')) { url = url.slice(0, -5) + '.mp3'; r = await fetch(url, init); }
+    if (r.ok) keepHeard(url, r.clone()); else if (navigator.onLine === false) offlineNote(); return r; }
   catch (e) { if (!(e instanceof DOMException && e.name === 'AbortError')) offlineNote(); throw e; }
 }
 // (31 Oct 2026 AEDT) recordings waiting to be written into a bundle (js/voicestore.ts) are written when the page goes away
@@ -482,10 +492,11 @@ function autoSavePack() {
 addEventListener('online',resumeHanoi);
 events.on('SettingsChanged',resumeHanoi);
 try{navigator.connection?.addEventListener('change',resumeHanoi);}catch{}
-export async function chooseVietnamesePack(choice:string){settings.voiceViVariant=choice==='leminh'?'leminh':'standard';saveSettings();resumeHanoi();}
+export async function chooseVietnamesePack(choice:string){settings.voiceViVariant=ASIDE_VOICES_ON&&choice==='leminh'?'leminh':'standard';saveSettings();resumeHanoi();}
 export async function hanoiPackInfo(){const m=await(await hanoiPack()).load();return m?{bytes:m.bytes,lines:Object.keys(m.lines).length}:null;}
-export async function downloadHanoiPack(){settings.voiceViVariant='leminh';settings.packCell=true;saveSettings();return(await hanoiPack()).download();}
+export async function downloadHanoiPack(){if(!ASIDE_VOICES_ON)return 0;settings.voiceViVariant='leminh';settings.packCell=true;saveSettings();return(await hanoiPack()).download();}
 export async function previewHanoiVoice(){
+  if(!ASIDE_VOICES_ON)return false;
   ++previewRequest;previewSlot=null;hush();const my=seq,ticket={};activeSpeech.add(ticket);told();
   try{await waitPack(['vi']);return await playPack('vi','Xin chào! Chào mừng con đến Thung Lũng Lấp Lánh.',my,true);}
   finally{activeSpeech.delete(ticket);told();}
@@ -503,12 +514,13 @@ const packSlot = (lang, text) => {
   if (previewSlot && has.includes(previewSlot)) return previewSlot;
   const k = speakerKind();
   // Female recordings cover every character until a grown-up deliberately downloads male recordings.
-  if (k && k.gender === 'm' && settings.voiceMale === true && has.includes('m')) return 'm';
+  // (v1.08 voices-aside) the male English and Vietnamese recordings are put aside: only with ASIDE_VOICES_ON
+  if (ASIDE_VOICES_ON && k && k.gender === 'm' && settings.voiceMale === true && has.includes('m')) return 'm';
   return has.includes('f') ? 'f' : has[0];
 };
 export async function previewPackVoice(slot) {
   const request = ++previewRequest;
-  previewSlot = slot === 'm' ? 'm' : 'f';
+  previewSlot = ASIDE_VOICES_ON && slot === 'm' ? 'm' : 'f';
   // say() is fire-and-forget; clearing the slot after it selected the female default
   // before the asynchronous manifest lookup could choose the requested recording.
   try { await sayAsync('Hello! Welcome to Sparkle Valley.', 'Xin chào! Chào mừng con đến Thung Lũng Lấp Lánh.'); }
@@ -617,13 +629,23 @@ export async function resumePackDownload() {
   m.refreshPack();
 }
 export async function savePackOffline(progress?: (done: number, total: number) => void) {
-  settings.autoPack = true; saveSettings();
+  settings.autoPack = true; settings.offlineLevel = 'full'; saveSettings(); // (v1.08c voices: keeping every voice is the Full level)
   await resumePackDownload();
   const standard=(await voicePackMod()).savePackOffline(progress);
   if(hanoiSelected()){const[n,h]=await Promise.all([standard,downloadHanoiPack()]);return n+h;}
   return standard;
 }
-export const packUrl = (lang, text, slot) => `voices/${lang}/${slot}/${packKey(lang, text) || lineHash(lang, text)}.mp3`;
+// (v1.08b platform, brief part 1) a recording as Opus (about half the size) when the pack has Opus copies and this browser
+// plays Opus; MP3 otherwise. The choice is made once on a device and kept (sv2_voiceFmt): a device that already keeps
+// MP3 recordings stays on MP3, so nothing is downloaded twice; the offline levels in Grown-ups may move it later.
+export const voiceFormat = (): string => voiceFormatFor(PACK);
+// a device that kept MP3 recordings before Opus came keeps MP3 (decided as soon as the voice store is looked at)
+export async function settleVoiceFormat() {
+  try { if (localStorage.getItem('sv2_voiceFmt')) return; const c = await caches.open('sv-voices'), ix = await c.match(new URL('voices/__store/index.json', location.href).href), j = ix ? await ix.json() : null;
+    const kept = (j && j.files && Object.keys(j.files).some(k => /\.mp3$/.test(k))) || (await c.keys()).some(r => /\/voices\/.+\.mp3(\?|$)/.test(r.url));
+    if (kept && !localStorage.getItem('sv2_voiceFmt')) localStorage.setItem('sv2_voiceFmt', 'mp3'); } catch (e) { }
+}
+export const packUrl = (lang, text, slot) => `voices/${lang}/${slot}/${packKey(lang, text) || lineHash(lang, text)}.${voiceFormat()}`;
 async function playPack(lang, text, my, forceHanoi=false, skipHanoi=false) {
   if (my !== seq) return true;
   const slot = packSlot(lang, text); if (!slot) return false;

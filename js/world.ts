@@ -3,10 +3,11 @@
 // (v1.07, owner 2 Nov 2026 AEDT) the parts of the world live in js/world/; this file builds it (createWorld) and
 // re-exports every name it always exported, so no import elsewhere changes.
 import { pushOutOfSolids } from './solids.js';
-import { THREE, sprite, toonSmooth, merge, P, toonVC, toon, glow, blobShadow } from './gfx.js';
+import { THREE, sprite, toonSmooth, merge, P, toonVC, toon, glow, blobShadow, worldTag, geoKey } from './gfx.js';
 import { seeded, lerp, smooth, clamp, fbm, dist2 } from './util.js';
 import { T } from './i18n.js';
 import { houseVillage } from './houses.js';
+import { natureModel } from './nature-tag.js';
 import { settings } from './state.js';
 import { keptFloats, rememberFloats } from './worldmemo.js';
 import * as MAP from './content/map.js';
@@ -15,9 +16,12 @@ import { edgeDist, heightAt, riverDist, roadDist, setGround } from './world/grou
 import { LEAFIES, SHRINES, TOWERS, TOWER_H } from './world/sites.js';
 
 export { MAP_VERSION, STUDIO_ON_MAP, PARKED, SIZE, HALF, WATER, RIDE_SWIM, PLATEAU, VILLAGE, PADDIES, LAKE, BAMBOO, APOSTLES, ULURU, HOIAN, ISLAND, FESTGROUNDS, HOME, PLAYGROUND, TOWN, MARKET, AUSSIE, CITIES, levelAt, LOTS, YARD, FOOTPRINTS, RIVERS, PONDS, pondDist, RIVER, CHINA, INDIA, BRIDGES, BRIDGE, DRAGON, bridgeAlong, bridgeAcross, bridgeAt, bridgeDist, bridgeBox } from './world/places.js';
+// (#797) how far from the middle a child can walk: the valley's edge, 8 m inside the drawn ground (W.collide holds everyone
+// within it), so anything a child should reach (festival decorations, js/festivals.js) stands inside it
+export const EDGE = HALF - 8;
 export type { SvCity, SvBridge, SvRoad } from './world/places.js';
 export { ROADS, edgeDist, roadDist, riverDist, waterAt, waterDist, setRoadBeds, heightAt, surfaceAt, oldHeightAt } from './world/ground.js';
-export { regionAt, REGION_NAMES, SHRINES, TOWERS, TOWER_H, REVEAL_R, LEAFIES, PLOTS, MEMORY, plotBox } from './world/sites.js';
+export { regionAt, EXTRA_REGIONS, REGION_NAMES, SHRINES, TOWERS, TOWER_H, REVEAL_R, LEAFIES, PLOTS, MEMORY, plotBox } from './world/sites.js';
 export { paintWater, paintWaterRows, paintMap, paintMapRows } from './world/paint.js';
 export { levelUnderBuildings, widenFlatLand, roadBedsOn } from './world/reshape.js';
 
@@ -31,7 +35,7 @@ export function createWorld(scene, quality) {
   };
   // (TypeScript, r86) what the valley's object gets after it is made: here, and by js/solids.js, js/roads.js, js/main.ts…
   type SvRideAnimal = { id: string, kind: string, swims: boolean, mesh: THREE.Mesh, shadow: THREE.Object3D, firstPersonHide?: THREE.Object3D[], home: number[], tx: number, tz: number, rider: unknown, yaw: number, back?: boolean };
-  type SvWorldMore = { underpassSolid?: Uint8Array, fronts?: { x: number, z: number, rot: number, d: number, kind: string }[], terrain?: THREE.Mesh, groundCover?: THREE.InstancedMesh[], critters?: unknown, fireflies?: unknown, buffalo?: SvRideAnimal[], cows?: SvRideAnimal[], rideAnimals?: SvRideAnimal[],
+  type SvWorldMore = { underpassSolid?: Uint8Array, splash?: (x: number, z: number, s?: number) => void, fronts?: { x: number, z: number, rot: number, d: number, kind: string }[], terrain?: THREE.Mesh, groundCover?: THREE.InstancedMesh[], critters?: unknown, fireflies?: unknown, buffalo?: SvRideAnimal[], cows?: SvRideAnimal[], rideAnimals?: SvRideAnimal[],
     pots?: { x: number, z: number, [k: string]: unknown }[], statue?: { x: number, z: number, [k: string]: unknown },
     groundAt?: (x: number, z: number, y?: number) => number, platformAt?: (x: number, z: number, y?: number) => unknown, collide?: (pos: { x: number, y?: number, z: number }, r?: number) => unknown,
     update?: (dt: number, t: number) => void, updateSky?: (dt: number, camPos: THREE.Vector3, focus?: THREE.Vector3) => void, isNight?: () => boolean,
@@ -114,7 +118,7 @@ export function createWorld(scene, quality) {
   const tg = new THREE.PlaneGeometry(SIZE, SIZE, seg, seg); tg.rotateX(-Math.PI / 2);
   const pa = tg.attributes.position, cols = new Float32Array(pa.count * 3), c = new THREE.Color();
   const C = { sand: new THREE.Color('#ecd6a4'), grassA: new THREE.Color('#7fbf8c'), grassB: new THREE.Color('#62a878'), dry: new THREE.Color('#e3cf9c'),
-    rock: new THREE.Color('#d9cfba'), snow: new THREE.Color('#f6f8fb'), dirt: new THREE.Color('#e6d2a2'), paddy: new THREE.Color('#a7d67c'), bamboo: new THREE.Color('#6eae78'), deep: new THREE.Color('#cdb88e'), outback: new THREE.Color('#d98f58') };
+    rock: new THREE.Color('#d9cfba'), snow: new THREE.Color('#f6f8fb'), dirt: new THREE.Color('#e6d2a2'), paddy: new THREE.Color('#a7d67c'), bamboo: new THREE.Color('#6eae78'), deep: new THREE.Color('#cdb88e'), wet: new THREE.Color('#d9c08a'), pebble: new THREE.Color('#a8a296'), outback: new THREE.Color('#d98f58') };
   // (round T2) the slope from the next grid points east and south (already worked out), scaled to 1.5 m as before:
   // two more heightAt calls per point made the valley a quarter of a second slower to build
   const row = seg + 1, step = SIZE / seg, HS = new Float32Array(pa.count);
@@ -144,7 +148,7 @@ export function createWorld(scene, quality) {
     if (sl > 2.2) c.lerp(C.rock, clamp((sl - 2.2) / 1.5, 0, 1));
     if (h > 34) c.lerp(C.snow, clamp((h - 34) / 6, 0, 1));
     if (h < 1.6) c.copy(C.sand);
-    if (h < -1.5) c.copy(C.deep);
+    if (h < WATER - .12) { const pb = fbm(x * .9, z * .9, 1); c.copy(C.sand).lerp(pb > .15 ? C.pebble : C.wet, pb > .15 ? clamp((pb - .15) * 4, 0, .8) : .35); }   // (v1.08e water) the shallow bed: wet sand with pebbles, seen through the water
     cols[i * 3] = c.r; cols[i * 3 + 1] = c.g; cols[i * 3 + 2] = c.b;
   }
   if (!keptCols) rememberFloats('ground-colours', cols);
@@ -166,7 +170,9 @@ export function createWorld(scene, quality) {
   // colour, deeper water darker, and a white foam line that moves along every shore; until it is ready (the first start
   // paints it after the valley is built) the water is the plain blue of before. Still one plane, one draw.
   const WU = { uWaterMap: { value: new THREE.Texture() }, uReady: { value: 0 }, uTime: { value: 0 }, uSize: { value: SIZE } };
-  const waterMat = new THREE.MeshStandardMaterial({ color: '#2f8fc8', map: wtex, transparent: true, opacity: .8, roughness: .08, metalness: .25 });
+  // (v1.08e water, owner 6 Nov 2026 AEDT: "the bed shows through clear, light water") lighter and clearer than before (was
+  // #2f8fc8 at 0.8): the sandy, pebbly bed shows through; each water keeps its own tint (js/world/paint.ts)
+  const waterMat = new THREE.MeshStandardMaterial({ color: '#4fb4e2', map: wtex, transparent: true, opacity: .56, roughness: .08, metalness: .15 });
   waterMat.onBeforeCompile = sh => {
     Object.assign(sh.uniforms, WU);
     sh.vertexShader = 'varying vec2 vWXZ;\n' + sh.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\n  vWXZ = position.xz;');
@@ -245,6 +251,7 @@ export function createWorld(scene, quality) {
       list.forEach((s, i) => { o3.position.set(s[0], s[1], s[2]); o3.rotation.set(0, s[3], 0); o3.scale.setScalar(s[4]); o3.updateMatrix(); im.setMatrixAt(i, o3.matrix); tint.setHSL(0, 0, .88 + rnd() * .12); im.setColorAt(i, tint); });
       im.computeBoundingSphere(); // so the camera can tell when a whole tile is out of view
       scene.add(im); im.userData.kind = k; im.userData.list = list; W.plants.push(im); // tappable (js/fun.js)
+      natureModel(im, k === 'bush' || k === 'rock' ? k : 'tree-' + k); // (v1.08e nature) its Blender model near the child (js/world-nature.ts)
     }
   }
   appleTrees.forEach((t, i) => {
@@ -269,7 +276,7 @@ export function createWorld(scene, quality) {
     if (rnd() < .16 && fi < fIm.count) { fIm.setMatrixAt(fi, o3.matrix); fIm.setColorAt(fi++, tint.set(FC[Math.floor(rnd() * FC.length)])); }
     else if (gi < nGrass) { gIm.setMatrixAt(gi, o3.matrix); gIm.setColorAt(gi++, tint.setHSL(.26 + rnd() * .06, .55, .3 + rnd() * .1)); }
   }
-  gIm.count = gi; fIm.count = fi; scene.add(gIm, fIm); W.groundCover = [gIm, fIm]; // (the roads check looks at them)
+  gIm.count = gi; fIm.count = fi; scene.add(gIm, fIm); natureModel(fIm, 'flower-meadow'); natureModel(gIm, 'grass'); W.groundCover = [gIm, fIm]; // (the roads check looks at them)
 
   // clouds: big soft painted cumulus with warm afternoon light on their edges
   const cloudTex = k => {
@@ -342,7 +349,7 @@ export function createWorld(scene, quality) {
       ...[-1.5, 1.5].flatMap(px => [P(new THREE.CylinderGeometry(.08, .08, 3, 5), '#7a5236', [px, 1.5, -.7])]),
       P(new THREE.ConeGeometry(2.6, 1.1, 8), col, [0, 3.2, 0]),
       ...([[-1, '#e8433a'], [-.4, '#ffd23f'], [.3, '#ff9a2e'], [.9, '#4cbf5c']] satisfies [number, string][]).map(([px, cc]) => P(new THREE.SphereGeometry(.24, 8, 6), cc, [px, 1.15, .1]))
-    ]), toonVC()); m.position.set(x, y, z); m.rotation.y = rot; scene.add(m);
+    ]), toonVC()); m.position.set(x, y, z); m.rotation.y = rot; scene.add(m); worldTag(m, 'st-' + geoKey(m.geometry));   // (v1.08e places)
     W.colliders.push({ x, z, r: 1.9 });
   };
   stall(V.x + 2, V.z - 10, 0, '#e8434a'); stall(V.x - 4, V.z - 11, .2, '#3d7fd6'); stall(V.x + 8, V.z - 9, -.3, '#ffb52e');
@@ -459,7 +466,8 @@ export function createWorld(scene, quality) {
     };
     if (STYLES[B.style]) parts.length = 0, parts.push(...STYLES[B.style]());
     else if (B.style !== 'harbour') parts.length = 0, parts.push(...plain());
-    const br = new THREE.Mesh(merge(parts), toonVC()); br.castShadow = true; br.receiveShadow = true; br.position.set(...(B.axis === 'z' ? [B.c, y, (B.a0 + B.a1) / 2] : [(B.a0 + B.a1) / 2, y, B.c]) satisfies [number, number, number]); if (B.axis === 'z') br.rotation.y = -Math.PI / 2; scene.add(br);
+    // (v1.08e places) worldTag: the Blender bridge takes over near the child
+    const br = worldTag(new THREE.Mesh(merge(parts), toonVC()), 'br-' + B.id); br.castShadow = true; br.receiveShadow = true; br.position.set(...(B.axis === 'z' ? [B.c, y, (B.a0 + B.a1) / 2] : [(B.a0 + B.a1) / 2, y, B.c]) satisfies [number, number, number]); if (B.axis === 'z') br.rotation.y = -Math.PI / 2; scene.add(br);
     // railings keep little explorers on the bridge
     W.boxes.push({ ...bridgeBox(B, B.a0, B.a1, hw - .1, hw + .3), bottom: y }, { ...bridgeBox(B, B.a0, B.a1, -hw - .3, -hw + .1), bottom: y });
     // (Round U, owner: no step where a road meets a bridge) the deck is walked on over the bridge itself; for 1.2 m past each
@@ -581,8 +589,11 @@ export function createWorld(scene, quality) {
   // ducks on the lake and chickens in the village (just for company)
   const critters = [];
   for (let i = 0; i < 6; i++) { const s = sprite('🦆', 1.4); critters.push({ s, cx: LAKE.x + (Math.random() - .5) * 30, cz: LAKE.z + (Math.random() - .5) * 30, r: 3 + Math.random() * 4, a: Math.random() * 6, sp: .3 + Math.random() * .3, water: true }); }
-  for (let i = 0; i < 5; i++) { const s = sprite(i % 2 ? '🐓' : '🐔', 1.1); critters.push({ s, cx: V.x - 8 + Math.random() * 20, cz: V.z - 20 + Math.random() * 8, r: 2 + Math.random() * 3, a: Math.random() * 6, sp: .4 }); }
-  for (let i = 0; i < 14; i++) { const s = sprite('🦋', .7); critters.push({ s, cx: PLATEAU.x + (Math.random() - .5) * 160, cz: PLATEAU.z + (Math.random() - .5) * 160, r: 3, a: Math.random() * 6, sp: .8, fly: true }); }
+  // (v1.08g) the hens' and butterflies' little rounds stay off the roads and streets (check roads: since they are drawn as
+  // models, js/flocks.ts, they count as small things on the ground): a spot is tried again until its whole round is clear
+  const offRoad = (spot: () => [number, number], r: number) => { let x = 0, z = 0; for (let k = 0; k < 60; k++) { [x, z] = spot(); x = clamp(x, -HALF + 30, HALF - 30); z = clamp(z, -HALF + 30, HALF - 30); if (edgeDist(x, z) > r + 1) break; } return { cx: x, cz: z }; };
+  for (let i = 0; i < 5; i++) { const s = sprite(i % 2 ? '🐓' : '🐔', 1.1), r = 2 + Math.random() * 3; critters.push({ s, ...offRoad(() => [V.x - 8 + Math.random() * 20, V.z - 20 + Math.random() * 8], r), r, a: Math.random() * 6, sp: .4 }); }
+  for (let i = 0; i < 14; i++) { const s = sprite('🦋', .7); critters.push({ s, ...offRoad(() => [PLATEAU.x + (Math.random() - .5) * 160, PLATEAU.z + (Math.random() - .5) * 160], 3), r: 3, a: Math.random() * 6, sp: .8, fly: true }); }
   const fireflies = [];
   for (let i = 0; i < 40; i++) { const s = new THREE.Sprite(new THREE.SpriteMaterial({ color: '#fff7a0', transparent: true, opacity: 0, depthWrite: false, fog: false })); s.scale.setScalar(.25); const x = BAMBOO.x + (Math.random() - .5) * 80, z = BAMBOO.z + (Math.random() - .5) * 80; s.position.set(x, heightAt(x, z) + 1.5, z); scene.add(s); fireflies.push({ s, ox: x, oz: z, a: Math.random() * 6 }); }
   for (let i = 0; i < 30; i++) { const s = new THREE.Sprite(new THREE.SpriteMaterial({ color: '#fff7a0', transparent: true, opacity: 0, depthWrite: false, fog: false })); s.scale.setScalar(.25); const x = V.x + (Math.random() - .5) * 60, z = V.z + (Math.random() - .5) * 60; s.position.set(x, heightAt(x, z) + 1.5, z); scene.add(s); fireflies.push({ s, ox: x, oz: z, a: Math.random() * 6 }); }
@@ -648,7 +659,7 @@ export function createWorld(scene, quality) {
       if (k === 0) pos.x = b.x0 - r; else if (k === 1) pos.x = b.x1 + r; else if (k === 2) pos.z = b.z0 - r; else pos.z = b.z1 + r;
     }
     pushOutOfSolids(W, pos, r); // the solid map: walls, fences, rocks, kiosks… (js/solids.js)
-    pos.x = clamp(pos.x, -HALF + 8, HALF - 8); pos.z = clamp(pos.z, -HALF + 8, HALF - 8);
+    pos.x = clamp(pos.x, -EDGE, EDGE); pos.z = clamp(pos.z, -EDGE, EDGE);
   };
   W.update = (dt, t) => W.updaters.forEach(f => f(dt, t));
   return W;

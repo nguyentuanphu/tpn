@@ -31,7 +31,9 @@ test('map: every reference resolves (WORLD-009)', () => {
   for (const id of Object.keys(M.LEGACY.C)) assert.ok(placeIds.has(id), `old anchor for an unknown place ${id}`);
   // (round T3) every plot is in a Memory Village of the map, and every boat with piers has two
   for (const p of M.PLOTS) assert.ok(M.PLACES.some(q => q.id === p.village && q.kind === 'plots'), `plot ${p.id} in an unknown village ${p.village}`);
-  for (const b of M.BOATS) if (b.piers) assert.equal(b.piers.length, 2, `boat ${b.id}: two piers`);
+  // (v1.08d s2au: the Southern Coast Boat stops at five piers, js/ferry.ts multi-pier boats; the boats check rides each
+  // route and checks every pier joins a path) a boat with piers has two or more
+  for (const b of M.BOATS) if (b.piers) assert.ok(b.piers.length >= 2, `boat ${b.id}: at least two piers`);
 });
 
 test('map: every place, road, bridge, landmark and spot is inside the valley', () => {

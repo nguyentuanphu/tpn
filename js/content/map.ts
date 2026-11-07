@@ -32,7 +32,12 @@ export const ROAD_WIDTH = { asphalt: 6.4, dirt: 3.4, footpath: 1.6 };
 
 // (Concept D map: drawing units × 8/7 = metres, the drawing's middle (210, 210) is (0, 0); north up)
 export const WORLD = {
-  size: 480, north: '-z', water: 0, riverDepth: 1.25,
+  size: 480, north: '-z', water: 0, riverDepth: 1.25,   // (riverDepth, the lake's 7 m, the ponds' 2.4 m and the sea's 5 m now shape the hollows only: see `wade`)
+  // (v1.08e water, owner 6 Nov 2026 AEDT: "all the rivers are too deep; make them shallow, cute and friendlier", pop-up:
+  // knee to waist deep, 0.4-0.8 m, children wade and splash, nobody sinks or swims) every river, the lake, every pond and the
+  // sea keep their hollow's shape, so every shore stays where it was, but under the water the depth d of that shape becomes
+  // max * tanh(d / soft): never deeper than 0.8 m, gentler than before at every bank (a river's middle, 1.25 m, is 0.6 m)
+  wade: { max: .8, min: .4, soft: 1.3 },
   edge: [222, 252],                                // the wall of hills on the east, west and north rises between these distances from the middle
   coast: { z: 194, sea: -5 },                      // the southern coast: the sea from about z, with a sandy beach before it
   mountains: { z0: -150, z1: -238, pines: -150, region: -172 }, // the snowy belt in the north: starts rising at z0, full at z1; pines north of `pines`; "Snowcap Peaks" north of `region`
@@ -91,7 +96,20 @@ export const PLACES = [
   { id: 'playground', kind: 'site', place: 'town', off: [-4, 9], r: 13, h: 4.6 },   // the park on Two Homes Street, where kids from Australia and Vietnam play
   // (round R story) bà Huệ and ông Nghi's yard (js/yard.js): its own levelled plot behind the north row of Two Homes
   // Street, east of the houses, facing the street (+z)
-  { id: 'yard', kind: 'plot', place: 'town', off: [28, -30], w: 15.5, d: 12, rot: 0, h: 4.6 }
+  { id: 'yard', kind: 'plot', place: 'town', off: [28, -30], w: 15.5, d: 12, rot: 0, h: 4.6 },
+  // (v1.08d s2au) Season 2, Australia: new places on the southern coast of the west bank (nothing else moved): the
+  // Great Barrier Reef's beach east of the Twelve Apostles, Tasmania an island in the sea south of them, Perth on the
+  // beach in the far south-west and Rottnest Island off it. The islands rise out of the sea (ISLES below); js/s2au.ts
+  { id: 'gbr', kind: 'site', cc: 'au', at: [-58, 177], r: 7 },
+  { id: 'tasmania', kind: 'site', cc: 'au', at: [-132, 222], r: 10 },
+  { id: 'perth', kind: 'site', cc: 'au', at: [-204, 177], r: 9 },
+  { id: 'rottnest', kind: 'site', cc: 'au', at: [-214, 222], r: 6 }
+];
+// (v1.08d s2au) islands in the southern sea (js/world/ground.ts heightAt): an ellipse rx by rz round `at`, level at h,
+// with a gentle shore; `peak`: a mountain on it [x, z, height, radius] (Cradle Mountain)
+export const ISLES: { id: string; at: [number, number]; rx: number; rz: number; h: number; peak?: [number, number, number, number] }[] = [
+  { id: 'tasmania', at: [-132, 222], rx: 30, rz: 13, h: 2.6, peak: [-148, 226, 9, 9] },
+  { id: 'rottnest', at: [-214, 222], rx: 12, rz: 8, h: 2.2 }
 ];
 
 // Water: one sea-level plane, and channels carved below it. The main river runs from the northern mountains to the sea,
@@ -119,8 +137,9 @@ export const WATERS = [
   { id: 'yarra', kind: 'river', w: .6, pts: [[-156, 84], [-146, 90], [-118, 90], [-96, 98], [-70, 118], [-36, 130], [12, 136]] },
   { id: 'murray', kind: 'river', w: .7, pts: [[-238, 150], [-190, 154], [-132, 154], [-80, 156], [-30, 162], [14, 168]] },
   // small round lakes: Hồ Gươm (Hoàn Kiếm Lake) by Hà Nội with the Turtle Tower in it; a billabong in the outback
-  { id: 'hoguom', kind: 'pond', place: 'hanoi', off: [-29, 3], r: 10.5, islet: 2.6, depth: .45 },   // (the Turtle Tower stands on its little island; r89, owner: bigger and shallow enough to wade in; owner, 30 Oct 2026 AEDT: "too deep, make it shallower": knee deep)
-  { id: 'billabong', kind: 'pond', at: [-204, 22], r: 8 }
+  { id: 'hoguom', kind: 'pond', place: 'hanoi', off: [-29, 3], r: 10.5, islet: 2.6, depth: .85 },   // (v1.08e water: .85 is the hollow's shape, still 0.45 m of water, js/world/ground.ts)   // (the Turtle Tower stands on its little island; r89, owner: bigger and shallow enough to wade in; owner, 30 Oct 2026 AEDT: "too deep, make it shallower": knee deep)
+  { id: 'billabong', kind: 'pond', at: [-204, 22], r: 8 },
+  { id: 'swan', kind: 'pond', at: [-222, 168], r: 6 }   // (v1.08d s2au) the Swan River's black swans by Perth
 ];
 
 // Bridges run along the x or the z axis, never diagonally: from a0 to a1 along it, centred on c across it; h is the deck.
@@ -186,6 +205,15 @@ export const ROADS: MapRoad[] = [
   { id: 'hoian_walk', kind: 'footpath', pts: [[153, 96], [170, 96], [170, 56]] },                   // (round T2) into Hội An and north over Chùa Cầu to the canal's far bank
   // (round T2) footpaths down to the piers: the raft's stops by the bridges and the harbour ferry on the island
   { id: 'quay_north', kind: 'footpath', pts: [[22, -172], [22, -152], [12, -152]] },
+  // (v1.08e vehicles, Release round 2) the Southern Coast Boat's piers: Melbourne's up the bank to the road; the Reef's,
+  // Perth's and the islands' (no road there) into their own place
+  // (v1.08) between Flinders Street Station (-123.4, 130, 3.8 m: validate ROAD-004) and saved home 36's lot, slanting
+  // along the lot's edge (2.5 m clear of it, check worldplacement), then round Uncle Ray's dim sim kiosk, 1.5 m clear (check stalls)
+  { id: 'quay_melbourne', kind: 'footpath', pts: [[-122, 145], [-122, 137.5], [-117.3, 128.3], [-117.3, 125], [-123, 123.6], [-129.5, 123.6], [-132, 117]] },
+  { id: 'quay_gbr', kind: 'footpath', pts: [[-58, 184], [-58, 179]] },
+  { id: 'quay_perth', kind: 'footpath', pts: [[-204, 186], [-204, 180]] },
+  { id: 'quay_tasmania', kind: 'footpath', pts: [[-120, 211], [-124, 215], [-127, 218]] },
+  { id: 'quay_rottnest', kind: 'footpath', pts: [[-210, 216], [-212, 219]] },
   { id: 'quay_ring_n', kind: 'footpath', pts: [[24, -130], [24, -114], [16, -114]] },
   { id: 'quay_haique', kind: 'footpath', pts: [[50, -28], [50, -6], [60, -6]] },
   { id: 'quay_ring_s', kind: 'footpath', pts: [[32, 104], [32, 124], [22, 124]] },
@@ -211,7 +239,9 @@ export const RELIEF = [{ id: 'gdr', pts: [[-166, -96], [-166, 120]], h: 14, w: 1
   { id: 'truongson', pts: [[123, -30], [122, 30]], h: 14, w: 10, pass: { at: [122, 7], h: 4, w: 14 } }];
 
 // Spots kept free of trees ([x, z, r]): round Uluru.
-export const CLEARINGS: { id: string; place?: string; off?: number[]; at?: number[]; r: number }[] = [{ id: 'uluru', place: 'uluru', off: [0, -2], r: 34 }];
+export const CLEARINGS: { id: string; place?: string; off?: number[]; at?: number[]; r: number }[] = [{ id: 'uluru', place: 'uluru', off: [0, -2], r: 34 },
+  // (v1.08d s2vn) Season 2's small new areas, kept free of trees (js/content/s2vn.ts: the same middles)
+  { id: 's2_mekong', at: [182, 169], r: 16 }, { id: 's2_halong', at: [221, 166], r: 14 }, { id: 's2_sapa', at: [173, -83], r: 13 }, { id: 's2_taynguyen', at: [188, 58], r: 15 }];
 
 // ---------- places of interest ----------
 export const SHRINES = [
@@ -332,8 +362,21 @@ export const BOATS = [
   { id: 'harbourferry', water: 'sydney_harbour', via: [[-106, -2], [-54, -2]], piers: [{ id: 'sydney', at: [-108, 24], to: [-106, 1], name: ['Sydney Harbour', 'Bến cảng Sydney'] }, { id: 'island', at: [-37, -3], to: [-48, -3], name: ['Two Homes Island', 'Đảo Hai Quê'] }] },
   // (round T3) the boat from TP. HCM down Sông Sài Gòn and along the coast to Bãi Sau at Vũng Tàu
   { id: 'vtboat', water: 'saigon_r', via: [[131, 196], [198, 198]], piers: [{ id: 'saigon', at: [136, 156], to: [131, 156], name: ['TP. Hồ Chí Minh', 'TP. Hồ Chí Minh'] }, { id: 'vungtau', at: [198, 181], to: [198, 190], name: ['Bãi Sau, Vũng Tàu', 'Bãi Sau, Vũng Tàu'] }] },
+  // (v1.08d s2au) the Southern Coast Boat: from the Murray by Melbourne, down the river and along the coast to the reef,
+  // Tasmania, Perth and Rottnest (more than two piers: `legs` are the turns between one pier and the next)
+  { id: 'coastboat', water: 'murray', speed: 9, piers: [
+    { id: 'melbourne', at: [-122, 145], to: [-122, 151], name: ['Melbourne river pier', 'Bến sông Melbourne'] },
+    { id: 'gbr', at: [-58, 184], to: [-58, 197], name: ['Great Barrier Reef', 'Rạn san hô Great Barrier'] },
+    { id: 'tasmania', at: [-120, 211], to: [-120, 205], name: ['Tasmania', 'Đảo Tasmania'] },
+    { id: 'perth', at: [-204, 186], to: [-204, 199], name: ['Perth', 'Perth'] },
+    { id: 'rottnest', at: [-210, 216], to: [-210, 209], name: ['Rottnest Island', 'Đảo Rottnest'] }],
+    legs: [[[-80, 156], [-30, 162], [12, 168], [13, 205], [-20, 204]], [[-90, 203]], [[-170, 208]], []] },
   { id: 'crossing', water: 'main_n', count: 0 }            // (round T2, Concept D: no crossing rafts; bridges join every bank and the raft line stops by each)
 ];
+// (v1.08e water, Release 6 Nov 2026 AEDT) boat channels: where a boat's route runs close to a bank, the water under it and
+// 1.5 m either side is 0.6 m deep (js/world/ground.ts): the Southern Coast Boat leaving the Melbourne river pier along the
+// Murray's north bank (the route, the piers and the rest of the shore stay where they are)
+export const BOAT_CHANNELS: { pts: [number, number][]; w: number }[] = [{ pts: [[-120, 151.2], [-104, 153.2]], w: 1.8 }];
 
 // ---------- (T1b, owner 11 Oct) tidy streets: one market row per place ----------
 // Every stall, kiosk, food van and seller's tent of a place stands in one row on one side of the place's main street,

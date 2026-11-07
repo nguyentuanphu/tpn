@@ -141,7 +141,7 @@ export function createHanoi(G, ctx: StoryContext) {
   const startParade = () => { paradeUntil = performance.now() / 1000 + 80; say(...STORY_LINES.parade); };
 
   // ---------- the bonus secret for big kids: a golden turtle comes up once ----------
-  const gold = buildStoneTurtle(); const goldBody = gold.children[0]; if (goldBody instanceof THREE.Mesh) goldBody.material = new THREE.MeshToonMaterial({ color: '#ffcf3a', emissive: '#7a5200', emissiveIntensity: .5 }); gold.userData.noSolid = true; gold.visible = false; scene.add(gold);
+  const gold = buildStoneTurtle(false); const goldBody = gold.children[0]; if (goldBody instanceof THREE.Mesh) goldBody.material = new THREE.MeshToonMaterial({ color: '#ffcf3a', emissive: '#7a5200', emissiveIntensity: .5 }); gold.userData.noSolid = true; gold.visible = false; scene.add(gold);
   const goldAt = W(0, -3.2); gold.position.set(goldAt.x, by - .3, goldAt.z); gold.rotation.y = rot;
   const secretFor = p => big(p) && st(p).chapters.ch2 && !(st(p).secret || {}).ch2;
 

@@ -46,7 +46,7 @@ register({ id: 'rd_storyhelp', icon: '🏡', name: () => T('Story Helpers', 'Cù
 Object.assign(GAME_INFO, {
   rd_listentouch: ['reading', 2, 1], rd_storychoice: ['reading', 3, 1],
   rd_trace: ['reading', 2, 1], rd_sounds: ['reading', 3, 1], rd_build: ['reading', 4, 2], rd_rhyme: ['reading', 4, 2], rd_sight: ['reading', 5, 2],
-  rd_tones: ['reading', 4, 2], rd_syllable: ['reading', 3, 1], rd_match: ['reading', 5, 2], rd_sentence: ['reading', 5, 3], rd_readalong: ['reading', 3, 1], rd_storyhelp: ['reading', 2, 1]
+  rd_tones: ['hv_vi', 4, 2] /* (v1.08b games) Vietnamese tone marks: Tiếng Việt */, rd_syllable: ['reading', 3, 1], rd_match: ['reading', 5, 2], rd_sentence: ['reading', 5, 3], rd_readalong: ['reading', 3, 1], rd_storyhelp: ['reading', 2, 1]
 });
 
 // the how-to cards (ACT-002), read aloud in the child's language

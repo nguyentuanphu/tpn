@@ -1,4 +1,5 @@
 import { isHeld, isOpen, progressOf, secondSetOf } from './content/unlocks.js';
+import { calNextWeek } from './content/secondset.js';
 // Learning that feels like play:
 // · Story time under the big banyan tree: short folk tales from Vietnam, Australia, China and India.
 // · Counting hunts in each village: find 5 hidden things, counting out loud (and in Chinese or Hindi
@@ -8,6 +9,10 @@ import { isHeld, isOpen, progressOf, secondSetOf } from './content/unlocks.js';
 import { pic } from './art.js';
 import { THREE, sprite, P, merge, toonVC, outline } from './gfx.js';
 import { T } from './i18n.js';
+import { gameOpen } from './games/frame.js';
+// (v1.08d valley, PERF-001) Lumi's speech bubble and the story theatre load when they are first needed, not in the first download
+const lumiSay = (line: [string, string]) => { void import('./lumi.js').then(L => L.lumiSay(line)).catch(() => { }); };
+import { LUMI_SOON, LUMI_BYE, playTimePhase, byeNow } from './content/lumi.js';
 import { say, sayIn } from './voice.js';
 import { SFX } from './audio.js';
 import { settings, saveSettings, saveProfiles, farm, saveFarm } from './state.js';
@@ -17,7 +22,7 @@ import { LEARN } from './words2.js';
 import { el, esc, dist2, shuffle } from './util.js';
 import { modal } from './ui.js';
 import { MORE_TALES } from './talesdata.js';
-import { openTheatre } from './tales.js';
+const openTheatre = (...a: Parameters<typeof import('./tales.js').openTheatre>) => import('./tales.js').then(m => m.openTheatre(...a));
 import { buildAvatar } from './avatar.js';
 import { registerName, onLang } from './i18n.js';
 
@@ -122,7 +127,7 @@ export function createLearning(G) {
     const open = shelf.filter(t => isOpen(p, t.id, 'tale', f)), locked = shelf.filter(t => !open.includes(t));
     const held = secondSetOf('tale', f).filter(id => TALES.some(t => t.id === id) && isHeld(id, 'tale')).length, shown = G.taleFolds.has(f);
     const fold = locked.length ? `<button class="talecard talefold" data-fold-tale="${f}" aria-expanded="${shown}"><span>${pic('\u{1F512}')}</span><small>${shown ? T('Hide', 'Thu gọn') : T(`${locked.length} more to unlock · Read each story above 3 times`, `Còn ${locked.length} truyện để mở · Đọc mỗi truyện ở trên 3 lần`)}</small></button>` : '';
-    const soon = held ? `<button class="talecard talesoon" data-soon="tale"><span>${pic('\u{1F51C}')}</span><small>${T(`Coming soon: ${held} new stories`, `Sắp ra mắt: ${held} truyện mới`)}</small></button>` : '';
+    const soon = held ? `<button class="talecard talesoon" data-soon="tale"><span>${pic('\u{1F51C}')}</span><small>${T(`Coming soon: ${held} new stories`, `Sắp ra mắt: ${held} truyện mới`)}${(n => n ? ' · ' + T(`next week ${n}`, `tuần sau ${n}`) : '')(calNextWeek('story', secondSetOf('tale', f).filter(id => isHeld(id, 'tale'))))}</small></button>` : '';
     const cards = open.map(t => taleCard(t, true, reads[t.id])).join('') + fold + (shown ? locked.map(t => taleCard(t, false, reads[t.id])).join('') : '') + soon;
     if (!cards) return '';
     const progress = progressOf(p, 'tale', f);
@@ -141,8 +146,10 @@ export function createLearning(G) {
     const m = modal('tales', ''), card = m.querySelector('.card'), p = h.profile; p.tales = p.tales || {};
     const close = () => { m.close(); G.paused = false; };
     card.innerHTML = `<button class="x" aria-label="${T('Close', 'Đóng')}">✕</button><h2>📖 ${T('Story time', 'Giờ kể chuyện')}</h2><p class="sub">${T('Folk tales from Vietnam, Australia, China and India. Tap a picture and Grandma reads it to you!', 'Truyện cổ tích Việt Nam, Úc, Trung Quốc và Ấn Độ. Chạm vào hình, bà sẽ kể cho con nghe!')}</p>
-      <div class="talelib">${G.taleShelfHTML(p)}</div>`;
+      <div class="filmpack-slot"></div><div class="talelib">${G.taleShelfHTML(p)}</div>`;
     card.querySelector('.x').onclick = close;
+    // (v1.08f films) "Download all films for offline": shown only when this device has Blender films to offer (js/filmpack.ts)
+    import('./filmpack.js').then(F => F.showFilmPack(card.querySelector('.filmpack-slot'))).catch(() => { });
     const lib = card.querySelector('.talelib');
     const bindLib = () => { G.bindTaleShelf(lib, () => { lib.innerHTML = G.taleShelfHTML(p); bindLib(); }); lib.querySelectorAll('[data-tale]').forEach(b => b.onclick = () => { const t = TALES.find(x => x.id === b.dataset.tale); m.close(); readTale(h, t); }); };
     bindLib();
@@ -196,26 +203,33 @@ export function createLearning(G) {
 
   // ---------- the gentle rest timer ----------
   // Minutes played today are counted on this device only (never sent anywhere).
+  // (v1.08b quality, owner's pop-up 3 Nov 2026 AEDT: "a gentle play time") the time a grown-up set counts games, the
+  // Simple screen and the valley alike; two minutes before, Lumi says so; when time is up her soft goodbye waits until
+  // the game, film or story in hand is over: never a hard cut mid-game (js/content/lumi.ts playTimePhase, byeNow)
   const today = () => new Date().toDateString();
-  let tick = 0, shown = false;
-  world.updaters.push(dt => {
-    if (!G.heroes.length || G.paused) return;
-    tick += dt; if (tick < 5) return;
-    const add = tick / 60; tick = 0;
-    if (settings.playDay !== today()) { settings.playDay = today(); settings.playMins = 0; shown = false; }
-    settings.playMins = (settings.playMins || 0) + add; saveSettings();
-    const lim = +settings.restMins || 0;
-    if (lim && settings.playMins >= lim && !shown) { shown = true; restTime(); }
-  });
+  let shown = false, soonSaid = false, last = performance.now();
+  const busy = () => gameOpen() || !!document.querySelector('.theatre, .tale-book, .resttime, .dancebreak');
+  const playing = () => !document.hidden && G.heroes.length && (!G.paused || gameOpen() || document.body.classList.contains('simple-on'));
+  setInterval(() => {
+    const now = performance.now(), add = Math.min(10, (now - last) / 1000) / 60; last = now;
+    if (!G.heroes.length) return;
+    if (settings.playDay !== today()) { settings.playDay = today(); settings.playMins = 0; shown = false; soonSaid = false; }
+    // (the minutes count while playing; the time is looked at on every tick, so the goodbye also comes on a menu)
+    if (playing()) { settings.playMins = (settings.playMins || 0) + add; saveSettings(); }
+    const phase = playTimePhase(settings.playMins, +settings.restMins || 0);
+    if (phase === 'soon' && !soonSaid && !busy()) { soonSaid = true; lumiSay(LUMI_SOON); }
+    if (phase === 'play') { soonSaid = false; shown = false; }
+    if (byeNow(phase, busy()) && !shown) { shown = true; restTime(); }
+  }, 5000);
   const restTime = () => {
     G.paused = true; G.world.time = .82;
     G.heroes.forEach(h => { h.cheerT = 0; h.emoteT = 2; });
-    const m = el('div', 'resttime', `<div class="rt-card"><div class="rt-moon">🌙</div><h2>${T('Time to rest!', 'Đến giờ nghỉ rồi!')}</h2><p>${T('You played so well today. Your explorer is yawning… See you tomorrow!', 'Hôm nay con chơi giỏi lắm. Nhà thám hiểm của con ngáp rồi… Hẹn gặp lại ngày mai nhé!')}</p>
-      <div class="rt-zz">😴 💤</div><button class="btn grownup"><span class="ring"></span>${T('Grown-ups: hold for 10 more minutes', 'Người lớn: giữ để chơi thêm 10 phút')}</button></div>`);
+    const m = el('div', 'resttime', `<div class="rt-card"><div class="rt-moon">${pic('lumi')}</div><h2>${T('Time to rest!', 'Đến giờ nghỉ rồi!')}</h2><p>${esc(T(...LUMI_BYE))}</p>
+      <div class="rt-zz">${pic('🌙')}</div><button class="btn grownup"><span class="ring"></span>${T('Grown-ups: hold for 10 more minutes', 'Người lớn: giữ để chơi thêm 10 phút')}</button></div>`);
     document.body.appendChild(m); SFX.chime();
-    say('You played so well today! Time to rest. See you tomorrow!', 'Hôm nay con chơi giỏi lắm! Đến giờ nghỉ rồi. Hẹn gặp lại ngày mai nhé!');
+    say(LUMI_BYE[0], LUMI_BYE[1]);
     const b = m.querySelector('.grownup'), ring = b.querySelector('.ring'); let t0 = 0, raf = 0;
-    const tickH = () => { const k = Math.min(1, (performance.now() - t0) / 1800); ring.style.setProperty('--p', k * 100 + '%'); if (k >= 1) { settings.restMins = String((+settings.restMins || 0) + 10); saveSettings(); shown = false; m.remove(); G.paused = false; } else raf = requestAnimationFrame(tickH); };
+    const tickH = () => { const k = Math.min(1, (performance.now() - t0) / 1800); ring.style.setProperty('--p', k * 100 + '%'); if (k >= 1) { settings.restMins = String((+settings.restMins || 0) + 10); saveSettings(); shown = false; soonSaid = false; m.remove(); G.paused = document.body.classList.contains('simple-on'); } else raf = requestAnimationFrame(tickH); };
     b.addEventListener('pointerdown', e => { e.preventDefault(); t0 = performance.now(); tickH(); });
     ['pointerup', 'pointerleave', 'pointercancel'].forEach(k => b.addEventListener(k, () => { cancelAnimationFrame(raf); ring.style.setProperty('--p', '0%'); }));
   };

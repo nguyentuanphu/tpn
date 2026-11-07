@@ -4,11 +4,11 @@
 // three slow circles (page 4) and giving the mango (page 6).
 import { L, Pp, LOOK, THREE, P, mesh, PI, H, go, hop, turn, speak, indiaVillage, animal, mouse, mango, board } from './kit.js';
 
-const SHIVA = LOOK({ style: 'tunic', color: '#3a6ab0', hairStyle: 'short', skin: '#c8a888' });
-const PARVATI = LOOK({ style: 'aodai', color: '#e8572a', hairStyle: 'long', skin: '#d8a070' });
-const KARTIK = LOOK({ style: 'tunic', color: '#e8b62a', hat: 'crown', hairStyle: 'short', skin: '#d8a070' });
-const SAGE = LOOK({ style: 'tunic', color: '#f2a03a', hairStyle: 'short', hair: '#f4f4f4', skin: '#c89070' });
-const GAN = LOOK({ style: 'tunic', color: '#ffd23f', hairStyle: 'short', skin: '#e8b0a0' });
+const SHIVA = LOOK({ kit: 'in-dhoti', style: 'tunic', color: '#3a6ab0', hairStyle: 'short', skin: '#c8a888' });
+const PARVATI = LOOK({ kit: 'in-sari', style: 'aodai', color: '#e8572a', hairStyle: 'long', skin: '#d8a070' });
+const KARTIK = LOOK({ kit: 'in-dhoti', style: 'tunic', color: '#e8b62a', hat: 'crown', hairStyle: 'short', skin: '#d8a070' });
+const SAGE = LOOK({ kit: 'in-dhoti', style: 'tunic', color: '#f2a03a', hairStyle: 'short', hair: '#f4f4f4', skin: '#c89070' });
+const GAN = LOOK({ kit: 'in-dhoti', style: 'tunic', color: '#ffd23f', hairStyle: 'short', skin: '#e8b0a0' });
 // Ganesha: a kind child with an elephant's head (soft pink-grey), big ears, a curling trunk and a little gold crown
 function ganesha(S, x, z, yaw, scale = .9) {
   const a = S.person(GAN, x, z, yaw, scale), h = a.A.head;

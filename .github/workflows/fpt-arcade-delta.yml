@@ -18,7 +18,8 @@ concurrency:
   cancel-in-progress: false
 jobs:
   record:
-    if: (!inputs.inventory) && (startsWith(github.ref, 'refs/heads/work/') || startsWith(github.ref, 'refs/heads/release/') || startsWith(github.ref, 'refs/heads/voices/'))
+    # (owner, 3 Nov 2026 AEDT, v1.08 voices-aside) Lê Minh is put aside: off unless the repository variable SV_ASIDE_VOICES is 1
+    if: vars.SV_ASIDE_VOICES == '1' && (!inputs.inventory) && (startsWith(github.ref, 'refs/heads/work/') || startsWith(github.ref, 'refs/heads/release/') || startsWith(github.ref, 'refs/heads/voices/'))
     runs-on: ubuntu-latest
     timeout-minutes: 150
     steps:

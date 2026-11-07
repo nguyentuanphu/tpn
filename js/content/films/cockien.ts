@@ -3,8 +3,8 @@
 // helps twice: Toad's hops (page 2) and the big drum (page 4).
 import { L, Pp, LOOK, THREE, P, mesh, PI, H, go, hop, speak, turn, heaven, plain, toad, tiger, jackal, animal, bird, drum, rain, flat } from './kit.js';
 
-const SKYKING = LOOK({ style: 'tunic', color: '#ffd23f', hat: 'crown', hairStyle: 'short', hair: '#f4f4f4', skin: '#e8c0a0' });
-const GUARD = LOOK({ style: 'tunic', color: '#3a6ab0', hat: 'silkcap', skin: '#e0aa80' });
+const SKYKING = LOOK({ kit: 'vn-king', style: 'tunic', color: '#ffd23f', hat: 'crown', hairStyle: 'short', hair: '#f4f4f4', skin: '#e8c0a0' });
+const GUARD = LOOK({ kit: 'vn-armour', style: 'tunic', color: '#3a6ab0', hat: 'silkcap', skin: '#e0aa80' });
 const bee = () => { const b = bird('#ffd23f', .7); b.children[0].add(mesh([P(new THREE.BoxGeometry(.2, .05, .3), '#2a2a2a', [0, .02, 0])])); return b; };
 // the dry land: cracked brown earth, dead grass, a hot sun
 const dry = S => { plain(S); L.ground(S, '#c8a068'); for (let i = 0; i < 14; i++) S.add(mesh([P(new THREE.BoxGeometry(1.4, .02, .04), '#8a6a3a', [0, .01, 0])]), Math.cos(i * 2.4) * 5, 0, Math.sin(i * 2.4) * 3 + 1, i, 0); };

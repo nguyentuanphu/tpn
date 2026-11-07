@@ -41,7 +41,12 @@ export function cleanReport(b, now = Date.now()) {
       : { type: 'unknown', name: '' };
   const r = {
     clientId: /^[a-f0-9]{32}$/.test(b.clientId || '') ? b.clientId : '', id: b.id, at: now, b: BUILD.test(b.b || '') ? b.b : '', kind, auto, detail: txt(b.detail, 200), note: txt(b.note, TLIMITS.note), spoken: b.spoken === true,
-    where: { area: txt(w.area, 60), place: txt(w.place, 60), game: txt(w.game, 60), window: txt(w.window, 80), x: num(w.x, -5000, 5000), z: num(w.z, -5000, 5000) },
+    where: { area: txt(w.area, 60), place: txt(w.place, 60), game: txt(w.game, 60), window: txt(w.window, 80), x: num(w.x, -5000, 5000), z: num(w.z, -5000, 5000),
+      // (v1.08f, owner 6 Nov: Try again takes the tester to the broken thing) the game's level, difficulty, mode and players,
+      // the quest step, the screen and tab, and the thing nearby (only when the report has them)
+      ...(num(w.lvl, 1, 9) ? { lvl: num(w.lvl, 1, 9) } : {}), ...(txt(w.diff, 12) ? { diff: txt(w.diff, 12) } : {}), ...(txt(w.mode, 20) ? { mode: txt(w.mode, 20) } : {}),
+      ...(num(w.np, 1, 8) ? { np: num(w.np, 1, 8) } : {}), ...(txt(w.quest, 60) ? { quest: txt(w.quest, 60) } : {}), ...(txt(w.screen, 60) ? { screen: txt(w.screen, 60) } : {}),
+      ...(txt(w.thing, 60) ? { thing: txt(w.thing, 60) } : {}) },
     join: PK.test(b.join || '') ? b.join : '',
     errors: (Array.isArray(b.errors) ? b.errors : []).slice(-TLIMITS.errors).map(e => txt(e, 200)).filter(Boolean),
     log: (Array.isArray(b.log) ? b.log : []).slice(-TLIMITS.log).filter(e => Array.isArray(e)).map(([t, k, s]) => [num(t, -600, 600) || 0, txt(k, 12), txt(s, 120)]),

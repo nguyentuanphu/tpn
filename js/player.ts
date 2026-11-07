@@ -3,7 +3,7 @@
 import { seatRider } from './vehicles.js';
 import { vehicleEye } from './rideview.js';
 import { THREE } from './gfx.js';
-import { buildAvatar } from './avatar.js';
+import { buildAvatar, setLookTarget, loadFriendModels, friendsReady, FRIEND_DATA, showHD } from './avatar.js';
 import { WATER, RIDE_SWIM, heightAt, surfaceAt } from './world.js';
 import { clamp, lerp, angleLerp } from './util.js';
 import { SFX } from './audio.js';
@@ -26,10 +26,10 @@ export interface Hero {
   pos: THREE.Vector3; lastSafe: THREE.Vector3; camPos: THREE.Vector3; camLook?: THREE.Vector3; cam: THREE.PerspectiveCamera;
   av: ReturnType<typeof buildAvatar>; yaw: number; vy: number; camYaw: number; camPitch: number; camDist: number;
   state: string; speed: number; onGround: boolean; stamina: number; exhausted: boolean; bonusStamina: number; hearts: number;
-  fallStart?: number; towerClimb?: { tw: { id: string, x: number, z: number }, top: number, ax: number, az: number }; riding?: RideMount;
-  safeTimer: number; stepTimer: number; emoteT: number; manualCamT: number; cheerT: number;
+  fallStart?: number; towerClimb?: { tw: { id: string, x: number, z: number }, top: number, ax: number, az: number }; riding?: RideMount; _faceDone?: boolean; _hdTried?: Set<string>;
+  safeTimer: number; stepTimer: number; emoteT: number; manualCamT: number; cheerT: number; momentT: number; _mom: number;
   easyT?: number; stillT?: number; steerYaw?: number; goal?: { x: number, z: number }; goalT?: number; view?: string; zoom?: number;
-  autoRun?: boolean; gliding?: boolean; climbing?: boolean; _swimSfx?: boolean; _dancing?: boolean; _pov?: boolean; _rode?: boolean; _viewBefore?: string; _rideNew?: boolean;
+  autoRun?: boolean; gliding?: boolean; climbing?: boolean; _swimSfx?: boolean; wading?: number; _wadeSfx?: boolean; _wadeT?: number; _dancing?: boolean; _pov?: boolean; _rode?: boolean; _viewBefore?: string; _rideNew?: boolean;
   _camFreeT?: number; _camHitRay?: boolean; _camK?: number; _camLift?: number; _lmF?: number; _lm?: { x: number, z: number };
   _houseFront?: { x: number, z: number, rot: number, d: number }; indoors?: unknown; ferry?: unknown;
   carry?: (dt: number, t: number, pad: HeroPad) => CarryResult | void; carryVehicle?: RideVehicle;
@@ -43,13 +43,20 @@ export class Hero {
     this.state = 'idle'; this.speed = 0; this.onGround = true;
     this.stamina = profile.staminaMax; this.exhausted = false; this.bonusStamina = 0;
     this.hearts = profile.hearts; this.lastSafe = new THREE.Vector3(); this.fallStart = null; this.towerClimb = null; this.riding = null;
-    this.safeTimer = 0; this.stepTimer = 0; this.emoteT = 0; this.manualCamT = 0; this.cheerT = 0;
+    this.safeTimer = 0; this.stepTimer = 0; this.emoteT = 0; this.manualCamT = 0; this.cheerT = 0; this.momentT = 0; this._mom = 0;
     this.buildModel();
   }
   buildModel() {
     if (this.av) this.scene.remove(this.av.root);
-    this.av = buildAvatar(this.profile.look, this.profile.photo); this.av.root.userData.own = true; // (Round V) a child's own character, never a villager (js/villagertalk.js)
+    this.av = buildAvatar(this.profile.look, this.profile.photo, { hd: true }); this.av.root.userData.own = true; // (Round V) a child's own character, never a villager (js/villagertalk.js)
     this.scene.add(this.av.root);
+    // (v1.08b friends) the friend's 3D model loads after the start; the code person in the friend's colours stands in until
+    // it arrives, then the child is built again with it (not in the middle of a ride)
+    if (!FRIEND_DATA.lib) { friendsReady().then(() => this.buildModel()); } // (v1.08b: a child started without Who's playing is built again once the friends' data is in)
+    const f = this.profile.look && this.profile.look.friend;
+    if (f && !this.av.model) loadFriendModels(f).then(ok => { const go = () => { if (this.profile.look.friend !== f) return; const face = !ok && this.profile.look.face && this.profile.look.face !== 'none' && !this._faceDone; if (ok ? this.av.model : !face) return; if (this.riding) return void setTimeout(go, 2000); if (!ok) this._faceDone = true; this.buildModel(); }; go(); });
+    // (v1.08e faces, part 2) then the high-detail model of the child's own friend (only theirs), and the child built again with it
+    else if (f && this.av.model && !this.av.modelHD && !(this._hdTried ||= new Set()).has(f)) { this._hdTried.add(f); loadFriendModels(f + '-hd').then(ok => { const go = () => { if (!ok || this.profile.look.friend !== f || this.av.modelHD) return; if (this.riding) return void setTimeout(go, 2000); this.buildModel(); }; go(); }); }
   }
   place(x, z, y?: number) {
     // ground, bridge or deck, but not a tower top (those are reached by climbing)
@@ -155,6 +162,14 @@ export class Hero {
       if (this.gliding) { speed = GLIDE; this.vy = Math.max(this.vy - GRAV * dt, -2.2); this.useStamina(dt * .1); want = 'glide'; if (mag < .05) { mx = Math.sin(this.yaw); mz = Math.cos(this.yaw); } }
       else this.vy -= GRAV * dt;
       if (!this.onGround && !this.gliding) want = 'air'; else if (speed > .3) want = 'walk';
+      // (v1.08e water, owner 6 Nov 2026 AEDT: every river, lake and pond knee to waist deep, "children wade through and
+      // splash") wading: a little slower the deeper it is, splash rings round the legs while walking, a splash going in
+      const wade = this.onGround ? clamp((WATER - ground) / .8, 0, 1) : 0; this.wading = wade;
+      if (wade > .02) {
+        speed *= 1 - .3 * wade;
+        if (!this._wadeSfx) { SFX.splash(); this._wadeSfx = true; this._wadeT = 0; }
+        if (speed > .3 && (this._wadeT = (this._wadeT || 0) - dt) <= 0) { this._wadeT = .3; W.splash?.(p.x, p.z, .45 + wade * .45); }
+      } else this._wadeSfx = false;
     }
     if (mag > .05 && !this.gliding) this.yaw = angleLerp(this.yaw, Math.atan2(mx, mz), Math.min(1, dt * 12));
     if (this.gliding) this.yaw = angleLerp(this.yaw, Math.atan2(mx, mz), Math.min(1, dt * 3));
@@ -191,7 +206,7 @@ export class Hero {
     if (want === 'walk' && this.onGround) { this.stepTimer -= dt * speed; if (this.stepTimer <= 0) { SFX.step(surfaceAt(p.x, p.z, p.y)); this.stepTimer = 2.2; game.stats(this, speed); } }
 
     this.speed = speed; this.state = this.cheerT > 0 ? 'cheer' : this.emoteT > 0 && want === 'idle' ? 'wave' : want === 'idle' && this._dancing ? 'dance' : want;
-    this.cheerT -= dt; this.emoteT -= dt;
+    this.cheerT -= dt; this.emoteT -= dt; this.momentT = (this.momentT || 0) - dt;
     this.finish(dt, t, game, 0);
   }
 
@@ -202,7 +217,10 @@ export class Hero {
   }
   mount(b) { this.riding = b; b.rider = this; this._rideNew = true; this.gliding = false; this.pos.copy(b.mesh.position); this.yaw = b.yaw; if (!b.quiet) SFX.moo(); }
   dismount() { const b = this.riding; if (!b) return; b.rider = null; b.tx = b.mesh.position.x; b.tz = b.mesh.position.z; if (b.home) { b.tx = b.home[0]; b.tz = b.home[1]; b.back = true; }   // (Round V, owner 13 Oct) an animal runs back home when the child gets off
-    if (b.slot) b.slot.taken = null; if (b.vehicle) this.av.torso.rotation.set(0, 0, 0), this.av.torso.position.set(0, 0, 0), this.av.head.position.set(0, 1.33, 0), this.av.armL.scale.y = this.av.armR.scale.y = 1; this.riding = null; this.pos.x += Math.cos(this.yaw) * 1.8; this.pos.z -= Math.sin(this.yaw) * 1.8; this.pos.y = this.world.groundAt(this.pos.x, this.pos.z); }
+    if (b.slot) b.slot.taken = null; if (b.vehicle) this.av.torso.rotation.set(0, 0, 0), this.av.torso.position.set(0, 0, 0), this.av.head.position.set(0, 1.33, 0), this.av.armL.scale.y = this.av.armR.scale.y = 1; this.riding = null;
+    // (v1.08b quality) off to the side, on open ground with a way out and a clear view (js/dropspot.ts through G.setDown); off a raft into the water stays as it was
+    const ox = this.pos.x + Math.cos(this.yaw) * 1.8, oz = this.pos.z - Math.sin(this.yaw) * 1.8, G = window.__sv as { setDown?: (h: Hero, x: number, z: number, f: null) => unknown } | undefined;
+    if (G?.setDown && heightAt(ox, oz) > WATER + .3) { const y = this.yaw; G.setDown(this, ox, oz, null); this.yaw = y; } else { this.pos.x = ox; this.pos.z = oz; this.pos.y = this.world.groundAt(this.pos.x, this.pos.z); } }
 
   startTowerClimb(tw) {
     const m = this.world.towerMeshes[tw.id];
@@ -231,6 +249,7 @@ export class Hero {
     this._rideNew = false;
     A.root.position.set(p.x, p.y + rideY, p.z); A.root.rotation.y = this.yaw;
     A.anim(this.state, t, this.speed);
+    if (!this.i) setLookTarget(p, A); // (v1.08) villagers close by turn their heads to the first child
     A.root.children[1].visible = this.state !== 'swim'; // blob shadow
     // camera: follow behind, gently swinging round when the child is just walking forward
     const easy = game.settings.camMode !== 'free';
@@ -271,8 +290,15 @@ export class Hero {
     const close = game.closeUp === this.i || (this.view === 'face' && this.speed < .6 && !this.towerClimb && !this.gliding);
     if (close) { this.camYaw = angleLerp(this.camYaw, this.yaw, Math.min(1, dt * 4)); this.camPitch += (.08 - this.camPitch) * Math.min(1, dt * 4); }
     const vk = this.view === 'high' ? 1.6 : this.view === 'street' ? .62 : 1;
-    const dist = close ? 2.8 : this.indoors ? 5.5 * (this.zoom || 1) : (easy ? 11.5 * (1 + (this._lmF || 0) * .55) : this.camDist) * vk * (this.gliding ? 1.25 : this.riding ? 1.15 : 1) * (this.zoom || 1) * (game.zoom || 1);
-    const target = new THREE.Vector3(p.x, p.y + (close ? (this.view === 'face' && game.closeUp !== this.i ? 1.05 : .2) : this.view === 'street' ? 1.6 : 1.15) + rideY, p.z);
+    // (v1.08e faces, part 2: owner 6 Nov 2026 AEDT "closer in key moments") the camera eases in, about half a second each
+    // way, while the child talks to a villager (momentT), wins or cheers (cheerT) or waves (emoteT), standing still; never
+    // while moving, riding, gliding or climbing
+    const moment = (this.cheerT > 0 || this.emoteT > 0 || this.momentT > 0) && this.speed < .6 && !this.riding && !this.gliding && !this.towerClimb && !close;
+    const mk = this._mom = (this._mom || 0) + ((moment ? 1 : 0) - (this._mom || 0)) * Math.min(1, dt * 6);
+    if (moment && this.manualCamT <= 0) this.camYaw = angleLerp(this.camYaw, this.yaw + .6, Math.min(1, dt * 4)); // a three-quarter view of the face, not the back
+    showHD(this.av, this.camPos.distanceTo(p) < 15); // (v1.08e faces, part 2) the high-detail friend up close
+    const dist = (1 - .55 * mk) * (close ? 2.8 : this.indoors ? 5.5 * (this.zoom || 1) : (easy ? 11.5 * (1 + (this._lmF || 0) * .55) : this.camDist) * vk * (this.gliding ? 1.25 : this.riding ? 1.15 : 1) * (this.zoom || 1) * (game.zoom || 1));
+    const target = new THREE.Vector3(p.x, p.y + (close ? (this.view === 'face' && game.closeUp !== this.i ? 1.05 : .2) : this.view === 'street' ? 1.6 : 1.15) + rideY + .2 * mk, p.z);
     const want = new THREE.Vector3(p.x + Math.sin(this.camYaw) * Math.cos(this.camPitch) * dist, target.y + Math.sin(this.camPitch) * dist, p.z + Math.cos(this.camYaw) * Math.cos(this.camPitch) * dist);
     // keep the camera out of houses: if a wall is between the child and the camera, move the camera in
     // front of it. Worked out as one "how much of the distance is free" number (k), then smoothed: the camera
@@ -300,7 +326,7 @@ export class Hero {
     // on a boat the camera stays under a bridge's deck (it used to jump on top of the deck: nothing to see)
     let gy;
     if (this.ferry) { gy = Math.max(WATER, heightAt(want.x, want.z)) + .7; for (const pl of this.world.platforms) if (pl.y > target.y + 1.5 && want.x > pl.x0 - 1 && want.x < pl.x1 + 1 && want.z > pl.z0 - 1 && want.z < pl.z1 + 1) want.y = Math.min(want.y, pl.y - .8); }
-    else gy = this.world.groundAt(want.x, want.z) + .7;
+    else gy = Math.max(this.world.groundAt(want.x, want.z), WATER) + .7;   // (v1.08e water) the camera never goes under the water
     if (this.riding && this.riding.swims) gy = Math.max(gy, WATER + .7);   // (a swimming buffalo or cow: the camera stays above the water)
     if (want.y < gy) want.y = gy;
     // (Round V, owner 13 Oct: "the camera angle should be point of view") riding an animal or a vehicle, or sitting in a bus,

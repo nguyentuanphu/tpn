@@ -5,7 +5,9 @@
   # is already packed by build-netlify.sh. If packing cannot run, the site keeps the plain modules.
   # (owner, 16 Oct AEDT: TypeScript, batch 0) first every .ts becomes the .js beside it (tools/build.mts); if that fails
   # the deploy stops and the live site stays as it was. Packing may still fall back to the plain modules.
-  command = "node tools/build.mts && (node tools/bundle.mts . || true)"
+  # (owner, 3 Nov 2026 AEDT, v1.08 voices-aside) the voices put aside (voices-aside/: male English and Vietnamese, Lê Minh,
+  # about 467 MB) stay in the repository but are never published: they are removed from Netlify's own copy first.
+  command = "rm -rf voices-aside && node tools/build.mts && (node tools/bundle.mts . || true)"
 [build.environment]
   # type stripping (tools/build.mts) needs Node 22.18 or newer; the same version the checks and the exe use
   NODE_VERSION = "22.22.0"
@@ -56,6 +58,12 @@
   for = "/sw.js"
   [headers.values]
     Cache-Control = "no-cache"
+
+# (v1.08b platform) the Opus copies of the voices (tools/make-voice-opus.mts): Ogg Opus, so browsers know what they are
+[[headers]]
+  for = "/voices/*.opus"
+  [headers.values]
+    Content-Type = "audio/ogg"
 
 [[headers]]
   for = "/manifest.webmanifest"

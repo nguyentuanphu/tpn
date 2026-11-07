@@ -102,7 +102,7 @@ await check('voiceonline', async () => {
   await P.page.waitForSelector('.screen.title .tt-voice', { timeout: 60000 });
   const note = await P.page.$eval('.screen.title .tt-voice', e => ({ shown: !e.hidden && e.getBoundingClientRect().height > 0, text: e.innerText }));
   await P.page.screenshot({ path: 'out/voiceonline-welcome-phone.png' });
-  ok(note.shown && /over the internet/.test(note.text) && /Keep all voices on this device/.test(note.text), 'the Welcome note: ' + JSON.stringify(note));
+  ok(note.shown && /over the internet/.test(note.text) && /Offline voices → Light or Full/.test(note.text), 'the Welcome note: ' + JSON.stringify(note));
   await start(P.page); await clear(P.page);
   await P.page.mouse.click(195, 420); await P.page.waitForTimeout(20000);
   const r = await P.page.evaluate(async () => {
@@ -121,11 +121,11 @@ await check('voiceonline', async () => {
   await P.page.evaluate(async () => { const V = await import('/js/voice.js'); for (const ph of V.FAMILY_PHRASES.slice(-6)) V.sayIn('en', ph.en); });
   const card = await P.page.waitForSelector('.voice-offline', { timeout: 15000 }).then(() => P.page.$eval('.voice-offline', e => ({ text: e.innerText, buttons: [...e.querySelectorAll('button')].map(x => Math.round(x.getBoundingClientRect().height)) })), () => null);
   await P.page.screenshot({ path: 'out/voiceonline-offline-phone.png' });
-  ok(card && /No internet/.test(card.text) && /Keep all voices on this device/.test(card.text) && card.buttons.every(h => h >= 44), 'the offline note: ' + JSON.stringify(card));
+  ok(card && /No internet/.test(card.text) && /Offline voices → Light or Full/.test(card.text) && card.buttons.every(h => h >= 44), 'the offline note: ' + JSON.stringify(card));
   await P.page.click('.voice-offline button:last-child'); await P.page.waitForTimeout(300);
   ok(!(await P.page.$('.voice-offline')), 'OK closes the offline note');
   const errs = P.errors.filter(e => !/Failed to fetch|ERR_INTERNET_DISCONNECTED|NetworkError|net::/.test(e)); await P.ctx.close(); ok(!errs.length, errs.join('\n'));
-  return `the Welcome says the voices play online and how to keep them; a new device downloaded ${mp3.length} recordings by itself; ${r.kept} heard kept; offline a grown-up is told "Keep all voices on this device" (buttons ${card.buttons.join('/')} px)`;
+  return `the Welcome says the voices play online and how to keep them; a new device downloaded ${mp3.length} recordings by itself; ${r.kept} heard kept; offline a grown-up is told "Offline voices → Light or Full" (v1.08c: the offline levels replaced "Keep all voices") (buttons ${card.buttons.join('/')} px)`;
 });
 
 await check('mixedhanoivoice', async () => (await import('../mixed-hanoi-voice.mts')).mixedHanoiVoiceCheck(b));
@@ -134,10 +134,13 @@ await check('hanoivoice', async () => (await import('../hanoi-voice.mts')).hanoi
 
 await check('voicebackground', async () => {
   // Owner, v1.01: male previews select the actual male file while female remains default.
+  // (owner's decision, 3 Nov 2026 AEDT, v1.08 voices-aside: female voices only; not a weakened check) the male voices are
+  // put aside (voices-aside/README.md): a male preview plays the female recording, the male choice is not shown in
+  // Grown-ups, and a device that had chosen the male voices moves to the female ones.
   // The explicit offline job keeps downloading after Save & close and Settings redraws.
   const {lineHash}=await import('../../js/packhash.js'), requests=[];
   const preview={en:lineHash('en','Hello! Welcome to Sparkle Valley.'),vi:lineHash('vi','Xin chào! Chào mừng con đến Thung Lũng Lấp Lánh.')};
-  const P=await open(b,{w:390,h:844,touch:true,lang:'vi',settings:{autoPack:false,voice:false,voiceMale:false,packCell:true},route:async ctx=>{
+  const P=await open(b,{w:390,h:844,touch:true,lang:'vi',settings:{autoPack:false,voice:false,voiceMale:true,voiceViVariant:'leminh',packCell:true},route:async ctx=>{
     await ctx.route('**/voices/manifest-*.json',async rt=>{const r=await rt.fetch(),j=await r.json(),keys=[...new Set([preview[j.language],...Object.keys(j.lines).slice(0,30)])].filter(k=>j.lines[k]);await rt.fulfill({json:{...j,lines:Object.fromEntries(keys.map(k=>[k,j.lines[k]])),langOf:Object.fromEntries(keys.map(k=>[k,j.language])),made:'background-test',signature:'background-'+j.language}})});
     await ctx.route('**/voices/**/*.mp3',async rt=>{requests.push(rt.request().url());await new Promise(r=>setTimeout(r,350));await rt.fulfill({response:await rt.fetch()})});
   }});
@@ -147,11 +150,14 @@ await check('voicebackground', async () => {
     const female=requests.some(u=>u.includes('/vi/f/'+preview.vi+'.mp3'));
     const cut=requests.length;
     await P.page.evaluate(async()=>{await (await import('/js/voice.js')).previewPackVoice('m')});
-    ok(female&&requests.slice(cut).some(u=>u.includes('/vi/m/'+preview.vi+'.mp3')),'female/male preview did not request distinct recordings: '+JSON.stringify(requests.slice(-6)));
-    ok(await P.page.evaluate(async()=>(await import('/js/state.js')).settings.voiceMale===false),'preview silently enabled male downloads');
+    ok(female&&!requests.some(u=>/\/(en|vi)\/m\/|fpt-leminh/.test(u)),'a recording that was put aside was asked for: '+JSON.stringify(requests.slice(-6)));
+    ok(requests.slice(cut).every(u=>!u.includes('/vi/m/')),'the male preview did not play the female recording: '+JSON.stringify(requests.slice(cut)));
+    const moved=await P.page.evaluate(async()=>{const S=(await import('/js/state.js')).settings;return{male:S.voiceMale,vi:S.voiceViVariant,packCell:S.packCell}});
+    ok(moved.male===false&&moved.vi==='standard'&&moved.packCell===true,'a device that had chosen the male voices or Lê Minh did not move to the female voices, or lost another setting: '+JSON.stringify(moved));
     await P.page.evaluate(async()=>(await import('/js/ui.js')).openGrownups());await P.page.waitForSelector('.grownups #gDone');
     await P.page.evaluate(()=>document.querySelectorAll('.grownups details').forEach(d=>d.open=true));
-    await P.page.locator('#gVoiceMale').check();
+    const hidden=await P.page.evaluate(()=>({male:!!document.querySelector('#gVoiceMale'),maleBtn:!!document.querySelector('.grownups [data-pv="m"]'),leminh:!!document.querySelector('#gVietnamesePack, #gHanoiDownload')}));
+    ok(!hidden.male&&!hidden.maleBtn&&!hidden.leminh,'Grown-ups still shows a voice that was put aside: '+JSON.stringify(hidden));
     await P.page.waitForSelector('.grownups #xPackSave');
     await P.page.evaluate(()=>document.querySelectorAll('.grownups details').forEach(d=>d.open=true));
     await P.page.locator('#xPackSave').click();
@@ -165,10 +171,11 @@ await check('voicebackground', async () => {
       await P.page.waitForTimeout(250);
     }
     const result=await P.page.evaluate(async()=>({open:!!document.querySelector('.grownups'),male:(await import('/js/state.js')).settings.voiceMale,auto:(await import('/js/state.js')).settings.autoPack,progress:document.querySelector('.packbar')?.textContent,files:(await (await import(String('/js/voicestore.js'))).voiceStore('sv-voices').keys()).size}));
-    ok(!result.open&&result.male&&result.auto&&result.progress&&result.files>before+6,'settings close stopped background download/progress: '+JSON.stringify({before,result}));
+    ok(!result.open&&result.male===false&&result.auto&&result.progress&&result.files>before+6,'settings close stopped background download/progress: '+JSON.stringify({before,result}));
     await P.page.waitForFunction(()=>/✓/.test(document.querySelector('.packbar')?.textContent||''),null,{timeout:60000});
     ok(!P.errors.length,P.errors.join(' | '));
-    return 'real female and male MP3 previews with male opt-in still off; opt-in and explicit offline download continue with shared progress after Save & close';
+    ok(!requests.some(u=>/\/(en|vi)\/m\/|fpt-leminh/.test(u)),'the offline download asked for a recording that was put aside');
+    return 'female voices only (owner, 3 Nov 2026 AEDT): both previews play the female MP3, no male or Lê Minh choice in Grown-ups, a device that had chosen them moved to female with its other settings kept; the explicit offline download continues with shared progress after Save & close';
   }finally{await P.ctx.unrouteAll({behavior:'ignoreErrors'});await P.ctx.close()}
 });
 
@@ -527,8 +534,10 @@ await check('mictest', async () => {
     const G = __sv, wait = ms => new Promise(r => setTimeout(r, ms)), md = navigator.mediaDevices, real = md.getUserMedia.bind(md);
     G.openPad(0, 'friend'); await wait(500);
     const btn = document.querySelector('.pad [data-mictest]'); if (!btn) return { btn: false };
-    btn.click(); await wait(300);
-    const m = document.querySelector('.modal.mictest'), lines = () => [...m.querySelectorAll('.mt-lines li')].map(li => li.textContent);
+    // (v1.08 release fix 2) the test's window comes when its code is in: waited for (300 ms was short on GitHub's machines)
+    btn.click(); await wait(300); for (let k = 0; k < 50 && !document.querySelector('.modal.mictest'); k++) await wait(100);
+    const m = document.querySelector('.modal.mictest'); if (!m) return { btn: true, noWindow: true };
+    const lines = () => [...m.querySelectorAll('.mt-lines li')].map(li => li.textContent);
     const before = lines();
     m.querySelector('[data-mic]').click(); for (let k = 0; k < 30 && !/ON/.test(lines()[2]); k++) await wait(100);
     const on = lines()[2];
@@ -539,7 +548,7 @@ await check('mictest', async () => {
     return { btn: true, before, on, blocked, small, gone: !document.querySelector('.modal.mictest') };
   });
   const errs = P.errors; await P.ctx.close();
-  ok(r.btn && r.before.length === 4 && /iOS|Safari|Chrome|browser/.test(r.before[0]) && /ON/.test(r.on) && /NotAllowedError/.test(r.blocked) && /Settings/.test(r.blocked) && !r.small && r.gone && !errs.length, JSON.stringify(Object.assign(r, { errs })));
+  ok(r.btn && r.before?.length === 4 && /iOS|Safari|Chrome|browser/.test(r.before[0]) && /ON/.test(r.on) && /NotAllowedError/.test(r.blocked) && /Settings/.test(r.blocked) && !r.small && r.gone && !errs.length, JSON.stringify(Object.assign(r, { errs })));
 });
 
 await check('owneraudiobounds', async () => {
@@ -621,3 +630,29 @@ await check('animalvoices', async () => {
 });
 
 await check('musicaudio', async () => (await import('../music-audio.mts')).musicAudioCheck(b));
+
+await check('voiceopus', async () => {
+  // (v1.08b platform, brief part 1) every recording also as Opus (tools/make-voice-opus.mts): a new device that plays Opus
+  // gets the Opus copy (about half the size) and it plays; a device that already keeps MP3 recordings stays on MP3 (nothing
+  // downloaded twice); a browser that cannot play Opus gets MP3; every MP3 in voices/ has its Opus copy and the manifests say so
+  const { execFileSync } = await import('node:child_process');
+  const files = JSON.parse(execFileSync(process.execPath, ['../tools/make-voice-opus.mts', '--check'], { encoding: 'utf8' }).trim().split('\n').pop());
+  const man = JSON.parse(fs.readFileSync('../voices/manifest-en.json', 'utf8')), h = Object.keys(man.lines).find(k => String(man.lines[k]).includes('f'));
+  const mp3 = fs.statSync(`../voices/en/f/${h}.mp3`).size, opus = fs.statSync(`../voices/en/f/${h}.opus`).size;
+  const fresh = () => { if (!sessionStorage.getItem('fmt-reset')) { localStorage.removeItem('sv2_voiceFmt'); sessionStorage.setItem('fmt-reset', '1'); } };
+  const look = (P, line) => P.page.evaluate(async line => { const V = await import('/js/voice.js'); let f = ''; for (let i = 0; i < 100; i++) { f = V.voiceFormat(); if (localStorage.getItem('sv2_voiceFmt')) break; await new Promise(r => setTimeout(r, 100)); }
+    let secs = 0; if (f === 'opus') { const r = await fetch(`/voices/en/f/${line}.opus`), buf = await new AudioContext().decodeAudioData(await r.arrayBuffer()); secs = buf.duration; }
+    return { f, kept: localStorage.getItem('sv2_voiceFmt'), secs }; }, line);
+  // 1. a new device on a browser that plays Opus
+  let P = await open(b, { pre: fresh }); const a = await look(P, h), e1 = P.errors; await P.ctx.close();
+  // 2. a device that kept MP3 recordings before the Opus copies came
+  P = await open(b, { pre: fresh }); await P.page.evaluate(async () => { const c = await caches.open('sv-voices'); await c.put(new globalThis.URL('/voices/en/f/old.mp3', location.href).href, new Response(new Uint8Array([0xff, 0xfb]))); localStorage.removeItem('sv2_voiceFmt'); });
+  await P.page.reload(); await P.page.waitForSelector('.screen.title, .valley, canvas', { timeout: 90000 }).catch(() => { }); const k = await look(P, h), e2 = P.errors; await P.ctx.close();
+  // 3. a browser that cannot play Opus
+  P = await open(b, { pre: () => { if (!sessionStorage.getItem('fmt-reset')) { localStorage.removeItem('sv2_voiceFmt'); sessionStorage.setItem('fmt-reset', '1'); } const was = HTMLMediaElement.prototype.canPlayType; HTMLMediaElement.prototype.canPlayType = function (t) { return /opus/.test(t) ? '' : was.call(this, t); }; } });
+  const s = await look(P, h), e3 = P.errors; await P.ctx.close();
+  const got = { files, sizes: { mp3, opus }, opusDevice: a, mp3Kept: k, noOpus: s, errs: [...e1, ...e2, ...e3] };
+  ok(!files.missing && !files.stray && opus < mp3 * .65 && a.f === 'opus' && a.kept === 'opus' && a.secs > .3 && k.f === 'mp3' && k.kept === 'mp3' && s.f === 'mp3' && s.kept === 'mp3' && !got.errs.length, JSON.stringify(got));
+  const tot = Object.values(files.per as Record<string, { mp3: number, opus: number }>).reduce((x, v) => x + v.opus, 0);
+  return `${tot} recordings with an Opus copy; one line ${mp3} -> ${opus} bytes; a new Opus device plays the Opus copy (${a.secs.toFixed(1)} s), a device keeping MP3 stays on MP3, a browser without Opus gets MP3`;
+});

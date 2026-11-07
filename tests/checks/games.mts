@@ -36,6 +36,9 @@ await check('goatcircle', async () => (await import('../goat-browser.mts')).goat
 
 await check('gamespace', async () => (await import('../gamespace-browser.mts')).gameSpaceCheck(b));
 
+// (v1.08 layout, owner 3 Nov 2026 AEDT) every game fits one screen: phone, tablet both ways and computer
+await check('gamefit', async () => (await import('../gamefit-browser.mts')).gameFitCheck(b));
+
 await check('simplereturnfruit', async () => (await import('../simple-return-fruit.mts')).simpleReturnFruitCheck(b));
 
 await check('ladybugsplit', async () => (await import('../ladybug-unified.mts')).ladybugUnifiedCheck(b,'split'));
@@ -134,9 +137,15 @@ await check('boxes', async () => {
     p.age = 'little'; await w(900); out.littleHidden = chip().parentNode.hidden; p.age = 'big'; await w(900);
     // the switches
     G.heroes.forEach(x => { delete x.profile.tried; });   // (batch rollout, owner 8 Oct rule: off keeps a feature for a child who used it; here the child never did, the check 'rollout' covers the keeping)
-    C.features = C.features || {}; for (const id of ['mysteryBox', 'rankings', 'collectibles']) C.features[id] = false; await w(900);
+    // (v1.08 release) a thing with a release rule (content/custom.json releases: the boxes start 7 Nov 2026) is switched
+    // off in Studio's Releases tab (releases[id].on = false), which js/custom.ts featureOn reads before CUSTOM.features;
+    // both switches are turned off here, as a grown-up would with whichever one Studio shows
+    C.features = C.features || {}; const relWas = { ...(C.releases || {}) }; C.releases = { ...relWas };
+    for (const id of ['mysteryBox', 'rankings', 'collectibles']) { C.features[id] = false; if (C.releases[id]) C.releases[id] = { ...C.releases[id], on: false }; }
+    await w(900);
     out.offHidden = chip().parentNode.hidden; G.boxes.openHub(0); await w(300); out.offHub = !document.querySelector('.modal.bxhub');
     for (const id of ['mysteryBox', 'rankings', 'collectibles']) delete C.features[id];
+    C.releases = relWas;
     return out;
   });
   const errs = P.errors; await P.ctx.close(); const bad = [];
@@ -264,7 +273,9 @@ await check('levelsa', async () => {
     ['hanoi', '.disc'], ['robot', '.rcell'], ['goat', '.hay'], ['eggs', '.eggspot'], ['opposites', '.choices .choice'], ['days', '.choices .choice'],
     ['oantuti', '.gl-dots i'], ['rulefinder', '.choices .choice'], ['steppingpath', '.think-path button'], ['sayfind', '.sf-pic'],
     ['numline', '.n2-btn'], ['tiles', '.s2-tile'], ['foldbox', '.s2-flap'], ['whichgroup', '.w2-btn'], ['guesswhat', '.w2-btn'],
-    ['pricetags', '.mn2-coin'], ['sharefair', '.mn2-friend'], ['cheaper', '.mg-card'], ['tangram', '.tg-piece'], ['rangoli', '.rg-pal button']];
+    ['pricetags', '.mn2-coin'], ['sharefair', '.mn2-friend'], ['cheaper', '.mg-card'], ['tangram', '.tg-piece'], ['rangoli', '.rg-pal button'],
+    // (v1.08 maths) two of the new maths games: more answers to choose from at Talent
+    ['mx_sprint', '.mx-btn'], ['mx_patterns', '.mx-btn']];
   // (every game unlocked, as in the games check: this checks the levels, not earned access)
   const P = await openAllGamesFixture(b, { w: 390, h: 844, touch: true }); await clear(P.page);
   await P.page.evaluate(() => { __sv.heroes.forEach(h => { h.profile.age = 'big'; }); });
@@ -387,7 +398,7 @@ await check('stickers', async () => {
     const r = await P.page.evaluate(async ([age, lang]) => {
       const G = __sv, hero = G.heroes[0], p = hero.profile, wait = ms => new Promise(r => setTimeout(r, ms));
       const SB = await import('/js/stickers.js'), C = await import('/js/content/stickers.js'), S = await import('/js/state.js'), V = await import('/js/voice.js'), A = await import('/js/audio.js');
-      const W = await import('/js/world.js'), R = await import('/js/regions.js'), GA = await import('/js/gather.js'), D = await import('/js/data.js'), SE = await import('/js/secrets.js'), PS = await import('/js/passport.js'), MH = await import('/js/myhouse.js'), FE = await import('/js/festivals.js'), SP = await import('/js/content/surprises.js');
+      const LP = await import('/js/content/learnpaths.js'), W = await import('/js/world.js'), R = await import('/js/regions.js'), GA = await import('/js/gather.js'), D = await import('/js/data.js'), SE = await import('/js/secrets.js'), PS = await import('/js/passport.js'), MH = await import('/js/myhouse.js'), FE = await import('/js/festivals.js'), SP = await import('/js/content/surprises.js');
       const out = { age, lang };
       // the ways to earn exist in the running game
       const kinds = new Set(['duck', 'chicken', 'butterfly', 'bird', 'kitty']); G.scene.traverse(o => { if (o.userData && o.userData.rig) kinds.add(o.userData.rig.kind); });
@@ -397,7 +408,9 @@ await check('stickers', async () => {
         const [k, v] = Object.entries(w)[0];
         const okk = k === 'act' ? (v.endsWith('*') ? [...its].some(x => x.startsWith(v.slice(0, -1))) : its.has(v)) : k === 'meet' ? kinds.has(v) : k === 'postcard' ? lms.has(v) : k === 'enter' ? !!W.REGION_NAMES[v]
           : k === 'find' ? !!GA.WILD[v] : k === 'cook' ? recipes.has(v) : k === 'taste' ? vend.has(v) : k === 'secret' ? SE.SECRETS.some(x => x.id === v) : k === 'tower' ? W.TOWERS.some(x => x.id === v)
-          : k === 'stamp' ? PS.COUNTRIES.some(c => c.cc + '_full' === v) : k === 'fest' ? !!FE.FESTIVALS[v] : k === 'surprise' ? SP.SURPRISES.some(x => x.id === v) : k === 'prize' ? C.LEGACY_EMOJI.includes(v) : false;
+          : k === 'stamp' ? PS.COUNTRIES.some(c => c.cc + '_full' === v) : k === 'fest' ? !!FE.FESTIVALS[v] : k === 'surprise' ? SP.SURPRISES.some(x => x.id === v) : k === 'prize' ? C.LEGACY_EMOJI.includes(v)
+          // (v1.08b games) a learning journey's step: the journey exists and the step is one of its 1 to STEPS
+          : k === 'learn' ? (([pk, n]) => LP.LEARN_PATHS.some(x => x.key === pk) && +n >= 1 && +n <= LP.STEPS)(String(v).split(':')) : false;
         if (!okk) bad.push(s.id + ':' + k + '=' + v);
         if (typeof A.SFX[s.sound] !== 'function') bad.push(s.id + ' sound ' + s.sound);
       }
@@ -461,7 +474,8 @@ await check('stickers', async () => {
     ok(!r.bad.length, 'ways to earn that do not exist: ' + r.bad.slice(0, 12).join(', '));
     ok(r.earned.length === 4, 'earned: ' + JSON.stringify(r.earned));
     ok(['hen', 'owl', 'pc_opera', 'place_village'].every(id => r.fresh.includes(id)) && +r.bagBadge >= 4 && +r.padTabBadge >= 4, 'New! badges: ' + JSON.stringify([r.fresh, r.bagBadge, r.padTabBadge]));
-    ok(r.tabs === 10 && r.tiles === 9 && /^\d \/ 9$/.test(r.count) && r.bar && r.missing && r.newOnHen, 'the page: ' + JSON.stringify(r));
+    // (v1.08b games, owner 5 Nov 2026 AEDT) the Learning journeys tab joined the ten themes: 11 tabs
+    ok(r.tabs === 11 && r.tiles === 9 && /^\d \/ 9$/.test(r.count) && r.bar && r.missing && r.newOnHen, 'the page: ' + JSON.stringify(r));
     ok(r.sizes.minTab >= want && r.sizes.minTile >= want && r.inView, `sizes (at least ${want} px): ` + JSON.stringify(r.sizes) + ' in view ' + r.inView);
     const other = lang === 'vi' ? 'en:Hen' : 'vi:Gà mái', mine = lang === 'vi' ? 'vi:Gà mái' : 'en:Hen';
     ok(r.henSaid.includes(mine) && r.henSaid.includes(other) && r.henSeen, 'tap: both names said and the badge gone: ' + JSON.stringify(r.henSaid));

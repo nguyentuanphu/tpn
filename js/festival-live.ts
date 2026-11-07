@@ -1,5 +1,5 @@
 /** A shared, public-only snapshot. Never read or store family answers, profiles or photos. */
-export type PublicFestivals={schema:1;enabled:string[];festivals:Record<string,{date?:string;buildup?:number|string}>;at?:string|null;launch?:string|null};
+export type PublicFestivals={schema:1;enabled:string[];festivals:Record<string,{date?:string;buildup?:number|string}>;at?:string|null;launch?:string|null;calendar?:{moves:Record<string,string>}};
 const KEY='sv_public_festivals_v1',listeners=new Set<()=>void>();
 let snapshot:PublicFestivals|null=null,started=false,inflight:Promise<void>|null=null,revision=0;
 let boot:Promise<PublicFestivals|null>|null=null;

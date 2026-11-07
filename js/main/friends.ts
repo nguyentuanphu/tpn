@@ -90,6 +90,8 @@ function friendNote(f, st) {
   const name = nm(st.name || f.name), where = st.at && REGION_NAMES[st.at] ? REGION_NAMES[st.at]() : '';
   const pop = el('div', 'vc-pop friendnote', `<p class="vc-heard">🟢 ${esc(T(`${name} is playing!`, `${name} đang chơi!`))}</p><div class="ff-row"><div class="ff-txt"><small>${esc(where)}${st.room ? ' · ' + T('in a room', 'đang ở trong phòng') + ` (${(st.players || 1)}/${MAX_ROOM})` : ''}</small></div></div>
     <div class="ff-btns"><button class="btn primary" data-inv>📨 ${T('Invite', 'Mời bạn')}</button>${st.room && (st.players || 1) < MAX_ROOM && Net.sameMap(st.map) ? `<button class="btn" data-go>▶ ${T('Go to their room', 'Sang phòng bạn')}</button>` : ''}<button class="btn" data-no>${T('Later', 'Để sau')}</button></div>`);
+  // (v1.08 release) when the card came, so the meet check counts its 10 still seconds from then (the card closes itself after 45 s)
+  pop.dataset.at = String(Date.now());
   document.body.appendChild(pop); SFX.chime(); say('Your friend is playing too!', 'Bạn của con cũng đang chơi!');
   const close = () => { pop.remove(); clearTimeout(t); }, t = setTimeout(close, 45000);
   pop.querySelector('[data-no]').onclick = () => { SFX.tap(); close(); };
@@ -160,7 +162,10 @@ G.drawOnlinePanel = (body, redraw) => {
     body.querySelectorAll<HTMLElement>('[data-rm]').forEach(b => b.onclick = () => { settings.friends = settings.friends.filter(f => f.code !== b.dataset.rm); saveSettings(); redraw(); });
     body.querySelectorAll<HTMLElement>('[data-joinf]').forEach(b => b.onclick = async () => { SFX.tap(); const f = settings.friends.find(x => x.code === b.dataset.fc), st = Net.friends.status[b.dataset.fc] || {}; await G.joinFriend(b.dataset.joinf, f && st.host ? f.pub : null); redraw(); });
     body.querySelectorAll<HTMLButtonElement>('[data-inv]').forEach(b => b.onclick = async () => { b.disabled = true; inviteToast(await G.inviteFriend(b.dataset.inv)); b.disabled = false; });
-    body.querySelectorAll<HTMLElement>('[data-mictest]').forEach(b => b.onclick = () => { SFX.tap(); import('../mictest.js').then(M => M.openMicTest()); });
+    // (v1.08 release fix 2, check mictest on GitHub) the test's code is fetched as soon as its button shows, so a grown-up's
+    // tap opens it at once (on a slow device the window came only after the fetch)
+    const micBtns = body.querySelectorAll<HTMLElement>('[data-mictest]'); if (micBtns.length) import('../mictest.js').catch(() => { });
+    micBtns.forEach(b => b.onclick = () => { SFX.tap(); import('../mictest.js').then(M => M.openMicTest()); });
   };
   if (Net.connected || Net.role === 'host') {
     const list = Object.values(Net.remotes);

@@ -1,0 +1,252 @@
+# Games, stories and quests linked; a slow rollout; a gift for installing: plan
+
+Owner, 3 Nov 2026 AEDT:
+- Are the games and stories in Play and on the Simple screen linked to the in-game quests and the villagers?
+- How should new content roll out slowly so the game stays interesting, and how are children and parents told?
+- Should children who install the game on the home screen get a gift?
+- Any other ideas?
+
+## Today (checked in the code)
+
+**Games and the valley**
+- 275 games. **131 have a place in the valley** (the map pin and "Go there"); **144 do not**.
+
+  | How a game is placed | Games | Where |
+  |---|---|---|
+  | `GAME_SPOT` | 38 | `js/main/talks.ts` |
+  | The school | 38 | |
+  | Science places | 18 | |
+  | Shrines | 12 | |
+  | Money places | 11 | |
+  | City hosts | 8 | |
+  | Street play groups | 3 | |
+
+  All the `en_*` games go to the school.
+- From the Play hub, tapping a game with a place flies the child there first.
+- **The Simple screen opens games straight away, with no link to the valley.**
+
+**Villagers**
+- 9 village children offer "Play / How to play".
+- The Homes Street neighbours offer Snap, Tiến Lên and Đá cầu, and Cô Mai offers the market game.
+- In chat, 12 of 16 characters offer a game set.
+- **No villager tells the child about a new game or story.**
+
+**Stories**
+- Every fairy tale is told at one spot: Bà Năm's mat under the banyan.
+- Only the lantern story's chapters are tied to places: Lotus Village, Hà Nội and Sydney.
+
+**Quests**
+
+| Quest system | How many | Linked to a game or story |
+|---|---|---|
+| Valley quests | 17 | 3 need games |
+| Lantern story | 3 chapters | 4 game steps and 3 story steps |
+| Daily adventures | 56 | 13 have a "play" step |
+| Farm jobs | 12 | "play 2 games" |
+| Passport | 4 countries | one stamp is a country's game |
+| Festival hunts | 24 | no |
+| Co-op quests | | no |
+| Family missions | 15 | no |
+
+- **No quest asks for one of the new learning games** (Vietnamese, English, Maths, Science, Money), and none asks for a particular fairy tale.
+
+**Rollout**
+- **What is held back:** 111 games and 54 stories are held back as "Coming soon" (`js/content/secondset.ts`). Each one opens for a child after the first-set items in its area are won 3 times (`js/content/unlocks.ts`).
+- **What Studio can schedule:** Studio has 118 switches (`js/content/releases.ts`). Each has on/off, a start date, days on and days the "New" badge shows. Saving goes live with no deploy.
+- **Missing:** there is no calendar that releases single games or stories week by week.
+
+**Telling children and parents**
+- **What children see:**
+  - a "New in the valley!" pop-up, up to 3 items, once per child;
+  - New tags on the Simple screen, the festival calendar and the sticker album, but **not on the Play hub tiles**.
+- **What testers see:** the tester ladybird list.
+- **What parents get:**
+  - 12 kinds of push notification, among them Saturday's "What's new" with text Studio writes, and the game of the week;
+  - the weekly note in Grown-ups.
+
+  There is no email.
+
+**Install**
+- What exists:
+  - the install chip on the title screen and in Grown-ups, with picture guides for iPhone, Android and computer;
+  - the one-tap install on Android and computer;
+  - Studio counts installs.
+- **No gift for installing.**
+
+## Plan
+
+### 1. Everything linked
+1. **Every game gets a place in the valley:**
+   - Vietnamese, English and Maths at the school (a room each);
+   - Science at the garden lab and its places;
+   - Money at the market and shops;
+   - folk games at the đình and the village yard;
+   - music at the music corner;
+   - drawing at the easel and the art house;
+   - thinking games with Ông Cú.
+
+   Each place has a villager host who says one line about it ("Cô giáo Lan: Hôm nay mình học đếm nhé!"). A check fails if a switched-on game has no place.
+2. **Every fairy tale gets its own spot** (Tấm Cám by the well and the thị tree, Sơn Tinh by the river, Chú Cuội under the banyan on the hill, and so on) with a small sign. Bà Năm stays the storyteller. The child can read the tale there or at her mat.
+3. **Villagers tell children about new things.**
+   - When a game or story opens, its host says so the first time the child passes: "Có trò mới ở trường đó!" ("There's a new game at the school!").
+   - Lumi or Ông Cú carries the week's news.
+4. **Learning quests.**
+   - The daily adventure includes one learning step at the child's level ("Help Cô Mai count the change": a money game; "Read Tấm Cám to Bà Năm": a story).
+   - Each subject gets a short path of 10 steps ("Hành trình Toán", "Hành trình Tiếng Anh") with a sticker at each step and a badge at the end.
+   - The Play hub tile shows a small quest mark when a game is part of today's quest.
+5. **The Simple screen** stays one tap to play for little children, with no flying. A small quest star shows on today's quest game.
+
+### 2. A slow rollout
+1. **A weekly drop.** Every week a few new things open for everyone, for example:
+   - 3–4 games;
+   - 1 story;
+   - 1 thing in the valley.
+
+   About 165 things are held back, and v1.08 and v1.09 add more, which is about a year of weekly drops. Big festivals (Tết, Trung Thu, Christmas, Australia Day) bring a bigger drop with their decorations.
+2. **A release calendar in Studio** ("Lịch phát hành"):
+   - Every held-back game and story is placed in a week. Release fills it in first, and the owner can drag items between weeks.
+   - Items open by date on their own, using the existing start-date mechanism, with no deploy.
+   - Testers still see each drop 7 days early.
+3. **Unlocks by playing stay**: a child who plays a lot can open the area's next items before their week, so the keen ones are never stuck waiting.
+4. **A teaser**: the Coming soon tile says what opens next week ("Tuần sau: 3 trò Khoa học mới").
+
+### 3. Telling children and parents
+- **Children:**
+  - the week's host in the valley announces it, and Lumi says it on the Simple screen;
+  - a "New" badge on Play hub tiles (missing today) and on the Simple screen (exists);
+  - the "New in the valley!" pop-up (exists).
+- **Parents:**
+  - Saturday's push "Tuần này có gì mới" (exists), written from the release calendar automatically;
+  - a "What's new" card at the top of Grown-ups;
+  - the weekly note lists the new things and suggests one to play together.
+- **Website:** a "What's new" strip on the home page, from the same calendar.
+- No streaks, timers or "you will lose it" messages: the game stays calm for children.
+
+### 4. A gift for installing on the home screen
+- When the game first runs installed (display mode standalone), every child on that device gets a one-time gift:
+  - a special hat, "Mũ Ngôi Nhà / Home hat" (our own drawing);
+  - 100 coins;
+  - a sticker.
+
+  It is given once per device, and the gift is told to the child in English and Vietnamese.
+- The install chip in Grown-ups says: "Cài lên màn hình chính để chơi nhanh hơn, chơi offline, và nhận quà cho bé".
+- Children are never pushed to install by themselves. Installing is the grown-up's job, so the reminder lives only in Grown-ups and on the title screen.
+- Studio already counts installs, so the effect can be seen there.
+
+### 5. Other ideas from Release
+1. **A learning report for parents by subject:**
+   - what the child practised this week in Vietnamese, English, Maths, Science and Money;
+   - what went well;
+   - one game suggested for next week.
+
+   It stays in Grown-ups and can be shared as a picture.
+2. **Difficulty that follows the child per subject:** a child strong in Maths but new to English gets harder Maths and easier English automatically. The parent can still set the level.
+3. **Lumi as the guide:** she welcomes new children, explains new things, and is the voice of the Simple screen. One friendly face for news.
+4. **Play together at home:** a "Chơi cùng bố mẹ" (play with Mum and Dad) list of games that two people can play on one device, with a short guide for the grown-up.
+5. **Gentle time limits:** a parent-set play time with a soft goodbye from Lumi ("Hẹn mai chơi tiếp nhé!").
+6. **Reading aloud everywhere:** every text a child sees can be tapped to hear it, for children who can't read yet.
+7. **A printable sheet per week:** the week's words and numbers as a PDF for parents (our own art).
+
+## Owner's answers (3 Nov 2026 AEDT, pop-ups)
+1. **Rollout:** "Game, story cũ thì giữ nguyên, chỉ cái mới thôi". Games and stories already open stay open as they are. Only new content goes into the release calendar. The owner asked how festivals and festival games work (below).
+2. **Install gift:** the Home hat, 100 coins and a sticker, once per device.
+3. **Other ideas, chosen:**
+   - the learning report by subject, with difficulty by subject;
+   - Lumi as the guide and the voice of news;
+   - play together with Mum and Dad, and a gentle play time.
+
+   Not chosen this time: tap to hear every text, and the weekly printable sheet.
+4. **Round:** all of this is in v1.09.
+
+## Festivals today (checked in the code)
+- **The calendar:** 24 festivals in `js/content/festcal.ts`, on their real lunar or solar dates every year.
+  - Studio can switch each one off, move it, and set the decoration days before it.
+  - Each festival has decorations, a festival hunt (5 items), festival adventures (24), an evening show (fireworks, lanterns or a parade), a present and a sticker.
+- **The festival game** opens at 15:00 at the festival table. **It is an everyday game, reused, and playable all year anyway:**
+
+  | Festival | Game |
+  |---|---|
+  | Tết | Dragon |
+  | Rằm tháng Giêng | Kite |
+  | Trung Thu | Kite |
+  | Giỗ Tổ | Puppets |
+  | Quốc Khánh | Puppets |
+  | Vu Lan, Mother's Day, Father's Day | Family Quiz |
+  | Children's Day, New Year | Balloon |
+  | Reconciliation, NAIDOC | Koala |
+  | Đoan Ngọ | Tug |
+  | Ông Táo | Market |
+  | Teachers' Day | Words |
+  | Easter | Eggs |
+  | Halloween | Memory |
+  | Christmas | Parcel |
+  | Australia Day | Cricket |
+  | Clean Up | Sorting |
+  | Harmony | First Words |
+  | Holi | Colours |
+  | Anzac | Tune |
+  | Diwali | Rangoli |
+## Festival games: owner's answers (3 Nov 2026 AEDT, pop-ups)
+- **Each of the 24 festivals gets its own new festival game.** Examples:
+  - Tết: wrap bánh chưng;
+  - Trung Thu: make a star lantern and walk in the lantern parade;
+  - Đoan Ngọ: dragon-boat race;
+  - Christmas: decorate the tree;
+  - Diwali: light the diyas;
+  - Anzac: bake Anzac biscuits.
+
+  The everyday games used today go back to being only everyday games.
+- **The festival game is played only in the festival season, and it comes back the next year.**
+  - It opens with the decorations (Studio's days before the festival) and stays a few days after the festival.
+  - Then it is put away until the next year. Testers see it 7 days early, as with other releases.
+  - Outside the season, the festival calendar shows it as "Comes back at Tết" (Sẽ quay lại vào Tết).
+- **All 24 in v1.09**, each with:
+  - levels up to Talent;
+  - a guide film;
+  - English and Vietnamese;
+  - our own drawings;
+  - a check.
+## Calendar with start and end dates: owner's answers (3 Nov 2026 AEDT, pop-ups)
+
+**Today:**
+- The pad's festival calendar (`js/ui/festivals-ui.ts`) shows "Today" (08:00 present, 15:00 game, show time) and "Coming up" (days to the decorations, the hunt and the festival day).
+- Parents get a push the morning before Vietnamese festivals and the Saturday before Australian events.
+- No end dates, no festival quests in the calendar, and new games and stories are not in it.
+
+**Plan, as chosen:**
+- **Everything lives only in the pad's calendar tab**, renamed "Lịch: Lễ hội và Có gì mới / Calendar: festivals and what's new". There is nothing extra on the play screen or the Simple screen.
+- **Each festival shows a timeline**, each step with its start, its end and "còn X ngày / X days left":
+  - decorations;
+  - the hunt;
+  - the festival day;
+  - the festival game (opens, put away until next year);
+  - the festival adventures.
+
+  Tapping a step flies the child there.
+- **Below the festivals:**
+  - "This week's new things" (from the release calendar);
+  - "Opens next week";
+  - "Ending soon".
+- **Ending soon is shown in the game only:**
+  - in the calendar tab;
+  - in the Grown-ups "What's new" card.
+
+  There is no push for endings. The existing start-of-festival pushes stay.
+## The website: what's new and coming up (owner, 3 Nov 2026 AEDT, pop-up)
+The website keeps its four main destinations (WEBSITE-RULES rule 1). Inside Discover there are two new parts:
+- **A strip just under the hero picture** with three short items: "Happening now", "New this week" and "Coming up" (for example "Chapter 4 opens 4 Dec").
+- **A Calendar part in Discover** (it extends the festival overview). Each entry has its start and end date and a picture (our own art). It shows:
+  - festivals;
+  - new lantern chapters, with a picture;
+  - new games and stories;
+  - festival games, with the dates they come back.
+
+How it is built:
+- Both parts read the same release calendar and festival dates as the game and the pad's calendar tab, so the website and the game always agree. This is the website contract's "same source" rule.
+- English and Vietnamese, and the one-screen phone layout.
+- It also says what parents get: the push messages that can be turned on in Grown-ups, and the "What's new" card.
+## Questions for the owner (asked by pop-up)
+1. Rollout pace.
+2. The install gift.
+3. Which other ideas to add.
+4. Which round: the links and quests, the release calendar and the install gift.

@@ -55,7 +55,9 @@ export async function freezeWhyCheck(b: Browser): Promise<string> {
     const busy = await waitFor(got, x => x && x.auto === 'freeze' && freezes().indexOf(x) >= n0, 8000, pause);
     // 2. the page is free but no frame comes for 3.6 s (the graphics side stopped drawing; a different length, because
     //    the same freeze in the same place again within a while is one report)
-    await pause(3500); const n1 = freezes().length;
+    // (v1.08 bugs, #780 #781) the device now counts a freeze of another length in the same place as the same problem, as
+    //    the server does, so the second freeze happens under another window: a new place, a new report
+    await pause(3500); await P.page.evaluate(() => { document.querySelector('.freeze-check')!.className = 'modal freeze-check-free'; }); const n1 = freezes().length;
     await P.page.evaluate(() => new Promise<void>(r => { const raf = window.requestAnimationFrame.bind(window); window.requestAnimationFrame = cb => raf(() => setTimeout(() => raf(cb), 3600)) as any; setTimeout(() => { window.requestAnimationFrame = raf; r(); }, 1000); }));
     const free = await waitFor(got, x => x && x.auto === 'freeze' && freezes().indexOf(x) >= n1 && parseFloat(x.detail) >= 3.4, 9000, pause);
     const bad: string[] = [];
@@ -79,9 +81,13 @@ export async function longPlayMemoryCheck(b: Browser): Promise<string> {
   try {
     await clear(P.page);
     const count = () => P.page.evaluate(() => { const G = (window as any).__sv, geos = new Set(), texs = new Set();
-      G.scene.traverse((o: any) => { if (o.geometry) geos.add(o.geometry); for (const m of (Array.isArray(o.material) ? o.material : o.material ? [o.material] : [])) for (const v of Object.values(m)) if (v && (v as any).isTexture) texs.add(v); });
+      G.scene.traverse((o: any) => { if (o.geometry) geos.add(o.geometry); if (o.isSkinnedMesh && o.skeleton && o.skeleton.boneTexture) texs.add(o.skeleton.boneTexture); for (const m of (Array.isArray(o.material) ? o.material : o.material ? [o.material] : [])) for (const v of Object.values(m)) if (v && (v as any).isTexture) texs.add(v); });
       // (three.js: a shape sent to the graphics gets a 'dispose' listener; a picture sent gets __webglInit)
-      const sent = [...geos].filter((g: any) => g._listeners?.dispose?.length).length, texSent = [...texs].filter(t => G.renderer.properties.get(t).__webglInit).length;
+      // (v1.08e faces, part 3: a shape with mood keys, a sculpted face, keeps them in a picture of its own that three.js makes
+      // for that shape when it is first drawn and frees with it: one for each such shape drawn in the valley)
+      const mg = new Set(); G.scene.traverse((o: any) => { const g = o.geometry; if (!o.isMesh || !g || !(g.morphAttributes && g.morphAttributes.position && g.morphAttributes.position.length) || !g._listeners?.dispose?.length) return; for (let p = o; p; p = p.parent) if (!p.visible) return; mg.add(g); });
+      const morphTex = mg.size; // (only the faces drawn: a hidden one's picture may not have been made)
+      const sent = [...geos].filter((g: any) => g._listeners?.dispose?.length).length, texSent = [...texs].filter(t => G.renderer.properties.get(t).__webglInit).length + morphTex;
       return { inScene: geos.size, sent, held: G.renderer.info.memory.geometries, texInScene: texs.size, texSent, texHeld: G.renderer.info.memory.textures }; });
     const before = await count();
     const places: number[][] = await P.page.evaluate(async () => (await import('/js/world.js')).CITIES.slice(0, 6).map((c: any) => [c.x, c.z]));
@@ -93,6 +99,8 @@ export async function longPlayMemoryCheck(b: Browser): Promise<string> {
     await P.page.waitForTimeout(1500);
     const after = await count();
     // (a few shapes may be drawn once without a place in the valley: the sky's light setup, a game's preview)
+    // (v1.08e villagers: a skinned model's skeleton keeps its bone turns in a picture of its own, not in a material: it is
+    // counted with the model it belongs to, so it is in the valley while the model is)
     const bad: string[] = [];
     if (after.held > after.sent + 12) bad.push(`the graphics hold ${after.held} shapes, ${after.held - after.sent} of them no longer in the valley`);
     if (after.texHeld > after.texSent + 12) bad.push(`the graphics hold ${after.texHeld} pictures, ${after.texHeld - after.texSent} of them no longer in the valley`);

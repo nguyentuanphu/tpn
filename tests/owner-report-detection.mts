@@ -7,9 +7,9 @@ try {
   await page.goto('http://127.0.0.1:8765/__fixture__');
   const results=await page.evaluate(async()=>{
     const {unreachableControl,activeReportPanel,observeGameOpen}=await import('/js/tester-detection.js');
-    document.body.innerHTML=`<div class="hud"><button id="background" style="position:absolute;top:1200px">Background</button></div><div class="modal" style="position:fixed;inset:0;z-index:30"><button id="outside" style="position:absolute;left:600px">Lost</button><div id="scroll" style="height:100px;width:250px;overflow-y:auto;overflow-x:hidden"><div style="height:1500px;position:relative"><button id="reachable" style="position:absolute;top:1200px">Scroll to me</button><button id="lostX" style="position:absolute;left:800px;top:200px">Lost sideways</button></div></div><button id="hidden" style="display:none">Hidden</button><button id="visible">Here</button><input id="input"></div>`;
+    document.body.innerHTML=`<div class="hud"><button id="background" style="position:absolute;top:1200px">Background</button></div><div class="modal" style="position:fixed;inset:0;z-index:30"><button id="outside" style="position:absolute;left:600px">Lost</button><div id="scroll" style="height:100px;width:250px;overflow-y:auto;overflow-x:hidden"><div style="height:1500px;position:relative"><button id="reachable" style="position:absolute;top:1200px">Scroll to me</button><button id="lostX" style="position:absolute;left:800px;top:200px">Lost sideways</button></div></div><button id="hidden" style="display:none">Hidden</button><button id="visible">Here</button><details id="foldbox"><summary><button id="foldsum" style="position:relative;top:2000px">Summary</button></summary><div style="height:1200px"></div><button id="folded">Folded away</button></details><details open><summary>Open</summary><div style="height:1200px"></div><button id="unfolded">Lost below</button></details><input id="input"></div>`;
     const top=activeReportPanel(document),get=id=>unreachableControl(document.getElementById(id),top);
-    const controls={reachable:get('reachable'),outside:get('outside'),lostX:get('lostX'),hidden:get('hidden'),background:get('background'),visible:get('visible')};
+    const controls={reachable:get('reachable'),outside:get('outside'),lostX:get('lostX'),hidden:get('hidden'),background:get('background'),visible:get('visible'),folded:get('folded'),foldSummary:get('foldsum'),unfolded:get('unfolded')};
     document.getElementById('input').focus();controls.keyboardDoesNotDisable=get('outside');
     const wait=()=>new Promise(r=>setTimeout(r,80));
     let failures=[];
@@ -23,7 +23,7 @@ try {
     const normal=document.createElement('input');normal.value='Synthetic visible note';
     return {controls,failures,captureValues:[captureFieldValue(password),captureFieldValue(pairing),captureFieldValue(normal)]};
   });
-  assert.deepEqual(results.controls,{reachable:false,outside:true,lostX:true,hidden:false,background:false,visible:false,keyboardDoesNotDisable:true});
+  assert.deepEqual(results.controls,{reachable:false,outside:true,lostX:true,hidden:false,background:false,visible:false,folded:false,foldSummary:true,unfolded:true,keyboardDoesNotDisable:true});
   assert.deepEqual(results.failures,['missing','wanted']);
   assert.deepEqual(results.captureValues,['••••','••••','Synthetic visible note']);
   console.log(JSON.stringify({pass:true,...results},null,2));

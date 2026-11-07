@@ -2,7 +2,7 @@
 // streets near Đà Nẵng (central Vietnam), the red Thê Húc bridge in Hà Nội, the Cái Răng floating market near
 // Hồ Chí Minh City (the Mekong), the Twelve Apostles near Melbourne (Victoria) and Story Bridge in Brisbane
 // (Queensland). Each has an ℹ️ sign, a postcard, real photos and a 360° look round (js/realworld.js REAL).
-import { THREE, P, merge, toonVC, sprite, outline } from './gfx.js';
+import { THREE, P, merge, toonVC, sprite, outline, worldTag } from './gfx.js';
 import { T } from './i18n.js';
 import { heightAt, oldHeightAt, CITIES, roadDist, riverDist, WATER, BAMBOO, APOSTLES, LAKE, ULURU, HALF, HOIAN, PONDS, BRIDGES } from './world.js';
 import { LANDMARKS, postcard } from './regions.js';
@@ -73,7 +73,7 @@ export function createRegionSites(G) {
       : bridge ? [...(B => B.axis === 'z' ? [B.c - B.w / 2 - 5, B.a0 - 4] : [B.a0 - 4, B.c - B.w / 2 - 5])(bridge), 0] : (near && findSpot({ x: near.mx ?? near.x, z: near.mz ?? near.z })) || findSpot(c); if (!s) { console.warn('no room for', id); continue; }
     const [x, z, y] = s; used.push([x, z]);
     const rot = id === 'thehuc' ? Math.PI / 2 : Math.atan2(c.x - x, c.z - z); // facing the city (the Thê Húc bridge reaches out across the lake)
-    if (!bridge) { const m = new THREE.Mesh(merge(MODELS[model]()), mat); m.position.set(x, y - .05, z); m.rotation.y = rot; m.castShadow = m.receiveShadow = true; scene.add(m); outline(m, .025, '#4a3a3f');
+    if (!bridge) { const m = new THREE.Mesh(merge(MODELS[model]()), mat); m.position.set(x, y - .05, z); m.rotation.y = rot; m.castShadow = m.receiveShadow = true; scene.add(m); outline(m, .025, '#4a3a3f'); worldTag(m, 'lm-' + model, { outline: [.025, '#4a3a3f'] }); // (v1.08e places)
           if (id === 'thehuc') {
             m.userData.walk = true; // (r89) a walkway: the solid map leaves it out (a plank's tilted edge stood a little above the deck and counted as a wall); the temple keeps its collider
             world.colliders.push({ x: x + Math.cos(rot) * 8.2, z: z - Math.sin(rot) * 8.2, r: 1.9 }); // (only its temple, on the shore: the bridge reaches out over the water)

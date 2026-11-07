@@ -9,18 +9,18 @@ import { STORY_LOOKS } from './film-looks.js';
 
 const PI = Math.PI, H = PI / 2;
 // the cast
-const AN = LOOK({ style: 'tunic', color: '#8a5a32', hairStyle: 'short', skin: '#d8a070' });
-const WIFE = LOOK({ style: 'aodai', color: '#b8573a', hairStyle: 'buns', skin: '#f0c098' });
-const SON = LOOK({ style: 'shirt', color: '#f2e2b8', hairStyle: 'spiky', skin: '#e0aa80' });
-const KING = LOOK({ style: 'tunic', color: '#e8b62a', hat: 'crown', skin: '#e0aa80' });
-const GUARD = LOOK({ style: 'tunic', color: '#c62f2f', hat: 'silkcap' });
-const SAILOR = (c, hat = 'nonla') => LOOK({ style: 'shirt', color: c, hat, skin: '#c89060' });
-const MOTHER = LOOK({ style: 'aodai', color: '#6a4a3a', hairStyle: 'buns', hair: '#cfcfcf', skin: '#e0aa80' });
-const GIONG = LOOK({ style: 'shirt', color: '#e8d8a8', hairStyle: 'short', skin: '#e0aa80' });
-const HERO = LOOK({ style: 'tunic', color: '#7a8088', back: 'cape', hairStyle: 'short', skin: '#e0aa80' });
-const MESSENGER = LOOK({ style: 'tunic', color: '#c62f2f', hat: 'silkcap', skin: '#d8a070' });
-const VILLAGER = (style, color, hat = 'nonla', hairStyle = 'buns') => LOOK({ style, color, hat, hairStyle, skin: '#d8a070' });
-const ENEMY = LOOK({ style: 'tunic', color: '#3a3a48', hairStyle: 'spiky', skin: '#c89070' });
+const AN = LOOK({ kit: 'vn-aonau', style: 'tunic', color: '#8a5a32', hairStyle: 'short', skin: '#d8a070' });
+const WIFE = LOOK({ kit: 'vn-tuthan', style: 'aodai', color: '#b8573a', hairStyle: 'buns', skin: '#f0c098' });
+const SON = LOOK({ kit: 'vn-boy', style: 'tunic', color: '#f2e2b8', hairStyle: 'spiky', skin: '#e0aa80' });
+const KING = LOOK({ kit: 'vn-king', style: 'tunic', color: '#e8b62a', hat: 'crown', skin: '#e0aa80' });
+const GUARD = LOOK({ kit: 'vn-armour', style: 'tunic', color: '#c62f2f', hat: 'silkcap' });
+const SAILOR = (c, hat = 'nonla') => LOOK({ kit: 'vn-aonau', style: 'tunic', color: c, hat, skin: '#c89060' });
+const MOTHER = LOOK({ kit: 'vn-khanvan', style: 'aodai', color: '#6a4a3a', hairStyle: 'buns', hair: '#cfcfcf', skin: '#e0aa80' });
+const GIONG = LOOK({ kit: 'vn-boy', style: 'tunic', color: '#e8d8a8', hairStyle: 'short', skin: '#e0aa80' });
+const HERO = LOOK({ kit: 'vn-armour', style: 'tunic', color: '#7a8088', back: 'cape', hairStyle: 'short', skin: '#e0aa80' });
+const MESSENGER = LOOK({ kit: 'vn-aothe', style: 'tunic', color: '#c62f2f', hat: 'silkcap', skin: '#d8a070' });
+const VILLAGER = (style, color, hat = 'nonla', hairStyle = 'buns') => LOOK({ style, kit: ({ aodai: 'vn-tuthan', tunic: 'vn-aonau', dress: 'vn-yem' })[style], color, hat, hairStyle, skin: '#d8a070' });
+const ENEMY = LOOK({ kit: 'vn-armour', style: 'tunic', color: '#3a3a48', hairStyle: 'spiky', skin: '#c89070' });
 
 // things on the water bob up and down with the waves
 function afloat(S, model, x, z, yaw = 0) {
@@ -203,7 +203,7 @@ export const FILMS: Record<string, Film> = {
       S.cam(2.5, 1.5, [2.6, 1.5, 14.2], [0, .6, 11.2]);
       const boat = afloat(S, Pp.boat(7, '#c8783a'), 6, 56, PI);
       const s1 = S.person(SAILOR('#3b6fe0'), 0, 0, 0), s2 = S.person(SAILOR('#5fa84a', 'none'), 0, 0, 0);
-      board(s1, boat.children[0], [0, .4, 2.3], 0); board(s2, boat.children[0], [.4, .4, -1.4], 0);
+      board(s1, boat.children[0], [0, .4, 2.3], 0); board(s2, boat.children[0], [.4, .4, -1.4], 0); S.mood(s1, 0, 'curious'); S.mood(s2, 0, 'excited');   // (faces with feeling) a strange fruit on the sea
       S.help(4, 'Tap to push the melon out to sea!', 'Chạm để thả quả dưa ra biển nào!', t => {
         S.do(an, t, 'throw', .5); S.drop(m, t + .2); S.move(m, t + .21, .8, [.3, -.2, 14], undefined, .8);
         let floating = false; S.at(t + 1, () => { floating = true; });
@@ -318,11 +318,12 @@ export const FILMS: Record<string, Film> = {
       const bowl = Pp.bowl(); S.add(bowl); S.grab(boy, 0, bowl, [0, -.52, .1]); S.do(boy, .3, 'eat');
       const stack = [0, 1, 2, 3, 4, 5].map(i => { const b = Pp.bowl(false); b.visible = false; return S.add(b, 1.4 + (i % 2) * .04, .46 + i * .07, 1.5); });
       stack.forEach((b, i) => S.show(b, 1.6 + i * .7));
-      const vs = [S.person(VILLAGER('aodai', '#3a7a6a'), -9, 6, H), S.person(VILLAGER('shirt', '#3b6fe0', 'nonla', 'short'), 9, 5, -H), S.person(VILLAGER('aodai', '#a8573a'), 8, 9, -H)];
+      const vs = [S.person(VILLAGER('aodai', '#3a7a6a'), -9, 6, H), S.person(VILLAGER('tunic', '#3b6fe0', 'nonla', 'short'), 9, 5, -H), S.person(VILLAGER('aodai', '#a8573a'), 8, 9, -H)];
       const loads = [Pp.pot(), Pp.basket(), Pp.pot()];
       vs.forEach((v, i) => { S.add(loads[i]); S.grab(v, 0, loads[i], [0, .3, .42], 'torso', .8); S.do(v, 0, 'carry'); });
       [[-2.2, 3.2], [2.6, 3.1], [1.2, 4.6]].forEach((p, i) => S.walk(vs[i], .2 + i * .3, p, 1.8));
-      vs.forEach((v, i) => { S.face(v, 5, [0, 1]); S.drop(loads[i], 5.2, [vs[i].px * .8, 0, vs[i].pz - .5]); S.do(v, 5.2, 'idle'); });
+      vs.forEach((v, i) => { S.face(v, 5, [0, 1]); S.drop(loads[i], 5.2, [vs[i].px * .8, 0, vs[i].pz - .5]); S.do(v, 5.2, 'idle'); S.mood(v, 4.6, 'o'); });
+      S.mood(mom, 1.6, 'o'); S.mood(boy, 1.6, 'excited');   // (faces with feeling) everyone amazed as the boy grows
       S.shot([0, 3, 10.5], [0, .8, 1.2]);
       S.cam(1.2, 1.6, [.7, .85, 3.4], [0, .55, 1]);
       S.scale(boy.o, 1.5, 4, .56, .85);
@@ -428,7 +429,7 @@ export const FILMS: Record<string, Film> = {
       S.cam(.5, 4.5, [-2.6, 3.2, 6], [-6.5, 3.6, -1]);
       S.show(sp, 1); S.tw(1, 4, k => clumps.forEach(c => tint(c, k)), k => k);
       S.show(sp, 5.4, false);
-      const mom = S.person(MOTHER, -1.2, 12, PI), v1 = S.person(VILLAGER('shirt', '#3b6fe0', 'nonla', 'short'), 1.2, 12.6, PI), v2 = S.person(VILLAGER('aodai', '#a8573a'), 0, 13.4, PI), kid = S.person(SON, .5, 14, PI, .68);
+      const mom = S.person(MOTHER, -1.2, 12, PI), v1 = S.person(VILLAGER('tunic', '#3b6fe0', 'nonla', 'short'), 1.2, 12.6, PI), v2 = S.person(VILLAGER('aodai', '#a8573a'), 0, 13.4, PI), kid = S.person(SON, .5, 14, PI, .68);
       [[mom, [-1.2, -3.6]], [v1, [1.2, -3.6]], [v2, [-.4, -2.4]], [kid, [.7, -2.3]]].forEach(([a, p], i) => S.walk(a, 5.2 + i * .25, p, 2.6));
       S.cam(5.2, 2.6, [0, 4, 15], [0, 1.6, -3]);
       [mom, v1, v2, kid].forEach(a => { S.do(a, 11, 'bow', 2.4); S.mood(a, 13.6, 'happy'); });
@@ -705,9 +706,9 @@ FILMS.lantern_ch1 = { pages: [
 ] };
 
 // ---------------- The next films (Kid UI, 10 Oct): two tales and two guides ----------------
-const PRINCE1 = LOOK({ style: 'tunic', color: '#3b6fe0', hat: 'silkcap', skin: '#e0aa80' });
-const PRINCE2 = LOOK({ style: 'tunic', color: '#3a9a6a', hat: 'silkcap', skin: '#d8a070' });
-const LIEU = LOOK({ style: 'tunic', color: '#b89a6a', hairStyle: 'short', skin: '#d8a070' });
+const PRINCE1 = LOOK({ kit: 'vn-prince', style: 'tunic', color: '#3b6fe0', hat: 'silkcap', skin: '#e0aa80' });
+const PRINCE2 = LOOK({ kit: 'vn-prince', style: 'tunic', color: '#3a9a6a', hat: 'silkcap', skin: '#d8a070' });
+const LIEU = LOOK({ kit: 'vn-aonau', style: 'tunic', color: '#b89a6a', hairStyle: 'short', skin: '#d8a070' });
 // the palace at Tết: blossom trees, red lanterns and the king on his step
 function palaceYard(S) {
   S.sky('#9fd4f4', '#fff1d8'); L.ground(S, '#cbb88a'); L.palace(S); L.blossom(S, -8, -2.5); L.blossom(S, 8, -2.5);
@@ -874,7 +875,7 @@ FILMS.banhchung = { pages: [
     S.cam(7, 1.4, [1.6, 2.2, -.6], [.2, 1, -3.8]);
     // the king tastes, and smiles
     const bite = new THREE.Mesh(G3.S(.07, 10, 8), new THREE.MeshToonMaterial({ color: '#ffffff', emissive: '#a8a49a' })); bite.scale.set(1, .5, 1); bite.visible = false; S.add(bite);
-    S.walk(king, 8.6, [.6, -5.2], 1); S.grab(king, 9.8, bite, [0, -.5, .12]); S.show(bite, 9.8); S.do(king, 10, 'eat', 2.2);
+    S.walk(king, 8.6, [.6, -5.2], 1); S.grab(king, 9.8, bite, [0, -.5, .12]); S.show(bite, 9.8); S.do(king, 10, 'eat', 2.2); S.mood(king, 10.6, 'o'); S.mood(p1, 10.6, 'curious'); S.mood(p2, 10.8, 'curious'); S.still(11.4);   // (faces with feeling) the king surprised by the simple cakes, the brothers wondering
     S.cam(9.2, 1.4, [2.4, 2.4, -1.6], [.4, 1.8, -5.2]);
     S.mood(king, 12.2, 'happy'); S.show(bite, 12.2, false); S.talk(king, 12.4, 2.4); S.do(king, 12.4, 'talk', 2.4);
     S.mood(lieu, 12.6, 'happy'); S.mood(p1, 13, 'happy'); S.mood(p2, 13.2, 'happy');
@@ -893,8 +894,8 @@ FILMS.banhchung = { pages: [
 ] };
 
 // ---------------- Cây khế (The Starfruit Tree) ----------------
-const OLDER = LOOK({ style: 'tunic', color: '#7a4a9a', hairStyle: 'short', skin: '#d8a070' });
-const YOUNGER = LOOK({ style: 'shirt', color: '#4a9a5a', hat: 'nonla', hairStyle: 'short', skin: '#d8a070' });
+const OLDER = LOOK({ kit: 'vn-aonau', style: 'tunic', color: '#7a4a9a', hairStyle: 'short', skin: '#d8a070' });
+const YOUNGER = LOOK({ kit: 'vn-aonau', style: 'tunic', color: '#4a9a5a', hat: 'nonla', hairStyle: 'short', skin: '#d8a070' });
 // the brothers' village: the big house on the left, the little hut and the starfruit tree on the right
 function khe(S, { house = true, sea = false } = {}) {
   if (sea) { S.sky('#7cc8f0', '#e8f6ff'); L.ground(S, '#8fcf6a', 34); if (house) L.house(S, -6, -7); L.bamboo(S, -9, -3); L.bamboo(S, -12, 6, '#5fae4a', 6, 6); L.sun(S, -60, 55, -170, 9); L.clouds(S, [[-40, 28, -90, 2], [30, 34, -110, 2.4]]); }
@@ -1060,7 +1061,7 @@ FILMS.caykhe = { pages: [
     S.drop(big, 5);
     S.move(big, 5.02, .9, [0, -.9, -24], k => k * k);
     const splash = Pp.sparkle('#9fe0ff'); splash.scale.setScalar(2.4); S.add(splash, 0, -.3, -24); S.show(splash, 5.9); S.show(splash, 7.4, false);
-    S.mood(older, 5.2, 'sad');
+    S.mood(older, 5.2, 'sad'); S.still(6.8);   // (faces with feeling) the picture: the heavy bag over the sea (earlier the camera is inside the hill)
     S.tw(5.6, 4, k => { bird.position.set(k * 3, 1.4 + Math.sin(k * PI) * 3, -26 + k * 26); }, k => k);
     S.at(5.6, () => { bird.userData.flap = 1; bird.rotation.y = Math.atan2(3, 26); });
     S.cam(5, 1, [6, 2, -16], [0, 0, -24]);
@@ -1271,10 +1272,10 @@ GUIDES.memory = { pages: [
 // ---------- Sự tích Hồ Gươm, the Lake of the Returned Sword (Kid UI, owner's go 12 Oct AEDT) ----------
 // The child helps twice: helping Lê Lợi reach the sword's handle in the tree (page 2) and handing the sword back to the
 // Golden Turtle (page 5). (A first page has no tap of its own in any film: its words are read as the theatre opens.)
-const THAN = LOOK({ style: 'shirt', color: '#5a7a9a', hat: 'nonla', skin: '#c89060' });
-const LOI = LOOK({ style: 'tunic', color: '#3a6a4a', hairStyle: 'short', skin: '#d8a070' });
-const LOI_KING = LOOK({ style: 'tunic', color: '#e8b62a', hat: 'crown', skin: '#d8a070' });
-const SOLDIER = c => LOOK({ style: 'tunic', color: c, hat: 'silkcap', skin: '#d8a070' });
+const THAN = LOOK({ kit: 'vn-aonau', style: 'tunic', color: '#5a7a9a', hat: 'nonla', skin: '#c89060' });
+const LOI = LOOK({ kit: 'vn-aonau', style: 'tunic', color: '#3a6a4a', hairStyle: 'short', skin: '#d8a070' });
+const LOI_KING = LOOK({ kit: 'vn-king', style: 'tunic', color: '#e8b62a', hat: 'crown', skin: '#d8a070' });
+const SOLDIER = c => LOOK({ kit: 'vn-armour', style: 'tunic', color: c, hat: 'silkcap', skin: '#d8a070' });
 const flat = (w, d, color, y = 0) => { const m = new THREE.Mesh(new THREE.PlaneGeometry(w, d).rotateX(-H), new THREE.MeshToonMaterial({ color })); m.material.userData.film = true; m.position.y = y; return m; };
 // a little rowboat: the valley's boat without its mast and sail, so the people in it can be seen
 const rowboat = (len = 4.4) => { const b = Pp.boat(len); b.children.slice(1).forEach(c => b.remove(c)); return b; };
@@ -1365,7 +1366,7 @@ FILMS.hoguom = { pages: [
     S.do(loi, .4, 'cheer', 2.4); S.mood(loi, .4, 'happy');
     crew.forEach((a, i) => { S.face(a, .6 + i * .15, [0, 1.6]); S.do(a, 1 + i * .2, 'cheer', 2); S.mood(a, 1, 'happy'); });
     S.cam(.4, 3, [0, 1.8, 6.4], [0, 1.5, 1.6]);
-    const vill = [S.person(VILLAGER('aodai', '#e86a8a'), -5, 6, PI * .8), S.person(VILLAGER('shirt', '#f2e2b8', 'nonla', 'short'), 5, 6, -PI * .8)];
+    const vill = [S.person(VILLAGER('aodai', '#e86a8a'), -5, 6, PI * .8), S.person(VILLAGER('tunic', '#f2e2b8', 'nonla', 'short'), 5, 6, -PI * .8)];
     vill.forEach((v, i) => { S.walk(v, 3.4 + i * .3, [i ? 3.4 : -3.4, 5]); S.do(v, 5.8, 'wave', 2); S.mood(v, 5.8, 'happy'); });
     S.cam(3.6, 2.4, [0, 4, 13], [0, 1.2, 3]);
     S.say(5.8, 'Everyone cheered and waved flags.', 'Mọi người reo hò, phất cờ.');
@@ -1402,7 +1403,7 @@ FILMS.hoguom = { pages: [
     // the turtle speaks
     S.tw(.4, 2.6, k => { turtle.userData.head.rotation.x = Math.sin(k * PI * 4) * .12; });
     S.cam(.2, 2.6, [3.4, 2.4, 5.4], [-.2, .8, -1.8]);
-    S.mood(king, 2.4, 'smile'); S.do(king, 2.6, 'bow', 1.4);
+    S.mood(king, 2.4, 'shy'); S.do(king, 2.6, 'bow', 1.4);   // (faces with feeling) the king bows to the Golden Turtle, humble
     const ring = Pp.sparkle('#ffe27a'); S.add(ring, 1.6, .3, -4);
     S.help(4.2, 'Tap to give the sword back to the Golden Turtle!', 'Chạm để trả gươm cho Rùa Vàng nhé!', t => {
       S.do(king, t, 'give', 1.6); S.drop(sword, t + .8); S.move(sword, t + .8, 1.2, [1.6, .5, -3.1], io, .6);
@@ -1420,7 +1421,7 @@ FILMS.hoguom = { pages: [
   // 6. That lake in Hà Nội is called Hồ Hoàn Kiếm, the Lake of the Returned Sword. Turtle Tower still stands there!
   S => {
     hoLake(S, { tower: true });
-    const kids = [S.person(VILLAGER('dress', '#ff7eb8', 'none', 'buns'), -1.4, 27, PI), S.person(VILLAGER('shirt', '#3b6fe0', 'none', 'short'), 1.4, 27.2, PI)];
+    const kids = [S.person(VILLAGER('dress', '#ff7eb8', 'none', 'buns'), -1.4, 27, PI), S.person(VILLAGER('tunic', '#3b6fe0', 'none', 'short'), 1.4, 27.2, PI)];
     const lanterns = [[-7.5, 2.8, 26], [7.5, 2.8, 26]].map(([x, y, z], i) => L.lantern(S, x, y, z, i ? '#ffd23f' : '#e8332a'));
     S.shot([0, 8, 46], [0, 2, -10]);
     S.cam(.3, 4.6, [0, 3, 33], [0, 2.4, -12]);

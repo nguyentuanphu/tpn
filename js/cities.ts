@@ -3,12 +3,12 @@
 //  Hà Nội, Bắc Ninh, Đà Nẵng, Hồ Chí Minh City, Sydney, Melbourne and Brisbane.
 // Also more food and saying kiosks in every older village, and two Bà Rịa–Vũng Tàu landmarks on
 // Two Homes Street: Bạch Dinh (the White Villa) and Nhà Tròn (the Round House water tower).
-import { THREE, toonVC, P, merge, outline, sprite } from './gfx.js';
+import { THREE, toonVC, P, merge, outline, sprite, worldTag } from './gfx.js';
 import { T, nm, onLang, registerName } from './i18n.js';
 import { heightAt, CITIES, TOWN, BRIDGES } from './world.js';
 import { landmarkAt, ROAD_WIDTH, rowSlot } from './content/map.js';
 import { roadTexture } from './roads.js';
-import { buildAvatar, nameAvatar } from './avatar.js';
+import { buildAvatar, nameAvatar, lateAvatar, crowdLook } from './avatar.js';
 import { LANDMARKS, VENDORS, postcard } from './regions.js';
 import { PERSONAS } from './chat.js';
 import { dialog, reward } from './ui.js';
@@ -159,7 +159,8 @@ export function createCities(G) {
   const place = (parts, x, z, rot, y?) => { const m = new THREE.Mesh(merge(parts), toonVC()); m.position.set(x, y ?? heightAt(x, z) - .05, z); m.rotation.y = rot; m.castShadow = m.receiveShadow = true; scene.add(m); outline(m, .025, '#4a3a3f'); return m; };
   const info = (x, y, z) => { const s = sprite('ℹ️', 1.5); s.position.set(x, y, z); scene.add(s); world.updaters.push((dt, t) => { s.position.y = y + Math.sin(t * 2 + x) * .25; }); };
   const person = (lk, x, z, face, name, tagH = 2.4) => { // tagH: lift a name tag so two people side by side don't overlap
-    const A = nameAvatar(buildAvatar(lk, null), name); A.root.position.set(x, heightAt(x, z), z); A.root.rotation.y = face; scene.add(A.root); people.push(A);
+    // (v1.08d valley) built when a child comes near (js/avatar.ts lateAvatar)
+    const A = nameAvatar(lateAvatar(crowdLook(lk)), name); A.root.position.set(x, heightAt(x, z), z); A.root.rotation.y = face; scene.add(A.root); people.push(A);
     const tg = tagSprite(name); tg.position.set(x, heightAt(x, z) + tagH, z); scene.add(tg); world.colliders.push({ x, z, r: .45 }); return A;
   };
   // sellers and hosts breathe and sway only when a child is near enough to see them (saves work on phones)
@@ -201,7 +202,7 @@ export function createCities(G) {
     D.sites.forEach(([id, icon, u0, v0, model, name, fact], k) => {
       const u = D.custom ? u0 : (k % 2 ? 8.6 : -8.6), v = D.custom ? v0 : -4 - Math.floor(k / 2) * 9;   // (T1b: further back, clear of the kiosks and the sellers' footpath; TP. HCM's pier path keeps its corridor)
       const [x, z] = L(u, v), rot = D.custom || model === 'wtram' ? toward : faceStreet(u);
-      const m = place(MODELS[model](), x, z, rot, c.h - .05);
+      const m = worldTag(place(MODELS[model](), x, z, rot, c.h - .05), 'lm-' + model, { outline: [.025, '#4a3a3f'], carry: true }); // (v1.08e places: its clock faces, wheel and singers move onto the model)
       const r = model === 'bnclock' ? 4 : model === 'quanho' || model === 'puppetstage' ? 4.6 : model === 'wtram' ? 4.6 : 4.2;
       world.colliders.push({ x, z, r: Math.min(r, 3.8) });
       if (model === 'bnclock') { const cm = clockFace(); for (let k = 0; k < 4; k++) { const f = new THREE.Mesh(new THREE.CircleGeometry(.85, 24), cm); const a = k * Math.PI / 2; f.position.set(Math.sin(a) * 1.07, 9.8, Math.cos(a) * 1.07); f.rotation.y = a; m.add(f); } }

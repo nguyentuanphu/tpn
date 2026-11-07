@@ -4,6 +4,7 @@ import { register, untilRight, choiceButtons } from './frame.js';
 import { T, numWord } from '../i18n.js';
 import { settings } from '../state.js';
 import { shuffle, pick, el, wait } from '../util.js';
+import { fresh, mover } from './variety.js';
 import { animalCall, loadAnimalCalls, animalRecording } from '../audio.js';
 import { sayAsync, hush, spoken } from '../voice.js';
 
@@ -28,15 +29,17 @@ register({
   async run(api) {
     const rounds = 4, mins = api.level <= 1 ? [0] : api.level === 2 ? [0, 30] : [0, 15, 30, 45];
     api.stage.dataset.lv = [rounds, mins.join('/'), api.talent ? 0 : 1].join(',');   // (v1.07 levels) rounds, minutes asked, words under the times
+    // (v1.08 variety) a time not asked before in this game, and the right one moves every round
+    const next = fresh(() => [1 + Math.floor(Math.random() * 12), pick(mins)], ([h, m]) => `${h}:${m}`), place = mover();
     for (let r = 0; r < rounds; r++) {
       api.dots(rounds, r); api.stage.innerHTML = '';
-      const h = 1 + Math.floor(Math.random() * 12), m = pick(mins);
+      const [h, m] = next();
       const face = el('div', 'clockwrap', clockSVG(h, m)); api.stage.appendChild(face);
       api.say('What time does the clock say? The short hand shows the hour.', 'Đồng hồ chỉ mấy giờ? Kim ngắn chỉ giờ.');
       // (levels) Hard: four times to choose from, Talent five with only the clock numbers (no words)
       const m2 = mins.length > 1 ? pick(mins.filter(x => x !== m)) : (m + 30) % 60;
       const wrong = shuffle([[h % 12 + 1, m], [(h + 10) % 12 + 1, m], [h, m2], [h % 12 + 1, m2], [(h + 10) % 12 + 1, m2]]).slice(0, lv(api, 2, 2, 3, 4));
-      const opts = shuffle([[h, m], ...wrong]);
+      const opts = place([[h, m], ...wrong], x => x[0] === h && x[1] === m);
       const btns = choiceButtons(api, opts, ([a, b]) => `<b class="tnum">${digital(a, b)}</b>${api.talent ? '' : `<small>${timeText(a, b)}</small>`}`);
       const b = await untilRight(api, btns, e => e._v[0] === h && e._v[1] === m); if (!b) return;
       api.say(`It's ${timeText(h, m)}!`, `${timeText(h, m)} rồi!`); await wait(1500);
@@ -51,11 +54,14 @@ register({
   async run(api) {
     const rounds = 5, max = api.talent ? 30 : [5, 8, 10, 15, 20][Math.min(4, api.level - 1)];   // (levels) Talent: numbers up to 30, four answers
     api.stage.dataset.lv = [rounds, max, api.level >= 3 ? 1 : 0].join(',');   // (v1.07 levels) rounds, biggest number, take-away rounds
+    // (v1.08 variety) a sum not asked before in this game, a new fruit each round, and the right answer moves
+    const seen = new Set<string>(), place = mover(), fruit0 = Math.floor(Math.random() * FRUIT.length);
     for (let r = 0; r < rounds; r++) {
       api.dots(rounds, r); api.stage.innerHTML = '';
-      const take = api.level >= 3 && r % 2 === 1, fr = pick(FRUIT);
-      let a = 1 + Math.floor(Math.random() * (max - 1)), b = 1 + Math.floor(Math.random() * Math.max(1, max - a));
-      if (take) { if (b > a) [a, b] = [b, a]; }
+      const take = api.level >= 3 && r % 2 === 1, fr = FRUIT[(fruit0 + r * 3) % FRUIT.length];
+      let a = 0, b = 0;
+      for (let t = 0; t < 40 && (!a || seen.has(`${take}${a},${b}`)); t++) { a = 1 + Math.floor(Math.random() * (max - 1)); b = 1 + Math.floor(Math.random() * Math.max(1, max - a)); if (take && b > a) [a, b] = [b, a]; }
+      seen.add(`${take}${a},${b}`);
       const ans = take ? a - b : a + b;
       const row = el('div', 'sumrow');
       const grp = (n, gone = 0) => `<span class="sumgrp">${Array.from({ length: n }, (_, i) => `<i class="${i >= n - gone ? 'gone' : ''}">${fr}</i>`).join('')}</span>`;
@@ -63,7 +69,7 @@ register({
       api.stage.appendChild(row);
       if (take) api.say(`${a} take away ${b}. How many are left?`, `${numWord(a)} bớt ${numWord(b)}. Còn lại mấy?`);
       else api.say(`${a} and ${b} more. How many altogether?`, `${numWord(a)} thêm ${numWord(b)}. Tất cả là mấy?`);
-      const opts = shuffle([ans, ...shuffle([ans - 2, ans - 1, ans + 1, ans + 2].filter(v => v >= 0)).slice(0, lv(api, 2, 2, 2, 3))]);
+      const opts = place([ans, ...shuffle([ans - 2, ans - 1, ans + 1, ans + 2].filter(v => v >= 0)).slice(0, lv(api, 2, 2, 2, 3))], v => v === ans);
       const btns = choiceButtons(api, opts, o => `<b class="num">${o}</b>`);
       const ok = await untilRight(api, btns, e => e._v === ans); if (!ok) return;
       api.say(take ? `${a} take away ${b} is ${ans}!` : `${a} plus ${b} is ${ans}!`, take ? `${numWord(a)} bớt ${numWord(b)} còn ${numWord(ans)}!` : `${numWord(a)} cộng ${numWord(b)} là ${numWord(ans)}!`); await wait(1500);

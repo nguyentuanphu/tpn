@@ -5,6 +5,9 @@ import type { Profile, Farm, Settings } from '../types/save.js';
 import { BUILD } from './build.js';
 import { managementEvidence } from './core/events.js';
 import { sortClothes } from './content/shop.js';
+// (v1.08b friends) the move of an old save to the new friends (js/content/friends.ts migrateFriend), filled in when that
+// file loads (js/avatar.ts friendsReady, as Who's playing opens): not in the first download (check startup)
+export const FRIEND_MIGRATE: { fn?: (p: Profile) => unknown, lib?: typeof import('./content/friends.js') } = {};
 const KEY_SETTINGS = 'sv2_settings', KEY_PROFILES = 'sv2_profiles';
 
 const store = {
@@ -118,20 +121,40 @@ export const settings: Settings = Object.assign({
   aiOn: false,
   online: false          // (round R privacy, 9 Oct) playing with friends online: off until a grown-up turns it on in Grown-ups (devices that played before start off too)
 }, store.get(KEY_SETTINGS, {}));
+// (v1.08f, owner 6 Nov: "Hide the offer for AI chat") the Grown-ups offer of villager chat with Claude (the AI key) is
+// hidden and the AI is not used; the code stays, so switching this to true brings it back
+export const AI_CHAT_OFFER = false;
+// (v1.08f, owner 6 Nov, corrected: "the turn function stays but the wording and the link there to hide") the voice relay
+// (TURN) still works as before (js/net.ts iceServers, /api/turn); only its wording and the grown-ups' relay field are
+// hidden. Switching this to true shows them again
+export const TURN_OFFER = false;
 // (round R privacy, 9 Oct, owner: "no voice keys on children's devices") voices are made in Studio only: an online voice
 // key saved by an older version, and its engine and voice choices, are deleted from this device
 const OLD_VOICE = ['tts', 'ttsKey', 'elevenVoice', 'googleVoiceEn', 'googleVoiceVi', 'azureRegion', 'azureVoiceEn', 'azureVoiceVi'];
 const dropOldVoice = () => { let n = 0; for (const k of OLD_VOICE) if (k in settings) { delete settings[k]; n++; } return n; };
 // (bug #32, owner 11 Oct) festival decorations are set in Sparkle Studio only: an old saved choice on this device is ignored
 const dropOldFestival = () => { if (!('festival' in settings)) return 0; delete settings.festival; return 1; };
-if (dropOldVoice() | dropOldFestival()) store.set(KEY_SETTINGS, settings);
+// (owner, 3 Nov 2026 AEDT, v1.08 voices-aside: "the game is getting heavy, above all the voices") only the female voices
+// are offered and played; the male English and Vietnamese voices and the Lê Minh pack are put aside (voices-aside/README.md).
+// Their code stays behind this switch, off: true brings them back (with their files moved back into voices/).
+export const ASIDE_VOICES_ON = false;
+// a device that had chosen the male voices or Lê Minh moves to the female voices; nothing else in its settings changes
+const dropAsideVoice = () => { if (ASIDE_VOICES_ON) return 0; let n = 0; if (settings.voiceMale === true) { settings.voiceMale = false; n++; } if (settings.voiceViVariant === 'leminh') { settings.voiceViVariant = 'standard'; n++; } return n; };
+// (owner, 3 Nov 2026 AEDT, v1.08) the outside "Also learn" Chinese/Hindi buttons are gone, so a choice saved by them
+// (extra Chinese or Hindi words in every game) is cleared; Chinese and Hindi stay inside their own places and games
+const dropLearnLang = () => { if (!settings.learnLang) return 0; settings.learnLang = ''; return 1; };
+if (dropOldVoice() | dropOldFestival() | dropAsideVoice() | dropLearnLang()) store.set(KEY_SETTINGS, settings);
 // fewer moving effects: Calm mode, or the device's own "Reduce motion" setting (round I accessibility rule A11Y-001)
 export const reduceMotion = () => !!settings.calm || (typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches);
-export const saveSettings = () => store.set(KEY_SETTINGS, settings);
+// (v1.08 english) while an English-mode game is open (js/englishmode.ts) the game language is English; the child's own
+// language and bilingual choice are held here, and the settings are always saved with them
+export const langHold: { lang?: 'en' | 'vi'; bilingual?: boolean } = {};
+export const saveSettings = () => store.set(KEY_SETTINGS, langHold.lang ? { ...settings, lang: langHold.lang, bilingual: langHold.bilingual } : settings);
 // (owner, 31 Oct 2026 AEDT: "voices online, download only to play offline") whether this device keeps the whole voice
 // pack by itself: a grown-up chose it ("Keep all voices on this device"), or the device had saved voices before (it keeps
 // them up to date as before). Otherwise each line plays over the internet and is kept once heard.
-export const autoPackOn = () => settings.autoPack === true || (settings.autoPack == null && !!(settings.packSaved || settings.packCore));
+// (v1.08c voices) the offline levels Light and Full keep voices by themselves (js/voicepack.ts offlineLevel)
+export const autoPackOn = () => settings.offlineLevel === 'light' || settings.offlineLevel === 'full' || settings.autoPack === true || (settings.autoPack == null && !!(settings.packSaved || settings.packCore));
 
 // Clothing: a style plus any colour. Dresses and shirt-and-shorts work for girls and boys alike.
 export const STYLES = ['dress', 'shirt', 'aodai', 'tunic', 'overalls', 'hoodie'];
@@ -151,7 +174,7 @@ function newProfile(i: number): Profile {
     photo: null,
     age: 'little',           // 'little' (under 5: everything spoken, can't lose) or 'big' (5 to 8: harder, real opponents)
     difficulty: 'easy',      // 'easy' | 'medium' | 'hard' | 'talent'
-    look: { style: i === 0 ? 'dress' : 'shirt', color: i === 0 ? '#ff5fa2' : '#3b6fe0', hat: i === 0 ? 'bow' : 'cap', back: i === 0 ? 'wings' : 'cape', hair: HAIR[0], hairStyle: i === 0 ? 'buns' : 'short', skin: SKIN[1], glider: 0 },
+    look: { style: i === 0 ? 'dress' : 'shirt', color: i === 0 ? '#ff5fa2' : '#3b6fe0', hat: i === 0 ? 'bow' : 'cap', back: i === 0 ? 'wings' : 'cape', hair: HAIR[0], hairStyle: i === 0 ? 'buns' : 'short', skin: SKIN[1], glider: 0, set: i === 0 ? 'girl' : 'boy', friend: i === 0 ? 'clara' : 'finn', suit: (i === 0 ? 'clara' : 'finn') + '-everyday' }, // (v1.08b friends)
     created: Date.now()
   };
 }
@@ -178,6 +201,7 @@ export function normalizeProfile(p: Record<string, any>): Profile {
   // (r79, owner 16 Oct: "boy wears boys clothes") clothes of the other set come off and are wrapped as gift boxes; things
   // that were for both sets become the child's own set's version (js/content/shop.js)
   sortClothes(o);
+  if (FRIEND_MIGRATE.fn) FRIEND_MIGRATE.fn(o); // (v1.08b friends) an old save moves to Finn (boys) or Clara (girls); the old look fields stay
   if (!Array.isArray(o.stickers)) o.stickers = [];
   if (!Array.isArray(o.album)) o.album = [];
     // (r90, owner 23 Oct) migration: treat existing profile.tales[id] === true as 1 read
@@ -266,7 +290,7 @@ export async function importBackup(file) {
   const data = JSON.parse(await file.text());
   if (!data || data.app !== 'sparkle-valley' || !Array.isArray(data.profiles)) throw new Error('bad file');
   profiles.splice(0, profiles.length, ...data.profiles.map(normalizeProfile));
-  Object.assign(settings, data.settings || {}); dropOldVoice(); dropOldFestival(); // (round R privacy, 9 Oct) an old backup brings no voice key back
+  Object.assign(settings, data.settings || {}); dropOldVoice(); dropOldFestival(); dropAsideVoice(); // (round R privacy, 9 Oct) an old backup brings no voice key back
   if (data.farm) Object.assign(farm, newFarm(), data.farm);
   const expected=JSON.parse(JSON.stringify({profiles,settings,farm}));reasonCode='storage';
   saveSettings(); saveProfiles(true);

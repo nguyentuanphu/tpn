@@ -1,10 +1,13 @@
 import {readReviewedVoiceDelta} from './reviewed-voice-delta.mts';
 import {AZURE_VOICES,AZURE_OUTPUT_FORMAT} from './voice-providers.mts';
+import { spawnSync } from 'node:child_process'; // (v1.08b platform: the Opus step)
 // Makes the offline voice pack with ElevenLabs: every line the game speaks, saved as small MP3 files in
 // voices/. The game plays these instead of the device voice, with no internet needed, and keeps the whole
 // pack on the device after the first visit (so nothing has to be downloaded again).
 //
-// The cast (one voice per language and slot):
+// (owner, 3 Nov 2026 AEDT, v1.08) only the women's voices (f) of English and Vietnamese are recorded now; the men's
+// voices are put aside in voices-aside/ (its README says how to bring them back; SV_ASIDE_VOICES=1 records them again).
+// The full cast, with the men's voices switched back on:
 //   English     – a woman (f) and a man (m)      every English line is made twice
 //   Tiếng Việt  – a woman (f) and a man (m)      every Vietnamese line is made twice
 //   中文 Chinese – a man (m)                      the Chinese learning words and sayings
@@ -41,7 +44,7 @@ Object.assign(globalThis, { document: { documentElement: {} }, localStorage: { g
 const { swapNames } = await import('../js/i18n.js');
 const { LEARN } = await import('../js/words2.js');
 const { packHash, lineHash } = await import('../js/packhash.js');
-const { viRuns, mixed, mixedSsml } = await import('../js/viwords.js');
+const { viRuns, mixed, mixedSsml, enRuns, enMixed } = await import('../js/viwords.js');
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const arg = <D = undefined,>(k: string, d?: D): string | D => { const i = process.argv.indexOf('--' + k); return i > 0 ? process.argv[i + 1] : d; };
@@ -125,6 +128,13 @@ for (const l of READING.readingLines()) jobs.push({ lang: l.lang, text: l.text, 
 // (js/content/hocvui.js): ma, má, mà…, cá vàng, and the picture words of Build a Syllable, always in Vietnamese
 const HOCVUI = await import('../js/content/hocvui.js');
 for (const l of HOCVUI.hocvuiLines()) jobs.push({ lang: l.lang, text: l.text, area: 'games', pri: 40, alt: 'games' });
+// (v1.08 english) the English corner's words, phrases, songs and sentences (English voice) and their Vietnamese hints
+// (js/content/english.js englishLines())
+const ENGLISH = await import('../js/content/english.js');
+for (const l of ENGLISH.englishLines()) jobs.push({ lang: l.lang, text: l.text, area: 'games', pri: 40, alt: 'games' });
+// (v1.08 vietnamese) the words, verses, sayings, sentences and riddles the ten new Tiếng Việt games say in Vietnamese
+const TV2 = await import('../js/content/tiengviet2.js');
+for (const l of TV2.tiengviet2Lines()) jobs.push({ lang: l.lang, text: l.text, area: 'games', pri: 40, alt: 'games' });
 const readingSsml = (j, v) => { const L = /^\/(\w+)\/$/.exec(j.lang === 'en' ? j.text : ''), ipa = L && READING.SOUND_IPA[L[1]]; return ipa ? `<speak version='1.0' xml:lang='en-AU'><voice name='${v}'><phoneme alphabet='ipa' ph='${ipa}'>${L[1]}</phoneme></voice></speak>` : null; };
 // one job per recording; a line used in several areas downloads with the first it is needed in (the core first)
 const RANK = a => a === 'core' ? 0 : a === 'world' ? 3 : GROUPS.includes(a) ? 2 : 1;
@@ -161,7 +171,9 @@ const reviewed=reviewedFile?readReviewedVoiceDelta(reviewedFile):null;
 if(reviewed&&flag('force'))throw Error('A reviewed delta cannot force replacement of existing recordings');
 const reviewedIds=reviewed?new Set(reviewed.lines.map(l=>l.lang+':'+l.id)):null;
 for(const line of reviewed?.lines||[])if(!list.some(([id,j])=>id===line.id&&j.lang===line.lang&&j.text===line.text))throw Error('Reviewed line missing from Azure inventory: '+line.id);
-const missing = files.filter(([s, h, j]) => (!reviewedIds||reviewedIds.has(j.lang+':'+h))&&!fs.existsSync(path.join(PACK_DIR, j.lang, s, h + '.mp3')));
+// (v1.08 aussie-voice) --vi-en: only the Vietnamese lines with English words (js/viwords.ts enRuns), in the woman's voices
+// (owner via Release, 3 Nov 2026 AEDT: only female voices from now on: Vietnamese HoaiMy with English Natasha)
+const missing = files.filter(([s, h, j]) => (!reviewedIds||reviewedIds.has(j.lang+':'+h))&&(!flag('vi-en')||j.lang==='vi'&&enMixed(j.text)&&s==='f')&&!fs.existsSync(path.join(PACK_DIR, j.lang, s, h + '.mp3')));
 const need = missing.reduce((a, [, , j]) => a + j.text.length, 0);
 console.log('The voice pack, by language:');
 for (const L of Object.keys(CAST)) {
@@ -223,7 +235,7 @@ if (flag('cover')) {
 }
 if (flag('count')) process.exit(0);
 if (!KEY) { console.error(ENGINE === 'azure' ? 'Add your Azure Speech key and region: --key <KEY 1> --region <Location/Region>. Use --count to see the cost without a key.' : 'Add your key: --key sk_... (or set ELEVEN_KEY). Use --count to see the cost without a key.'); process.exit(1); }
-if (ENGINE === 'azure') { await azure(); process.exit(0); }
+if (ENGINE === 'azure') { await azure(); opusStep(); process.exit(0); }
 const H = { 'xi-api-key': KEY };
 const get = async p => { const r = await fetch(API + p, { headers: H }); if (r.status === 401) { console.error('ElevenLabs did not accept the key (401). Check it on elevenlabs.io → API Keys, and that it may use Text to Speech, Voices and User.'); process.exit(3); } if (!r.ok) throw new Error(p + ' ' + r.status + ' ' + (await r.text()).slice(0, 200)); return r.json(); };
 const sub = await get('/user/subscription');
@@ -311,8 +323,9 @@ async function azure() {
   const one = async ([slot, h, j]) => {
     const wait = next - Date.now(); next = Math.max(next, Date.now()) + gap; if (wait > 0) await new Promise(r => setTimeout(r, wait));
     const v = voices[j.lang][slot].id;
-    // (round R) Vietnamese names and dishes inside an English line are said by the Vietnamese voice of the same man or woman
-    const ssml = readingSsml(j, v) || (j.lang === 'en' && mixed(j.text) ? mixedSsml(viRuns(j.text), v, voices.vi[slot].id) : `<speak version='1.0' xml:lang='${LOCALE[j.lang]}'><voice name='${v}'>${sounds(xml(j.text), j.lang)}</voice></speak>`); // (Play reading trial: readingSsml)
+    // (round R) Vietnamese names and dishes inside an English line are said by the Vietnamese voice of the same man or woman;
+    // (v1.08 aussie-voice) and the English slang inside a Vietnamese line by the English (en-AU) voice of the same man or woman
+    const ssml = readingSsml(j, v) || (j.lang === 'en' && mixed(j.text) ? mixedSsml(viRuns(j.text), v, voices.vi[slot].id) : j.lang === 'vi' && enMixed(j.text) ? mixedSsml(enRuns(j.text), voices.en[slot].id, v, '', 'vi') : `<speak version='1.0' xml:lang='${LOCALE[j.lang]}'><voice name='${v}'>${sounds(xml(j.text), j.lang)}</voice></speak>`); // (Play reading trial: readingSsml)
     for (let attempt = 0; ; attempt++) {
       let r;
       // a dropped connection (socket closed, timeout) is tried again, like a busy server, instead of stopping the run
@@ -321,6 +334,8 @@ async function azure() {
       if (r.status === 401 || r.status === 403) { console.error('Azure did not accept the key or region (' + r.status + '). Copy KEY 1 and the Location/Region from the Speech resource\'s "Keys and Endpoint" page.'); save(); process.exit(3); }
       if ((r.status === 429 || r.status >= 500) && attempt < 6) { await new Promise(res => setTimeout(res, 5000 * (attempt + 1))); continue; }
       if (!r.ok) throw new Error(`${r.status} ${(await r.text()).slice(0, 200)} — "${j.text.slice(0, 40)}"`);
+      // (v1.08 fix) a line Azure has no sound for (a picture alone, '♟️') is not saved as an empty file: it is named instead
+      if (!buf || !buf.length) { console.warn(`  Azure sent no sound (${j.lang} ${slot}): "${j.text.slice(0, 40)}"`); break; }
       const dir = path.join(PACK_DIR, j.lang, slot); fs.mkdirSync(dir, { recursive: true });
       fs.writeFileSync(path.join(dir, h + '.mp3'), buf);
       man.lines[h] = (man.lines[h] || '').replace(slot, '') + slot; used += j.text.length; done++;
@@ -332,8 +347,14 @@ async function azure() {
   await Promise.all(Array.from({ length: Math.max(1, +arg('parallel', 3)) }, async () => { while (work.length) {const next=work.shift();if(next)await one([next[0],next[1],next[2]]);} }));
   // the old all-English recordings of those lines are not needed once both of their new ones are made
   let gone = 0;
-  for (const [h, j] of list) if (j.lang === 'en' && h !== packHash('en', j.text) && CAST.en.every(sl => fs.existsSync(path.join(PACK_DIR, 'en', sl, h + '.mp3'))))
-    for (const sl of CAST.en) { const f = path.join(PACK_DIR, 'en', sl, packHash('en', j.text) + '.mp3'); if (fs.existsSync(f)) { fs.unlinkSync(f); gone++; } }
+  // (v1.08 aussie-voice) and the old all-Vietnamese recordings of Vietnamese lines with English words
+  for (const [h, j] of list) if ((j.lang === 'en' || j.lang === 'vi') && h !== packHash(j.lang, j.text) && CAST[j.lang].every(sl => fs.existsSync(path.join(PACK_DIR, j.lang, sl, h + '.mp3'))))
+    for (const sl of CAST[j.lang]) { const f = path.join(PACK_DIR, j.lang, sl, packHash(j.lang, j.text) + '.mp3'); if (fs.existsSync(f)) { fs.unlinkSync(f); gone++; } }
   save(); writeAreas(man);
   console.log(`Finished: ${done} new files (${used} characters)${gone ? `, ${gone} old all-English files of mixed lines removed` : ''}. The pack is in voices/ — include that folder when you publish the game (./build-netlify.sh does).`);
 }
+// (v1.08b platform, brief part 1) every recording also as Opus beside its MP3, and the manifests say so
+// (tools/make-voice-opus.mts; without ffmpeg the pack stays MP3 only, which the game handles)
+// (run after the Azure recordings too, before that path exits)
+function opusStep() { if (process.argv.includes('--no-opus')) return; const r = spawnSync(process.execPath, [path.join(ROOT, 'tools/make-voice-opus.mts')], { stdio: 'inherit' }); if (r.status) console.log('The Opus copies were not all made: the game uses the MP3 files until they are.'); }
+opusStep();

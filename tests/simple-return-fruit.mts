@@ -25,6 +25,7 @@ export async function simpleReturnFruitCheck(browser:Browser){
  }});
  try{
   await clear(P.page);await noWelcome(P.page);await P.page.locator('.simple-screen:not([hidden]) .sp-stop').first().waitFor();
+  await P.page.evaluate(()=>{(window.__sv as any).simple.show('games');}); // (v1.08: both game buttons together, as the fruit games are under Vui chơi)
   await P.page.evaluate(()=>{(window.__sv as any).tester?.unmount();});
   for(const id of fruitIds)assert.equal(await inView(P.page,id),true,'all three tester previews appear while mode switches are off');
   assert.equal(await inView(P.page,'memory'),true);

@@ -34,6 +34,9 @@ export interface Settings {
   familyQuiz?: import('../js/content/family-quiz.js').FamilyQuestion[];
   /** optional family code (XXXX-XXXX) linking a family's devices for anonymous Studio device-count statistics only */
   familyCode?: string;
+  /** (v1.08c voices) the offline level chosen in Grown-ups (unset: 'auto'); packRecent: the last areas the child was in */
+  offlineLevel?: 'light' | 'auto' | 'full';
+  packRecent?: string[];
   /** family missions done: mission id → child id → when (ms) */
   missionsDone?: Record<string, Record<string, number>>;
   [k: string]: any;

@@ -9,6 +9,16 @@ const worker = self;
 // saved progress (localStorage, IndexedDB, and the 'sv-save' copy) and the voice pack are never deleted.
 const VERSION = 'sv-2026-11-02-v1.07';
 const FILES = [
+  // (v1.08, Release) the files the v1.08 helpers added, all offline (checks offline and swupdate)
+  'js/areas.js', 'js/art/emoji108b.js', 'js/art/frienditems.js', 'js/art/games108b.js', 'js/art/handson.js', 'js/art/lumi.js', 'js/art/maths3.js', 'js/art/money3.js', 'js/art/s2au.js',
+  'js/art/s2vn.js', 'js/art/science2.js', 'js/art/tiengviet2.js', 'js/content/chapter10.js', 'js/content/chapter11.js', 'js/content/chapter12.js', 'js/content/chapter4.js', 'js/content/chapter5.js',
+  'js/content/chapter6.js', 'js/content/chapter7.js', 'js/content/chapter8.js', 'js/content/chapter9.js', 'js/content/chapterfinale.js', 'js/content/chapterkit.js', 'js/content/festgame-ids.js',
+  'js/content/festgames108b.js', 'js/content/festseason.js', 'js/content/friendquests.js', 'js/content/gameplace.js', 'js/content/games108b.js', 'js/content/kitfilms.js', 'js/content/learnpaths.js',
+  'js/content/lumi.js', 'js/content/releasecal-core.js', 'js/content/releasecal-items.js', 'js/content/releasecal-names.js', 'js/content/releasecal.js', 'js/content/s2au-games.js',
+  'js/content/s2au.js', 'js/content/s2aufilms.js', 'js/content/s2vn.js', 'js/content/s2vnfilms.js', 'js/content/subjects.js', 'js/dropspot.js', 'js/friendquest.js', 'js/games/art-pending.js',
+  'js/games/games108b-meta.js', 'js/games/games108b.js', 'js/games/handson-meta.js', 'js/games/handson.js', 'js/games/reveal.js', 'js/games/s2au-meta.js', 'js/games/s2au.js', 'js/games/s2vn-meta.js',
+  'js/games/s2vn.js', 'js/games/sudoku-core.js', 'js/games/variety.js', 'js/installgift.js', 'js/learnquest.js', 'js/lumi.js', 'js/playtogether.js',
+  'js/s2au-region.js', 'js/s2au.js', 'js/s2vn.js', 'js/ui/calendar-news.js', 'js/validate.js', 'js/voicestore.js',
   'js/content/tester-arcades.js', 'js/games/parade-engine.js', 'js/games/arcade-session.js', 'js/games/arcade-board.js', 'js/games/sparkleorchard.js', 'js/games/fruitbar-engine.js', 'js/games/sparklefruitbar.js',
   'js/games/trongnu.js', 'js/games/trongnu-rules.js',
   'js/content/fruit-parade.js', 'js/games/fruitparade.js', 'js/games/fruitparade-core.js', 'js/games/fruitparade-engine.js', 'js/games/fruitparade-session.js', 'js/games/fruitparade-input.js', 'js/games/fruitparade-style.js',
@@ -17,24 +27,47 @@ const FILES = [
   'vendor/three.module.js', 'vendor/peerjs.min.js', 'vendor/RoomEnvironment.js', 'css/fonts.css',
   'fonts/Fredoka-latin-500.woff2', 'fonts/Fredoka-latin-ext-500.woff2', 'fonts/Baloo2-latin-600.woff2', 'fonts/Baloo2-latin-ext-600.woff2', 'fonts/Baloo2-vietnamese-600.woff2',
   // (v1.07 split) the parts of js/main.js
-  'js/main/online-games.js', 'js/main/friends.js', 'js/main/talks.js', 'js/main/quests.js', 'js/main/interactables.js', 'js/main/hero-events.js', 'js/main/talking.js', 'js/main/layout.js', 'js/main/later.js',
+  'js/main/online-games.js', 'js/main/friends.js', 'js/main/talks.js', 'js/main/quests.js', 'js/main/interactables.js', 'js/main/hero-events.js', 'js/main/talking.js', 'js/main/layout.js', 'js/main/later.js', 'js/main/soon.js',
   'js/main.js', 'js/rideview.js', 'js/render-recovery.js', 'js/gpu.js', 'js/launch.js', 'js/screencapture.js', 'js/familydevices.js', 'js/family-backup.js', 'js/util.js', 'js/state.js', 'js/i18n.js', 'js/money.js', 'js/audio.js', 'js/voice.js', 'js/hanoi-pack.js', 'js/content/hanoi-pack-info.js', 'js/gfx.js',
   'js/world.js', 'js/world/places.js', 'js/world/ground.js', 'js/world/sites.js', 'js/world/paint.js', 'js/world/reshape.js', 'js/avatar.js', 'js/player.js', 'js/input.js', 'js/net.js', 'js/mictest.js', 'js/hud.js', 'js/explain.js', 'js/ui.js', 'js/ui-settings.js', 'js/data.js',
   // (v1.07 split-code) the parts of js/ui.js
-  'js/ui/common.js', 'js/ui/grownups.js', 'js/ui/title.js', 'js/ui/profile.js', 'js/ui/quick.js', 'js/ui/festivals-ui.js',
+  'js/ui/common.js', 'js/ui/grownups.js', 'js/ui/title.js', 'js/ui/profile.js', 'js/ui/editor.js', 'js/ui/quick.js', 'js/ui/festivals-ui.js',
   'js/ui/pad.js', 'js/ui/pad-map.js', 'js/ui/pad-album.js', 'js/ui/shops.js', 'js/ui/hub.js',
   // (v1.07 split-code) the parts of js/art.js
   'js/art/kit.js', 'js/art/pad-and-games.js', 'js/art/howto-tales.js', 'js/art/people-food.js', 'js/art/round30.js',
-  'js/art/things-money.js', 'js/art/r90-audits.js', 'js/art/learning.js', 'js/art/lookup.js',
+  'js/art/things-money.js', 'js/art/r90-audits.js', 'js/art/learning.js', 'js/art/english.js', 'js/art/lookup.js',
   'js/farm.js', 'js/places.js', 'js/story.js', 'js/recorder.js', 'js/secrets.js', 'js/credits.js', 'js/howto.js', 'js/howto-player.js', 'js/howto-registry.js', 'js/howto-data.js', 'js/howto-data2.js', 'js/chat.js', 'js/chat-player.js',
-  'js/listen.js', 'js/install.js', 'js/gather.js', 'js/trade.js', 'js/asia.js', 'js/heritage.js', 'js/pets.js', 'js/ferry.js', 'js/passport.js', 'js/festivals.js', 'js/weather.js', 'js/fun.js', 'js/learn.js', 'js/packhash.js', 'js/voice-fragments.js', 'js/showcase.js', 'js/games/music.js', 'js/icons.js', 'js/words2.js', 'js/games/asia.js', 'js/houses.js', 'js/commands.js', 'js/extras.js', 'js/town.js', 'js/powerlines.js', 'js/viwords.js', 'js/vehicles.js', 'js/traffic.js', 'js/film.js', 'js/content/films.js', 'js/content/talefilms.js', 'js/content/films/kit.js', 'js/content/film-looks.js', 'js/content/films/rongtien.js', 'js/content/films/caytre.js', 'js/content/films/tamcam.js', 'js/content/films/sodua.js', 'js/content/films/thachsanh.js', 'js/content/films/chucuoi.js', 'js/content/films/cockien.js', 'js/content/films/vusua.js', 'js/content/films/baluoiriu.js', 'js/content/films/quabau.js', 'js/content/films/thayboi.js', 'js/content/films/nhacmeo.js', 'js/content/films/ongtao.js', 'js/content/films/cachep.js', 'js/content/films/sontinh.js', 'js/content/films/rainbowserpent.js', 'js/content/films/emu.js', 'js/content/films/dotkangaroo.js', 'js/content/films/birdcolours.js', 'js/content/films/magicpudding.js', 'js/content/films/tiddalik.js', 'js/content/films/greatrace.js', 'js/content/films/maliang.js', 'js/content/films/weaver.js', 'js/content/films/nian.js', 'js/content/films/kongrong.js', 'js/content/films/change.js', 'js/content/films/crow.js', 'js/content/films/lionrabbit.js', 'js/content/films/ganesha.js', 'js/content/films/bluejackal.js', 'js/content/films/elephantmice.js', 'js/content/films/monkey.js', 'js/lanterns.js', 'js/companion.js', 'js/dinh.js', 'js/content/chapters.js', 'js/content/chapter2hanoi.js', 'js/content/chapter2props.js', 'js/content/chapter2films.js', 'js/content/chapter2text.js', 'js/yard.js', 'js/content/yard.js', 'js/content/map.js', 'js/openspot.js', 'js/handpad.js', 'js/kidplay.js', 'js/hoilang.js', 'js/surprises.js', 'js/parents.js', 'js/content/hoilang.js', 'js/content/surprises.js', 'js/content/parents.js', 'js/lunar.js', 'js/content/festcal.js', 'js/content/releases.js', 'js/emojiswap.js', 'js/regions.js', 'js/words.js', 'js/games/folk.js', 'js/games/folk2.js', 'js/roads.js', 'js/signposts.js', 'js/nametags.js', 'js/cities.js', 'js/games/cities.js', 'js/chatter.js', 'js/tales.js', 'js/tale-loader.js', 'js/talesdata.js', 'js/tales-content.js', 'js/kite.js', 'js/relay.js', 'js/hawkers.js', 'js/snacks.js', 'js/animals.js', 'js/homes.js', 'js/art.js', 'js/suburbs.js', 'js/games/learning.js', 'js/games/all.js', 'js/games/catalog.js', 'js/games/learning-meta.js', 'js/games/hocvui-meta.js', 'js/content/hocvui.js', 'js/cartoon.js', 'js/games/tienlen.js', 'js/games/tienlenrules.js', 'js/realworld.js', 'js/symbols.js', 'js/games/more.js', 'js/regionsites.js', 'js/vnfun.js', 'js/custom.js', 'js/content/festival-visibility.js', 'js/festival-live.js', 'content/custom.json', 'js/build.js', 'js/worldedit.js', 'js/content/build-types.js', 'js/studio-position.js', 'js/folkshow.js', 'js/ads.js', 'js/solids.js', 'js/players.js', 'js/packbar.js', 'js/roomcode.js', 'js/photos.js', 'js/netmsg.js', 'js/lotus.js', 'js/worldcache.js', 'js/worldmemo.js', 'js/core/ids.js', 'js/core/events.js', 'js/core/rng.js', 'js/core/geo.js', 'js/placebook.js', 'js/familycards.js', 'js/home-decor-models.js', 'js/myhouse.js', 'js/popups.js', 'js/vendors.js', 'js/games/registry.js', 'js/content/rules.js', 'js/report.js', 'js/website.js', 'js/printpage.js', 'js/coop.js', 'js/netgames.js', 'js/twinchests.js', 'js/claims.js', 'js/simple.js', 'js/songs.js', 'js/content/songs.js', 'js/content/activities.js', 'js/content/install-state.js', 'js/content/unlocks.js', 'js/content/secondset.js', 'js/festdecor.js', 'js/festhunt.js', 'js/content/festhunt.js', 'js/seethrough.js', 'js/content/chapter3sydney.js', 'js/content/chapter3props.js', 'js/content/chapter3films.js', 'js/content/chapter3text.js', 'js/voicepack.js', 'js/voice-index.js', 'js/autoplay.js', 'js/content/autoplay.js', 'js/testergate.js', 'js/tester.js', 'js/tester-float.js', 'js/travel-stops.js', 'js/tester-detection.js', 'js/report-outbox.js', 'js/testerrewards.js', 'js/content/tester.js', 'js/plots.js', 'js/reeds.js', 'js/scrollhelp.js', 'js/chipinfo.js', 'js/soundsheet.js', 'js/content/familymissions.js', 'js/villagertalk.js', 'js/school.js', 'js/content/school-place.js', 'js/content/companions.js', 'js/content/villagerlines.js', 'js/owlguide.js', 'js/pricetags.js', 'js/content/owllessons.js', 'js/jobs.js', 'js/content/jobs.js', 'js/wayfind.js', 'js/feel.js', 'js/stickers.js', 'js/stickerfx.js', 'js/content/stickers.js', 'js/adventure.js', 'js/content/adventures.js', 'js/dayplan.js', 'js/animalhomes.js', 'js/keepcopy.js', 'js/content/devname.js',
-  'js/content/savecopy.js', 'js/content/familycode.js', 'js/games/money.js', 'js/games/moneylogic.js', 'js/games/frame.js', 'js/games/playwatch.js', 'js/games/thinking.js', 'js/games/bigthinkers.js', 'js/games/bigthinkers2.js', 'js/games/science.js', 'js/games/tiengviet.js', 'js/games/talkgames.js', 'js/games/drawing.js', 'js/games/drawshape.js', 'js/games/strategy.js', 'js/games/goat.js', 'js/games/goat-core.js', 'js/games/goat-art.js', 'js/games/vietnam.js', 'js/games/vietnam2.js', 'js/games/nature2.js', 'js/games/animals2.js', 'js/games/me2.js', 'js/games/thinking2.js', 'js/games/music2.js', 'js/games/words2.js', 'js/games/numbers2.js', 'js/games/shapes2.js', 'js/games/places2.js', 'js/games/outside.js', 'js/games/money2.js', 'js/games/reading2.js', 'js/games/market.js', 'js/games/farmgames.js',
+  'js/listen.js', 'js/install.js', 'js/gather.js', 'js/trade.js', 'js/asia.js', 'js/heritage.js', 'js/pets.js', 'js/ferry.js', 'js/passport.js', 'js/festivals.js', 'js/weather.js', 'js/fun.js', 'js/learn.js', 'js/packhash.js', 'js/voice-fragments.js', 'js/showcase.js', 'js/games/music.js', 'js/icons.js', 'js/words2.js', 'js/games/asia.js', 'js/houses.js', 'js/commands.js', 'js/extras.js', 'js/town.js', 'js/powerlines.js', 'js/viwords.js', 'js/vehicles.js', 'js/traffic.js', 'js/film.js', 'js/content/films.js', 'js/content/talefilms.js', 'js/content/films/kit.js', 'js/content/film-looks.js', 'js/content/films/rongtien.js', 'js/content/films/caytre.js', 'js/content/films/tamcam.js', 'js/content/films/sodua.js', 'js/content/films/thachsanh.js', 'js/content/films/chucuoi.js', 'js/content/films/cockien.js', 'js/content/films/vusua.js', 'js/content/films/baluoiriu.js', 'js/content/films/quabau.js', 'js/content/films/thayboi.js', 'js/content/films/nhacmeo.js', 'js/content/films/ongtao.js', 'js/content/films/cachep.js', 'js/content/films/sontinh.js', 'js/content/films/rainbowserpent.js', 'js/content/films/emu.js', 'js/content/films/dotkangaroo.js', 'js/content/films/birdcolours.js', 'js/content/films/magicpudding.js', 'js/content/films/tiddalik.js', 'js/content/films/greatrace.js', 'js/content/films/maliang.js', 'js/content/films/weaver.js', 'js/content/films/nian.js', 'js/content/films/kongrong.js', 'js/content/films/change.js', 'js/content/films/crow.js', 'js/content/films/lionrabbit.js', 'js/content/films/ganesha.js', 'js/content/films/bluejackal.js', 'js/content/films/elephantmice.js', 'js/content/films/monkey.js', 'js/lanterns.js', 'js/companion.js', 'js/dinh.js', 'js/content/chapters.js', 'js/content/chapter2hanoi.js', 'js/content/chapter2props.js', 'js/content/propmodel.js', 'js/content/chapter2films.js', 'js/content/chapter2text.js', 'js/yard.js', 'js/content/yard.js', 'js/content/map.js', 'js/openspot.js', 'js/handpad.js', 'js/kidplay.js', 'js/hoilang.js', 'js/surprises.js', 'js/parents.js', 'js/content/hoilang.js', 'js/content/surprises.js', 'js/content/parents.js', 'js/lunar.js', 'js/content/festcal.js', 'js/content/films-for-all.js', 'js/content/releases.js', 'js/emojiswap.js', 'js/regions.js', 'js/words.js', 'js/games/folk.js', 'js/games/folk2.js', 'js/roads.js', 'js/signposts.js', 'js/nametags.js', 'js/cities.js', 'js/games/cities.js', 'js/chatter.js', 'js/tales.js', 'js/tale-loader.js', 'js/talesdata.js', 'js/tales-content.js', 'js/kite.js', 'js/relay.js', 'js/hawkers.js', 'js/snacks.js', 'js/animals.js', 'js/homes.js', 'js/art.js', 'js/suburbs.js', 'js/games/learning.js', 'js/games/all.js', 'js/games/catalog.js', 'js/games/learning-meta.js', 'js/games/hocvui-meta.js', 'js/content/hocvui.js', 'js/cartoon.js', 'js/games/tienlen.js', 'js/games/tienlenrules.js', 'js/realworld.js', 'js/symbols.js', 'js/games/more.js', 'js/regionsites.js', 'js/vnfun.js', 'js/custom.js', 'js/content/festival-visibility.js', 'js/festival-live.js', 'content/custom.json', 'js/build.js', 'js/worldedit.js', 'js/content/build-types.js', 'js/studio-position.js', 'js/folkshow.js', 'js/ads.js', 'js/solids.js', 'js/players.js', 'js/packbar.js', 'js/roomcode.js', 'js/photos.js', 'js/netmsg.js', 'js/lotus.js', 'js/worldcache.js', 'js/worldmemo.js', 'js/core/ids.js', 'js/core/events.js', 'js/core/rng.js', 'js/core/geo.js', 'js/placebook.js', 'js/familycards.js', 'js/home-decor-models.js', 'js/myhouse.js', 'js/popups.js', 'js/vendors.js', 'js/games/registry.js', 'js/content/rules.js', 'js/report.js', 'js/report-count.js', 'js/website.js', 'js/printpage.js', 'js/coop.js', 'js/netgames.js', 'js/twinchests.js', 'js/claims.js', 'js/simple.js', 'js/songs.js', 'js/content/songs.js', 'js/content/activities.js', 'js/content/install-state.js', 'js/content/unlocks.js', 'js/content/secondset.js', 'js/festdecor.js', 'js/festpieces.js', 'js/festhunt.js', 'js/content/festhunt.js', 'js/seethrough.js', 'js/content/chapter3sydney.js', 'js/content/chapter3props.js', 'js/content/chapter3films.js', 'js/content/chapter3text.js', 'js/voicepack.js', 'js/voice-index.js', 'js/autoplay.js', 'js/content/autoplay.js', 'js/testergate.js', 'js/tester.js', 'js/tester-float.js', 'js/travel-stops.js', 'js/tester-detection.js', 'js/report-outbox.js', 'js/testerrewards.js', 'js/content/tester.js', 'js/content/tester-level.js', 'js/plots.js', 'js/reeds.js', 'js/scrollhelp.js', 'js/chipinfo.js', 'js/soundsheet.js', 'js/content/familymissions.js', 'js/villagertalk.js', 'js/school.js', 'js/content/school-place.js', 'js/content/companions.js', 'js/content/villagerlines.js', 'js/owlguide.js', 'js/pricetags.js', 'js/content/owllessons.js', 'js/jobs.js', 'js/content/jobs.js', 'js/wayfind.js', 'js/feel.js', 'js/stickers.js', 'js/stickerfx.js', 'js/content/stickers.js', 'js/adventure.js', 'js/content/adventures.js', 'js/dayplan.js', 'js/animalhomes.js', 'js/keepcopy.js', 'js/content/devname.js',
+  'js/content/savecopy.js', 'js/content/familycode.js', 'js/games/money.js', 'js/games/moneylogic.js', 'js/games/frame.js', 'js/games/playwatch.js', 'js/games/thinking.js', 'js/games/bigthinkers.js', 'js/games/bigthinkers2.js', 'js/games/science.js', 'js/games/tiengviet.js', 'js/games/english.js', 'js/games/english-meta.js', 'js/content/english.js', 'js/englishmode.js', 'js/games/talkgames.js', 'js/games/drawing.js', 'js/games/drawshape.js', 'js/games/strategy.js', 'js/games/goat.js', 'js/games/goat-core.js', 'js/games/goat-art.js', 'js/games/vietnam.js', 'js/games/vietnam2.js', 'js/games/nature2.js', 'js/games/animals2.js', 'js/games/me2.js', 'js/games/thinking2.js', 'js/games/music2.js', 'js/games/words2.js', 'js/games/numbers2.js', 'js/games/shapes2.js', 'js/games/places2.js', 'js/games/outside.js', 'js/games/money2.js', 'js/games/reading2.js', 'js/games/market.js', 'js/games/farmgames.js',
   'js/management-telemetry.js', 'js/core/reporting-policy.js', 'js/games/drawing2.js', 'js/games/crafts.js', 'js/games/art-pad.js',
   'js/shop.js', 'js/content/shop.js', 'js/boxes.js', 'js/content/boxes.js', // (round S: the clothes shop, mystery boxes, rankings, collectibles)
   'js/games/readingmenu.js', 'js/games/reading.js', 'js/content/reading.js', 'js/games/storyhelp.js', 'js/content/storyhelp.js', // (Play reading trial)
   'sounds/animals/cow.mp3', 'sounds/animals/sheep.mp3', 'sounds/animals/pig.mp3', 'sounds/animals/dog.mp3', 'sounds/animals/cat.mp3', // (owner, 17 Oct AEDT: real animal voices)
   'sounds/animals/duck.mp3', 'sounds/animals/hen.mp3', 'sounds/animals/horse.mp3', 'sounds/animals/frog.mp3', 'sounds/animals/owl.mp3',
-  'icons/icon-180.png', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/launch/valley-portrait.jpg', 'icons/launch/valley-landscape.jpg'
+  'js/notify.js', 'js/content/notify.js', 'js/art/notify.js', // (v1.08 notifications)
+  // (v1.08 fixes) the new games of this round, their pictures (js/art/games108.js, loaded after the start) and guides
+  'js/art/companion-hats.js', 'js/art/games108.js', 'js/content/science-places.js', 'js/content/tiengviet2.js',
+  'js/games/maths-kit.js', 'js/games/maths3.js', 'js/games/maths3-meta.js', 'js/games/maths4.js',
+  'js/games/money3.js', 'js/games/money3-meta.js', 'js/games/moneylogic3.js',
+  'js/games/science2.js', 'js/games/science2-meta.js', 'js/games/tiengviet2.js', 'js/games/tiengviet2-meta.js',
+  // (v1.08b friends) the four new friends: their data, the choosing screens and their pictures
+  'js/content/friends.js', 'js/ui/friends-row.js', 'js/ui/friends-ui.js', 'js/friend-model.js', 'js/friend-view.js',
+  'vendor/GLTFLoader.js', 'vendor/BufferGeometryUtils.js', 'vendor/SkeletonUtils.js', 'vendor/meshopt_decoder.module.js',
+  'models/finn.glb', 'models/sol.glb', 'models/clara.glb', 'models/lumi.glb',
+  'models/finn-hd.glb', 'models/sol-hd.glb', 'models/clara-hd.glb', 'models/lumi-hd.glb', // (v1.08e faces part 2) high-detail friends
+  'js/crowd-models.js', // (v1.08e crowds) the gallery neighbours worn by crowd people near a child
+  // (written out one by one: tools/bundle.mts reads the quoted names of the list)
+  'icons/friends/finn-f.webp', 'icons/friends/finn-q.webp', 'icons/friends/finn-s.webp', 'icons/friends/finn-face.webp',
+  'icons/friends/sol-f.webp', 'icons/friends/sol-q.webp', 'icons/friends/sol-s.webp', 'icons/friends/sol-face.webp',
+  'icons/friends/clara-f.webp', 'icons/friends/clara-q.webp', 'icons/friends/clara-s.webp', 'icons/friends/clara-face.webp',
+  'icons/friends/lumi-f.webp', 'icons/friends/lumi-q.webp', 'icons/friends/lumi-s.webp', 'icons/friends/lumi-face.webp',
+  'js/vehicle-models.js', // (v1.08e vehicles) the vehicles models put in place (js/vehicles.ts wear)
+  'js/wading.js', // (v1.08e water) splash rings and little fish in the shallow water
+  'js/modelkit.js', // (v1.08e) the shared loader of the Blender models of the world (models/world/*.glb load near the child)
+  'js/creatures.js', // (v1.08e creatures) the Blender models of the animals, pets and companions: asked for near the child
+  'js/nature-tag.js', 'js/world-nature.js', // (v1.08e nature) the marks in the world code and the swaps near the child
+  'js/offlinelevels.js', // (v1.08c voices) the offline levels in Grown-ups, loaded when Grown-ups opens
+  'icons/icon-32.png', 'icons/icon-180.png', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/launch/valley-portrait.jpg', 'icons/launch/valley-landscape.jpg'
 ];
 // (Analytics & Infra, 10 Oct, owner: "can't even play offline when there is no internet") the newest copy when the
 // network answers quickly, otherwise the saved copy after a short wait: a connection that never answers (Wi-Fi with no
@@ -74,7 +107,7 @@ worker.addEventListener('message', (e: ExtendableMessageEvent) => { if (e.data?.
 // (r80) this version's own copy first: the one older copy kept below is only for a game still open from before (its
 // lazy parts); answering from it first had every updated device running the version before (r78 ran r77's files)
 const saved = req => caches.open(VERSION).then(c => c.match(req, { ignoreSearch: true })).then(hit => hit || caches.match(req, { ignoreSearch: true }));
-worker.addEventListener('activate', (e: ExtendableEvent) => { e.waitUntil(Promise.resolve(worker.registration.navigationPreload?.enable()).catch(() => { })); e.waitUntil(caches.keys().then(keys => { const old = keys.filter(k => k !== 'sv-family' && /^sv-20/.test(k) && k !== VERSION); const keep = old.slice(-1); return Promise.all(old.filter(k => !keep.includes(k)).map(k => caches.delete(k))); }).then(() => worker.clients.claim())); });
+worker.addEventListener('activate', (e: ExtendableEvent) => { e.waitUntil(Promise.resolve(worker.registration.navigationPreload?.enable()).catch(() => { })); e.waitUntil(caches.keys().then(keys => { const old = keys.filter(k => k !== 'sv-family' && /^sv-20/.test(k) && k !== VERSION); /* (v1.08e) the world models of an older version go at once: they are fetched again near the child */ keys.filter(k => k.startsWith('sv-models-') && k !== 'sv-models-' + VERSION).forEach(k => caches.delete(k)); const keep = old.slice(-1); return Promise.all(old.filter(k => !keep.includes(k)).map(k => caches.delete(k))); }).then(() => worker.clients.claim())); });
 // (owner, 31 Oct 2026 AEDT: the installed app stayed white for about 30 s) the voices are kept as a few big bundles with
 // one index (js/voicestore.ts); a recording is cut out of its bundle here. The index is read once and again whenever the
 // game says it changed; the last bundles read are kept in memory for the next lines.
@@ -108,6 +141,15 @@ worker.addEventListener('fetch', (e: FetchEvent) => {
   }
   if (url.origin !== location.origin) return;
   // Hashed chunks are immutable. An open previous-version game may still need its own lazy chunks.
+  // (v1.08e, Release 6 Nov 2026 AEDT: a light download) the Blender models of the world (models/world/*.glb, about 7 MB in
+  // all) are not in the install list: each is kept in its own cache the first time a child comes near it and is used from
+  // there after, offline too. Until then the code shapes stand in (js/modelkit.ts), with or without a network.
+  if (url.pathname.includes('/models/world/')) { e.respondWith(caches.open('sv-models-' + VERSION).then(c => c.match(req).then(hit => hit || fetch(req).then(r => { if (r.ok) e.waitUntil(c.put(req, r.clone())); return r; })))); return; }
+  // (v1.08e faces, part 2) a friend's high-detail model (models/<id>-hd.glb, about 0.5 MB): from the saved copy, or kept the
+  // first time it loads (also when the offline list above has not finished saving it)
+  // (v1.08e villagers) the villagers' models (about 400 KB each, 25 of them: 10 MB) are not in the list either: each is
+  // kept the first time a child meets that villager, so the ones a child has met are there offline
+  if (/\/models\/([a-z]+-hd|villager-[a-z-]+)\.glb$/.test(url.pathname)) { e.respondWith(saved(req).then(hit => hit || fetch(req).then(r => { if (r.ok) e.waitUntil(caches.open(VERSION).then(c => c.put(req, r.clone()))); return r; }))); return; }
   if (url.pathname.includes('/bundle/')) { e.respondWith(saved(req).then(hit => hit || fetch(req).then(r => { if (r.ok) e.waitUntil(caches.open(VERSION).then(c => c.put(req, r.clone()))); return r; }))); return; }
   // the voice pack: kept in its own cache (it survives game updates) and stored as lines are played
   if(url.pathname.startsWith('/voices/fpt-leminh-v1/')){
@@ -160,7 +202,7 @@ worker.addEventListener('fetch', (e: FetchEvent) => {
     else e.respondWith(caches.open('sv-website').then(c => fetch(req).then(r => { if (r.ok) e.waitUntil(c.put(req, r.clone())); return r; }).catch(() => c.match(req, { ignoreSearch: true }).then(hit => hit || Response.error()))));
     return;
   }
-  if (url.pathname.includes('/voices/') && url.pathname.endsWith('.mp3')) {
+  if (url.pathname.includes('/voices/') && /\.(mp3|opus)$/.test(url.pathname)) { // (v1.08b platform: Opus copies too)
     // (31 Oct 2026 AEDT) from its bundle, else a recording kept the old way, else the internet (the game keeps it, in a bundle)
     e.respondWith(fromStore('sv-voices', url).then(hit => hit || caches.open('sv-voices').then(c => c.match(req)).then(hit2 => hit2 || fetch(req))));
     return;
@@ -190,4 +232,43 @@ worker.addEventListener('fetch', (e: FetchEvent) => {
     return;
   }
   e.respondWith(saved(req).then(hit => hit || fetch(req)));
+});
+// (v1.08 notifications, owner plan docs/plans/push-notifications.md) push notifications for grown-ups. The website sends
+// only which kinds are due and the texts that are the same for every family; the lines about the children (summary,
+// balance, game of the week, achievements) are this device's own, kept by the game in the cache "sv-notify" (js/notify.ts).
+// The joining below is js/content/notify.ts compose() (a service worker cannot import modules); the check pushnotify
+// compares the two. A tap opens the game on the right screen (?open=), or tells the game that is already open.
+type PushPayload = { v: 1, kinds: string[], title: string, lead?: string, parts: Record<string, string>, open: string, tag: string, lang: 'en' | 'vi' };
+const PUSH_FALLBACK: Record<string, [string, string]> = {
+  gotw: ['A game picked for this week is waiting in the valley.', 'Một trò chơi được chọn cho tuần này đang chờ trong thung lũng.'],
+  weekly: ['Open Grown-ups to see this week’s play report.', 'Mở mục Phụ huynh để xem báo cáo chơi tuần này.'],
+  balance: ['Try a mix of games this week: maths, words, stories and music.', 'Tuần này thử nhiều loại trò: toán, chữ, truyện và âm nhạc.'],
+  invite: ['A friend’s family would like to play together. Open the game to say yes or no.', 'Gia đình một người bạn muốn cùng chơi. Mở trò chơi để đồng ý hoặc từ chối.'],
+  tester: ['A problem you reported is fixed in the newest version. Please try it again.', 'Một lỗi bạn báo đã được sửa trong bản mới nhất. Bạn thử lại nhé.'],
+};
+const PUSH_OPENS = ['new', 'gotw', 'weekly', 'balance', 'achieve', 'word', 'bedtime', 'life', 'festival', 'event', 'invite', 'tester'];
+function pushCompose(p: PushPayload, local: Record<string, { en: string, vi: string } | string> | null) {
+  const lang = p.lang === 'vi' ? 'vi' : 'en', lines: string[] = [];
+  if (p.lead) lines.push(p.lead);
+  for (const k of p.kinds) { if ((k === 'festival' || k === 'event') && p.lead) continue; const own = local && local[k] as { en: string, vi: string }; const t = (own && own[lang]) || p.parts[k] || (PUSH_FALLBACK[k] && PUSH_FALLBACK[k][lang === 'vi' ? 1 : 0]); if (t) lines.push(t); }
+  return { title: p.title, body: lines.join('\n').slice(0, 600), open: p.open, tag: p.tag };
+}
+const pushLocal = () => caches.open('sv-notify').then(c => c.match(new URL('__sv-notify.json', worker.registration.scope).href)).then(r => r ? r.json() : null).catch(() => null);
+worker.addEventListener('push', (e: PushEvent) => {
+  let p: PushPayload | null = null; try { p = e.data ? e.data.json() : null; } catch { p = null; }
+  if (!p || p.v !== 1 || !Array.isArray(p.kinds)) return;
+  e.waitUntil(pushLocal().then(local => {
+    const m = pushCompose(p, local), game = p.kinds.includes('gotw') && local && typeof local.gotwId === 'string' ? local.gotwId : '';
+    return worker.registration.showNotification(m.title, { body: m.body, tag: m.tag, icon: 'icons/icon-192.png', badge: 'icons/icon-192.png', lang: p.lang, data: { open: m.open, game, kinds: p.kinds } });
+  }));
+});
+worker.addEventListener('notificationclick', (e: NotificationEvent) => {
+  e.notification.close();
+  const d = e.notification.data || {}, open = PUSH_OPENS.includes(d.open) ? d.open : 'home', game = /^[\w-]{1,40}$/.test(d.game || '') ? d.game : '';
+  const u = new URL('./', worker.registration.scope); u.searchParams.set('open', open); if (open === 'gotw' && game) u.searchParams.set('game', game);
+  e.waitUntil(worker.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(list => {
+    const c = list.find(x => new URL(x.url).pathname === new URL(worker.registration.scope).pathname) as WindowClient | undefined;
+    if (c) { c.postMessage({ type: 'SV_NOTIFY_OPEN', open, game }); return c.focus().then(() => undefined); }
+    return worker.clients.openWindow(u.href).then(() => undefined);
+  }));
 });

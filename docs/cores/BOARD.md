@@ -502,3 +502,7 @@ The broad selection passed 16/19, corrected focused checks 12/13, and final layo
 ### B pending-work register — 29 October 2026 AEDT
 
 Owner asked to upload and record B's remaining work. [Pending work](../studio-content-website-20261029/PENDING-WORK.md): B-P01 spotdiff mechanics; B-P02 hiddenpic mechanics; B-P03 paperfold mechanics; B-P04 resolve rongran intent before implementation; B-P05 twelve EN/VI guidance recordings. B remains incomplete for these items. The twenty-two delivered activities and evidence remain available for A integration. Keep A-owned fixture updates, combined review and final CI/release validation separate. No implementation, version, deployment or family-data change is included in this record.
+
+## v1.08 helper: handbook (4 Nov 2026 AEDT)
+
+- **Now: ready for Release** · branch `work/handbook` (from `origin/integrate/v108`) · docs and tools only, no game change · the Sparkle Valley Handbook: `tools/handbook.mts` writes `docs/handbook/index.html` (13 parts and Then and now, EN/VI switch, search), `tools/handbook-shots.mts` takes the "now" pictures · release step 6a added to `docs/cores/release.md` · artifact https://claude.ai/artifact/PFBV9XHeEBAUqTP7HDJW33; checks in `docs/handbook/README.md` · waiting for: Release to collect into v1.08.

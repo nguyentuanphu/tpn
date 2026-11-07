@@ -1,9 +1,9 @@
 // Dot and the Kangaroo (Bé Dot và Kangaroo): Dot lost in the bush at dusk, the kind mother kangaroo, the magic
 // berries, the koala, the owl, the kookaburra and the lizard help, the kangaroo carries Dot home, a hug and a promise.
 // The child helps twice: eating the berries (page 3) and hopping home (page 5).
-import { L, Pp, LOOK, THREE, P, mesh, PI, H, go, hop, turn, speak, KID, VILLAGER, bush, animal, owl, bird, board } from './kit.js';
+import { L, Pp, LOOK, THREE, P, mesh, PI, H, go, hop, turn, speak, KID, VILLAGER, bush, animal, owl, bird, board, colonial } from './kit.js';
 
-const DOT = LOOK({ style: 'dress', color: '#ffd0e4', hairStyle: 'ponytail', hair: '#c8a060', skin: '#f2c8a0' });
+const DOT = LOOK({ kit: 'au-colonial-f', style: 'dress', color: '#ffd0e4', hairStyle: 'ponytail', hair: '#c8a060', skin: '#f2c8a0' });
 const berries = () => mesh([0, 1, 2, 3, 4].map(i => P(new THREE.SphereGeometry(.06, 8, 6), '#4a3ab8', [Math.cos(i * 1.3) * .08, .06 + (i % 2) * .05, Math.sin(i * 1.3) * .08])));
 const lizard = () => mesh([P(new THREE.CapsuleGeometry(.08, .35, 4, 8), '#8a9a3a', [0, .08, 0], [H, 0, 0]), P(new THREE.SphereGeometry(.08, 8, 6), '#8a9a3a', [0, .1, .28]), P(new THREE.ConeGeometry(.05, .4, 6), '#8a9a3a', [0, .06, -.4], [-H, 0, 0]), P(new THREE.SphereGeometry(.02, 6, 5), '#1a1a1a', [.05, .14, .33]), P(new THREE.SphereGeometry(.02, 6, 5), '#1a1a1a', [-.05, .14, .33])]);
 const dusk = S => { S.sky('#e8805a', '#ffc89a'); S.light(.7, .75); };
@@ -74,7 +74,7 @@ export default { pages: [
   // 6. Dot hugged her new friend and promised to always care for the animals of the bush.
   S => {
     bush(S, { rockFar: false }); S.add(Pp.mat(), 0, 0, 0); L.hut(S, -4, -3, .4);
-    const dot = S.person(DOT, .4, 1.6, -.6, .75), roo = animal(S, 'joey', -1, 1.2, .6, 2.6), mom = S.person(VILLAGER('dress', '#3b6fe0', 'none', 'long'), -3, -.6, .5);
+    const dot = S.person(DOT, .4, 1.6, -.6, .75), roo = animal(S, 'joey', -1, 1.2, .6, 2.6), mom = S.person(colonial(VILLAGER('dress', '#3b6fe0', 'none', 'long')), -3, -.6, .5);
     S.shot([0, 2, 7], [0, 1, 1]);
     S.do(dot, .3, 'hug', 3); S.mood(dot, .3, 'happy'); S.cam(.3, 3, [1, 1.2, 4.6], [-.3, .8, 1.4]);
     S.say(5.4, 'Then she ran to her mum, safe at home.', 'Rồi bé chạy ùa về với mẹ, bình an ở nhà.');

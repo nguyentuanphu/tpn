@@ -90,3 +90,9 @@ await check('ownerstudiofolds', async () => {
 await check('ownerstudioperms', async () => {
   return await ownerSmoke('owner-studio-perms.mts');
 });
+
+// (v1.08b platform, owner 5 Nov 2026 AEDT) Studio: Back shows the kept page without a network read; Releases by
+// purpose with a plain line, a state, one tap, search, a timeline and the change list; Sparkle Lab in three parts
+await check('studioback', async () => ownerSmoke('studio-back.mts', ['studioback']));
+await check('studioreleases', async () => ownerSmoke('studio-back.mts', ['studioreleases']));
+await check('sparklelab', async () => ownerSmoke('studio-back.mts', ['sparklelab']));

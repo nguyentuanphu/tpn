@@ -34,6 +34,8 @@ const STAGES: Array<[RegExp,string]> = [
   [/king|palace|prince|princess|emperor|queen|festival/i, 'palace'], [/rice|field|farm|garden|village|plant|seed/i, 'field'],
   [/desert|hot|dry|thirsty/i, 'desert']
 ];
+// (v1.08c) the tales whose pages are drawn in Blender (js/storypics.ts, js/content/storypics.ts): the 20 Vietnamese tales
+const STORY_PICS = ['duahau', 'thanhgiong', 'banhchung', 'caykhe', 'hoguom', 'rongtien', 'caytre', 'tamcam', 'sodua', 'thachsanh', 'chucuoi', 'cockien', 'vusua', 'baluoiriu', 'quabau', 'thayboi', 'nhacmeo', 'ongtao', 'cachep', 'sontinh'];
 export const stageOf = en => STAGES.find(([re]) => re.test(en))?.[1] || 'meadow';
 
 // sync (round H, reading together online): { send(page), listen(fn) } — a page turned here turns for every friend reading
@@ -63,24 +65,51 @@ export async function openTheatre(tale, { name = '', onDone = undefined, startPa
     // (films batch, 13 Oct) the first films live in js/content/films.js; every other tale's film is its own small file
     // (js/content/talefilms.js), so a story loads only its own. A film that has not come after 10 s (a slow phone
     // network) is not waited for: the story is read over the picture stage instead (owner: films that did not start).
-    let film = null, gaveUp = false;
+    let film = null, gaveUp = false, kept = false;
     const loadFilm = async () => { const C = await import('./content/films.js'); return C.FILMS[tale.id] || (await import('./content/talefilms.js')).taleFilm(tale.id); };
-    const ready = featureOn('storyFilms', true) ? loadFilm().then(async script => {
+    // a narration line inside the film shows under the page's words, and is spoken only while the story reads itself
+    const onSay = (en, vi, kind) => { if (kind !== 'help') { text.querySelectorAll('.th-more').forEach(e => e.remove()); text.appendChild(el('p', 'th-more', esc(T(en, vi).replace(/\{name\}/g, name)))); } return auto ? sayAsync(en, vi) : Promise.resolve(); };
+    // (v1.08c) stories with a film made in Blender (js/blenderfilm.ts) play it when it is kept on the device or the internet
+    // can bring it; otherwise the game's own film plays, as before. (v1.08f) Which films a child sees (the five for
+    // everyone, the rest on tester devices with Studio's "Blender films for testers") is js/blenderfilm.ts filmOpen.
+    const videoFilm = async () => {
+      if (!featureOn('blenderFilms', true)) return false;
+      try {
+        const B = await import('./blenderfilm.js'); if (!B.filmOpen(tale.id)) return false; // (v1.08f) five for everyone, the rest for testers
+        const v = await B.videoFor(tale.id); if (!v || !alive || gaveUp) return false;
+        const vf = B.createVideoFilm(stage, tale.id, v.src); if (!vf) return false;
+        // a video this device cannot show (a broken file, no codec for it) is let go: the game's own film plays instead
+        if (!(await vf.playable(8000)) || !alive || gaveUp) { vf.close(); return false; }
+        film = vf;
+      }
+      catch (e) { return false; }
+      if (!film) return false; m.classList.add('film', 'video'); film.onSay = onSay; return true;
+    };
+    const ready = featureOn('storyFilms', true) ? videoFilm().then(done => done ? null : loadFilm().then(async script => {
       if (!script || !alive || gaveUp) return; const F = await import('./film.js'); if (!alive || gaveUp) return;
       film = F.createFilm(stage, script, tale.ctx); if (!film) return; m.classList.add('film');
-      // a narration line inside the film shows under the page's words, and is spoken only while the story reads itself
-      film.onSay = (en, vi, kind) => { if (kind !== 'help') { text.querySelectorAll('.th-more').forEach(e => e.remove()); text.appendChild(el('p', 'th-more', esc(T(en, vi).replace(/\{name\}/g, name)))); } return auto ? sayAsync(en, vi) : Promise.resolve(); };
-    }).catch(e => { console.warn('film', e); window.svModuleGone?.(e); }) : Promise.resolve();
+      film.onSay = onSay;
+    })).catch(e => { console.warn('film', e); window.svModuleGone?.(e); }) : Promise.resolve();
     const readyOr = Promise.race([ready, wait(10000).then(() => { gaveUp = true; })]);
     const rate = () => window.__svFilmRate || 1; // (checks only: films played faster)
     const draw = async (fromFriend = false) => {
       const my = ++token; await readyOr; if (!alive || my !== token) return;
       const [pics, en, vi] = tale.pages[k], st = stageOf(en);
       if (film) return drawFilm(my, en, vi, fromFriend);
+      // (v1.08 Release, check ownertogetherstart) the page turn goes to the friends at once: waiting for the page's
+      // picture first lost a turn when the next tap came before the picture (only the last of two quick turns was sent)
+      publish(fromFriend);
       stage.className = 'th-stage st-' + st; bg.innerHTML = SCENES[st] ? `<svg class="sc" viewBox="0 0 800 450" preserveAspectRatio="xMidYMax slice" aria-hidden="true">${SCENES[st]()}</svg>` : STAGE_ART[st] || '';
+      // (v1.08c) a tale with pages drawn in Blender shows its own picture of the page (it has the people and the place in
+      // it, so the little actors stay away); with no picture to be had, the painted stage below plays as before
+      if (STORY_PICS.includes(tale.id)) {
+        const src = await import('./storypics.js').then(Sp => { if (!kept) { kept = true; Sp.keepStoryPics(tale.id); } return Sp.storyPic(tale.id, k); }).catch(() => null);
+        if (!alive || my !== token) return;
+        if (src) { stage.classList.add('drawn'); bg.innerHTML = `<img class="th-pic-fill" alt="" src="${src}"><img class="th-pic" alt="" src="${src}">`; }
+      }
       // actors: spread across the stage, each entering from its side, then moving its own way
       // on a narrow (phone) stage fewer, smaller actors, spread over the whole width, so nobody overlaps
-      const narrow = stage.clientWidth < 560, list = graphemes(pics).slice(0, narrow ? 4 : 7);
+      const narrow = stage.clientWidth < 560, list = stage.classList.contains('drawn') ? [] : graphemes(pics).slice(0, narrow ? 4 : 7);
       actors.innerHTML = list.map((e, i) => {
         const n = list.length, x = n === 1 ? 50 : (narrow ? 12 : 14) + i * ((narrow ? 76 : 72) / (n - 1)), y = 38 + ((i * 37) % 3) * 9 - (moveOf(e) === 'fly' ? 24 : 0);
         const size = n <= 2 ? 22 : n <= 4 ? 17 : 13;
@@ -96,7 +125,6 @@ export async function openTheatre(tale, { name = '', onDone = undefined, startPa
       if (/✨|magic|thần|fairy|Bụt/i.test(pics + en)) for (let i = 0; i < 10; i++) fx.appendChild(el('i', 'th-spark', pic('✨'))).style.cssText = `left:${10 + (i * 41) % 80}%;top:${10 + (i * 23) % 60}%;animation-delay:${(i % 6) * .3}s`;
       text.innerHTML = `<p>${esc(T(en, vi).replace(/\{name\}/g, name))}</p>`;
       dots.innerHTML = tale.pages.map((_, i) => `<i class="${i === k ? 'on' : i < k ? 'done' : ''}"></i>`).join('');
-      publish(fromFriend);
       m.querySelector('.th-prev').disabled = k === 0;
       m.querySelector('.th-next').innerHTML = (k === tale.pages.length - 1 ? pic('🏁') : '▶') + `<small>${k === tale.pages.length - 1 ? T('End', 'Hết') : T('Next', 'Sau')}</small>`;
       const pageSound=(SFX as typeof SFX & {page?:()=>void}).page; pageSound ? pageSound() : SFX.tap();

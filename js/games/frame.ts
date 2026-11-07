@@ -6,7 +6,7 @@ import { say } from '../voice.js';
 import { SFX, Music } from '../audio.js';
 import { el, wait, esc } from '../util.js';
 import { openHowTo } from '../howto.js';
-import { pic } from '../art.js';
+import { pic, moreArt, moreArtReady } from '../art.js';
 import { featureOn, itemEnabled, keptOn, MONEY_GAMES } from '../custom.js';
 import { saveProfiles, normalizeLearn } from '../state.js';
 
@@ -14,6 +14,7 @@ import { isOpen, isHeld } from '../content/unlocks.js';
 import { GAME_INFO } from '../content/activities.js';
 import { GAMES, register, SKILLS } from './registry.js';
 import { playWatch, tell, setPlan } from './playwatch.js';
+import { englishFor, enterEnglish, keepEnglish } from '../englishmode.js'; // (v1.08 english)
 export { GAMES, register }; // (the list itself is in registry.js)
 // Each kind of game has its own song.
 const GAME_MUSIC = {
@@ -55,10 +56,15 @@ export function canStartGame(id:string,players:Profile[]=[]):boolean {
   if(id.startsWith('rd_')&&!keptOn('readingTrial'))return false;
   return !players.length||players.some(p=>isOpen(p,id,'game',GAME_INFO[id]?.[0]||''));
 }
-export function openGame(id: string, { players, level = 1, style = 'shrine', partnerName = null, little = true, strong = false, nextId = null, completion = 'choose', online = null, levelPick = null }: GameOptions): Promise<GameResult> {
+// (v1.08) a game opens once the v1.08 games' pictures and guides are in (they load just after the start: js/art.ts)
+export function openGame(id: string, opts: GameOptions): Promise<GameResult> { return moreArtReady() ? openGameNow(id, opts) : moreArt().then(() => openGameNow(id, opts), () => openGameNow(id, opts)); }
+function openGameNow(id: string, { players, level = 1, style = 'shrine', partnerName = null, little = true, strong = false, nextId = null, completion = 'choose', online = null, levelPick = null }: GameOptions): Promise<GameResult> {
   const def = GAMES[id]; if (!def || !canStartGame(id,players)) return Promise.resolve({ won: false });
   const nextName = nextId && GAMES[nextId] ? GAMES[nextId].name() : '';
   if (current) current.close(false);
+  // (v1.08 english) English mode: a game chosen in Học vui › Tiếng Anh, or an English game of its own, plays in English
+  // (words, voice, instructions) with a Vietnamese hint under the instruction (js/englishmode.ts)
+  const english = englishFor(id, def) ? enterEnglish() : null;
   return new Promise<GameResult>(resolve => {
     const layer = el('div', 'gl gl-' + style + (little ? ' little' : ''));
     layer.dataset.gameId = id;
@@ -70,19 +76,22 @@ export function openGame(id: string, { players, level = 1, style = 'shrine', par
     if (def.learn && little) layer.classList.add('pic-only');
     // (r79 learning, UX-001) learning games keep one height for the question line, so a longer explanation never moves the board
     if (def.learn) layer.classList.add('learn');
+    if (english) { layer.classList.add('english'); layer.dataset.english = '1'; }
     layer.innerHTML = `
       <div class="gl-head">
         <button class="gl-x" aria-label="${T('Leave', 'Rời đi')}">✕</button>
         <div class="gl-title"><span class="gl-icon">${pic(def.icon)}</span><span>${esc(def.name())}</span></div>
         <div class="gl-dots"></div>
-        <button class="gl-how" aria-label="${T('How to play', 'Cách chơi')}">📺</button>
-      </div>
-      <!-- (owner, 30 Oct 2026 AEDT: "the upper part takes too much space") the level and stars share the guide's line;
-           the guide shows two short lines (tap for the rest, the voice says it all) so the game gets the room -->
-      <div class="gl-guide"><div class="gl-help"></div><div class="gl-status">
+        <!-- (v1.08 layout, owner 3 Nov 2026 AEDT) the level and the stars sit on the title row, beside the guide film -->
+        <div class="gl-status">
           ${levelPick ? `<button class="gl-lvl" aria-label="${T('How hard', 'Độ khó')}">${esc(T(...(LEVELS.find(l => l[0] === levelPick.value) || LEVELS[0]).slice(1)))} ▾</button>` : ''}
           <div class="starbox">⭐ <b>0</b></div>
-        </div></div>
+        </div>
+        <button class="gl-how" aria-label="${T('How to play', 'Cách chơi')}">📺</button>
+      </div>
+      <!-- (owner, 30 Oct 2026 AEDT: "the upper part takes too much space") the guide shows two short lines (tap for the
+           rest, the voice says it all) so the game gets the room -->
+      <div class="gl-guide"><div class="gl-help"></div></div>
       <div class="gl-stage"></div>
       <div class="mascot">🦉</div><div class="mascot-say"></div>`;
     dispatchEvent(new Event('sv-hide-caption')); document.body.appendChild(layer);
@@ -92,32 +101,152 @@ export function openGame(id: string, { players, level = 1, style = 'shrine', par
       const before = help.offsetHeight, text = T(en, vi);
       help.textContent = capital ? text.charAt(0).toUpperCase() + text.slice(1) : text;
       help.classList.remove('open');
+      if (english) english.hint(layer, vi == null ? '' : String(vi));
       // Retain the largest guidance height so selecting a piece cannot move its drop target.
       help.style.setProperty('--gl-guide-height', Math.max(before, help.offsetHeight) + 'px');
     };
     const cleanups = [];
     // (owner, 30 Oct 2026 AEDT: "grow to fill" on tablets and computers) a game drawn small in the middle of a big screen
     // grows to fill it: the stage zooms so its pieces take the room (at most 2.4x). Drawing games (a canvas) keep their
-    // size so a finger lands where it draws; phones keep today's layout.
-    const fit = () => {
-      if (closed || Math.min(innerWidth, innerHeight) < 600 || stage.querySelector('canvas')) { if (stage.style.zoom) stage.style.zoom = ''; return; }
+    // size so a finger lands where it draws.
+    // (v1.08 layout, owner 3 Nov 2026 AEDT: "the answers sit below the bottom of the screen") it also shrinks a game that
+    // is taller or wider than the playing area, on every screen, so the question, the play picture and every answer fit
+    // one screen with no scrolling (at most down to FIT_MIN, and never making a button smaller than a finger)
+    const FIT_MIN = .62;
+    const wide = { tried: 0, before: 0, round: false };
+    // (v1.08 release fix, horsestability on GitHub) once the game has been fitted and the child plays, it does not grow again
+    // until the screen changes size: a redraw can be short for a moment (a full fit queued before the first tap then grew
+    // the board, and the next pass shrank it back under the child's finger)
+    let fitted = false, resized = false;
+    const setWide = (kids: Element[], on: boolean) => {
+      layer.classList.toggle('gl-wide', on); stage.querySelectorAll('.gl-wide-one').forEach(e => e.classList.remove('gl-wide-one'));
+      // (one board of two parts, a picture and its answers, turns into a row; a board of many parts, a card table or a
+      // game board, keeps its own layout)
+      const parts = (e: Element) => [...e.children].filter(c => c.tagName !== 'STYLE' && c.getBoundingClientRect().height > 0 && !/^(absolute|fixed)$/.test(getComputedStyle(c).position)).length;
+      if (on && kids.length === 1 && getComputedStyle(kids[0]).display.includes('flex') && parts(kids[0]) === 2) kids[0].classList.add('gl-wide-one');
+    };
+    const fit = (shrinkOnly = false) => {
+      if (closed || stage.querySelector('canvas')) { if (stage.style.zoom) stage.style.zoom = ''; return; }
       const z = parseFloat(stage.style.zoom) || 1, box = stage.getBoundingClientRect(), kids = [...stage.children].filter(e => e.tagName !== 'STYLE' && e.getBoundingClientRect().height > 0 && !/^(absolute|fixed)$/.test(getComputedStyle(e).position));
-      if (!kids.length) return;
-      const rs = kids.map(e => e.getBoundingClientRect()), w = (Math.max(...rs.map(r => r.right)) - Math.min(...rs.map(r => r.left))) / z, h = (Math.max(...rs.map(r => r.bottom)) - Math.min(...rs.map(r => r.top))) / z;
+      if (!kids.length || !box.width || !box.height) return;
+      // (v1.08b fivescreens) every button counts too, also one standing outside its board (a floating piece), so no
+      // answer is grown past the edge of the screen
+      const taps = [...stage.querySelectorAll('button, [role=button]')].filter(e => { const r = e.getBoundingClientRect(), cs = getComputedStyle(e); return r.width > 2 && r.height > 2 && cs.visibility !== 'hidden' && !e.getAnimations().some(a => a.playState === 'running'); });
+      const rs = [...kids, ...taps].map(e => e.getBoundingClientRect()), w = (Math.max(...rs.map(r => r.right)) - Math.min(...rs.map(r => r.left))) / z, h = (Math.max(...rs.map(r => r.bottom)) - Math.min(...rs.map(r => r.top))) / z;
       if (!w || !h) return;
-      const next = Math.max(1, Math.min(2.4, Math.min(box.width / w, box.height / h) * .9));
-      if (Math.abs(next - z) > .06) stage.style.zoom = String(Math.round(next * 100) / 100);
+      // the room inside the stage's padding, at zoom 1
+      const cs = getComputedStyle(stage), padX = (parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight)) * z, padY = (parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom)) * z;
+      const room = Math.min((box.width - padX) / w, (box.height - padY) / h);
+      // (v1.08b quality, owner: "phone landscape is fully playable") on a short landscape screen a game that does not fit
+      // tries its picture beside its answers (.gl-wide: the stage, or its one board, in a row); it keeps that only when
+      // it fits better than one under the other
+      if (innerWidth > innerHeight && innerHeight <= 520 && (!playing || wide.round)) {
+        wide.round = false;
+        if (wide.tried === 0 && room < 1) { wide.tried = 1; wide.before = room; setWide(kids, true); fitSoon(); return; }
+        if (wide.tried === 1) { wide.tried = 2; if (room < wide.before - .01) { setWide(kids, false); fitSoon(); return; } }
+      }
+      // tablets and computers grow to fill (at most 2.4x); (v1.08 layout, owner: "text big and clear") a phone grows a
+      // small game too, at most 1.4x
+      // (v1.08b fivescreens) a sideways phone grows a game less: the next round's words may be longer
+      const grow = Math.min(innerWidth, innerHeight) >= 600 ? 2.4 : innerWidth > innerHeight && innerHeight <= 520 ? 1.15 : 1.4;
+      // a shrink keeps every button a finger size: 44 px, 64 px for under-5s (it stops there, at FIT_MIN at most)
+      // (v1.08 fixes 2, checks horseplay, folkplay, ownerlearningprogression) each button keeps its own minimum too: a game
+      // that asks 64 px for everyone (Cờ Cá Ngựa, the folk games) was shrunk to 44 px for a big kid
+      // (v1.08 release fix 2, checks s2autas, s2auperth, s2aureef on GitHub) a game's own minimum counts only up to the
+      // biggest finger size, 64 px: a bigger one is the game's look (the Season 2 answers ask 96 px), and keeping all of
+      // it stopped a sideways phone from shrinking a board wider than the screen (the 44 px !important floor hid this)
+      const need = little ? 64 : 44, FINGER_MAX = 64, wants = [...(stage.querySelectorAll('button, [role=button], .choice') as NodeListOf<HTMLElement>)].map(e => { const r = e.getBoundingClientRect(), cs = getComputedStyle(e), w = r.width / z, h = r.height / z; return w > 2 && h > 2 ? Math.max(need / Math.min(w, h), Math.min(FINGER_MAX, parseFloat(cs.minWidth) || 0) / w, Math.min(FINGER_MAX, parseFloat(cs.minHeight) || 0) / h) : 0; }).filter(Boolean);
+      // (v1.08b fivescreens) with a little room to spare: a button whose words change a moment later (a narrower number)
+      // must not end a pixel under a finger's size
+      const floor = wants.length ? Math.max(FIT_MIN, Math.min(1, Math.max(...wants) * 1.03)) : FIT_MIN;
+      // (v1.08b fivescreens) a short landscape screen grows a game a little less, so its padding and gaps still fit
+      const short = innerWidth > innerHeight && innerHeight <= 520;
+      let next = room >= 1 ? Math.min(grow, Math.max(1, room * (short ? .85 : .9))) : Math.max(floor, room * .98);
+      const hold = playing && fitted && !resized;
+      if (!shrinkOnly) { fitted = true; resized = false; }
+      if (hold && next > z) next = z;
+      // (v1.08 fixes 2, checks horseplay, folkplay) a button drawn after the last fit (Roll the die, Pull) may now be under a
+      // finger at this zoom: go back up to the floor then, even on a shrink-only pass
+      if (shrinkOnly && next >= z && z >= floor - .005) return;
+      if (z < floor) next = Math.max(next, floor);
+      // (v1.08b fivescreens) rounded up, so a shrink never takes a button just under a finger's size (43 for 44)
+      next = Math.ceil(next * 100 - 1e-6) / 100;
+      if (Math.abs(next - z) > .04 || (next < z && h * z > (box.height - padY) + 1)) { stage.style.zoom = next === 1 ? '' : String(next); fitSoon(true); }
+    };
+    // (v1.08 layout, owner 3 Nov 2026 AEDT, CLAUDE.md "One screen, big clear text") the words a child reads in a game are
+    // at least TEXT_MIN px as drawn (their size times the stage's zoom): a smaller label is raised, and goes back to the
+    // game's own size when the stage grows. Drawings (svg) and the round dots keep their size.
+    const TEXT_MIN = 16;
+    // (v1.08 release fix, UI rule: touch targets 44 px, 64 px for under-5s) a button whose game draws it smaller than a
+    // finger, also with a size set on the button itself, is raised to a finger's size; a game's own bigger minimum (Pull,
+    // Roll, the Ô ăn quan pits: 64 px for everyone) is left as it is (css/style.css keeps only a zero-weight floor)
+    const floorTaps = (roots: Node[] = [stage]) => {
+      const need = little ? 64 : 44;
+      const btns = new Set<HTMLElement>(); for (const r of roots) { if (!(r instanceof HTMLElement) || !stage.contains(r)) continue; if (r.matches('button, [role=button]')) btns.add(r); r.querySelectorAll('button, [role=button]').forEach(b => btns.add(b as HTMLElement)); }
+      for (const e of btns) {
+        if (e.classList.contains('ch-stick')) continue;
+        const cs = getComputedStyle(e);
+        if ((parseFloat(cs.minWidth) || 0) < need) e.style.setProperty('min-width', need + 'px', 'important');
+        if ((parseFloat(cs.minHeight) || 0) < need) e.style.setProperty('min-height', need + 'px', 'important');
+      }
+    };
+    // (v1.08 Release, check tienlen) roots: only the pieces just added (a card flying in, a new label), not the whole
+    // stage again at every change; the whole stage is looked at again with each fit
+    const floorText = (roots: Node[] = [stage]) => {
+      if (closed) return 0; let changed = 0;
+      floorTaps(roots);
+      const z = parseFloat(stage.style.zoom) || 1, done = new Set<HTMLElement>(), texts: Node[] = [];
+      for (const r of roots) {
+        if (r.nodeType === Node.TEXT_NODE) { if (stage.contains(r)) texts.push(r); continue; }
+        if (r.nodeType !== Node.ELEMENT_NODE || !stage.contains(r)) continue;
+        const walk = document.createTreeWalker(r, NodeFilter.SHOW_TEXT); for (let t = walk.nextNode(); t; t = walk.nextNode()) texts.push(t);
+      }
+      for (const t of texts) {
+        const p = t.parentElement;
+        if (!p || done.has(p) || !/[\p{L}\p{N}]/u.test(t.textContent || '') || p.closest('svg, style, script')) continue;
+        done.add(p);
+        const own = p.dataset.tfOwn, base = own != null ? parseFloat(p.dataset.tfBase) : parseFloat(getComputedStyle(p).fontSize);
+        if (!base) continue;
+        if (base * z < TEXT_MIN - .5) { if (own == null) { p.dataset.tfOwn = p.style.fontSize; p.dataset.tfBase = String(base); } const px = (Math.ceil(TEXT_MIN / z * 10) / 10) + 'px'; if (p.style.fontSize !== px) { p.style.fontSize = px; changed++; } }
+        else if (own != null) { p.style.fontSize = own; delete p.dataset.tfOwn; delete p.dataset.tfBase; changed++; }
+      }
+      return changed;
     };
     let fitTimer: ReturnType<typeof setTimeout> | undefined;
-    const fitSoon = () => { clearTimeout(fitTimer); fitTimer = setTimeout(fit, 120); };
+    // (a game that changes something every moment must not keep putting the fit off: the first call sets the time, later
+    // calls before it only widen it from shrink-only to a full fit)
+    let fitShrinkOnly = true;
+    const fitSoon = (shrinkOnly = false) => {
+      fitShrinkOnly = fitShrinkOnly && shrinkOnly; if (fitTimer) return;
+      fitTimer = setTimeout(() => { const only = fitShrinkOnly; fitTimer = undefined; fitShrinkOnly = true; floorText(); fit(only); if (floorText()) fitSoon(true); }, 120);
+    };
     // (31 Oct 2026 AEDT, horsestability on GitHub: the board shrank mid-game) the stage fits itself while the game sets up;
-    // once the child has tapped it, only a new screen size changes the zoom, so a cheer or a piece added during play never
-    // moves the board under a finger (floating pieces are not measured at all)
-    let playing = false; const startPlay = () => { playing = true; };
+    // once the child has tapped it, only a new screen size, or a new round that would not fit, changes the zoom, so a cheer
+    // or a piece added during play never moves the board under a finger (floating pieces are not measured at all)
+    // (v1.08 layout) at the first tap the game stays where it is: the stage stops centring it and keeps its place from the
+    // top instead, so answers or moves that appear later grow the game downwards and never move the board up
+    let playing = false; const startPlay = () => {
+      playing = true;
+      const z = parseFloat(stage.style.zoom) || 1, box = stage.getBoundingClientRect(), cs = getComputedStyle(stage);
+      const first = [...stage.children].find(e => e.tagName !== 'STYLE' && e.getBoundingClientRect().height > 0 && !/^(absolute|fixed)$/.test(getComputedStyle(e).position));
+      if (!first || cs.flexDirection !== 'column') return;
+      const pad = parseFloat(cs.paddingTop), gap = (first.getBoundingClientRect().top - box.top) / z - pad - (parseFloat(getComputedStyle(first).marginTop) || 0);
+      if (gap > 1) { stage.style.justifyContent = 'flex-start'; stage.style.paddingTop = (pad + gap) + 'px'; }
+    };
     stage.addEventListener('pointerdown', startPlay, { capture: true, once: true });
-    const fitWatch = new MutationObserver(() => { if (!playing) fitSoon(); }); fitWatch.observe(stage, { childList: true });
-    addEventListener('resize', fitSoon); setTimeout(fit, 400);
-    cleanups.push(() => { fitWatch.disconnect(); removeEventListener('resize', fitSoon); clearTimeout(fitTimer); stage.removeEventListener('pointerdown', startPlay, { capture: true }); });
+    // once playing, only a new round (the stage's own pieces replaced) may shrink it; a change inside the game (a move
+    // button, a cheer) only raises small text, so the board never moves under a finger (horsestability)
+    // (small text is raised at once, before the new pieces are drawn, so nothing grows a moment after it appears)
+    const fitWatch = new MutationObserver(list => {
+      floorText(list.flatMap(m => [...m.addedNodes]));
+      // (v1.08b fivescreens) a new round on a sideways phone may try the picture beside its answers again
+      if (playing && list.some(m => m.target === stage) && wide.tried === 2 && !layer.classList.contains('gl-wide')) { wide.tried = 0; wide.round = true; }
+      if (!playing || list.some(m => m.target === stage)) fitSoon(playing);
+    });
+    fitWatch.observe(stage, { childList: true, subtree: true });
+    const fitResize = () => { resized = true; if (wide.tried) { wide.tried = 0; setWide([], false); } fitSoon(false); };
+    addEventListener('resize', fitResize); setTimeout(() => { floorText(); fit(); if (floorText()) fitSoon(true); }, 400);
+    cleanups.push(() => { fitWatch.disconnect(); removeEventListener('resize', fitResize); clearTimeout(fitTimer); stage.removeEventListener('pointerdown', startPlay, { capture: true }); });
     let closed = false, winning = false;
     const prevMusic = Music.key; Music.play(GAME_MUSIC[id] || 'think');
     const lvNotes = new Map<string, string>();
@@ -287,6 +416,7 @@ export function openGame(id: string, { players, level = 1, style = 'shrine', par
     function finish(won: boolean, extra: Partial<GameResult> = {}) {
       if (closed) return; closed = true; current = null;
       cleanups.forEach(f => { try { f(); } catch (e) { } });
+      if (english) { english.leave(); keepEnglish(id); }
       layer.classList.add('out'); setTimeout(() => layer.remove(), 300);
       Music.play(prevMusic || 'field');
       resolve(Object.assign({ won }, extra));
@@ -321,7 +451,9 @@ export function burstConfetti(parent) {
 export function tapOne<E extends EventTarget>(els: E[], api?: Cleanup): Promise<E | null> {
   return new Promise(resolve => {
     const handlers = new Map<E, EventListener>();
-    const done = (element: E | null) => { for (const [target, handler] of handlers) target.removeEventListener('click', handler); resolve(element); };
+    const list = els.filter(e => e instanceof Element) as unknown as Element[];
+    const done = (element: E | null) => { for (const [target, handler] of handlers) target.removeEventListener('click', handler); if (playWatch.offer === list) playWatch.offer = null; resolve(element); };
+    playWatch.offer = list;   // (v1.08 variety) what is offered, for the roundvariety check
     if (typeof api?.onCleanup === 'function') api.onCleanup(() => done(null));
     for (const element of els) {
       if (handlers.has(element)) continue;

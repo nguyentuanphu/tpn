@@ -171,8 +171,12 @@ await check('firstplayer', async () => {
   const P = await open(b, { w: 390, h: 844, touch: true, lang: 'vi', play: false, pre: () => { localStorage.setItem('sv2_profiles', '[]'); } });
   await P.page.click('.screen.title .press', { force: true }); await P.page.waitForSelector('.screen.who');
   const before = await P.page.evaluate(() => ({ first: !!document.querySelector('.who-card.first .make'), picks: document.querySelectorAll('.pick[data-id]').length }));
-  await P.page.click('.who .make'); await P.page.waitForSelector('.modal.editor #nm');
-  await P.page.fill('#nm', 'Mai'); await P.page.evaluate(() => document.querySelector('#eSave').click());
+  // (v1.08b friends) "Make my character" now starts with the Welcome steps: name, boy or girl, friend and skin tone; the
+  // editor with age, start screen and difficulty follows with the name already filled in (checked in full by "newfriends")
+  await P.page.click('.who .make'); await P.page.waitForSelector('.modal.friendpick .fr-name');
+  await P.page.fill('.fr-name', 'Mai'); await P.page.click('.friendpick [data-go="next"]'); await P.page.click('.friendpick [data-set="girl"]');
+  await P.page.click('.friendpick [data-friend="clara"]'); await P.page.click('.friendpick [data-go="done"]');
+  await P.page.waitForSelector('.modal.editor #nm'); await P.page.evaluate(() => document.querySelector('#eSave').click());
   await P.page.waitForSelector('.who .go:not([disabled])', { timeout: 5000 });
   await P.page.click('.who .go'); await P.page.waitForFunction(() => window.__sv && window.__sv.heroes.length > 0);
   const r = await P.page.evaluate(() => ({ name: __sv.heroes[0].profile.name, saved: JSON.parse(localStorage.getItem('sv2_profiles')).map(p => p.name) }));
@@ -383,7 +387,7 @@ await check('battery', async () => {
   const play = await rate(P.page);
   // far people standing still: one shape (the still copy); near people and the child keep every moving part
   const people = await P.page.evaluate(async () => { const { OUTLINED } = await import('/js/avatar.js'), h = __sv.heroes[0], v = { far: 0, farStill: 0, near: 0, nearStill: 0, mine: !!h.av._still };
-    for (const A of OUTLINED) { if (!A.root.parent || A === h.av) continue; const p = A.root.getWorldPosition(A.root.position.clone()), d = Math.hypot(p.x - h.pos.x, p.z - h.pos.z);
+    for (const A of OUTLINED) { if (!A.root.parent || A === h.av || A.model) continue; /* (v1.08b friends) a child drawn with a friend model has no still copy by design (js/avatar.ts showStill): only a few children are ever on screen; villagers are still checked */ const p = A.root.getWorldPosition(A.root.position.clone()), d = Math.hypot(p.x - h.pos.x, p.z - h.pos.z);
       if (d > 24 && A._calm >= 2) { v.far++; if (A._still && A.still && A.still.visible && !A.rig.visible) v.farStill++; } else if (d < 16) { v.near++; if (A._still) v.nearStill++; } }
     return v; });
   // nothing moves for 15 s: the valley is drawn a few times a second; a touch brings it back at once (up to 90 s: the test
@@ -453,6 +457,19 @@ await check('startup', async () => {
     ok(!over.length && !errs.length && !mutedIndexLoads.length, JSON.stringify({ over, got, mutedIndexLoads, machineMs: Math.round(machineMs), speed: +speed.toFixed(2), slowest: slow, firstSteps: first.steps, secondSteps: second.steps, errs }));
     return `machine ${Math.round(machineMs)} ms (x${speed.toFixed(2)} of the reference); tablet speed: first start ${first.kb} KB, title ${(first.title / 1000).toFixed(1)} s, valley ready ${(first.ready / 1000).toFixed(1)} s; second start ${second.kb} KB from the network, ready ${(second.ready / 1000).toFixed(1)} s, longest freeze ${(second.freeze / 1000).toFixed(1)} s; slowest steps ${slow.join(', ')}`;
   } finally { S.close(); }
+});
+
+await check('festgameids', async () => {
+  // (v1.08d valley, PERF-001) the valley reads which festival each festival game belongs to from a small list
+  // (js/content/festgame-ids.ts), so the games' questions (js/content/festgames108b.ts) are not in the first download;
+  // the two lists must stay the same
+  const P = await open(b, { play: false });
+  try {
+    const r = await P.page.evaluate(async () => { const A = await import('/js/content/festgame-ids.js'), B = await import('/js/content/festgames108b.js');
+      return { ids: Object.entries(A.FEST_OF_GAME).sort().join(), games: Object.entries(B.FEST_OF_GAME).sort().join(), n: B.FEST_GAMES.length }; });
+    ok(r.n > 0 && r.ids === r.games, 'the festival game list and the games differ: ' + JSON.stringify(r));
+    return `${r.n} festival games, the same in both lists`;
+  } finally { await P.ctx.close(); }
 });
 
 await check('saves', async () => {
@@ -591,10 +608,10 @@ await check('welcomesteady', async () => {
   // content changes"; the r79 sweep found the Welcome screen's Start button growing and shrinking on every device) the
   // Welcome screen holds still on a phone, a tablet and a computer, in English and in Vietnamese: the Start button, the
   // cover, the logo and the language panel keep their boxes (within 2 px) for 2.5 s after it opens, after each language
-  // tap and the Chinese switch, and the Start button keeps one size in both languages
+  // tap, and the Start button keeps one size in both languages
   const PARTS = [['start', '.screen.title .press'], ['cover', '.screen.title .tt-cover'], ['logo', '.screen.title .logo'], ['languages', '.screen.title .tt-panel']];
-  const TAPS = [['Tieng Viet', '.screen.title .seg.lang button[data-l="vi"]'], ['English', '.screen.title .seg.lang button[data-l="en"]'],
-    ['learn Chinese on', '.screen.title .learnrow [data-learn="zh"]'], ['learn Chinese off', '.screen.title .learnrow [data-learn="zh"]']];
+  const TAPS = [['Tieng Viet', '.screen.title .seg.lang button[data-l="vi"]'], ['English', '.screen.title .seg.lang button[data-l="en"]']];
+  // (owner, 3 Nov 2026 AEDT, v1.08) the Chinese/Hindi "Also learn" buttons left the Welcome screen: no Chinese switch to tap
   const moved = [], notes = [];
   for (const [dev, w, h, touch] of [['phone', 390, 844, true], ['tablet', 820, 1180, true], ['computer', 1280, 800, false]]) for (const lang of ['en', 'vi']) {
     const P = await open(b, { w, h, touch, lang, play: false, settings: { calm: false } });
@@ -608,6 +625,7 @@ await check('welcomesteady', async () => {
       return first;
     };
     const open0 = await watch('opening', 2500);
+    ok(!(await P.page.$('.screen.title .learnrow, .screen.title [data-learn]')), `${dev} ${lang}: the Welcome screen still shows the Chinese/Hindi "Also learn" buttons`);
     ok(PARTS.every(([k]) => open0[k]), `${dev} ${lang}: a part of the Welcome screen is missing ${JSON.stringify(open0)}`);
     const sizes = {};
     for (const [label, sel] of TAPS) {
@@ -622,7 +640,7 @@ await check('welcomesteady', async () => {
     await P.ctx.close();
   }
   ok(!moved.length, 'the Welcome screen moved: ' + moved.slice(0, 8).join('; '));
-  return `Welcome screen still within 2 px (Start button, cover, logo, language panel) opening, after both language taps and the Chinese switch, one Start size in both languages: ${notes.join(', ')}`;
+  return `Welcome screen still within 2 px (Start button, cover, logo, language panel) opening, after both language taps, no Chinese/Hindi buttons, one Start size in both languages: ${notes.join(', ')}`;
 });
 
 await check('swupdate', async () => {

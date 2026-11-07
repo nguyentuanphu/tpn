@@ -4,13 +4,16 @@
 // The processor runs 4 times slower (tablet speed, as the `startup` check), so the valley is still being built. The taps
 // are made inside the page, a third of a second apart, as a child's finger would: the checks' own remote control is
 // answered only now and then while the valley is built, so it would tap long after the child did.
+// (v1.08b friends) the child has also chosen a friend already, so the one-time "New friends are here!" card for an old save
+// (checked by friendmigrate) does not come between Go and the Simple screen; without a friend the card waits for a tap
+// that this check never makes and the Simple screen never opens.
 import type { Browser } from 'playwright';
 import { URL, seedPlayers } from './harness.mts';
 type Seen = Record<string, number | boolean | string | null>;
 export async function simpleFirstCheck(browser: Browser): Promise<string> {
   let cdp = null;
   const pre = () => {
-    try { const ps = JSON.parse(localStorage.getItem('sv2_profiles') || '[]'); for (const p of ps) { p.screen = 'simple'; p.story = { ...(p.story || {}), prologue: true }; } localStorage.setItem('sv2_profiles', JSON.stringify(ps)); } catch (e) { }
+    try { const ps = JSON.parse(localStorage.getItem('sv2_profiles') || '[]'); for (const p of ps) { p.screen = 'simple'; p.story = { ...(p.story || {}), prologue: true }; p.look = { ...(p.look || {}), friend: p.look?.friend || 'finn' }; } localStorage.setItem('sv2_profiles', JSON.stringify(ps)); } catch (e) { }
     const W = window as unknown as { __sf: Seen, __sv?: { bootTimes?: unknown, simple?: { cats: string[], openGroup(t: string, k: string): void, view: { stops: string[] } } } };
     const seen: Seen = W.__sf = {}, now = () => Math.round(performance.now()), built = () => !!W.__sv?.bootTimes;
     const mark = (k: string) => { if (seen[k] == null) { seen[k] = now(); seen[k + 'Built'] = built(); } };
@@ -22,7 +25,11 @@ export async function simpleFirstCheck(browser: Browser): Promise<string> {
       if (!seen.pick && q('.screen.who .pick[data-id]')) { later(() => { mark('pick'); q('.screen.who .pick[data-id]').click(); }); return; }
       if (seen.pick && !seen.go && q('.who .go')) { later(() => { mark('go'); q('.who .go').click(); }); return; }
       if (seen.go && !seen.simple && q('.simple-screen:not([hidden])')) { mark('simple'); later(async () => {
-        const S = W.__sv.simple; S.openGroup('games', S.cats[0]); const id = S.view.stops[0], name = (await import(String('/js/games/frame.js'))).GAMES[id].name();
+        // (v1.08 simple) every switched-on game is reachable from the two big buttons, Học vui and Vui chơi (a locked one as its own padlock stop)
+        const S = W.__sv.simple as unknown as { cats: string[], tab: string, openGroup(t: string, k: string | null): void, view: { stops: string[], locks: string[] } }, A = await import(String('/js/content/activities.js')), F = await import(String('/js/games/frame.js'));
+        const got = new Set<string>(); for (const t of ['learn', 'fun']) { S.openGroup(t, null); S.view.stops.concat(S.view.locks).forEach(x => got.add(x)); }
+        seen.unreached = Object.keys(F.GAMES).filter(x => !A.gameInfo(x).hidden && !got.has(x)).join(',');
+        S.openGroup('learn', null); S.openGroup('learn', S.cats[0]); const id = S.view.stops[0], name = (await import(String('/js/games/frame.js'))).GAMES[id].name();
         const b = [...document.querySelectorAll<HTMLElement>('.sp-stop')].find(x => x.getAttribute('aria-label') === name); seen.game = id; mark('tap'); b.click(); }); return; }
       if (seen.tap && !seen.open && q('.gl')) { mark('open'); later(() => { q('.gl .gl-x')?.click(); }); return; }
       if (seen.open && !q('.gl') && !seen.closed) { mark('closed'); if (!built()) { q('.sp-valley').click(); mark('valley'); setTimeout(() => { seen.valleyWait = !!q('.bootwait') && !!q('.simple-screen:not([hidden])'); }, 200); } }
@@ -47,7 +54,7 @@ export async function simpleFirstCheck(browser: Browser): Promise<string> {
       heroes: window.__sv.heroes.length, simple: !!document.querySelector('.simple-screen:not([hidden])'), wait: !!document.querySelector('.bootwait') }));
     const s = r.seen, end = r.ready.start + r.ready.ready;
     const good = !s.error && s.simple && !s.simpleBuilt && s.open && !s.openBuilt && (s.simple as number) - (s.go as number) < 1500 && r.play > 0 && r.waited === 0
-      && r.heroes === 1 && !r.wait && (s.valley ? s.valleyWait === true && !r.simple : r.simple) && !errors.length;
+      && s.unreached === '' && r.heroes === 1 && !r.wait && (s.valley ? s.valleyWait === true && !r.simple : r.simple) && !errors.length;
     if (!good) throw new Error(JSON.stringify({ ...r, errors }));
     const sec = (n: number) => (n / 1000).toFixed(1) + ' s';
     return `tablet speed: Welcome at ${sec(s.title as number)}, Go at ${sec(s.go as number)}, the Simple screen ${(s.simple as number) - (s.go as number)} ms later, game "${s.game}" open ${(s.open as number) - (s.tap as number)} ms after its tap, ` +

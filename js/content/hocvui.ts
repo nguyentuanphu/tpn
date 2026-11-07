@@ -1,27 +1,11 @@
-// Học vui (Fun learning), phase 1 of the owner's plan (1 Nov 2026 AEDT, docs/learn-tab/PLAN.md): one tab in Play and
-// four areas on the Simple screen, the four corners Tiếng Việt, English, Maths and Science. The new games live in their
-// corner (js/content/activities.ts GAME_INFO). Existing games keep their own home tab and are LINKED into a corner too:
-// the Play hub lists every game in exactly one tab (the `hubmap` check), so a corner shows a link tile that opens the
-// game where it is, and the game is never moved or taken away from where children already find it.
+// Học vui (Fun learning), the owner's plan (1 Nov 2026 AEDT, docs/learn-tab/PLAN.md). (v1.08b games, owner 3 Nov 2026
+// AEDT: "each game belongs to the category it fits and should not be reused") Học and Học vui are one tab now, and every
+// game lives in one corner only (js/content/activities.ts GAME_INFO and LEARN_CORNERS); the link tiles are gone.
 // No imports here except the words' language: tools/make-voice-pack.mts reads hocvuiLines() to record every syllable.
 
-/** the four corners, in the order they are shown (keys are areas in js/content/activities.ts) */
-export const CORNERS = ['hv_vi', 'hv_en', 'hv_math', 'hv_sci'] as const;
+/** the subject corners that are Học vui's own areas (the tab also holds Toán, Hình khối, Tiền, Chữ và đọc, Em và gia đình) */
+export const CORNERS = ['hv_vi', 'hv_en', 'hv_sci'] as const;
 export type Corner = typeof CORNERS[number];
-
-/** existing games linked into a corner (they stay in their own tab and area) */
-export const CORNER_LINKS: Record<Corner, string[]> = {
-  // Vietnamese words of the three regions, and the Vietnamese alphabet with ă â đ ê ô ơ ư when played in Tiếng Việt
-  hv_vi: ['words', 'letters'],
-  // the owner's list: phonics, first words, opposites and the reading corner's games (when Studio's reading switch is on)
-  hv_en: ['phonics', 'firstwords', 'opposites', 'rd_listentouch', 'rd_storychoice', 'rd_trace', 'rd_sounds', 'rd_build', 'rd_rhyme', 'rd_sight', 'rd_tones', 'rd_syllable', 'rd_match', 'rd_sentence', 'rd_readalong',
-    'rd_blend', 'rd_hats', 'rd_endings', 'rd_compound', 'rd_labels', 'rd_signs', 'rd_questions', 'rd_many', 'rd_caps', 'rd_poem', 'rd_missing', 'rd_book', 'rd_storyhelp'],
-  // counting, adding and taking away, the number line and the numbers games; comparing and time from the plan
-  hv_math: ['counting', 'sums', 'numline', 'tenframe', 'dice', 'evenodd', 'measure', 'beforeafter', 'halves', 'moreless', 'clock'],
-  hv_sci: []
-};
-/** is this game shown in this corner as a link (not its own area)? */
-export const linkedIn = (area: string, id: string): boolean => !!(CORNER_LINKS as Record<string, string[]>)[area]?.includes(id);
 
 // ---------- Tiếng Việt: the six tones ----------
 // index 0 ngang (no mark), 1 sắc, 2 huyền, 3 hỏi, 4 ngã, 5 nặng; each family is one syllable with the six marks

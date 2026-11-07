@@ -2,7 +2,7 @@
 // that cross the river, and a river raft that runs up and down the river past the towns. On a boat with more
 // than two stops the child chooses where to go, and the boat takes them straight there. Walk to the end of a pier and tap "Ride the ferry"; if the boat
 // isn't there yet, you wait and hop on when it arrives. Tap "Get off" at any stop.
-import { THREE, P, merge, toonVC, outline, sprite } from './gfx.js';
+import { THREE, P, merge, toonVC, outline, sprite, afterGameStart } from './gfx.js';
 import { T, onLang } from './i18n.js';
 import { say } from './voice.js';
 import { SFX } from './audio.js';
@@ -19,7 +19,7 @@ function signTex(lines, w = 512, h = 128, bg = '#2f86c0') {
   draw(); onLang(draw); return t;
 }
 
-function ferryBoat(flag = true) {
+export function ferryBoat(flag = true) {
   const p = [];
   p.push(P(B(7, 1.1, 3), '#ffffff', [0, .55, 0]), P(B(7.2, .25, 3.2), '#2f86c0', [0, .05, 0]), P(new THREE.CylinderGeometry(1.5, 1.5, 1.1, 16, 1, false, 0, Math.PI), '#ffffff', [3.5, .55, 0], [0, Math.PI / 2, 0]));
   p.push(P(B(7.4, .15, 3.3), '#c98a4a', [0, 1.15, 0])); // deck rail top
@@ -36,7 +36,7 @@ function ferryBoat(flag = true) {
   g.deck = 1.15; g.seats = [[1.4, .6], [1.4, -.6], [2.6, .5], [2.6, -.5]];
   return g;
 }
-function bambooRaft() {
+export function bambooRaft() {
   const p = [];
   for (let i = 0; i < 9; i++) p.push(P(C(.2, .2, 5, 8), i % 2 ? '#c9b45a' : '#b8a24a', [0, .25, -1.6 + i * .4], [0, 0, Math.PI / 2]));
   [-1.8, 1.8].forEach(x => p.push(P(B(.2, .15, 3.6), '#8a6a3a', [x, .5, 0])));
@@ -52,6 +52,14 @@ function bambooRaft() {
   return g;
 }
 
+// (v1.08e vehicles) the Blender boats (models/world/boat-ferry.glb, boat-raft.glb from tools/blender/world-vehicles.py):
+// the hull is swapped when a child first comes near (js/modelkit.ts), dressed like the vehicles (js/vehicle-models.ts); the signs, the flag, the lantern and the raft's
+// fading roof stay the code's own. Until the model has arrived, or when it cannot load, the code hull stays.
+function wearBoat(g, name) {
+  const hull = g.children[0]; if (!hull) return;
+  // (v1.08 startup, PERF-001) asked for after the game's start (js/gfx.ts): the model code is not in the first download
+  afterGameStart().then(() => import('./modelkit.js')).then(K => K.modelFor(hull, name, {}, m => { if (!m) return; m.obj.traverse(o => { o.userData.noCam = true; }); import('./vehicle-models.js').then(V => V.dress(m.obj)); })).catch(() => { });
+}
 export function createFerries(G) {
   const { scene, world } = G;
   const pier = (sx, sz, ex, ez) => { // wooden pier from (sx,sz) on land to (ex,ez) over water; walkable
@@ -73,6 +81,7 @@ export function createFerries(G) {
   const ferries = [];
   function makeFerry({ model, path, loop, stops, speed }) {
     model.traverse(o => { o.userData.noCam = true; }); // a moving boat never pushes the camera in (it ended up inside the raft's roof)
+    wearBoat(model, model.roof ? 'boat-raft' : 'boat-ferry');
     scene.add(model);
       // Start at the first stop's path index, not path[0], so F.at and F.seg are consistent
       const startIdx = stops[0].i;
@@ -117,7 +126,7 @@ export function createFerries(G) {
   const cands = [];
   for (let i = 1; i < RIVER.length - 1; i++) for (let t = .1; t < .95; t += .1) {
     const [ax, az] = RIVER[i], [bx, bz] = RIVER[i + 1], x = ax + (bx - ax) * t, z = az + (bz - az) * t;
-    if (bridgeD(x, z) < 34 || Math.hypot(x - LAKE.x, z - LAKE.z) < LAKE.r + 16 || heightAt(x, z) > WATER - .5) continue;
+    if (bridgeD(x, z) < 34 || Math.hypot(x - LAKE.x, z - LAKE.z) < LAKE.r + 16 || heightAt(x, z) > WATER - .29) continue;   /* (v1.08e water: 0.5 m of the old depth) */
     cands.push({ i, x, z, d: nearest(x, z)[1] });
   }
   cands.sort((a, b) => a.d - b.d);
@@ -143,7 +152,7 @@ export function createFerries(G) {
   // ---------- the river raft line: up and down the river, stopping by the towns (passes under both bridges) ----------
   {
     const path = []; for (let i = 1; i < RIVER.length - 1; i++) { const [ax, az] = RIVER[i], [bx, bz] = RIVER[i + 1], L = Math.hypot(bx - ax, bz - az), n = Math.ceil(L / 4); for (let k = 0; k < n; k++) path.push({ x: ax + (bx - ax) * k / n, z: az + (bz - az) * k / n }); }
-    const wet = path.filter(p => heightAt(p.x, p.z) < WATER - .6); path.length = 0; path.push(...wet);
+    const wet = path.filter(p => heightAt(p.x, p.z) < WATER - .35); path.length = 0; path.push(...wet);   // (v1.08e water: 0.6 m of the old depth)
     const under = (x, z) => !!bridgeAt(x, z, 18, 18);
     const stops = [];
     const byRiver = PLACES.map(pl => ({ pl, d: Math.min(...path.map(p => Math.hypot(p.x - pl.x, p.z - pl.z))) })).sort((a, b) => a.d - b.d).map(o => o.pl); // the towns nearest the river first
@@ -176,11 +185,14 @@ export function createFerries(G) {
   // ---------- boats between two piers (round T2: the Sydney Harbour ferry, under the Harbour Bridge to the island; round
   // T3: the Sài Gòn boat down Sông Sài Gòn and along the coast to Vũng Tàu): from one pier along `via` to the other ----------
   for (const HF of BOATS.filter(b => b.piers)) {
-    const [A, Bp] = HF.piers, path = [], pts = [A.to, ...(HF.via || []), Bp.to];
-    for (let i = 0; i < pts.length - 1; i++) { const [ax, az] = pts[i], [bx, bz] = pts[i + 1], n = Math.max(1, Math.ceil(Math.hypot(bx - ax, bz - az) / 4)); for (let k = 0; k < n; k++) path.push({ x: ax + (bx - ax) * k / n, z: az + (bz - az) * k / n }); }
-    path.push({ x: Bp.to[0], z: Bp.to[1] });
-    const stopOf = (P0, i) => ({ i, name: () => T(P0.name[0], P0.name[1]), dock: { pier: pier(P0.at[0], P0.at[1], P0.to[0] + Math.sign(P0.at[0] - P0.to[0]) * 1.4, P0.to[1] + Math.sign(P0.at[1] - P0.to[1]) * 1.4) } });
-    const f = makeFerry({ model: ferryBoat(false), path, loop: false, stops: [stopOf(A, 0), stopOf(Bp, path.length - 1)], speed: 5 }); f.harbour = true; f.boat = HF.id;
+    // (v1.08d s2au) a boat with more than two piers (the Southern Coast Boat) goes pier to pier along its `legs`
+    const HX = HF as typeof HF & { legs?: number[][][]; speed?: number; via?: number[][] };
+    const PS = HX.legs ? HF.piers : HF.piers.slice(0, 2), legs = HX.legs || [HX.via || []], path = [], at: number[] = [];
+    for (let p = 0; p < PS.length; p++) { at.push(path.length); if (p === PS.length - 1) break; const pts = [PS[p].to, ...(legs[p] || []), PS[p + 1].to];
+      for (let i = 0; i < pts.length - 1; i++) { const [ax, az] = pts[i], [bx, bz] = pts[i + 1], n = Math.max(1, Math.ceil(Math.hypot(bx - ax, bz - az) / 4)); for (let k = 0; k < n; k++) path.push({ x: ax + (bx - ax) * k / n, z: az + (bz - az) * k / n }); } }
+    path.push({ x: PS[PS.length - 1].to[0], z: PS[PS.length - 1].to[1] });
+    const stopOf = (P0, i) => ({ i, id: P0.id, name: () => T(P0.name[0], P0.name[1]), dock: { pier: pier(P0.at[0], P0.at[1], P0.to[0] + Math.sign(P0.at[0] - P0.to[0]) * 1.4, P0.to[1] + Math.sign(P0.at[1] - P0.to[1]) * 1.4) } });
+    const f = makeFerry({ model: ferryBoat(false), path, loop: false, stops: PS.map((P0, k) => stopOf(P0, at[k])), speed: HX.speed || 5 }); f.harbour = true; f.boat = HF.id;
   }
 
   // ---------- riding ----------

@@ -3,7 +3,7 @@
 // trunk wiggles (page 2) and the ear flaps (page 3).
 import { L, Pp, LOOK, THREE, P, mesh, PI, H, speak, village, animal } from './kit.js';
 
-const MEN = ['#6a4a8a', '#3a6a8a', '#8a4a3a', '#4a7a4a', '#8a7a3a'].map(c => LOOK({ style: 'tunic', color: c, hat: 'nonla', hairStyle: 'short', hair: '#e8e8e8', skin: '#e0aa80' }));
+const MEN = ['#6a4a8a', '#3a6a8a', '#8a4a3a', '#4a7a4a', '#8a7a3a'].map(c => LOOK({ kit: 'vn-aonau', style: 'tunic', color: c, hat: 'nonla', hairStyle: 'short', hair: '#e8e8e8', skin: '#e0aa80' }));
 const stick = () => mesh([P(new THREE.CylinderGeometry(.025, .025, 1.3, 5), '#8a5a32', [0, -.2, .1])]);
 // the elephant in the middle of the yard, and the five men round it, eyes closed, each with a stick
 const yard = S => {
