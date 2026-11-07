@@ -83,7 +83,9 @@ export async function facesCheck(b) {
       const cam = new THREE.OrthographicCamera(-h, h, h, -h, .01, 10); cam.position.set(c.x, c.y, box.max.z + 2); cam.lookAt(c.x, c.y, 0);
       const was = rr.getRenderTarget(); rr.setRenderTarget(rt); rr.setClearColor('#000', 1); rr.clear(); rr.render(sc, cam); rr.readRenderTargetPixels(rt, 0, 0, 160, 160, px); rr.setRenderTarget(was);
       swap.forEach(([o, m]) => { o.material = m; }); if (parent) parent.add(av.root); else sc.remove(av.root);
-      let n = 0; for (let k = 0; k < px.length; k += 4) if (px[k] > 225 && px[k + 1] > 225 && px[k + 2] > 210) n++;
+      // eye white: bright and nearly grey (Sol's and Lumi's painted whites are warmer or greener than Clara's; skin is
+      // never this grey, so it is not counted)
+      let n = 0; for (let k = 0; k < px.length; k += 4) { const lo = Math.min(px[k], px[k + 1], px[k + 2]), hi = Math.max(px[k], px[k + 1], px[k + 2]); if (lo > 180 && hi - lo < 40) n++; }
       return n;
     };
     for (const [id, look] of people) {
@@ -139,7 +141,8 @@ export async function facesCheck(b) {
         A.animate(av, 'idle', 1); av.root.rotation.y = 0; av.root.updateMatrixWorld(true);
         const m = { ...av, model: M }, white: Record<string, number> = {};
         for (const k of ['smile', 'half', 'blink', 'happy']) white[k] = W.__picWhite(m, k);
-        if (!(white.smile > 40) || !(white.half < white.smile) || white.blink > 5 || white.happy > 5) bad.push(`${tag}: picture face eye white ${JSON.stringify(white)}`);
+        // (open: clearly some white; Lumi's big green irises leave little of it, about 15 of the 160 px square's pixels)
+        if (!(white.smile > 10) || !(white.half < white.smile) || white.blink > 5 || white.happy > 5) bad.push(`${tag}: picture face eye white ${JSON.stringify(white)}`);
         out[tag] = { pictureFace: true, white }; continue;
       }
       if (!M.face3d) { bad.push(tag + ': no sculpted face (face3d)'); continue; }

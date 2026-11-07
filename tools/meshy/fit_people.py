@@ -314,7 +314,12 @@ def box_of(mask):
     return [int(np.percentile(xs, 2)), int(np.percentile(ys, 2)), int(np.percentile(xs, 98)) + 1, int(np.percentile(ys, 98)) + 1]
 dark = (V < .42) & (yy > H_ * .15) & (yy < H_ * .7)
 eyes = {}
+WHT = (V > .82) & (S_ < .16) & (yy > H_ * .2) & (yy < H_ * .75)   # eye whites: found first, so dark hair is never taken for an eye
 for side, cols in (('R', xx < W_ / 2), ('L', xx >= W_ / 2)):
+    bw = box_of(WHT & cols) if (WHT & cols).sum() > 40 else None
+    if bw:
+        ww_, wh_ = bw[2] - bw[0], bw[3] - bw[1]
+        eyes[side] = [max(0, int(bw[0] - ww_ * .15)), max(0, int(bw[1] - wh_ * .45)), min(W_, int(bw[2] + ww_ * .15)), min(H_, int(bw[3] + wh_ * .25))]; continue
     b = box_of(dark & cols)
     if not b: continue
     w_, h_ = b[2] - b[0], b[3] - b[1]
@@ -322,6 +327,10 @@ for side, cols in (('R', xx < W_ / 2), ('L', xx >= W_ / 2)):
     white = region & (V > .8) & (S_ < .18)
     b2 = box_of((dark & cols & region) | white) or b
     eyes[side] = b2
+if 'R' in eyes and 'L' in eyes:   # an eye half under the fringe is found smaller: each box also takes the mirror of the other
+    _r, _l = eyes['R'], eyes['L']
+    eyes['R'] = [min(_r[0], W_ - _l[2]), min(_r[1], _l[1]), max(_r[2], W_ - _l[0]), max(_r[3], _l[3])]
+    eyes['L'] = [min(_l[0], W_ - _r[2]), min(_l[1], _r[1]), max(_l[2], W_ - _r[0]), max(_l[3], _r[3])]
 mouthm = (yy > H_ * .68) & (yy < H_ * .97) & (xx > W_ * .3) & (xx < W_ * .7) & (D > .1) & (F[..., 0] > F[..., 1] + .08) & (V < REF.max() - .02)
 mouth = box_of(mouthm)
 print('FIT eyes', eyes, 'mouth', mouth)
@@ -340,15 +349,34 @@ if eyes and mouth:
 _al = base[..., 3].copy()
 for _ in range(2): _al = (_al + np.roll(_al, 1, 0) + np.roll(_al, -1, 0) + np.roll(_al, 1, 1) + np.roll(_al, -1, 1)) / 5
 base[..., 3] = _al
-if ORIGINAL:   # the skin is not recoloured, so the face layer covers the whole face with her own original face picture:
-    base[..., 3] = 1   # nothing of the body's face shows through it (no shards where the body's eyes or seams are)
+HAIRISH = np.zeros(F.shape[:2], bool)
+if ORIGINAL:   # the skin is not recoloured: the face layer covers the face's skin, eyes, brows and mouth with the original picture
+    # (nothing of the body's face shows through there); hair in front of the face stays the body's own hair (see-through)
+    # the hair colour: the original picture where rays from the front meet the top of the head
+    _hc = []
+    for _x in np.linspace(fx0 + (fx1 - fx0) * .3, fx1 - (fx1 - fx0) * .3, 7):
+        _h = _ht.ray_cast(Vector((_x, -2, fz1 + (fz1 - fz0) * .35)), Vector((0, 1, 0)))
+        if _h[0] is not None:
+            _p = _hm.polygons[_h[2]]; _li = list(_p.loop_indices)[:3]; _vi = [_hm.loops[l].vertex_index for l in _li]
+            _u = _bary(_h[0], *(_hm.vertices[v].co for v in _vi), *(Vector((*_huv[l].uv, 0)) for l in _li)); _hc.append(_bil(_u.x, _u.y))
+    HAIRC = np.median(np.array(_hc), axis=0) if _hc else None
+    hairish = (np.linalg.norm(F[..., :3] - HAIRC, axis=-1) < .16) & ~skin_mask(F) if HAIRC is not None else np.zeros(F.shape[:2], bool)
+    print('FIT hair colour', None if HAIRC is None else np.round(HAIRC, 3), 'hair pixels in the face picture', int(hairish.sum()))
+    keep = ~hairish; HAIRISH = hairish
+    for b in eyes.values():
+        w_, h_ = b[2] - b[0], b[3] - b[1]
+        keep |= (xx >= b[0] - w_ * .1) & (xx <= b[2] + w_ * .1) & (yy >= b[1] - h_ * .15) & (yy <= b[3] + h_ * .1)
+        keep |= (xx >= b[0] - w_ * .1) & (xx <= b[2] + w_ * .1) & (yy >= b[1] - h_ * .9) & (yy < b[1]) & (V < .55)   # the brow
+    al = keep.astype(np.float32)
+    for _ in range(2): al = (al + np.roll(al, 1, 0) + np.roll(al, -1, 0) + np.roll(al, 1, 1) + np.roll(al, -1, 1)) / 5
+    base[..., 3] = al
 def lid(img, b, top=0., bot=1.):   # (original_skin) a closed lid painted over the eye: her own skin from round the eye
     w_, h_ = b[2] - b[0], b[3] - b[1]; y0 = b[1] + h_ * top; y1 = b[1] + h_ * bot
     ring = (xx > b[0] - w_ * .3) & (xx < b[2] + w_ * .3) & (yy > b[1] - h_ * .2) & (yy < b[3] + h_ * .5) & ~((xx > b[0]) & (xx < b[2]) & (yy > b[1]) & (yy < b[3]))
     ring &= skin_mask(F) & (V > .55)
     sk = np.median(F[ring][:, :3], axis=0) if ring.any() else REF
     cx_, cy_ = (b[0] + b[2]) / 2, (y0 + y1) / 2; rx, ry = w_ / 2 * 1.15, max(2, (y1 - y0) / 2 * 1.15)
-    d = np.hypot((xx - cx_) / rx, (yy - cy_) / ry); hole = d < 1
+    d = np.hypot((xx - cx_) / rx, (yy - cy_) / ry); hole = (d < 1) & ~(HAIRISH & (d > .8))   # (hair at the eye's edge stays hair; inside the eye the lid always closes: an iris can be hair-coloured)
     if top > 0: hole &= yy >= y0
     # her own skin flows in from all round the eye (a smooth fill, no disc edge): the eye pixels are repeatedly
     # replaced by the mean of their neighbours, the skin round them held fixed
@@ -393,9 +421,18 @@ def shift_iris(img, b, frac):
     inside = (((ex - ww_ / 2) / (ww_ * .42)) ** 2 + ((ey - hh_ * .45) / (hh_ * .55)) ** 2) < 1   # within the eye opening only
     eyewhite = (v > .8) & (sat < .2) & inside
     iris = ((v < .7) | (sat > .3)) & (sub[..., 3] > .5) & inside & ~eyewhite & ~skin_mask(sub)
-    o = out[y0:y1, b[0]:b[2]]; o[iris, :3] = EW
-    ys, xs = np.nonzero(iris); xs2 = np.clip(xs + dx, 0, w_ - 1); ok = (eyewhite[ys, xs2] | iris[ys, xs2]) & inside[ys, xs2]
-    o[ys[ok], xs2[ok], :3] = sub[ys[ok], xs[ok], :3]
+    if iris.sum() < 6: return out
+    # the iris as a round disc (no ragged mask edges: those left white streaks and rings); the old disc becomes eye white,
+    # the disc moved sideways is copied from the old one, both with soft edges, only inside the eye's opening
+    ys, xs = np.nonzero(iris); icx, icy = xs.mean(), ys.mean(); ir = math.sqrt(len(xs) / math.pi) * 1.1
+    opening = (inside & (eyewhite | iris)).astype(np.float32)
+    for _ in range(1): opening = np.maximum(opening, (np.roll(opening, 1, 0) + np.roll(opening, -1, 0) + np.roll(opening, 1, 1) + np.roll(opening, -1, 1)) / 4)
+    d0 = np.hypot(ex - icx, ey - icy); d1 = np.hypot(ex - icx - dx, ey - icy)
+    a0 = (np.clip(ir * 1.25 + .5 - d0, 0, 1) * opening)[..., None]; a1 = (np.clip(ir + .5 - d1, 0, 1) * opening)[..., None]
+    o = out[y0:y1, b[0]:b[2]]
+    o[..., :3] = o[..., :3] * (1 - a0) + np.array(EW) * a0
+    src = np.empty_like(sub[..., :3]); sx = np.clip(ex - dx, 0, ww_ - 1); src[:] = sub[ey, sx, :3]
+    o[..., :3] = o[..., :3] * (1 - a1) + src * a1
     return out
 lw = max(1.6, H_ * .012)
 M = {}
@@ -541,7 +578,10 @@ if ORIGINAL and moods:   # (opaque face layer) any body point in front of it, or
     for v in body.data.vertices:
         if v.co.y > .05 or not (fx0 - .01 < v.co.x < fx1 + .01 and fz0 - .01 < v.co.z < fz1 + .01): continue
         h_ = _lt.ray_cast(Vector((v.co.x, -2, v.co.z)), Vector((0, 1, 0)))
-        if h_[0] is not None and v.co.y < h_[0].y + .004: v.co.y = h_[0].y + .004; _np += 1
+        if h_[0] is None: continue
+        cpx = int((v.co.x - fx0) / (fx1 - fx0) * W_); rpx = int((fz1 - v.co.z) / (fz1 - fz0) * H_)
+        if not (0 <= cpx < W_ and 0 <= rpx < H_) or base[rpx, cpx, 3] < .5: continue   # (where the layer is see-through, hair: left in front)
+        if v.co.y < h_[0].y + .004: v.co.y = h_[0].y + .004; _np += 1
     body.data.update(); print('FIT body points moved behind the face layer', _np)
 if KEEP:
     for p in body.data.polygons: p.use_smooth = True   # (Meshy's remesh: soft shading, not flat facets)
