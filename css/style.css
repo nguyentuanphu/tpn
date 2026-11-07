@@ -1398,7 +1398,7 @@ body.bigtext .th-text .th-more { font-size: clamp(17px, 2.7vw, 23px); }
 .th-bar button { width: 60px; height: 60px; border: 0; border-radius: 20px; background: #fff; color: #3b2a4f; font-size: 26px; box-shadow: 0 4px 0 rgba(0,0,0,.25); flex: none; }
 .th-bar button:disabled { opacity: .35; }
 .th-bar button { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0; line-height: 1; }
-.th-bar button small { font-size: 11px; font-weight: 800; margin-top: 3px; opacity: .8; }
+.th-bar button small { font-size: 16px; font-weight: 800; margin-top: 3px; opacity: .9; }
 .th-bar .th-pause svg.art, .th-bar .th-auto svg.art { width: 28px; height: 28px; }
 .th-bar .th-pause.on { background: #ffd23f; }
 .th-bar .th-auto { color: #fff; width: 72px; background: #b9d9b4; }
@@ -2847,6 +2847,15 @@ body.touch .htoast.explain { bottom: calc(env(safe-area-inset-bottom) + 184px); 
 .ht-top .ht-title { flex: 1; font-size: clamp(17px, 3.4vw, 26px); line-height: 1.15; }
 .ht-cap { margin: 10px 0 0; background: #fffdf6; color: #3b2a4f; border-radius: 16px; padding: 8px 14px; min-height: 52px; display: flex; align-items: center; justify-content: flex-start; text-align: left; font-size: clamp(16px, 2.2vw, 20px); line-height: 1.35; }
 body.bigtext .ht-cap { font-size: clamp(20px, 3.2vw, 28px); }
+/* (v1.08 fix, check fivescreensfilms) a phone on its side (390 px high): How to play's buttons stand in a column beside
+   the film instead of under it, and the close button keeps its own strip on the right, so the film, its words and the
+   buttons fit on one screen with nothing under the close button (they were 12 px below the screen, the title under it) */
+@media (orientation: landscape) and (max-height: 500px) {
+  .howto { flex-direction: row; gap: 12px; padding: calc(env(safe-area-inset-top) + 8px) calc(env(safe-area-inset-right) + 76px) calc(env(safe-area-inset-bottom) + 8px) calc(env(safe-area-inset-left) + 12px); }
+  .ht-film { flex: 0 1 760px; min-width: 0; width: auto; padding: 10px; }
+  .ht-ctl { flex: none; flex-direction: column; flex-wrap: nowrap; }
+  .howto.film .ht-screen.demo { height: min(54vh, 560px); }
+}
 .film-help { bottom: 8px; gap: 6px; max-width: min(80%, 420px); padding: 5px 12px; font-size: clamp(15px, 2vw, 17px); }
 .film-help .fh-hand { width: 24px; height: 24px; }
 .th-text { min-height: 52px; padding: 8px 14px; border-radius: 16px; }

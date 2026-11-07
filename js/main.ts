@@ -766,7 +766,9 @@ function frame(now) {
   // (#746, v1.07) and in a tab another tab of the game took over: it went on drawing the valley under its notice, so the
   // computer drew two games at once and both slowed (16 frames a second)
   if (heldByOtherTab()) { BAT.lastDrawn = 0; return; }
-  if (twoHalves() && playing ? G.halfBusy(0) && G.halfBusy(1) : gameOpen() || document.querySelector<HTMLElement>('.storybook, .theatre.film') || (G.paused && document.querySelector<HTMLElement>('.modal')) || (playing && worldHidden())) { BAT.lastDrawn = 0; return; }
+  // (v1.08 fix, check fivescreensfilms) a story's picture stage and a game's How to play cover the whole screen as a film
+  // does, so the world rests under them too: it went on drawing the valley under every page of 92 stories
+  if (twoHalves() && playing ? G.halfBusy(0) && G.halfBusy(1) : gameOpen() || document.querySelector<HTMLElement>('.storybook, .theatre, .howto') || (G.paused && document.querySelector<HTMLElement>('.modal')) || (playing && worldHidden())) { BAT.lastDrawn = 0; return; }
   world.update(dt, t);
   if (playing) G.farCull(now); // (round T: small things far from every camera are not drawn)
   if (!playing) {
