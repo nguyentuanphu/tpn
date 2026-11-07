@@ -35,6 +35,9 @@ function style(): void {
   document.head.appendChild(el('style', '', `
 .choice.sh-book { width: auto; min-width: clamp(120px, 26vw, 170px); height: auto; min-height: clamp(120px, 26vw, 170px); flex-direction: column; gap: 4px; padding: 10px; font-size: clamp(16px, 3.4vw, 22px); font-weight: 800; }
 .sh-cover { display: inline-flex; width: clamp(64px, 14vw, 96px); height: clamp(64px, 14vw, 96px); } .sh-cover .art { width: 100%; height: 100%; }
+/* (v1.08 fix, check fivescreens) a phone on its side (390 px high): the story covers were sized by the screen's width, two
+   rows of 170 px, so the second row ran 166 px below the screen; there they are sized by its height */
+@media (orientation: landscape) and (max-height: 520px) { .choice.sh-book { min-width: clamp(110px, 20vw, 170px); min-height: clamp(96px, 34vh, 150px); padding: 6px; } .sh-cover { width: clamp(48px, 16vh, 80px); height: clamp(48px, 16vh, 80px); } }
 .sh-wrap { display: flex; flex-direction: column; align-items: center; gap: clamp(6px, 1.4vh, 12px); width: min(96vw, 900px); margin: 0 auto; }
 .sh-text { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 4px 6px; background: rgba(255, 255, 255, .94); color: #2a2a3a; border-radius: 20px; padding: 8px 14px; box-shadow: 0 5px 0 rgba(0, 0, 0, .15); max-width: 100%; }
 .sh-text .sh-pics { display: inline-flex; gap: 2px; margin-right: 6px; } .sh-text .sh-pics .art { width: clamp(30px, 6vw, 44px); height: clamp(30px, 6vw, 44px); }

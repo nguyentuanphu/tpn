@@ -4,13 +4,16 @@
 // The processor runs 4 times slower (tablet speed, as the `startup` check), so the valley is still being built. The taps
 // are made inside the page, a third of a second apart, as a child's finger would: the checks' own remote control is
 // answered only now and then while the valley is built, so it would tap long after the child did.
+// (v1.08b friends) the child has also chosen a friend already, so the one-time "New friends are here!" card for an old save
+// (checked by friendmigrate) does not come between Go and the Simple screen; without a friend the card waits for a tap
+// that this check never makes and the Simple screen never opens.
 import type { Browser } from 'playwright';
 import { URL, seedPlayers } from './harness.mts';
 type Seen = Record<string, number | boolean | string | null>;
 export async function simpleFirstCheck(browser: Browser): Promise<string> {
   let cdp = null;
   const pre = () => {
-    try { const ps = JSON.parse(localStorage.getItem('sv2_profiles') || '[]'); for (const p of ps) { p.screen = 'simple'; p.story = { ...(p.story || {}), prologue: true }; } localStorage.setItem('sv2_profiles', JSON.stringify(ps)); } catch (e) { }
+    try { const ps = JSON.parse(localStorage.getItem('sv2_profiles') || '[]'); for (const p of ps) { p.screen = 'simple'; p.story = { ...(p.story || {}), prologue: true }; p.look = { ...(p.look || {}), friend: p.look?.friend || 'finn' }; } localStorage.setItem('sv2_profiles', JSON.stringify(ps)); } catch (e) { }
     const W = window as unknown as { __sf: Seen, __sv?: { bootTimes?: unknown, simple?: { cats: string[], openGroup(t: string, k: string): void, view: { stops: string[] } } } };
     const seen: Seen = W.__sf = {}, now = () => Math.round(performance.now()), built = () => !!W.__sv?.bootTimes;
     const mark = (k: string) => { if (seen[k] == null) { seen[k] = now(); seen[k + 'Built'] = built(); } };
