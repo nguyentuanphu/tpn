@@ -66,8 +66,10 @@ async function probe(page, id: string, level: string, rounds: number): Promise<S
       const pic = clean(stage?.innerHTML || '').replace(/\d+(\.\d+)?(?=\s*(px|%))/g, '');
       const q = help + ' || ' + answers.join(' ¦ ') + ' || right=' + clean(right.outerHTML) + ' || ' + (pic.length > 4000 ? pic.length + ':' + pic.slice(0, 4000) : pic);
       // things placed about a scene (a fish, a swimmer) have no first or last place: only rows of answers are counted
-      // (and a free choice, where every answer is right, has no right place at all)
-      const row = ask.check && !els.some(e => getComputedStyle(e).position === 'absolute') && !els.every(e => ask.check(e));
+      // (and a free choice, where every answer is right, has no right place at all; (v1.08 fix) nor has a round with
+      // several right answers, such as the squares of a path (s2a_turtle: every square of the way is right, a dead end is
+      // wrong), where the first right square in reading order was counted as "the" right answer and stood first)
+      const row = ask.check && !els.some(e => getComputedStyle(e).position === 'absolute') && els.filter(e => ask.check(e)).length === 1;
       out.push({ q, pos: row ? els.indexOf(right) : -1, n: row ? els.length : 0 });
       right.click();
       await w(150);

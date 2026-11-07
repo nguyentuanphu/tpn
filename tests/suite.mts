@@ -24,6 +24,7 @@ const SOLO = ['perf', 'startup', 'battery'];
 // another; the everyday checks share the other lanes
 const HEAVY = ['ownerdesk', 'ownerstudioperms', 'ownerstudiofolds', 'ownerround', 'ownerfamily', 'ownercapture', 'films', 'testerrewards', 'reading', 'facetoface', 'phone', 'chapter2', 'chapter3', 'studio', 'voicearea', 'solid', 'nametags', 'migrate', 'testerreport', 'camera', 'spill', 'games', 'roundvariety', /* (v1.08b quality) */ 'fivescreens', 'fivescreenswide', 'fivescreensfilms', 'fivescreensfilmstablet', 'fivescreensfilmscomputer'];
 // the slowest checks and the files that are theirs: in full when one of these changed, a sample otherwise
+const FILMS_FIT = [/^js\/film\.[jt]s$/, /^js\/tales\.[jt]s$/, /^js\/howto(-player)?\.[jt]s$/, /^tests\/fivescreens-films/];
 const SLOW_OWN = {
   // (v1.08 fix) the game's files are TypeScript now (js/*.ts; the .js beside them are built, not kept in git), so each
   // file pattern takes both: with ".js" alone a changed film or story file never made these run in full
@@ -33,9 +34,8 @@ const SLOW_OWN = {
   // (v1.08 variety) the round makers of the games
   roundvariety: [/^js\/games\//, /^tests\/round-variety/],
   // (v1.08b quality) the five screens of every tale, story page and guide film (three checks: phone, tablet, computer)
-  fivescreensfilms: [/^js\/film\.[jt]s$/, /^js\/tales\.[jt]s$/, /^js\/howto(-player)?\.[jt]s$/, /^tests\/fivescreens-films/],
+  fivescreensfilms: FILMS_FIT, fivescreensfilmstablet: FILMS_FIT, fivescreensfilmscomputer: FILMS_FIT,
 };
-SLOW_OWN.fivescreensfilmstablet = SLOW_OWN.fivescreensfilmscomputer = SLOW_OWN.fivescreensfilms;
 // a change to the look (css) is checked by the checks that measure what is on screen
 const LAYOUT = ['phone', 'contract', 'hscroll', 'chips', 'a11y', 'iphone', 'simple', 'adventure', 'facetoface', 'two-players', 'questbar', 'bagitems', 'friendstab', 'shop', 'mictest'];
 // checks without a browser, a few seconds each: always run
