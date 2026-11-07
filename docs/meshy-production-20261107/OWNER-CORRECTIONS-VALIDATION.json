@@ -1,0 +1,45 @@
+{
+  "recordedAtSydney": "2026-11-07T23:01:49.925928+11:00",
+  "assets": [
+    {
+      "assetId": "clara",
+      "sheetSHA256": "c238e20dac0bc194d7cf57eaf45884f3f7a5d062fb3ccf6ff6353ca2c0905a4c",
+      "viewsValidated": 3,
+      "pixelExactCrops": true,
+      "visualReview": "technical_pass"
+    },
+    {
+      "assetId": "regional-074-coastal-grandma",
+      "sheetSHA256": "37a1a839ca96d867f7258d7527a286faf119e0f3298bb903268381c182819e96",
+      "viewsValidated": 3,
+      "pixelExactCrops": true,
+      "visualReview": "technical_pass"
+    }
+  ],
+  "refreshedClaraJobHashes": "passed",
+  "runtimeChanges": false,
+  "paidMeshyCalls": 0,
+  "galleryBrowserChecks": {
+    "viewports": {
+      "phone": [
+        393,
+        852
+      ],
+      "tablet": [
+        820,
+        1180
+      ],
+      "desktop": [
+        1440,
+        1000
+      ]
+    },
+    "assetsChecked": [
+      "clara",
+      "regional-074-coastal-grandma"
+    ],
+    "allImageLinksHTTP200": true,
+    "horizontalOverflow": false
+  },
+  "browserPreviewNote": "Previous local server returned an empty response; fresh local server on 8766 passed all six layout/image checks."
+}

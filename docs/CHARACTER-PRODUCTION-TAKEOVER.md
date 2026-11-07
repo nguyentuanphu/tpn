@@ -2,6 +2,8 @@
 
 Branch: `meshy-production-20261107`. Base: undeployed `integrate/v108` at d51e062e5894a2229bd62e7b429dec87a9787a8f. Main remains unchanged.
 
+Latest owner corrections: [Clara forward braids and coastal grandmother sleeves](meshy-production-20261107/OWNER-CORRECTIONS-20261107.md). Use these corrected sheets/crops for future fitting; preserve the historical anchor only as provenance.
+
 ## Read these first
 
 1. [Original owner production plan](meshy-production-20261107/OWNER-PRODUCTION-PLAN.md).

@@ -19,17 +19,17 @@
     {
       "view": "front",
       "localPath": "reference-images/01-clara/front.png",
-      "sha256": "dcb41577591597bf702ba504895abfc7410b8d911334a2f5b2e62de063b515b5"
+      "sha256": "be7dece239591e22363aae132c0b4c891c861df0731f6d30d32605c475643037"
     },
     {
       "view": "left-side",
       "localPath": "reference-images/01-clara/left-side.png",
-      "sha256": "65b062b10bda3a92a11e1e349eb9e082bb20be0a46091dc9a54aee33d6798e5d"
+      "sha256": "90fa844d9a839d96fa866cec8bc90063c8110b47048d218b4a1ec418aaa2c606"
     },
     {
       "view": "back",
       "localPath": "reference-images/01-clara/back.png",
-      "sha256": "d92118b821f2f4d3b604ab27bc01760b084c3b694cd1279fc55a22bafefe5f71"
+      "sha256": "6e51c52f0669a093037e73e1fbaaf39879c6789f1552a7ea731e22b51a89dd93"
     }
   ],
   "transportNote": "Runner must populate image_urls with public URLs or data URIs in this order. Local paths are not accepted by the API.",

@@ -39,5 +39,6 @@
   "newMeshyModels": 0,
   "MeshyCreditsSpent": 0,
   "paidJobsSubmitted": 0,
-  "MarkdownLocalLinksCheckedAcrossBothPacksAndHandoff": 498
+  "MarkdownLocalLinksCheckedAcrossBothPacksAndHandoff": 498,
+  "latestOwnerCorrectionValidation": "../meshy-production-20261107/OWNER-CORRECTIONS-VALIDATION.json"
 }

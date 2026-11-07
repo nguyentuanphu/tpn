@@ -2376,15 +2376,17 @@
       "conceptReference": null,
       "prompt": "prompts/074-coastal-grandma.txt",
       "promptText": "Create ONE character turnaround sheet: Coastal grandma, an Australian woman in her seventies with short white hair, a sun visor, a bright floral kaftan and sandals. Match the provided Clara STYLE reference ONLY: cozy premium family-animation 3D render, softly rounded shapes, clay-like materials with fine stylized fabric/fur detail, warm friendly colours and expressive eyes. CHILD head height about 1/4 total height; ADULT about 1/5; ELDERS slightly shorter and rounder with age-appropriate features. Depict real cultures accurately and respectfully in the SPECIFIED everyday clothing as worn today, never costume or caricature. Relaxed upright human A-pose with open empty hands, arms clear of torso and hair. Exactly THREE views, left to right FRONT, strict SIDE facing LEFT (nose points image left), BACK. Same individual, colours, garments, scale and floor baseline. Full body including hats, fingers, feet, tails, ears, beaks inside image with generous margins and clear gaps between views. Plain LIGHT GREY background, soft even studio lighting, NO ground shadows. No text, labels, logos, watermark or inset figures. No carried equipment, carrying poles, vehicles, boats, carts, surfboards, tools, food, cups, ice cream or held props. Hands OPEN and EMPTY. Worn hats/clothes/backpacks specifically requested remain attached and consistent. Animals have no collars, bells, clothing or accessories unless explicitly requested. No human hairstyle/outfit on animals. Do not give other characters Clara hair or dress.",
-      "sourceGenerationFile": "/workspace/generated_images/exec-9d19ee2e-c1c9-41e5-9d9b-819ef4cf9aa7.png",
-      "turnaroundSHA256": "f6e0b762c62ef7390a9dda2682bc74dc2601214989d143b0c63f684c2c81525a",
+      "sourceGenerationFile": "/workspace/generated_images/exec-08891986-aae7-49e1-ba14-8c3bafd6e880.png",
+      "turnaroundSHA256": "37a1a839ca96d867f7258d7527a286faf119e0f3298bb903268381c182819e96",
+      "reviewNotes": "Owner correction: sleeves end above elbows, visible background clearance around arms in all views. Rejected first edit with a large side slit; final kaftan has continuous closed side. Profile arm clearance adjusted minimally within the relaxed pose.",
+      "separateViewStatus": "current",
       "cropBoundaries": [
         0,
         571,
         955,
         1536
       ],
-      "reviewNotes": "Visually reviewed against owner line and supplemental age/culture/pose/empty-hands brief. Full front, left-facing profile, back; corrected clothing/anatomy/layout errors where found. Background-gap crop coordinates checked separately. Owner review remains pending.",
+      "latestOwnerCorrection": "2026-11-07",
       "viewCrops": [
         {
           "path": "reference-images/074-coastal-grandma/front.png",
@@ -2394,7 +2396,7 @@
             571,
             1024
           ],
-          "sha256": "4fb8f0bb8ab1c18c66aa700a4b7da7c80f87f436ab2b5df0e383f12f603462b3"
+          "sha256": "76f82aa11a29daf39c3e54b68558c7e073dbd49f49c68ae3f9137dae8be0c5a7"
         },
         {
           "path": "reference-images/074-coastal-grandma/left-side.png",
@@ -2404,7 +2406,7 @@
             955,
             1024
           ],
-          "sha256": "19c5a791950a076d35bb997f55bb0e908f5b8ddd153a37708695357d4ad400c1"
+          "sha256": "892bdfb16dec9b4085845846ad685716d5366285ceb57fea4ef399669ca7d4a2"
         },
         {
           "path": "reference-images/074-coastal-grandma/back.png",
@@ -2414,10 +2416,9 @@
             1536,
             1024
           ],
-          "sha256": "ac1f1c25777c55ea9a82937277e1302b49eb19d4a4cc605386a06be1f1da1bb2"
+          "sha256": "777748d6e103ad4e3f7c0070e38ae5666b128e177ee9909d65164947862003e4"
         }
-      ],
-      "separateViewStatus": "current"
+      ]
     },
     {
       "number": 75,
