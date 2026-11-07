@@ -4,6 +4,14 @@ Branch: `meshy-production-20261107`. Base: undeployed `integrate/v108` at d51e06
 
 Latest owner corrections: [Clara forward braids and coastal grandmother sleeves](meshy-production-20261107/OWNER-CORRECTIONS-20261107.md). Use these corrected sheets/crops for future fitting; preserve the historical anchor only as provenance.
 
+## Latest merged pilot status takes precedence
+
+Concurrent work through 48a4fdca8 has been preserved: Clara pilot, revision, remesh and rig records, 70 credits charged, reported remaining balance 2,979 on the owner PC. Read [CLARA-PILOT.md](meshy-production-20261107/CLARA-PILOT.md) and the live credit ledger before any paid work. The key/raw models/journal are on the owner PC, not supplied to this cloud environment. No completed task may be resubmitted or reset because current image hashes differ.
+
+People fitting tools now exist as tools/meshy/fit_people.py, render_views.py, pose_check.py and the pilot joints files. Inspect them before recreating the fitting pipeline. Runtime face compatibility/pilot acceptance and bulk fitting remain open; no runtime deployment is claimed.
+
+Submitted job specifications retain their OLD input hashes. Corrected Clara images have a separate unsubmitted draft, 01-clara-current-reference.json. Do not rerun build_reference_pack.py until its writer preserves submitted specifications; protecting that history is an explicit pending handoff task. Earlier zero-spend/no-GLB/account-missing statements below describe the initial reference phase and are superseded by the merged pilot records.
+
 ## Read these first
 
 1. [Original owner production plan](meshy-production-20261107/OWNER-PRODUCTION-PLAN.md).
@@ -17,7 +25,7 @@ The original 43 images and the additional 61 descriptions are separate inventori
 
 Reference images are not GLB models. Technical image review is separate from owner approval, independent provider review and runtime validation. The image manifest is the per-item source of truth. The original Clara upload was inline without a downloadable file ID: the generated style anchor is identified honestly, not passed off as the original.
 
-Only the original 43 models have the supplied 990-credit plan plus 10 reserve. No additional 61-model credit budget was approved or recorded. Public Meshy API IDs and 30/15-credit prices were verified; usable API balance, account settings and credentials were not. No paid calls, new subscriptions, spending, GLB generation, rigging, runtime replacement, version bump or deployment occurred.
+Only the original 43 models have the supplied 990-credit plan plus 10 reserve. No additional 61-model credit budget was approved or recorded. Public Meshy API IDs and 30/15-credit prices were verified; usable API balance, account settings and credentials were not. The initial reference phase made no paid calls or model generation. Subsequent merged pilot work records 70 credits and Clara generation/remesh/rigging; no runtime replacement, version bump or deployment is claimed.
 
 ## Continue 3D production
 

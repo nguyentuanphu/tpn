@@ -2,6 +2,8 @@
 
 7 November 2026 AEDT. Branch `meshy-production-20261107`, based on undeployed `integrate/v108` at `d51e062e5894a2229bd62e7b429dec87a9787a8f`.
 
+Latest combined state: [owner image corrections](OWNER-CORRECTIONS-20261107.md) are merged with [Clara pilot work](CLARA-PILOT.md) through 48a4fdca8. The ledger records 70 credits already charged on the owner PC; completed task history is preserved. The current corrected Clara images are a separate unsubmitted draft, not the inputs used by past paid tasks. Earlier zero-spend/account-blocked statements describe this cloud reference phase. No extra paid call was made for the image corrections. Read the combined takeover update before using the batch builder.
+
 ## Reference phase complete
 
 - **43 turnaround sheets and 128 separate view crops** generated, saved and technically reviewed. [View all pictures](GALLERY.md); GitHub renders this Markdown gallery on phones. [HTML gallery](gallery.html) is also included for a local/preview web server; GitHub displays HTML as source.

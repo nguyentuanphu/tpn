@@ -14,8 +14,14 @@ The first generated edit introduced an unwanted large side slit and was rejected
 
 ## Derived files and validation
 
-All six affected view crops were regenerated, hashes and Clara's job specification refreshed, and both galleries rebuilt. Source images and exact edit prompts are saved in each affected folder's generation.json. Overall inventory remains 104 sheets / 311 separate views; no Meshy jobs, spending, new GLBs or deployment occurred.
+All six affected view crops were regenerated, hashes and a separate current-reference draft specification refreshed, and both galleries rebuilt. Source images and exact edit prompts are saved in each affected folder's generation.json. Overall inventory remains 104 sheets / 311 separate views; this correction made no additional Meshy jobs, spending, new GLBs or deployment. Concurrent work through 48a4fdca8 contains the existing Clara pilot/revision/remesh/rig and 70-credit ledger; those records were preserved.
 
 ## Short next-chat prompt
 
-Continue on meshy-production-20261107. Read docs/CHARACTER-PRODUCTION-TAKEOVER.md and docs/meshy-production-20261107/OWNER-CORRECTIONS-20261107.md. Preserve the corrected Clara braids (front of shoulders, none down the back) and regional-074 coastal grandmother's short sleeves/clear arm gaps. Use the current sheets/crops and refreshed manifest/job hashes; historical attempts are not production inputs. Continue the documented 3D work only after secure Meshy account verification.
+Continue on meshy-production-20261107. Read docs/CHARACTER-PRODUCTION-TAKEOVER.md and docs/meshy-production-20261107/OWNER-CORRECTIONS-20261107.md. Preserve the corrected Clara braids (front of shoulders, none down the back) and regional-074 coastal grandmother's short sleeves/clear arm gaps. Use the current sheets/crops and refreshed manifest/job hashes; historical attempts are not production inputs. Preserve the existing Clara pilot/revision/remesh/rig records and 70-credit ledger; resume from CLARA-PILOT.md after verifying the live journal. Do not resubmit completed tasks.
+
+## Submitted job history is immutable
+
+The incoming pilot work already submitted the OLD Clara images. job-specifications/01-clara.json and 01-clara-r2.json retain those original submitted hashes. Current corrected images are recorded in 01-clara-current-reference.json, an unsubmitted draft requiring separate authorization; no new paid revision is implied. A hash mismatch against an old submitted specification is expected after this image correction and must not be bypassed by resetting its task ID.
+
+Do not rerun build_reference_pack.py until it preserves submitted specifications: its original writer would overwrite submitted metadata. This history-protection improvement remains a handoff task. The galleries already point to the corrected images and require no rebuild.

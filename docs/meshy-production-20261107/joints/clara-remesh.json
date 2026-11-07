@@ -1,0 +1,18 @@
+{
+  "id": "clara",
+  "reference_prefix": "clara-",
+  "source": "Meshy Remesh task 01a1b5b5-61a1-7570-984e-7d1ef26df9b5 of revision 01a1b58a-d2db-7782-9703-ad4a47802716 (triangle, target 30000; 30,941 triangles, sha256 afc0c403677c331667afec2d22fef74b41f008df7ae62b15416b588ca54bb338). Same framing as clara-r2, joints unchanged.",
+  "top": [300, 35],
+  "neck": [300, 258],
+  "hip": [300, 540],
+  "shoulderL": [380, 300],
+  "elbowL": [430, 378],
+  "wristL": [468, 455],
+  "hipL": [345, 540],
+  "kneeL": [343, 680],
+  "ankleL": [348, 800],
+  "facebox": [[226, 118], [374, 238]],
+  "trim_back_hair": false,
+  "original_skin": true,
+  "keep_meshy_uvs": true
+}

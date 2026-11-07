@@ -45,7 +45,12 @@ def spec_for(asset):
     manifest = json.loads((OUT/'ASSET-MANIFEST.json').read_text())
     if len(manifest['assets'])!=43 or not all(a['reviewStatus']=='technical_pass' and len(a.get('viewCrops',[]))==len(a['views']) for a in manifest['assets']):
         raise ValueError('Finish technical review and cropping for all 43 original assets first')
-    expected = next(a for a in manifest['assets'] if a['id']==asset)
+    # (7 Nov 2026) an owner-approved revision of a reviewed asset (its own asset ID, e.g. clara-r2): the same reviewed
+    # views, a subset of them in their reviewed order, e.g. leaving out a view that disagrees with the others
+    base_id = spec.get('revisionOf') or asset
+    if spec.get('revisionOf') and not spec.get('revisionReason'):
+        raise ValueError('A revision must record its reason')
+    expected = next(a for a in manifest['assets'] if a['id']==base_id)
     parameters = {'ai_model':'meshy-7.1' if expected['group'] in 'ABCD' else 'meshy-6-lite',
         'geometry_resolution':'standard','should_texture':True,'texture_resolution':'2k',
         'enable_pbr':False,'pose_mode':'','target_formats':['glb']}
@@ -55,7 +60,11 @@ def spec_for(asset):
         raise ValueError('Job parameters differ from reviewed model tier and budget')
     inputs = [(i['localPath'],i['sha256']) for i in spec['inputImages']]
     reviewed = [(i['path'],i['sha256']) for i in expected['viewCrops']]
-    if expected['reviewStatus']!='technical_pass' or inputs!=reviewed:
+    if spec.get('revisionOf'):
+        same = len(inputs)>=2 and all(x in reviewed for x in inputs) and inputs==[r for r in reviewed if r in inputs] and inputs[0]==reviewed[0]
+    else:
+        same = inputs==reviewed
+    if expected['reviewStatus']!='technical_pass' or not same:
         raise ValueError('Job inputs differ from reviewed views')
     return spec
 
@@ -113,7 +122,9 @@ def check_account(account, spec):
             raise ValueError('Missing verified account setting: '+key)
     if account.get('batchStartingAPIBalance',0) < 1000:
         raise ValueError('This batch needs at least 1000 verified API credits')
-    if spec['assetId'] != 'clara' and account.get('claraPilotAccepted') is not True:
+    if spec.get('revisionOf') and spec['assetId'] not in (account.get('approvedRevisions') or []):
+        raise ValueError('The owner has not approved this revision in the account record')
+    if spec['assetId'] != 'clara' and spec.get('revisionOf') != 'clara' and account.get('claraPilotAccepted') is not True:
         raise ValueError('Inspect the Clara pilot before continuing A to G')
 
 def submit(db, spec, account, transport=api):

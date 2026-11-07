@@ -1,0 +1,39 @@
+{
+  "assetId": "clara-r2",
+  "revisionOf": "clara",
+  "revisionReason": "Owner-approved fix, 7 Nov 2026: the reviewed back view puts the two braids down her back while the front and left-side views put them in front, and the first job (01a1b551-4e41-7544-a5da-564f88acc6f3) built both pairs (four braids). This revision sends only the front and left-side views, which agree, so Meshy infers the back.",
+  "group": "A",
+  "endpoint": "https://api.meshy.ai/openapi/v1/multi-image-to-3d",
+  "method": "POST",
+  "parameters": {
+    "ai_model": "meshy-7.1",
+    "geometry_resolution": "standard",
+    "should_texture": true,
+    "texture_resolution": "2k",
+    "enable_pbr": false,
+    "pose_mode": "",
+    "target_formats": [
+      "glb"
+    ],
+    "image_enhancement": false
+  },
+  "inputImages": [
+    {
+      "view": "front",
+      "localPath": "reference-images/01-clara/front.png",
+      "sha256": "dcb41577591597bf702ba504895abfc7410b8d911334a2f5b2e62de063b515b5"
+    },
+    {
+      "view": "left-side",
+      "localPath": "reference-images/01-clara/left-side.png",
+      "sha256": "65b062b10bda3a92a11e1e349eb9e082bb20be0a46091dc9a54aee33d6798e5d"
+    }
+  ],
+  "transportNote": "Runner must populate image_urls with public URLs or data URIs in this order. Local paths are not accepted by the API.",
+  "plannedCredits": 30,
+  "ownerApprovedExtraCredits": 30,
+  "submitted": false,
+  "taskId": null,
+  "rawDownloadDestination": "raw-models/A/clara-r2.glb",
+  "runtimeDestinationAfterFittingAndValidation": "models/clara.glb"
+}

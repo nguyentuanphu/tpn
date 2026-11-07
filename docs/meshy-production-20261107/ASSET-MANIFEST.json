@@ -9,7 +9,7 @@
   "plannedCredits": 990,
   "reserveCredits": 10,
   "generationServicesCalled": true,
-  "MeshySpend": 0,
+  "MeshySpend": 70,
   "assets": [
     {
       "number": 1,
@@ -39,20 +39,16 @@
       ],
       "referenceStatus": "generated",
       "reviewStatus": "technical_pass",
-      "meshyTaskId": null,
-      "modelStatus": "not_submitted",
+      "meshyTaskId": "01a1b551-4e41-7544-a5da-564f88acc6f3",
+      "modelStatus": "raw_downloaded_pilot_under_review",
       "reviewNotes": "Owner correction: both braids drape forward over the shoulders; rear view shows no hanging braids. Front, left profile, back and unchanged identity/outfit visually checked.",
       "ownerReviewStatus": "pending",
-      "turnaroundSHA256": "c238e20dac0bc194d7cf57eaf45884f3f7a5d062fb3ccf6ff6353ca2c0905a4c",
-      "sourceGenerationFile": "/workspace/generated_images/exec-3ec0edf6-35cc-4f49-8619-6af97d081721.png",
-      "separateViewStatus": "current",
       "cropBoundaries": [
         0,
         576,
         960,
         1536
       ],
-      "latestOwnerCorrection": "2026-11-07",
       "viewCrops": [
         {
           "path": "reference-images/01-clara/front.png",
@@ -84,7 +80,43 @@
           ],
           "sha256": "6e51c52f0669a093037e73e1fbaaf39879c6789f1552a7ea731e22b51a89dd93"
         }
-      ]
+      ],
+      "turnaroundSHA256": "c238e20dac0bc194d7cf57eaf45884f3f7a5d062fb3ccf6ff6353ca2c0905a4c",
+      "sourceGenerationFile": "/workspace/generated_images/exec-3ec0edf6-35cc-4f49-8619-6af97d081721.png",
+      "pilot": {
+        "submittedAt": "2026-11-07T20:22+11:00",
+        "finishedAt": "2026-11-07T20:24+11:00",
+        "chargedCredits": 30,
+        "rawBytes": 56560796,
+        "rawSHA256": "1fd03261ff453d6ddd687172f0bfd1636ea6519f46d27b5cf8ca24efe1fc9162",
+        "rawLocation": "outside the repository (owner PC D:/WorkSpace/meshy/raw-models/A/clara.glb)",
+        "triangles": 1840250,
+        "texture": "one 2048x2048 base colour (plus Meshy detail maps)",
+        "review": "Outfit, face, satchel, petal skirt, boots and pendant match the reviewed sheet. Four braids: the reviewed back view puts the braids down the back while the front/side put them in front, and Meshy built both; tools/meshy/fit_people.py trim_back_hair removes the back pair in fitting. Owner acceptance pending.",
+        "claraPilotAccepted": false,
+        "submittedReferenceSHA256": "03492f7f5480c99b4bebc5549b63af9624300a2a5d44f841c420ea9a656654c2",
+        "submittedInputImages": [
+          {
+            "view": "front",
+            "localPath": "reference-images/01-clara/front.png",
+            "sha256": "dcb41577591597bf702ba504895abfc7410b8d911334a2f5b2e62de063b515b5"
+          },
+          {
+            "view": "left-side",
+            "localPath": "reference-images/01-clara/left-side.png",
+            "sha256": "65b062b10bda3a92a11e1e349eb9e082bb20be0a46091dc9a54aee33d6798e5d"
+          },
+          {
+            "view": "back",
+            "localPath": "reference-images/01-clara/back.png",
+            "sha256": "d92118b821f2f4d3b604ab27bc01760b084c3b694cd1279fc55a22bafefe5f71"
+          }
+        ],
+        "currentCorrectedReferenceNotSubmitted": true,
+        "referenceCorrectionNote": "OWNER-CORRECTIONS-20261107.md; existing pilot/task history preserved, corrected views require a separately authorized revision."
+      },
+      "separateViewStatus": "current",
+      "latestOwnerCorrection": "2026-11-07"
     },
     {
       "number": 2,
