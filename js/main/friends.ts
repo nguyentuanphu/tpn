@@ -7,7 +7,7 @@ import { T, nm } from '../i18n.js';
 import { say } from '../voice.js';
 import { SFX, ac } from '../audio.js';
 import { el, esc, $ } from '../util.js';
-import { REGION_NAMES } from '../world.js';
+import { REGION_NAMES, regionAt } from '../world.js';
 import { avatarURL } from '../avatar.js';
 import { Net, MAX_ROOM, ROOM_LEN, okPub } from '../net.js';
 import { dialog, toast, modal, openGrownups } from '../ui.js';
@@ -101,7 +101,9 @@ function friendNote(f, st) {
 setInterval(() => G.autoMeet(), 12000);
 // what my friends see about me (only when sharing is switched on): (round R privacy, 9 Oct) everyone with my friend code
 // sees only "playing now"; my name, the place I am in and my room go locked to each saved friend whose key I have (net.js)
-G.shareStatus = () => { const h = G.heroes[0]; if (!h || !settings.online || !settings.friendsOn) return; Net.friendsShare({ map: Net.mapVersion, name: h.profile.name, at: G.regionOf[0] || '', room: Net.role && !Net.knocking ? Net.code : null, players: Net.role ? Net.count : 0, host: Net.role === 'host' }); };
+// (v1.08 cloud fix) where I am is worked out from where the hero stands now: G.regionOf follows only on the next frame,
+// which on a slow device came after this note had gone, so a friend kept seeing the place before a jump or a ride
+G.shareStatus = () => { const h = G.heroes[0]; if (!h || !settings.online || !settings.friendsOn) return; Net.friendsShare({ map: Net.mapVersion, name: h.profile.name, at: (h.indoors ? G.regionOf[0] : regionAt(h.pos.x, h.pos.z)) || '', room: Net.role && !Net.knocking ? Net.code : null, players: Net.role ? Net.count : 0, host: Net.role === 'host' }); };
 setInterval(() => { if (isPlaying()) G.shareStatus(); }, 45000);
 // signal bars: ▂▄▆█ with the strong ones lit
 G.netQuality = id => Net.quality(id);

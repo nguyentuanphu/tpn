@@ -494,7 +494,9 @@ await check('cloud', async () => {
   const code = await A.page.evaluate(async () => __Net.host(__sv.sendHello()));
   await A.page.evaluate(async () => { const S = (await import('/js/world.js')).CITIES.find(c => c.id === 'saigon'); __sv.heroes[0].place(S.x, S.z); __sv.shareStatus(); });
   await B.page.waitForFunction(() => { const s = __Net.friends.status.AAAAA2; return s && s.online && s.room; }, null, { timeout: 30000 });
-  const status = await B.page.evaluate(() => { __sv.openPad(0, 'friend'); return new Promise(r => setTimeout(() => r(document.querySelector('.frow').innerText.replace(/\n+/g, ' ')), 600)); });
+  // (v1.08 cloud fix) the row redraws with each note; the note host() sent before A moved rightly names the start place
+  // and can be the one the wait above saw, so read the row once it names Saigon (10 s at most), not at a fixed 600 ms
+  const status = await B.page.evaluate(async () => { __sv.openPad(0, 'friend'); const row = () => (document.querySelector('.frow') as HTMLElement | null)?.innerText.replace(/\n+/g, ' ') || ''; await new Promise(r => setTimeout(r, 600)); for (let n = 0; n < 47 && !/TP\. Hồ Chí Minh/.test(row()); n++) await new Promise(r => setTimeout(r, 200)); return row(); });
   await B.page.evaluate(() => document.querySelector('[data-joinf]').click());
   await B.page.waitForFunction(() => Object.keys(__sv.partners).length > 0, null, { timeout: 45000 });
   await B.page.evaluate(() => { document.querySelectorAll('.modal').forEach(m => m.remove()); __sv.paused = false; });
