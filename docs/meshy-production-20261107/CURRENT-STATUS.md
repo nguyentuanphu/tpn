@@ -1,5 +1,16 @@
 # Production status — 7 November 2026 AEDT
 
+**Overnight update, 8 Nov 2026 (owner asleep; authorised: up to 1,000 credits, skin shifted from the original, on the
+branch, puppy too).** `tools/meshy/overnight.ps1` ran the people in plan order (model 30, remesh 30k 5, remesh 9k 5,
+Meshy rig 5 = 45 each), never retrying a paid call. CREDIT-LEDGER.json is now synced from the private journal by
+`tools/meshy/ledger_sync.py`. On the branch (not main, not deployed): Clara, Finn, Sol and Lumi (light + high-detail,
+all 12 friend checks pass) and the villagers fitted so far (`models/villager-<id>.glb`, one ~1 MB model each, 512 px
+picture; `fit_person.ps1 -Villager`). Face pictures: closed lids cover the whole eye, the two eye boxes mirror each
+other, the glance moves a round iris; the hair colour is also sampled from the back of the head (a hat such as Mai's
+nón lá is not hair). Known: the friends' light models (288 px) look patchy at a three-quarter view up close (the
+high-detail model is used close up); the puppy is generated for review only (the valley's animals are code-built;
+an animal model path is new runtime work for the owner to decide). Regional sheets: none in chatgpt-fixes yet.
+
 **Latest combined update:** reference corrections merged with pilot work through 48a4fdca8. CREDIT-LEDGER.json records 70 credits total (pilot 30, revision 30, remesh 5, rig 5), with reported balance 2,979 on the owner PC. Existing tasks/raw downloads/fitting tools are preserved. The corrected Clara sheet and kaftan sheet are uploaded separately from historical submitted inputs; no additional Meshy task was made by this correction. Read CLARA-PILOT.md and OWNER-CORRECTIONS-20261107.md before continuing. Earlier zero-spend/account-blocked paragraphs below describe the initial reference phase and are superseded by these pilot records. No runtime replacement or deployment.
 
 

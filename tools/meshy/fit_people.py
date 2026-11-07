@@ -25,7 +25,7 @@ ORIGINAL = bool(J.get('original_skin'))
 # (owner 7 Nov 2026: shifted from the original) skin_shift with original_skin: the painted look is kept exactly, and the skin
 # (body skin triangles and the face pictures' skin texels) is tinted in the game by the tone relative to skin_ref
 SHIFT = bool(J.get('skin_shift')) and ORIGINAL; SKIN_REF = J.get('skin_ref')
-TILE = 512 if TEX >= 1024 else 128   # the face picture: sharp lashes and eye rims up close (the light model's is smaller)
+TILE = 512 if TEX >= 1024 else 256 if TEX >= 512 else 128   # (256: a villager's one model, seen close and far) the face picture: sharp lashes and eye rims up close (the light model's is smaller)
 os.makedirs(RDIR, exist_ok=True)
 bpy.ops.wm.read_factory_settings(use_empty=True)
 sc = bpy.context.scene; VL = bpy.context.view_layer
@@ -315,6 +315,10 @@ def box_of(mask):
 dark = (V < .42) & (yy > H_ * .15) & (yy < H_ * .7)
 eyes = {}
 WHT = (V > .82) & (S_ < .16) & (yy > H_ * .2) & (yy < H_ * .75)   # eye whites: found first, so dark hair is never taken for an eye
+# (Bác Ba, 8 Nov 2026) and only next to a dark iris: white hair beside the face is not an eye white
+_nd = dark.copy(); _r = max(2, int(W_ * .05))
+for _ in range(_r): _nd = _nd | np.roll(_nd, 1, 0) | np.roll(_nd, -1, 0) | np.roll(_nd, 1, 1) | np.roll(_nd, -1, 1)
+WHT &= _nd
 for side, cols in (('R', xx < W_ / 2), ('L', xx >= W_ / 2)):
     bw = box_of(WHT & cols) if (WHT & cols).sum() > 40 else None
     if bw:
@@ -359,7 +363,18 @@ if ORIGINAL:   # the skin is not recoloured: the face layer covers the face's sk
         if _h[0] is not None:
             _p = _hm.polygons[_h[2]]; _li = list(_p.loop_indices)[:3]; _vi = [_hm.loops[l].vertex_index for l in _li]
             _u = _bary(_h[0], *(_hm.vertices[v].co for v in _vi), *(Vector((*_huv[l].uv, 0)) for l in _li)); _hc.append(_bil(_u.x, _u.y))
-    HAIRC = np.median(np.array(_hc), axis=0) if _hc else None
+    # (villagers, 8 Nov 2026) a hat (Mai's nón lá) is what the rays over the head meet: the back of the head at eye height
+    # is hair too; the hair colour is the darker of the two medians (a hat is lighter than hair, a top of the head is not)
+    _hb = []
+    for _x in np.linspace(fx0 + (fx1 - fx0) * .3, fx1 - (fx1 - fx0) * .3, 7):
+        _h = _ht.ray_cast(Vector((_x, 2, (fz0 + fz1) / 2 + (fz1 - fz0) * .2)), Vector((0, -1, 0)))
+        if _h[0] is not None:
+            _p = _hm.polygons[_h[2]]; _li = list(_p.loop_indices)[:3]; _vi = [_hm.loops[l].vertex_index for l in _li]
+            _u = _bary(_h[0], *(_hm.vertices[v].co for v in _vi), *(Vector((*_huv[l].uv, 0)) for l in _li)); _hb.append(_bil(_u.x, _u.y))
+    _c = [np.median(np.array(s), axis=0) for s in (_hc, _hb) if s]
+    _nc = [c for c in _c if not skin_mask(np.array(c, np.float32).reshape(1, 1, -1))[0, 0]]   # (Bác Ba: a bald top is skin, not hair)
+    _c = _nc or _c
+    HAIRC = min(_c, key=lambda c: float(np.sum(c[:3]))) if _c else None
     hairish = (np.linalg.norm(F[..., :3] - HAIRC, axis=-1) < .16) & ~skin_mask(F) if HAIRC is not None else np.zeros(F.shape[:2], bool)
     print('FIT hair colour', None if HAIRC is None else np.round(HAIRC, 3), 'hair pixels in the face picture', int(hairish.sum()))
     keep = ~hairish; HAIRISH = hairish
@@ -373,7 +388,7 @@ if ORIGINAL:   # the skin is not recoloured: the face layer covers the face's sk
 def lid(img, b, top=0., bot=1.):   # (original_skin) a closed lid painted over the eye: her own skin from round the eye
     w_, h_ = b[2] - b[0], b[3] - b[1]; y0 = b[1] + h_ * top; y1 = b[1] + h_ * bot
     ring = (xx > b[0] - w_ * .3) & (xx < b[2] + w_ * .3) & (yy > b[1] - h_ * .2) & (yy < b[3] + h_ * .5) & ~((xx > b[0]) & (xx < b[2]) & (yy > b[1]) & (yy < b[3]))
-    ring &= skin_mask(F) & (V > .55)
+    ring &= skin_mask(F) & (V > .55) & (S_ > .14)   # (not grey brows or hair: Bác Ba's lids came out grey)
     sk = np.median(F[ring][:, :3], axis=0) if ring.any() else REF
     cx_, cy_ = (b[0] + b[2]) / 2, (y0 + y1) / 2; rx, ry = w_ / 2 * 1.15, max(2, (y1 - y0) / 2 * 1.15)
     d = np.hypot((xx - cx_) / rx, (yy - cy_) / ry); hole = (d < 1) & ~(HAIRISH & (d > .8))   # (hair at the eye's edge stays hair; inside the eye the lid always closes: an iris can be hair-coloured)
