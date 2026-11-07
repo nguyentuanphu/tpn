@@ -117,7 +117,20 @@ function openGameNow(id: string, { players, level = 1, style = 'shrine', partner
     // (v1.08 release fix, horsestability on GitHub) once the game has been fitted and the child plays, it does not grow again
     // until the screen changes size: a redraw can be short for a moment (a full fit queued before the first tap then grew
     // the board, and the next pass shrank it back under the child's finger)
-    let fitted = false, resized = false;
+    let fitted = false, resized = false, fitSize = '';
+    // (v1.08 release fix 5, horsestability on GitHub) a button folded away in a closed box (Cờ Cá Ngựa's "Local players
+    // and rules") is not on the screen, but Chromium can still give it its last place, below the game, or none just after
+    // the box closes: the fit counted it on one pass and not on the next, so the board grew at the start and shrank back
+    // under the child's finger. Only buttons a child can see are measured.
+    const shown = (e: Element) => {
+      const box = e.closest('details:not([open])');
+      if (box && !(e.closest('summary') && e.closest('summary').parentElement === box)) return false;
+      return typeof e.checkVisibility === 'function' ? e.checkVisibility() : true;
+    };
+    // (v1.08 release fix 5) while the child plays, a game that still fits the screen at its zoom keeps it: a pass queued
+    // before the first tap (or the next pass of a fit) found more on the screen than at the start, and its 10% spare
+    // room made it shrink the board a little although everything was still on the screen
+    const STILL_FITS = .995;
     const setWide = (kids: Element[], on: boolean) => {
       layer.classList.toggle('gl-wide', on); stage.querySelectorAll('.gl-wide-one').forEach(e => e.classList.remove('gl-wide-one'));
       // (one board of two parts, a picture and its answers, turns into a row; a board of many parts, a card table or a
@@ -129,9 +142,10 @@ function openGameNow(id: string, { players, level = 1, style = 'shrine', partner
       if (closed || stage.querySelector('canvas')) { if (stage.style.zoom) stage.style.zoom = ''; return; }
       const z = parseFloat(stage.style.zoom) || 1, box = stage.getBoundingClientRect(), kids = [...stage.children].filter(e => e.tagName !== 'STYLE' && e.getBoundingClientRect().height > 0 && !/^(absolute|fixed)$/.test(getComputedStyle(e).position));
       if (!kids.length || !box.width || !box.height) return;
+      fitSize = innerWidth + 'x' + innerHeight;
       // (v1.08b fivescreens) every button counts too, also one standing outside its board (a floating piece), so no
       // answer is grown past the edge of the screen
-      const taps = [...stage.querySelectorAll('button, [role=button]')].filter(e => { const r = e.getBoundingClientRect(), cs = getComputedStyle(e); return r.width > 2 && r.height > 2 && cs.visibility !== 'hidden' && !e.getAnimations().some(a => a.playState === 'running'); });
+      const taps = [...stage.querySelectorAll('button, [role=button]')].filter(e => { const r = e.getBoundingClientRect(), cs = getComputedStyle(e); return r.width > 2 && r.height > 2 && cs.visibility !== 'hidden' && shown(e) && !e.getAnimations().some(a => a.playState === 'running'); });
       const rs = [...kids, ...taps].map(e => e.getBoundingClientRect()), w = (Math.max(...rs.map(r => r.right)) - Math.min(...rs.map(r => r.left))) / z, h = (Math.max(...rs.map(r => r.bottom)) - Math.min(...rs.map(r => r.top))) / z;
       if (!w || !h) return;
       // the room inside the stage's padding, at zoom 1
@@ -155,7 +169,7 @@ function openGameNow(id: string, { players, level = 1, style = 'shrine', partner
       // (v1.08 release fix 2, checks s2autas, s2auperth, s2aureef on GitHub) a game's own minimum counts only up to the
       // biggest finger size, 64 px: a bigger one is the game's look (the Season 2 answers ask 96 px), and keeping all of
       // it stopped a sideways phone from shrinking a board wider than the screen (the 44 px !important floor hid this)
-      const need = little ? 64 : 44, FINGER_MAX = 64, wants = [...(stage.querySelectorAll('button, [role=button], .choice') as NodeListOf<HTMLElement>)].map(e => { const r = e.getBoundingClientRect(), cs = getComputedStyle(e), w = r.width / z, h = r.height / z; return w > 2 && h > 2 ? Math.max(need / Math.min(w, h), Math.min(FINGER_MAX, parseFloat(cs.minWidth) || 0) / w, Math.min(FINGER_MAX, parseFloat(cs.minHeight) || 0) / h) : 0; }).filter(Boolean);
+      const need = little ? 64 : 44, FINGER_MAX = 64, wants = [...(stage.querySelectorAll('button, [role=button], .choice') as NodeListOf<HTMLElement>)].filter(shown).map(e => { const r = e.getBoundingClientRect(), cs = getComputedStyle(e), w = r.width / z, h = r.height / z; return w > 2 && h > 2 ? Math.max(need / Math.min(w, h), Math.min(FINGER_MAX, parseFloat(cs.minWidth) || 0) / w, Math.min(FINGER_MAX, parseFloat(cs.minHeight) || 0) / h) : 0; }).filter(Boolean);
       // (v1.08b fivescreens) with a little room to spare: a button whose words change a moment later (a narrower number)
       // must not end a pixel under a finger's size
       const floor = wants.length ? Math.max(FIT_MIN, Math.min(1, Math.max(...wants) * 1.03)) : FIT_MIN;
@@ -165,6 +179,7 @@ function openGameNow(id: string, { players, level = 1, style = 'shrine', partner
       const hold = playing && fitted && !resized;
       if (!shrinkOnly) { fitted = true; resized = false; }
       if (hold && next > z) next = z;
+      if (hold && next < z && room >= z * STILL_FITS) next = z;
       // (v1.08 fixes 2, checks horseplay, folkplay) a button drawn after the last fit (Roll the die, Pull) may now be under a
       // finger at this zoom: go back up to the floor then, even on a shrink-only pass
       if (shrinkOnly && next >= z && z >= floor - .005) return;
@@ -244,7 +259,9 @@ function openGameNow(id: string, { players, level = 1, style = 'shrine', partner
       if (!playing || list.some(m => m.target === stage)) fitSoon(playing);
     });
     fitWatch.observe(stage, { childList: true, subtree: true });
-    const fitResize = () => { resized = true; if (wide.tried) { wide.tried = 0; setWide([], false); } fitSoon(false); };
+    // (v1.08 release fix 5, horsestability on GitHub) a busy machine can hand the game a resize late, after it has
+    // already been fitted to that same size: only a screen that really changed size since the last fit refits it
+    const fitResize = () => { if (fitSize === innerWidth + 'x' + innerHeight) return; resized = true; if (wide.tried) { wide.tried = 0; setWide([], false); } fitSoon(false); };
     addEventListener('resize', fitResize); setTimeout(() => { floorText(); fit(); if (floorText()) fitSoon(true); }, 400);
     cleanups.push(() => { fitWatch.disconnect(); removeEventListener('resize', fitResize); clearTimeout(fitTimer); stage.removeEventListener('pointerdown', startPlay, { capture: true }); });
     let closed = false, winning = false;
@@ -269,6 +286,10 @@ function openGameNow(id: string, { players, level = 1, style = 'shrine', partner
       close: () => finish(false),
       // Test autoplay still uses real UI taps; a strategy supplies the next legal target, not a synthetic win.
       plan: (f, { maxActions = 0 } = {}) => { cleanups.push(setPlan(f, maxActions)); },
+      // (v1.08 release fix 5, horsestability) a game that starts again inside its own pieces (Cờ Cá Ngựa's new local game
+      // with more players) asks for a fit at once, like a new round: it only shrinks if the new game no longer fits, and
+      // it is done before the child's next tap, not a moment later under the finger
+      refit() { if (closed) return; floorText(); fit(true); if (floorText()) fitSoon(true); },
       // (r79 learning, I1) the game's tier now: 0 under-5, 1 Easy, 2 Medium, 3 Hard. The level the game started at
       // (Easy, Medium or Hard) is the starting point; the child's answers move it at most one step either way, and
       // under-5s always stay at the under-5 tier.
