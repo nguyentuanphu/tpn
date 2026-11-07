@@ -2,15 +2,15 @@
   "budget": 1000,
   "planned": 990,
   "reserve": 10,
-  "charged": 0,
+  "charged": 30,
   "entries": [
     {
       "assetId": "clara",
       "plannedCredits": 30,
-      "reservedCredits": 0,
-      "chargedCredits": 0,
-      "taskId": null,
-      "state": "not_submitted"
+      "reservedCredits": 30,
+      "chargedCredits": 30,
+      "taskId": "01a1b551-4e41-7544-a5da-564f88acc6f3",
+      "state": "SUCCEEDED_raw_downloaded_pilot_under_review"
     },
     {
       "assetId": "finn",
@@ -348,5 +348,12 @@
       "taskId": null,
       "state": "not_submitted"
     }
-  ]
+  ],
+  "liveJournal": "Live SQLite journal kept outside the repository on the owner PC (D:/WorkSpace/meshy/private/meshy-jobs.sqlite3); it is the submission record.",
+  "balanceEvidence": {
+    "before": 3049,
+    "after": 3019,
+    "checkedAt": "2026-11-07T20:20:46+11:00 / after download",
+    "endpoint": "GET /openapi/v1/balance"
+  }
 }

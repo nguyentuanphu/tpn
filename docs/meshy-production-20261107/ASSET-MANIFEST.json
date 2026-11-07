@@ -39,8 +39,8 @@
       ],
       "referenceStatus": "generated",
       "reviewStatus": "technical_pass",
-      "meshyTaskId": null,
-      "modelStatus": "not_submitted",
+      "meshyTaskId": "01a1b551-4e41-7544-a5da-564f88acc6f3",
+      "modelStatus": "raw_downloaded_pilot_under_review",
       "reviewNotes": "Visual reference review: full-body views, left-facing profile (firefly front/dorsal top), empty hands, no labels, consistent outfit/species and grey background. Crops use individually checked gaps. This is technical reference review, not owner approval or 3D model validation.",
       "ownerReviewStatus": "pending",
       "cropBoundaries": [
@@ -82,7 +82,19 @@
         }
       ],
       "turnaroundSHA256": "03492f7f5480c99b4bebc5549b63af9624300a2a5d44f841c420ea9a656654c2",
-      "sourceGenerationFile": "/workspace/generated_images/exec-752131a1-bb11-4cef-9a21-f3b30e5c0d28.png"
+      "sourceGenerationFile": "/workspace/generated_images/exec-752131a1-bb11-4cef-9a21-f3b30e5c0d28.png",
+      "pilot": {
+        "submittedAt": "2026-11-07T20:22+11:00",
+        "finishedAt": "2026-11-07T20:24+11:00",
+        "chargedCredits": 30,
+        "rawBytes": 56560796,
+        "rawSHA256": "1fd03261ff453d6ddd687172f0bfd1636ea6519f46d27b5cf8ca24efe1fc9162",
+        "rawLocation": "outside the repository (owner PC D:/WorkSpace/meshy/raw-models/A/clara.glb)",
+        "triangles": 1840250,
+        "texture": "one 2048x2048 base colour (plus Meshy detail maps)",
+        "review": "Outfit, face, satchel, petal skirt, boots and pendant match the reviewed sheet. Four braids: the reviewed back view puts the braids down the back while the front/side put them in front, and Meshy built both; tools/meshy/fit_people.py trim_back_hair removes the back pair in fitting. Owner acceptance pending.",
+        "claraPilotAccepted": false
+      }
     },
     {
       "number": 2,

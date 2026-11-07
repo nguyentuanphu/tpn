@@ -1,5 +1,15 @@
 # Production status — 7 November 2026 AEDT
 
+**Update, 7 Nov 2026 evening: account verified, Clara pilot generated and fitted, not integrated.** See
+[CLARA-PILOT.md](CLARA-PILOT.md). Key bound on the owner's PC; balance 3,049 → 3,019 after the one 30-credit pilot job
+(task `01a1b551-4e41-7544-a5da-564f88acc6f3`); raw GLB outside the repository. Pilot quality is high but has four
+braids (the reviewed back view disagrees with the front/side); fitting trims them. `tools/meshy/fit_people.py`
+(recreated people fitter), `tools/meshy/render_views.py` and `joints/clara.json` added. **Blocked on the owner:**
+pilot acceptance, and the face path (v1.08 tests require the sculpted `face3d`; the fitted pilot uses face pictures).
+Recommended before more paid jobs: check every remaining sheet's views for front/back disagreements. Remaining 42
+original assets unsubmitted (960 planned credits); the 61 regional assets still have no budget or runtime mapping.
+No runtime model replaced, no merge, deploy or version change.
+
 The original reference-image phase is complete. Full 3D production is blocked by account access; no new runtime model is claimed complete.
 
 ## Completed
