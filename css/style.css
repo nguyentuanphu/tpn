@@ -3689,6 +3689,10 @@ body:has(.modal.tpanel) .tester-floating { visibility: hidden; }
   .gl.gl-wide .gl-stage:has(> .choices):not(:has(> :nth-child(4))) { flex-direction: row; flex-wrap: nowrap; align-items: center; justify-content: center; }
   .gl.gl-wide .gl-stage:has(> .choices):not(:has(> :nth-child(4))) > * { flex-shrink: 1; min-width: 0; max-height: 100%; }
   .gl.gl-wide .gl-stage:has(> .choices):not(:has(> :nth-child(4))) > .choices { flex-wrap: wrap; max-width: 62%; justify-content: center; }
+  /* (v1.08 release, check fivescreens on GitHub: Đếm lửa Cầu Rồng) a big answer's width came from the screen's width
+     (26vw, 200 px on a sideways phone), so three numbers could not share the 62% beside the picture and stood in a
+     column; beside the picture a big answer is sized for the row, still far over a finger's size */
+  .gl.gl-wide .gl-stage:has(> .choices):not(:has(> :nth-child(4))) > .choices > .choice.big { min-width: clamp(96px, 15vw, 150px); }
 }
 .gl .ch-stick { transform: translateY(var(--y)) rotate(calc(var(--r) * .6)); }
 @media (max-width: 520px) { .gl .ch-stick { transform: translateY(var(--y)) rotate(calc(var(--r) * .25)); } }
