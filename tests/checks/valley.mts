@@ -1086,6 +1086,10 @@ await check('realrides', async () => {
 // (owner, 30 Oct 2026 AEDT) the Vietnamese yellow cow beside the water buffalo: both are ridden, both swim across deep
 // water with the rider's head above it and climb out again; the cow has its own drawing
 await check('ridecowswim', async () => {
+  // (v1.08 fix) since the owner's shallow water (6 Nov 2026 AEDT, js/world/ground.ts "wade": every water is knee to
+  // waist deep, 0.8 m at most) the lake has no water 3 m deep, so the ride is counted over the lake's water (more than
+  // 0.3 m deep, where the animal wades or swims): the same ride from the shore to the middle and out, rider and head above
+  // the water all the way
   const P = await open(b, { w: 900, h: 640 }); await clear(P.page);
   const r = await P.page.evaluate(async () => {
     const G = __sv, h = G.heroes[0], Wm = await import('/js/world.js'), A = await import('/js/art.js'), W = G.world, L = Wm.LAKE, out = [];
@@ -1094,7 +1098,7 @@ await check('ridecowswim', async () => {
       G.paused = true; G.mount(h, animal);
       let sx = L.x; for (let d = 0; d < 90; d++) if (Wm.heightAt(L.x + d, L.z) > Wm.WATER + .2) { sx = L.x + d + 3; break; }
       h.pos.set(sx, Wm.heightAt(sx, L.z), L.z); h.goal = { x: L.x, z: L.z }; let deep = 0, low = 0, headLow = 0;
-      for (let k = 0; k < 900; k++) { h.update(1 / 60, pad, k / 60, G); if (Wm.heightAt(h.pos.x, h.pos.z) < Wm.WATER - 3) { deep++; if (h.pos.y < Wm.WATER - Wm.RIDE_SWIM - .01) low++; if (h.av.root.position.y + 1 < Wm.WATER) headLow++; } }
+      for (let k = 0; k < 900; k++) { h.update(1 / 60, pad, k / 60, G); if (Wm.heightAt(h.pos.x, h.pos.z) < Wm.WATER - .3) { deep++; if (h.pos.y < Wm.WATER - Wm.RIDE_SWIM - .01) low++; if (h.av.root.position.y + 1 < Wm.WATER) headLow++; } }
       const far = Math.hypot(h.pos.x - L.x, h.pos.z - L.z); h.goal = { x: sx + 6, z: L.z }; for (let k = 0; k < 1200; k++) h.update(1 / 60, pad, k / 60, G);
       out.push({ kind: animal.kind, riding: !!h.riding, deep, low, headLow, reached: far < 3, out: Wm.heightAt(h.pos.x, h.pos.z) > Wm.WATER });
       h.dismount(); G.paused = false;
@@ -1105,7 +1109,7 @@ await check('ridecowswim', async () => {
   await P.ctx.close();
   ok(r.cows >= 2 && r.labels.filter(l => /cow/i.test(l)).length >= 2 && r.cowArt, JSON.stringify(r));
   ok(r.rows.every(x => x.riding && x.deep > 60 && !x.low && !x.headLow && x.reached && x.out), JSON.stringify(r.rows));
-  return r.rows.map(x => `${x.kind}: swam ${(x.deep / 60).toFixed(1)} s over deep water, head above it, out again`).join('; ');
+  return r.rows.map(x => `${x.kind}: ${(x.deep / 60).toFixed(1)} s in the lake's water, head above it, out again`).join('; ');
 });
 
 await check('ridingcamera', async () => (await import('../riding-camera.mts')).ridingCameraCheck(b));

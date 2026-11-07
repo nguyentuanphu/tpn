@@ -46,7 +46,9 @@ await check('roundvariety', async () => (await import('./round-variety.mts')).ro
 // tale film and story page on five screens (fivescreensfilms) (tests/fivescreens-browser.mts)
 await check('fivescreens', async () => (await import('./fivescreens-browser.mts')).fiveScreensCheck(b));
 await check('fivescreenswide', async () => (await import('./fivescreens-browser.mts')).fiveScreensWideCheck(b));
-await check('fivescreensfilms', async () => (await import('./fivescreens-films.mts')).fiveScreensFilmsCheck(b, { sample: sampled('fivescreensfilms') ? SEED : null }));
+await check('fivescreensfilms', async () => { const F = await import('./fivescreens-films.mts'); return F.fiveScreensFilmsCheck(b, { sample: sampled('fivescreensfilms') ? SEED : null, sizes: F.FILM_SIZES.phone }); });
+await check('fivescreensfilmstablet', async () => { const F = await import('./fivescreens-films.mts'); return F.fiveScreensFilmsCheck(b, { sample: sampled('fivescreensfilmstablet') ? SEED : null, sizes: F.FILM_SIZES.tablet }); });
+await check('fivescreensfilmscomputer', async () => { const F = await import('./fivescreens-films.mts'); return F.fiveScreensFilmsCheck(b, { sample: sampled('fivescreensfilmscomputer') ? SEED : null, sizes: F.FILM_SIZES.computer }); });
 // (v1.08b quality) for grown-ups: the learning report by subject and the level by subject; Lumi as the guide; Play with Mum
 // and Dad; the gentle play time (tests/quality-v108b-browser.mts)
 await check('subjectlevel', async () => (await import('./quality-v108b-browser.mts')).subjectLevelCheck(b));

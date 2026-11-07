@@ -25,8 +25,12 @@ const MEASURE=([root,parts]:[string,string[]])=>{
 };
 const THEATRE:[string,string[]]=['.theatre',['.th-top','.th-stage','.th-text','.th-bar']];
 const HOWTO:[string,string[]]=['.howto',['.ht-top','.ht-screen','.ht-cap','.ht-ctl','.ht-x']];
-export async function fiveScreensFilmsCheck(browser:Browser,opt:{sample?:number|null}={}){
- const pick=(process.env.SV_FIT_SIZES||'').split(',').filter(Boolean),sizes=SIZES.filter(s=>!pick.length||pick.includes(s.name));
+// (v1.08 fix, GitHub machine 2: "did not finish within 45 min") 92 tales and 218 guide films at five sizes are three
+// checks, each with its own sizes: fivescreensfilms the phone (upright and sideways), fivescreensfilmstablet the tablet
+// (upright and sideways), fivescreensfilmscomputer the computer; together the same pages at the same sizes as before
+export const FILM_SIZES={phone:['phoneport','phoneland'],tablet:['tabletport','tabletland'],computer:['computer']};
+export async function fiveScreensFilmsCheck(browser:Browser,opt:{sample?:number|null,sizes?:string[]}={}){
+ const pick=(process.env.SV_FIT_SIZES||'').split(',').filter(Boolean),sizes=SIZES.filter(s=>(!opt.sizes||opt.sizes.includes(s.name))&&(!pick.length||pick.includes(s.name)));
  const sample=process.env.SV_FILM_SAMPLE!=null&&process.env.SV_FILM_SAMPLE!==''?+process.env.SV_FILM_SAMPLE:opt.sample??null;
  await fs.mkdir('out/fivescreens',{recursive:true});
  const bad:string[]=[];let tales=0,pages=0,guides=0;

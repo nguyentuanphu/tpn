@@ -22,17 +22,20 @@ const JOBS = Math.max(1, Number(opt('--jobs', 3)) || 3), CHANGED = flag('--chang
 const SOLO = ['perf', 'startup', 'battery'];
 // (13 Oct trial: 3 at once overloaded the machine when these ran side by side) the heavy checks share one lane, one after
 // another; the everyday checks share the other lanes
-const HEAVY = ['ownerdesk', 'ownerstudioperms', 'ownerstudiofolds', 'ownerround', 'ownerfamily', 'ownercapture', 'films', 'testerrewards', 'reading', 'facetoface', 'phone', 'chapter2', 'chapter3', 'studio', 'voicearea', 'solid', 'nametags', 'migrate', 'testerreport', 'camera', 'spill', 'games', 'roundvariety', /* (v1.08b quality) */ 'fivescreens', 'fivescreenswide', 'fivescreensfilms'];
+const HEAVY = ['ownerdesk', 'ownerstudioperms', 'ownerstudiofolds', 'ownerround', 'ownerfamily', 'ownercapture', 'films', 'testerrewards', 'reading', 'facetoface', 'phone', 'chapter2', 'chapter3', 'studio', 'voicearea', 'solid', 'nametags', 'migrate', 'testerreport', 'camera', 'spill', 'games', 'roundvariety', /* (v1.08b quality) */ 'fivescreens', 'fivescreenswide', 'fivescreensfilms', 'fivescreensfilmstablet', 'fivescreensfilmscomputer'];
 // the slowest checks and the files that are theirs: in full when one of these changed, a sample otherwise
 const SLOW_OWN = {
+  // (v1.08 fix) the game's files are TypeScript now (js/*.ts; the .js beside them are built, not kept in git), so each
+  // file pattern takes both: with ".js" alone a changed film or story file never made these run in full
   reading: [/^js\/games\/reading/, /^js\/content\/reading/],
-  films: [/^js\/film\.js$/, /^js\/content\/[a-z0-9]*films?\.js$/, /^js\/tales\.js$/, /^js\/howto\.js$/, /^js\/talesdata\.js$/],
-  voicearea: [/^js\/voice[a-z]*\.js$/, /^voices\//, /^tools\/make-voice-pack/],
+  films: [/^js\/film\.[jt]s$/, /^js\/content\/[a-z0-9]*films?\.[jt]s$/, /^js\/tales\.[jt]s$/, /^js\/howto\.[jt]s$/, /^js\/talesdata\.[jt]s$/],
+  voicearea: [/^js\/voice[a-z]*\.[jt]s$/, /^voices\//, /^tools\/make-voice-pack/],
   // (v1.08 variety) the round makers of the games
   roundvariety: [/^js\/games\//, /^tests\/round-variety/],
-  // (v1.08b quality) the five screens of every tale, story page and guide film
-  fivescreensfilms: [/^js\/film\.js$/, /^js\/tales\.js$/, /^js\/howto(-player)?\.js$/, /^tests\/fivescreens-films/],
+  // (v1.08b quality) the five screens of every tale, story page and guide film (three checks: phone, tablet, computer)
+  fivescreensfilms: [/^js\/film\.[jt]s$/, /^js\/tales\.[jt]s$/, /^js\/howto(-player)?\.[jt]s$/, /^tests\/fivescreens-films/],
 };
+SLOW_OWN.fivescreensfilmstablet = SLOW_OWN.fivescreensfilmscomputer = SLOW_OWN.fivescreensfilms;
 // a change to the look (css) is checked by the checks that measure what is on screen
 const LAYOUT = ['phone', 'contract', 'hscroll', 'chips', 'a11y', 'iphone', 'simple', 'adventure', 'facetoface', 'two-players', 'questbar', 'bagitems', 'friendstab', 'shop', 'mictest'];
 // checks without a browser, a few seconds each: always run
