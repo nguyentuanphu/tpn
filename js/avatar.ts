@@ -677,7 +677,13 @@ export function stillOf(A) {
   if (!stillMat) { stillMat = toonSmooth({ side: THREE.DoubleSide }); stillMat.userData.shared = true; }
   A.root.updateMatrixWorld(true); _inv.copy(A.root.matrixWorld).invert();
   const solid = [], lines = [], keep = [], still = new THREE.Group(); still.userData.still = true;
-  A.rig.traverse(m => {
+  // (v1.08 fix, check multiplayer) a villager wearing a Blender model (wearVillagerModel) is far away the code person's
+  // still copy, as showStill says: the code parts hidden under the model are copied, not the model, whose 18,000
+  // triangles and outline made each far still copy about 35,000 triangles (11 named villagers: 385,000 in every frame)
+  const parts: THREE.Object3D[] = A.model && A.root.userData.villagerModel && A._codeParts, show = (on: boolean) => {
+    parts.forEach(o => { o.visible = on; o.children.forEach(c => { if (c.userData.outline) c.visible = on; }); }); A.model.obj.visible = !on; };
+  if (parts) show(true);
+  try { A.rig.traverse(m => {
     if (!m.isMesh || !shown(m, A.root) || !m.geometry.attributes.normal) return;
     if (m.userData.outline) { lines.push({ m }); return; }
     const mt = m.material;
@@ -685,7 +691,7 @@ export function stillOf(A) {
     if (mt.vertexColors && m.geometry.attributes.color) solid.push({ m, c: null });
     else if (mt.color) solid.push({ m, c: mt.color });
     else keep.push(m);
-  });
+  }); } finally { if (parts) show(false); }
   if (solid.length) { const one = new THREE.Mesh(bake(solid, _inv, true), stillMat); one.castShadow = true; still.add(one); }
   for (const m of keep) { const c = new THREE.Mesh(m.geometry, m.material); _mm.multiplyMatrices(_inv, m.matrixWorld); _mm.decompose(c.position, c.quaternion, c.scale); c.renderOrder = m.renderOrder; still.add(c); }
   if (lines.length) { const ol = new THREE.Mesh(bake(lines, _inv, false), lines[0].m.material); ol.userData.outline = true; ol.visible = A._ol !== false; still.add(ol); A.stillLine = ol; }
