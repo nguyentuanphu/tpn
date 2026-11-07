@@ -3667,6 +3667,12 @@ body:has(.modal.tpanel) .tester-floating { visibility: hidden; }
   .gl .gl-stage > .rg-grid { grid-column: 1; grid-row: 1 / span 2; }
   .gl .gl-stage:has(> .rg-grid) > :not(.rg-grid) { grid-column: 2; }
 }
+/* (v1.08 fix, check fivescreens) Trồng nụ trồng hoa on a phone on its side: the right column (title, level, words, button,
+   praise) was 6 px taller than the screen; its gaps are smaller there */
+@media (orientation: landscape) and (max-height: 520px) {
+  .gl .tn-game h2, .gl .tn-game p { margin: 4px 8px; }
+  .gl .tn-game .tn-levels { margin: 4px; }
+}
 @media (orientation: landscape) and (max-height: 520px) {
   .gl > .gl-stage { padding: 3px 6px; }
   .gl .horse-race { gap: 4px 14px; padding: 2px 6px; }

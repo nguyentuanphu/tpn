@@ -40,7 +40,9 @@ function style() {
 .s2g .mx-stage { min-height: 0; padding: 6px; }
 .s2g .mx-board { gap: 10px; }
 /* a wide screen: the answers sit beside the picture, not under it (owner, 3 Nov 2026 AEDT: one screen) */
-@media (min-aspect-ratio: 4/3) { .s2g .mx-board { flex-direction: row; justify-content: center; align-items: center; } .s2g .mx-controls { display: grid; grid-template-columns: repeat(2, auto); max-width: 420px; } .s2g .mx-controls:empty { display: none; } }
+/* (v1.08 fix, check fivescreens: on a phone on its side the answers' second column ran 10 px off the screen) side by side, the
+   picture gives up width to the answers, never the other way round */
+@media (min-aspect-ratio: 4/3) { .s2g .mx-board { flex-direction: row; justify-content: center; align-items: center; } .s2g .mx-board { max-width: 100%; min-width: 0; box-sizing: border-box; } .s2g .mx-board > .mx-stage { flex: 0 1 auto; min-width: 0; } .s2g .mx-board > .mx-controls { flex: none; } .s2g .mx-controls { display: grid; grid-template-columns: repeat(2, auto); max-width: 420px; } .s2g .mx-controls:empty { display: none; } }
 @media (max-height: 500px) { .s2g .mx-board { padding: 4px; } .s2g .mx-stage { width: min(460px, 60vw); } .s2-scene > * { min-height: 46px; } .s2-scene .art, .s2-scene .mx-tap .art { width: 38px; height: 38px; } .mx-btn.s2-opt { min-height: 72px; } .mx-btn.s2-opt .art { width: 40px; height: 40px; } .s2-pics .art { width: 52px; height: 52px; } }
 `));
 }
