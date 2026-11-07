@@ -37,6 +37,7 @@ const PATTERNS = [
 ];
 // the story's speech boxes show the child's name but say the line without it (js/lanterns.js unnamed)
 const unnamed = s => s.replace(/,?\s*\{name\}/g, '');
+const PICTURE = /^[\p{Emoji}\p{Emoji_Component}\s✓✕+−=]+$/u;
 export function collectLines() {
 const seen = new Map();
 for (const f of files) {
@@ -48,8 +49,11 @@ for (const f of files) {
       if (!en || !vi || en.length < 2) continue;
       if (/^[a-z]{2}:/.test(en) || /^[a-z]{2}:/.test(vi)) continue; // wiki page keys, not speech
       if (!VI.test(vi) && en === vi) continue;             // not a translation pair
-      if (/^[\p{Emoji}\s✓✕+−=]+$/u.test(en)) continue;     // pictures only
-      if (/^[\p{Emoji}\s✓✕+−=]+$/u.test(vi)) continue;     // (v1.08) a picture in the second place: [word, word, picture] (js/content/english.ts) is not a spoken pair
+      // pictures only; (v1.08 fix) a picture's variation selector and joiner (U+FE0F, U+200D: '♟️', '🍽️') are part of
+      // the picture, so a picture written with one is not taken for a spoken line (Azure made an empty file for '♟️')
+      if (PICTURE.test(en)) continue;
+      // (v1.08) a picture in the second place: [word, word, picture] (js/content/english.ts) is not a spoken pair
+      if (PICTURE.test(vi)) continue;
       if (en.split(/\s+/).length < 2 && !/[!?.]$/.test(en)) continue; // single-word labels are not speech
       for (const [e, v] of f === 'js/content/chapters.js' && /\{name\}/.test(en + vi) ? [[unnamed(en), unnamed(vi)]] : [[en, vi]]) {
         const key = e + '\u0000' + v;
