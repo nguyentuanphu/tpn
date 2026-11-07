@@ -152,12 +152,16 @@ function runOne(list, env, tag) {
   return new Promise(res => {
     const out = new Map(), log = fs.createWriteStream(path.join(HERE, `out/suite-${tag}.log`));
     const p = spawn(process.execPath, ['run.mts', ...list], { cwd: HERE, env: { ...(fs.existsSync('/opt/pw-browsers/chromium') ? { CHROMIUM: '/opt/pw-browsers/chromium' } : {}), SV_URL: GAME_URL, ...process.env, ...env } });
-    let buf = '';
+    let buf = '', lastT = Date.now();
     const line = l => {
       log.write(l + '\n');
       const ok = /^✅ ([a-z0-9-]+) \((\d+)s\) ?(.*)/.exec(l), bad = /^❌ ([a-z0-9-]+): (.*)/.exec(l);
       if (ok) { out.set(ok[1], { ok: true, secs: +ok[2], note: ok[3] }); console.log(`[${tag}] ${l.slice(0, 160)}`); }
-      if (bad) { out.set(bad[1], { ok: false, note: bad[2] }); console.log(`[${tag}] ${l.slice(0, 300)}`); }
+      // (v1.08 fix, GitHub machine 15 ran out of time) a failed check's time is kept too, from the line before it (the
+      // checks run one after another): a slow check that failed kept no time, counted as one minute, and one machine got
+      // two 40-minute checks (roundvariety, fivescreens) in its "34 minutes"
+      if (bad) { out.set(bad[1], { ok: false, note: bad[2], secs: Math.round((Date.now() - lastT) / 1000) }); console.log(`[${tag}] ${l.slice(0, 300)}`); }
+      if (ok || bad) lastT = Date.now();
     };
     const eat = d => { buf += d; const parts = buf.split('\n'); buf = parts.pop(); parts.forEach(line); };
     p.stdout.on('data', eat); p.stderr.on('data', d => log.write(d));
@@ -212,7 +216,7 @@ if (flag('--collect')) {
   // (30 Oct AEDT) a run of chosen checks (--only, as the machines had) misses only the chosen ones
   const chosen = opt('--only', '') ? opt('--only', '').split(',').filter(n => ALL.includes(n)) : ALL;
   for (const n of chosen.filter(n => !SOLO.includes(n))) if (!results.has(n)) results.set(n, { ok: false, note: 'did not run (its machine stopped)' });
-  for (const [n, r] of results) if (r.ok && r.secs) times[n] = r.secs;
+  for (const [n, r] of results) if (r.secs) times[n] = r.ok ? r.secs : Math.max(times[n] || 0, r.secs); // (a failed check: at least as long as it took to fail)
   fs.writeFileSync(TIMES_F, JSON.stringify(Object.fromEntries(Object.entries(times).sort()), null, 0).replace(/,"/g, ',\n"') + '\n');
   const m = buildMap(ALL); fs.writeFileSync(MAP_F, JSON.stringify(m));
   const failed = [...results].filter(([, r]) => !r.ok), skipped = [...results].filter(([, r]) => r.ok && /^skipped/.test(r.note)), again = [...results].filter(([, r]) => r.ok && r.alone);
@@ -253,7 +257,7 @@ if (LIST) process.exit(0);
 if (mapping) fs.rmSync(path.join(HERE, 'out/cover'), { recursive: true, force: true });
 const t0 = Date.now();
 const results = await runAll(list, { SV_SAMPLE: '1', SV_FULL: full.join(','), SV_SEED: String(seed), ...(mapping ? { SV_COVER: '1' } : {}) });
-for (const [n, r] of results) if (r.ok && r.secs) times[n] = r.secs;
+for (const [n, r] of results) if (r.secs) times[n] = r.ok ? r.secs : Math.max(times[n] || 0, r.secs); // (a failed check: at least as long as it took to fail)
 fs.writeFileSync(TIMES_F, JSON.stringify(Object.fromEntries(Object.entries(times).sort()), null, 0).replace(/,"/g, ',\n"') + '\n');
 fs.writeFileSync(path.join(HERE, 'out/suite-result.json'), JSON.stringify(Object.fromEntries(results)));
 const failed = [...results].filter(([, r]) => !r.ok), skipped = [...results].filter(([, r]) => r.ok && /^skipped/.test(r.note));
