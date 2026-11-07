@@ -1,0 +1,19 @@
+{
+  "recordedAtSydney": "2026-11-07T19:09:02.483945+11:00",
+  "baseCommit": "d51e062e5894a2229bd62e7b429dec87a9787a8f",
+  "ownerPlanHashMatches": true,
+  "rosterAndBudgetValidation": "passed",
+  "assets": 43,
+  "promptFiles": 43,
+  "requiredSeparateViews": 128,
+  "plannedCredits": 990,
+  "reserveCredits": 10,
+  "referenceSheetsGenerated": 0,
+  "paidJobsSubmitted": 0,
+  "MeshyCreditsSpent": 0,
+  "requiredStyleReferenceMissing": true,
+  "MarkdownLinksChecked": 5,
+  "missingLinks": [],
+  "runtimeFilesChanged": false,
+  "freshGameOrModelRenderValidationClaimed": false
+}

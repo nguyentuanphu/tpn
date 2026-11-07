@@ -1,0 +1,16 @@
+I am making 3D models for a cozy children's game for ages 4-9. Every picture I ask for in this chat must match the
+art style of the attached reference image: a cute stylized 3D render like a premium animated family film, rounded
+soft shapes, soft clay-like materials with fine fabric and fur texture, warm friendly colours, big expressive eyes,
+rosy cheeks, gentle smiles. Each picture is a **character turnaround sheet** on a plain light grey background with
+soft even studio lighting and no shadows on the ground: the same character shown three times side by side at the
+same size: **front view, side view (facing left), back view**. Full body in every view, nothing cropped, a little
+space between the views. Clean and simple: nothing in the hands, no props held, no text, no labels, no watermark.
+For people: standing straight in a relaxed A-pose, arms slightly away from the body, open empty hands, feet flat,
+hair, braids and ponytails kept clear of the arms. For animals: standing on all fours in a calm neutral pose, legs
+slightly apart so each leg is visible, tail visible, mouth closed. Large head and short body proportions, cute and
+chubby. I will now send one character per message; reply with just the picture.
+
+ASSET 03: Sol, twilight twin: 8-year-old boy, curly copper-orange hair, golden-yellow short cape with sun embroidery, cream tunic with a sun emblem, brown leather belt and bracers, dark brown trousers, brown boots.
+
+Species-specific pose (takes precedence over the generic pose rule): Relaxed standing A-pose, hands empty/open and clear of torso, feet flat.
+All views depict the same individual, clothes, proportions and colours. No perspective-size changes, duplicate limbs, pedestal, detached accessories or text. Worn accessories remain attached; hands/paws hold nothing. Keep fabric/fur detail stylized; individual hair/fur strands are not required for the game.
