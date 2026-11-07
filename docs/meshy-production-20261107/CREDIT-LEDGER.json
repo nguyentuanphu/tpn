@@ -1,0 +1,352 @@
+{
+  "budget": 1000,
+  "planned": 990,
+  "reserve": 10,
+  "charged": 0,
+  "entries": [
+    {
+      "assetId": "clara",
+      "plannedCredits": 30,
+      "reservedCredits": 0,
+      "chargedCredits": 0,
+      "taskId": null,
+      "state": "not_submitted"
+    },
+    {
+      "assetId": "finn",
+      "plannedCredits": 30,
+      "reservedCredits": 0,
+      "chargedCredits": 0,
+      "taskId": null,
+      "state": "not_submitted"
+    },
+    {
+      "assetId": "sol",
+      "plannedCredits": 30,
+      "reservedCredits": 0,
+      "chargedCredits": 0,
+      "taskId": null,
+      "state": "not_submitted"
+    },
+    {
+      "assetId": "lumi",
+      "plannedCredits": 30,
+      "reservedCredits": 0,
+      "chargedCredits": 0,
+      "taskId": null,
+      "state": "not_submitted"
+    },
+    {
+      "assetId": "mai",
+      "plannedCredits": 30,
+      "reservedCredits": 0,
+      "chargedCredits": 0,
+      "taskId": null,
+      "state": "not_submitted"
+    },
+    {
+      "assetId": "ba",
+      "plannedCredits": 30,
+      "reservedCredits": 0,
+      "chargedCredits": 0,
+      "taskId": null,
+      "state": "not_submitted"
+    },
+    {
+      "assetId": "teo",
+      "plannedCredits": 30,
+      "reservedCredits": 0,
+      "chargedCredits": 0,
+      "taskId": null,
+      "state": "not_submitted"
+    },
+    {
+      "assetId": "ti",
+      "plannedCredits": 30,
+      "reservedCredits": 0,
+      "chargedCredits": 0,
+      "taskId": null,
+      "state": "not_submitted"
+    },
+    {
+      "assetId": "bong",
+      "plannedCredits": 30,
+      "reservedCredits": 0,
+      "chargedCredits": 0,
+      "taskId": null,
+      "state": "not_submitted"
+    },
+    {
+      "assetId": "su",
+      "plannedCredits": 30,
+      "reservedCredits": 0,
+      "chargedCredits": 0,
+      "taskId": null,
+      "state": "not_submitted"
+    },
+    {
+      "assetId": "jack",
+      "plannedCredits": 30,
+      "reservedCredits": 0,
+      "chargedCredits": 0,
+      "taskId": null,
+      "state": "not_submitted"
+    },
+    {
+      "assetId": "mit",
+      "plannedCredits": 30,
+      "reservedCredits": 0,
+      "chargedCredits": 0,
+      "taskId": null,
+      "state": "not_submitted"
+    },
+    {
+      "assetId": "bom",
+      "plannedCredits": 30,
+      "reservedCredits": 0,
+      "chargedCredits": 0,
+      "taskId": null,
+      "state": "not_submitted"
+    },
+    {
+      "assetId": "ruby",
+      "plannedCredits": 30,
+      "reservedCredits": 0,
+      "chargedCredits": 0,
+      "taskId": null,
+      "state": "not_submitted"
+    },
+    {
+      "assetId": "lan",
+      "plannedCredits": 30,
+      "reservedCredits": 0,
+      "chargedCredits": 0,
+      "taskId": null,
+      "state": "not_submitted"
+    },
+    {
+      "assetId": "puppy",
+      "plannedCredits": 30,
+      "reservedCredits": 0,
+      "chargedCredits": 0,
+      "taskId": null,
+      "state": "not_submitted"
+    },
+    {
+      "assetId": "kitty",
+      "plannedCredits": 30,
+      "reservedCredits": 0,
+      "chargedCredits": 0,
+      "taskId": null,
+      "state": "not_submitted"
+    },
+    {
+      "assetId": "bunny",
+      "plannedCredits": 30,
+      "reservedCredits": 0,
+      "chargedCredits": 0,
+      "taskId": null,
+      "state": "not_submitted"
+    },
+    {
+      "assetId": "panda",
+      "plannedCredits": 30,
+      "reservedCredits": 0,
+      "chargedCredits": 0,
+      "taskId": null,
+      "state": "not_submitted"
+    },
+    {
+      "assetId": "joey",
+      "plannedCredits": 30,
+      "reservedCredits": 0,
+      "chargedCredits": 0,
+      "taskId": null,
+      "state": "not_submitted"
+    },
+    {
+      "assetId": "calf",
+      "plannedCredits": 30,
+      "reservedCredits": 0,
+      "chargedCredits": 0,
+      "taskId": null,
+      "state": "not_submitted"
+    },
+    {
+      "assetId": "dragon",
+      "plannedCredits": 30,
+      "reservedCredits": 0,
+      "chargedCredits": 0,
+      "taskId": null,
+      "state": "not_submitted"
+    },
+    {
+      "assetId": "firefly",
+      "plannedCredits": 30,
+      "reservedCredits": 0,
+      "chargedCredits": 0,
+      "taskId": null,
+      "state": "not_submitted"
+    },
+    {
+      "assetId": "chicken",
+      "plannedCredits": 15,
+      "reservedCredits": 0,
+      "chargedCredits": 0,
+      "taskId": null,
+      "state": "not_submitted"
+    },
+    {
+      "assetId": "cow",
+      "plannedCredits": 15,
+      "reservedCredits": 0,
+      "chargedCredits": 0,
+      "taskId": null,
+      "state": "not_submitted"
+    },
+    {
+      "assetId": "sheep",
+      "plannedCredits": 15,
+      "reservedCredits": 0,
+      "chargedCredits": 0,
+      "taskId": null,
+      "state": "not_submitted"
+    },
+    {
+      "assetId": "pig",
+      "plannedCredits": 15,
+      "reservedCredits": 0,
+      "chargedCredits": 0,
+      "taskId": null,
+      "state": "not_submitted"
+    },
+    {
+      "assetId": "buffalo",
+      "plannedCredits": 15,
+      "reservedCredits": 0,
+      "chargedCredits": 0,
+      "taskId": null,
+      "state": "not_submitted"
+    },
+    {
+      "assetId": "bull",
+      "plannedCredits": 15,
+      "reservedCredits": 0,
+      "chargedCredits": 0,
+      "taskId": null,
+      "state": "not_submitted"
+    },
+    {
+      "assetId": "bear",
+      "plannedCredits": 15,
+      "reservedCredits": 0,
+      "chargedCredits": 0,
+      "taskId": null,
+      "state": "not_submitted"
+    },
+    {
+      "assetId": "unicorn",
+      "plannedCredits": 15,
+      "reservedCredits": 0,
+      "chargedCredits": 0,
+      "taskId": null,
+      "state": "not_submitted"
+    },
+    {
+      "assetId": "koala",
+      "plannedCredits": 15,
+      "reservedCredits": 0,
+      "chargedCredits": 0,
+      "taskId": null,
+      "state": "not_submitted"
+    },
+    {
+      "assetId": "emu",
+      "plannedCredits": 15,
+      "reservedCredits": 0,
+      "chargedCredits": 0,
+      "taskId": null,
+      "state": "not_submitted"
+    },
+    {
+      "assetId": "platypus",
+      "plannedCredits": 15,
+      "reservedCredits": 0,
+      "chargedCredits": 0,
+      "taskId": null,
+      "state": "not_submitted"
+    },
+    {
+      "assetId": "elephant",
+      "plannedCredits": 15,
+      "reservedCredits": 0,
+      "chargedCredits": 0,
+      "taskId": null,
+      "state": "not_submitted"
+    },
+    {
+      "assetId": "penguin",
+      "plannedCredits": 15,
+      "reservedCredits": 0,
+      "chargedCredits": 0,
+      "taskId": null,
+      "state": "not_submitted"
+    },
+    {
+      "assetId": "turtle",
+      "plannedCredits": 15,
+      "reservedCredits": 0,
+      "chargedCredits": 0,
+      "taskId": null,
+      "state": "not_submitted"
+    },
+    {
+      "assetId": "peacock",
+      "plannedCredits": 15,
+      "reservedCredits": 0,
+      "chargedCredits": 0,
+      "taskId": null,
+      "state": "not_submitted"
+    },
+    {
+      "assetId": "crane",
+      "plannedCredits": 15,
+      "reservedCredits": 0,
+      "chargedCredits": 0,
+      "taskId": null,
+      "state": "not_submitted"
+    },
+    {
+      "assetId": "vn-aodai",
+      "plannedCredits": 15,
+      "reservedCredits": 0,
+      "chargedCredits": 0,
+      "taskId": null,
+      "state": "not_submitted"
+    },
+    {
+      "assetId": "vn-dad",
+      "plannedCredits": 15,
+      "reservedCredits": 0,
+      "chargedCredits": 0,
+      "taskId": null,
+      "state": "not_submitted"
+    },
+    {
+      "assetId": "au-dad",
+      "plannedCredits": 15,
+      "reservedCredits": 0,
+      "chargedCredits": 0,
+      "taskId": null,
+      "state": "not_submitted"
+    },
+    {
+      "assetId": "au-mum",
+      "plannedCredits": 15,
+      "reservedCredits": 0,
+      "chargedCredits": 0,
+      "taskId": null,
+      "state": "not_submitted"
+    }
+  ]
+}

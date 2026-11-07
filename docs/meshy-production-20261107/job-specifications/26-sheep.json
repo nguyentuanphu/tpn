@@ -1,0 +1,42 @@
+{
+  "assetId": "sheep",
+  "group": "E",
+  "endpoint": "https://api.meshy.ai/openapi/v1/multi-image-to-3d",
+  "method": "POST",
+  "parameters": {
+    "ai_model": "meshy-6-lite",
+    "geometry_resolution": "standard",
+    "should_texture": true,
+    "texture_resolution": "2k",
+    "enable_pbr": false,
+    "pose_mode": "",
+    "target_formats": [
+      "glb"
+    ]
+  },
+  "inputImages": [
+    {
+      "view": "front",
+      "localPath": "reference-images/26-sheep/front.png",
+      "sha256": "a99bed64bc714296445e569a8159e56bdfefd255e26abfa88e025f8c3945820c"
+    },
+    {
+      "view": "left-side",
+      "localPath": "reference-images/26-sheep/left-side.png",
+      "sha256": "d3cea3c7aaa8228fb65ece51c0182cbae80079b0d42a2a236363c36ee5c48aa8"
+    },
+    {
+      "view": "back",
+      "localPath": "reference-images/26-sheep/back.png",
+      "sha256": "567fdb976512fa0f2a36a24bc76c8a98e948745a0c23d82fb053b7e0f56d4f91"
+    }
+  ],
+  "transportNote": "Runner must populate image_urls with public URLs or data URIs in this order. Local paths are not accepted by the API.",
+  "plannedCredits": 15,
+  "submitted": false,
+  "taskId": null,
+  "accountVerified": false,
+  "privateSettingsVerified": false,
+  "rawDownloadDestination": "raw-models/E/sheep.glb",
+  "runtimeDestinationAfterFittingAndValidation": "models/world/creature-sheep.glb"
+}

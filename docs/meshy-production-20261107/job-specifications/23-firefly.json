@@ -1,0 +1,38 @@
+{
+  "assetId": "firefly",
+  "group": "D",
+  "endpoint": "https://api.meshy.ai/openapi/v1/multi-image-to-3d",
+  "method": "POST",
+  "parameters": {
+    "ai_model": "meshy-7.1",
+    "geometry_resolution": "standard",
+    "should_texture": true,
+    "texture_resolution": "2k",
+    "enable_pbr": false,
+    "pose_mode": "",
+    "target_formats": [
+      "glb"
+    ],
+    "image_enhancement": false
+  },
+  "inputImages": [
+    {
+      "view": "front",
+      "localPath": "reference-images/23-firefly/front.png",
+      "sha256": "eb5ea8cc9b32a35cf381fad1facfdb957d5db3ac37c36f9824be7683712e227f"
+    },
+    {
+      "view": "top",
+      "localPath": "reference-images/23-firefly/top.png",
+      "sha256": "c367a6f908cdaa1c9198919f3678f738c10d0710a52fdfe9e19b6cef18d8e861"
+    }
+  ],
+  "transportNote": "Runner must populate image_urls with public URLs or data URIs in this order. Local paths are not accepted by the API.",
+  "plannedCredits": 30,
+  "submitted": false,
+  "taskId": null,
+  "accountVerified": false,
+  "privateSettingsVerified": false,
+  "rawDownloadDestination": "raw-models/D/firefly.glb",
+  "runtimeDestinationAfterFittingAndValidation": "models/world/creature-firefly.glb"
+}

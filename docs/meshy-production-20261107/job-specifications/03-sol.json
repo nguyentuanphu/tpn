@@ -1,0 +1,43 @@
+{
+  "assetId": "sol",
+  "group": "A",
+  "endpoint": "https://api.meshy.ai/openapi/v1/multi-image-to-3d",
+  "method": "POST",
+  "parameters": {
+    "ai_model": "meshy-7.1",
+    "geometry_resolution": "standard",
+    "should_texture": true,
+    "texture_resolution": "2k",
+    "enable_pbr": false,
+    "pose_mode": "",
+    "target_formats": [
+      "glb"
+    ],
+    "image_enhancement": false
+  },
+  "inputImages": [
+    {
+      "view": "front",
+      "localPath": "reference-images/03-sol/front.png",
+      "sha256": "a826921131bdb0da0e053a91d5e417a5e8268acad90e57d32aba072637328f4a"
+    },
+    {
+      "view": "left-side",
+      "localPath": "reference-images/03-sol/left-side.png",
+      "sha256": "de6516c000f0385a8b1bedaf383fcdbd4f3554c7ba3bf3a42a71fc79b1d20cb4"
+    },
+    {
+      "view": "back",
+      "localPath": "reference-images/03-sol/back.png",
+      "sha256": "311b5b8361a780eb4c3dc25dc08cd9be1dcc09104bf1397d0bf7c0c3ad1f5187"
+    }
+  ],
+  "transportNote": "Runner must populate image_urls with public URLs or data URIs in this order. Local paths are not accepted by the API.",
+  "plannedCredits": 30,
+  "submitted": false,
+  "taskId": null,
+  "accountVerified": false,
+  "privateSettingsVerified": false,
+  "rawDownloadDestination": "raw-models/A/sol.glb",
+  "runtimeDestinationAfterFittingAndValidation": "models/sol.glb"
+}

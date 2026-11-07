@@ -1,26 +1,32 @@
 # Sparkle Valley: Meshy production
 
-7 November 2026 AEDT. Branch `meshy-production-20261107`, based on undeployed `integrate/v108` at `d51e062e5894a2229bd62e7b429dec87a9787a8f`. The owner explicitly asked to proceed with the attached production plan. Its reference-image phase comes first; no generation or paid task is claimed as complete here.
+7 November 2026 AEDT. Branch `meshy-production-20261107`, based on undeployed `integrate/v108` at `d51e062e5894a2229bd62e7b429dec87a9787a8f`.
 
-## Current state
+## Reference phase complete
 
-- The original [owner plan](OWNER-PRODUCTION-PLAN.md) is preserved unchanged.
-- [43 assets](ASSETS.md) and individual prompts are prepared; ASSET-MANIFEST.json records intended runtime destinations, species-specific poses, references, reviews and task status.
-- Budget arithmetic matches the supplied plan:23assets at30credits plus20at15credits =990, leaving10of1,000. Current prices, model IDs and retry/private entitlements have not been independently verified.
-- **Required image missing:** `clara/clara-young-2.webp`. It is not attached or present in the checked repository. All43sheets must match this reference; the existing game Clara render has not been substituted.
-- Image generation0; approved sheets0; separate views0of128; Meshy jobs0; credits spent0.
-- MESHY_API_KEY is not bound in this environment. That affects the later paid phase, not preparation of the reference prompts. Never paste the key into chat or source.
+- **43 turnaround sheets and 128 separate view crops** generated, saved and technically reviewed. [View all pictures](GALLERY.md); GitHub renders this Markdown gallery on phones. [HTML gallery](gallery.html) is also included for a local/preview web server; GitHub displays HTML as source.
+- Owner supplied the young-Clara style image in this chat. [Provenance](REFERENCE-PROVENANCE.json) explicitly distinguishes that inline original from the generated local style anchor. Finn/Sol/Lumi also use the repository concepts. No final owner approval is implied by technical review.
+- Corrections retained: Clara side direction; unrequested pet collars/bells; folded dragon wings; firefly dorsal view. Sol's transparent variant is separate from the grey-background production input.
+- All 43 [job specifications](job-specifications), source prompts, hashes, crop coordinates, intended runtime destinations and initial [credit ledger](CREDIT-LEDGER.json) are saved.
+- [Offline-tested batch runner](BATCH-RUNNER.md) supports explicit submission, durable duplicate/budget protection, polling, lost-response reconciliation and safe raw GLB download. No authenticated provider or paid call has been made.
+- [Official pricing/API verification](OFFICIAL-MESHY-VERIFICATION.md): explicit model IDs and 30/15-credit prices match the 990-credit plan. Actual account balance/private settings and API entitlement remain unverified. No Meshy credential is bound.
+- **0 new Meshy models, 0 credits spent, 0 new models rigged/integrated/deployed.** Full production is not complete. See [current status and remaining work](CURRENT-STATUS.md).
+- [Additional owner rules](ADDITIONAL-REFERENCE-RULES.md) govern future sheets. The owner supplied all 61 regional descriptions; generation is tracked separately in [the regional pack](../meshy-regional-40-100/README.md), outside the original 43-model credit budget.
 
-[Readiness report](READINESS.json) · [v1.08 compatibility](V108-COMPATIBILITY.md) · [Execution and review steps](NEXT-STEPS.md).
+## Review and handoff
 
-The supplied plan's STYLE block asks for a4–9art brief. This is a reference-art instruction; the game's existing age/accessibility rules are not changed by preparing it.
+[Original owner plan](OWNER-PRODUCTION-PLAN.md) · [Roster](ASSETS.md) · [Execution steps](NEXT-STEPS.md) · [v1.08 compatibility](V108-COMPATIBILITY.md) · [Readiness](READINESS.json) · [Validation](VALIDATION.json).
+
+Phone and desktop gallery screenshots are saved beside this README. These validate the review gallery, not game rendering with new 3D assets. A tablet screenshot is also included when recorded in validation.
 
 ## Tools
 
-`python tools/meshy/check_readiness.py` validates the roster, group counts,990credit arithmetic, input-plan hash, prompt paths, concept references and image/review availability without a network call. It never reads or prints a credential value and never submits a paid task.
+- `python tools/meshy/check_readiness.py`: offline roster/budget/hash/image availability checks.
+- `python tools/meshy/save_references.py --crop-reviewed`: reproducible lossless crops using manifest coordinates; original sheets remain intact.
+- `python tools/meshy/build_reference_pack.py`: regenerate gallery/job specifications from the reviewed files, preserving an existing credit ledger.
+- `python tools/meshy/run_batch.py plan`: offline paid-batch summary; see the runner handbook before any other command.
+- `python tools/meshy/test_batch.py`: expense/idempotency protection tests using fake transports only.
 
-`python tools/meshy/prepare_references.py` builds the initial prompt pack. It refuses to overwrite a progressed production ledger or an existing reference-image directory. Do not rerun it to reset approvals, spending or task IDs.
+Do not rerun `prepare_references.py` to reset a progressed manifest. Do not run the obsolete five-character/single-image `tools/blender/make-3d.py` against this batch.
 
-The old `tools/blender/make-3d.py` is **not** this43asset batch runner. It defaults to five older concepts, one image per job and `ai_model=latest`. Do not run it unchanged against this budget.
-
-No runtime model was overwritten; no source game behaviour, subscription, payment, main merge or deployment was changed.
+No runtime asset, subscription, payment, main merge, deployment or version was changed.

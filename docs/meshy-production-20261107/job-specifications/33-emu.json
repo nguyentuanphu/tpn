@@ -1,0 +1,42 @@
+{
+  "assetId": "emu",
+  "group": "F",
+  "endpoint": "https://api.meshy.ai/openapi/v1/multi-image-to-3d",
+  "method": "POST",
+  "parameters": {
+    "ai_model": "meshy-6-lite",
+    "geometry_resolution": "standard",
+    "should_texture": true,
+    "texture_resolution": "2k",
+    "enable_pbr": false,
+    "pose_mode": "",
+    "target_formats": [
+      "glb"
+    ]
+  },
+  "inputImages": [
+    {
+      "view": "front",
+      "localPath": "reference-images/33-emu/front.png",
+      "sha256": "6a940911bfa9991083a246167d8ee4a5eb73a0e00f8b52688b5ae6b82c74f753"
+    },
+    {
+      "view": "left-side",
+      "localPath": "reference-images/33-emu/left-side.png",
+      "sha256": "67b1d5ea78b2f86100686f805f9533c099c24ec24fb7d848ac85940a70f3df7a"
+    },
+    {
+      "view": "back",
+      "localPath": "reference-images/33-emu/back.png",
+      "sha256": "88e928d8142b55dfd7b395d37a4d0d77ddeb485da61b0f43e9659bd1a72fce86"
+    }
+  ],
+  "transportNote": "Runner must populate image_urls with public URLs or data URIs in this order. Local paths are not accepted by the API.",
+  "plannedCredits": 15,
+  "submitted": false,
+  "taskId": null,
+  "accountVerified": false,
+  "privateSettingsVerified": false,
+  "rawDownloadDestination": "raw-models/F/emu.glb",
+  "runtimeDestinationAfterFittingAndValidation": "models/world/creature-emu.glb"
+}

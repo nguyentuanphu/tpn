@@ -1,0 +1,43 @@
+{
+  "assetId": "clara",
+  "group": "A",
+  "endpoint": "https://api.meshy.ai/openapi/v1/multi-image-to-3d",
+  "method": "POST",
+  "parameters": {
+    "ai_model": "meshy-7.1",
+    "geometry_resolution": "standard",
+    "should_texture": true,
+    "texture_resolution": "2k",
+    "enable_pbr": false,
+    "pose_mode": "",
+    "target_formats": [
+      "glb"
+    ],
+    "image_enhancement": false
+  },
+  "inputImages": [
+    {
+      "view": "front",
+      "localPath": "reference-images/01-clara/front.png",
+      "sha256": "dcb41577591597bf702ba504895abfc7410b8d911334a2f5b2e62de063b515b5"
+    },
+    {
+      "view": "left-side",
+      "localPath": "reference-images/01-clara/left-side.png",
+      "sha256": "65b062b10bda3a92a11e1e349eb9e082bb20be0a46091dc9a54aee33d6798e5d"
+    },
+    {
+      "view": "back",
+      "localPath": "reference-images/01-clara/back.png",
+      "sha256": "d92118b821f2f4d3b604ab27bc01760b084c3b694cd1279fc55a22bafefe5f71"
+    }
+  ],
+  "transportNote": "Runner must populate image_urls with public URLs or data URIs in this order. Local paths are not accepted by the API.",
+  "plannedCredits": 30,
+  "submitted": false,
+  "taskId": null,
+  "accountVerified": false,
+  "privateSettingsVerified": false,
+  "rawDownloadDestination": "raw-models/A/clara.glb",
+  "runtimeDestinationAfterFittingAndValidation": "models/clara.glb"
+}

@@ -3,20 +3,22 @@
   "assets": 43,
   "plannedCredits": 990,
   "reserveCredits": 10,
-  "requiredStyleReferencePresent": false,
-  "turnaroundsPresent": 0,
-  "separateViewsPresent": 0,
+  "requiredStyleReferencePresent": true,
+  "turnaroundsPresent": 43,
+  "separateViewsPresent": 128,
   "requiredSeparateViews": 128,
   "assetsReviewedAndApproved": 0,
+  "assetsTechnicallyReviewed": 43,
+  "originalUserImageAvailableLocally": false,
   "MeshyAPIKeyPresent": false,
   "keyValuePrinted": false,
   "paidCallsMadeByThisCheck": 0,
-  "referenceGenerationReady": false,
+  "referenceGenerationReady": true,
   "paidSubmissionReady": false,
   "paidSubmissionBlockers": [
-    "All43reference sheets/views must exist and pass review first.",
-    "Confirm current official pricing, model IDs and multi-image API contract.",
-    "Verify account/private settings and claimed retry entitlements; do not assume web retries apply to API.",
-    "Use a secure binding and a reviewed credit ledger; the old make-3d.py is not this batch runner."
+    "MESHY_API_KEY must be bound securely; never paste it into chat or source.",
+    "Verify actual account API balance, private settings and usable subscription entitlements.",
+    "Web-app free retries are not assumed to apply to API tasks.",
+    "Runner is offline-tested only; validate the authenticated Clara pilot before continuing."
   ]
 }

@@ -1,5 +1,5 @@
 {
-  "recordedAtSydney": "2026-11-07T19:09:02.483945+11:00",
+  "recordedAtSydney": "2026-11-07T20:10:45.347090+11:00",
   "baseCommit": "d51e062e5894a2229bd62e7b429dec87a9787a8f",
   "ownerPlanHashMatches": true,
   "rosterAndBudgetValidation": "passed",
@@ -8,12 +8,87 @@
   "requiredSeparateViews": 128,
   "plannedCredits": 990,
   "reserveCredits": 10,
-  "referenceSheetsGenerated": 0,
+  "referenceSheetsGenerated": 43,
   "paidJobsSubmitted": 0,
   "MeshyCreditsSpent": 0,
-  "requiredStyleReferenceMissing": true,
+  "requiredStyleReferenceMissing": false,
   "MarkdownLinksChecked": 5,
   "missingLinks": [],
   "runtimeFilesChanged": false,
-  "freshGameOrModelRenderValidationClaimed": false
+  "freshGameOrModelRenderValidationClaimed": false,
+  "separateViewCrops": 128,
+  "assetsTechnicallyReviewed": 43,
+  "ownerApprovalsRecorded": 0,
+  "jobSpecifications": 43,
+  "offlineBatchRunnerTests": "10 passed",
+  "selectedRepositoryChecks": "9/9 passed; includes 528 unit tests",
+  "repositoryCheckBase": "origin/integrate/v108",
+  "fullGameSuiteRun": false,
+  "authenticatedMeshyCalls": 0,
+  "gallery": {
+    "phone": {
+      "viewport": [
+        393,
+        852
+      ],
+      "cards": 43,
+      "imageLinksHTTP200": 171,
+      "horizontalOverflow": false
+    },
+    "desktop": {
+      "viewport": [
+        1440,
+        1000
+      ],
+      "cards": 43,
+      "imageLinksHTTP200": 171,
+      "horizontalOverflow": false
+    }
+  },
+  "initialCheckFailure": "Default Playwright browser executable missing; reran selected checks with CHROMIUM=/usr/bin/chromium. Build also regenerated unrelated catalogue; generated diff removed after checks.",
+  "browserChecks": [
+    {
+      "pack": "meshy-production-20261107",
+      "device": "phone",
+      "width": 393,
+      "height": 852,
+      "cards": 43,
+      "overflow": false,
+      "imageLinksHTTP200": 171
+    },
+    {
+      "pack": "meshy-production-20261107",
+      "device": "tablet",
+      "width": 820,
+      "height": 1180,
+      "cards": 43,
+      "overflow": false,
+      "imageLinksHTTP200": 0
+    },
+    {
+      "pack": "meshy-production-20261107",
+      "device": "desktop",
+      "width": 1440,
+      "height": 1000,
+      "cards": 43,
+      "overflow": false,
+      "imageLinksHTTP200": 0
+    }
+  ],
+  "sourceAndCropHashes": "passed",
+  "losslessCropPixelComparison": "311/311 exact comparisons passed across both packs",
+  "newMeshyModels": 0,
+  "selectedChecks": {
+    "emoji": "passed",
+    "preload": "passed",
+    "noemoji": "passed",
+    "arch": "passed",
+    "unit": "passed",
+    "names": "passed",
+    "bilingual": "passed",
+    "rules": "passed",
+    "types": "passed"
+  },
+  "unitTestsPassed": 528,
+  "MarkdownLocalLinksCheckedAcrossBothPacksAndHandoff": 498
 }

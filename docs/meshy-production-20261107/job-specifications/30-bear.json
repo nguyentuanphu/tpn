@@ -1,0 +1,42 @@
+{
+  "assetId": "bear",
+  "group": "F",
+  "endpoint": "https://api.meshy.ai/openapi/v1/multi-image-to-3d",
+  "method": "POST",
+  "parameters": {
+    "ai_model": "meshy-6-lite",
+    "geometry_resolution": "standard",
+    "should_texture": true,
+    "texture_resolution": "2k",
+    "enable_pbr": false,
+    "pose_mode": "",
+    "target_formats": [
+      "glb"
+    ]
+  },
+  "inputImages": [
+    {
+      "view": "front",
+      "localPath": "reference-images/30-bear/front.png",
+      "sha256": "6c9c55f547424bfa1b8aaa6c3bc66c0d3bb729e778d19581e8426319e3f6f1f7"
+    },
+    {
+      "view": "left-side",
+      "localPath": "reference-images/30-bear/left-side.png",
+      "sha256": "136c5fc8e8999ea874ae44b0c948294ae5d3f8eb7e01db61aa3c94db4ea11cc7"
+    },
+    {
+      "view": "back",
+      "localPath": "reference-images/30-bear/back.png",
+      "sha256": "1f282c8015e24573f5d9c82154337254c852c574c3b923b656ec6f14c0695a82"
+    }
+  ],
+  "transportNote": "Runner must populate image_urls with public URLs or data URIs in this order. Local paths are not accepted by the API.",
+  "plannedCredits": 15,
+  "submitted": false,
+  "taskId": null,
+  "accountVerified": false,
+  "privateSettingsVerified": false,
+  "rawDownloadDestination": "raw-models/F/bear.glb",
+  "runtimeDestinationAfterFittingAndValidation": "models/world/creature-bear.glb"
+}

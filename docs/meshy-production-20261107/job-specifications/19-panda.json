@@ -1,0 +1,43 @@
+{
+  "assetId": "panda",
+  "group": "C",
+  "endpoint": "https://api.meshy.ai/openapi/v1/multi-image-to-3d",
+  "method": "POST",
+  "parameters": {
+    "ai_model": "meshy-7.1",
+    "geometry_resolution": "standard",
+    "should_texture": true,
+    "texture_resolution": "2k",
+    "enable_pbr": false,
+    "pose_mode": "",
+    "target_formats": [
+      "glb"
+    ],
+    "image_enhancement": false
+  },
+  "inputImages": [
+    {
+      "view": "front",
+      "localPath": "reference-images/19-panda/front.png",
+      "sha256": "07300a6dc1c2ca4bd2636e32b1a7100eb2a6b3d23b87f8a117e4bb626fa8edfe"
+    },
+    {
+      "view": "left-side",
+      "localPath": "reference-images/19-panda/left-side.png",
+      "sha256": "30b6a8d65a9f764d8b10eef7f54d3a6b77e1995088e7e7dfa6f53f4226498eaf"
+    },
+    {
+      "view": "back",
+      "localPath": "reference-images/19-panda/back.png",
+      "sha256": "03ac138a6e3f1b7f30e19c48a1424e1f0c267bc07616f4f75b40db30c9b9d7a4"
+    }
+  ],
+  "transportNote": "Runner must populate image_urls with public URLs or data URIs in this order. Local paths are not accepted by the API.",
+  "plannedCredits": 30,
+  "submitted": false,
+  "taskId": null,
+  "accountVerified": false,
+  "privateSettingsVerified": false,
+  "rawDownloadDestination": "raw-models/C/panda.glb",
+  "runtimeDestinationAfterFittingAndValidation": "models/world/creature-panda.glb"
+}
