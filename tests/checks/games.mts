@@ -137,9 +137,15 @@ await check('boxes', async () => {
     p.age = 'little'; await w(900); out.littleHidden = chip().parentNode.hidden; p.age = 'big'; await w(900);
     // the switches
     G.heroes.forEach(x => { delete x.profile.tried; });   // (batch rollout, owner 8 Oct rule: off keeps a feature for a child who used it; here the child never did, the check 'rollout' covers the keeping)
-    C.features = C.features || {}; for (const id of ['mysteryBox', 'rankings', 'collectibles']) C.features[id] = false; await w(900);
+    // (v1.08 release) a thing with a release rule (content/custom.json releases: the boxes start 7 Nov 2026) is switched
+    // off in Studio's Releases tab (releases[id].on = false), which js/custom.ts featureOn reads before CUSTOM.features;
+    // both switches are turned off here, as a grown-up would with whichever one Studio shows
+    C.features = C.features || {}; const relWas = { ...(C.releases || {}) }; C.releases = { ...relWas };
+    for (const id of ['mysteryBox', 'rankings', 'collectibles']) { C.features[id] = false; if (C.releases[id]) C.releases[id] = { ...C.releases[id], on: false }; }
+    await w(900);
     out.offHidden = chip().parentNode.hidden; G.boxes.openHub(0); await w(300); out.offHub = !document.querySelector('.modal.bxhub');
     for (const id of ['mysteryBox', 'rankings', 'collectibles']) delete C.features[id];
+    C.releases = relWas;
     return out;
   });
   const errs = P.errors; await P.ctx.close(); const bad = [];

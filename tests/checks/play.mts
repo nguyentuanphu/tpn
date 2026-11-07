@@ -207,7 +207,12 @@ await check('surprises', async () => {
     S.settings.calm = true; Sp.reset(); const cs = Sp.place('stars', h); out.calmStreaks = cs ? cs.streaks.length : -1; S.settings.calm = false;
     // the Studio switch
     G.heroes.forEach(x => { delete x.profile.tried; });   // (batch rollout, owner 8 Oct rule: off keeps a feature for a child who used it; here the child never did, the check 'rollout' covers the keeping)
+    // (v1.08 release) surprises has a release rule (content/custom.json, from 7 Nov 2026): Studio's Releases tab switches
+    // it off (releases.surprises.on = false), which js/custom.ts featureOn reads before CUSTOM.features; both are off here
+    const relWas = { ...(C.releases || {}) }; C.releases = { ...relWas };
+    if (C.releases.surprises) C.releases.surprises = { ...C.releases.surprises, on: false };
     C.features.surprises = false; await w(1500); out.off = !Sp.current();
+    C.releases = relWas;
     return out;
   });
   const errs = P.errors; await P.ctx.close(); const bad = [...r.bad];
