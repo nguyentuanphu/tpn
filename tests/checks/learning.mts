@@ -245,8 +245,11 @@ await check('school', async () => {
   ok(box, 'tapping Cô Tam opened no speech box');
   ok(/Tam/.test(box.name) && box.text === 'Welcome to the Fun Learning School! Shall we learn something fun today?' && box.n === 2 && box.h >= 44, 'her greeting: ' + JSON.stringify(box));
   await P.page.touchscreen.tap(box.x, box.y);
-  const hub = await P.page.waitForSelector('.hub .hubtabs [data-tab="hocvui"].on', { timeout: 10000 }).then(() => P.page.evaluate(() => ({ title: document.querySelector('.hub .hubbody h3')?.textContent || '', areas: document.querySelectorAll('.hub .hubbody .hubarea').length })), () => null);
-  ok(hub && /Fun learning/.test(hub.title) && hub.areas === 4, 'the tap did not open the Fun learning tab: ' + JSON.stringify(hub));
+  const hub = await P.page.waitForSelector('.hub .hubtabs [data-tab="hocvui"].on', { timeout: 10000 }).then(() => P.page.evaluate(() => ({ title: document.querySelector('.hub .hubbody h3')?.textContent || '', areas: document.querySelectorAll('.hub .hubbody .hubarea').length, heads: [...document.querySelectorAll('.hub .hubbody .hubarea')].map(h => [...h.childNodes].filter(n => n.nodeType === 3).map(n => n.textContent).join('').trim()) })), () => null);
+  // (v1.08b games, owner 3 Nov 2026 AEDT: one learning tab, commit e2f01a0dd) Học vui now holds every learning corner (it had
+  // four), with the learning journeys on top (74788c7b7): the corners are read by name, as check hocvui does
+  const CORNERS = ['Vietnamese', 'English', 'Maths', 'Shapes', 'Money and shopping', 'Science', 'Letters and reading', 'Me and my family'];
+  ok(hub && /Fun learning/.test(hub.title) && CORNERS.every(c => hub.heads.includes(c)), 'the tap did not open the Fun learning tab: ' + JSON.stringify(hub));
   // in Vietnamese too: her line and the sign's words
   const vi = await P.page.evaluate(async () => { document.querySelectorAll('.modal, .hub, .dialog').forEach(e => e.remove()); __sv.paused = false; const L = await import('/js/school.js'); return L.SCHOOL_GREETING[1]; });
   ok(vi === 'Chào mừng con đến Trường Học Vui! Hôm nay mình học điều gì vui nhé?', 'Vietnamese greeting ' + vi);

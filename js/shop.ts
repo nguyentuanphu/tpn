@@ -123,6 +123,9 @@ export function createShop(G, { say, save }) {
   function openShop(i, host?) {
     if (!host && twoOpen(i)) return;
     const h = G.heroes[i], p = h.profile; adoptWorn(p);
+    // (v1.08 release fix 2, check friendoutfits on GitHub) the Outfits tab's code is fetched as the shop opens, so the first
+    // tap on Outfits shows the friend's outfits at once (on a slow device the tab stayed empty until the fetch ended)
+    import('./ui/friends-row.js').catch(() => { });
     const little = p.age !== 'big', m = host ? { close: () => {}, addEventListener: () => {} } : modal('kcard shopk' + (little ? ' little' : ''), ''), card = host || m.querySelector('.card');
     card.classList.add('shop-content', 'kcard'); if (little) card.classList.add('little'); let collection = setOf(p.look)==='girl'?'g':'b'; let recipient = p;
     let pick = null, more = false, suitPick = null;   // more: the other set too (Round U); suitPick: an outfit tapped once (v1.08b)

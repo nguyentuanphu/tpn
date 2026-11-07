@@ -152,7 +152,10 @@ function openGameNow(id: string, { players, level = 1, style = 'shrine', partner
       // a shrink keeps every button a finger size: 44 px, 64 px for under-5s (it stops there, at FIT_MIN at most)
       // (v1.08 fixes 2, checks horseplay, folkplay, ownerlearningprogression) each button keeps its own minimum too: a game
       // that asks 64 px for everyone (Cờ Cá Ngựa, the folk games) was shrunk to 44 px for a big kid
-      const need = little ? 64 : 44, wants = [...(stage.querySelectorAll('button, [role=button], .choice') as NodeListOf<HTMLElement>)].map(e => { const r = e.getBoundingClientRect(), cs = getComputedStyle(e), w = r.width / z, h = r.height / z; return w > 2 && h > 2 ? Math.max(need / Math.min(w, h), (parseFloat(cs.minWidth) || 0) / w, (parseFloat(cs.minHeight) || 0) / h) : 0; }).filter(Boolean);
+      // (v1.08 release fix 2, checks s2autas, s2auperth, s2aureef on GitHub) a game's own minimum counts only up to the
+      // biggest finger size, 64 px: a bigger one is the game's look (the Season 2 answers ask 96 px), and keeping all of
+      // it stopped a sideways phone from shrinking a board wider than the screen (the 44 px !important floor hid this)
+      const need = little ? 64 : 44, FINGER_MAX = 64, wants = [...(stage.querySelectorAll('button, [role=button], .choice') as NodeListOf<HTMLElement>)].map(e => { const r = e.getBoundingClientRect(), cs = getComputedStyle(e), w = r.width / z, h = r.height / z; return w > 2 && h > 2 ? Math.max(need / Math.min(w, h), Math.min(FINGER_MAX, parseFloat(cs.minWidth) || 0) / w, Math.min(FINGER_MAX, parseFloat(cs.minHeight) || 0) / h) : 0; }).filter(Boolean);
       // (v1.08b fivescreens) with a little room to spare: a button whose words change a moment later (a narrower number)
       // must not end a pixel under a finger's size
       const floor = wants.length ? Math.max(FIT_MIN, Math.min(1, Math.max(...wants) * 1.03)) : FIT_MIN;

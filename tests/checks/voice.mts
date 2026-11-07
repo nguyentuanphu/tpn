@@ -534,8 +534,10 @@ await check('mictest', async () => {
     const G = __sv, wait = ms => new Promise(r => setTimeout(r, ms)), md = navigator.mediaDevices, real = md.getUserMedia.bind(md);
     G.openPad(0, 'friend'); await wait(500);
     const btn = document.querySelector('.pad [data-mictest]'); if (!btn) return { btn: false };
-    btn.click(); await wait(300);
-    const m = document.querySelector('.modal.mictest'), lines = () => [...m.querySelectorAll('.mt-lines li')].map(li => li.textContent);
+    // (v1.08 release fix 2) the test's window comes when its code is in: waited for (300 ms was short on GitHub's machines)
+    btn.click(); await wait(300); for (let k = 0; k < 50 && !document.querySelector('.modal.mictest'); k++) await wait(100);
+    const m = document.querySelector('.modal.mictest'); if (!m) return { btn: true, noWindow: true };
+    const lines = () => [...m.querySelectorAll('.mt-lines li')].map(li => li.textContent);
     const before = lines();
     m.querySelector('[data-mic]').click(); for (let k = 0; k < 30 && !/ON/.test(lines()[2]); k++) await wait(100);
     const on = lines()[2];
@@ -546,7 +548,7 @@ await check('mictest', async () => {
     return { btn: true, before, on, blocked, small, gone: !document.querySelector('.modal.mictest') };
   });
   const errs = P.errors; await P.ctx.close();
-  ok(r.btn && r.before.length === 4 && /iOS|Safari|Chrome|browser/.test(r.before[0]) && /ON/.test(r.on) && /NotAllowedError/.test(r.blocked) && /Settings/.test(r.blocked) && !r.small && r.gone && !errs.length, JSON.stringify(Object.assign(r, { errs })));
+  ok(r.btn && r.before?.length === 4 && /iOS|Safari|Chrome|browser/.test(r.before[0]) && /ON/.test(r.on) && /NotAllowedError/.test(r.blocked) && /Settings/.test(r.blocked) && !r.small && r.gone && !errs.length, JSON.stringify(Object.assign(r, { errs })));
 });
 
 await check('owneraudiobounds', async () => {
