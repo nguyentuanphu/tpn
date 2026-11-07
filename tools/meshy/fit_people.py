@@ -19,7 +19,10 @@ MESHY, GAME, OUT, RDIR = a[0], a[1], a[2], a[3]
 TRIS, TEX, HEAD_S, ARM_DEG = int(a[4]), int(a[5]), float(a[6]), float(a[7])
 J = json.load(open(a[8], encoding='utf-8'))
 ID, REFP = J.get('id', 'person'), J.get('reference_prefix', 'clara-')
-TILE = 256 if TEX else 160   # the light model's face picture is smaller
+# (owner, 7 Nov 2026: "skin toned phai giu nhu original") original_skin: the skin keeps Meshy's own painted colour exactly
+# (no skin-tone part); the face layers and moods stay ("mat va mat phai co emotion")
+ORIGINAL = bool(J.get('original_skin'))
+TILE = 512 if TEX else 160   # the face picture: sharp lashes and eye rims up close (the light model's is smaller)
 os.makedirs(RDIR, exist_ok=True)
 bpy.ops.wm.read_factory_settings(use_empty=True)
 sc = bpy.context.scene; VL = bpy.context.view_layer
@@ -73,8 +76,10 @@ def back_hair(cz, cy, cx, rgb):   # hair-coloured surface behind the body betwee
     h_, s_, v = hsv_np(rgb)
     return ((cz > L['hip'].z) & (cz < L['neck'].z - .02) & (cy > .02) & (np.abs(cx) < abs(L['shoulderL'].x) + .22)
             & ((h_ < .09) | (h_ > .97)) & (s_ > .35) & (v > .3))
-def fill_missing(img):   # texels the bake missed (left black) take the colour of their neighbours: no dark slits
-    A = px(img); miss = A[..., :3].max(-1) < .02; n0 = int(miss.sum())
+def fill_missing(img, extra=None):   # texels the bake missed (left black), or marked, take their neighbours' colour
+    A = px(img); miss = A[..., :3].max(-1) < .02
+    if extra is not None: miss |= extra
+    n0 = int(miss.sum())
     for _ in range(48):
         if not miss.any(): break
         ok = ~miss; acc = np.zeros_like(A[..., :3]); cnt = np.zeros(miss.shape, np.float32)
@@ -85,18 +90,20 @@ def fill_missing(img):   # texels the bake missed (left black) take the colour o
 
 # ---- (joints.json "trim_back_hair") the duplicate back braids come off the full-detail model first, so the colour
 # baked onto the dress behind them is the dress, not hair
-if J.get('trim_back_hair'):
-    me = high.data
-    base_img = None
-    for m in me.materials:
-        if m and m.node_tree:
-            for l in m.node_tree.links:
-                if l.to_socket.name == 'Base Color' and l.from_node.type == 'TEX_IMAGE': base_img = l.from_node.image
+base_img = None
+for m in high.data.materials:
+    if m and m.node_tree:
+        for l in m.node_tree.links:
+            if l.to_socket.name == 'Base Color' and l.from_node.type == 'TEX_IMAGE': base_img = l.from_node.image
+HI = px(base_img)
+def face_colours(me):   # each face's Meshy colour (its first corner), for a mesh still on Meshy's own UVs
     n = len(me.polygons); cen = np.empty(n * 3, np.float32); me.polygons.foreach_get('center', cen); cen = cen.reshape(n, 3)
     ls = np.empty(n, np.int32); me.polygons.foreach_get('loop_start', ls)
     uv = np.empty(len(me.loops) * 2, np.float32); me.uv_layers.active.data.foreach_get('uv', uv); uv = uv.reshape(-1, 2)[ls]
-    HI = px(base_img); hh, ww = HI.shape[:2]
-    rgb = HI[np.clip((uv[:, 1] % 1 * hh).astype(int), 0, hh - 1), np.clip((uv[:, 0] % 1 * ww).astype(int), 0, ww - 1), :3]
+    hh, ww = HI.shape[:2]
+    return cen, HI[np.clip((uv[:, 1] % 1 * hh).astype(int), 0, hh - 1), np.clip((uv[:, 0] % 1 * ww).astype(int), 0, ww - 1), :3]
+if J.get('trim_back_hair'):
+    me = high.data; n = len(me.polygons); cen, rgb = face_colours(me)
     sel = back_hair(cen[:, 2], cen[:, 1], cen[:, 0], rgb)
     activate(high); bpy.ops.object.mode_set(mode='EDIT'); bpy.ops.mesh.select_all(action='DESELECT'); bpy.ops.object.mode_set(mode='OBJECT')
     me.polygons.foreach_set('select', sel); me.update()
@@ -105,17 +112,65 @@ if J.get('trim_back_hair'):
 
 # ---- 1. the reduced mesh with its own UVs, the colour baked from the full model (no bleeding edges)
 body = high.copy(); body.data = high.data.copy(); body.name = ID + '-body'; sc.collection.objects.link(body)
-activate(body); bpy.ops.object.mode_set(mode='EDIT'); bpy.ops.mesh.select_all(action='SELECT'); bpy.ops.mesh.remove_doubles(threshold=0.0002); bpy.ops.object.mode_set(mode='OBJECT')
-print('FIT welded verts', len(body.data.vertices))
-dm = body.modifiers.new('dec', 'DECIMATE')
-dm.ratio = min(1, TRIS / sum(len(p.vertices) - 2 for p in high.data.polygons)); bpy.ops.object.modifier_apply(modifier='dec')
-bpy.ops.object.mode_set(mode='EDIT'); bm = bmesh.from_edit_mesh(body.data); bmesh.ops.triangulate(bm, faces=bm.faces[:]); bmesh.update_edit_mesh(body.data)
-bpy.ops.object.mode_set(mode='OBJECT')
-for u in list(body.data.uv_layers): body.data.uv_layers.remove(u)
-body.data.uv_layers.new(name='UVMap'); bpy.ops.object.mode_set(mode='EDIT'); bpy.ops.mesh.select_all(action='SELECT')
-bpy.ops.uv.smart_project(angle_limit=math.radians(80), island_margin=0.004); bpy.ops.object.mode_set(mode='OBJECT')
-body.data.materials.clear()
-print('FIT body tris', len(body.data.polygons))
+# (joints.json "keep_meshy_uvs", high detail) a Meshy-remeshed model is already clean and the right size: its own UVs and
+# picture are kept as they are (no reduction, no new layout, no bake), which keeps the artwork exactly
+KEEP = bool(J.get('keep_meshy_uvs')) and TEX > 0
+if not KEEP:
+    activate(body); bpy.ops.object.mode_set(mode='EDIT'); bpy.ops.mesh.select_all(action='SELECT'); bpy.ops.mesh.remove_doubles(threshold=0.0002); bpy.ops.object.mode_set(mode='OBJECT')
+    print('FIT welded verts', len(body.data.vertices))
+    # the hair keeps a bigger share of the triangles than its area (braids are thin and detailed, the dress and legs are
+    # smooth): hair and the rest are reduced separately to their own budgets, then joined and welded again
+    HAIR_SHARE = float(J.get('hair_share', .5))
+    cen_, rgb = face_colours(body.data); h_, s_, v_ = hsv_np(rgb)
+    hairm = ((h_ < .09) | (h_ > .97)) & (s_ > .42) & (v_ > .45)   # the hair is more saturated than skin and blush
+    # never the front of the face (blush and lips can reach hair's saturation)
+    hairm &= ~((cen_[:, 0] > fx0 - .01) & (cen_[:, 0] < fx1 + .01) & (cen_[:, 2] > fz0 - .03) & (cen_[:, 2] < (fz0 + fz1) / 2) & (cen_[:, 1] < 0))   # cheeks, mouth, chin; the fringe stays hair
+    # smooth the choice over neighbouring triangles, so specks go with what surrounds them (no scattered patches)
+    _me = body.data; _n = len(_me.polygons); _ls = np.empty(_n, np.int32); _me.polygons.foreach_get('loop_start', _ls)
+    _tot = np.empty(_n, np.int32); _me.polygons.foreach_get('loop_total', _tot); _vi = np.empty(len(_me.loops), np.int32); _me.loops.foreach_get('vertex_index', _vi)
+    for _ in range(3):
+        vh = np.zeros(len(_me.vertices)); vc = np.zeros(len(_me.vertices))
+        np.add.at(vh, _vi, np.repeat(hairm.astype(np.float64), _tot)); np.add.at(vc, _vi, 1); vh /= np.maximum(vc, 1)
+        hairm = np.add.reduceat(vh[_vi], _ls) / _tot > .5
+    # the front of the face joins the detail group too: it is what the close-up camera sees
+    hairm |= (cen_[:, 0] > fx0 - .02) & (cen_[:, 0] < fx1 + .02) & (cen_[:, 2] > fz0 - .04) & (cen_[:, 2] < fz1 + .02) & (cen_[:, 1] < 0)
+    def tri_count(o): return sum(len(p.vertices) - 2 for p in o.data.polygons)
+    def reduce_to(o, n_):
+        activate(o); d = o.modifiers.new('dec', 'DECIMATE'); d.ratio = min(1, n_ / max(1, tri_count(o))); bpy.ops.object.modifier_apply(modifier='dec')
+    if TEX and hairm.any() and not hairm.all():   # (the high-detail model; the light one is too small to split and is seen far away)
+        activate(body); bpy.ops.object.mode_set(mode='EDIT'); bpy.ops.mesh.select_all(action='DESELECT'); bpy.ops.object.mode_set(mode='OBJECT')
+        body.data.polygons.foreach_set('select', hairm); body.data.update()
+        bpy.ops.object.mode_set(mode='EDIT'); bpy.ops.mesh.select_mode(type='FACE'); bpy.ops.mesh.separate(type='SELECTED'); bpy.ops.object.mode_set(mode='OBJECT')
+        hairo = next(o for o in sc.objects if o.type == 'MESH' and o not in (high, body))
+        print('FIT hair split', tri_count(hairo), 'rest', tri_count(body))
+        reduce_to(hairo, TRIS * HAIR_SHARE); reduce_to(body, TRIS * (1 - HAIR_SHARE))
+        bpy.ops.object.select_all(action='DESELECT'); hairo.select_set(True); body.select_set(True); VL.objects.active = body; bpy.ops.object.join()
+        bpy.ops.object.mode_set(mode='EDIT'); bpy.ops.mesh.select_all(action='SELECT'); bpy.ops.mesh.remove_doubles(threshold=0.0015); bpy.ops.object.mode_set(mode='OBJECT')
+    else:
+        reduce_to(body, TRIS)
+    bpy.ops.object.mode_set(mode='EDIT'); bm = bmesh.from_edit_mesh(body.data); bmesh.ops.triangulate(bm, faces=bm.faces[:]); bmesh.update_edit_mesh(body.data)
+    bpy.ops.object.mode_set(mode='OBJECT')
+    for u in list(body.data.uv_layers): body.data.uv_layers.remove(u)
+    body.data.uv_layers.new(name='UVMap'); bpy.ops.object.mode_set(mode='EDIT'); bpy.ops.mesh.select_all(action='SELECT')
+    bpy.ops.uv.smart_project(angle_limit=math.radians(80), island_margin=0.004); bpy.ops.object.mode_set(mode='OBJECT')
+    # texture space where the camera looks closest: the face's pieces 3.5x, the head and hair 1.6x, then everything is packed
+    # again (a plain layout gives every part the same density, which leaves the face about 30 pixels wide)
+    from bpy_extras.bmesh_utils import bmesh_linked_uv_islands
+    bm = bmesh.new(); bm.from_mesh(body.data); bm.faces.ensure_lookup_table(); uvl = bm.loops.layers.uv.active; nface = nhead = 0
+    for isl in bmesh_linked_uv_islands(bm, uvl):
+        c3 = sum((f.calc_center_median() for f in isl), Vector()) / len(isl)
+        k = 3.5 if (fx0 - .02 < c3.x < fx1 + .02 and fz0 - .04 < c3.z < fz1 + .02 and c3.y < 0) else 1.6 if c3.z > L['neck'].z - .02 else 1.0
+        if k == 1.0: continue
+        nface += k == 3.5; nhead += k == 1.6
+        cu = sum((l[uvl].uv for f in isl for l in f.loops), Vector((0, 0))) / sum(len(f.loops) for f in isl)
+        for f in isl:
+            for l in f.loops: l[uvl].uv = cu + (l[uvl].uv - cu) * k
+    bm.to_mesh(body.data); bm.free()
+    bpy.ops.object.mode_set(mode='EDIT'); bpy.ops.mesh.select_all(action='SELECT'); bpy.ops.uv.select_all(action='SELECT')
+    bpy.ops.uv.pack_islands(rotate=True, margin=0.004); bpy.ops.object.mode_set(mode='OBJECT')
+    print('FIT texture space: face islands x3.5', nface, 'head/hair islands x1.6', nhead)
+    body.data.materials.clear()
+    print('FIT body tris', len(body.data.polygons))
 
 sc.render.engine = 'CYCLES'; sc.cycles.samples = 1; sc.cycles.device = 'CPU'
 sc.render.bake.margin = 6; sc.render.bake.margin_type = 'EXTEND'
@@ -125,7 +180,12 @@ def bake(target, img, ext=.012, dist=.035):
     bpy.ops.object.select_all(action='DESELECT'); high.select_set(True); target.select_set(True); VL.objects.active = target
     bpy.ops.object.bake(type='DIFFUSE', pass_filter={'COLOR'}, use_selected_to_active=True, cage_extrusion=ext, max_ray_distance=dist, use_clear=True)
     return m
-colour = bpy.data.images.new(ID + '-colour', 1024, 1024, alpha=True); bake(body, colour); fill_missing(colour)
+if KEEP:   # Meshy's own picture, on Meshy's own UVs (the body still has them)
+    colour = bpy.data.images.new(ID + '-colour', base_img.size[0], base_img.size[1], alpha=True)
+    colour.pixels.foreach_set(px(base_img).ravel()); colour.update()
+    body.data.materials.clear(); print('FIT kept Meshy UVs and picture', base_img.size[0], 'x', base_img.size[1], 'tris', len(body.data.polygons))
+else:
+    colour = bpy.data.images.new(ID + '-colour', 1024, 1024, alpha=True); bake(body, colour); fill_missing(colour)
 colour.filepath_raw = os.path.join(RDIR, 'colour-bake.png'); colour.file_format = 'PNG'; colour.save()
 CA = px(bpy.data.images.load(os.path.join(RDIR, 'colour-bake.png'))); print('FIT colour mean', np.round(CA[..., :3].mean((0, 1)), 3))
 def sample(arr, u, v):
@@ -191,7 +251,7 @@ dbm = bmesh.new(); vmap = {}
 for f in front:
     vs = []
     for v in f.verts:
-        if v.index not in vmap: vmap[v.index] = dbm.verts.new(v.co + v.normal * .0025)
+        if v.index not in vmap: vmap[v.index] = dbm.verts.new(v.co + v.normal * .003)
         vs.append(vmap[v.index])
     try: dbm.faces.new(vs)
     except ValueError: pass
@@ -204,7 +264,29 @@ bm.free()
 fimg = bpy.data.images.new('face-smile-src', TILE, TILE, alpha=True); bake(decal, fimg, ext=.03, dist=.06); fill_missing(fimg)
 fimg.filepath_raw = os.path.join(RDIR, 'face-bake.png'); fimg.file_format = 'PNG'; fimg.save(); fimg = bpy.data.images.load(os.path.join(RDIR, 'face-bake.png'))
 F = px(fimg)[::-1].copy()   # top-down rows
-activate(decal); dd = decal.modifiers.new('dec', 'DECIMATE'); dd.ratio = min(1, 300 / max(1, len(decal.data.polygons))); bpy.ops.object.modifier_apply(modifier='dec')
+# the face picture straight from the front: each pixel is the original model's own colour where a ray from the camera
+# side meets it (a bake through the folded eye sockets left thin streaks at the eye edges)
+from mathutils.bvhtree import BVHTree as _BVH
+from mathutils.geometry import barycentric_transform as _bary
+_ht = _BVH.FromObject(high, bpy.context.evaluated_depsgraph_get()); _hm = high.data; _huv = _hm.uv_layers.active.data
+_HI = px(base_img); _hh, _hw = _HI.shape[:2]; _Hn, _Wn = F.shape[:2]; _nr = 0
+def _bil(u, v):   # bilinear sample of the original picture (smooth lash and iris edges)
+    x = u % 1 * _hw - .5; y = v % 1 * _hh - .5; x0 = int(math.floor(x)); y0 = int(math.floor(y)); fx_ = x - x0; fy_ = y - y0
+    x0c, x1c = min(_hw - 1, max(0, x0)), min(_hw - 1, max(0, x0 + 1)); y0c, y1c = min(_hh - 1, max(0, y0)), min(_hh - 1, max(0, y0 + 1))
+    return (_HI[y0c, x0c, :3] * (1 - fx_) + _HI[y0c, x1c, :3] * fx_) * (1 - fy_) + (_HI[y1c, x0c, :3] * (1 - fx_) + _HI[y1c, x1c, :3] * fx_) * fy_
+for r_ in range(_Hn):
+    for c_ in range(_Wn):
+        acc = np.zeros(3); n_ = 0
+        for oy, ox in ((.25, .25), (.25, .75), (.75, .25), (.75, .75)):   # 4 rays per pixel
+            z_ = fz1 - (r_ + oy) / _Hn * (fz1 - fz0); x_ = fx0 + (c_ + ox) / _Wn * (fx1 - fx0)
+            loc, nrm, fi, _d = _ht.ray_cast(Vector((x_, -2, z_)), Vector((0, 1, 0)))
+            if loc is None: continue
+            p = _hm.polygons[fi]; li = list(p.loop_indices)[:3]; vi = [_hm.loops[l].vertex_index for l in li]
+            a3, b3, c3 = (_hm.vertices[v].co for v in vi); ua, ub, uc = (Vector((*_huv[l].uv, 0)) for l in li)
+            uvp = _bary(loc, a3, b3, c3, ua, ub, uc); acc += _bil(uvp.x, uvp.y); n_ += 1
+        if n_: F[r_, c_, :3] = acc / n_; _nr += 1
+print('FIT face picture projected from the front', _nr, 'of', _Hn * _Wn)
+activate(decal); dd = decal.modifiers.new('dec', 'DECIMATE'); dd.ratio = min(1, 1200 / max(1, len(decal.data.polygons))); bpy.ops.object.modifier_apply(modifier='dec')
 print('FIT face layer tris', len(dme.polygons))
 
 # ---- skin colour: the face's typical light skin
@@ -250,7 +332,36 @@ base = F.copy(); base[..., 3] = np.where(skin_mask(F) & ~mouthm & ~dark, 0, 1).a
 if eyes and mouth:
     ny0 = max(b[3] for b in eyes.values()); ny1 = mouth[1] - 2
     if ny1 > ny0: nz = (yy >= ny0) & (yy < ny1) & ~(V < .42); base[..., 3] = np.where(nz, 0, base[..., 3])
+# soft cut edges: the see-through mask is blurred a little, so the game's alpha cut (0.5) follows a smooth line between
+# texels instead of their stair-steps (no broken lash and rim lines up close)
+_al = base[..., 3].copy()
+for _ in range(2): _al = (_al + np.roll(_al, 1, 0) + np.roll(_al, -1, 0) + np.roll(_al, 1, 1) + np.roll(_al, -1, 1)) / 5
+base[..., 3] = _al
+if ORIGINAL:   # the skin is not recoloured, so the face layer covers the whole face with her own original face picture:
+    base[..., 3] = 1   # nothing of the body's face shows through it (no shards where the body's eyes or seams are)
+def lid(img, b, top=0., bot=1.):   # (original_skin) a closed lid painted over the eye: her own skin from round the eye
+    w_, h_ = b[2] - b[0], b[3] - b[1]; y0 = b[1] + h_ * top; y1 = b[1] + h_ * bot
+    ring = (xx > b[0] - w_ * .3) & (xx < b[2] + w_ * .3) & (yy > b[1] - h_ * .2) & (yy < b[3] + h_ * .5) & ~((xx > b[0]) & (xx < b[2]) & (yy > b[1]) & (yy < b[3]))
+    ring &= skin_mask(F) & (V > .55)
+    sk = np.median(F[ring][:, :3], axis=0) if ring.any() else REF
+    cx_, cy_ = (b[0] + b[2]) / 2, (y0 + y1) / 2; rx, ry = w_ / 2 * 1.15, max(2, (y1 - y0) / 2 * 1.15)
+    d = np.hypot((xx - cx_) / rx, (yy - cy_) / ry); hole = d < 1
+    if top > 0: hole &= yy >= y0
+    # her own skin flows in from all round the eye (a smooth fill, no disc edge): the eye pixels are repeatedly
+    # replaced by the mean of their neighbours, the skin round them held fixed
+    ya, yb = max(0, int(cy_ - ry) - 3), min(H_, int(cy_ + ry) + 4); xa, xb = max(0, int(cx_ - rx) - 3), min(W_, int(cx_ + rx) + 4)
+    sub = img[ya:yb, xa:xb, :3].copy(); hm = hole[ya:yb, xa:xb]; sub[hm] = sk
+    for _ in range(220):
+        P = np.pad(sub, ((1, 1), (1, 1), (0, 0)), mode='edge')
+        av = (P[:-2, 1:-1] + P[2:, 1:-1] + P[1:-1, :-2] + P[1:-1, 2:]) / 4; sub[hm] = av[hm]
+    img[ya:yb, xa:xb, :3] = sub; img[ya:yb, xa:xb, 3] = np.maximum(img[ya:yb, xa:xb, 3], hm.astype(np.float32))
+def shut(img, b, top=0., bot=1.):   # close an eye: a painted lid (original skin) or see-through (skin-tone mode)
+    if ORIGINAL: lid(img, b, top, bot)
+    else: erase(img, b, top, bot)
+def grow(b):   # an eye box out to its lashes (closed eyes erase the whole painted eye)
+    w_, h_ = b[2] - b[0], b[3] - b[1]; return [max(0, int(b[0] - w_ * .12)), max(0, int(b[1] - h_ * .25)), min(W_, int(b[2] + w_ * .12)), min(H_, int(b[3] + h_ * .3))]
 def erase(img, b, top=0., bot=1.):
+    if ORIGINAL: return lid(img, b, top, bot)   # (opaque face layer: remove a painted feature by painting her skin over it)
     y0 = int(b[1] + (b[3] - b[1]) * top); y1 = int(b[1] + (b[3] - b[1]) * bot)
     img[y0:y1, b[0]:b[2], 3] = 0
 def stroke(img, pts, col, r):
@@ -275,27 +386,30 @@ def ellipse(img, cx, cy, rx, ry, col, edge):
 def shift_iris(img, b, frac):
     out = img.copy(); w_ = b[2] - b[0]; dx = int(round(w_ * frac)); y0 = int(b[1] + (b[3] - b[1]) * .3); y1 = b[3]
     sub = img[y0:y1, b[0]:b[2]]; v = sub[..., :3].max(-1); sat = (v - sub[..., :3].min(-1)) / np.maximum(v, 1e-4)
-    iris = (dist(sub) > .12) & ((v < .7) | (sat > .3)) & (sub[..., 3] > .5); eyewhite = (v > .8) & (sat < .2)
+    hh_, ww_ = sub.shape[:2]; ey, ex = np.mgrid[0:hh_, 0:ww_]
+    inside = (((ex - ww_ / 2) / (ww_ * .42)) ** 2 + ((ey - hh_ * .45) / (hh_ * .55)) ** 2) < 1   # within the eye opening only
+    eyewhite = (v > .8) & (sat < .2) & inside
+    iris = ((v < .7) | (sat > .3)) & (sub[..., 3] > .5) & inside & ~eyewhite & ~skin_mask(sub)
     o = out[y0:y1, b[0]:b[2]]; o[iris, :3] = EW
-    ys, xs = np.nonzero(iris); xs2 = np.clip(xs + dx, 0, w_ - 1); ok = eyewhite[ys, xs2] | iris[ys, xs2]
+    ys, xs = np.nonzero(iris); xs2 = np.clip(xs + dx, 0, w_ - 1); ok = (eyewhite[ys, xs2] | iris[ys, xs2]) & inside[ys, xs2]
     o[ys[ok], xs2[ok], :3] = sub[ys[ok], xs[ok], :3]
     return out
 lw = max(1.6, H_ * .012)
 M = {}
 M['smile'] = base.copy()
 im = base.copy()
-for b in eyes.values(): erase(im, b); stroke(im, arc(b, .62, .16), lash, lw)
+for b in eyes.values(): shut(im, grow(b)); stroke(im, arc(b, .62, .16), lash, lw)
 M['blink'] = im
 im = base.copy()
-for b in eyes.values(): erase(im, b, 0, .5); stroke(im, arc(b, .5, -.06), lash, lw)
+for b in eyes.values(): shut(im, grow(b), 0, .55); stroke(im, arc(b, .5, -.06), lash, lw)
 M['half'] = im
 im = base.copy()
-for b in eyes.values(): erase(im, b); stroke(im, arc(b, .7, -.32), lash, lw)
+for b in eyes.values(): shut(im, grow(b)); stroke(im, arc(b, .7, -.32), lash, lw)
 M['happy'] = im
 def mouth_o(im, big):
     if not mouth: return im
     erase(im, mouth); cx, cy = (mouth[0] + mouth[2]) / 2, (mouth[1] + mouth[3]) / 2; mw = mouth[2] - mouth[0]
-    ellipse(im, cx, cy + (mouth[3] - mouth[1]) * .2, mw * (.24 if not big else .32), mw * (.22 if not big else .26), lip * .5, lip * .85); return im
+    ellipse(im, cx, cy + (mouth[3] - mouth[1]) * .2, mw * (.17 if not big else .24), mw * (.15 if not big else .19), np.array([.80, .42, .45]), np.clip(lip * .95, 0, 1)); return im   # (owner: no black lips) a soft rose mouth, like the game's own faces
 M['surprised'] = mouth_o(base.copy(), False)
 im = base.copy()
 if mouth: erase(im, mouth); mb = [mouth[0] + (mouth[2] - mouth[0]) * .15, mouth[1], mouth[2] - (mouth[2] - mouth[0]) * .15, mouth[3]]; stroke(im, arc(mb, .75, -.45), lip * .8, lw * 1.1)
@@ -332,6 +446,98 @@ for i, k in enumerate(ORDER):
     o.data.materials.clear(); o.data.materials.append(m); moods.append(o)
 bpy.data.objects.remove(decal, do_unlink=True)
 
+# Meshy sculpts the eyes as bulges in sockets: under a closed lid (blink, happy, sleep) they would show as an oval
+# crease. The face surface inside the eye areas is smoothed flat, and the face layers are laid back onto it.
+def wbox(b, pad):   # a box in face-picture pixels -> world x/z ranges
+    xa = fx0 + (b[0] - pad) / W_ * (fx1 - fx0); xb = fx0 + (b[2] + pad) / W_ * (fx1 - fx0)
+    za = fz1 - (b[3] + pad) / H_ * (fz1 - fz0); zb = fz1 - (b[1] - pad) / H_ * (fz1 - fz0); return xa, xb, za, zb
+EYEBOX = [wbox(b, 8) for b in eyes.values()]
+if EYEBOX:
+    from mathutils.bvhtree import BVHTree
+    bm = bmesh.new(); bm.from_mesh(body.data); bm.verts.ensure_lookup_table()
+    ev = [v for v in bm.verts if v.co.y < 0 and any(xa <= v.co.x <= xb and za <= v.co.z <= zb for xa, xb, za, zb in EYEBOX)]
+    for _ in range(25): bmesh.ops.smooth_vert(bm, verts=ev, factor=.6, use_axis_x=True, use_axis_y=True, use_axis_z=True)
+    bm.normal_update(); bm.to_mesh(body.data); bm.free(); body.data.update()
+    tree = BVHTree.FromObject(body, bpy.context.evaluated_depsgraph_get())
+    for o in moods:
+        for v in o.data.vertices:
+            hit = tree.find_nearest(v.co)
+            if hit[0] is not None: v.co = hit[0] + hit[1] * .003
+    print('FIT eye sockets smoothed', len(ev), 'vertices')
+
+# the face layers as a fine even grid laid onto the face (a copy of a coarse or remeshed face's own triangles folds over
+# the eyes and shows as shards): rays from the front onto the body; the same picture coordinates as before
+from mathutils.bvhtree import BVHTree
+_btree = BVHTree.FromObject(body, bpy.context.evaluated_depsgraph_get())
+_otree = BVHTree.FromObject(moods[0], bpy.context.evaluated_depsgraph_get()) if moods else None   # the old layer's outline
+GN = 44 if TEX else 24   # (9 moods share the size: light model small enough for phones)
+gx = np.linspace(fx0, fx1, GN + 1); gz = np.linspace(fz0, fz1, GN + 1); gp = {}
+EYEW = [wbox(b, 14) for b in eyes.values()]   # the eye areas: one smooth lid surface over each socket, not its folds
+ineye = lambda x_, z_: any(xa <= x_ <= xb and za <= z_ <= zb for xa, xb, za, zb in EYEW)
+Yg = np.full((GN + 1, GN + 1), np.nan); want = np.zeros((GN + 1, GN + 1), bool); Yhit = np.full((GN + 1, GN + 1), np.inf)
+for i_, x_ in enumerate(gx):
+    for j_, z_ in enumerate(gz):
+        h_ = _btree.ray_cast(Vector((x_, -2, z_)), Vector((0, 1, 0)))
+        if ineye(x_, z_):
+            if h_[0] is not None: want[i_, j_] = True; Yhit[i_, j_] = h_[0].y   # filled from the rim below
+            continue
+        if h_[0] is not None and h_[1].y < -.05:
+            near = _otree.find_nearest(h_[0]) if _otree else (h_[0], None, None, 0)
+            if near[0] is not None and near[3] < .012: Yg[i_, j_] = h_[0].y; want[i_, j_] = True
+# holes inside the face's outline (the sides of the nose and the inner eye corners face sideways, so the old layer had
+# none there) are filled too: any grid point the outside cannot reach without crossing the face
+_out = np.zeros_like(want); _st = [(i_, j_) for i_ in range(GN + 1) for j_ in (0, GN)] + [(i_, j_) for i_ in (0, GN) for j_ in range(GN + 1)]
+while _st:
+    i_, j_ = _st.pop()
+    if not (0 <= i_ <= GN and 0 <= j_ <= GN) or _out[i_, j_] or want[i_, j_]: continue
+    _out[i_, j_] = True; _st += [(i_ + 1, j_), (i_ - 1, j_), (i_, j_ + 1), (i_, j_ - 1)]
+_holes = ~want & ~_out; want |= _holes; print('FIT face layer holes filled', int(_holes.sum()))
+for _ in range(200):   # each eye's points take the mean depth of their filled neighbours, from the rim inwards
+    miss = want & np.isnan(Yg)
+    if not miss.any(): break
+    P = np.pad(Yg, 1, constant_values=np.nan); nb = np.stack([P[:-2, 1:-1], P[2:, 1:-1], P[1:-1, :-2], P[1:-1, 2:]])
+    cnt = (~np.isnan(nb)).sum(0); s_ = np.nansum(nb, 0); fill = miss & (cnt > 0); Yg[fill] = s_[fill] / cnt[fill]
+if not ORIGINAL:   # (with an opaque layer the body is pushed behind it instead, so the lids stay smooth)
+    Yg = np.where(np.isfinite(Yhit), np.fmin(Yg, Yhit - .002), Yg)   # never behind the body (the nose bridge, the eye rims)
+# smooth cheeks: the grid follows the coarse model's flat facets, which shade as patches; its depth is softened
+# (a few averaging passes; the body is then pushed behind it, so nothing crosses)
+for _ in range(12):
+    P = np.pad(Yg, 1, constant_values=np.nan); nb = np.stack([P[:-2, 1:-1], P[2:, 1:-1], P[1:-1, :-2], P[1:-1, 2:], P[1:-1, 1:-1]])
+    cnt = (~np.isnan(nb)).sum(0); sm = np.nansum(nb, 0) / np.maximum(cnt, 1)
+    Yg = np.where(np.isnan(Yg), Yg, np.where(cnt >= 4, sm, Yg))
+for i_ in range(GN + 1):
+    for j_ in range(GN + 1):
+        if want[i_, j_] and not np.isnan(Yg[i_, j_]): gp[(i_, j_)] = (Vector((gx[i_], Yg[i_, j_] - .003, gz[j_])), None)
+for k_, o in enumerate(moods):
+    r_, cc_ = divmod(k_, 3); bmg = bmesh.new(); vv = {}
+    for key, (co, _n) in gp.items(): vv[key] = bmg.verts.new(co)
+    for i_ in range(GN):
+        for j_ in range(GN):
+            q = [(i_, j_), (i_ + 1, j_), (i_ + 1, j_ + 1), (i_, j_ + 1)]
+            if all(x in vv for x in q) and max(abs(vv[a_].co.y - vv[b_].co.y) for a_ in q for b_ in q) < .09:   # (only real cliffs, at the face's outline, are left open)
+                try: bmg.faces.new([vv[x] for x in q])
+                except ValueError: pass
+    uvg = bmg.loops.layers.uv.new('UVMap')
+    for f in bmg.faces:
+        f.smooth = True
+        for l in f.loops:
+            u_ = (l.vert.co.x - fx0) / (fx1 - fx0); v_ = (l.vert.co.z - fz0) / (fz1 - fz0)
+            l[uvg].uv = ((cc_ + min(1, max(0, u_))) / 3, (2 - r_ + min(1, max(0, v_))) / 3)
+    bmesh.ops.triangulate(bmg, faces=bmg.faces[:])
+    mats_ = list(o.data.materials); bmg.to_mesh(o.data); bmg.free()
+    o.data.materials.clear()
+    for m_ in mats_: o.data.materials.append(m_)
+print('FIT face layer rebuilt as a grid', len(gp), 'points', len(moods[0].data.polygons) if moods else 0, 'triangles')
+if ORIGINAL and moods:   # (opaque face layer) any body point in front of it, or nearly, goes just behind it: no facet pokes through
+    _lt = BVHTree.FromObject(moods[0], bpy.context.evaluated_depsgraph_get()); _np = 0
+    for v in body.data.vertices:
+        if v.co.y > .05 or not (fx0 - .01 < v.co.x < fx1 + .01 and fz0 - .01 < v.co.z < fz1 + .01): continue
+        h_ = _lt.ray_cast(Vector((v.co.x, -2, v.co.z)), Vector((0, 1, 0)))
+        if h_[0] is not None and v.co.y < h_[0].y + .004: v.co.y = h_[0].y + .004; _np += 1
+    body.data.update(); print('FIT body points moved behind the face layer', _np)
+if KEEP:
+    for p in body.data.polygons: p.use_smooth = True   # (Meshy's remesh: soft shading, not flat facets)
+
 # ---- skin: its own part, the painted shading kept in the corner colours (times the child's skin tone)
 me = body.data
 col = me.color_attributes.new('Color', 'BYTE_COLOR', 'CORNER'); me.color_attributes.active_color = col
@@ -352,7 +558,7 @@ for p in me.polygons:
     neckzone = pc.z > L['neck'].z - .06 and abs(pc.x) < .1
     zone = (pc.z > L['neck'].z + .02 and not hairzone) or armzone or neckzone
     # below the face, cream and ivory cloth (sleeves, collars) can sit in the skin hue range: skin there needs more colour
-    isskin = infaceregion or (zone and bool(skin_mask(avg[None])[0]) and (pc.z > L['neck'].z + .02 or hsv(avg)[1] > .2))
+    isskin = (not ORIGINAL) and (infaceregion or (zone and bool(skin_mask(avg[None])[0]) and (pc.z > L['neck'].z + .02 or hsv(avg)[1] > .2)))
     p.material_index = 1 if isskin else 0; nskin += isskin
     for li, cv in zip(p.loop_indices, cs):
         if isskin:
@@ -360,6 +566,45 @@ for p in me.polygons:
             col.data[li].color = (*r_, 1)
         else: col.data[li].color_srgb = (*cv, 1) if TEX == 0 else (1, 1, 1, 1)   # light model: the clothes' colour in the corners, no picture
 print('FIT skin faces', nskin, 'of', len(me.polygons))
+SKIN_TEX = TEX > 0 and not ORIGINAL   # (original_skin: no skin part at all)
+CLEAR_FACE = TEX > 0 and not ORIGINAL   # (an opaque face layer needs no clearing underneath)
+# the high-detail model keeps Meshy's painted skin ("skin-tex"); the light one its corner colours
+def uv_texels(polys, shape):   # texels covered by these faces' UV triangles
+    hh, ww = shape; out = np.zeros((hh, ww), bool)
+    for p in polys:
+        uvs = np.array([uv[li].uv[:] for li in p.loop_indices], np.float32)
+        if len(uvs) != 3 or not np.isfinite(uvs).all(): continue
+        P_ = uvs * [ww, hh]; x0, y0 = np.floor(P_.min(0)).astype(int) - 1; x1, y1 = np.ceil(P_.max(0)).astype(int) + 1
+        x0, y0 = max(0, x0), max(0, y0); x1, y1 = min(ww, x1), min(hh, y1)
+        if x1 <= x0 or y1 <= y0: continue
+        gy, gx = np.mgrid[y0:y1, x0:x1] + .5; (ax, ay), (bx, by), (cx, cy) = P_
+        den = (by - cy) * (ax - cx) + (cx - bx) * (ay - cy)
+        if abs(den) < 1e-9: continue
+        l1 = ((by - cy) * (gx - cx) + (cx - bx) * (gy - cy)) / den; l2 = ((cy - ay) * (gx - cx) + (ax - cx) * (gy - cy)) / den
+        out[y0:y1, x0:x1] |= (l1 >= -.05) & (l2 >= -.05) & (1 - l1 - l2 >= -.05)
+    return out
+if CLEAR_FACE:
+    # under the face layer the painted skin must be plain skin: Meshy's painted eyes, lashes, brows and mouth there are
+    # filled from the skin around them (otherwise they show through a blink)
+    A_ = px(colour); fm = uv_texels([me.polygons[i] for i in FACEF], A_.shape[:2])
+    hA, sA, Vv = hsv_np(A_[..., :3])
+    # the features: dark lines (lashes, brows), lip red; and everything inside the eye and mouth boxes the face layer
+    # found (iris, whites, lids), by position; the nose and blush stay painted
+    paint = fm & ((Vv < .55) | (((hA < .03) | (hA > .95)) & (sA > .38) & (Vv < .82)))
+    def wbox(b, pad):   # a box in face-picture pixels -> world x/z ranges
+        xa = fx0 + (b[0] - pad) / W_ * (fx1 - fx0); xb = fx0 + (b[2] + pad) / W_ * (fx1 - fx0)
+        za = fz1 - (b[3] + pad) / H_ * (fz1 - fz0); zb = fz1 - (b[1] - pad) / H_ * (fz1 - fz0); return xa, xb, za, zb
+    boxes = [wbox(b, 11) for b in eyes.values()] + ([wbox(mouth, 5)] if mouth else [])   # wide enough for the lashes and eye rims
+    inbox = [me.polygons[i] for i in FACEF if any(xa <= me.polygons[i].center.x <= xb and za <= me.polygons[i].center.z <= zb for xa, xb, za, zb in boxes)]
+    _ib = uv_texels(inbox, A_.shape[:2]); paint |= _ib
+    print('FIT eye/mouth texels', int(_ib.sum()), 'example uv', [tuple(round(x, 4) for x in uv[li].uv) for li in inbox[0].loop_indices] if inbox else None)
+    fc =np.array([me.polygons[i].center[:] for i in FACEF]) if FACEF else np.zeros((0, 3))
+    print('FIT face-layer boxes', [tuple(round(x, 3) for x in bx) for bx in boxes], 'face tris', len(FACEF), 'in boxes', len(inbox),
+          'face x', fc[:, 0].min().round(3) if len(fc) else None, fc[:, 0].max().round(3) if len(fc) else None, 'z', fc[:, 2].min().round(3) if len(fc) else None, fc[:, 2].max().round(3) if len(fc) else None)
+    # filled with her own face skin (the median of the face's skin texels), not from neighbours (lashes would smear in)
+    skin_px = A_[fm & ~paint & skin_mask(A_)][:, :3]; med = np.median(skin_px, axis=0) if len(skin_px) else REF
+    A_[paint, :3] = med; A_[paint, 3] = 1; colour.pixels.foreach_set(A_.ravel()); colour.update()
+    colour.save(); print('FIT painted face features cleared under the face layer', int(paint.sum()), 'with', np.round(med, 3))
 def hsvs(sel):
     cs = np.array([np.mean([sample(CA, *uv[li].uv) for li in p.loop_indices], axis=0) for p in me.polygons if sel(p)])
     return np.round(np.median(np.array([hsv(x) for x in cs]), axis=0), 3) if len(cs) else None
@@ -368,8 +613,13 @@ for m_, img in (((clothm, colour),) if TEX else ()):
     m_.use_nodes = True; nt = m_.node_tree; bs = nt.nodes['Principled BSDF']; t = nt.nodes.new('ShaderNodeTexImage'); t.image = img
     nt.links.new(t.outputs['Color'], bs.inputs['Base Color']); bs.inputs['Roughness'].default_value = 1
 skinm.use_nodes = True; nt = skinm.node_tree; bs = nt.nodes['Principled BSDF']
-at = nt.nodes.new('ShaderNodeVertexColor'); at.layer_name = 'Color'; tone = nt.nodes.new('ShaderNodeRGB'); tone.name = 'tone'
-tone.outputs[0].default_value = (0.92, 0.6, 0.45, 1); mul = nt.nodes.new('ShaderNodeMix'); mul.data_type = 'RGBA'; mul.blend_type = 'MULTIPLY'; mul.inputs[0].default_value = 1
+if SKIN_TEX:
+    skinm.name = 'skin-tex'; skinm['skin_ref'] = '#%02x%02x%02x' % tuple(int(round(min(1, max(0, float(x))) * 255)) for x in REF)
+    at = nt.nodes.new('ShaderNodeTexImage'); at.image = colour; at.name = 'skinpic'
+else:
+    at = nt.nodes.new('ShaderNodeVertexColor'); at.layer_name = 'Color'
+tone = nt.nodes.new('ShaderNodeRGB'); tone.name = 'tone'
+tone.outputs[0].default_value = (1, 1, 1, 1) if SKIN_TEX else (0.92, 0.6, 0.45, 1); mul = nt.nodes.new('ShaderNodeMix'); mul.data_type = 'RGBA'; mul.blend_type = 'MULTIPLY'; mul.inputs[0].default_value = 1
 nt.links.new(at.outputs['Color'], mul.inputs[6]); nt.links.new(tone.outputs[0], mul.inputs[7]); nt.links.new(mul.outputs[2], bs.inputs['Base Color']); bs.inputs['Roughness'].default_value = 1
 if TEX == 0:
     clothm.use_nodes = True; nt = clothm.node_tree; bs = nt.nodes['Principled BSDF']; vc = nt.nodes.new('ShaderNodeVertexColor'); vc.layer_name = 'Color'
@@ -402,6 +652,7 @@ for p in me.polygons:
     for li in p.loop_indices:
         vi = me.loops[li].vertex_index; cv = sample(CA, *uvb[li].uv); h_, s__, v_ = hsv(cv)
         if v_ < .62 and s__ > .3 and .03 < h_ < .14: LEATHER[vi] = True
+        if KEEP and (h_ < .09 or h_ > .97) and s__ > .42 and v_ > .45: LEATHER[vi] = True   # (the braids hang by the arms: never part of an arm)
 print('FIT leather verts', sum(LEATHER))
 ARMV = {}
 for sd in 'LR':
@@ -445,6 +696,34 @@ for v in me.vertices:
     else: W = {'torso': 1}
     for n, w_ in W.items():
         if w_ > 0: groups[n].add([v.index], w_, 'REPLACE')
+if KEEP:   # (remesh: a clean closed surface) Blender's automatic bone-heat weights, the standard way: smooth across the
+    # shoulders, armpits and hips, so nothing tears when an arm lifts. The hair keeps the region weights (head and
+    # torso only: braids lying by the arms must not follow them), and any point bone heat missed keeps them too.
+    region = [{g.group: g.weight for g in v.groups} for v in me.vertices]
+    HAIRV = [False] * len(me.vertices)
+    for p in me.polygons:
+        for li in p.loop_indices:
+            h_, s__, v_ = hsv(sample(CA, *uvb[li].uv))
+            if (h_ < .09 or h_ > .97) and s__ > .42 and v_ > .45: HAIRV[me.loops[li].vertex_index] = True
+    for g in list(body.vertex_groups): g.remove(list(range(len(me.vertices))))
+    bpy.ops.object.select_all(action='DESELECT'); body.select_set(True); rigo.select_set(True); VL.objects.active = rigo
+    bpy.ops.object.parent_set(type='ARMATURE_AUTO')
+    for m_ in [m_ for m_ in body.modifiers if m_.type == 'ARMATURE']: body.modifiers.remove(m_)
+    mw_ = body.matrix_world.copy(); body.parent = None; body.matrix_world = mw_
+    nmiss = 0
+    for v in me.vertices:
+        tot = sum(g.weight for g in v.groups)
+        if HAIRV[v.index] or tot < .05:
+            nmiss += not HAIRV[v.index]
+            for g in body.vertex_groups: g.remove([v.index])
+            for gi_, w_ in region[v.index].items(): body.vertex_groups[gi_].add([v.index], w_, 'REPLACE')
+    print('FIT bone-heat weights; hair kept on region weights', sum(HAIRV), 'missed', nmiss)
+    activate(body); bpy.ops.object.mode_set(mode='WEIGHT_PAINT')
+    for gname in ('armL', 'armR', 'torso', 'elbowL', 'elbowR'):
+        body.vertex_groups.active_index = body.vertex_groups[gname].index
+        bpy.ops.object.vertex_group_smooth(group_select_mode='ACTIVE', factor=.5, repeat=12, expand=.3)
+    bpy.ops.object.vertex_group_normalize_all(group_select_mode='ALL', lock_active=False)
+    bpy.ops.object.mode_set(mode='OBJECT'); print('FIT shoulder weights smoothed')
 # where Meshy fused a sleeve to what it touched (the satchel under the right arm), triangles join an arm point to a
 # body point outside the shoulder seam: they would stretch into a sheet when the arm lifts, so they go
 gi = {g.name: g.index for g in body.vertex_groups}
@@ -455,6 +734,7 @@ for p in me.polygons:
     for sd, sx in (('L', 1), ('R', -1)):
         ws = [armw(v, sd) for v in vs]; wall = abs(L['shoulder' + sd].x) + .03
         if max(ws) > .9 and min(ws) < .1 and all(sx * v.co.x > wall for v in vs): cut.append(p.index); break
+if KEEP: cut = []   # (a Meshy remesh is clean: nothing fused to cut; cutting tore the braids and sleeves)
 bm = bmesh.new(); bm.from_mesh(me); bm.faces.ensure_lookup_table()
 bmesh.ops.delete(bm, geom=[bm.faces[i] for i in cut], context='FACES_ONLY'); bm.to_mesh(me); bm.free()
 print('FIT cut fused triangles', len(cut))
@@ -471,9 +751,14 @@ for up in ((.55, -.15, .82), (.15, -.95, .2), (.15, .9, -.3), (.95, 0, .1)):
         vi = list(p.vertices)
         for a_, b_ in zip(vi, vi[1:] + vi[:1]):
             r0 = (rest[a_] - rest[b_]).length; r1 = (pos[a_] - pos[b_]).length
-            if r1 > .025 and r1 > 2.5 * max(r0, 1e-4): bad.add(p.index); break
+            if r1 > .025 and r1 > 2.5 * max(r0, 1e-4):
+                # (remesh) the shoulder caps and sleeve backs stretch with the arm as they should; only the bridges under
+                # the arm (sleeve to dress, at the front and sides below the armpit) are cut
+                if KEEP: break   # (remesh: never cut; the weights are smooth instead)
+                bad.add(p.index); break
 for pb in rigo.pose.bones: pb.matrix_basis = Matrix()
 body.modifiers.remove(tm); VL.update()
+if KEEP: print('FIT stretching triangles (remesh)', len(bad))
 bm = bmesh.new(); bm.from_mesh(me); bm.faces.ensure_lookup_table()
 bmesh.ops.delete(bm, geom=[bm.faces[i] for i in sorted(bad)], context='FACES_ONLY'); bm.to_mesh(me); bm.free()
 print('FIT stretch-cut triangles', len(bad))
@@ -490,7 +775,7 @@ for o in [body] + moods:
     o.parent = rigo; m_ = o.modifiers.new('Armature', 'ARMATURE'); m_.object = rigo
 # the arms down to the game's rest angle
 activate(rigo); bpy.ops.object.mode_set(mode='POSE')
-for sd, sx in (('L', 1), ('R', -1)):
+for sd, sx in ((() if ARM_DEG < 0 else (('L', 1), ('R', -1)))):   # (arm deg < 0: keep the model's own arm angle; the runtime copies turns from each rest pose)
     tgt = Vector((sx * math.sin(math.radians(ARM_DEG)), 0, -math.cos(math.radians(ARM_DEG))))
     pb = rigo.pose.bones['arm' + sd]; cur = (L['wrist' + sd] - L['shoulder' + sd]).normalized()
     R = cur.rotation_difference(tgt).to_matrix().to_4x4(); h = pb.bone.head_local
@@ -509,13 +794,14 @@ if os.path.exists(jp): os.remove(jp)
 if TEX:
     colour.scale(TEX, TEX); colour.file_format = 'JPEG'; colour.save(filepath=jp, quality=62)
     jimg = bpy.data.images.load(jp); jimg.name = ID + '-colour'
-    for n in clothm.node_tree.nodes:
-        if n.type == 'TEX_IMAGE': n.image = jimg
+    for m_ in (clothm, skinm):
+        for n in m_.node_tree.nodes:
+            if n.type == 'TEX_IMAGE': n.image = jimg
 print('FIT colour jpg', os.path.exists(jp) and os.path.getsize(jp))
 bpy.ops.object.select_all(action='DESELECT')
 for o in [rigo, body] + moods: o.select_set(True)
 bpy.ops.export_scene.gltf(filepath=OUT, export_format='GLB', use_selection=True, export_animations=False, export_skins=True, export_morph=False,
-                          export_yup=True, export_image_format='AUTO', export_vertex_color='ACTIVE')
+                          export_yup=True, export_image_format='AUTO', export_vertex_color='ACTIVE', export_extras=True)
 print('FIT exported', OUT, os.path.getsize(OUT))
 bpy.ops.wm.save_as_mainfile(filepath=os.path.splitext(OUT)[0] + '.blend')
 

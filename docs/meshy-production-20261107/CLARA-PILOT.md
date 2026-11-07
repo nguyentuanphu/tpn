@@ -106,3 +106,24 @@ download time need checking).
 - `tools/meshy/test_batch.py`: 10/10 offline runner tests pass; `check_readiness.py` passes except the account items it cannot see.
 - `node tests/suite.mts --only emoji,preload,noemoji,arch,unit,names,bilingual,rules,types`: 8/9 pass. `unit`: 526 of 529 pass, 1 skipped, 2 fail only because `ffmpeg` is not installed on this PC (the voice delivery-encoder tests). First attempts failed for missing `tests/node_modules` and root `node_modules`; installed from the lock files.
 - No browser or full suite run; the full release suite runs on GitHub.
+
+## Round 3 (7 Nov 2026, evening): braids, original look, face, sleeves
+
+Owner-approved extra spend, both outside the 990-credit plan, sent once each, never retried:
+- **clara-r2** (30 credits, task `01a1b58a-d2db-7782-9703-ad4a47802716`): front + left-side views only (`job-specifications/01-clara-r2.json`; `run_batch.py` now accepts an owner-approved revision that sends a subset of the reviewed views). Result: two braids, as in the ChatGPT sheet.
+- **Remesh** (5 credits, task `01a1b5b5-61a1-7570-984e-7d1ef26df9b5`, `tools/meshy/remesh_once.py`): Meshy rebuilt clara-r2 at 30,941 triangles. Hair, braids and sleeves match the original exactly (our own reduction had shredded them).
+Balance 3,019 → 2,984.
+
+Fitter changes (`joints/clara-remesh.json`): `keep_meshy_uvs` (Meshy's own picture and UVs, no rebake), `original_skin` (skin kept exactly as painted; no skin-tone part), face picture projected straight from the front (4 rays per pixel, bilinear), face layer as an even grid laid on the face (holes filled, smoothed, body pushed just behind it), closed lids filled from her own skin, soft rose open mouths, eye-socket smoothing.
+
+**Open:** arms. With the arms rotated to a 20° rest angle the sleeve backs tear; without it the rest pose is clean (the runtime copies turns from each rest pose, so the model keeps its A-pose arms at rest). Raising the arms (cheer) still tears the sleeves and the sides of the dress: the region weights are too hard at the shoulders, and Blender's bone-heat weights fail on Meshy's separate shells (34k of 47k points unsolved). Next: Meshy Auto-Rigging (5 credits) for real skin weights, mapped onto the game's 11 joints.
+
+## Lessons for the other 99 models
+
+1. **The views must agree.** Check every sheet's front/side/back for the same hair, bags, straps and capes before paying; send only the agreeing views (a revision costs 30).
+2. **Let Meshy reduce the mesh.** Remesh (5 credits, ~30k triangles) keeps hair and cloth whole; our own decimation shredded them. Build the light phone model from the remesh.
+3. **Keep Meshy's own texture and UVs.** Rebaking loses detail and seams the face.
+4. **Faces: one opaque face layer per mood, projected from the front**, lids painted from the character's own skin. The same code works for every person once the joints file is marked.
+5. **Don't re-pose the arms**; the runtime handles a different rest pose.
+6. **Skin weights need a real rig.** Region weights tear when arms lift; plan Meshy Auto-Rigging (5 credits per character) or proper weight painting before mass production.
+7. Cost per person, done this way: 30 (model) + 5 (remesh) + 5 (rig) = **40 credits**, not 30.

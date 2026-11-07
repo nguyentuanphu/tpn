@@ -2,7 +2,7 @@
   "budget": 1000,
   "planned": 990,
   "reserve": 10,
-  "charged": 30,
+  "charged": 65,
   "entries": [
     {
       "assetId": "clara",
@@ -347,6 +347,25 @@
       "chargedCredits": 0,
       "taskId": null,
       "state": "not_submitted"
+    },
+    {
+      "assetId": "clara-r2",
+      "revisionOf": "clara",
+      "plannedCredits": 30,
+      "reservedCredits": 30,
+      "chargedCredits": 30,
+      "taskId": "01a1b58a-d2db-7782-9703-ad4a47802716",
+      "state": "SUCCEEDED_raw_downloaded",
+      "ownerApproved": "7 Nov 2026 in chat (front + left-side views only, to fix four braids); outside the 990 plan"
+    },
+    {
+      "assetId": "clara-r2-remesh",
+      "plannedCredits": 5,
+      "reservedCredits": 5,
+      "chargedCredits": 5,
+      "taskId": "01a1b5b5-61a1-7570-984e-7d1ef26df9b5",
+      "state": "SUCCEEDED_raw_downloaded",
+      "ownerApproved": "7 Nov 2026 in chat (Meshy Remesh, triangle, 30000); outside the 990 plan"
     }
   ],
   "liveJournal": "Live SQLite journal kept outside the repository on the owner PC (D:/WorkSpace/meshy/private/meshy-jobs.sqlite3); it is the submission record.",
@@ -354,6 +373,7 @@
     "before": 3049,
     "after": 3019,
     "checkedAt": "2026-11-07T20:20:46+11:00 / after download",
-    "endpoint": "GET /openapi/v1/balance"
+    "endpoint": "GET /openapi/v1/balance",
+    "afterRevisionAndRemesh": 2984
   }
 }
