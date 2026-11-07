@@ -8,6 +8,8 @@ DB = sys.argv[1] if len(sys.argv) > 1 else r'D:\WorkSpace\meshy\private\meshy-jo
 LED = sys.argv[2] if len(sys.argv) > 2 else os.path.join(os.path.dirname(__file__), '..', '..', 'docs', 'meshy-production-20261107', 'CREDIT-LEDGER.json')
 L = json.load(open(LED, encoding='utf-8')); c = sqlite3.connect(DB)
 paid = lambda s: s in ('SUCCEEDED', 'IN_PROGRESS', 'PENDING', 'submitted', 'SUBMITTED')
+# (the hand-written clara-r2-remesh / clara-r2-rig entries are the journal's remesh and rigging rows: listed once, in extras)
+L['entries'] = [e for e in L['entries'] if not e['assetId'].endswith(('-remesh', '-rig'))]
 by = {e['assetId']: e for e in L['entries']}; extras = []
 for asset, cost, state, task in c.execute('select asset, cost, state, task_id from jobs'):
     ch = int(cost) if paid(state) else 0
