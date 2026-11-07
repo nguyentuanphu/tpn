@@ -26,8 +26,12 @@ class Mqtt {
   constructor(url: string) { this.url = url; this.subs = new Set(); this.onmessage = null; this.onclose = null; this.open = false; this.pid = 1; this.buf = new Uint8Array(0); }
   connect(will, timeout = 7000) {
     return new Promise(res => {
-      let done = false; const finish = ok => { if (done) return; done = true; clearTimeout(t); res(ok); };
-      const t = setTimeout(() => { try { this.ws && this.ws.close(); } catch (e) { } finish(false); }, timeout);
+      let done = false, t, more = 2; const finish = ok => { if (done) return; done = true; clearTimeout(t); res(ok); };
+      // (v1.08 cloud fix) on a slow, busy device this timer can run seconds late, after the broker has already answered
+      // in a message still waiting its turn: a broker whose socket is open, or a timer that ran late, gets more time
+      // (twice at most), so a busy device is not cut off from the cloud again and again
+      const arm = () => { const due = Date.now() + timeout; t = setTimeout(() => { if (done) return; if (more > 0 && ((this.ws && this.ws.readyState === 1) || Date.now() - due > 2000)) { more--; arm(); return; } try { this.ws && this.ws.close(); } catch (e) { } finish(false); }, timeout); };
+      arm();
       let ws; try { ws = this.ws = new WebSocket(this.url, ['mqtt']); } catch (e) { return finish(false); }
       ws.binaryType = 'arraybuffer';
       ws.onopen = () => {
@@ -88,7 +92,10 @@ export class Channel {
   declare kind: string; declare code: string; declare onMsg: ((m: any) => void) | undefined; declare will: unknown;
   declare clients: Mqtt[]; declare seen: Map<string, number>; declare alive: boolean; declare extra: Set<string>;
   declare key: CryptoKey | undefined; declare topic: string | undefined; declare extraKeys: Map<string, CryptoKey> | undefined;
-  constructor({ kind, code, onMsg, will }: { kind: string, code: string, onMsg?: (m: any) => void, will?: unknown }) { this.kind = kind; this.code = code; this.onMsg = onMsg; this.will = will; this.clients = []; this.seen = new Map(); this.alive = true; this.extra = new Set(); }
+  // onOpen: called each time a broker answers (the first time and after it dropped and came back), so a word that
+  // could not go out while no broker was connected (a knock on a slow device) can be said again straight away
+  declare onOpen: (() => void) | undefined;
+  constructor({ kind, code, onMsg, will, onOpen }: { kind: string, code: string, onMsg?: (m: any) => void, will?: unknown, onOpen?: () => void }) { this.kind = kind; this.code = code; this.onMsg = onMsg; this.onOpen = onOpen; this.will = will; this.clients = []; this.seen = new Map(); this.alive = true; this.extra = new Set(); }
   async start() {
     this.key = await keyFor(this.code); this.topic = await topicFor(this.kind, this.code);
     const will = this.will ? { topic: this.topic, payload: await seal(this.key, this.will), retain: true } : null;
@@ -111,6 +118,7 @@ export class Channel {
     const t0 = Date.now();
     c.onclose = () => { const n = Date.now() - t0 > 60000 ? 0 : tries + 1; if (this.alive) setTimeout(() => { this.clients = this.clients.filter(x => x !== c); this._connect(url, will, n); }, Math.min(60000, 2000 * (n + 1))); };
     if (!ok) { this.clients = this.clients.filter(x => x !== c); if (this.alive) setTimeout(() => this._connect(url, will, tries + 1), Math.min(60000, 4000 * (tries + 1))); }
+    else if (this.alive && this.onOpen) { try { this.onOpen(); } catch (e) { } }
   }
   // extra topics with their own keys (friends' presence)
   async watch(kind, code) { this.extraKeys = this.extraKeys || new Map(); const t = await topicFor(kind, code); this.extraKeys.set(t, await keyFor(code)); this.extra.add(t); this.clients.forEach(c => c.subscribe(t)); return t; }
