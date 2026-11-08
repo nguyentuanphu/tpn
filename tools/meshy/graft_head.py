@@ -77,8 +77,15 @@ incol = lambda c: (math.hypot(c.x - NCX, c.y - NCY) < NR * 1.15 and c.z < CUT + 
 _cz = np.array([p.center.z for p in body.data.polygons]); HCn = np.median(cn[_cz > _cz.max() - .05], axis=0)   # (the new body's own hair colour)
 hairn = np.linalg.norm(cn - HCn, axis=1) < .12
 kitn = Sn < .12   # (the grey swim kit, wherever it reaches: the tops of its straps rise above the cut)
-gone = [f for f in bm.faces if (f.calc_center_median().z > CUT and not kitn[f.index] and not (incol(f.calc_center_median()) and Vn[f.index] > .45 and Sn[f.index] > .1)) or
-        (f.calc_center_median().z > CUT - .12 and abs(f.calc_center_median().x) < .16 and f.calc_center_median().y > NCY and hairn[f.index])]   # (its hair at the nape only)
+# (8 Nov 2026: Lumi's leaves and Clara's braids twice) all of the new body's own hair goes (the old head brings its own),
+# not its skin (the fitting marked skin: Clara's hair is nearly her skin's colour)
+_skw = body.data.color_attributes.get('skinw')
+skinn = np.zeros(len(body.data.polygons), bool)
+if _skw is not None:
+    _w = np.array([c.color[0] for c in _skw.data], np.float32)
+    skinn = np.array([_w[list(p.loop_indices)].mean() > .5 for p in body.data.polygons])
+hairn &= ~skinn & ~kitn & (_cz > CUT - .35)
+gone = [f for f in bm.faces if (f.calc_center_median().z > CUT and not kitn[f.index] and not (incol(f.calc_center_median()) and Vn[f.index] > .45 and Sn[f.index] > .1)) or hairn[f.index]]
 bmesh.ops.delete(bm, geom=gone, context='FACES'); bmesh.ops.delete(bm, geom=[v for v in bm.verts if not v.link_faces], context='VERTS')
 bm.normal_update()
 NAPE_Y = NCY + NR * .35   # (behind this, below the hair, the neck is the new body's own)
@@ -98,13 +105,27 @@ SKC = np.median(co[warm & (cz > CUT + .05) & (cz < ztop - .08)], axis=0)   # (th
 skino = warm & (np.linalg.norm(co - SKC, axis=1) < .1)   # (a cream collar is warm too, but paler than skin)
 cx_ = np.array([p.center.x for p in oldbody.data.polygons])
 cy_ = np.array([p.center.y for p in oldbody.data.polygons]); _hy = float(np.median(cy_[cz > CUT]))
-hairo &= (cz > CUT) | ((np.abs(cx_) < .11) & (cy_ > _hy) & (cz > CUT - .08))   # (below the cut, hair only at the back of the neck)
+# (8 Nov 2026, Clara's braids and Sol's cape) below the cut, hair is kept only where it hangs from the head: grown
+# through hair-coloured triangles from the hair above the cut (Clara's braids in front stay whole; an old cape or collar
+# that happens to be hair-coloured, Sol's, and slivers on the shoulders are not joined to the head and go)
+_bm0 = bmesh.new(); _bm0.from_mesh(oldbody.data); _bm0.faces.ensure_lookup_table()
+_hang = hairo & (cz > CUT); _st = list(np.nonzero(_hang)[0])
+while _st:
+    i = _st.pop()
+    for e in _bm0.faces[int(i)].edges:
+        for k in e.link_faces:
+            if hairo[k.index] and not _hang[k.index]: _hang[k.index] = True; _st.append(k.index)
+_bm0.free()
+# (only friends with long hair hang far below the cut, Clara's braids: GH_LONG_HAIR=1; others' hair-coloured old capes or bibs,
+# Sol's and Lumi's, are joined to the hair through the surface and would hang on too)
+hairo = _hang & ((cz > CUT - .06) | bool(os.environ.get('GH_LONG_HAIR')))
+print('GH old hair triangles (head and hanging from it)', int(hairo.sum()))
 print('GH hair colour', np.round(HC, 3), 'skin colour', np.round(SKC, 3))
 bm = bmesh.new(); bm.from_mesh(oldbody.data); bm.faces.ensure_lookup_table()
 def keep(f):
     z = f.calc_center_median().z
     if z > CUT + .07: return True   # (the head itself: face, ears, hair)
-    if hairo[f.index]: return z > CUT - .14   # (hair, hanging a little lower at the nape)
+    if hairo[f.index]: return True   # (hair hanging from the head: braids, nape)
     # (owner 8 Nov 2026: "the neck is still smudged") the back of the old neck carries the shadow its hood painted; there
     # the new body's own clean nape shows instead, the join hidden under the hair
     if f.calc_center_median().y > NAPE_Y: return False

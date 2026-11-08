@@ -1,0 +1,56 @@
+{
+ "id": "lumi-swim",
+ "reference_prefix": "lumi-",
+ "source": "auto_joints.py from Meshy rig lumi-swim.glb",
+ "top": [
+  300.0,
+  33.3
+ ],
+ "neck": [
+  300.0,
+  396.7
+ ],
+ "hip": [
+  300.0,
+  515.4
+ ],
+ "shoulderL": [
+  356.9,
+  423.8
+ ],
+ "elbowL": [
+  406.1,
+  491.3
+ ],
+ "wristL": [
+  458.2,
+  552.5
+ ],
+ "hipL": [
+  333.1,
+  552.0
+ ],
+ "kneeL": [
+  348.5,
+  698.1
+ ],
+ "ankleL": [
+  353.9,
+  815.0
+ ],
+ "facebox": [
+  [
+   180.1,
+   167.8
+  ],
+  [
+   419.9,
+   364.0
+  ]
+ ],
+ "trim_back_hair": false,
+ "original_skin": true,
+ "keep_meshy_uvs": true,
+ "skin_shift": true,
+ "skin_ref": "#f6c7a5"
+}

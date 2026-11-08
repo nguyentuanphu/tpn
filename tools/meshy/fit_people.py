@@ -338,7 +338,7 @@ for side, cols in (('R', xx < W_ / 2), ('L', xx >= W_ / 2)):
     _w = WHT & cols
     if _w.sum() > 40:
         _rows = _w.sum(1).astype(np.float32); _rows = np.convolve(_rows, np.ones(9) / 9, 'same'); _r0 = int(np.argmax(_rows))
-        _w &= np.abs(yy - _r0) < H_ * .12
+        _w &= np.abs(yy - _r0) < H_ * .18   # (Lumi's big eyes are .28 of the face tall)
     bw = box_of(_w) if _w.sum() > 40 else None
     if bw:
         ww_, wh_ = bw[2] - bw[0], bw[3] - bw[1]

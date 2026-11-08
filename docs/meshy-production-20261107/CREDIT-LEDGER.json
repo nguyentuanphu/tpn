@@ -2,7 +2,7 @@
   "budget": 1000,
   "planned": 990,
   "reserve": 10,
-  "charged": 880,
+  "charged": 1015,
   "entries": [
     {
       "assetId": "clara",
@@ -391,6 +391,27 @@
       "state": "SUCCEEDED"
     },
     {
+      "kind": "model-revision",
+      "source": "sol-swim",
+      "chargedCredits": 30,
+      "taskId": "01a1b9f0-1d4c-772b-9b86-09cdacb2dc8b",
+      "state": "SUCCEEDED"
+    },
+    {
+      "kind": "model-revision",
+      "source": "clara-swim",
+      "chargedCredits": 30,
+      "taskId": "01a1b9f4-be48-7418-a2aa-1d91bb421b5b",
+      "state": "SUCCEEDED"
+    },
+    {
+      "kind": "model-revision",
+      "source": "lumi-swim",
+      "chargedCredits": 30,
+      "taskId": "01a1b9f9-0d18-75dc-b3ce-2022acdd0d82",
+      "state": "SUCCEEDED"
+    },
+    {
       "kind": "remesh",
       "source": "clara-r2",
       "chargedCredits": 5,
@@ -657,6 +678,48 @@
       "state": "SUCCEEDED"
     },
     {
+      "kind": "remesh",
+      "source": "sol-swim",
+      "chargedCredits": 5,
+      "taskId": "01a1b9f1-7147-717a-a188-3a78d22cf1a2",
+      "state": "SUCCEEDED"
+    },
+    {
+      "kind": "remesh",
+      "source": "sol-swim@9000",
+      "chargedCredits": 5,
+      "taskId": "01a1b9f3-0ea4-7244-abc5-2b7a6dab301c",
+      "state": "SUCCEEDED"
+    },
+    {
+      "kind": "remesh",
+      "source": "clara-swim",
+      "chargedCredits": 5,
+      "taskId": "01a1b9f6-1296-72d0-92fe-5fb86f8e8163",
+      "state": "SUCCEEDED"
+    },
+    {
+      "kind": "remesh",
+      "source": "clara-swim@9000",
+      "chargedCredits": 5,
+      "taskId": "01a1b9f7-5c34-7040-858c-78665b6ffda3",
+      "state": "SUCCEEDED"
+    },
+    {
+      "kind": "remesh",
+      "source": "lumi-swim",
+      "chargedCredits": 5,
+      "taskId": "01a1b9fa-125a-722d-9b45-ef93a6147273",
+      "state": "SUCCEEDED"
+    },
+    {
+      "kind": "remesh",
+      "source": "lumi-swim@9000",
+      "chargedCredits": 5,
+      "taskId": "01a1b9fb-5c69-724e-8c75-f40fb57949bc",
+      "state": "SUCCEEDED"
+    },
+    {
       "kind": "rigging",
       "source": "clara-r2",
       "chargedCredits": 5,
@@ -780,6 +843,27 @@
       "source": "finn-swim",
       "chargedCredits": 5,
       "taskId": "01a1b975-9b33-77eb-88ca-0143ee4ca67e",
+      "state": "SUCCEEDED"
+    },
+    {
+      "kind": "rigging",
+      "source": "sol-swim",
+      "chargedCredits": 5,
+      "taskId": "01a1b9f4-5887-7596-ab42-68f8611efb4c",
+      "state": "SUCCEEDED"
+    },
+    {
+      "kind": "rigging",
+      "source": "clara-swim",
+      "chargedCredits": 5,
+      "taskId": "01a1b9f8-a63b-74dd-abff-75fcfaf98772",
+      "state": "SUCCEEDED"
+    },
+    {
+      "kind": "rigging",
+      "source": "lumi-swim",
+      "chargedCredits": 5,
+      "taskId": "01a1b9fc-55ff-7274-afd0-74d0ae40385f",
       "state": "SUCCEEDED"
     }
   ],

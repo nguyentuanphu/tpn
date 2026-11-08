@@ -284,13 +284,18 @@ parts = []
 # tops (the T-shirt's grey and the skin they reach): length by the lowest point, sleeves to 0.45 (short), 1.9 (long)
 # (each chosen a little too big, then cut straight at its hems; tops end below the trousers' top, so nothing shows between)
 TOP_HEM = HIP - .03
+# (owner review 8 Nov: grey swim kit showing between garments) all the kit on the trunk counts as trunk, wherever it is,
+# and shorts reach past the kit shorts' own hem on the thighs
+istorso |= kit & ~isarm & ~isleg & (fc[:, 2] > HIP - .16) & (fc[:, 2] < NECK)
+_kl = kit & isleg; KIT_LEG_T = float(np.percentile(legt[_kl], 97)) + .06 if _kl.any() else .5
+print('CL kit shorts reach', round(KIT_LEG_T, 2))
 parts.append(shell('top-short', faces_for(top=TOP_HEM - .06, sleeve=.75), .012, cuts=[neck_cut(), hem_cut(TOP_HEM)] + limb_cuts('arm', .5)))
 parts.append(shell('top-long', faces_for(top=TOP_HEM - .06, sleeve=1.8), .013, cuts=[neck_cut(), hem_cut(TOP_HEM)] + limb_cuts('arm', 1.55)))
 parts.append(shell('tunic-long', np.union1d(faces_for(top=HIP - .2, sleeve=1.8, under_waist=True), faces_for(leg=.8)), .015,
                    cuts=[neck_cut(), hem_cut(HIP - .12)] + limb_cuts('arm', 1.55) + limb_cuts('leg', .55)))
-parts.append(shell('bodice', faces_for(top=WAIST - .06, sleeve=.6), .012, cuts=[neck_cut(), hem_cut(WAIST - .015)] + limb_cuts('arm', .35)))
+parts.append(shell('bodice', faces_for(top=HIP - .09, sleeve=.6), .012, cuts=[neck_cut(), hem_cut(HIP - .03)] + limb_cuts('arm', .35)))
 # bottoms
-parts.append(shell('shorts', faces_for(under_waist=True, leg=.75), .010, cuts=limb_cuts('leg', .5)))
+parts.append(shell('shorts', faces_for(under_waist=True, leg=max(.75, KIT_LEG_T + .2)), .010, cuts=limb_cuts('leg', max(.5, KIT_LEG_T))))
 parts.append(shell('trousers', faces_for(under_waist=True, leg=1.95), .011, cuts=limb_cuts('leg', 1.82)))
 parts.append(shell('leggings', faces_for(under_waist=True, leg=1.95), .007, cuts=limb_cuts('leg', 1.85)))
 # overalls: the bib over the chest's front, below the arms

@@ -1,0 +1,56 @@
+{
+ "id": "sol-swim",
+ "reference_prefix": "sol-",
+ "source": "auto_joints.py from Meshy rig sol-swim.glb",
+ "top": [
+  300.0,
+  33.3
+ ],
+ "neck": [
+  300.0,
+  288.1
+ ],
+ "hip": [
+  300.0,
+  434.5
+ ],
+ "shoulderL": [
+  359.2,
+  304.6
+ ],
+ "elbowL": [
+  391.7,
+  399.7
+ ],
+ "wristL": [
+  442.0,
+  482.4
+ ],
+ "hipL": [
+  329.9,
+  477.2
+ ],
+ "kneeL": [
+  343.1,
+  647.8
+ ],
+ "ankleL": [
+  350.3,
+  807.8
+ ],
+ "facebox": [
+  [
+   215.9,
+   127.6
+  ],
+  [
+   384.1,
+   265.2
+  ]
+ ],
+ "trim_back_hair": false,
+ "original_skin": true,
+ "keep_meshy_uvs": true,
+ "skin_shift": true,
+ "skin_ref": "#f6c7a5"
+}
