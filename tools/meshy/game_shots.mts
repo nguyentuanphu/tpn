@@ -46,6 +46,8 @@ const shots: Record<string, string> = await P.page.evaluate(async ([MODE, LIST])
     const t = id + (hd ? '-hd' : '');
     for (const m of MOODS) { mood(av, M, m); for (const s of [0, .7]) headShot(`${t}-${m}-${s ? 'tq' : 'front'}`, av.root, M, 0, s); }
     mood(av, M, 'smile'); for (const s of [Math.PI, 2.2, -2.2]) headShot(`${t}-neck-back-${s.toFixed(1)}`, av.root, M, 0, s);
+    // (owner 8 Nov 2026: "check the eyes from the side") each mood from both sides, close
+    for (const m of ['smile', 'blink', 'half', 'happy', 'sad', 'lookL', 'lookR']) { mood(av, M, m); for (const s of [1.2, -1.2]) headShot(`${t}-${m}-side${s > 0 ? 'L' : 'R'}`, av.root, M, 0, s); }
     top.remove(av.root);
   }
   // outfits: each of a friend's shop outfits (js/content/friends.ts SUIT_KINDS), full length, front, three-quarter, back

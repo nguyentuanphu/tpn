@@ -1102,6 +1102,8 @@ await check('friendmodel', async () => {
     out.hero = !!G.heroes[0].av.model;
     return out;
   });
+  // (8 Nov 2026, friends as the approved head grafted on a swim body with clothes made in the game: body, head, shoes, kit
+  // items, the face and the worn garments are their own parts, 9 to 10 draws; limit 11)
   // no model (an old phone, no network): the code person stays, nothing breaks
   const Q = await open(b, { w: 900, h: 700, route: async ctx => { await ctx.route('**/models/*.glb', r => r.abort()); } }); await clear(Q.page);
   const f = await Q.page.evaluate(async () => { const A = await import('/js/avatar.js'), ok = await A.loadFriendModels('sol'), av = A.buildAvatar({ set: 'boy', friend: 'sol', skin: '#f6c7a5' }); await new Promise(r => setTimeout(r, 500)); return { ok, model: !!av.model, hero: !!__sv.heroes[0].av.model, look: av.look.hair }; });
@@ -1110,7 +1112,7 @@ await check('friendmodel', async () => {
   sizes.forEach((n, i) => { if (n > 500 * 1024) bad.push(`model ${i} is ${Math.round(n / 1024)} KB`); });
   // (a relative tint rounds: the recovered tone is within 3 of 255 per channel)
   const near = (a: string, b: string) => [1, 3, 5].every(i => Math.abs(parseInt(a.slice(i, i + 2), 16) - parseInt(b.slice(i, i + 2), 16)) <= 3);
-  for (const id of ['finn', 'sol', 'clara', 'lumi']) { const x = r[id]; if (!x.ok || !(x.skin === '#b47a55' || x.pic && (near(x.skin, '#b47a55') || near(x.skin, '#f6c7a5'))) || x.faces < (x.pic ? 9 : 13) || x.turned < 1 || x.face !== 'face-happy' || x.tris > (id === 'lumi' ? 17500 : 12000) || x.draws > 7 || x.lines > 6 || !x.hat) bad.push(id + ' ' + JSON.stringify(x)); }
+  for (const id of ['finn', 'sol', 'clara', 'lumi']) { const x = r[id]; if (!x.ok || !(x.skin === '#b47a55' || x.pic && (near(x.skin, '#b47a55') || near(x.skin, '#f6c7a5'))) || x.faces < (x.pic ? 9 : 13) || x.turned < 1 || x.face !== 'face-happy' || x.tris > (id === 'lumi' ? 17500 : 12000) || x.draws > 11 || x.lines > 6 || !x.hat) bad.push(id + ' ' + JSON.stringify(x)); }
   if (!r.hero) bad.push('the child in the valley has no model'); if (f.ok || f.model || f.hero || f.look !== '#e0762a') bad.push('no model: ' + JSON.stringify(f));
   ok(!bad.length && !errs.length, JSON.stringify({ bad, errs, r }).slice(0, 2000));
   return `${sizes.map(n => Math.round(n / 1024)).join(', ')} KB; ${['finn', 'sol', 'clara', 'lumi'].map(id => `${id} ${r[id].tris} triangles in ${r[id].draws} parts (+${r[id].lines} outlines)`).join(', ')}; skin tone, joints and moods follow; the cap is worn; without the files the code person stays`;
@@ -1149,7 +1151,7 @@ await check('frienditems', async () => {
     const w = ms => new Promise(r => setTimeout(r, ms)), G = __sv, h = G.heroes[0], p = h.profile, Q = await import('/js/content/friendquests.js'), A = await import('/js/avatar.js');
     for (let k = 0; k < 60 && !(G.friendQuests && h.av.model); k++) await w(250);
     const item = av => { let v = null; av.model && av.model.obj.traverse(o => { if (o.isMesh && o.material.name === 'cloth-item') v = o.visible; }); return v; };
-    const boots = av => { let v = null; av.model && av.model.obj.traverse(o => { if (o.isMesh && o.material.name === 'cloth-shoes') v = o.visible; }); return v; };
+    const boots = av => { let v = null; av.model && av.model.obj.traverse(o => { if (o.isMesh && /^(cloth-shoes|lit-g-boots)$/.test(o.material.name)) v = o.visible; }); return v; }; // (8 Nov 2026: a swim-body friend's boots are a garment, lit-g-boots)
     const f = p.look.friend, out: any = { f, model: !!h.av.model };
     // every quest: three steps, each at a place that stands in the valley, lines in English and Vietnamese
     out.places = Object.values(Q.FRIEND_QUESTS).flatMap(q => q.steps.map(s => s.spot)).filter(id => !G.interactables.some(it => it.id === id));
@@ -1185,7 +1187,7 @@ await check('frienditems', async () => {
   if (r.after.item !== true || !String(r.after.fitems).split(' ').includes(r.f) || r.after.step !== 3 || !r.after.done || r.after.follow || /^FQ_/.test(r.after.goal)) bad.push('after ' + JSON.stringify(r.after));
   if (r.other !== false) bad.push('another friend carries an item not earned');
   if (r.shoes.boots !== false || r.shoes.code < 2 || r.shoes.plain !== true) bad.push('shoes ' + JSON.stringify(r.shoes));
-  if (r.draws > 8) bad.push('draws ' + r.draws); // (v1.08e part 3: the sculpted face draws in two parts, its colours and its lids in the skin tone)
+  if (r.draws > 11) bad.push('draws ' + r.draws); // (8 Nov 2026: a swim-body friend: body, head, feet, face, worn garments and the item, 11) // (v1.08e part 3: the sculpted face draws in two parts, its colours and its lids in the skin tone)
   ok(!bad.length && !errs.length, JSON.stringify({ bad, errs, r }).slice(0, 2000));
   return `${r.f}: three steps at places in the valley, followed on the goal bar; the item shows only after the third; shop shoes replace the boots; ${r.draws} parts drawn with the item`;
 });

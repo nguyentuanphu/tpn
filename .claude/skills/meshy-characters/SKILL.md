@@ -57,6 +57,18 @@ Then the checks: `node suite.mts --only faces,friendmodel,frienditems,friendoutf
 - PowerShell `String.Replace` on `fit_people.py` silently does nothing when the line ends differ (CRLF): use the Edit tool, and check "found True".
 - `fit_person.ps1` must fail loudly (it checks the exit code and `EXCEPTION_`), or an old model gets installed without notice.
 
+## Friends: old head on a swim body, clothes made in code (8 Nov 2026)
+
+One friend end to end: `GF_SKIP_REFIT=1 powershell -File tools/meshy/graft_friend.ps1 -Id <id>` (refits are slow; skip them once the fitted old head and swim body exist). `graft_head.py` puts the approved old head on the swim body, and `make_clothes.py` makes the garments (`lit-g-<part>`). Review with `game_shots.mts` `faces` (with the side views), `outfits` and `nape`, and crop the chins and collars at full size.
+
+- Find what a stray piece belongs to before fixing it: render each part in a flat colour (body, old head, face, garment). Guessing cost a dozen rounds on the chins and collars.
+- These children's shoulders rise above the neck cut. Below the cut, keep the old head only close round the neck, at most 4 cm down. At neck height the old hair spread wide (Sol's cape) and the old neck's front (Finn's V) lie over the new shirt.
+- Long hair that hangs in front (Clara's braids): use the swim body's own braids below the cut (`GH_LONG_HAIR`). The old head's braids were shards with the old outfit's straps cut out. The braids are marked `own_hair`, and a garment never covers them. Grow the mark through coloured triangles only, never the kit's tinted shading.
+- Garment rays near the collar must start on the neck's own axis. The trunk's middle lies in front of the neck, so a ray from it pointed backwards and threw the collar's front to the nape, which left the grey kit bare under the chin.
+- Skirts: fit the waist ring without hair, widen each ring to the body at that height (the seat), but only for nearby points (never a hand beside the hip).
+- Light model under 500 KB: Clara's needs `GH_TEX_MAX=300`. Reducing her garments further let leggings poke through skirts.
+- Edit Python files with the Edit tool or Python, never PowerShell `Get-Content`/`Set-Content`: on Windows PowerShell 5.1 they garble Vietnamese text ("áo dài").
+
 ## Scaling up
 
 When a method is proven on one person (owner-approved), the rest can be split across chats or accounts: one chat per group (e.g. friends, VN-north villagers, VN-central, VN-south, Australia, animals by skeleton type), each using this skill, the same tools and its own review sheets, never two chats writing the same files. Paid Meshy jobs stay on one account's journal per group; each group syncs its ledger.

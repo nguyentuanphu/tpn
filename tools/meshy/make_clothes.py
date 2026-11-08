@@ -14,6 +14,7 @@ from mathutils import Vector
 from mathutils.bvhtree import BVHTree
 a = sys.argv[sys.argv.index('--') + 1:]
 BLEND, OUT = a[0], a[1]; RDIR = a[2] if len(a) > 2 else None
+LIGHT = '-light' in os.path.basename(OUT)
 bpy.ops.wm.open_mainfile(filepath=BLEND)
 sc = bpy.context.scene; VL = bpy.context.view_layer
 rig = bpy.data.objects['rig']
@@ -79,20 +80,24 @@ for i in np.nonzero(grey)[0]:
 gtree = BVHTree.FromBMesh(gbm)
 cyz = float(np.median(fc[istorso, 1])) if istorso.any() else 0.
 infront = np.zeros(NP, bool)
-for i in np.nonzero(~grey & ((fS > .3) | (fV < .25)) & (fc[:, 2] < NECK) & (fc[:, 2] > HIP - .1) & ~isarm)[0]:   # (hair-coloured only: the kit's raised collar ring is not hair)
+for i in np.nonzero(~grey & (fS > .3) & ~((fS < .35) & (fV < .45)) & (fc[:, 2] < NECK) & (fc[:, 2] > HIP - .1) & ~isarm)[0]:   # (coloured hair only: the kit's collar ring and its dark shaded underside are not hair, Sol's)
     P = Vector(fc[i]); d = Vector((0, 1 if P.y < cyz else -1, 0)); h = gtree.ray_cast(P, d, .25)
     if h[0] is not None and h[3] > .01: infront[i] = True
 gbm.free()
 hair = ((fc[:, 2] >= NECK) & ~grey) | infront   # (the grey neckline is clothes)
+_oh = me.attributes.get('own_hair')   # (graft_head.py: the swim body's own braids, Clara's, kept whole)
+if _oh is not None:
+    _ohv = np.zeros(NP, np.int32); _oh.data.foreach_get('value', _ohv); hair |= _ohv > 0
+    print('CL own braids (graft)', int((_ohv > 0).sum()))
 clothable = ~hair
 print('CL hair in front of the shirt', int(infront.sum()))
 
 # (owner review 8 Nov: a grey collar showed above every top) the kit is everything on the body that is neither skin
 # (the skin marks from fitting) nor hair: its shaded parts fail the plain grey test. Tops reach 1.2 cm past its top edge.
 kit = (~skin if skin.any() else grey) & ~hair & (fS < .3)
-_kc = kit & (np.abs(fc[:, 0]) < SH_X * .7) & (fc[:, 2] > WAIST) & (fc[:, 2] < NECK)
+_kc = kit & (np.abs(fc[:, 0]) < SH_X * .7) & (fc[:, 2] > WAIST) & (fc[:, 2] < NECK + .04)   # (owner 8 Nov: a grey ring under the chins; Finn's kit rose 2 cm past the neck joint)
 KIT_TOP = float(fc[_kc, 2].max()) if _kc.any() else NECK - .02
-NECKBAND = min(KIT_TOP + .012, NECK + .02)
+NECKBAND = min(KIT_TOP + .012, NECK + .05)
 print('CL kit top', round(KIT_TOP, 3), 'neckband', round(NECKBAND, 3), 'neck', round(NECK, 3))
 # (owner review 8 Nov: the grey collar still showed at the back) a top's selection shrank below the collar when it was
 # smoothed: it now reaches 3 cm up the neck itself (the neck column: close round the neck's axis, never hair hanging
@@ -160,13 +165,17 @@ def shell(name, faces, thick, smooth=6, cuts=()):
     (owner review 8 Nov: ragged hems) each cut is a flat plane at a hem or cuff: the part is chosen a little too big and
     cut there, so hems run straight across the body instead of following its triangles. A torso hem cuts only the torso,
     a sleeve cut only that arm, a leg cut only that leg."""
+    if LIGHT and name.startswith(('top', 'tunic')): thick *= 1.8   # (tops only: thicker leggings poked through skirts, Clara's; light model: its garments are reduced below, and a thin shell lets the grey kit poke through, owner review 8 Nov)
     o = body.copy(); o.data = body.data.copy(); o.name = 'g-' + name; sc.collection.objects.link(o)
     bm = bmesh.new(); bm.from_mesh(o.data); bm.faces.ensure_lookup_table()
     keep = set(int(i) for i in faces)
     bmesh.ops.delete(bm, geom=[f for f in bm.faces if f.index not in keep], context='FACES')
     bmesh.ops.remove_doubles(bm, verts=bm.verts[:], dist=.0004)   # (Meshy's file splits vertices at picture seams)
     bm.normal_update()
-    for _ in range(smooth): bmesh.ops.smooth_vert(bm, verts=bm.verts[:], factor=.5, use_axis_x=True, use_axis_y=True, use_axis_z=True)
+    # (owner 8 Nov 2026: a grey ring under the chins) the collar's open edge is not smoothed: smoothing pulled a top's neckline
+    # 3 cm down below the kit's collar, before its neckband cut could shape it (the cuts trim the edges straight below)
+    _inner = [v for v in bm.verts if not (v.is_boundary and v.co.z > NECKBAND - .06)]   # (only the collar's edge: other open edges, the hems and small gaps, smooth as before or they tore)
+    for _ in range(smooth): bmesh.ops.smooth_vert(bm, verts=_inner, factor=.5, use_axis_x=True, use_axis_y=True, use_axis_z=True)
     for region, s, p, d in cuts:
         def mine(f):
             c = f.calc_center_median()
@@ -174,7 +183,7 @@ def shell(name, faces, thick, smooth=6, cuts=()):
             side_ok = (c.x >= 0) == (s == 'L')
             P = np.array([c[:]])
             da = along(P, J['arm' + s], J['elbow' + s], J['hand' + s])[0][0]; dl = along(P, J['leg' + s], J['knee' + s], J['ankle' + s])[0][0]
-            return side_ok and ((da < dl) if region == 'arm' else (dl < da))
+            return side_ok and ((da < dl and da < .1) if region == 'arm' else (dl < da and dl < .15))   # (only the limb itself: the chest is closer to an arm than to a leg, and a sleeve cut sliced the shirt's belly off, Sol's and Clara's)
         fs = [f for f in bm.faces if mine(f)]
         if not fs: continue
         geom = list({v for f in fs for v in f.verts}) + list({e for f in fs for e in f.edges}) + fs
@@ -203,7 +212,11 @@ def shell(name, faces, thick, smooth=6, cuts=()):
             # front of the leg, so rays from the bone missed the shins)
             dvec = v.normal.normalized() if v.normal.length > .5 else hit[1].normalized(); origin = v.co - dvec * .05; reach = .11
         else:
-            axis = Vector((0, cyz, v.co.z)); dvec = v.co - axis
+            # (owner 8 Nov 2026: a grey ring under the chins) at collar height the rays start on the neck's own axis: the
+            # trunk's middle lies in front of the neck there, and a ray from it through the front of the neck pointed
+            # backwards and threw the collar's front edge to the nape, baring the kit under the chin (Clara's)
+            _w = max(0., min(1., (v.co.z - (NECK - .06)) / .04))
+            axis = Vector((NAX * _w, cyz + (NAY - cyz) * _w, v.co.z)); dvec = v.co - axis
             if dvec.length < 1e-5: continue
             dvec.normalize(); origin = axis.copy(); reach = .4
         last = None
@@ -211,10 +224,17 @@ def shell(name, faces, thick, smooth=6, cuts=()):
             h = RTREE[region].ray_cast(origin, dvec, reach - (origin - (v.co - dvec * .05 if chain else axis)).length)
             if h[0] is None: break
             last = h[0]; origin = h[0] + dvec * .0005
-        if last is not None: v.co = last + dvec * thick
+        # (owner 8 Nov 2026: a grey ring under the chins) the collar hugs the neck: the shirt's lift tapers to almost nothing
+        # over its top 5 cm, so the kit's top edge is never seen past it
+        _ring = max(0., min(1., (math.hypot(v.co.x - NAX, v.co.y - NAY) - NRAD * 1.15) / (NRAD * .5)))   # (0 at the neck, 1 a little out: the shoulders keep their lift)
+        _th = thick * max(.7, min(1., (NECKBAND - v.co.z) / .05 + _ring)) if region == 'torso' else thick
+        if last is not None: v.co = last + dvec * _th
         else:
             hit = btree.find_nearest(v.co)
-            if hit[0] is not None: v.co = hit[0] + hit[1].normalized() * thick
+            # (owner 8 Nov 2026: a grey ring under the chins) no torso surface at collar height (the neck is not in it): the
+            # nearest body point lay 3 cm lower and dragged the collar down past the kit; a point far from it lifts in place
+            if hit[0] is not None and (hit[0] - v.co).length < .008: v.co = hit[0] + hit[1].normalized() * _th
+            elif v.normal.length > .5: v.co = v.co + v.normal.normalized() * _th
     bm.normal_update()
     # painted shade: the body's own colour under each corner, as brightness relative to the grey clothes / the skin
     uv = bm.loops.layers.uv.active; col = bm.loops.layers.color.new('shade')
@@ -234,13 +254,26 @@ def shell(name, faces, thick, smooth=6, cuts=()):
 def cone(name, z_top, z_bot, flare, thick, panels=False, slit=.0):
     """a skirt (or the áo dài's long panels with side slits) hung from the waist: rings round the body's own waist,
     widening to the hem; weighted to the torso at the top, more to each leg's side lower down"""
-    ring = [(fc[i]) for i in np.nonzero(istorso & (np.abs(fc[:, 2] - z_top) < .02))[0]]
+    ring = [(fc[i]) for i in np.nonzero(istorso & ~hair & (np.abs(fc[:, 2] - z_top) < .02))[0]]   # (never hair: Clara's braid tips in front of the waist pulled the skirt forward and her seat poked out behind)
     cx = float(np.mean([p[0] for p in ring])) if ring else 0.; cy = float(np.mean([p[1] for p in ring])) if ring else 0.
     rx = max(abs(p[0] - cx) for p in ring) + thick if ring else .12; ry = max(abs(p[1] - cy) for p in ring) + thick if ring else .08
     N, R = 48, 10; bm = bmesh.new(); rows = []
     for r in range(R + 1):
         t = r / R; z = z_top + (z_bot - z_top) * t; k = 1 + flare * t ** 1.4
-        rows.append([bm.verts.new((cx + math.cos(2 * math.pi * i / N) * rx * k, cy + math.sin(2 * math.pi * i / N) * ry * k, z)) for i in range(N)])
+        # (each ring reaches past the body at its height, the seat and thighs: in each direction the farthest body point
+        # there, plus the thickness)
+        _b = fc[~hair & ~isarm & (np.abs(fc[:, 2] - z) < .03)]
+        _row = []
+        for i in range(N):
+            ca, sa = math.cos(2 * math.pi * i / N), math.sin(2 * math.pi * i / N); rr = 1.
+            if len(_b):
+                dx, dy = _b[:, 0] - cx, _b[:, 1] - cy; ang = np.arctan2(dy, dx) - math.atan2(sa, ca); ang = (ang + np.pi) % (2 * np.pi) - np.pi
+                _base = math.hypot(rx * k * ca, ry * k * sa); _near = (np.abs(ang) < .25) & (np.hypot(dx, dy) < _base * 1.4)   # (the body there, never a hand hanging beside the hip)
+                if _near.any():
+                    need = float(np.max(dx[_near] * ca + dy[_near] * sa)) + thick
+                    rr = min(1.4, max(1., need / max(_base, 1e-4)))
+            _row.append(bm.verts.new((cx + ca * rx * k * rr, cy + sa * ry * k * rr, z)))
+        rows.append(_row)
     for r in range(R):
         for i in range(N):
             ang = 2 * math.pi * (i + .5) / N
@@ -299,8 +332,12 @@ parts.append(shell('shorts', faces_for(under_waist=True, leg=max(.75, KIT_LEG_T 
 parts.append(shell('trousers', faces_for(under_waist=True, leg=1.95), .011, cuts=limb_cuts('leg', 1.82)))
 parts.append(shell('leggings', faces_for(under_waist=True, leg=1.95), .007, cuts=limb_cuts('leg', 1.85)))
 # overalls: the bib over the chest's front, below the arms
-_bf = faces_for(top=HIP + .01, front_only=True)
-parts.append(shell('bib', _bf[(fc[_bf, 2] < NECK - (NECK - WAIST) * .35) & (np.abs(fc[_bf, 0]) < SH_X * .75)], .014))
+# (owner review 8 Nov: Lumi's bib was a round blob) a straight-edged bib: the chest's front, cut flat at its top and sides
+_bf = faces_for(top=HIP - .04, front_only=True)
+BIB_TOP = WAIST + (NECK - WAIST) * .55; BIB_X = SH_X * .55
+parts.append(shell('bib', _bf[(fc[_bf, 2] < BIB_TOP + .05) & (np.abs(fc[_bf, 0]) < BIB_X + .05)], .016, smooth=2,
+                   cuts=[('torso', None, Vector((0, 0, BIB_TOP)), Vector((0, 0, 1))), ('torso', None, Vector((BIB_X, 0, 0)), Vector((1, 0, 0))),
+                         ('torso', None, Vector((-BIB_X, 0, 0)), Vector((-1, 0, 0))), hem_cut(WAIST - .01)]))
 # skirts and the áo dài's panels
 parts.append(cone('skirt', WAIST, KNEE + .03, .55, .02))
 parts.append(cone('aodai-panels', WAIST, ANKLE + .04, .5, .03, panels=True, slit=.14))
@@ -324,6 +361,25 @@ if feet is not None:
     fo.data.color_attributes.active_color = fo.data.color_attributes['shade']
     fo.data.materials.clear(); fo.data.materials.append(bpy.data.materials.new('lit-g-boots')); parts.append(fo)
 
+# (light model, far away only: the garments carry half their triangles; Clara's light model passed the 500 KB limit)
+if LIGHT:
+    for o in parts:
+        if len(o.data.polygons) < 300: continue
+        bpy.context.view_layer.objects.active = o; dm = o.modifiers.new('reduce', 'DECIMATE'); dm.ratio = float(os.environ.get('CL_REDUCE', '.6'))
+        bpy.ops.object.modifier_apply(modifier='reduce')
+    print('CL light garments reduced', sum(len(o.data.polygons) for o in parts))
+# (owner 8 Nov 2026: a grey ring under the chins) under the collar the body's own grey kit sinks 8 mm in: looking down past
+# a collar's edge shows a shadow, not the swimsuit (its shared edge with the neck's skin stays, under the collar)
+_kv = set()
+for p_ in me.polygons:
+    if kit[p_.index] and p_.center.z > NECKBAND - .06 and math.hypot(p_.center.x - NAX, p_.center.y - NAY) < NRAD * 3: _kv.update(p_.vertices)
+_notkit = set()
+for p_ in me.polygons:
+    if not kit[p_.index]: _notkit.update(p_.vertices)
+_sunk = 0
+for vi in _kv - _notkit:
+    v_ = me.vertices[vi]; v_.co = v_.co - v_.normal * .008; _sunk += 1
+me.update(); print('CL kit sunk under the collar', _sunk)
 # every part follows the rig as the body does
 for o in parts:
     o.parent = rig

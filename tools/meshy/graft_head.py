@@ -84,7 +84,32 @@ skinn = np.zeros(len(body.data.polygons), bool)
 if _skw is not None:
     _w = np.array([c.color[0] for c in _skw.data], np.float32)
     skinn = np.array([_w[list(p.loop_indices)].mean() > .5 for p in body.data.polygons])
+# (owner 8 Nov 2026: chins and necks) the shaded strands are darker than the top of the head: by hue too (Sol's swim
+# body's own locks on the shoulders, which the snug new collars no longer hide)
+_hcc = HCn / max(float(HCn.max()), 1e-4)
+hairn |= (np.linalg.norm(cn / np.maximum(Vn, 1e-4)[:, None] - _hcc, axis=1) < .12) & (Sn > .25) & (Vn < float(HCn.max()) * 1.15)
 hairn &= ~skinn & ~kitn & (_cz > CUT - .35)
+# (owner 8 Nov 2026: "bím của Clara lởm chởm") the old head's braids below the shoulders are broken shards (its outfit's
+# straps were cut out of them); the swim body's own braids are whole, ties and all: GH_LONG_HAIR keeps the new body's
+# hair in front of the neck below the shoulders, and the old head's hair stops 6 cm under the cut as everyone's (3 cm overlap)
+LONG = bool(os.environ.get('GH_LONG_HAIR'))
+if LONG:
+    _cy = np.array([p.center.y for p in body.data.polygons])
+    _cx = np.array([p.center.x for p in body.data.polygons]); _bz = (_cz < CUT) & (_cz > CUT - .35) & ((_cy < NCY - NR * .5) | ((np.abs(_cx - NCX) > NR * 1.3) & (_cy < NCY + NR * .3)))   # (and beside the neck, where the braids pass over the shoulders)   # (in front of the neck, shoulders to chest: never the back of the waist)
+    _own = hairn & _bz; hairn &= ~_bz
+    # the whole braid, its shaded strands and ties too: grown from the hair-coloured part through what is neither kit
+    # nor marked skin; make_clothes.py reads the mark ('own_hair') and never puts a garment over it
+    _bm1 = bmesh.new(); _bm1.from_mesh(body.data); _bm1.faces.ensure_lookup_table(); _st = list(np.nonzero(_own)[0])
+    while _st:
+        for e in _bm1.faces[int(_st.pop())].edges:
+            for k in e.link_faces:
+                j = k.index
+                if not _own[j] and _bz[j] and not kitn[j] and not skinn[j] and Sn[j] > .22: _own[j] = True; _st.append(j)   # (coloured only: the kit collar's tinted shading stayed bare under the chin)
+    _bm1.free()
+    _at = body.data.attributes.get('own_hair') or body.data.attributes.new('own_hair', 'INT', 'FACE')
+    _at.data.foreach_set('value', _own.astype(np.int32))
+    print('GH own braids kept', int(_own.sum()))
+    bm.free(); bm = bmesh.new(); bm.from_mesh(body.data); bm.faces.ensure_lookup_table()   # (with the mark)
 gone = [f for f in bm.faces if (f.calc_center_median().z > CUT and not kitn[f.index] and not (incol(f.calc_center_median()) and Vn[f.index] > .45 and Sn[f.index] > .1)) or hairn[f.index]]
 bmesh.ops.delete(bm, geom=gone, context='FACES'); bmesh.ops.delete(bm, geom=[v for v in bm.verts if not v.link_faces], context='VERTS')
 bm.normal_update()
@@ -103,6 +128,10 @@ hairo = np.linalg.norm(co - HC, axis=1) < .14
 warm = (co[:, 0] > co[:, 1]) & (co[:, 1] > co[:, 2] * .95) & (So > .12) & (So < .62) & (Vo > .45)
 SKC = np.median(co[warm & (cz > CUT + .05) & (cz < ztop - .08)], axis=0)   # (the face's own skin)
 skino = warm & (np.linalg.norm(co - SKC, axis=1) < .1)   # (a cream collar is warm too, but paler than skin)
+# (owner 8 Nov 2026: "cằm có vấn đề") under the jaw the skin is in shadow, darker than the face: by its hue (colour over
+# brightness) it is still skin, and it stays, or the chin's underside opened in jagged holes
+_skc = SKC / max(float(SKC.max()), 1e-4)
+skino |= (Vo > .3) & (np.linalg.norm(co / np.maximum(Vo, 1e-4)[:, None] - _skc, axis=1) < .12) & (cz > CUT + .005) & (cz < CUT + .1)   # (the jaw only: below the cut, Sol's brown cape and Lumi's collar share the hue)
 cx_ = np.array([p.center.x for p in oldbody.data.polygons])
 cy_ = np.array([p.center.y for p in oldbody.data.polygons]); _hy = float(np.median(cy_[cz > CUT]))
 # (8 Nov 2026, Clara's braids and Sol's cape) below the cut, hair is kept only where it hangs from the head: grown
@@ -110,21 +139,48 @@ cy_ = np.array([p.center.y for p in oldbody.data.polygons]); _hy = float(np.medi
 # that happens to be hair-coloured, Sol's, and slivers on the shoulders are not joined to the head and go)
 _bm0 = bmesh.new(); _bm0.from_mesh(oldbody.data); _bm0.faces.ensure_lookup_table()
 _hang = hairo & (cz > CUT); _st = list(np.nonzero(_hang)[0])
+# (owner 8 Nov 2026: Clara's braid tips ragged) the shaded tips and ties of hanging hair are darker: below the cut a
+# looser colour match (and any triangle mostly surrounded by hair) joins the hair
+_loose = (np.linalg.norm(co - HC, axis=1) < .26) | ((Vo < .5) & (np.linalg.norm(co / np.maximum(Vo, 1e-4)[:, None] - HC / max(float(HC.max()), 1e-4), axis=1) < .25))
 while _st:
     i = _st.pop()
     for e in _bm0.faces[int(i)].edges:
         for k in e.link_faces:
-            if hairo[k.index] and not _hang[k.index]: _hang[k.index] = True; _st.append(k.index)
+            ok = hairo[k.index] or (cz[k.index] < CUT and _loose[k.index])
+            if ok and not _hang[k.index]: _hang[k.index] = True; _st.append(k.index)
+# small holes inside the hair (a triangle whose neighbours are all hair) fill in
+for _ in range(2):
+    add = []
+    for f in _bm0.faces:
+        if _hang[f.index]: continue
+        nb = {k.index for e in f.edges for k in e.link_faces if k.index != f.index}
+        if nb and sum(_hang[j] for j in nb) >= len(nb) - 0: add.append(f.index)
+    _hang[add] = True
 _bm0.free()
 # (only friends with long hair hang far below the cut, Clara's braids: GH_LONG_HAIR=1; others' hair-coloured old capes or bibs,
 # Sol's and Lumi's, are joined to the hair through the surface and would hang on too)
-hairo = _hang & ((cz > CUT - .06) | bool(os.environ.get('GH_LONG_HAIR')))
+hairo = _hang & (cz > CUT - .06)   # (Clara's braids below: the swim body's own, see LONG above)
+# (owner 8 Nov 2026: chins and necks) below the cut, the old head's hair stays only behind the neck (the nape's hair);
+# in front and on the shoulders it was an old cape or collar of the hair's colour (Sol's), which the snug new collars
+# no longer hide; Clara's braid tops in front stay (they join her own braids)
+if not LONG: hairo &= (cz > CUT) | (cy_ > NCY - NR * .2)
+else: hairo &= (cz > CUT) | (cy_ > NCY + NR * .3)   # (Clara: in front and beside the neck below the cut her own braids take over, whole)
 print('GH old hair triangles (head and hanging from it)', int(hairo.sum()))
 print('GH hair colour', np.round(HC, 3), 'skin colour', np.round(SKC, 3))
 bm = bmesh.new(); bm.from_mesh(oldbody.data); bm.faces.ensure_lookup_table()
 def keep(f):
     z = f.calc_center_median().z
     if z > CUT + .07: return True   # (the head itself: face, ears, hair)
+    # (owner 8 Nov 2026: chins and necks) below the cut only what lies close round the neck and at most 4 cm down stays:
+    # an old collar's V down Finn's chest and hair spread over Sol's shoulders went (Clara's braid tops 6 cm)
+    c_ = f.calc_center_median(); _rd = math.hypot(c_.x - NCX, c_.y - NCY)
+    # (these children's shoulders rise above the cut) at neck height the old hair spread wider than the neck lay over the
+    # new shoulders (Sol's), and the old neck's front lay over the new collar in a V (Finn's): the front of the neck is the
+    # new body's own up to 3 cm above the cut, the join hidden under the chin
+    if not LONG and hairo[f.index] and _rd > NR * 2.2: return False
+    if z < CUT + .03 and c_.y < NCY - NR * .3 and not hairo[f.index]: return False
+    if z < CUT:
+        if _rd > NR * 1.6 or z < CUT - (.06 if LONG else .04): return False
     if hairo[f.index]: return True   # (hair hanging from the head: braids, nape)
     # (owner 8 Nov 2026: "the neck is still smudged") the back of the old neck carries the shadow its hood painted; there
     # the new body's own clean nape shows instead, the join hidden under the hair
@@ -186,5 +242,9 @@ if RDIR:
     for nm, ang in (('front', 0), ('side', 90), ('back', 180), ('tq', 40)):
         r_ = math.radians(ang); cob.location = (math.sin(r_) * 3, -math.cos(r_) * 3, CUT + .02); cob.rotation_euler = (math.radians(90), 0, r_)
         sc.render.filepath = os.path.join(RDIR, 'graft-' + nm + '.png'); bpy.ops.render.render(write_still=True)
+TEXMAX = int(os.environ.get('GH_TEX_MAX', '0'))   # (light model of a friend whose two pictures pass the 500 KB limit: Clara's)
+if TEXMAX:
+    for im in bpy.data.images:
+        if im.size[0] > TEXMAX and im.users: im.scale(TEXMAX, int(im.size[1] * TEXMAX / im.size[0])); im.pack(); print('GH picture', im.name, 'to', TEXMAX)
 bpy.ops.wm.save_as_mainfile(filepath=OUT)
 print('GH done', OUT)

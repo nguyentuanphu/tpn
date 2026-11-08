@@ -10,6 +10,7 @@ $B = 'C:\Users\nguye\tools\blender-4.2.23-windows-x64\blender.exe'; $npx = 'C:\P
 $repo = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent; Set-Location $repo
 $ref = "D:\WorkSpace\meshy\work-v108\$Id-game-hd.glb"; $raw = 'D:\WorkSpace\meshy\raw-models'
 function Run($script, $argList) { $ErrorActionPreference = 'Continue'; $out = & $B -b -P $script -- @argList 2>&1 | Out-String; if ($LASTEXITCODE -ne 0 -or $out -match 'Traceback|rror: |EXCEPTION_') { throw "$script failed: $($out.Substring([Math]::Max(0,$out.Length-800)))" }; return $out }
+if ($env:GF_SKIP_REFIT) { Write-Output 'refits skipped' } else {
 # 1. the earlier model, refitted (Clara's comes from her approved revision clara-r2 with hand-marked joints)
 if ($Id -eq 'clara') {
   $o = 'D:\WorkSpace\meshy\fitted\clara'; $j = 'docs\meshy-production-20261107\joints\clara-remesh.json'
@@ -19,10 +20,12 @@ if ($Id -eq 'clara') {
 } else { powershell -NoProfile -ExecutionPolicy Bypass -File tools\meshy\fit_person.ps1 -Id $Id | Out-Null }
 # 2. the swim body
 powershell -NoProfile -ExecutionPolicy Bypass -File tools\meshy\fit_person.ps1 -Id "$Id-swim" -Ref $ref -Prefix "$Id-" | Out-Null
+}   # (GF_SKIP_REFIT=1: reuse the fitted heads and bodies, only graft and dress again)
 # 3. the old head on it, the clothes, packed
 if ($Id -eq 'clara') { $env:GH_LONG_HAIR = '1' } else { Remove-Item Env:GH_LONG_HAIR -ErrorAction SilentlyContinue }   # (Clara's braids hang to her chest)
 $g = "D:\WorkSpace\meshy\fitted\$Id-graft"; New-Item -ItemType Directory -Force $g | Out-Null
 foreach ($n in 'hd', 'light') {
+  if ($n -eq 'light' -and $Id -eq 'clara') { $env:GH_TEX_MAX = '300' } else { Remove-Item Env:GH_TEX_MAX -ErrorAction SilentlyContinue }   # (Clara's light model: 500 KB limit)
   $null = Run 'tools\meshy\graft_head.py' @("D:\WorkSpace\meshy\fitted\$Id-swim\$Id-swim-$n.blend", "D:\WorkSpace\meshy\fitted\$Id\$Id-$n.blend", "$g\$Id-graft-$n.blend")
   $null = Run 'tools\meshy\make_clothes.py' @("$g\$Id-graft-$n.blend", "$g\$Id-dressed-$n.glb")
   & node $npx -y gltfpack@0.20.0 -i "$g\$Id-dressed-$n.glb" -o "$g\$Id-dressed-$n-packed.glb" -cc -kn -km -ke 2>&1 | Out-Null
