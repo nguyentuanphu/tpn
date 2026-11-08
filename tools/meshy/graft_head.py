@@ -72,6 +72,13 @@ bm = bmesh.new(); bm.from_mesh(body.data); bm.faces.ensure_lookup_table()
 _ring = [f.calc_center_median() for f in bm.faces if CUT - .03 < f.calc_center_median().z < CUT]
 NCX = sum((c.x for c in _ring), 0.) / max(1, len(_ring)); NCY = sum((c.y for c in _ring), 0.) / max(1, len(_ring))
 NR = float(np.median([math.hypot(c.x - NCX, c.y - NCY) for c in _ring])) if _ring else .05
+# (owner 8 Nov 2026, circled again) NR above is the ring's spread, shoulders and all where they rise past the cut (11-12 cm;
+# the nape's column was tuned on it and stays); NRN is the neck itself: the faces close round its middle (about 3.5 cm)
+_d0 = [(c, math.hypot(c.x - NCX, c.y - NCY)) for c in _ring]
+_nk = [c for c, d in _d0 if d < max(.07, float(np.percentile([d for _, d in _d0], 30)) if _d0 else .07)]
+if _nk: NCX = sum(c.x for c in _nk) / len(_nk); NCY = sum(c.y for c in _nk) / len(_nk)
+NRN = float(np.median([math.hypot(c.x - NCX, c.y - NCY) for c in _nk])) if _nk else .035
+print('GH neck centre', round(NCX, 3), round(NCY, 3), 'ring spread', round(NR, 3), 'neck radius', round(NRN, 3))
 incol = lambda c: (math.hypot(c.x - NCX, c.y - NCY) < NR * 1.15 and c.z < CUT + .09) or \
     (c.y > NCY - NR * .3 and math.hypot(c.x - NCX, c.y - NCY) < NR * 2.2 and c.z < CUT + .16)   # (the back and the sides, under the ears)   # (and the back of its own head's skin: the old head's nape may be open, under a hood; owner 8 Nov: "gáy chưa kết nối")
 _cz = np.array([p.center.z for p in body.data.polygons]); HCn = np.median(cn[_cz > _cz.max() - .05], axis=0)   # (the new body's own hair colour)
@@ -95,7 +102,7 @@ hairn &= ~skinn & ~kitn & (_cz > CUT - .35)
 LONG = bool(os.environ.get('GH_LONG_HAIR'))
 if LONG:
     _cy = np.array([p.center.y for p in body.data.polygons])
-    _cx = np.array([p.center.x for p in body.data.polygons]); _bz = (_cz < CUT) & (_cz > CUT - .35) & ((_cy < NCY - NR * .5) | ((np.abs(_cx - NCX) > NR * 1.3) & (_cy < NCY + NR * .3)))   # (and beside the neck, where the braids pass over the shoulders)   # (in front of the neck, shoulders to chest: never the back of the waist)
+    _cx = np.array([p.center.x for p in body.data.polygons]); _bz = (_cz < CUT) & (_cz > CUT - .35) & ((_cy < NCY - NRN * .5) | ((np.abs(_cx - NCX) > NRN * 1.3) & (_cy < NCY + NRN * .3)))   # (and beside the neck, where the braids pass over the shoulders)   # (in front of the neck, shoulders to chest: never the back of the waist)
     _own = hairn & _bz; hairn &= ~_bz
     # the whole braid, its shaded strands and ties too: grown from the hair-coloured part through what is neither kit
     # nor marked skin; make_clothes.py reads the mark ('own_hair') and never puts a garment over it
@@ -163,8 +170,8 @@ hairo = _hang & (cz > CUT - .06)   # (Clara's braids below: the swim body's own,
 # (owner 8 Nov 2026: chins and necks) below the cut, the old head's hair stays only behind the neck (the nape's hair);
 # in front and on the shoulders it was an old cape or collar of the hair's colour (Sol's), which the snug new collars
 # no longer hide; Clara's braid tops in front stay (they join her own braids)
-if not LONG: hairo &= (cz > CUT) | (cy_ > NCY - NR * .2)
-else: hairo &= (cz > CUT) | (cy_ > NCY + NR * .3)   # (Clara: in front and beside the neck below the cut her own braids take over, whole)
+if not LONG: hairo &= (cz > CUT)   # (owner 8 Nov 2026, circled: strands cut off at the nape looked broken; below the cut the new body's clean nape shows)
+else: hairo &= (cz > CUT) | (cy_ > NCY + NRN * .3)   # (Clara: in front and beside the neck below the cut her own braids take over, whole)
 print('GH old hair triangles (head and hanging from it)', int(hairo.sum()))
 print('GH hair colour', np.round(HC, 3), 'skin colour', np.round(SKC, 3))
 bm = bmesh.new(); bm.from_mesh(oldbody.data); bm.faces.ensure_lookup_table()
@@ -177,10 +184,13 @@ def keep(f):
     # (these children's shoulders rise above the cut) at neck height the old hair spread wider than the neck lay over the
     # new shoulders (Sol's), and the old neck's front lay over the new collar in a V (Finn's): the front of the neck is the
     # new body's own up to 3 cm above the cut, the join hidden under the chin
-    if not LONG and hairo[f.index] and _rd > NR * 2.2: return False
-    if z < CUT + .03 and c_.y < NCY - NR * .3 and not hairo[f.index]: return False
+    if not LONG and hairo[f.index] and _rd > NRN * 2.2: return False
+    # (owner 8 Nov 2026, circled again) whatever of the old head lies out to the sides at neck height goes, hair or not:
+    # Sol's cape is brown with the hue of skin and passed as shaded skin
+    if z < CUT + .09 and abs(c_.x - NCX) > NRN * 2.2 and not (LONG and hairo[f.index]): return False   # (up to 9 cm: Sol's cape rose 5 cm past the cut)
+    if z < CUT + .03 and c_.y < NCY - NRN * .3 and not hairo[f.index]: return False
     if z < CUT:
-        if _rd > NR * 1.6 or z < CUT - (.06 if LONG else .04): return False
+        if _rd > NRN * 1.6 or z < CUT - (.06 if LONG else .04): return False
     if hairo[f.index]: return True   # (hair hanging from the head: braids, nape)
     # (owner 8 Nov 2026: "the neck is still smudged") the back of the old neck carries the shadow its hood painted; there
     # the new body's own clean nape shows instead, the join hidden under the hair

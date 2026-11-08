@@ -94,6 +94,24 @@ print('CL hair in front of the shirt', int(infront.sum()))
 
 # (owner review 8 Nov: a grey collar showed above every top) the kit is everything on the body that is neither skin
 # (the skin marks from fitting) nor hair: its shaded parts fail the plain grey test. Tops reach 1.2 cm past its top edge.
+# (owner 8 Nov 2026: Clara on her own Meshy head and braids) CL_OWN_BRAIDS marks the braids hanging in front as hair here,
+# as graft_head.py does for a grafted head: hair-coloured by hue (the top of the head's colour) in front of and beside the
+# neck down the chest, grown through coloured triangles that are neither skin nor grey kit (shaded strands, ties)
+if os.environ.get('CL_OWN_BRAIDS') and me.attributes.get('own_hair') is None:
+    _hc = np.median(fcol[fc[:, 2] > fc[:, 2].max() - .05], axis=0); _hcc = _hc / max(float(_hc.max()), 1e-4)
+    _n0 = (fc[:, 2] > NECK - .04) & (fc[:, 2] < NECK) & ~hair
+    _ax, _ay = (fc[_n0, 0].mean(), fc[_n0, 1].mean()) if _n0.any() else (0., 0.)
+    _nr0 = float(np.median(np.hypot(fc[_n0, 0] - _ax, fc[_n0, 1] - _ay))) if _n0.any() else .05
+    _bz = (fc[:, 2] < NECK) & (fc[:, 2] > NECK - .35) & ((fc[:, 1] < _ay - _nr0 * .5) | ((np.abs(fc[:, 0] - _ax) > _nr0 * 1.3) & (fc[:, 1] < _ay + _nr0 * .3)))
+    _own = _bz & ~skin & ~grey & (fS > .25) & (np.linalg.norm(fcol / np.maximum(fV, 1e-4)[:, None] - _hcc, axis=1) < .12)
+    _bmo = bmesh.new(); _bmo.from_mesh(me); _bmo.faces.ensure_lookup_table(); _st = list(np.nonzero(_own)[0])
+    while _st:
+        for e in _bmo.faces[int(_st.pop())].edges:
+            for k in e.link_faces:
+                j = k.index
+                if not _own[j] and _bz[j] and not skin[j] and not grey[j] and fS[j] > .22: _own[j] = True; _st.append(j)
+    _bmo.free(); hair |= _own; clothable = ~hair
+    print('CL own braids (marked here)', int(_own.sum()))
 kit = (~skin if skin.any() else grey) & ~hair & (fS < .3)
 _kc = kit & (np.abs(fc[:, 0]) < SH_X * .7) & (fc[:, 2] > WAIST) & (fc[:, 2] < NECK + .04)   # (owner 8 Nov: a grey ring under the chins; Finn's kit rose 2 cm past the neck joint)
 KIT_TOP = float(fc[_kc, 2].max()) if _kc.any() else NECK - .02
@@ -190,9 +208,10 @@ def shell(name, faces, thick, smooth=6, cuts=()):
         bmesh.ops.bisect_plane(bm, geom=geom, plane_co=p, plane_no=d, clear_outer=True, dist=.0001)
     bmesh.ops.delete(bm, geom=[v for v in bm.verts if not v.link_faces], context='VERTS')
     # the open edges (hems, cuffs, neckline) are evened out a little along themselves
-    for _ in range(3):
+    for _it in range(10):   # (the collar's edge, not smoothed with the rest, evens out longer: Lumi's zigzag, owner 8 Nov)
         new = {}
         for v in bm.verts:
+            if _it >= 3 and v.co.z < NECKBAND - .06: continue
             ed = [e for e in v.link_edges if len(e.link_faces) == 1]
             if len(ed) == 2: a_, b_ = (e.other_vert(v).co for e in ed); new[v] = v.co * .4 + (a_ + b_) * .3
         for v, p in new.items(): v.co = p
@@ -227,7 +246,7 @@ def shell(name, faces, thick, smooth=6, cuts=()):
         # (owner 8 Nov 2026: a grey ring under the chins) the collar hugs the neck: the shirt's lift tapers to almost nothing
         # over its top 5 cm, so the kit's top edge is never seen past it
         _ring = max(0., min(1., (math.hypot(v.co.x - NAX, v.co.y - NAY) - NRAD * 1.15) / (NRAD * .5)))   # (0 at the neck, 1 a little out: the shoulders keep their lift)
-        _th = thick * max(.7, min(1., (NECKBAND - v.co.z) / .05 + _ring)) if region == 'torso' else thick
+        _th = thick   # (the collar keeps its full lift: the grey ring was the rays' axis, now fixed; a thinner collar let the body poke through, owner 8 Nov) if region == 'torso' else thick
         if last is not None: v.co = last + dvec * _th
         else:
             hit = btree.find_nearest(v.co)
@@ -368,6 +387,14 @@ if LIGHT:
         bpy.context.view_layer.objects.active = o; dm = o.modifiers.new('reduce', 'DECIMATE'); dm.ratio = float(os.environ.get('CL_REDUCE', '.6'))
         bpy.ops.object.modifier_apply(modifier='reduce')
     print('CL light garments reduced', sum(len(o.data.polygons) for o in parts))
+    # (Clara's own Meshy head and braids, owner 8 Nov 2026: the light body passed 500 KB) CL_BODY_REDUCE thins the body
+    # below the neck only; the head stays exact under its face pieces
+    if os.environ.get('CL_BODY_REDUCE'):
+        vg = body.vertex_groups.new(name='reduce-me')
+        vg.add([v.index for v in me.vertices if v.co.z < NECK - .04], 1.0, 'REPLACE')
+        bpy.context.view_layer.objects.active = body; dm = body.modifiers.new('reduce', 'DECIMATE'); dm.ratio = float(os.environ['CL_BODY_REDUCE']); dm.vertex_group = 'reduce-me'; dm.vertex_group_factor = 1.0
+        n0 = len(me.polygons); bpy.ops.object.modifier_apply(modifier='reduce'); body.vertex_groups.remove(body.vertex_groups['reduce-me'])
+        print('CL light body reduced', n0, '->', len(body.data.polygons))
 # (owner 8 Nov 2026: a grey ring under the chins) under the collar the body's own grey kit sinks 8 mm in: looking down past
 # a collar's edge shows a shadow, not the swimsuit (its shared edge with the neck's skin stays, under the collar)
 _kv = set()
@@ -379,6 +406,16 @@ for p_ in me.polygons:
 _sunk = 0
 for vi in _kv - _notkit:
     v_ = me.vertices[vi]; v_.co = v_.co - v_.normal * .008; _sunk += 1
+# (owner 8 Nov 2026, circled: specks of skin through the collar) just under the collar's edge the neck's own skin sinks
+# too, a little, ramping from nothing at the edge: the smoothed shirt never dips inside it
+_hv = set()
+for p_ in me.polygons:
+    if hair[p_.index]: _hv.update(p_.vertices)
+for v_ in me.vertices:
+    if v_.index in _hv or v_.index in _kv: continue
+    z_ = v_.co.z
+    if NECKBAND - .07 < z_ < NECKBAND and math.hypot(v_.co.x - NAX, v_.co.y - NAY) < NRAD * 3:
+        v_.co = v_.co - v_.normal * (.006 * min(1., (NECKBAND - z_) / .015)); _sunk += 1
 me.update(); print('CL kit sunk under the collar', _sunk)
 # every part follows the rig as the body does
 for o in parts:
