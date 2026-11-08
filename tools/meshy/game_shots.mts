@@ -7,8 +7,9 @@
 // head and neck from three sides. Writes <id>[-hd]-<mood>-front|tq.png and <id>[-hd]-neck-back-<angle>.png, and a
 // review sheet <id>-review.png per person (row 1 smile/blink front and three-quarter and the back; row 2 the moods).
 // Look at every sheet: eyes open and closed, brows, lids, cheeks, neck, ears, hairline, hair back, clothes edges.
-import { chromium } from 'playwright';
+import { createRequire } from 'node:module';
 import { open, clear } from '../../tests/harness.mts';
+const { chromium } = createRequire(new URL('../../tests/package.json', import.meta.url))('playwright');   // (installed under tests/)
 import { writeFileSync, mkdirSync } from 'node:fs';
 const [OUT, MODE = 'faces', LIST = 'finn,sol,clara,lumi'] = process.argv.slice(2);
 mkdirSync(OUT, { recursive: true });
@@ -46,6 +47,20 @@ const shots: Record<string, string> = await P.page.evaluate(async ([MODE, LIST])
     for (const m of MOODS) { mood(av, M, m); for (const s of [0, .7]) headShot(`${t}-${m}-${s ? 'tq' : 'front'}`, av.root, M, 0, s); }
     mood(av, M, 'smile'); for (const s of [Math.PI, 2.2, -2.2]) headShot(`${t}-neck-back-${s.toFixed(1)}`, av.root, M, 0, s);
     top.remove(av.root);
+  }
+  // outfits: each of a friend's shop outfits (js/content/friends.ts SUIT_KINDS), full length, front, three-quarter, back
+  if (MODE === 'outfits') for (const id of ids) {
+    await A.loadFriendModels(id); await A.loadFriendModels(id + '-hd');
+    for (const kind of ['everyday', 'aodai', 'festival', 'rain']) {
+      const av: any = A.buildAvatar({ set: LOOK[id] || 'girl', friend: id, skin: '#f6c7a5', suit: `${id}-${kind}` }, null, { hd: true }); A.showHD(av, true);
+      top.add(av.root); av.root.position.set(h.pos.x + 3, h.av.root.position.y, h.pos.z + 3); av.root.rotation.y = 0; A.animate(av, 'idle', 1); av.root.updateMatrixWorld(true);
+      const box = new THREE.Box3().setFromObject(av.modelHD.obj, true), c = box.getCenter(new THREE.Vector3()), Hh = box.max.y - box.min.y;
+      for (const [s, nm] of [[0, 'front'], [.75, 'tq'], [Math.PI, 'back']] as [number, string][]) {
+        const cam = new THREE.PerspectiveCamera(30, .75, .05, 100), dir = new THREE.Vector3(Math.sin(s), 0, Math.cos(s));
+        cam.position.copy(c).addScaledVector(dir, Hh * 2.1); cam.position.y += Hh * .05; cam.lookAt(c); grab(`${id}-${kind}-${nm}`, cam, 360, 480);
+      }
+      top.remove(av.root);
+    }
   }
   if (MODE === 'tones') for (const id of ids) {
     FM.setMeshyTones(true); await A.loadFriendModels(id); await A.loadFriendModels(id + '-hd');

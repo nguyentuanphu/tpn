@@ -6,6 +6,7 @@
 // torso, head, armL, elbowL, legL, kneeL ...), so walking, jumping, riding (seatRider) and the films' poses work as before,
 // and the hats, necklaces and backs the code person wears sit on the model.
 import { THREE, P, personLook, outlineSkinned } from './gfx.js';
+import { friendLook } from './content/friends.js';
 import type { FriendId } from './content/friends.js';
 
 type Loaded = { scene: THREE.Object3D, clone: (o: THREE.Object3D) => THREE.Object3D };
@@ -127,7 +128,7 @@ export function loadFriendModel(id: FriendId | `${FriendId}-hd`): Promise<boolea
           // (v1.08e, Release 6 Nov: no picture, the clothes crisp) the light is baked into the corner colours: drawn the same way
           : name.startsWith('lit-') ? litCorners(name)
           : m.map ? new THREE.MeshToonMaterial({ name, map: m.map, gradientMap: bands }) : new THREE.MeshToonMaterial({ name, vertexColors: true, gradientMap: bands }));
-        if (/^cloth-(hat|hair)/.test(name)) mats.get(m).side = THREE.DoubleSide; // (v1.08e villagers) a hat is a thin shell, and a lock of hair a thin card: both sides drawn
+        if (/^(cloth-(hat|hair)|lit-g-)/.test(name)) mats.get(m).side = THREE.DoubleSide; // (and a body model's clothes: a skirt's inside shows) // (v1.08e villagers) a hat is a thin shell, and a lock of hair a thin card: both sides drawn
         if (ref && !mats.get(m).userData.skinRef) mats.get(m).userData.skinRef = ref;   // (a corner-coloured "skin-shade" painted in its own tone)
         o.material = personLook(mats.get(m));
         if (o.material.userData.faceTint) o.material.customProgramCacheKey = () => 'person-facetint'; }); // (v1.08e faces, part 2) the people's soft ramp and rim light
@@ -152,10 +153,29 @@ export type FriendModel = { obj: THREE.Object3D, follow: (mood?: string, riding?
 // (js/friendquest.ts), and its own boots unless the child wears shoes from the shop (then the code person's shoes stay on)
 export type FriendModelWear = { item?: boolean, shoes?: boolean };
 /** a copy of the friend's model inside the code person's rig, following its joints. A: the code person (js/avatar.ts) */
+// (owner 8 Nov 2026, "Body + code-made clothes") a friend made as a Meshy body (tools/meshy/make_clothes.py) carries its
+// clothes as parts "lit-g-<part>", shaped on that body; the outfit worn (js/content/friends.ts friendLook: style, main
+// colour, legs colour, shoes) picks the parts and colours them. The parts keep Meshy's painted shading in their corner
+// colours, so a colour only tints them.
+const GARMENTS: Record<string, [string, 'main' | 'legs' | 'cream'][]> = {
+  shirt: [['top-short', 'main'], ['trousers', 'legs']],
+  tunic: [['tunic-long', 'main'], ['trousers', 'legs']],
+  dress: [['bodice', 'main'], ['skirt', 'main'], ['leggings', 'legs']],
+  overalls: [['top-short', 'cream'], ['shorts', 'main'], ['bib', 'main']],
+  aodai: [['top-long', 'main'], ['aodai-panels', 'main'], ['trousers', 'legs']],
+  hoodie: [['top-long', 'main'], ['trousers', 'legs']]
+};
+function dress(parts: Record<string, any>, look, wear: FriendModelWear) {
+  if (!Object.keys(parts).length) return;
+  const L = friendLook(look || {}) || {}, set = GARMENTS[L.style] || GARMENTS.shirt;
+  const paint = (o, hex: string) => { const c = new THREE.Color(hex || '#9a9a9a'); o.material.emissive.copy(c).multiplyScalar(.62); o.material.emissiveIntensity = 1; o.material.color.copy(c).multiplyScalar(.55); }; // (mostly its own painted shade, some valley light: not flat)
+  for (const [part, from] of set) { const o = parts[part]; if (!o) continue; o.visible = true; paint(o, from === 'main' ? L.color : from === 'legs' ? L.legs : '#f3e6c8'); }
+  if (parts.boots) { parts.boots.visible = !wear.shoes; paint(parts.boots, L.shoe || '#8a5a3a'); }
+}
 export function attachFriendModel(A, id: string, skinHex: string, wear: FriendModelWear = {}, hd = false): FriendModel {
   const L = ready[hd ? HD(id) : id]; if (!L) return null;
   const obj = L.clone(L.scene); obj.name = 'friend-model';
-  const bones: Record<string, THREE.Bone> = {}, faces: Record<string, THREE.Object3D[]> = {}, grips: THREE.Object3D[] = [], skinMats = [], face3: any[] = [];
+  const bones: Record<string, THREE.Bone> = {}, faces: Record<string, THREE.Object3D[]> = {}, grips: THREE.Object3D[] = [], skinMats = [], face3: any[] = [], garments: Record<string, any> = {};
   obj.traverse((o: any) => {
     if (o.isBone) bones[o.name] = o;
     if (o.isMesh) {
@@ -170,8 +190,10 @@ export function attachFriendModel(A, id: string, skinHex: string, wear: FriendMo
       if (n === 'skin-grip' || n === 'cloth-hands-grip') grips.push(o); // (the hands that hold handlebars: shown only when riding)
       if (n === 'cloth-item') o.visible = !!wear.item; // (v1.08d polish) the item in the hand: only once earned
       if (n === 'cloth-shoes') o.visible = !wear.shoes; // (v1.08d polish) the model's boots, unless shop shoes are worn
+      if (n.startsWith('lit-g-')) { o.material = o.material.clone(); garments[n.slice(6)] = o; o.visible = false; } // (a body model's clothes, dressed below)
     }
   });
+  dress(garments, A.look, wear);
   A.rig.add(obj); A.rig.updateMatrixWorld(true);
   // (v1.08e faces, part 2) the same thin ink outline as the code people, bent by the model's bones (not on the faces);
   // each follows its part's visibility (the item in the hand, the riding hands) and hides far away with the others

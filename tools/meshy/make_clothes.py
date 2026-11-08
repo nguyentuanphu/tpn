@@ -65,7 +65,7 @@ for s in 'LR':
 SH_X = (abs(J['armL'].x) + abs(J['armR'].x)) / 2
 isarm = (armd < .09) & (armd < legd) & (np.abs(fc[:, 0]) > SH_X - .01) & (fc[:, 2] < NECK)   # (closer to the arm than the leg: a hand beside the thigh)
 isleg = ~isarm & (fc[:, 2] < HIP + .02) & (legd < .14)
-istorso = ~isarm & ~isleg & (fc[:, 2] < NECK) & (fc[:, 2] > HIP - .16)
+istorso = ~isarm & ~isleg & (fc[:, 2] < NECK) & (fc[:, 2] > HIP - .16) & (np.abs(fc[:, 0]) < SH_X + .02)   # (not a hand beside the hip)
 # hair is never clothed: everything above the neck, and anything hanging in front of or behind the grey shirt (Clara's
 # braids, Lumi's leaves on the shoulders): a ray from it towards the body's middle meets grey shirt more than 1 cm on
 gbm = bmesh.new(); gv = {}
@@ -83,15 +83,15 @@ for i in np.nonzero(~grey & (fc[:, 2] < NECK) & (fc[:, 2] > HIP - .1) & ~isarm)[
     P = Vector(fc[i]); d = Vector((0, 1 if P.y < cyz else -1, 0)); h = gtree.ray_cast(P, d, .25)
     if h[0] is not None and h[3] > .01: infront[i] = True
 gbm.free()
-hair = (fc[:, 2] >= NECK) | infront
+hair = ((fc[:, 2] >= NECK) & ~grey) | infront   # (the grey neckline is clothes)
 clothable = ~hair
 print('CL hair in front of the shirt', int(infront.sum()))
 
 def faces_for(top=None, sleeve=None, leg=None, under_waist=False, front_only=False, z_min=None):
     """the body triangles a garment covers: torso between z_min and the neck, sleeves to `sleeve` (0..2), legs to `leg`"""
     sel = np.zeros(NP, bool)
-    if top is not None:   # (and all the grey shirt above that line)
-        sel |= (istorso | (grey & ~isarm)) & (fc[:, 2] > top)
+    if top is not None:   # (and all the grey shirt above that line, up to its neckline)
+        sel |= (istorso | (grey & ~isarm & (np.abs(fc[:, 0]) < SH_X + .02))) & (fc[:, 2] > top) & (fc[:, 2] < NECK + .03)
     if under_waist:   # (and all the grey shorts, wherever they are)
         sel |= istorso & (fc[:, 2] <= WAIST + .02) | (isleg & (legt <= .05)) | (grey & ~isarm & (fc[:, 2] <= WAIST + .02))
     if sleeve is not None:
@@ -114,6 +114,14 @@ def shell(name, faces, thick, smooth=6, open_neck=True):
     bmesh.ops.remove_doubles(bm, verts=bm.verts[:], dist=.0004)   # (Meshy's file splits vertices at picture seams)
     bm.normal_update()
     for _ in range(smooth): bmesh.ops.smooth_vert(bm, verts=bm.verts[:], factor=.5, use_axis_x=True, use_axis_y=True, use_axis_z=True)
+    # (owner review 8 Nov: ragged hems) the open edges (hems, cuffs, neckline) are evened out along themselves: each edge
+    # point moves towards the middle of its two edge neighbours, so a hem runs in a clean line instead of following triangles
+    for _ in range(14):
+        new = {}
+        for v in bm.verts:
+            ed = [e for e in v.link_edges if len(e.link_faces) == 1]
+            if len(ed) == 2: a_, b_ = (e.other_vert(v).co for e in ed); new[v] = v.co * .4 + (a_ + b_) * .3
+        for v, p in new.items(): v.co = p
     bm.normal_update()
     for v in bm.verts:
         hit = btree.find_nearest(v.co)
@@ -175,7 +183,7 @@ if RDIR and os.environ.get('CL_CLASSES'):   # (check picture of how each body tr
         i = p.index; c = (0, 0, 0, 1) if hair[i] else (.2, .3, 1, 1) if isarm[i] else (.2, .9, .2, 1) if isleg[i] else (1, .2, .2, 1) if istorso[i] else (1, 1, 0, 1)
         for l in p.loop_indices: ca.data[l].color = c
     dm_ = bpy.data.materials.new('dbg'); dm_.use_nodes = True
-    vc = dm_.node_tree.nodes.new('ShaderNodeVertexColor'); vc.layer_name = 'cls'; dm_.node_tree.links.new(vc.outputs['Color'], dm_.node_tree.nodes['Principled BSDF'].inputs['Base Color'])
+    vc = dm_.node_tree.nodes.new('ShaderNodeVertexColor'); vc.layer_name = 'cls'; em_ = dm_.node_tree.nodes.new('ShaderNodeEmission'); dm_.node_tree.links.new(vc.outputs['Color'], em_.inputs['Color']); dm_.node_tree.links.new(em_.outputs[0], dm_.node_tree.nodes['Material Output'].inputs['Surface'])   # (lit by itself: no lights needed)
     for k in range(len(me.materials)): me.materials[k] = dm_
     sc.render.engine = 'BLENDER_EEVEE_NEXT'; sc.render.resolution_x, sc.render.resolution_y = 480, 640
     cam = bpy.data.cameras.new('c'); cam.type = 'ORTHO'; cam.ortho_scale = (J['head'].z + .3) * 1.05
@@ -187,7 +195,7 @@ parts = []
 # tops (the T-shirt's grey and the skin they reach): length by the lowest point, sleeves to 0.45 (short), 1.9 (long)
 parts.append(shell('top-short', faces_for(top=HIP + .01, sleeve=.5), .010))
 parts.append(shell('top-long', faces_for(top=HIP + .01, sleeve=1.55), .011))
-parts.append(shell('tunic-long', np.union1d(faces_for(top=HIP - .08, sleeve=1.55, under_waist=True), faces_for(leg=.45)), .013))
+parts.append(shell('tunic-long', np.union1d(faces_for(top=HIP - .08, sleeve=1.55, under_waist=True), faces_for(leg=.62)), .013))
 parts.append(shell('bodice', faces_for(top=WAIST - .01, sleeve=.35), .010))
 # bottoms
 parts.append(shell('shorts', faces_for(under_waist=True, leg=.5), .008))
