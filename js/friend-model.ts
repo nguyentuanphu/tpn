@@ -32,7 +32,35 @@ function faceTint(m) {
 // slivers and black eyes. So such a model ("baked": it has face pictures) is drawn by its own light (emissive, as the
 // gallery villagers' "lit-" pictures are) with a little of the valley's light on top, both sides, and with no ink shell.
 // The valley's light on top is smooth (Lambert): the toon steps drew hard bright and dark bands across faces and necks.
-const BAKED_EMISSIVE = .72, BAKED_COLOR = new THREE.Color('#2a2928'); // (mostly its own painted light: the sun on top clipped the skin to glowing orange)
+const BAKED_EMISSIVE = .95, BAKED_COLOR = new THREE.Color('#262524'); // (its own painted light, as painted; owner 8 Nov 2026: .72 drew the faces too dark)
+// (owner 8 Nov 2026: Lumi's ears, neck, collar and nose in patches) the child's skin tone was put on whole triangles marked
+// skin, so a collar triangle marked skin turned skin-coloured and a neck or ear triangle left out kept the painted tone.
+// Now every part of a Meshy model takes the tone texel by texel, as much as each texel's colour is the painted skin's
+// (its hue and mix of colours, at any brightness): skin everywhere follows the tone, clothes, hair and eyes never do.
+function skinTint(m, paintHex: string) {
+  m.userData.skinTint = true; m.userData.paintHex = paintHex; const lax = /^(skin|face-)/.test(m.name || ''); // (parts marked skin: blush, shine and shade follow the tone too; clothes only their skin-coloured texels)
+  m.userData.tint = { value: new THREE.Color(1, 1, 1) }; m.userData.paint = { value: new THREE.Color(paintHex) };
+  m.onBeforeCompile = sh => { sh.uniforms.uTint = m.userData.tint; sh.uniforms.uPaint = m.userData.paint;
+    sh.fragmentShader = 'uniform vec3 uTint;\nuniform vec3 uPaint;\n' + sh.fragmentShader
+      .replace('#include <map_fragment>', `#include <map_fragment>
+vec3 pc_ = uPaint / (uPaint.r + uPaint.g + uPaint.b); vec3 tx_ = sampledDiffuseColor.rgb; float sm_ = tx_.r + tx_.g + tx_.b + 1e-4;
+#ifdef USE_COLOR
+// (the triangles marked skin when the model was made, tools/meshy/fit_people.py: red of the corner colour) times a loose
+// per-texel test on them, so eyes, brows, lashes and painted lines on skin triangles stay as painted
+float w_ = vColor.r * (1.0 - smoothstep(.10, .24, distance(tx_ / sm_, pc_))) * smoothstep(.06, .16, sm_);
+#else
+float w_ = (1.0 - smoothstep(${lax ? '.10, .24' : '.025, .06'}, distance(tx_ / sm_, pc_))) * smoothstep(.03, .1, sm_) * (${lax ? 'smoothstep(.46, .56, (max(tx_.r, max(tx_.g, tx_.b)) - min(tx_.r, min(tx_.g, tx_.b))) / max(tx_.r, max(max(tx_.g, tx_.b), 1e-4)))' : '1.0'});   // (skin is strongly coloured; a cream blouse marked skin is not)
+#endif // (the picture's own colour: the material colour is near black)
+vec3 k_ = mix(vec3(1.0), uTint, w_); diffuseColor.rgb *= k_;`)
+      .replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\ntotalEmissiveRadiance *= k_;')
+      .replace('#include <color_fragment>', ''); }; // (the corner colour is the skin mark, not a colour)
+  m.customProgramCacheKey = () => 'meshy-skintint' + (lax ? '-lax' : '') + (m.vertexColors ? '-mark' : ''); m.needsUpdate = true; return m;
+}
+/** a child's own copy of a skin-tinted material (a clone loses the shader change and turns the colours into plain data) */
+function tintCopy(m) { const c = m.clone(); return skinTint(c, m.userData.paintHex); }
+/** (owner 8 Nov 2026) the skin tone choice is hidden for now and may come back: true lets a Meshy friend take the child's tone (skinTint) */
+export let MESHY_TONES = false;
+export const setMeshyTones = (on: boolean) => { MESHY_TONES = on; };
 function baked(name: string, map: THREE.Texture) {
   const m = new THREE.MeshLambertMaterial({ name, map, emissiveMap: map, emissive: '#ffffff', emissiveIntensity: BAKED_EMISSIVE, color: BAKED_COLOR.clone(), side: THREE.DoubleSide });
   m.userData.baked = true; return m;
@@ -64,9 +92,22 @@ export function loadFriendModel(id: FriendId | `${FriendId}-hd`): Promise<boolea
         const m = o.material, name = m.name || '';
         if (isBaked && m.map && !mats.has(m)) {   // (a Meshy model: see baked() above)
           const t = baked(name, m.map), ref = m.userData && m.userData.skin_ref;
-          if (ref && (name.startsWith('skin-tex') || name.startsWith('face-'))) { t.userData.skinRef = ref; if (name.startsWith('face-')) faceTint(t); }
+          if (m.userData && m.userData.skin_mark && o.geometry.attributes.color) t.vertexColors = true; // (the skin mark from tools/meshy/fit_people.py, read by skinTint, not drawn as a colour)
+          // (owner 8 Nov 2026, "Meshy's own face") an own-face mood piece: soft-edged and see-through round the eyes or
+          // mouth over the painted face, taking the child's tone as a whole like the painted skin under it
+          const own = name.startsWith('face-') && m.userData && m.userData.own_face;
+          if (own) { t.transparent = true; t.depthWrite = false; t.userData.ownFace = true; o.renderOrder = 2; t.polygonOffset = true; t.polygonOffsetFactor = -6; t.polygonOffsetUnits = -24; } // (owner 8 Nov 2026: the curved cheek poked through the piece between its grid points as stripes and patches: the piece is drawn just on top)
+          if (ref && (name.startsWith('skin-tex') || name.startsWith('face-'))) { t.userData.skinRef = ref; if (name.startsWith('face-') && !own) faceTint(t); }
           mats.set(m, t);
         }
+      });
+      // (owner 8 Nov 2026) every picture part of a Meshy model with a painted skin takes the tone texel by texel (skinTint)
+      let mref = '', mpaint = '';
+      g.scene.traverse((o: any) => { if (o.isMesh && o.material.userData) { mref ||= o.material.userData.skin_ref || ''; mpaint ||= o.material.userData.skin_paint || ''; } });
+      if (isBaked && mref) for (const t of mats.values()) if (t.userData.baked && !t.userData.faceTint) { t.userData.skinRef = mref; skinTint(t, mpaint || mref); }
+      g.scene.traverse((o: any) => { if (!o.isMesh) return;
+        const m = o.material, name = m.name || '';
+        if (isBaked && m.map && mats.has(m)) { o.material = mats.get(m); return; }
         // (v1.08e faces, part 2) a high-detail model's parts carry their painted picture (m.map) instead of corner colours
         // (v1.08e, owner 6 Nov: "skin-shade": the skin's corners carry its soft form shading, times the child's skin tone)
         // (Meshy characters, owner 7 Nov 2026: "skin toned phai giu nhu original", shifted from it for other tones) a model's
@@ -121,8 +162,10 @@ export function attachFriendModel(A, id: string, skinHex: string, wear: FriendMo
       const n = o.material.name || '';
       if (o.morphTargetDictionary && 'blink' in o.morphTargetDictionary) { face3.push(o); o.userData.face3d = true; }
       if (n.startsWith('face-')) (faces[n] = faces[n] || []).push(o);
-      if (n.startsWith('skin')) { o.material = o.material.clone(); o.material.userData.person = false; personLook(o.material); skinMats.push(o.material); }
+      if (o.material.userData.skinTint) { o.material = tintCopy(o.material); skinMats.push(o.material); } // (Meshy: each child's own tone, texel by texel)
+      else if (n.startsWith('skin')) { o.material = o.material.clone(); o.material.userData.person = false; personLook(o.material); skinMats.push(o.material); }
       // (Meshy characters) each child's copy of a skin-tinted face picture has its own tint
+      else if (o.material.userData.ownFace) { const c = o.material.clone(); o.material = c; if (c.userData.skinRef) skinMats.push(c); } // (each child's own tone)
       else if (o.material.userData.faceTint) { const c = faceTint(o.material.clone()); c.userData.person = false; personLook(c); c.customProgramCacheKey = () => 'person-facetint'; o.material = c; skinMats.push(c); }
       if (n === 'skin-grip' || n === 'cloth-hands-grip') grips.push(o); // (the hands that hold handlebars: shown only when riding)
       if (n === 'cloth-item') o.visible = !!wear.item; // (v1.08d polish) the item in the hand: only once earned
@@ -163,10 +206,11 @@ export function attachFriendModel(A, id: string, skinHex: string, wear: FriendMo
   };
   // (Meshy characters) a painted skin (skinRef) is tinted by the tone relative to the tone it was painted in
   const skin = (hex: string) => skinMats.forEach(m => {
+    if (L.scene.userData.baked && !MESHY_TONES) hex = ''; // (owner 8 Nov 2026: a Meshy friend keeps exactly the skin Meshy painted while the tone choice is hidden)
     const r = m.userData.skinRef; if (!r) { if (hex) m.color.set(hex); return; }
     if (!hex) hex = r; // (no tone given, a villager: exactly as painted)
     const t = new THREE.Color(hex), c = new THREE.Color(r), k = new THREE.Color(t.r / Math.max(c.r, .05), t.g / Math.max(c.g, .05), t.b / Math.max(c.b, .05));
-    if (m.userData.faceTint) m.userData.tint.value.copy(k);
+    if (m.userData.faceTint || m.userData.skinTint) m.userData.tint.value.copy(k);
     else if (m.userData.baked) { m.color.copy(BAKED_COLOR).multiply(k); m.emissive.copy(k); } // (its own light takes the tone too)
     else m.color.copy(k);
   });

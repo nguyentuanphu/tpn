@@ -397,7 +397,8 @@ export function buildAvatar(look, photo?, opts?: { code?: boolean, into?: SvAvat
   if (useModel) { A.model = FRIEND_MODELS.attach(A, friendId, look.skin, { item: typeof look.fitems === 'string' && look.fitems.split(' ').includes(friendId), shoes: !!ft }); A.root.userData.friendModel = friendId;
     // (v1.08e faces, part 2) the child's own friend also gets the high-detail model once it is loaded: drawn up close
     // (showHD, from js/player.ts), the light one far away
-    if (opts && opts.hd && A.model && FRIEND_MODELS.ready(friendId + '-hd')) { A.modelHD = FRIEND_MODELS.attach(A, friendId, look.skin, { item: A.model.item, shoes: !A.model.boots }, true); if (A.modelHD) showHD(A, true); } }
+    if (opts && opts.hd && A.model && FRIEND_MODELS.ready(friendId + '-hd')) { A.modelHD = FRIEND_MODELS.attach(A, friendId, look.skin, { item: A.model.item, shoes: !A.model.boots }, true); if (A.modelHD) showHD(A, true); }
+    else if (A.model && !(opts && opts.hd)) FRIEND_AVS.add(A); } // (owner 8 Nov 2026: every friend near a child in high detail, friendsHDNear)
   return A;
 }
 
@@ -549,6 +550,32 @@ export function unwearVillagerModel(A: SvAvatar): boolean {
 }
 /** (v1.08e faces, part 2) the high-detail model up close, the light one far away (a child's own friend only) */
 export function showHD(A, near: boolean) { if (!A || !A.modelHD || A._hd === near) return; A._hd = near; A.modelHD.obj.visible = near; A.model.obj.visible = !near; }
+// (owner 8 Nov 2026, Meshy friends: "high-detail when near") every friend near any child's camera is drawn in high detail,
+// not only the child's own (the light model is too small for Meshy's painted face up close; it stays for far away).
+// Other children's friends (other players on this device, online children, the friends in places) are kept here; the
+// high-detail model is loaded once per friend the first time one comes near, and worn in the rest pose, as a
+// villager's model is (wearVillagerModel), without rebuilding the person.
+const FRIEND_AVS = new Set<SvAvatar>(), HD_ASKED = new Set<string>(), HD_NEAR = 15, _hp = new THREE.Vector3();
+function attachHDLate(A: SvAvatar, id: string) {
+  const keep = JOINTS.map(j => A[j] ? A[j].rotation.clone() : null), lift = A.rig.position.y, sc = A.rig.scale.clone(), H = A.height || 1;
+  JOINTS.forEach(j => { if (A[j] && j !== 'rig') A[j].rotation.set(0, 0, 0); }); A.rig.position.y = 0; A.rig.scale.set(H, H, H); A.root.updateMatrixWorld(true);
+  A.modelHD = FRIEND_MODELS.attach(A, id, A.look.skin, { item: A.model.item, shoes: !A.model.boots }, true);
+  JOINTS.forEach((j, i) => { if (keep[i]) A[j].rotation.copy(keep[i]); }); A.rig.position.y = lift; A.rig.scale.copy(sc);
+  if (A.modelHD) { A.modelHD.obj.visible = false; A._hd = false; }
+}
+/** each frame or so, with the children's camera positions: the friends near one in high detail, the rest light */
+export function friendsHDNear(cams: THREE.Vector3[]) {
+  for (const A of FRIEND_AVS) {
+    if (!A.root.parent || !A.model) { FRIEND_AVS.delete(A); continue; }
+    const id = A.root.userData.friendModel; A.root.getWorldPosition(_hp);
+    const near = cams.some(c => c.distanceTo(_hp) < HD_NEAR);
+    if (near && !A.modelHD && id) {
+      if (FRIEND_MODELS.ready(id + '-hd')) attachHDLate(A, id);
+      else if (!HD_ASKED.has(id)) { HD_ASKED.add(id); loadFriendModels(id + '-hd'); }
+    }
+    if (A.modelHD) showHD(A, near);
+  }
+}
 /** (v1.08e faces) a feeling on a person's face for a moment: 'o' (surprised at a find), 'sad' (a game lost), 'shy' (greeted),
  *  'happy', 'excited', 'curious'; the blinks go on over it */
 export function feel(A, mood: string, secs = 2) { const L = A && A.life; if (!L) return; L.feel = mood; L.feelUntil = L.t + secs; }
