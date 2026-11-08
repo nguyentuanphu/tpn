@@ -463,6 +463,19 @@ def lid(img, b, top=0., bot=1.):   # (original_skin) a closed lid painted over t
         for _ in range(2): _h2 = _h2 | (_far & (np.roll(_h2, 1, 0) | np.roll(_h2, -1, 0) | np.roll(_h2, 1, 1) | np.roll(_h2, -1, 1)))
         hole = (_h2 | (d < .6)) & (yy >= cy_ - ry * .7)   # (the brows just above stay: Clara's and Lumi's vanished)
         hole &= ~(HAIRISH & (yy < b[1] + (b[3] - b[1]) * .08))   # (b is the eye box grown upwards: only strands above the eye itself; dark lashes close)   # (fringe strands in the top of the eye area stay hair: no skin patch over them)
+        # (owner 9 Nov 2026, circled on Finn's and Lumi's own heads: a ghost of the open eye round the closed one, a black
+        # mark at the face's edge from the side) their hair is as dark as the eye's outline (Finn's black, Lumi's darkest
+        # leaves), so the outline and the lashes at the corners counted as hair and stayed: the outline is traced on its own,
+        # very dark pixels joined to the eye, out to its corners, and always closes (fringe strands over the top excepted)
+        _dk = ((V < .4) | ((V > .7) & (S_ < .2))) & (np.hypot((xx - cx_) / (rx * 1.9), (yy - cy_) / (ry * 1.6)) < 1) & (yy >= b[1] - h_ * .15)   # (and the pale rim of the eye's white: Sol's faint ring)
+        _ls = _dk & _inb
+        for _ in range(int(max(rx, ry) * 2)):
+            _n = _ls | (_dk & (np.roll(_ls, 1, 0) | np.roll(_ls, -1, 0) | np.roll(_ls, 1, 1) | np.roll(_ls, -1, 1)))
+            if (_n == _ls).all(): break
+            _ls = _n
+        for _ in range(2): _ls = _ls | (np.roll(_ls, 1, 0) | np.roll(_ls, -1, 0) | np.roll(_ls, 1, 1) | np.roll(_ls, -1, 1))   # (its soft edge too)
+        _ls &= ~((yy < b[1] + h_ * .08) & (xx > b[0]) & (xx < b[2]) & HAIRISH)
+        hole |= _ls
     if top > 0: hole &= yy >= y0
     if PART: hole &= yy < lidline(xx)
     # her own skin flows in from all round the eye (a smooth fill, no disc edge): the eye pixels are repeatedly

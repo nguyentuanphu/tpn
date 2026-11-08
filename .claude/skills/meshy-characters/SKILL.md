@@ -72,6 +72,8 @@ One friend end to end: `GF_SKIP_REFIT=1 powershell -File tools/meshy/graft_frien
 - Measure the neck by the faces close round its middle (`NRN`, about 2.5-5.6 cm). The cut ring's spread includes shoulders that rise past the cut (11-12 cm), and every rule scaled by it was three times too loose. That is why Sol's cape survived three rounds.
 - The other way, with no graft: `powershell -File tools/meshy/dress_own.ps1 -Id <id>` dresses the swim model on its own Meshy head. Fitting already gave that head its own face moods; `CL_OWN_BRAIDS` marks front braids, and `tex_max.py` and `CL_BODY_REDUCE` keep the light model under 500 KB. Compare both ways side by side in the game before choosing (8 Nov: Clara better on her own head; Sol better grafted).
 
+- 9 Nov 2026: the owner chose the own-head way (B) for all four friends. On an own head, closed eyes left a ghost of the open eye, and a black mark at the face's edge from the side, wherever the hair is as dark as the eye's outline (Finn's black, Lumi's darkest leaves) or the eye has a pale rim (Sol). `fit_people.py` now traces the eye's outline itself (very dark or pale-white pixels joined to the eye, out to its corners), and it always closes. Refit with `fit_person.ps1 -Id <id>-swim -Ref <ref> -Prefix <id>-` (2 min each), then run `dress_own.ps1`.
+
 ## Scaling up
 
 When a method is proven on one person (owner-approved), the rest can be split across chats or accounts: one chat per group (e.g. friends, VN-north villagers, VN-central, VN-south, Australia, animals by skeleton type), each using this skill, the same tools and its own review sheets, never two chats writing the same files. Paid Meshy jobs stay on one account's journal per group; each group syncs its ledger.
