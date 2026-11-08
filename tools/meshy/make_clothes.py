@@ -94,6 +94,14 @@ _kc = kit & (np.abs(fc[:, 0]) < SH_X * .7) & (fc[:, 2] > WAIST) & (fc[:, 2] < NE
 KIT_TOP = float(fc[_kc, 2].max()) if _kc.any() else NECK - .02
 NECKBAND = min(KIT_TOP + .012, NECK + .02)
 print('CL kit top', round(KIT_TOP, 3), 'neckband', round(NECKBAND, 3), 'neck', round(NECK, 3))
+# (owner review 8 Nov: the grey collar still showed at the back) a top's selection shrank below the collar when it was
+# smoothed: it now reaches 3 cm up the neck itself (the neck column: close round the neck's axis, never hair hanging
+# further out), and the neckband cut gives its clean edge
+_nr = (fc[:, 2] > NECK - .04) & (fc[:, 2] < NECK) & ~hair
+NAX = fc[_nr, 0].mean() if _nr.any() else 0.; NAY = fc[_nr, 1].mean() if _nr.any() else 0.
+_nd = np.hypot(fc[:, 0] - NAX, fc[:, 1] - NAY); NRAD = float(np.median(_nd[_nr])) if _nr.any() else .05
+neckcol = (fc[:, 2] > NECK - .06) & (fc[:, 2] < NECKBAND + .03) & (_nd < NRAD * 1.3) & ~infront & ~((fV < .3) & (fS < .6))
+clothable = clothable | neckcol
 _vf = {}
 for p in me.polygons:
     for vi in p.vertices: _vf.setdefault(vi, []).append(p.index)
@@ -107,6 +115,7 @@ def faces_for(top=None, sleeve=None, leg=None, under_waist=False, front_only=Fal
     sel = np.zeros(NP, bool)
     if top is not None:   # (and all the kit above that line, and the neck's skin up to the neckband)
         sel |= (istorso | (kit & ~isarm & (np.abs(fc[:, 0]) < SH_X + .02))) & (fc[:, 2] > top) & ((fc[:, 2] < NECKBAND) | kit)
+        sel |= neckcol
     if under_waist:   # (and all the grey shorts, wherever they are)
         sel |= istorso & (fc[:, 2] <= WAIST + .02) | (isleg & (legt <= .05)) | (grey & ~isarm & (fc[:, 2] <= WAIST + .02))
     if sleeve is not None:
@@ -117,7 +126,7 @@ def faces_for(top=None, sleeve=None, leg=None, under_waist=False, front_only=Fal
     if front_only: sel &= fc[:, 1] < float(np.median(fc[istorso, 1]))
     if z_min is not None: sel &= fc[:, 2] > z_min
     out = np.nonzero(sel)[0]
-    return dilate(out) if not front_only else out
+    return dilate(out, 4 if top is not None else 2) if not front_only else out   # (tops: four rings, the armpit seam between sleeve and side closed)
 
 btree = BVHTree.FromObject(body, bpy.context.evaluated_depsgraph_get())
 # the body without its hair, one surface per part (torso, each arm, each leg): shell() casts outward from a bone onto
@@ -132,7 +141,7 @@ def _tree(mask):
         try: bm_.faces.new(vs)
         except ValueError: pass
     t = BVHTree.FromBMesh(bm_); bm_.free(); return t
-RTREE = {'torso': _tree(clothable & (istorso | (kit & ~isarm & ~isleg & (fc[:, 2] < NECK + .02))))}   # (with the kit's collar: tops wrap over it)
+RTREE = {'torso': _tree(clothable & (istorso | neckcol | (kit & ~isarm & ~isleg & (fc[:, 2] < NECK + .02))))}   # (with the kit's collar: tops wrap over it)
 for s in 'LR':
     RTREE['arm' + s] = _tree(clothable & isarm & ((fc[:, 0] >= 0) == (s == 'L')))
     RTREE['leg' + s] = _tree(clothable & isleg & ((fc[:, 0] >= 0) == (s == 'L')))
@@ -260,7 +269,7 @@ if RDIR and os.environ.get('CL_CLASSES'):   # (check picture of how each body tr
     os.makedirs(RDIR, exist_ok=True)
     ca = me.color_attributes.new('cls', 'BYTE_COLOR', 'CORNER')
     for p in me.polygons:
-        i = p.index; c = (0, 0, 0, 1) if hair[i] else (.2, .3, 1, 1) if isarm[i] else (.2, .9, .2, 1) if isleg[i] else (1, .2, .2, 1) if istorso[i] else (1, 1, 0, 1)
+        i = p.index; c = (0, 0, 0, 1) if hair[i] else (1, 1, 1, 1) if (kit[i] and fc[i, 2] > WAIST + .1 and not isarm[i]) else (.2, .3, 1, 1) if isarm[i] else (.2, .9, .2, 1) if isleg[i] else (1, .2, .2, 1) if istorso[i] else (1, 1, 0, 1)
         for l in p.loop_indices: ca.data[l].color = c
     dm_ = bpy.data.materials.new('dbg'); dm_.use_nodes = True
     vc = dm_.node_tree.nodes.new('ShaderNodeVertexColor'); vc.layer_name = 'cls'; em_ = dm_.node_tree.nodes.new('ShaderNodeEmission'); dm_.node_tree.links.new(vc.outputs['Color'], em_.inputs['Color']); dm_.node_tree.links.new(em_.outputs[0], dm_.node_tree.nodes['Material Output'].inputs['Surface'])   # (lit by itself: no lights needed)

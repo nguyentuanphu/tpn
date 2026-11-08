@@ -81,8 +81,9 @@ gone = [f for f in bm.faces if (f.calc_center_median().z > CUT and not kitn[f.in
         (f.calc_center_median().z > CUT - .12 and abs(f.calc_center_median().x) < .16 and f.calc_center_median().y > NCY and hairn[f.index])]   # (its hair at the nape only)
 bmesh.ops.delete(bm, geom=gone, context='FACES'); bmesh.ops.delete(bm, geom=[v for v in bm.verts if not v.link_faces], context='VERTS')
 bm.normal_update()
+NAPE_Y = NCY + NR * .35   # (behind this, below the hair, the neck is the new body's own)
 for v in bm.verts:   # (what it keeps above the cut sits a little inside, so it fills openings but never shows through the old head)
-    if v.co.z > CUT + .015: v.co -= v.normal * min(.009, (v.co.z - CUT - .015) * .3)
+    if v.co.z > CUT + .015 and not (v.co.y > NAPE_Y and v.co.z < CUT + .07): v.co -= v.normal * min(.009, (v.co.z - CUT - .015) * .3)
 bm.to_mesh(bm_ := body.data) if False else bm.to_mesh(body.data); bm.free(); body.data.update()
 print('GH new body triangles removed', len(gone))
 # ---- the old head: above the cut, the 2.5 cm band below it, and its own hair hanging lower
@@ -104,6 +105,9 @@ def keep(f):
     z = f.calc_center_median().z
     if z > CUT + .07: return True   # (the head itself: face, ears, hair)
     if hairo[f.index]: return z > CUT - .14   # (hair, hanging a little lower at the nape)
+    # (owner 8 Nov 2026: "the neck is still smudged") the back of the old neck carries the shadow its hood painted; there
+    # the new body's own clean nape shows instead, the join hidden under the hair
+    if f.calc_center_median().y > NAPE_Y: return False
     return skino[f.index] and z > CUT - .025   # (the neck's skin and its band; never clothes)
 bmesh.ops.delete(bm, geom=[f for f in bm.faces if not keep(f)], context='FACES')
 bmesh.ops.delete(bm, geom=[v for v in bm.verts if not v.link_faces], context='VERTS')

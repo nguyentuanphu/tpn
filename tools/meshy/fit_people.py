@@ -430,6 +430,11 @@ if ORIGINAL:   # the skin is not recoloured: the face layer covers the face's sk
     base[..., 3] = al
 def lid(img, b, top=0., bot=1.):   # (original_skin) a closed lid painted over the eye: her own skin from round the eye
     w_, h_ = b[2] - b[0], b[3] - b[1]; y0 = b[1] + h_ * top; y1 = b[1] + h_ * bot
+    # (owner 8 Nov 2026: "a straight streak across the eyes" on the sad face) a lid that comes only part way down is the
+    # whole eye's lid cut by a curved edge following the eye (lower in the middle), with a lash line along it, not a
+    # straight band across the top of the eye
+    PART = OWN and top == 0 and bot < 1
+    if PART: lidline = lambda x: b[1] + h_ * bot + h_ * .14 * (1 - np.clip((x - (b[0] + b[2]) / 2) / (w_ / 2), -1, 1) ** 2); y1 = b[3]
     ring = (xx > b[0] - w_ * .3) & (xx < b[2] + w_ * .3) & (yy > b[1] - h_ * .2) & (yy < b[3] + h_ * .5) & ~((xx > b[0]) & (xx < b[2]) & (yy > b[1]) & (yy < b[3]))
     ring &= skin_mask(F) & (V > .55) & (S_ > .14)   # (not grey brows or hair: Bác Ba's lids came out grey)
     sk = np.median(F[ring][:, :3], axis=0) if ring.any() else REF
@@ -459,6 +464,7 @@ def lid(img, b, top=0., bot=1.):   # (original_skin) a closed lid painted over t
         hole = (_h2 | (d < .6)) & (yy >= cy_ - ry * .7)   # (the brows just above stay: Clara's and Lumi's vanished)
         hole &= ~(HAIRISH & (yy < b[1] + (b[3] - b[1]) * .08))   # (b is the eye box grown upwards: only strands above the eye itself; dark lashes close)   # (fringe strands in the top of the eye area stay hair: no skin patch over them)
     if top > 0: hole &= yy >= y0
+    if PART: hole &= yy < lidline(xx)
     # her own skin flows in from all round the eye (a smooth fill, no disc edge): the eye pixels are repeatedly
     # replaced by the mean of their neighbours, the skin round them held fixed
     ya, yb = max(0, int(cy_ - ry * 1.4) - 3), min(H_, int(cy_ + ry * 1.4) + 4); xa, xb = max(0, int(cx_ - rx * 1.6) - 3), min(W_, int(cx_ + rx * 1.6) + 4)
@@ -475,6 +481,8 @@ def lid(img, b, top=0., bot=1.):   # (original_skin) a closed lid painted over t
         av = (P[:-2, 1:-1] + P[2:, 1:-1] + P[1:-1, :-2] + P[1:-1, 2:]) / 4; sub[hm] = av[hm]
     _w = img[ya:yb, xa:xb, :3]; _w[hm] = sub[hm]   # (only the lid itself: the brows, lashes and hair held at skin colour above were written back too, and vanished on every blink)
     img[ya:yb, xa:xb, 3] = np.maximum(img[ya:yb, xa:xb, 3], hm.astype(np.float32))
+    if PART:   # the lid's edge: a soft lash line along the curve, over the eye only
+        xs_ = np.linspace(b[0] + w_ * .06, b[2] - w_ * .06, 24); stroke(img, list(zip(xs_, lidline(xs_))), lash, max(1.2, H_ * .008))
 def shut(img, b, top=0., bot=1.):   # close an eye: a painted lid (original skin) or see-through (skin-tone mode)
     if ORIGINAL: lid(img, b, top, bot)
     else: erase(img, b, top, bot)
@@ -549,7 +557,9 @@ im = base.copy()
 for b in eyes.values(): shut(im, grow(b)); stroke(im, arc(b, .62, .16), lash, lw)
 M['blink'] = im
 im = base.copy()
-for b in eyes.values(): shut(im, grow(b), 0, .55); stroke(im, arc(b, .5, -.06), lash, lw)
+for b in eyes.values():
+    shut(im, grow(b), 0, .55)
+    if not OWN: stroke(im, arc(b, .5, -.06), lash, lw)   # (own face: the lid draws its own lash line along its curve)
 M['half'] = im
 im = base.copy()
 for b in eyes.values(): shut(im, grow(b)); stroke(im, arc(b, .7, -.32), lash, lw)
