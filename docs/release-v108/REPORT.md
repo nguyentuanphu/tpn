@@ -48,6 +48,29 @@ villagers), 38 Blender films, parent notifications (off until VAPID keys are set
 Release fixes on 6-7 Nov: touch sizes, world placement, voice lists and order, sideways-phone layouts, lighter far
 villagers, and the browser workflows pinned to Ubuntu 24.04.
 
-## Results
+## Results (8 Nov 2026, 11:40 am AEDT)
 
-(filled in when the final full suite on the release head finishes)
+- **Full suite on GitHub, release head `767a52377`: 376/376 passed** (run 42424167978, 16 machines). Passed only on
+  a second try: hocvui (one sampled science game, Talent vs Easy count), managementstudio (Studio page slow to draw).
+- Rounds before it (6-8 Nov): 337, 46/48 (only-run), 372, 374, 373, 354 (a machine lost) then 375 on its re-run.
+  Every red was fixed at its cause:
+  - Studio switches for the boxes and surprises: their release dates are 7 Nov, and the checks now switch them off the
+    way Studio does.
+  - Repeated rounds: reading games deal their lists in turn, and Gấp Đôi Easy goes to 4.
+  - Friend card: it keeps the time it came, and the meet check waits from then.
+  - Film music: a story's music starts on the tap.
+  - Sound switches in the valley: they open inside the tap.
+  - Cờ Cá Ngựa: the board holds still mid-game, and the fit leaves out folded buttons.
+  - Cloud play: a knocking friend always reaches the host, and a friend sees the right place.
+  - Dragon Bridge Count on a sideways phone, and the 4 new voice lines.
+  - Workflows on Ubuntu 24.04.
+- Speed checks on the Release machine (head `767a52377`):
+  - perf: pass (start 2.4 MB in 4.0 s; home 163 draws, village 269 draws / 774k triangles).
+  - battery: pass.
+  - startup: first download 1017 KB (limit 1025, pass); ready in 18.5 s, over this machine's scaled limit
+    (13.8 s at speed 0.71), the same as v1.07 on this machine (24-25 s).
+- Local checks on the merged fixes: types, preload, soundsw x5, filmmusic x5, cloud x5, meet x2, horsestability
+  x11 (no board move), fivescreens 370 games on a sideways phone, gamefit, reading, hocvui, school, voicecover,
+  voiceopus: pass.
+- Screenshots (phone, tablet, computer): `docs/release-v108/screens/` (taken 7 Nov on 3185da1b1; the later fixes are
+  covered by the fivescreens and gamefit checks at every size).
