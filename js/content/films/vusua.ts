@@ -3,8 +3,8 @@
 // twice: running home (page 3) and hugging the tree (page 5).
 import { L, Pp, LOOK, THREE, P, mesh, PI, H, speak, go, hop, village, night, milkFruit, rain } from './kit.js';
 
-const BOY = LOOK({ style: 'shirt', color: '#43a8e8', hairStyle: 'spiky', skin: '#e0aa80' });
-const MOM = LOOK({ style: 'aodai', color: '#7aa84a', hairStyle: 'buns', skin: '#e8b890' });
+const BOY = LOOK({ kit: 'vn-boy', style: 'tunic', color: '#43a8e8', hairStyle: 'spiky', skin: '#e0aa80' });
+const MOM = LOOK({ kit: 'vn-tuthan', style: 'aodai', color: '#7aa84a', hairStyle: 'buns', skin: '#e8b890' });
 const ball = () => mesh([P(new THREE.SphereGeometry(.15, 12, 10), '#e8332a', [0, .15, 0]), P(new THREE.TorusGeometry(.15, .015, 4, 16), '#ffd23f', [0, .15, 0], [H, 0, 0])]);
 const gate = () => mesh([P(new THREE.BoxGeometry(.2, 2, .2), '#8a5a32', [-1, 1, 0]), P(new THREE.BoxGeometry(.2, 2, .2), '#8a5a32', [1, 1, 0]), P(new THREE.BoxGeometry(2.4, .25, .3), '#8a5a32', [0, 2, 0])]);
 // the milk fruit tree: wide shiny leaves (green on top, gold under), round purple-green fruit

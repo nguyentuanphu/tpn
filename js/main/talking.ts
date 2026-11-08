@@ -10,6 +10,9 @@ import { $ } from '../util.js';
 import { buildAvatar, avatarURL } from '../avatar.js';
 import { EMOTES } from '../hud.js';
 import { Net } from '../net.js';
+// (v1.08 release fix 5) the Sound switches come with the game, not when Sound is tapped: on a slow device (GitHub's
+// software-drawn test browser) loading them at the tap took 2 to 5 s of half-second frames, so a child's tap seemed to do nothing
+import { openSoundSheet } from '../soundsheet.js';
 import { dialog, toast, modal } from '../ui.js';
 import { gameOpen } from '../games/frame.js';
 import type { SvMain } from '../main.js';
@@ -45,7 +48,7 @@ G.setAudio = (kind, on) => {
   if (kind === 'voice' && !on) hush();
   saveSettings(); G.huds.forEach(h => h.refreshAudio());
 };
-G.openSound = anchor => import('../soundsheet.js').then(m => m.openSoundSheet(G, anchor));
+G.openSound = anchor => Promise.resolve(openSoundSheet(G, anchor));
 // (r63) the first tap asks for the microphone and turns it on; then each tap turns it off or on again
 G.toggleMute = async () => { if (!Net.micLive) { Net.resumeAudio(); await Net.getMic(true); } else { Net.setMuted(!Net.muted); Net.resumeAudio(); } G.huds.forEach(hd => hd.setCall(Net.connected, false, Net.muted || !Net.micLive)); };
 // Keyboard shortcuts on computers (shown as little key badges on the buttons). Player 1's screen.

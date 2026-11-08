@@ -3,6 +3,7 @@
 // for), en, vi, group, def (what it is when Studio never set it: the owner chose "everything on"). Every festival is
 // one too (fest_<id>, from js/content/festcal.js). Part 2 of round R adds the rest of the list as each one is built.
 import { FESTCAL } from './festcal.js';
+import { BLENDER_FOR_ALL, filmSwitch } from './films-for-all.js';
 // game: the money game it switches; icon: a festival's picture
 export type Release = { id: string, en: string, vi: string, group: string, def: boolean, icon?: string, game?: string };
 export const RELEASES: Release[] = [
@@ -30,6 +31,10 @@ export const RELEASES: Release[] = [
   { id: 'story_ch1', en: 'Story chapter 1: Lotus Village', vi: 'Truyện chương 1: Làng Sen', group: 'story', def: true },
   { id: 'story_ch2', en: 'Story chapter 2: Hà Nội (Tèo\'s challenge, Văn Miếu, Cầu Thê Húc lights up, Trung Thu parade)', vi: 'Truyện chương 2: Hà Nội (Tèo thách đấu, Văn Miếu, Cầu Thê Húc sáng đèn, rước đèn Trung Thu)', group: 'story', def: true }, // (owner 10 Oct: off until an admin switches it on or schedules it)
   { id: 'story_ch3', en: 'Story chapter 3: Sydney (Chi\'s Aussie words, the ferries, cricket with Jack and Ruby, the Opera House lights up, fireworks)', vi: 'Truyện chương 3: Sydney (Chi dạy từ tiếng Úc, phà, chơi cricket với Jack và Ruby, Nhà hát Opera sáng đèn, pháo hoa)', group: 'story', def: true },
+  // (v1.08b story) chapters 4, 5 and the Tết finale: on, and each opens on its day in the release calendar (js/content/releasecal.ts)
+  { id: 'story_ch4', en: 'Story chapter 4: Christmas and New Year (opens 4 Dec in the release calendar)', vi: 'Truyện chương 4: Giáng sinh và Năm mới (mở ngày 4/12 theo lịch phát hành)', group: 'story', def: true },
+  { id: 'story_ch5', en: 'Story chapter 5: Huế, Đà Nẵng, Melbourne and Uluru (opens 8 Jan in the release calendar)', vi: 'Truyện chương 5: Huế, Đà Nẵng, Melbourne và Uluru (mở ngày 8/1 theo lịch phát hành)', group: 'story', def: true },
+  { id: 'story_finale', en: 'Story finale: every lantern home for Tết (opens at Tết, 6 Feb, in the release calendar)', vi: 'Truyện phần cuối: mọi đèn lồng về nhà đón Tết (mở dịp Tết, 6/2, theo lịch phát hành)', group: 'story', def: true },
   { id: 'story_yard', en: 'Story: Bà Huệ and ông Nghi\'s yard (coach from Hà Tĩnh, dump truck, excavator, a house built together)', vi: 'Truyện: Công trường của bà Huệ và ông Nghi (xe khách từ Hà Tĩnh, xe ben, máy xúc, cùng xây nhà)', group: 'story', def: true },
   // (owner, 18 Oct AEDT: "stories film switch is not available on studio") js/tales.js, js/howto-player.js; also on Studio's Defaults page (Releases wins)
   { id: 'storyFilms', en: 'Stories and how-to guides as 3D films (where a film is made). Off: the tale opens as a picture book and the guide as pictures', vi: 'Truyện và hướng dẫn thành phim 3D (khi đã có phim). Tắt: truyện mở thành sách tranh và hướng dẫn thành tranh', group: 'story', def: true },
@@ -70,6 +75,12 @@ RELEASES.push(
   { id: 'rideAny', en: 'Ride any vehicle: drive the parked cars and motorbikes', vi: 'Đi mọi loại xe: lái xe hơi và xe máy đang đậu', group: 'world', def: true },
   { id: 'busFares', en: 'Buses, trams and taxis take a passenger for a fare; bus stops with a picture timetable', vi: 'Xe buýt, tàu điện và taxi chở khách có trả tiền vé; trạm xe buýt có bảng giờ bằng hình', group: 'world', def: true },
   { id: 'wayfind', en: 'Find a place: compass guidance (hidden until enabled)', vi: 'Tìm một nơi: la bàn chỉ đường (ẩn đến khi bật)', group: 'valley', def: false },
+  // (Release, v1.08: check studioswitches) the four Season 2 Vietnam regions open on their calendar day; these cards let
+  // Studio peek each one early on testers' devices (js/s2vn.ts regionOpen)
+  { id: 's2_mekong', en: 'Season 2: the Mekong floating market (opens on its calendar day)', vi: 'Mùa 2: chợ nổi miền Tây (mở vào ngày trong lịch)', group: 'valley', def: true },
+  { id: 's2_halong', en: 'Season 2: Hạ Long Bay (opens on its calendar day)', vi: 'Mùa 2: Vịnh Hạ Long (mở vào ngày trong lịch)', group: 'valley', def: true },
+  { id: 's2_sapa', en: 'Season 2: the Sapa rice terraces (opens on its calendar day)', vi: 'Mùa 2: ruộng bậc thang Sapa (mở vào ngày trong lịch)', group: 'valley', def: true },
+  { id: 's2_taynguyen', en: 'Season 2: the Central Highlands (opens on its calendar day)', vi: 'Mùa 2: Tây Nguyên (mở vào ngày trong lịch)', group: 'valley', def: true },
   { id: 'jobs', en: 'Village job boards: helping jobs for coins and a sticker', vi: 'Bảng việc làng: việc giúp đỡ được tiền và hình dán', group: 'valley', def: true },
   { id: 'villagerTalk', en: 'Every villager talks: a fact or a saying of their place', vi: 'Mọi người trong làng đều nói chuyện: kể điều hay hoặc câu nói của quê mình', group: 'valley', def: true },
   { id: 'dayPlan', en: 'Villagers\' day plan: they walk home at night, umbrellas in the rain', vi: 'Một ngày của dân làng: tối đi về nhà, trời mưa che ô', group: 'valley', def: true },
@@ -123,4 +134,37 @@ for (const [id,en,vi] of [['sparkleorchard','Orchard Quest','Nhiệm vụ vườ
  RELEASES.push({id:id+'_tester',en:en+(id==='sparkleorchard'?': invited tester preview (works while tester modes are off; never opens for non-testers)':': enable invited tester preview only'),vi:vi+(id==='sparkleorchard'?': bản thử cho người thử được mời (dùng được khi các chế độ thử đang tắt; không mở cho người chưa thử)':': chỉ bật bản thử cho người thử được mời'),group:'tools',def:false},
  {id:id+'_single',en:en+(id==='sparklefruitbar'?': single-device play for everyone':': tester single-device play'),vi:vi+(id==='sparklefruitbar'?': mọi người chơi cùng máy':': người thử chơi cùng máy'),group:'tools',def:false},
  {id:id+'_multi',en:en+(id==='sparklefruitbar'?': online multiplayer for everyone':': tester online multiplayer'),vi:vi+(id==='sparklefruitbar'?': mọi người chơi nhiều máy':': người thử chơi nhiều máy'),group:'tools',def:false});
+}
+// (v1.08 notifications) push notifications for grown-ups (docs/plans/push-notifications.md): one switch per kind, on for
+// everyone unless Studio turns it off or schedules it (a start date and days); each family still picks its own kinds in
+// Grown-ups. The website reads these switches when it sends (netlify/lib/push.mts studioOffOf).
+RELEASE_GROUPS.notify = ['Notifications for grown-ups', 'Thông báo cho phụ huynh'];
+RELEASES.push(
+  { id: 'push_festival', en: 'Notification: Vietnamese festival (the morning before)', vi: 'Thông báo: lễ hội Việt Nam (sáng hôm trước)', group: 'notify', def: true },
+  { id: 'push_event', en: 'Notification: event in Australia (the Saturday before)', vi: 'Thông báo: sự kiện ở Úc (thứ Bảy trước đó)', group: 'notify', def: true },
+  { id: 'push_new', en: 'Notification: new games and stories (Saturday 9:30; the text is set below)', vi: 'Thông báo: trò chơi và truyện mới (thứ Bảy 9:30; lời nhắn đặt ở dưới)', group: 'notify', def: true },
+  { id: 'push_gotw', en: 'Notification: game of the week (Saturday 9:30)', vi: 'Thông báo: trò chơi của tuần (thứ Bảy 9:30)', group: 'notify', def: true },
+  { id: 'push_weekly', en: 'Notification: weekly summary for grown-ups (Sunday 18:00)', vi: 'Thông báo: tóm tắt tuần cho phụ huynh (Chủ nhật 18:00)', group: 'notify', def: true },
+  { id: 'push_balance', en: 'Notification: skill balance tip (Sunday 18:00)', vi: 'Thông báo: gợi ý cân bằng kỹ năng (Chủ nhật 18:00)', group: 'notify', def: true },
+  { id: 'push_achieve', en: 'Notification: level ups and achievements (in the Sunday summary)', vi: 'Thông báo: lên cấp và thành tích (trong tóm tắt Chủ nhật)', group: 'notify', def: true },
+  { id: 'push_word', en: 'Notification: word of the week (Monday morning)', vi: 'Thông báo: từ của tuần (sáng thứ Hai)', group: 'notify', def: true },
+  { id: 'push_bedtime', en: 'Notification: bedtime story (19:00 on the days a grown-up picks)', vi: 'Thông báo: truyện trước giờ ngủ (19:00 vào ngày phụ huynh chọn)', group: 'notify', def: true },
+  { id: 'push_life', en: 'Notification: everyday life ideas (twice a month)', vi: 'Thông báo: gợi ý đời thường (hai lần mỗi tháng)', group: 'notify', def: true },
+  { id: 'push_invite', en: 'Notification: play invites from a friend’s family', vi: 'Thông báo: lời mời chơi từ gia đình bạn', group: 'notify', def: true },
+  { id: 'push_tester', en: 'Notification: testers, a reported problem is fixed', vi: 'Thông báo: người thử, lỗi đã báo được sửa', group: 'notify', def: true },
+);
+
+// (v1.08f films, owner 6 Nov 2026 AEDT) the Blender films (js/blenderfilm.ts, js/content/blenderfilms.ts): one switch for
+// all of them, one for testers, and one per listed film (on for the five, off for the rest), built from the film list so a
+// film added there gets its switch with no code change
+RELEASES.push(
+  { id: 'blenderFilms', en: 'Blender films: the stories that have a film made in Blender play it as a video (kept on the device once watched). Off: every story plays the in-game film', vi: 'Phim Blender: truyện có phim làm bằng Blender sẽ chiếu video đó (giữ trên máy sau khi xem). Tắt: mọi truyện chiếu phim trong game', group: 'story', def: true },
+  { id: 'blenderFilmsTesters', en: 'Blender films for testers: on tester devices, every Blender film plays, also the ones not yet for everyone. Off: testers see only the films for everyone', vi: 'Phim Blender cho người thử: trên máy thử, mọi phim Blender đều chiếu, cả phim chưa mở cho mọi người. Tắt: người thử chỉ xem các phim cho mọi người', group: 'story', def: false }
+);
+for (const id of BLENDER_FOR_ALL) RELEASES.push(filmSwitch(id));
+// the switches of the other listed films (Studio calls this with js/content/blenderfilms.ts BLENDER_FILMS, so a film added
+// there gets its switch with no code change, and the game's first download never carries the films' page data)
+export function addFilmSwitches(films: Record<string, { en?: string, vi?: string }>) {
+  for (const id of Object.keys(films)) if (!RELEASES.some(r => r.id === `blenderFilm_${id}`)) RELEASES.push(filmSwitch(id, films[id]));
+  return RELEASES;
 }

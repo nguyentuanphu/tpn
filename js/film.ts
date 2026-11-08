@@ -4,7 +4,8 @@
 //   S.walk(actor, t, [x, z])        walks there (turns first), returns when it arrives
 //   S.do(actor, t, 'kneel', dur)    a pose or action: kneel dig plant water eat point talk sad bow hug carry
 //                                   give pull swing throw stretch surprised sitground lie cheer wave ride
-//   S.mood(actor, t, 'happy')       the face: smile happy sad o (surprised) sleep; S.talk() moves the mouth
+//   S.mood(actor, t, 'happy')       the face: smile happy sad o or surprised, curious, shy, excited, sleep, cry (sad), sly (curious); S.talk() moves the mouth
+//   S.still(t)                      the moment drawn as the page's story picture (Blender)
 //   S.tw(t, dur, k => …)            anything else that changes over time (grow, fall, change colour, fly…)
 //   S.cam(t, dur, pos, look)        the camera glides to a new shot (in calm mode it cuts instead)
 //   S.help(t, en, vi, act)          the child helps: the film waits for a tap anywhere on the picture
@@ -18,6 +19,7 @@ import type { BufferGeometry, CanvasTexture, Material, Mesh, Object3D } from '..
 type PaintedCanvasTexture = CanvasTexture & { paint(top: string, bottom: string): void };
 type FilmApi = { onSay?: (en: string, vi: string, kind?: string) => Promise<unknown>; readonly now: any; page(k: number): Promise<unknown>; narrated(): void; pause(): void; close(): void };
 import { buildAvatar, drawFeatures, OUTLINED } from './avatar.js';
+import * as AV from './avatar.js';
 import { reduceMotion } from './state.js';
 import { T } from './i18n.js';
 import { sayAsync } from './voice.js';
@@ -25,6 +27,7 @@ import { SFX } from './audio.js';
 import { el, esc } from './util.js';
 import { pic } from './art.js';
 import { storyLook } from './content/film-looks.js';
+import { kitBase, kitDress } from './film-costume.js';
 
 const H = Math.PI / 2;
 export const io = k => k < .5 ? 2 * k * k : 1 - (-2 * k + 2) ** 2 / 2;
@@ -50,31 +53,7 @@ const faces = {};
 function face(look, mood) {
   const k = look.hair + look.skin + mood; if (faces[k]) return faces[k];
   const S = 256, c = document.createElement('canvas'); c.width = c.height = S; const x = c.getContext('2d');
-  if (mood === 'smile' || mood === 'o') drawFeatures(x, S, look, mood);
-  else {
-    // the same eyes and cheeks as the valley's faces, with other brows and mouths
-    const eyeOpen = mood !== 'sleep';
-    [.36, .64].forEach(cx => {
-      if (eyeOpen) {
-        x.fillStyle = '#fff'; x.beginPath(); x.ellipse(cx * S, S * .55, S * .085, S * .075, 0, 0, 7); x.fill();
-        x.fillStyle = '#3a2418'; x.beginPath(); x.arc(cx * S, S * .56, S * .06, 0, 7); x.fill();
-        x.fillStyle = '#120a08'; x.beginPath(); x.arc(cx * S, S * .56, S * .03, 0, 7); x.fill();
-        x.fillStyle = '#fff'; x.beginPath(); x.arc(cx * S + S * .022, S * .535, S * .02, 0, 7); x.fill();
-      }
-      x.strokeStyle = '#2b1a14'; x.lineWidth = S * .022; x.lineCap = 'round'; x.beginPath();
-      if (eyeOpen) x.ellipse(cx * S, S * .55, S * .088, S * .078, 0, Math.PI * 1.08, Math.PI * 1.92); else x.arc(cx * S, S * .53, S * .07, Math.PI * .15, Math.PI * .85);
-      x.stroke();
-      // brows: sad ones slope down at the sides, happy ones lift
-      const d = cx < .5 ? -1 : 1, sad = mood === 'sad';
-      x.strokeStyle = look.hair; x.lineWidth = S * .024; x.beginPath();
-      x.moveTo(S * (cx - .07), S * (sad ? .43 + .025 * d : .42)); x.quadraticCurveTo(S * cx, S * (sad ? .41 : .39), S * (cx + .07), S * (sad ? .43 - .025 * d : .42)); x.stroke();
-    });
-    x.fillStyle = 'rgba(240,110,110,.4)'; [.24, .76].forEach(cx => { x.beginPath(); x.ellipse(cx * S, S * .67, S * .065, S * .04, 0, 0, 7); x.fill(); });
-    x.fillStyle = '#a3485a'; x.strokeStyle = '#a3485a'; x.lineWidth = S * .02; x.beginPath();
-    if (mood === 'sad') { x.moveTo(S * .44, S * .74); x.quadraticCurveTo(S * .5, S * .69, S * .56, S * .74); x.stroke(); }
-    else if (mood === 'sleep') { x.moveTo(S * .46, S * .72); x.lineTo(S * .54, S * .72); x.stroke(); }
-    else { x.moveTo(S * .42, S * .68); x.quadraticCurveTo(S * .5, S * .8, S * .58, S * .68); x.closePath(); x.fill(); x.fillStyle = '#fff'; x.fillRect(S * .45, S * .68, S * .1, S * .02); }
-  }
+  drawFeatures(x, S, look, mood); // (v1.08e faces) every mood in the valley's soft-lid style: smile, happy, sad, o, sleep ...
   const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return (faces[k] = t);
 }
 
@@ -83,10 +62,14 @@ export const LOOK = (o) => Object.assign({ style: 'shirt', color: '#3b6fe0', hat
 // the people's shapes and paints are shared with the valley, so a page never throws those away
 const KEEP = new WeakSet();
 function person(look, scale = 1) {
-  const A = buildAvatar(LOOK(look), null);
+  // (v1.08c) a tale's period costume from the kit (js/film-costume.ts): the base shape first, then the kit's pieces on top
+  const base = look.kit ? kitBase(LOOK(look)) : LOOK(look);
+  const A = buildAvatar(base, null);
+  (A as any).painted = false; // the film drives this face itself (its own picture per mood): the valley's face code must not move it
+  if (look.kit) kitDress(A, LOOK(look), base);
   const i = OUTLINED.indexOf(A); if (i >= 0) OUTLINED.splice(i, 1); // the valley hides far outlines; a film keeps them
   A.root.scale.setScalar(scale);
-  const a = { A, o: A.root, state: 'idle', speed: 0, mood: 'smile', talkUntil: -1, px: 0, pz: 0, yaw: 0, look: LOOK(look), wig: 0 };
+  const a = { A, o: A.root, state: 'idle', speed: 0, mood: 'smile', talkUntil: -1, px: 0, pz: 0, yaw: 0, look: LOOK(look), wig: 0, blinkAt: undefined as number };
   A.root.userData.actor = a; A.faceMat.map = face(a.look, 'smile');
   A.root.traverse((o: Object3D) => {
     const meshObj = o as unknown as Mesh;
@@ -100,6 +83,23 @@ function person(look, scale = 1) {
 function lean(A, a, nod = 0) {
   A.torso.rotation.x = a; A.torso.position.set(0, .6 - .6 * Math.cos(a), -.6 * Math.sin(a));
   A.head.position.set(0, .6 + .73 * Math.cos(a), .73 * Math.sin(a)); A.head.rotation.x = a * .7 + nod;
+}
+// the story moods that use another face: surprised is the o face, crying the sad one (tears in the Blender pages), sly the curious one
+const FACE_AS = { surprised: 'o', cry: 'sad', sly: 'curious' };
+const OPEN_EYES = new Set(['smile', 'o', 'sad', 'curious', 'excited']);
+// the blink and the glances need the soft faces with lids (v1.08e faces: drawFeatures draws 'half', 'lookL', 'lookR')
+const SOFT = ((AV as any).MOODS || []).includes('half');
+// (v1.08c) the eyes of everyone quiet turn to whoever is speaking: 'lookL' is the person's own left (+x as they face +z)
+const _sp = new THREE.Vector3(), _me = new THREE.Vector3();
+function lookToSpeaker(actors: any[], t: number) {
+  const sp = actors.find(a => t < a.talkUntil || (a.lip && a.lip.on()));
+  if (sp) sp.o.getWorldPosition(_sp);
+  for (const a of actors) {
+    if (!sp || sp === a) { a.lookAt = null; continue; }
+    a.o.getWorldPosition(_me); const dx = _sp.x - _me.x, dz = _sp.z - _me.z, y = a.o.rotation.y;
+    const side = dx * Math.cos(y) - dz * Math.sin(y), ahead = dx * Math.sin(y) + dz * Math.cos(y);
+    a.lookAt = Math.abs(side) < .35 || ahead < -.2 ? null : side > 0 ? 'lookL' : 'lookR';
+  }
 }
 const BASE = { walk: 'walk', ride: 'ride', sit: 'sit', cheer: 'cheer', wave: 'wave', dance: 'dance' };
 function pose(a, t) {
@@ -137,9 +137,54 @@ function pose(a, t) {
   if (a.hold) a.hold(A, t);
   // a tap on a character: a happy little hop
   if (a.wig > 0) { a.wig = Math.max(0, a.wig - 1 / 40); A.rig.position.y += Math.sin(a.wig * Math.PI) * .25; }
-  // the mouth moves while the character speaks
-  const m = t < a.talkUntil ? (Math.sin(t * 16) > 0 ? 'o' : a.mood === 'sad' ? 'sad' : 'smile') : a.mood;
+  // the mouth moves while the character speaks: (v1.08c) with the voice, syllable by syllable, and still at its pauses
+  const talking = t < a.talkUntil || (a.lip && a.lip.on()), mood = FACE_AS[a.mood] || a.mood;
+  let m = talking ? (lipOpen(a.lip && a.lip.line(), t) ? 'o' : mood === 'sad' ? 'sad' : 'smile') : mood;
+  // (v1.08c, with the v1.08e faces) while quiet with open eyes: a soft blink (half, closed, half) every 2 to 6 s, each actor
+  // at their own moment; between blinks the eyes turn to whoever is speaking
+  if (SOFT && !talking && OPEN_EYES.has(m)) {
+    if (a.blinkAt === undefined) a.blinkAt = t + Math.random() * 4;
+    const into = t - a.blinkAt;
+    if (into >= .15) a.blinkAt = t + 2 + Math.random() * 4;
+    else if (into >= 0) m = into < .04 || into >= .11 ? 'half' : 'blink';
+    else if (m === 'smile' && a.lookAt) m = a.lookAt;
+  }
   if (a._face !== m) { a._face = m; A.faceMat.map = face(a.look, m); A.faceMat.needsUpdate = true; }
+  if (A.model) (A.life || (A.life = {} as any)).mood = m; // (v1.08b friends) a friend's model shows the same mood on its own face
+}
+
+// (v1.08c) lips with the voice: the line being said is cut into syllables (a Vietnamese word is one syllable; an English
+// word one per group of vowels), each about a fifth of a second, with a short rest at every comma and full stop. The mouth
+// opens for the start of each syllable and closes at the rests, so it follows the words and stops when the voice stops.
+const SYL = .2, REST = .28;
+function syllables(text: string) {
+  const out: number[] = []; // 1: a syllable, 0: a rest
+  for (const w of String(text).split(/\s+/)) {
+    if (!w) continue; const v = w.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().match(/[aeiouy]+/g);
+    const n = /[\u0300-\u036f\u01a1\u01b0\u0103\u00e2\u00ea\u00f4\u0111]/i.test(w.normalize('NFD')) || !v ? 1 : Math.min(4, v.length);
+    for (let i = 0; i < n; i++) out.push(1);
+    if (/[,.!?;:]$/.test(w)) out.push(0);
+  }
+  return out;
+}
+const lipCache = new Map<string, number[]>();
+function lipOpen(line: { text: string, t0: number } | null, t: number) {
+  if (!line) return Math.sin(t * 13) + Math.sin(t * 7.3) * .6 > 0; // no words to follow: a soft irregular talk
+  let sy = lipCache.get(line.text); if (!sy) { sy = syllables(line.text); lipCache.set(line.text, sy); if (lipCache.size > 60) lipCache.delete(lipCache.keys().next().value); }
+  let at = t - line.t0;
+  for (const k of sy) { const d = k ? SYL : REST; if (at < d) return !!k && at < d * .62; at -= d; }
+  return false;
+}
+
+// (v1.08b story, smoother films) soft motes of light drifting slowly through a scene: dust in the sun by day, fireflies
+// at night (the sky's colour says which); 28 points in one draw call, so a film plays as fast as before
+function motes(S) {
+  const n = 28, pos = new Float32Array(n * 3), seed = [...Array(n)].map((_, i) => [Math.sin(i * 12.9898) * 43758.5453 % 1, Math.sin(i * 78.233) * 43758.5453 % 1, Math.sin(i * 39.425) * 43758.5453 % 1].map(v => Math.abs(v)));
+  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  const sky = (S.skyNow && S.skyNow[0]) || '#9ad0ff', night = parseInt(String(sky).slice(1, 3), 16) < 0x50;
+  const m = new THREE.PointsMaterial({ color: night ? '#fff2a8' : '#ffffff', size: night ? .16 : .1, transparent: true, opacity: night ? .85 : .45, depthWrite: false, blending: THREE.AdditiveBlending });
+  const pts = new THREE.Points(g, m); pts.userData.film = true; pts.frustumCulled = false; S.root.add(pts);
+  S.every((dt, time) => { const c = S.camLook; for (let i = 0; i < n; i++) { const [a, b, d] = seed[i]; pos[i * 3] = c.x + (a - .5) * 16 + Math.sin(time * .3 + i) * .6; pos[i * 3 + 1] = .6 + b * 4 + Math.sin(time * .5 + i * 1.7) * .3; pos[i * 3 + 2] = c.z + (d - .5) * 10 + Math.cos(time * .25 + i) * .6; } g.attributes.position.needsUpdate = true; });
 }
 
 // ---------- the renderer (one for the whole session) ----------
@@ -151,6 +196,41 @@ function renderer() {
     r.setPixelRatio(Math.min(devicePixelRatio || 1, 1.5)); r.outputColorSpace = THREE.SRGBColorSpace; r.toneMapping = THREE.NoToneMapping;
     r.domElement.className = 'th-film';
     return (R = r);
+  } catch (e) { return null; }
+}
+
+// (v1.08c) a light depth blur: the scene is drawn into a picture with its depth, then shown through one small pass that
+// softens what is far behind (and a little what is very near) the place the camera looks at; the actors stay sharp.
+// One extra full-screen pass with 8 taps; off in calm mode and when the device cannot draw into a depth picture.
+function depthBlur(r, scene, cam) {
+  try {
+    const gl = r.getContext(); if (!(gl instanceof WebGL2RenderingContext)) return null;
+    const sz = new THREE.Vector2(); r.getDrawingBufferSize(sz);
+    const rt = new THREE.WebGLRenderTarget(sz.x, sz.y, { samples: 4, depthTexture: new THREE.DepthTexture(sz.x, sz.y) });
+    const mat = new THREE.ShaderMaterial({
+      uniforms: { tC: { value: rt.texture }, tD: { value: rt.depthTexture }, px: { value: new THREE.Vector2() }, focus: { value: 10 }, near: { value: cam.near }, far: { value: cam.far } },
+      vertexShader: 'varying vec2 vUv; void main() { vUv = uv; gl_Position = vec4(position.xy, 0., 1.); }',
+      fragmentShader: `uniform sampler2D tC; uniform sampler2D tD; uniform vec2 px; uniform float focus, near, far; varying vec2 vUv;
+        float dist(vec2 uv) { float z = texture2D(tD, uv).x * 2. - 1.; return 2. * near * far / (far + near - z * (far - near)); }
+        void main() {
+          float d = dist(vUv), coc = smoothstep(focus * 1.25, focus * 3.5, d) * 2.4 + smoothstep(focus * .5, focus * .2, d) * 1.4;
+          vec4 c = texture2D(tC, vUv);
+          if (coc > .05) { vec4 s = c; float w = 1.;
+            for (int i = 0; i < 8; i++) { float a = float(i) * .785398; vec2 o = vec2(cos(a), sin(a)) * px * coc * (i % 2 == 0 ? 1. : .55);
+              float dd = dist(vUv + o); float k = dd < focus * 1.1 && d > focus * 1.1 ? 0. : 1.; s += texture2D(tC, vUv + o) * k; w += k; }
+            c = s / w; }
+          gl_FragColor = linearToOutputTexel(c); }`,
+      depthTest: false, depthWrite: false
+    });
+    const quad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), mat), qs = new THREE.Scene(), qc = new THREE.Camera(); quad.frustumCulled = false; qs.add(quad);
+    return {
+      draw(focus: number) {
+        r.getDrawingBufferSize(sz); if (rt.width !== sz.x || rt.height !== sz.y) rt.setSize(sz.x, sz.y);
+        mat.uniforms.px.value.set(1 / sz.x, 1 / sz.y).multiplyScalar(Math.max(1, sz.y / 720)); mat.uniforms.focus.value = Math.max(2, focus); mat.uniforms.near.value = cam.near; mat.uniforms.far.value = cam.far;
+        r.setRenderTarget(rt); r.render(scene, cam); r.setRenderTarget(null); r.render(qs, qc);
+      },
+      dispose() { rt.dispose(); rt.depthTexture.dispose(); mat.dispose(); quad.geometry.dispose(); }
+    };
   } catch (e) { return null; }
 }
 
@@ -173,6 +253,14 @@ export function createFilm(stage: HTMLElement, script: any, ctx: any = {}): Film
   const hemi = new THREE.HemisphereLight(0xffffff, 0xf1dfc0, 1.25), sun = new THREE.DirectionalLight(0xffffff, 1.4);
   sun.position.set(30, 50, 25); scene.add(hemi, sun);
   if (script.look) { const fill = new THREE.DirectionalLight('#fff6e4', .55); fill.position.set(-12, 16, 25); scene.add(fill); }
+  // (v1.08c) soft light by the time of day in the story, read from the sky: a warm low sun at dawn and dusk, a cool
+  // moonlight at night, a soft warm white by day; the shadow side takes a little of the sky's and the ground's colour
+  const _sun = new THREE.Color(), _a = new THREE.Color(), _b = new THREE.Color();
+  const dayLight = (top, bottom) => {
+    _a.set(top); _b.set(bottom); const lum = _a.r * .3 + _a.g * .59 + _a.b * .11, warm = Math.max(0, Math.min(1, (_b.r - _b.b) * 1.8));
+    if (lum < .22) _sun.set('#b4c2ff'); else _sun.set('#fff6ea').lerp(_a.set('#ffc184'), warm * .8);
+    sun.color.copy(_sun); hemi.color.set('#ffffff').lerp(_a.set(top), .22); hemi.groundColor.set('#f1dfc0').lerp(_b, .25);
+  };
   stage.appendChild(r.domElement);
   const help = el('div', 'film-help'); help.hidden = true; stage.appendChild(help);
   const ring = el('div', 'film-ring'); ring.hidden = true; stage.appendChild(ring);
@@ -184,12 +272,13 @@ export function createFilm(stage: HTMLElement, script: any, ctx: any = {}): Film
     cam.fov = cam.aspect >= 16 / 9 ? 42 : Math.min(75, 2 * Math.atan(Math.tan(21 * Math.PI / 180) * (16 / 9) / cam.aspect) * 180 / Math.PI);
     cam.updateProjectionMatrix(); };
   const _p = new THREE.Vector3();
+  const blur = depthBlur(r, scene, cam);
   let paused = false; // (a guide's real game is on screen instead: nothing to draw)
   const loop = now => {
     if (!alive) return; requestAnimationFrame(loop);
     const dt = Math.min(.05, (now - last) / 1000) * filmRate(); last = now; if (paused) return; clock += dt; fit();
     if (page) page.tick(dt, clock);
-    r.render(scene, cam);
+    if (blur && page && !calm) blur.draw(page.camPos.distanceTo(page.camLook)); else r.render(scene, cam);
     if (page && page.hold && page.hold.at) { const p = page.hold.at(); _p.copy(p).project(cam); ring.style.left = ((_p.x + 1) / 2 * w) + 'px'; ring.style.top = ((1 - _p.y) / 2 * h) + 'px'; }
   };
   requestAnimationFrame(loop);
@@ -217,8 +306,8 @@ export function createFilm(stage: HTMLElement, script: any, ctx: any = {}): Film
     S.at = (t, fn) => S.tw(t, 0, (k, first) => { if (first) fn(); });
     S.add = (o, x = 0, y = 0, z = 0, ry = 0) => { o.position.set(x, y, z); o.rotation.y = ry; S.root.add(o); o.traverse(c => { if (c.userData.tick) S.tickers.push(c.userData.tick); }); return o; };
     S.every = f => S.tickers.push(f);
-    S.sky = (top, bottom, fog) => { sky.paint(top, bottom); (scene.fog as THREE.Fog).color.set(fog || bottom); S.skyNow = [top, bottom]; };
-    S.skyTo = (t, dur, top, bottom) => { let from; return S.tw(t, dur, (k, first) => { if (first) from = S.skyNow.slice(); const a = mixHex(from[0], top, k), b = mixHex(from[1], bottom, k); sky.paint(a, b); scene.fog.color.set(b); if (k >= 1) S.skyNow = [top, bottom]; }, lin); };
+    S.sky = (top, bottom, fog) => { sky.paint(top, bottom); (scene.fog as THREE.Fog).color.set(fog || bottom); S.skyNow = [top, bottom]; dayLight(top, bottom); };
+    S.skyTo = (t, dur, top, bottom) => { let from; return S.tw(t, dur, (k, first) => { if (first) from = S.skyNow.slice(); const a = mixHex(from[0], top, k), b = mixHex(from[1], bottom, k); sky.paint(a, b); scene.fog.color.set(b); dayLight(a, b); if (k >= 1) S.skyNow = [top, bottom]; }, lin); };
     S.light = (sunI = 1.05, hemiI = .85) => { sun.intensity = Math.max(S.look ? .8 : .45, sunI); hemi.intensity = Math.max(S.look ? 1.1 : .65, hemiI); };
     S.lightTo = (t, dur, sunI, hemiI) => { let a, b; return S.tw(t, dur, (k, first) => { if (first) { a = sun.intensity; b = hemi.intensity; } sun.intensity = Math.max(S.look ? .8 : .45, lerp(a, sunI, k)); hemi.intensity = Math.max(S.look ? 1.1 : .65, lerp(b, hemiI, k)); }, lin); };
     // actors
@@ -233,7 +322,9 @@ export function createFilm(stage: HTMLElement, script: any, ctx: any = {}): Film
     };
     S.do = (a, t, state, dur = 0) => { S.at(t, () => { a.state = state; }); if (dur) S.at(t + dur, () => { if (a.state === state) a.state = 'idle'; }); S.len = Math.max(S.len, t + dur); return t + dur; };
     S.mood = (a, t, m) => S.at(t, () => { a.mood = m; });
-    S.talk = (a, t, dur) => { S.at(t, () => { a.talkUntil = clock + dur; }); return t + dur; };
+    S.still = t => { S.stillAt = t; };   // (v1.08c) the moment of this page drawn as its story picture in Blender (tools/blender/scene-export.mts); nothing in the game
+    // (v1.08c) a character who talks while a line is being said keeps talking with that line, and stops when it ends
+    S.talk = (a, t, dur) => { S.at(t, () => { a.talkUntil = clock + dur; a.talkSpan = [t, t + dur]; S.actors.forEach(o => { if (o.lip) o.lip = null; }); a.lip = { on: () => S.speaking && !!S.line && clock < a.talkUntil + 6, line: () => S.line }; }); return t + dur; };
     S.scale = (o, t, dur, s0, s1, e = io) => S.tw(t, dur, k => { o.scale.setScalar(lerp(s0, s1, k)); }, e);
     S.move = (o, t, dur, to, e = io, arc = 0) => { let from; return S.tw(t, dur, (k, first) => { if (first) from = o.position.clone(); o.position.set(lerp(from.x, to[0], k), lerp(from.y, to[1], k) + Math.sin(k * Math.PI) * arc, lerp(from.z, to[2], k)); }, e); };
     S.show = (o, t, on = true) => S.at(t, () => { o.visible = on; });
@@ -253,7 +344,8 @@ export function createFilm(stage: HTMLElement, script: any, ctx: any = {}): Film
     S.say = (t, en, vi) => { S.ev.push({ t, dur: 0, say: { en, vi }, e: lin }); S.len = Math.max(S.len, t + .1); };
     S.speaking = false;
     // a line spoken inside the film (a narration line or the child's turn): the page goes on only once it is said
-    const speak = (en: string, vi: string, after?: () => void, kind = 'say') => { S.speaking = true; Promise.resolve(api.onSay ? api.onSay(en, vi, kind) : sayAsync(en, vi)).catch(() => { }).finally(() => { S.speaking = false; after && after(); }); };
+    S.line = null; // (v1.08c) the words being said now and when they began, for the lips
+    const speak = (en: string, vi: string, after?: () => void, kind = 'say') => { S.speaking = true; S.line = { text: T(en, vi), t0: clock }; Promise.resolve(api.onSay ? api.onSay(en, vi, kind) : sayAsync(en, vi)).catch(() => { }).finally(() => { S.speaking = false; S.line = null; after && after(); }); };
     S.help = (t, en, vi, act, at, dur = 0) => { S.ev.push({ t, dur: 0, help: { en, vi, act, dur, at: at ? () => v3(val(at)) : null }, e: lin }); S.len = Math.max(S.len, t + .1); };
     S.release = byChild => {
       const hd = S.hold; if (!hd) return; S.hold = null; help.hidden = true; ring.hidden = true; clearTimeout(hd.timer);
@@ -291,7 +383,7 @@ export function createFilm(stage: HTMLElement, script: any, ctx: any = {}): Film
         if (S.t > S.len + .4 && !S.ended && !S.speaking && !S.ev.some(e => (e.help || e.say) && !e.fin)) { S.ended = true; resolve(); }
       }
       for (const f of S.tickers) f(dt, time, S.t);
-      for (const a of S.actors) pose(a, time);
+      lookToSpeaker(S.actors, time); for (const a of S.actors) pose(a, time);
       cam.position.copy(S.camPos); cam.lookAt(S.camLook);
     };
     S.dispose = () => {
@@ -312,20 +404,23 @@ export function createFilm(stage: HTMLElement, script: any, ctx: any = {}): Film
     page(k) {
       if (page) page.dispose();
       paused = false; r.domElement.hidden = false;
-      page = new Page(k); (scene.fog as THREE.Fog).near = 60; (scene.fog as THREE.Fog).far = 260; sun.intensity = 1.4; hemi.intensity = 1.25;
+      page = new Page(k); (scene.fog as THREE.Fog).near = 60; (scene.fog as THREE.Fog).far = 260; sun.intensity = 1.4; hemi.intensity = 1.25; sun.color.set('#ffffff'); hemi.color.set('#ffffff'); hemi.groundColor.set('#f1dfc0');
       try {
         script.pages[k] && script.pages[k](page);
         if (page.look) { const n = page.tickers.length; dressStory(page); if (calm) page.tickers.length = n; }
+        if (!calm) motes(page); // (v1.08b story) a few soft floating motes of light in every scene
       } catch (e) { console.warn('film page', k, e); }
       page.ev.sort((a, b) => a.t - b.t);
       cam.position.copy(page.camPos); cam.lookAt(page.camLook);
+      // (v1.08b story) a soft fade between scenes (none in calm mode)
+      if (!calm && k > 0) { const c = r.domElement; c.style.transition = 'none'; c.style.opacity = '0'; requestAnimationFrame(() => { c.style.transition = 'opacity .45s ease-out'; c.style.opacity = '1'; }); }
       return page.done;
     },
     // the narrator finished reading this page (help questions wait for that)
     narrated() { if (page) page.narrated = true; },
     // hide the film while a guide's real game plays on the same screen (the next page() brings it back)
     pause() { if (page) { page.dispose(); page = null; } paused = true; r.domElement.hidden = true; },
-    close() { alive = false; if (page) page.dispose(); page = null; r.domElement.removeEventListener('pointerdown', onDown); r.domElement.removeEventListener('pointerup', onUp); r.domElement.remove(); help.remove(); ring.remove(); r.renderLists.dispose(); if (current === api) current = null; }
+    close() { alive = false; if (blur) blur.dispose(); if (page) page.dispose(); page = null; r.domElement.removeEventListener('pointerdown', onDown); r.domElement.removeEventListener('pointerup', onUp); r.domElement.remove(); help.remove(); ring.remove(); r.renderLists.dispose(); if (current === api) current = null; }
   };
   return api;
 }

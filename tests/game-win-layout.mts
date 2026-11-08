@@ -26,6 +26,9 @@ export async function gameWinLayoutCheck(browser: Browser): Promise<string> {
         await page.evaluate(async ({ lang, pane, height }) => {
           const u = '/js/games/frame.js', F: typeof import('../js/games/frame.js') = await import(u);
           const s = '/js/state.js', S: typeof import('../js/state.js') = await import(s); S.settings.lang = lang;
+          // (v1.08) openGame waits for the v1.08 pictures (moreArt) before it builds the game layer: wait for them first,
+          // so the layer exists when it is read below, as it does for a child once the pictures are in
+          const a = '/js/art.js', A: typeof import('../js/art.js') = await import(a); await A.moreArt();
           window.__layoutResult = F.openGame('layout_fixture', { players: [], little: true, nextId: 'layout_fixture' });
           const layer = document.querySelector<HTMLElement>('.gl');
           // A transformed pane is the containing block for its fixed celebration, as in split screen.

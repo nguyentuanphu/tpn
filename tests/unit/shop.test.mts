@@ -13,7 +13,7 @@ test('prices: a nice thing costs about one day of play', () => {
   assert.equal(priceOf({ tier: 'nice' }), priceOf({}), 'an unknown tier is priced as nice');
 });
 test('the catalogue: every kind of thing, both languages, about twice the choice for girls and for boys', () => {
-  assert.deepEqual(SLOTS.map(s => s.id), ['hat', 'neck', 'top', 'bottom', 'feet', 'back']);
+  assert.deepEqual(SLOTS.map(s => s.id), ['hat', 'face', 'neck', 'top', 'bottom', 'feet', 'back']); // (v1.08b friends: glasses and masks)
   assert.equal(new Set(CLOTHES.map(x => x.id)).size, CLOTHES.length, 'ids are unique');
   for (const x of CLOTHES) {
     assert.match(x.id, /^[a-z0-9_]{1,16}$/, 'ids pass the online look filter: ' + x.id);

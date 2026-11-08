@@ -3,11 +3,11 @@
 // child helps twice: calling Bống (page 2) and trying the slipper on Tấm (page 5).
 import { L, Pp, LOOK, THREE, P, mesh, PI, H, speak, hop, go, VILLAGER, ELDER, BUT, village, palace, animal, board, carp, fruitTree, basket } from './kit.js';
 
-const TAM = LOOK({ style: 'shirt', color: '#a88a6a', hairStyle: 'long', skin: '#f0c098' });
-const TAM_FINE = LOOK({ style: 'aodai', color: '#ffd23f', hairStyle: 'long', hat: 'none', skin: '#f0c098' });
-const CAM = LOOK({ style: 'aodai', color: '#c84a8a', hairStyle: 'buns', skin: '#e8b890' });
-const STEP = LOOK({ style: 'aodai', color: '#5a3a5a', hairStyle: 'buns', skin: '#e0aa80' });
-const PRINCE = LOOK({ style: 'tunic', color: '#e8b62a', hat: 'crown', skin: '#e0aa80' });
+const TAM = LOOK({ kit: 'vn-yem', style: 'tunic', color: '#a88a6a', hairStyle: 'long', skin: '#f0c098' });
+const TAM_FINE = LOOK({ kit: 'vn-tuthan', style: 'aodai', color: '#ffd23f', hairStyle: 'long', hat: 'none', skin: '#f0c098' });
+const CAM = LOOK({ kit: 'vn-tuthan', style: 'aodai', color: '#c84a8a', hairStyle: 'buns', skin: '#e8b890' });
+const STEP = LOOK({ kit: 'vn-khanvan', style: 'aodai', color: '#5a3a5a', hairStyle: 'buns', skin: '#e0aa80' });
+const PRINCE = LOOK({ kit: 'vn-prince', style: 'tunic', color: '#e8b62a', hat: 'crown', skin: '#e0aa80' });
 const slipper = () => mesh([P(new THREE.SphereGeometry(.12, 10, 8), '#e8332a', [0, .05, 0], [0, 0, 0], [.7, .45, 1.5]), P(new THREE.SphereGeometry(.04, 6, 5), '#ffd23f', [0, .1, .1])]);
 const pondAt = (S, x, z) => S.add(mesh([P(new THREE.CylinderGeometry(2, 2, .06, 24), '#5ab0d0', [0, .03, 0]), P(new THREE.CylinderGeometry(2.3, 2.3, .03, 24), '#a88a5a', [0, .01, 0])]), x, 0, z);
 
@@ -16,7 +16,7 @@ export default { pages: [
   S => {
     village(S, { house: [0, -6] });
     const tam = S.person(TAM, 2, 2, -.4), step = S.person(STEP, -2.4, -2.4, .4), cam = S.person(CAM, -1.2, -2.6, .2);
-    S.do(step, 0, 'sitground'); S.do(cam, 0, 'sitground'); S.mood(step, 0, 'sad'); S.mood(cam, 0, 'happy');
+    S.do(step, 0, 'sitground'); S.do(cam, 0, 'sitground'); S.mood(step, 0, 'sly'); S.mood(cam, 0, 'sly');   // (faces with feeling) the stepmother and Cám: sly, Tấm at work
     S.shot([3, 2.4, 9], [0, 1.2, 0]);
     S.do(tam, .3, 'swing', 2.6); S.mood(tam, .3, 'smile');
     S.do(step, 2.2, 'point', 1.6); speak(S, step, 2.2, 1.6);
@@ -33,10 +33,10 @@ export default { pages: [
     const tam = S.person(TAM, -1.2, 3.6, PI * .9), but = S.person(BUT, 2.4, 3.2, -1.2); but.o.scale.setScalar(.01);
     const fish = carp('#ffcf33', '#ffe27a'); fish.scale.setScalar(.6); S.add(fish, 0, -.6, 1);
     S.shot([0, 2.4, 9], [0, .8, 2]);
-    S.do(tam, .2, 'sitground', 3.6); S.mood(tam, .2, 'sad');
+    S.do(tam, .2, 'sitground', 3.6); S.mood(tam, .2, 'cry'); S.still(5);   // the picture: Tấm crying as Bụt speaks
     const sp = Pp.sparkle('#ffe27a'); S.add(sp, 2.4, .2, 3.2); S.show(sp, 1.8);
     S.scale(but.o, 2.2, 1.1, .01, 1); S.mood(but, 2.4, 'happy'); speak(S, but, 3.4, 2); S.do(but, 5.4, 'point', 1.4);
-    S.mood(tam, 4, 'o'); S.cam(2, 3, [3, 2, 7], [1, 1, 2.4]);
+    S.mood(tam, 5.4, 'o'); S.cam(2, 3, [3, 2, 7], [1, 1, 2.4]);
     S.help(7, 'Tap to call Bống the fish!', 'Chạm để gọi cá Bống nào!', tt => {
       S.move(fish, tt, .8, [0, .2, 1.6], undefined, .9); S.tw(tt + .8, 1.4, k => { fish.position.y = .05 + Math.sin(k * PI * 3) * .05; fish.rotation.y = k * PI * 2; });
       S.do(tam, tt + .4, 'kneel', 1.6); S.mood(tam, tt + .4, 'happy');

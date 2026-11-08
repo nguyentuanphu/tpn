@@ -1,4 +1,8 @@
 import {HANOI_PACK_INFO} from './content/hanoi-pack-info.js';
+import { grownupsNewsHTML, fillGrownupsNews } from './ui/festivals-ui.js';
+// (v1.08 notifications) the parents' notification settings (js/notify.ts and its texts, about 42 KB) load the first time
+// Grown-ups opens, not with the start (PERF-001); until then the section is an empty space that fills itself in
+let NOTIFY: typeof import('./notify.js') | null = null;
 import { hasClip, saveClip, deleteClip, playClip, estimatePitch, pitchFromHz } from './voice.js';
 import { startRecording, releaseMic, micProblem } from './recorder.js';
 import { ac } from './audio.js';
@@ -9,7 +13,7 @@ import { el } from './util.js';
 import { events, managementEvidence } from './core/events.js';
 
 import { T, applyLang, nm, NPC_NAMES, defaultName } from './i18n.js';
-import { settings, saveSettings, profiles, saveProfiles, normalizeProfile, exportBackup, importBackup, backupAge, farm, resetFarm, saveFarm, MAX_KIDS, getSnapshot, saveReadbackMatches } from './state.js';
+import { settings, saveSettings, profiles, saveProfiles, normalizeProfile, exportBackup, importBackup, backupAge, farm, resetFarm, saveFarm, MAX_KIDS, getSnapshot, saveReadbackMatches, ASIDE_VOICES_ON, TURN_OFFER } from './state.js';
 import { createSaveCopy, readSaveCopyOrLegacy } from './content/savecopy.js';
 import { FAMILY_CODE_PRIVACY, makeFamilyCode, normalizeFamilyCode, familyName, familyQrSvg } from './content/familycode.js';
 import { say, voicePack, voiceDiag, allowMobilePack, voiceMisses, clearVoiceMisses, voicesFor, onVoices, hasVietnamese, FAMILY_PHRASES, previewPackVoice, resumePackDownload, chooseVietnamesePack, downloadHanoiPack, previewHanoiVoice } from './voice.js';
@@ -23,6 +27,7 @@ import { familyCode, setFamilyCode, familyPhotoCount } from './custom.js';
 import { avatarURL, applyNpcFaces, namedVillagers } from './avatar.js';
 
 import { openReport } from './report.js';
+import { togetherHTML, bindTogether } from './playtogether.js';
 
 import { extrasHTML, bindExtras, privacyHTML, netListHTML } from './extras.js';
 
@@ -33,7 +38,7 @@ import { clipCountFor, setSpeaker, sayDevice } from './voice.js';
 
 import { pic } from './art.js';
 import { modal } from './popups.js';
-import { applyComfort, foldHeadings, jumpNav, familyTrialOn, toast, openEditor, flagBtns, learnBtns, bindLearn, bindLang } from './ui.js';
+import { applyComfort, foldHeadings, jumpNav, familyTrialOn, toast, openEditor, flagBtns, bindLang } from './ui.js';
 function openRenamer(after) {
   const m = modal('renamer', ''), card = m.querySelector('.card');
   const list = NPC_NAMES.slice().sort((a, b) => defaultName(a.id).localeCompare(defaultName(b.id)));
@@ -119,12 +124,14 @@ function packStatusHTML() {
   const P = voicePack(), miss = voiceMisses().filter(m => m[0] === 'en' || m[0] === 'vi'), n = P ? Object.keys(P.lines).length : 0;
   return `<p class="note">${P ? '✅ ' + T(`${n.toLocaleString()} lines recorded with natural voices. They always play first, even offline; the phone's voice reads only a line that has no recording.`, `${n.toLocaleString('vi-VN')} câu đã thu bằng giọng tự nhiên. Luôn được phát trước, kể cả khi không có mạng; giọng của máy chỉ đọc câu chưa có bản ghi.`) : '⚠️ ' + T('The recorded voices have not loaded yet (they need the internet once).', 'Giọng đã thu chưa tải được (cần có mạng một lần).')}</p>
     ${voiceDiag.lastMiss ? `<p class="note warn">⚠️ ${T('Last time a recording could not play here', 'Lần trước máy này không phát được bản ghi')} (${esc(voiceDiag.lastMiss)}). ${T('Tap anywhere on the screen once, check the side switch is not on silent, then press ▶ below.', 'Chạm vào màn hình một lần, kiểm tra nút gạt bên hông không ở chế độ im lặng, rồi bấm ▶ bên dưới.')}</p>` : ''}
-    <div class="actions"><button class="btn" data-pv="f">▶ 👩 ${T('Woman', 'Giọng nữ')}</button><button class="btn" data-pv="m">▶ 👨 ${T('Man', 'Giọng nam')}</button></div>
-    <p class="note">${T('Female voices are the default. Enable male recordings below for men, boys and grandpas. Downloads continue in the background while you play, even after Save & close.', 'Giọng nữ được dùng mặc định. Bật bản ghi giọng nam bên dưới cho đàn ông, bé trai và ông. Giọng đọc tiếp tục tải khi bạn chơi, kể cả sau khi Lưu và đóng.')}</p>
+    ${'' /* (owner, 3 Nov 2026 AEDT, v1.08 voices-aside) the male voices and Lê Minh are put aside: their choices show only with ASIDE_VOICES_ON (js/state.ts) */}
+    <div class="actions"><button class="btn" data-pv="f">▶ 👩 ${T('Woman', 'Giọng nữ')}</button>${ASIDE_VOICES_ON ? `<button class="btn" data-pv="m">▶ 👨 ${T('Man', 'Giọng nam')}</button>` : ''}</div>
+    ${ASIDE_VOICES_ON ? `<p class="note">${T('Female voices are the default. Enable male recordings below for men, boys and grandpas. Downloads continue in the background while you play, even after Save & close.', 'Giọng nữ được dùng mặc định. Bật bản ghi giọng nam bên dưới cho đàn ông, bé trai và ông. Giọng đọc tiếp tục tải khi bạn chơi, kể cả sau khi Lưu và đóng.')}</p>` : `<p class="note">${T('Every character speaks with the female voices. Downloads continue in the background while you play, even after Save & close.', 'Mọi nhân vật đều nói bằng giọng nữ. Giọng đọc tiếp tục tải khi bạn chơi, kể cả sau khi Lưu và đóng.')}</p>`}
+    ${ASIDE_VOICES_ON ? `
     <label>${T('Vietnamese recorded voice', 'Giọng đọc tiếng Việt đã thu')}<select id="gVietnamesePack"><option value="standard" ${settings.voiceViVariant!=='leminh'?'selected':''}>${T('Default voices (female unless male voices are enabled)', 'Giọng mặc định (giọng nữ nếu chưa bật giọng nam)')}</option><option value="leminh" ${settings.voiceViVariant==='leminh'?'selected':''}>${T('Lê Minh · Northern Vietnamese · all Vietnamese speech', 'Lê Minh · giọng Bắc · toàn bộ lời đọc tiếng Việt')}</option></select></label>
     <p class="note">${T(`${HANOI_PACK_INFO.lines.toLocaleString()} recordings · about ${Math.ceil(HANOI_PACK_INFO.bytes/1048576)} MB.`,`${HANOI_PACK_INFO.lines.toLocaleString('vi-VN')} bản thu · khoảng ${Math.ceil(HANOI_PACK_INFO.bytes/1048576)} MB.`)} ${T('Lê Minh is a large optional pack of public recordings. On Wi-Fi it downloads while you play. The download button also allows mobile data. Closing Settings keeps the download running while the game stays open; it resumes after reopening. Family names and answers are never sent to FPT.', 'Lê Minh là gói bản thu công khai dung lượng lớn, không bắt buộc. Có Wi-Fi sẽ tải khi bạn chơi. Nút tải cũng cho phép dùng dữ liệu di động. Đóng Cài đặt vẫn tiếp tục tải khi trò chơi còn mở; mở lại sẽ tải tiếp. Không gửi tên hay câu trả lời của gia đình đến FPT.')}</p>
     <div class="actions hanoi-actions"><button class="btn" id="gHanoiPreview">${pic('▶')} ${T('Listen', 'Nghe thử')}</button><button class="btn" id="gHanoiDownload">${pic('⬇️')} ${T('Save offline', 'Lưu ngoại tuyến')}</button></div><p class="note" id="gHanoiStatus" role="status"></p>
-    <label class="tog"><input type="checkbox" id="gVoiceMale" ${settings.voiceMale === true ? 'checked' : ''}> ${T('Download and use optional male default voices (off by default; Lê Minh is selected separately above)', 'Tải và dùng giọng nam mặc định tùy chọn (tắt sẵn; Lê Minh chọn riêng bên trên)')}</label>
+    <label class="tog"><input type="checkbox" id="gVoiceMale" ${settings.voiceMale === true ? 'checked' : ''}> ${T('Download and use optional male default voices (off by default; Lê Minh is selected separately above)', 'Tải và dùng giọng nam mặc định tùy chọn (tắt sẵn; Lê Minh chọn riêng bên trên)')}</label>` : ''}
     ${P ? `<label class="tog"><input type="checkbox" id="gPackCell" ${settings.packCell === true ? 'checked' : ''}> ${T('Download the rest of the voices on mobile data too (on Wi-Fi they download by themselves)', 'Tải phần giọng đọc còn lại cả bằng dữ liệu di động (khi có Wi-Fi giọng đọc tự tải)')}</label>` : ''}
     ${miss.length ? `<details class="g-miss"><summary>📝 ${T(`${miss.length} lines on this device had no recording yet`, `${miss.length} câu trên máy này chưa có bản ghi`)}</summary>
       <p class="note">${settings.countPlayers !== false ? T('They are sent by themselves, without children’s names, and recorded for the next update.', 'Các câu này tự được gửi đi, không kèm tên các con, và sẽ được thu cho bản cập nhật sau.') : T('Analytics is off on this device, so they are not sent. They are kept in the backup file (below).', 'Phân tích đang tắt trên máy này nên các câu không được gửi. Các câu được giữ trong tệp sao lưu (bên dưới).')}</p>
@@ -139,7 +146,8 @@ function bindPackStatus(card, redraw) {
     }
     await previewPackVoice(b.dataset.pv);
   });
-  const updateHanoiInfo=()=>{card.querySelector('#gHanoiStatus').textContent=T('Lê Minh downloads continue while you play. Mobile data can be switched off below.','Lê Minh tiếp tục tải khi bạn chơi. Bạn có thể tắt dữ liệu di động bên dưới.');};
+  // (v1.08 fixes 2) the Lê Minh card is set aside (voices-aside): a device that chose Lê Minh before has no status line to write
+  const updateHanoiInfo=()=>{const st=card.querySelector('#gHanoiStatus');if(!st)return;st.textContent=T('Lê Minh downloads continue while you play. Mobile data can be switched off below.','Lê Minh tiếp tục tải khi bạn chơi. Bạn có thể tắt dữ liệu di động bên dưới.');};
   const hp=card.querySelector('#gVietnamesePack');if(hp)hp.onchange=()=>{void chooseVietnamesePack(hp.value);if(hp.value==='leminh')updateHanoiInfo();};
   if(settings.voiceViVariant==='leminh')updateHanoiInfo();
   const preview=card.querySelector('#gHanoiPreview');if(preview)preview.onclick=async()=>{const ok=await previewHanoiVoice();if(card.isConnected&&!ok)card.querySelector('#gHanoiStatus').textContent=T('Lê Minh is not available here yet. Connect and try again.','Chưa phát được giọng Lê Minh. Kết nối mạng rồi thử lại.');};
@@ -162,18 +170,52 @@ export function openGrownups(after: (() => void) | undefined = undefined) {
   // while the page redraws
   const m = modal('grownups', ''), gOpen = new Set(['players']);
   const card = m.querySelector('.card');
+  // (v1.08f, owner 6 Nov: "once I click on the current it jumps to the top") the part that scrolls is .grownups-body,
+  // which every redraw makes anew. The control that was tapped (or else the first one in view) is found again after the
+  // redraw and put back where it was on screen, also after late parts above it (voices, notices) have loaded
+  const ANCH = '.seg, h3, summary, label.tog, .actions';
+  let tapped: Element | null = null;
+  card.addEventListener('pointerdown', e => { tapped = e.target instanceof Element ? e.target : null; }, true);
+  const anchorNow = (body: HTMLElement) => {
+    const top = body.getBoundingClientRect().top, list = [...card.querySelectorAll(ANCH)] as Element[];
+    let i = tapped && tapped.isConnected ? list.indexOf(tapped.closest(ANCH)) : -1;
+    if (i >= 0 && !list[i].getClientRects().length) i = -1;
+    if (i < 0) i = list.findIndex(x => x.getClientRects().length && x.getBoundingClientRect().top >= top);
+    if (i < 0) return null;
+    const key = keyOf(list[i]);
+    return { key, n: list.slice(0, i).filter(x => keyOf(x) === key).length, off: list[i].getBoundingClientRect().top - top };
+  };
+  // a control is known again by its kind, its classes and the start of its words (late parts can add others before it)
+  const keyOf = (x: Element) => x.tagName + '|' + x.className.replace(/\bon\b/g, '') + '|' + (x.tagName === 'DIV' ? '' : (x.textContent || '').trim().slice(0, 40));
+  const putBack = (a: { key: string, n: number, off: number }) => {
+    const body = (card.querySelector('.grownups-body') as HTMLElement | null), x = body && ([...card.querySelectorAll(ANCH)] as Element[]).filter(y => keyOf(y) === a.key)[a.n];
+    if (!x || !x.getClientRects().length) return null;
+    body.scrollTop += x.getBoundingClientRect().top - body.getBoundingClientRect().top - a.off; return body.scrollTop;
+  };
   const draw = () => {
     const vEn = voicesFor('en'), vVi = voicesFor('vi');
+    const oldBody = (card.querySelector('.grownups-body') as HTMLElement | null), keepY = oldBody ? oldBody.scrollTop : 0;
+    const a = oldBody && keepY ? anchorNow(oldBody) : null;
+    draw0(vEn, vVi); tapped = null;
+    const newBody = (card.querySelector('.grownups-body') as HTMLElement | null); if (!newBody || !keepY) return;
+    newBody.scrollTop = keepY;
+    if (!a) return;
+    let set = putBack(a);
+    // late parts: put it back again while nobody has scrolled since
+    [60, 250, 700, 1500].forEach(ms => setTimeout(() => { if (set === null || !newBody.isConnected || Math.abs(newBody.scrollTop - set) > 2) return; set = putBack(a); }, ms));
+  };
+  const draw0 = (vEn, vVi) => {
     card.innerHTML = `
       <div class="grownups-panel"><button class="x" aria-label="${T('Close', 'Đóng')}">✕</button>
       <h2>${T('Grown-ups', 'Phụ huynh')} <small class="buildtag">${T('Version', 'Phiên bản')} ${SHOWN}</small></h2>
       <div class="grownups-body"><div class="g-install"></div>
+      ${grownupsNewsHTML()}
       ${privacyHTML()}
       ${familyTrialOn() ? familyDevicesHTML() : ''}
       <div class="toggles gcaprow">
-        <label class="tog"><input type="checkbox" id="gCap" ${settings.captions === false ? '' : 'checked'}> ${T('Captions: show everything that is said as text', 'Phụ đề: hiện chữ cho mọi câu được nói')}</label>
+        <label class="tog"><input type="checkbox" id="gCap" ${settings.captions === true ? 'checked' : ''}> ${T('Captions: show everything that is said as text (off unless you turn it on)', 'Phụ đề: hiện chữ cho mọi câu được nói (tắt, trừ khi bạn bật)')}</label>
       </div>
-      <h3>${T('Language', 'Ngôn ngữ')}</h3>${flagBtns()}${learnBtns()}
+      <h3>${T('Language', 'Ngôn ngữ')}</h3>${flagBtns()}${'' /* (owner, 3 Nov 2026 AEDT, v1.08) no Chinese/Hindi "Also learn" buttons beside the two game languages */}
       <label class="tog"><input type="checkbox" id="gBil" ${settings.bilingual ? 'checked' : ''}> ${T('Bilingual voice: also say everything in the other language', 'Giọng song ngữ: nói thêm bằng ngôn ngữ còn lại')}</label>
             <details class="gsec" data-sec="players" ${gOpen.has('players') ? 'open' : ''}><summary><span class="gi">👧</span><b>${T('Children', 'Các con')}</b></summary><div class="gbody">
 
@@ -211,10 +253,10 @@ export function openGrownups(after: (() => void) | undefined = undefined) {
         <label class="tog"><input type="checkbox" id="gCalm" ${settings.calm ? 'checked' : ''}> ${T('Calm mode: quieter music, fewer moving effects', 'Chế độ êm dịu: nhạc nhỏ hơn, ít hiệu ứng chuyển động')}</label>
       </div>
 <h3>👫 ${T('Two players on one device', 'Hai người chơi trên một máy')}</h3>
-      <div class="seg tview">${[['auto', T('Automatic', 'Tự động')], ['face', T('Face to face', 'Đối diện nhau')], ['side', T('Side by side', 'Cạnh nhau')]].map(([k, l]) => `<button data-tv="${k}" class="${(settings.twoView || 'auto') === k ? 'on' : ''}">${l}</button>`).join('')}</div>
+      <div class="seg tview row3">${[['auto', T('Automatic', 'Tự động')], ['face', T('Face to face', 'Đối diện nhau')], ['side', T('Side by side', 'Cạnh nhau')]].map(([k, l]) => `<button data-tv="${k}" class="${(settings.twoView || 'auto') === k ? 'on' : ''}">${l}</button>`).join('')}</div>
       <p class="note">${T('Face to face: lay the tablet flat with a child at each end; each half of the screen faces its child. Automatic uses face to face on touch screens and side by side on a computer.', 'Đối diện nhau: đặt máy tính bảng nằm trên bàn, mỗi bé ngồi một đầu; mỗi nửa màn hình quay về phía bé đó. Tự động: đối diện trên màn hình cảm ứng, cạnh nhau trên máy tính.')}</p>
 <h3>📱 ${T('Fit the screen', 'Vừa màn hình')}</h3>
-      <div class="seg sfit">${[['auto', T('Automatic', 'Tự động')], ['fill', T('Whole screen', 'Cả màn hình')], ['fit', T('Fit inside', 'Vừa bên trong')]].map(([k, l]) => `<button data-sf="${k}" class="${(settings.screenFit || 'auto') === k ? 'on' : ''}">${l}</button>`).join('')}</div>
+      <div class="seg sfit row3">${[['auto', T('Automatic', 'Tự động')], ['fill', T('Whole screen', 'Cả màn hình')], ['fit', T('Fit inside', 'Vừa bên trong')]].map(([k, l]) => `<button data-sf="${k}" class="${(settings.screenFit || 'auto') === k ? 'on' : ''}">${l}</button>`).join('')}</div>
       <p class="note">${T('If the buttons at the bottom are cut off or the top looks hazy, try the other choices. Automatic fits a Home Screen app inside the space it is given.', 'Nếu các nút ở dưới bị cắt hoặc phía trên bị mờ, hãy thử lựa chọn khác. Tự động cho ứng dụng ở Màn hình chính vừa với chỗ được cho.')}</p>
       <p class="note sfacts">${(() => { const f = window.__sv && window.__sv.screenFacts ? window.__sv.screenFacts() : null; return f ? esc(`${f.app ? T('Home Screen app', 'Ứng dụng Màn hình chính') : T('Browser', 'Trình duyệt')} · ${T('height used', 'chiều cao dùng')} ${f.used} · ${T('window', 'cửa sổ')} ${f.inner} · ${T('visible', 'nhìn thấy')} ${f.visual} · ${T('large', 'lớn')} ${f.large} · ${T('screen', 'màn hình')} ${f.screen}`) : ''; })()}</p>
 <h3>🔠 ${T('Text size', 'Cỡ chữ')}</h3>
@@ -239,7 +281,7 @@ export function openGrownups(after: (() => void) | undefined = undefined) {
       </div></details>
       <details class="gsec" data-sec="money" ${gOpen.has('money') ? 'open' : ''}><summary><span class="gi">💰</span><b>${T('Money and farm', 'Tiền và nông trại')}</b></summary><div class="gbody">
 <h3>${T('Money', 'Tiền tệ')}</h3>
-      <div class="seg cur"><button data-c="auto" class="${!settings.curPinned ? 'on' : ''}">${T('Same as the language', 'Theo ngôn ngữ')}</button><button data-c="AUD" class="${settings.curPinned && settings.currency === 'AUD' ? 'on' : ''}">🇦🇺 AUD $</button><button data-c="VND" class="${settings.curPinned && settings.currency === 'VND' ? 'on' : ''}">🇻🇳 VND đ</button></div>
+      <div class="seg cur row3"><button data-c="auto" class="${!settings.curPinned ? 'on' : ''}">${T('Same as the language', 'Theo ngôn ngữ')}</button><button data-c="AUD" class="${settings.curPinned && settings.currency === 'AUD' ? 'on' : ''}">🇦🇺 AUD $</button><button data-c="VND" class="${settings.curPinned && settings.currency === 'VND' ? 'on' : ''}">🇻🇳 VND đ</button></div>
       <p class="note">${T('Prices and the money games use this money. Same as the language: đồng in Vietnamese, dollars in English. 10c = 2.000đ in this game.', 'Giá cả và các trò chơi tiền dùng loại tiền này. Theo ngôn ngữ: tiếng Việt dùng đồng, tiếng Anh dùng đô la Úc. Trong game, 10 xu Úc = 2.000đ.')}</p>
       <div class="field"><label>💰 ${T('Coins in the piggy bank', 'Tiền trong heo đất')}: <b id="gCoins">${fmt(farm.coins)}</b></label>
         <div class="actions coinadd">${[100, 500, 2000].map(n => `<button class="btn" data-add="${n}">+ ${fmt(n)}</button>`).join('')}</div></div>
@@ -257,9 +299,9 @@ export function openGrownups(after: (() => void) | undefined = undefined) {
       <h3>👥 ${T('Who’s here', 'Ai đang ở đây')}</h3><div class="whohere" id="gWho"><p class="note">…</p></div>
       <p class="note">${T('Online play uses the free PeerJS service to connect two devices directly. Voice goes straight between the devices and is never recorded.', 'Chơi trực tuyến dùng dịch vụ miễn phí PeerJS để nối hai máy trực tiếp. Giọng nói đi thẳng giữa hai máy và không bao giờ được ghi lại.')}</p>
       <label class="tog"><input type="checkbox" id="gAutoMeet" ${settings.autoMeet !== false ? 'checked' : ''}> ${T('Tell me when a friend on the list starts playing (with buttons to invite them or go to their room; nobody is put in a room by themselves)', 'Báo khi một bạn trong danh sách bắt đầu chơi (có nút mời bạn hoặc sang phòng bạn; không ai tự bị đưa vào phòng)')}</label>
-      <p class="note">${T('If a friend far away stays on “Connecting…”, your two networks need a relay (TURN server). Free public relays are tried automatically. For a reliable one, make a free account at a TURN service (for example metered.ca), then paste its credentials link here, or a turn: address with its name and password. Both devices need the same relay.', 'Nếu bạn ở xa cứ “Đang kết nối…” mãi, hai mạng cần một máy chủ trung chuyển (TURN). Trò chơi tự thử các máy chủ miễn phí công cộng. Để ổn định hơn, hãy tạo tài khoản miễn phí ở một dịch vụ TURN (ví dụ metered.ca), rồi dán đường link lấy thông tin vào đây, hoặc địa chỉ turn: kèm tên và mật khẩu. Cả hai máy cần dùng cùng máy chủ.')}</p>
+      ${TURN_OFFER ? `<p class="note">${T('If a friend far away stays on “Connecting…”, your two networks need a relay (TURN server). Free public relays are tried automatically. For a reliable one, make a free account at a TURN service (for example metered.ca), then paste its credentials link here, or a turn: address with its name and password. Both devices need the same relay.', 'Nếu bạn ở xa cứ “Đang kết nối…” mãi, hai mạng cần một máy chủ trung chuyển (TURN). Trò chơi tự thử các máy chủ miễn phí công cộng. Để ổn định hơn, hãy tạo tài khoản miễn phí ở một dịch vụ TURN (ví dụ metered.ca), rồi dán đường link lấy thông tin vào đây, hoặc địa chỉ turn: kèm tên và mật khẩu. Cả hai máy cần dùng cùng máy chủ.')}</p>
       <div class="vrow"><input type="text" id="gTurn" placeholder="https://…/turn/credentials?apiKey=…  ${T('or', 'hoặc')}  turn:…" value="${esc(settings.turnUrl || '')}" autocomplete="off"></div>
-      <div class="vrow ${/^turns?:/i.test(settings.turnUrl || '') ? '' : 'vh'}" id="gTurnCred"><input type="text" id="gTurnUser" placeholder="${T('Name', 'Tên')}" value="${esc(settings.turnUser || '')}" autocomplete="off"><input type="password" id="gTurnPass" placeholder="${T('Password', 'Mật khẩu')}" value="${esc(settings.turnPass || '')}" autocomplete="off"></div>
+      <div class="vrow ${/^turns?:/i.test(settings.turnUrl || '') ? '' : 'vh'}" id="gTurnCred"><input type="text" id="gTurnUser" placeholder="${T('Name', 'Tên')}" value="${esc(settings.turnUser || '')}" autocomplete="off"><input type="password" id="gTurnPass" placeholder="${T('Password', 'Mật khẩu')}" value="${esc(settings.turnPass || '')}" autocomplete="off"></div>` : ''}
       <div class="actions"><button class="btn" id="gNetCheck">🔍 ${T('Test the connection', 'Kiểm tra kết nối')}</button></div><p class="note" id="gNetRes"></p>
 
       </div></details>
@@ -296,14 +338,16 @@ export function openGrownups(after: (() => void) | undefined = undefined) {
       <p class="note">${T('The file stays in your own Drive or iCloud: Sparkle Valley has no server and never sees it.', 'Tệp nằm trong Drive hoặc iCloud của bạn: Thung Lũng Lấp Lánh không có máy chủ và không bao giờ xem tệp này.')}</p>
       
       </div></details>
+      ${togetherHTML(gOpen.has('together')) /* (v1.08b quality) Play with Mum and Dad */}
       ${window.__sv && window.__sv.parents ? window.__sv.parents.grownupsHTML(gOpen.has('family'), familyQuestionsHTML()) : `<details class="gsec family" data-sec="family" ${gOpen.has('family') ? 'open' : ''}><summary><span class="gi">${pic('💛')}</span><b>${T('Family', 'Gia đình')}</b></summary><div class="gbody">${familyQuestionsHTML()}</div></details>` /* Family questions also work before the world/mission service has finished starting. */}
 
+      ${NOTIFY ? NOTIFY.notifyHTML(gOpen.has('notify')) : '<div class="pushsec-wait"></div>' /* (v1.08 notifications) */}
       <details class="gsec" data-sec="note" ${gOpen.has('note') ? 'open' : ''}><summary><span class="gi">📜</span><b>${T('Note for grown-ups', 'Lưu ý cho người lớn')}</b></summary><div class="gbody">
       <ul class="gnote"><li>${T('Sparkle Valley is a free family game made for fun and learning. It is provided as it is, without any promise or warranty.', 'Thung Lũng Lấp Lánh là trò chơi gia đình miễn phí, làm ra để vui chơi và học hỏi. Trò chơi được cung cấp như hiện có, không kèm bất kỳ cam kết hay bảo đảm nào.')}</li><li>${T('A grown-up is responsible for the child’s play: when and how long they play, online play and chat, and the device itself.', 'Người lớn chịu trách nhiệm về việc chơi của trẻ: chơi lúc nào, chơi bao lâu, chơi trực tuyến, trò chuyện, và cả thiết bị.')}</li><li>${T('Games the valley suggests playing for real (tug of war, jump rope, hopscotch, đá cầu, kites, cooking…) need a grown-up watching, a safe place and the right equipment.', 'Các trò chơi được gợi ý chơi ngoài đời (kéo co, nhảy dây, nhảy lò cò, đá cầu, thả diều, nấu ăn…) cần có người lớn trông, chỗ chơi an toàn và dụng cụ phù hợp.')}</li><li>${T('Take a break every 20 to 30 minutes, and stop if a child feels unwell (tired eyes, dizziness, motion sickness).', 'Nghỉ giải lao sau mỗi 20 đến 30 phút, và dừng chơi nếu trẻ thấy khó chịu (mỏi mắt, chóng mặt, say xe).')}</li><li>${T('Places, festivals, food and history are told simply for children and may not be complete or exact.', 'Địa danh, lễ hội, món ăn và lịch sử được kể đơn giản cho trẻ, có thể chưa đầy đủ hoặc chưa chính xác hoàn toàn.')}</li><li>${T('Online friends, chat and real photos come from other people and services; the makers are not responsible for their content.', 'Bạn bè trực tuyến, trò chuyện và ảnh thật đến từ người khác và các dịch vụ khác; người làm game không chịu trách nhiệm về nội dung đó.')}</li><li>${T('As far as the law allows, the makers are not responsible for any loss, injury or damage from using the game.', 'Trong phạm vi pháp luật cho phép, người làm game không chịu trách nhiệm về bất kỳ mất mát, thương tích hay thiệt hại nào do việc sử dụng trò chơi.')}</li></ul>
       </div></details>
 
       </div></div><button class="btn primary wide" id="gDone">${pic('💾')} ${T('Save & close', 'Lưu và đóng')}</button>`;
-    bindLang(card, () => { draw(); after && after(); }); bindLearn(card, () => draw());
+    bindLang(card, () => { draw(); after && after(); });
     card.querySelectorAll('details.gsec').forEach(d => d.ontoggle = () => { if (d.open) gOpen.add(d.dataset.sec); else gOpen.delete(d.dataset.sec); });
     bindPackStatus(card, () => { const y = m.scrollTop; draw(); m.scrollTop = y; });
     card.querySelector('.x').onclick = card.querySelector('#gDone').onclick = () => { m.close(); after && after(); };
@@ -334,19 +378,22 @@ export function openGrownups(after: (() => void) | undefined = undefined) {
       box.querySelectorAll('[data-whokick]').forEach(b => b.onclick = () => { if (confirm(T('Remove this player from the room?', 'Mời bạn này ra khỏi phòng?'))) { Net.kick(b.dataset.whokick); setTimeout(drawWho, 600); } });
     };
     drawWho();
+    // (v1.08f, owner 6 Nov: "the turn function stays but the wording and the link there to hide") the relay field, hidden
+    if (TURN_OFFER) {
     const turnIn = card.querySelector('#gTurn');
     turnIn.oninput = () => { settings.turnUrl = turnIn.value.trim(); saveSettings(); card.querySelector('#gTurnCred').classList.toggle('vh', !/^turns?:/i.test(settings.turnUrl)); };
     card.querySelector('#gTurnUser').oninput = e => { settings.turnUser = e.target.value; saveSettings(); };
     card.querySelector('#gTurnPass').oninput = e => { settings.turnPass = e.target.value; saveSettings(); };
+    }
     card.querySelector('#gNetCheck').onclick = async e => {
       const b = e.currentTarget, out = card.querySelector('#gNetRes'); b.disabled = true; out.textContent = '⏳ ' + T('Checking… (about 10 seconds)', 'Đang kiểm tra… (khoảng 10 giây)');
       const { Net } = await import('./net.js'); const r = await Net.check(); b.disabled = false;
-      const cloudLine = '<br>' + (r.cloud ? '☁️ ' + T(`Cloud relay: ${r.cloud} servers answer, so friends can always play together (voice calls still need a direct link or a relay).`, `Mạng đám mây: ${r.cloud} máy chủ trả lời, nên các bạn luôn chơi cùng được (gọi bằng giọng nói vẫn cần kết nối trực tiếp hoặc máy chủ trung chuyển).`) : '⚠️ ' + T('Cloud relay: no server answered (the network may block it).', 'Mạng đám mây: không máy chủ nào trả lời (mạng có thể đang chặn).'));
+      const cloudLine = TURN_OFFER ? '<br>' + (r.cloud ? '☁️ ' + T(`Cloud relay: ${r.cloud} servers answer, so friends can always play together (voice calls still need a direct link or a relay).`, `Mạng đám mây: ${r.cloud} máy chủ trả lời, nên các bạn luôn chơi cùng được (gọi bằng giọng nói vẫn cần kết nối trực tiếp hoặc máy chủ trung chuyển).`) : '⚠️ ' + T('Cloud relay: no server answered (the network may block it).', 'Mạng đám mây: không máy chủ nào trả lời (mạng có thể đang chặn).')) : '<br>' + (r.cloud ? '☁️ ' + T(`Cloud relay: ${r.cloud} servers answer, so friends can always play together.`, `Mạng đám mây: ${r.cloud} máy chủ trả lời, nên các bạn luôn chơi cùng được.`) : '⚠️ ' + T('Cloud relay: no server answered (the network may block it).', 'Mạng đám mây: không máy chủ nào trả lời (mạng có thể đang chặn).'));
       let msg;
       if (!r.server) msg = r.cloud ? '🟡 ' + T('The meeting service (PeerJS) is not answering, but the cloud relay works: you can still play together.', 'Dịch vụ PeerJS không trả lời, nhưng mạng đám mây hoạt động: vẫn chơi cùng nhau được.') : '❌ ' + T('Cannot reach the PeerJS service. Check the internet connection.', 'Không kết nối được dịch vụ PeerJS. Kiểm tra lại mạng internet.');
-      else if (r.relay) msg = '✅ ' + T('Ready to play with friends anywhere (a relay is working).', 'Sẵn sàng chơi với bạn ở bất cứ đâu (máy chủ trung chuyển hoạt động).');
-      else if (r.srflx) msg = '🟡 ' + T('Direct links work on most home Wi-Fi. For voice with friends on mobile data or strict networks, add a relay above.', 'Kết nối trực tiếp chạy được với Wi-Fi gia đình. Để gọi giọng nói với bạn dùng 4G hoặc mạng chặt, hãy thêm máy chủ trung chuyển ở trên.');
-      else msg = '🟠 ' + T('Direct links only work on the same Wi-Fi. Add a relay above for voice with friends far away.', 'Kết nối trực tiếp chỉ chạy khi cùng Wi-Fi. Thêm máy chủ trung chuyển ở trên để gọi giọng nói với bạn ở xa.');
+      else if (r.relay) msg = TURN_OFFER ? '✅ ' + T('Ready to play with friends anywhere (a relay is working).', 'Sẵn sàng chơi với bạn ở bất cứ đâu (máy chủ trung chuyển hoạt động).') : '✅ ' + T('Ready to play with friends anywhere.', 'Sẵn sàng chơi với bạn ở bất cứ đâu.');
+      else if (r.srflx) msg = TURN_OFFER ? '🟡 ' + T('Direct links work on most home Wi-Fi. For voice with friends on mobile data or strict networks, add a relay above.', 'Kết nối trực tiếp chạy được với Wi-Fi gia đình. Để gọi giọng nói với bạn dùng 4G hoặc mạng chặt, hãy thêm máy chủ trung chuyển ở trên.') : '🟡 ' + T('Direct links work on most home Wi-Fi.', 'Kết nối trực tiếp chạy được với hầu hết Wi-Fi gia đình.');
+      else msg = TURN_OFFER ? '🟠 ' + T('Direct links only work on the same Wi-Fi. Add a relay above for voice with friends far away.', 'Kết nối trực tiếp chỉ chạy khi cùng Wi-Fi. Thêm máy chủ trung chuyển ở trên để gọi giọng nói với bạn ở xa.') : '🟠 ' + T('Direct links only work on the same Wi-Fi; friends far away play together through the cloud.', 'Kết nối trực tiếp chỉ chạy khi cùng Wi-Fi; bạn ở xa vẫn chơi cùng nhau qua mạng đám mây.');
       out.innerHTML = msg + cloudLine;
     };
     card.querySelector('#gRain').onchange = e => { settings.noRain = !e.target.checked; saveSettings(); };
@@ -379,8 +426,14 @@ export function openGrownups(after: (() => void) | undefined = undefined) {
     card.querySelector('#gAdd').onclick = () => profiles.length >= MAX_KIDS ? toast(T(`Up to ${MAX_KIDS} players.`, `Tối đa ${MAX_KIDS} người chơi.`)) : openEditor(null, () => { draw(); after && after(); });
     card.querySelector('#gRec').onclick = () => openRecorder(draw);
     { const b = installButton('btn wide installrow'); if (b) card.querySelector('.g-install').appendChild(b); }
+    fillGrownupsNews(card); // (v1.08b story) the What's new card
     card.querySelector('#gNames').onclick = () => openRenamer(() => { const y = m.scrollTop; draw(); m.scrollTop = y; });
     bindExtras(card, () => { const y = m.scrollTop; draw(); m.scrollTop = y; }, toast);
+    if (NOTIFY) NOTIFY.bindNotify(card, () => { const y = m.scrollTop; draw(); m.scrollTop = y; }, toast); // (v1.08 notifications)
+    // (v1.08 fixes 2, check familycodejourney) once it has loaded, only the notifications part takes its place: drawing the
+    // whole card again replaced whatever a grown-up was tapping or typing in at that moment
+    else void import('./notify.js').then(mod => { NOTIFY = mod; const wait = card.isConnected && card.querySelector('.pushsec-wait'); if (!wait) return; wait.insertAdjacentHTML('afterend', mod.notifyHTML(gOpen.has('notify'))); wait.remove(); (card.querySelectorAll('details.gsec[data-sec="notify"]') as NodeListOf<HTMLDetailsElement>).forEach(d => d.ontoggle = () => { if (d.open) gOpen.add(d.dataset.sec); else gOpen.delete(d.dataset.sec); }); mod.bindNotify(card, () => { const y = m.scrollTop; draw(); m.scrollTop = y; }, toast); }).catch(() => { });
+    bindTogether(card, () => { m.close(); after && after(); });   // (v1.08b quality)
     if (window.__sv && window.__sv.parents) window.__sv.parents.bindGrownups(card, () => { const y = m.scrollTop; draw(); m.scrollTop = y; }, toast); // (round S)
     card.querySelector('#gFarm').onclick = () => { if (confirm(T('Start the farm over? Players and stickers are kept.', 'Làm lại nông trại? Người chơi và hình dán được giữ lại.'))) { resetFarm(); window.__sv && window.__sv.farm && (window.__sv.farm.syncAnimals(), window.__sv.farm.syncPets()); toast(T('A fresh new farm!', 'Nông trại mới tinh!')); } };
     const syncFamTelemetry = () => { import('./players.js').then(M => M.noteFamilyCode && M.noteFamilyCode()).catch(() => {}); };

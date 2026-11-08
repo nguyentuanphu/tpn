@@ -1,6 +1,6 @@
 # Prizes & badges / Quà thưởng và huy hiệu
 
-Facts generated from source [380ed908b79b94ac32f83865af7d87758e5932d0](https://github.com/nguyentuanphu/Sparkle-Valley/tree/380ed908b79b94ac32f83865af7d87758e5932d0). [Interactive prize showcase](prototype.html#rewards) · [Quest Guide](quest-guide.md)
+Facts generated from source [802d543c268ae0450acafdeb95d45d2983df4dab](https://github.com/nguyentuanphu/Sparkle-Valley/tree/802d543c268ae0450acafdeb95d45d2983df4dab). [Interactive prize showcase](prototype.html#rewards) · [Quest Guide](quest-guide.md)
 
 These are rewards available under the reviewed rules, not a record of any child's saved collection. Age, difficulty, family choices, already-owned items and remaining stickers affect availability. The website does not grant prizes. / Đây là quà theo quy tắc đã kiểm tra, không phải bộ sưu tập đã lưu của bé. Tuổi, độ khó, lựa chọn gia đình, món đã có và hình dán còn lại ảnh hưởng nội dung. Trang web không trao quà.
 
@@ -531,6 +531,83 @@ Fill a complete Sticker Book page (normally nine stickers), then open it: a gold
 | Rocket / Tên lửa | A prize for quests, jobs and festivals / Quà khi làm nhiệm vụ, việc nhà và lễ hội |
 | Little train / Tàu hỏa nhỏ | A prize for quests, jobs and festivals / Quà khi làm nhiệm vụ, việc nhà và lễ hội |
 
+### Learning journeys / Hành trình học
+
+| Sticker / Hình dán | Clue / Manh mối |
+| --- | --- |
+| Vietnamese step 1 / Tiếng Việt: bước 1 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| Vietnamese step 2 / Tiếng Việt: bước 2 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| Vietnamese step 3 / Tiếng Việt: bước 3 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| Vietnamese step 4 / Tiếng Việt: bước 4 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| Vietnamese step 5 / Tiếng Việt: bước 5 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| Vietnamese step 6 / Tiếng Việt: bước 6 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| Vietnamese step 7 / Tiếng Việt: bước 7 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| Vietnamese step 8 / Tiếng Việt: bước 8 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| Vietnamese step 9 / Tiếng Việt: bước 9 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| English step 1 / Tiếng Anh: bước 1 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| English step 2 / Tiếng Anh: bước 2 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| English step 3 / Tiếng Anh: bước 3 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| English step 4 / Tiếng Anh: bước 4 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| English step 5 / Tiếng Anh: bước 5 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| English step 6 / Tiếng Anh: bước 6 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| English step 7 / Tiếng Anh: bước 7 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| English step 8 / Tiếng Anh: bước 8 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| English step 9 / Tiếng Anh: bước 9 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| Maths step 1 / Toán: bước 1 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| Maths step 2 / Toán: bước 2 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| Maths step 3 / Toán: bước 3 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| Maths step 4 / Toán: bước 4 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| Maths step 5 / Toán: bước 5 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| Maths step 6 / Toán: bước 6 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| Maths step 7 / Toán: bước 7 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| Maths step 8 / Toán: bước 8 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| Maths step 9 / Toán: bước 9 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| Shapes step 1 / Hình khối: bước 1 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| Shapes step 2 / Hình khối: bước 2 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| Shapes step 3 / Hình khối: bước 3 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| Shapes step 4 / Hình khối: bước 4 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| Shapes step 5 / Hình khối: bước 5 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| Shapes step 6 / Hình khối: bước 6 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| Shapes step 7 / Hình khối: bước 7 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| Shapes step 8 / Hình khối: bước 8 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| Shapes step 9 / Hình khối: bước 9 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| Money step 1 / Tiền: bước 1 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| Money step 2 / Tiền: bước 2 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| Money step 3 / Tiền: bước 3 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| Money step 4 / Tiền: bước 4 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| Money step 5 / Tiền: bước 5 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| Money step 6 / Tiền: bước 6 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| Money step 7 / Tiền: bước 7 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| Money step 8 / Tiền: bước 8 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| Money step 9 / Tiền: bước 9 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| Science step 1 / Khoa học: bước 1 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| Science step 2 / Khoa học: bước 2 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| Science step 3 / Khoa học: bước 3 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| Science step 4 / Khoa học: bước 4 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| Science step 5 / Khoa học: bước 5 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| Science step 6 / Khoa học: bước 6 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| Science step 7 / Khoa học: bước 7 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| Science step 8 / Khoa học: bước 8 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| Science step 9 / Khoa học: bước 9 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| Reading step 1 / Chữ và đọc: bước 1 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| Reading step 2 / Chữ và đọc: bước 2 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| Reading step 3 / Chữ và đọc: bước 3 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| Reading step 4 / Chữ và đọc: bước 4 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| Reading step 5 / Chữ và đọc: bước 5 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| Reading step 6 / Chữ và đọc: bước 6 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| Reading step 7 / Chữ và đọc: bước 7 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| Reading step 8 / Chữ và đọc: bước 8 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| Reading step 9 / Chữ và đọc: bước 9 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| Me and my family step 1 / Em và gia đình: bước 1 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| Me and my family step 2 / Em và gia đình: bước 2 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| Me and my family step 3 / Em và gia đình: bước 3 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| Me and my family step 4 / Em và gia đình: bước 4 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| Me and my family step 5 / Em và gia đình: bước 5 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| Me and my family step 6 / Em và gia đình: bước 6 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| Me and my family step 7 / Em và gia đình: bước 7 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| Me and my family step 8 / Em và gia đình: bước 8 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+| Me and my family step 9 / Em và gia đình: bước 9 | Win the steps of a learning journey in Học vui / Thắng các bước hành trình học trong Học vui |
+
 ## Special reasoning stickers / Hình dán tư duy đặc biệt
 
 Ages five and over, local play, finish Hard in the matching game; each skill sticker is awarded once. / Từ năm tuổi, chơi cục bộ, hoàn thành mức Khó của trò tương ứng; mỗi hình kỹ năng nhận một lần.
@@ -613,20 +690,20 @@ When enabled for ages 5–8 on Medium/Hard, one daily box and up to one extra ea
 
 ## Sources
 
-- [js/content/adventures.js](https://github.com/nguyentuanphu/Sparkle-Valley/blob/380ed908b79b94ac32f83865af7d87758e5932d0/js/content/adventures.js)
-- [js/content/stickers.js](https://github.com/nguyentuanphu/Sparkle-Valley/blob/380ed908b79b94ac32f83865af7d87758e5932d0/js/content/stickers.js)
-- [js/stickers.js](https://github.com/nguyentuanphu/Sparkle-Valley/blob/380ed908b79b94ac32f83865af7d87758e5932d0/js/stickers.js)
-- [js/content/chapters.ts](https://github.com/nguyentuanphu/Sparkle-Valley/blob/380ed908b79b94ac32f83865af7d87758e5932d0/js/content/chapters.ts)
-- [js/lanterns.ts](https://github.com/nguyentuanphu/Sparkle-Valley/blob/380ed908b79b94ac32f83865af7d87758e5932d0/js/lanterns.ts)
-- [js/story.js](https://github.com/nguyentuanphu/Sparkle-Valley/blob/380ed908b79b94ac32f83865af7d87758e5932d0/js/story.js)
-- [js/passport.js](https://github.com/nguyentuanphu/Sparkle-Valley/blob/380ed908b79b94ac32f83865af7d87758e5932d0/js/passport.js)
-- [js/festhunt.js](https://github.com/nguyentuanphu/Sparkle-Valley/blob/380ed908b79b94ac32f83865af7d87758e5932d0/js/festhunt.js)
-- [js/parents.ts](https://github.com/nguyentuanphu/Sparkle-Valley/blob/380ed908b79b94ac32f83865af7d87758e5932d0/js/parents.ts)
-- [js/main.ts](https://github.com/nguyentuanphu/Sparkle-Valley/blob/380ed908b79b94ac32f83865af7d87758e5932d0/js/main.ts)
-- [js/yard.js](https://github.com/nguyentuanphu/Sparkle-Valley/blob/380ed908b79b94ac32f83865af7d87758e5932d0/js/yard.js)
-- [js/jobs.js](https://github.com/nguyentuanphu/Sparkle-Valley/blob/380ed908b79b94ac32f83865af7d87758e5932d0/js/jobs.js)
-- [js/content/boxes.js](https://github.com/nguyentuanphu/Sparkle-Valley/blob/380ed908b79b94ac32f83865af7d87758e5932d0/js/content/boxes.js)
-- [js/boxes.js](https://github.com/nguyentuanphu/Sparkle-Valley/blob/380ed908b79b94ac32f83865af7d87758e5932d0/js/boxes.js)
-- [js/kidplay.js](https://github.com/nguyentuanphu/Sparkle-Valley/blob/380ed908b79b94ac32f83865af7d87758e5932d0/js/kidplay.js)
-- [js/games/frame.ts](https://github.com/nguyentuanphu/Sparkle-Valley/blob/380ed908b79b94ac32f83865af7d87758e5932d0/js/games/frame.ts)
-- [js/games/registry.ts](https://github.com/nguyentuanphu/Sparkle-Valley/blob/380ed908b79b94ac32f83865af7d87758e5932d0/js/games/registry.ts)
+- [js/content/adventures.js](https://github.com/nguyentuanphu/Sparkle-Valley/blob/802d543c268ae0450acafdeb95d45d2983df4dab/js/content/adventures.js)
+- [js/content/stickers.js](https://github.com/nguyentuanphu/Sparkle-Valley/blob/802d543c268ae0450acafdeb95d45d2983df4dab/js/content/stickers.js)
+- [js/stickers.js](https://github.com/nguyentuanphu/Sparkle-Valley/blob/802d543c268ae0450acafdeb95d45d2983df4dab/js/stickers.js)
+- [js/content/chapters.ts](https://github.com/nguyentuanphu/Sparkle-Valley/blob/802d543c268ae0450acafdeb95d45d2983df4dab/js/content/chapters.ts)
+- [js/lanterns.ts](https://github.com/nguyentuanphu/Sparkle-Valley/blob/802d543c268ae0450acafdeb95d45d2983df4dab/js/lanterns.ts)
+- [js/story.js](https://github.com/nguyentuanphu/Sparkle-Valley/blob/802d543c268ae0450acafdeb95d45d2983df4dab/js/story.js)
+- [js/passport.js](https://github.com/nguyentuanphu/Sparkle-Valley/blob/802d543c268ae0450acafdeb95d45d2983df4dab/js/passport.js)
+- [js/festhunt.js](https://github.com/nguyentuanphu/Sparkle-Valley/blob/802d543c268ae0450acafdeb95d45d2983df4dab/js/festhunt.js)
+- [js/parents.ts](https://github.com/nguyentuanphu/Sparkle-Valley/blob/802d543c268ae0450acafdeb95d45d2983df4dab/js/parents.ts)
+- [js/main.ts](https://github.com/nguyentuanphu/Sparkle-Valley/blob/802d543c268ae0450acafdeb95d45d2983df4dab/js/main.ts)
+- [js/yard.js](https://github.com/nguyentuanphu/Sparkle-Valley/blob/802d543c268ae0450acafdeb95d45d2983df4dab/js/yard.js)
+- [js/jobs.js](https://github.com/nguyentuanphu/Sparkle-Valley/blob/802d543c268ae0450acafdeb95d45d2983df4dab/js/jobs.js)
+- [js/content/boxes.js](https://github.com/nguyentuanphu/Sparkle-Valley/blob/802d543c268ae0450acafdeb95d45d2983df4dab/js/content/boxes.js)
+- [js/boxes.js](https://github.com/nguyentuanphu/Sparkle-Valley/blob/802d543c268ae0450acafdeb95d45d2983df4dab/js/boxes.js)
+- [js/kidplay.js](https://github.com/nguyentuanphu/Sparkle-Valley/blob/802d543c268ae0450acafdeb95d45d2983df4dab/js/kidplay.js)
+- [js/games/frame.ts](https://github.com/nguyentuanphu/Sparkle-Valley/blob/802d543c268ae0450acafdeb95d45d2983df4dab/js/games/frame.ts)
+- [js/games/registry.ts](https://github.com/nguyentuanphu/Sparkle-Valley/blob/802d543c268ae0450acafdeb95d45d2983df4dab/js/games/registry.ts)

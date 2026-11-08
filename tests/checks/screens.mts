@@ -230,15 +230,160 @@ await check('hubmap', async () => {
     const placesOf = async name => { const c = [...document.querySelectorAll('.mapcities button')].find(b => b.innerText.includes(name)); if (!c) return null;
       c.click(); await new Promise(r => setTimeout(r, 200)); return [...document.querySelectorAll('.mapplaces .qbtn')].map(b => b.innerText.trim()); };
     const hanoi = (await placesOf('Hà Nội')) || (await placesOf('Hanoi')), danang = await placesOf('Đà Nẵng');
-    return { games: Object.keys(seen).length, all: Object.keys(__sv.GAMES || {}).length, dup: Object.entries(seen).filter(([, n]) => n > 1).map(([k]) => k), cities, hanoi, danang };
+    // (v1.08b games, owner 3 Nov 2026 AEDT: one home per game) no link tiles in the Play hub, and on the Simple screen
+    // each game is one stop across Học vui and Vui chơi together (a stop or a locked stop), never two
+    const links = document.querySelectorAll('[data-link]').length;
+    document.querySelectorAll('.modal').forEach(e => e.remove()); __sv.paused = false;
+    const simple = {}; for (const t of ['learn', 'fun']) { __sv.simple.show(t); __sv.simple.openGroup(t, null); const v = __sv.simple.view; for (const id of v.stops.concat(v.locks)) simple[id] = (simple[id] || 0) + 1; }
+    __sv.simple.hide();
+    return { games: Object.keys(seen).length, dup: Object.entries(seen).filter(([, n]) => (n as number) > 1).map(([k]) => k), links, simpleDup: Object.entries(simple).filter(([, n]) => (n as number) > 1).map(([k]) => k), simple: Object.keys(simple).length, cities, hanoi, danang };
   });
   ok(!r.dup.length, 'games in two tabs: ' + r.dup.join(', ')); ok(r.games >= 60, 'games in the hub: ' + r.games);
+  ok(!r.links, 'link tiles in the Play hub: ' + r.links);
+  ok(!r.simpleDup.length, 'games twice on the Simple screen: ' + r.simpleDup.join(', '));
   const at = n => r.cities.findIndex(x => x.includes(n)), hn = at('Hà Nội') >= 0 ? at('Hà Nội') : at('Hanoi'), dn = at('Đà Nẵng');
   ok(hn >= 0 && dn > hn, 'map: the Vietnam cities are not north to south (Hà Nội before Đà Nẵng): ' + r.cities.join(' | '));
   ok(r.hanoi && r.hanoi.some(x => x.includes('Hạ Long')), 'map: Hạ Long should be under Hà Nội: ' + (r.hanoi || []).join(' | '));
   ok(r.danang && r.danang.some(x => x.includes('Huế')) && !r.hanoi.some(x => x.includes('Huế')), 'map: Huế should be under Đà Nẵng only: ' + (r.danang || []).join(' | '));
   ok(!P.errors.length, P.errors.join(' | ')); await P.ctx.close();
-  return `${r.games} games, each in one tab; the map's Vietnam cities run north to south, each with its landmarks (${r.cities.length} cities)`;
+  return `${r.games} games, each in one tab, no link tiles; ${r.simple} games once each on the Simple screen; the map's Vietnam cities run north to south, each with its landmarks (${r.cities.length} cities)`;
+});
+
+await check('gameplace', async () => {
+  // (v1.08b games, owner's plan 3 Nov 2026 AEDT, docs/plans/links-rollout-install.md part 4) every switched-on game has a
+  // place in the valley (its 📍 button walks there) and a host with a spoken line in English and Vietnamese; a host says
+  // once, as the child walks past, that a game at their place has just opened, and never again for that game
+  const P = await openAllGamesFixture(b, { w: 1180, h: 820 }); await clear(P.page);
+  const r = await P.page.evaluate(async () => {
+    const { GAMES } = await import('/js/games/frame.js'), A = await import('/js/content/activities.js'), GP = await import('/js/content/gameplace.js');
+    const on = Object.keys(GAMES).filter(id => !A.gameInfo(id).hidden), none = on.filter(id => !__sv.gameSpot(id));
+    const noHost = [...new Set(on.map(id => A.gameInfo(id).area))].filter(a => !GP.AREA_PLACE[a] || !GP.AREA_PLACE[a].line.every(x => x && x.length > 10));
+    const missingSpot = Object.entries(GP.AREA_PLACE).filter(([, a]) => !__sv.interactables.some(it => it.id === a.spot)).map(([k]) => k);
+    // the news: a game known as not yet seen, the child next to its place, then the host's line once
+    const h = __sv.heroes[0], p = h.profile; delete p.hostNews; document.querySelectorAll('.modal').forEach(e => e.remove()); __sv.paused = false; await new Promise(r => setTimeout(r, 1100));
+    __sv.hostNews(h); const seeded = !!p.hostNews && Object.keys(p.hostNews).length;
+    const id = 'counting', it = __sv.gameSpot(id); delete p.hostNews[id];
+    h.pos.x = it.x + 1; h.pos.z = it.z + 1; await new Promise(r => setTimeout(r, 1100));
+    __sv.hostNews(h); const toast1 = [...document.querySelectorAll('.toast, .htoast, [class*=toast]')].map(e => e.textContent).join('|');
+    const marked = !!p.hostNews[id];
+    await new Promise(r => setTimeout(r, 1100)); const n1 = Object.keys(p.hostNews).length; __sv.hostNews(h); const n2 = Object.keys(p.hostNews).length;
+    // (stories) a tale newly open: Bà Năm tells about it once as the child passes her mat
+    const tale = (__sv.TALES || []).find(t => p.hostNews['tale:' + t.id]); let taleNews = false;
+    if (tale && __sv.storyteller) { delete p.hostNews['tale:' + tale.id]; h.pos.x = __sv.storyteller.x + 1; h.pos.z = __sv.storyteller.z + 1; await new Promise(r => setTimeout(r, 1100)); document.querySelectorAll('.modal').forEach(e => e.remove()); __sv.paused = false; /* (walking up to her mat opens her greeting: closed first, as a child does) */ __sv.hostNews(h); taleNews = !!p.hostNews['tale:' + tale.id]; }
+    return { on: on.length, none, noHost, missingSpot, seeded, marked, again: n1 === n2, toast: /Count|Đếm/.test(toast1), taleNews };
+  });
+  ok(!r.none.length, 'switched-on games with no place in the valley: ' + r.none.join(', '));
+  ok(!r.noHost.length, 'areas without a host and line: ' + r.noHost.join(', '));
+  ok(!r.missingSpot.length, 'area places that do not stand in the valley: ' + r.missingSpot.join(', '));
+  ok(r.seeded > 20 && r.marked && r.again, 'host news: ' + JSON.stringify(r));
+  ok(r.taleNews, 'no story news from Bà Năm: ' + JSON.stringify(r));
+  ok(!P.errors.length, P.errors.join(' | ')); await P.ctx.close();
+  return `${r.on} switched-on games, each with a place and a host; ${r.seeded} games already open counted as known; a host told about a new game once (name on screen: ${r.toast}); Bà Năm told about a new story`;
+});
+
+await check('festivalgames', async () => {
+  // (v1.08b games, owner's plan 3 Nov 2026 AEDT: festival games) one game of its own per festival, the festival's table
+  // game; open only in its season (with the decorations, until 3 days after), testers 7 days earlier, put away the
+  // rest of the year with the day it comes back; each plays to a win; its How to play and pictures are there
+  const P = await openAllGamesFixture(b, { w: 390, h: 844, touch: true }); await clear(P.page);
+  const r = await P.page.evaluate(async () => {
+    const { GAMES } = await import('/js/games/frame.js'), FC = await import('/js/content/festcal.js'), FG = await import('/js/content/festgames108b.js');
+    const S = await import('/js/content/festseason.js'), A = await import('/js/content/activities.js'), C = (await import('/js/custom.js')).CUSTOM, H = await import('/js/howto-registry.js'), ART = await import('/js/art.js');
+    await ART.moreArt();
+    const out = { fests: FC.FESTCAL.length, noGame: [], notTable: [], noHow: [], noPic: [], season: [], tester: [], back: [], hiddenWrong: [], won: [], notWon: [] };
+    const DAY = 864e5, testerWas = localStorage.getItem('sv2_tester'); localStorage.removeItem('sv2_tester');   // (the fixture makes this device a tester: the seasons are checked as a family's first)
+    for (const F of FC.FESTCAL) {
+      const id = 'fg_' + F.id;
+      if (!GAMES[id] || FG.FEST_GAME_OF[F.id] !== id) out.noGame.push(F.id);
+      if (F.game !== id) out.notTable.push(F.id + ':' + F.game);
+      if (!H.HOWTO[id]) out.noHow.push(id);
+      if (!ART.hasArt(GAMES[id]?.icon || '')) out.noPic.push(id);
+      const s = S.seasonOf(F.id, new Date()); if (!s) { out.season.push(F.id + ': no date'); continue; }
+      const d = s.day, before = F.kind === 'quiet' ? 3 : 21;
+      const at = n => S.inSeason(id, new Date(+d + n * DAY + 3600e3));
+      if (!at(0) || !at(-before) || at(-before - 1) || !at((F.days || 1) + 2) || at((F.days || 1) + 3 + 1)) out.season.push(F.id);
+      localStorage.setItem('sv2_tester', JSON.stringify({ at: Date.now() })); const t = S.inSeason(id, new Date(+d - (before + 7) * DAY + 3600e3)); localStorage.removeItem('sv2_tester');
+      if (!t) out.tester.push(F.id);
+      const away = new Date(+d + ((F.days || 1) + 10) * DAY), back = S.backOn(id, away);
+      if (!back || +back <= +away) out.back.push(F.id);
+      if (A.gameInfo(id).hidden !== !S.inSeason(id)) out.hiddenWrong.push(id);
+    }
+    if (testerWas) localStorage.setItem('sv2_tester', testerWas);
+    // three festival games played to a win (a grown-up's moved date puts each in season today)
+    C.festivals = C.festivals || {};
+    const today = new Date(), iso = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+    for (const f of ['tet', 'christmas', 'diwali']) {
+      const id = 'fg_' + f; C.festivals[f] = { ...(C.festivals[f] || {}), date: iso };
+      if (A.gameInfo(id).hidden) { out.notWon.push(id + ' still hidden'); continue; }
+      document.querySelectorAll('.gl, .modal').forEach(e => e.remove()); __sv.paused = false; __sv.playGame(0, id, 'hub');
+      const { playWatch } = await import('/js/games/frame.js'); let won = false;
+      for (let k = 0; k < 400 && !won; k++) {
+        await new Promise(r => setTimeout(r, 120));
+        const gl = document.querySelector('.gl:not(.out)'); if (!gl) continue; if (gl.querySelector('.gl-win')) { won = true; break; }
+        const e = (playWatch.plan && playWatch.plan()) as HTMLButtonElement; if (e && e.isConnected && !e.disabled) e.click();
+      }
+      (won ? out.won : out.notWon).push(id);
+      document.querySelector('.gl:not(.out) .gl-x')?.click(); await new Promise(r => setTimeout(r, 300));
+    }
+    return out;
+  });
+  const bad = Object.entries(r).filter(([k, v]) => Array.isArray(v) && k !== 'won' && v.length).map(([k, v]) => k + ': ' + (v as unknown[]).join(','));
+  ok(r.fests >= 24 && !bad.length, bad.join(' | '));
+  ok(!P.errors.length, P.errors.join(' | ')); await P.ctx.close();
+  return `${r.fests} festivals, each with its own game at its table; open with the decorations until 3 days after, testers 7 days early, put away with the day it comes back; ${r.won.join(', ')} played to a win`;
+});
+
+await check('learningquests', async () => {
+  // (v1.08b games, owner 5 Nov 2026 AEDT: 9 steps and a badge) each Học vui subject has a journey of 9 steps; a step won
+  // gives its sticker, the 9th the badge; today's learning step is in the daily adventure's window, marked in the Play
+  // hub and starred on the Simple screen; the journeys are at the top of the Học vui tab, on a phone, a tablet and a computer
+  const P = await openAllGamesFixture(b, { w: 390, h: 844, touch: true }); await clear(P.page);
+  const r = await P.page.evaluate(async () => {
+    const wait = ms => new Promise(r => setTimeout(r, ms));
+    for (let k = 0; k < 50 && !__sv.learnQuest; k++) await wait(100);
+    const LQ = await import('/js/learnquest.js'), LP = await import('/js/content/learnpaths.js'), ST = await import('/js/stickers.js');
+    const h = __sv.heroes[0], p = h.profile; p.age = 'big'; delete p.learnPath; delete p.learnBadges;
+    const out = { paths: LP.LEARN_PATHS.length, short: [], today: null, mark: false, star: false, row: false, rows: 0, steps: 0, stickers: 0, badge: false, wrongNoMove: false };
+    for (const L of LP.LEARN_PATHS) if (LQ.stepsOf(p, L).length !== 9) out.short.push(L.key);
+    const t = LQ.todayStep(p); out.today = t && t.id;
+    document.querySelectorAll('.modal').forEach(m => m.remove()); __sv.paused = false; __sv.openGamesHub(0); await wait(400);
+    document.querySelector('.hubtabs [data-tab="hocvui"]').click(); await wait(300);
+    out.rows = document.querySelectorAll('.hubbody .lq-row').length;
+    out.mark = !!document.querySelector(`.hubbody [data-play="${t.id}"]`)?.closest('.hcard')?.querySelector('.hquest');
+    document.querySelectorAll('.modal').forEach(m => m.remove()); __sv.paused = false;
+    out.row = /lq-today/.test(LQ.adventureRowHTML(p));
+    __sv.simple.show('learn');
+    // the Simple screen: open the subject of today's step and find the quest star on its stop
+    const A = await import('/js/content/activities.js'), area = A.gameInfo(t.id).area; __sv.simple.openGroup('learn', area); await wait(300);
+    out.star = [...document.querySelectorAll('.sp-stop')].some(e => e.querySelector('.sp-quest')); __sv.simple.hide();
+    // a game that is not the next step changes nothing; the 9 steps of the Maths journey, won in turn, give 9 stickers and the badge
+    const M = LP.LEARN_PATHS.find(L => L.key === 'math'), other = LQ.stepsOf(p, LP.LEARN_PATHS.find(L => L.key === 'sci'))[0];
+    LQ.stepWon(p, other); out.wrongNoMove = LQ.doneOf(p, M) === 0;
+    for (let k = 0; k < 9; k++) { const id = LQ.nextOf(p, M); if (!id) break; LQ.stepWon(p, id); out.steps = LQ.doneOf(p, M); }
+    out.stickers = Array.from({ length: 9 }, (_, k) => ST.has(LP.stepSticker('math', k + 1), p)).filter(Boolean).length;
+    out.badge = !!(p.learnBadges && p.learnBadges.math) && !LQ.nextOf(p, M);
+    return out;
+  });
+  fs.mkdirSync('out/learningquests', { recursive: true });
+  for (const [name, w, h] of [['phone', 390, 844], ['tablet', 820, 1180], ['computer', 1366, 800]]) {
+    await P.page.setViewportSize({ width: +w, height: +h });
+    await P.page.evaluate(() => { document.querySelectorAll('.modal').forEach(m => m.remove()); __sv.paused = false; __sv.openGamesHub(0); });
+    await P.page.waitForTimeout(400); await P.page.evaluate(() => (document.querySelector('.hubtabs [data-tab="hocvui"]') as HTMLElement)?.click()); await P.page.waitForTimeout(400);
+    // (v1.08d polish) on a phone the journeys are folded into one row, so the corners show first; a tap opens them.
+    // On a tablet and a computer they are open. The picture is taken folded on the phone, then each row is measured open.
+    const fold = await P.page.evaluate(() => { const d = document.querySelector('.hubbody details.lq-journeys') as HTMLDetailsElement, s = d && d.querySelector('summary'); return d ? { open: d.open, h: s.getBoundingClientRect().height } : null; });
+    if (!fold || fold.h < 44 || fold.open !== (name !== 'phone')) r.short.push(name + ': journeys ' + JSON.stringify(fold));
+    await P.page.screenshot({ path: `out/learningquests/hocvui-${name}.png` });
+    if (fold && !fold.open) { await P.page.click('.hubbody details.lq-journeys > summary'); await P.page.waitForTimeout(300); }
+    const small = await P.page.evaluate(() => [...document.querySelectorAll('.lq-row')].filter(e => { const q = e.getBoundingClientRect(); return q.height < 44 || q.right > innerWidth + 1; }).length);
+    if (small) r.short.push(name + ': ' + small + ' journey rows under 44 px or off screen');
+    if (fold && !fold.open) await P.page.click('.hubbody details.lq-journeys > summary'); // (folded again, as the child had it)
+  }
+  ok(r.paths === 8 && !r.short.length && r.rows === 8, JSON.stringify(r));
+  ok(r.today && r.mark && r.star && r.row, 'today: ' + JSON.stringify(r));
+  ok(r.wrongNoMove && r.steps === 9 && r.stickers === 9 && r.badge, 'journey: ' + JSON.stringify(r));
+  ok(!P.errors.length, P.errors.join(' | ')); await P.ctx.close();
+  return `8 journeys of 9 steps at the top of Học vui; today's step (${r.today}) in the adventure, marked in the hub and starred on the Simple screen; 9 wins give 9 stickers and the badge; pictures in tests/out/learningquests/`;
 });
 
 await check('padmap', async () => {
@@ -257,10 +402,14 @@ await check('padmap', async () => {
       // visit the first clouded place, then open the map again: its cloud puffs away, once
       const h = __sv.heroes[0], c = clouds[0], W = await import('/js/world.js');
       h.profile.visited = h.profile.visited || {}; h.profile.visited[c.region] = true;
+      // (v1.08 release fix, padmap red on GitHub) the puffs are counted as they are added: a puff lives 0.9 s and removes
+      // itself, so on a busy machine it could already be gone when the count was read 200 ms later
+      let added = new Set(); const seen = new MutationObserver(list => list.forEach(m => m.addedNodes.forEach(n => { if (n instanceof Element) [n, ...n.querySelectorAll('*')].forEach(e => { if (e.matches('.mapcloud.puff')) added.add(e); }); })));
+      seen.observe(document.body, { childList: true, subtree: true });
       document.querySelectorAll('.modal').forEach(e => e.remove()); __sv.paused = false; __sv.openPad(0, 'map'); await new Promise(r => setTimeout(r, 200));
-      const after = document.querySelector('canvas.bigmap').clouds, puff = document.querySelectorAll('.mapcloud.puff').length;
+      const after = document.querySelector('canvas.bigmap').clouds, puff = added.size; added = new Set();
       document.querySelectorAll('.modal').forEach(e => e.remove()); __sv.paused = false; __sv.openPad(0, 'map'); await new Promise(r => setTimeout(r, 200));
-      const again = document.querySelectorAll('.mapcloud.puff').length;
+      const again = added.size; seen.disconnect();
       return { n: L.length, missing, over, clouds: clouds.length, region: c.region, still: after.some(o => o.region === c.region), puff, again, pic };
     });
     ok(r.pic && !r.missing.length, `${w}px: places missing from the drawn map: ${r.missing.join(', ')}`);
@@ -456,15 +605,36 @@ await check('adventure', async () => {
     delete p.unlockAll; __sv.simple.openGroup('games', null);
     return { cats: cats.length, inOrder: JSON.stringify(order) === JSON.stringify(cats), heads, missed: want.filter(id => !stops.includes(id)), notDrawn: out.notDrawn, tooBig: out.tooBig, stops: stops.length };
   });
+  // (v1.08 simple, owner 3 Nov 2026 AEDT) the games are in two big buttons, Học vui (learning) and Vui chơi (play): every
+  // switched-on game is on one of them, as a stop or (still locked) as a stop of its own with a padlock and what to do;
+  // the learning areas are all under Học vui and none under Vui chơi; Valley is in the top row, not the bottom bar
+  r.reach = await P.page.evaluate(async () => {
+    const { GAMES } = await import('/js/games/registry.js'), A = await import('/js/content/activities.js'), out = { missing: [], twoTabs: [], noPad: [], folded: 0, learnWrong: [], bar: '', top: false };
+    const want = Object.keys(GAMES).filter(id => !A.gameInfo(id).hidden), seen = {};
+    for (const t of ['learn', 'fun']) {
+      __sv.simple.show(t); __sv.simple.openGroup(t, null); const v = __sv.simple.view;
+      for (const id of new Set(v.stops.concat(v.locks))) (seen[id] = seen[id] || []).push(t);
+      for (const c of v.cats) if ((t === 'learn') !== (A.LEARN_CORNERS.includes(c) || c.startsWith('hv_'))) out.learnWrong.push(t + ':' + c);
+      document.querySelectorAll('.sp-stop.locked').forEach(b => { if (!b.querySelector('.sp-lockpad .art') || !b.querySelector('.sp-hint')?.textContent.trim()) out.noPad.push(b.getAttribute('aria-label')); });
+      out.folded += [...document.querySelectorAll('.sp-stop')].filter(e => /more to unlock|trò để mở/.test(e.textContent)).length;
+    }
+    out.missing = want.filter(id => !seen[id]);
+    out.twoTabs = want.filter(id => seen[id] && seen[id].length > 1);   // (v1.08b games: one home per game, no link stops)
+    out.bar = [...document.querySelectorAll('.sp-tabs button')].map(b => b.dataset.tab || (b.classList.contains('sp-discover') ? 'discover' : '?')).join(',');
+    out.top = !!document.querySelector('.sp-top .sp-tools .sp-valley') && !document.querySelector('.sp-tabs .sp-valley');
+    out.games = want.length;
+    __sv.simple.show('games'); __sv.simple.openGroup('games', null);
+    return out;
+  });
   // places: China and India (asia) always come last
   // (owner, 1 Nov 2026 AEDT) a lock stop says what to do: its guide lists each game to win 3 times with the stars so far
-  r.guide = await P.page.evaluate(async () => { const s = [...document.querySelectorAll('.sp-stop')].find(e => /more to unlock|trò để mở/.test(e.textContent)); if (!s) return 'no lock stop'; s.click(); await new Promise(r => setTimeout(r, 200)); const g = document.querySelector('.sp-guide'), rows = g ? g.querySelectorAll('.sp-grow').length : 0, x = g && g.querySelector('.sp-gx'), xr = x && x.getBoundingClientRect(); x && x.click(); return rows && xr.width >= 64 && !document.querySelector('.sp-guide') ? 'ok' : 'guide rows ' + rows; });
+  r.guide = await P.page.evaluate(async () => { const s = document.querySelector('.sp-stop.locked') || [...document.querySelectorAll('.sp-stop')].find(e => /more to unlock|trò để mở/.test(e.textContent)); /* (v1.08: each locked game is its own stop) */ if (!s) return 'no lock stop'; s.click(); await new Promise(r => setTimeout(r, 200)); const g = document.querySelector('.sp-guide'), rows = g ? g.querySelectorAll('.sp-grow').length : 0, x = g && g.querySelector('.sp-gx'), xr = x && x.getBoundingClientRect(); x && x.click(); return rows && xr.width >= 64 && !document.querySelector('.sp-guide') ? 'ok' : 'guide rows ' + rows; });
   r.placesLast = await P.page.evaluate(() => { __sv.simple.show('places'); const c = __sv.simple.view.cats; return c[c.length - 1]; });
   await P.page.evaluate(() => __sv.simple.show('games'));
   // Discover: a big picture for every area; tapping Music goes there
   await P.page.click('.sp-discover'); await P.page.waitForSelector('.sp-find:not([hidden]) .sp-card');
   r.find = await P.page.evaluate(() => ({ cards: document.querySelectorAll('.sp-card').length, search: !!document.querySelector('.sp-q') }));
-  await P.page.click('.sp-card[data-t="games"][data-a="music"]'); await P.page.waitForTimeout(200); r.music = await P.page.evaluate(() => { const h = document.querySelector('.sp-sec[data-cat="music"] .sp-sectitle'), r = h && h.getBoundingClientRect(); return r && r.top >= 0 && r.top < innerHeight / 2 ? 'music' : 'lost'; });
+  await P.page.click('.sp-card[data-t="fun"][data-a="music"]'); await P.page.waitForTimeout(200); r.music = await P.page.evaluate(() => { const h = document.querySelector('.sp-sec[data-cat="music"] .sp-sectitle'), r = h && h.getBoundingClientRect(); return r && r.top >= 0 && r.top < innerHeight / 2 ? 'music' : 'lost'; });
   // a double tap starts the game once
   await P.page.evaluate(() => { window.__starts = 0; const pg = __sv.playGame; __sv.playGame = (...a) => { window.__starts++; return pg(...a); }; const s = [...document.querySelectorAll('.sp-stop:not(.grp)')].find(x => !/^(Songs|Bài hát)$/.test(x.getAttribute('aria-label'))); s.click(); s.click(); setTimeout(() => s.click(), 120); }); // (a game, not the Music group's 🎵 Songs)
   await P.page.waitForSelector('.gl', { timeout: 10000 }); await P.page.waitForTimeout(400);
@@ -499,6 +669,7 @@ await check('adventure', async () => {
   errs.push(...B.errors); await B.ctx.close();
   ok(!r.list.missing.length && !r.list.extra.length && !r.list.badArea.length, 'activity list: ' + JSON.stringify(r.list));
   ok(r.guide === 'ok', 'lock guide: ' + r.guide);
+  ok(!r.reach.missing.length && !r.reach.twoTabs.length && !r.reach.noPad.length && !r.reach.folded && !r.reach.learnWrong.length && r.reach.bar === 'learn,fun,tales,places,discover' && r.reach.top, 'Học vui / Vui chơi: ' + JSON.stringify(r.reach));
   ok(r.walk.cats >= 5 && r.walk.heads === r.walk.cats && r.walk.inOrder && r.placesLast === 'asia' && !r.walk.missed.length && !r.walk.notDrawn.length && !r.walk.tooBig.length, 'under-5 path: ' + JSON.stringify(r.walk));
   ok(r.find.cards >= 18 && !r.find.search && r.music === 'music', 'discover: ' + JSON.stringify(r.find) + ' ' + r.music);
   ok(r.starts === 1, 'a double tap started the game ' + r.starts + ' times');
@@ -542,6 +713,9 @@ await check('grownupsui', async () => {
     const wait = ms => new Promise(x => setTimeout(x, ms)), h = __sv.huds[0];
     __sv.paused = true; h.setAction({ label: () => 'Nhặt Lá dong', icon: '🌿' }); await wait(300); // (paused: the valley's own loop would hide it again)
     const a = h.q('.act').getBoundingClientRect(), mv = h.q('.hud-br').getBoundingClientRect();
+    // (v1.08f, owner 6 Nov 2026 AEDT: captions are off unless a grown-up turns them on) the place of the words is checked
+    // with captions turned on, as in a11y
+    __sv.settings.captions = true;
     const { say } = await import('/js/voice.js'); say('A test line.', 'Một câu thử.'); await wait(400);
     const cap = document.querySelector('.caption'), c = cap ? cap.getBoundingClientRect() : null;
     const { openGrownups } = await import('/js/ui.js'); await openGrownups(); await wait(400);
@@ -620,7 +794,7 @@ await check('a11y', async () => {
   await P.page.evaluate(() => __sv.simple.hide());
   // readable captions: shown even with the voice off, ≥ 16 px, contrast ≥ 4.5 : 1 (on white behind, the worst case), ≥ 2.5 s
   const cap = await P.page.evaluate(async () => {
-    const V = await import('/js/voice.js'); V.say('Look at the pretty kite!', 'Nhìn con diều đẹp chưa kìa!');
+    __sv.settings.captions = true; const V = await import('/js/voice.js'); V.say('Look at the pretty kite!', 'Nhìn con diều đẹp chưa kìa!');
     await new Promise(r => setTimeout(r, 2400)); const c = document.querySelector('.caption'); if (!c) return null;
     const s = getComputedStyle(c), rgb = x => x.match(/[\d.]+/g).map(Number), fg = rgb(s.color), bg = rgb(s.backgroundColor), a = bg[3] ?? 1;
     const mix = bg.slice(0, 3).map((v, k) => v * a + 255 * (1 - a)), L = c3 => { const [r, g, b] = c3.map(v => { v /= 255; return v <= .03928 ? v / 12.92 : ((v + .055) / 1.055) ** 2.4; }); return .2126 * r + .7152 * g + .0722 * b; };

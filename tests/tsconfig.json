@@ -67,6 +67,9 @@
     "../js/content/films/vusua.ts",
     "../js/content/films/weaver.ts",
     "../js/games/parade-engine.ts",
+    "../js/games/fruitparade-core.ts",
+    "../js/games/art-pending.ts",
+    "../js/modelkit.ts",
     "../js/games/arcade-session.ts",
     "../js/games/arcade-board.ts",
     "../js/games/sparkleorchard.ts",
@@ -185,6 +188,8 @@
     "../js/testerrewards.ts",
     "../js/hud.ts",
     "../home/site.ts",
+    "../home/page.ts",
+    "../home/navigation.ts",
     "../home/analytics.ts",
     "../tools/build-website.mts",
     "./website-float.mts",
@@ -373,6 +378,11 @@
     "../js/regions.ts",
     "../js/regionsites.ts",
     "../js/signposts.ts",
-    "../js/vendors.ts"
+    "../js/vendors.ts",
+    "../js/content/subjects.ts",
+    "../js/content/lumi.ts",
+    "../js/lumi.ts",
+    "../js/playtogether.ts",
+    "../js/art/lumi.ts"
   ]
 }

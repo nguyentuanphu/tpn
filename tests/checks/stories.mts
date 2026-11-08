@@ -69,6 +69,9 @@ await check('films', async () => {
   // every page of the pilot story and guide films plays to its end, the child's turn waits for a tap, and closing frees it
   const P = await open(b, { w: 1000, h: 700 }); await clear(P.page);
   const r = await P.page.evaluate(async () => {
+    // (v1.08c) the theatre plays a tale's Blender video first when it has one (check blenderfilms); this check is about the
+    // game's own 3D films, which stay the stand-in whenever a video cannot play, so here the videos are switched off
+    const CU = await import('/js/custom.js'); (CU.CUSTOM as any).features = { ...((CU.CUSTOM as any).features || {}), blenderFilms: false };
     const F = await import('/js/film.js'), C = await import('/js/content/films.js'), { MORE_TALES: more } = await import('/js/talesdata.js'), { TALES } = await import('/js/learn.js');
     const MORE_TALES = [...TALES, ...more]; // (Bánh chưng is one of the first tales, in js/learn.js)
     const { openTheatre } = await import('/js/tales.js'), { openHowTo } = await import('/js/howto.js');
@@ -325,8 +328,11 @@ await check('story', async () => {
   const calm = () => pg.evaluate(() => { document.querySelectorAll('.storybook,.dialog,.reward').forEach(e => e.remove()); __sv.paused = false; });
   const act = id => pg.evaluate(id => { const it = __sv.interactables.find(i => i.id === id); it.act(__sv.heroes[0], __sv); }, id);
   seen.push(await q());
-  await pg.evaluate(() => { if (!document.querySelector('.theatre')) __sv.lanterns.owl(__sv.heroes[0]); }); await w(2500);
-  const film = await pg.evaluate(() => !!document.querySelector('.theatre'));
+  // (v1.08) wait for the theatre up to 10 s (the game's own wait for a film) instead of looking once after 2.5 s: on
+  // v1.07 itself it takes 1.8 to 3.1 s on the Release machine, so the single look passed or failed by the machine's speed
+  await pg.evaluate(() => { if (!document.querySelector('.theatre')) __sv.lanterns.owl(__sv.heroes[0]); });
+  let film = false; for (let i = 0; i < 40 && !film; i++) { await w(250); film = await pg.evaluate(() => !!document.querySelector('.theatre')); }
+  await w(1000);
   await pg.evaluate(() => document.querySelector('.th-x')?.click()); await w(800);
   await pg.evaluate(() => { const c = document.querySelectorAll('.dialog .dchoices button'); c[1] && c[1].click(); }); await w(800);
   await calm(); await w(2500); await calm(); seen.push(await q());

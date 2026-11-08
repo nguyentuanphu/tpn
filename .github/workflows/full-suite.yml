@@ -4,6 +4,8 @@
 # "Full suite", and keeps the refreshed code map (tests/check-map.json, tests/check-times.json) as an artifact for Release
 # to commit. The speed checks (perf, startup, battery) are not run here: GitHub's machines are shared, so the Release chat
 # runs them on its own machine. Free for a public repository. Uses no Claude usage.
+# (Release, 7 Nov 2026 AEDT) the machines are pinned to Ubuntu 24.04: GitHub moved ubuntu-latest to 26.04, where
+# Playwright 1.56 cannot install Chromium (run 42343027491 ran no check). Move up once Playwright supports 26.04.
 name: Full suite
 on:
   pull_request:
@@ -33,7 +35,7 @@ permissions:
 
 jobs:
   which:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     outputs:
       sha: ${{ steps.pr.outputs.sha }}
       pr: ${{ steps.pr.outputs.pr }}
@@ -48,12 +50,12 @@ jobs:
           if [ -n "$N" ]; then sha=$(gh pr view "$N" --json headRefOid -q .headRefOid); else sha=$GITHUB_SHA; fi
           echo "sha=$sha" >> "$GITHUB_OUTPUT"; echo "pr=$N" >> "$GITHUB_OUTPUT"
           gh api "repos/$GH_REPO/statuses/$sha" -f state=pending -f context='Full suite' \
-            -f description='Running on 8 machines' -f target_url="$GITHUB_SERVER_URL/$GH_REPO/actions/runs/$GITHUB_RUN_ID" >/dev/null
+            -f description='Running on 16 machines' -f target_url="$GITHUB_SERVER_URL/$GH_REPO/actions/runs/$GITHUB_RUN_ID" >/dev/null
 
   postgres:
     name: Management PostgreSQL
     needs: which
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     services:
       postgres:
@@ -104,12 +106,12 @@ jobs:
 
   share:
     needs: which
-    runs-on: ubuntu-latest
-    timeout-minutes: 120
+    runs-on: ubuntu-24.04
+    timeout-minutes: 170   # (Release, 7 Nov 2026 AEDT) v1.08 has about 374 checks: 16 machines (GitHub runs up to 20 jobs at once) and more time each, nothing skipped
     strategy:
       fail-fast: false
       matrix:
-        k: [1, 2, 3, 4, 5, 6, 7, 8]
+        k: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
     steps:
       - uses: actions/checkout@v4
         with:
@@ -134,7 +136,7 @@ jobs:
       - name: Run this machine's share
         env:
           SV_SEED: ${{ github.run_id }}
-        run: cd tests && SV_URL=http://localhost:8765/ node suite.mts ${{ (inputs.all || github.head_ref == 'work/v1.02-fruit-parade') && '--all' || '' }} ${{ inputs.only && format('--only {0}', inputs.only) || '' }} --shard ${{ matrix.k }}/8 --no-solo --jobs 1
+        run: cd tests && SV_URL=http://localhost:8765/ node suite.mts ${{ (inputs.all || github.head_ref == 'work/v1.02-fruit-parade') && '--all' || '' }} ${{ inputs.only && format('--only {0}', inputs.only) || '' }} --shard ${{ matrix.k }}/16 --no-solo --jobs 1
       - name: Keep the results
         if: always()
         run: |
@@ -157,7 +159,7 @@ jobs:
     needs: [which, share, postgres]
     # (not when the run was cancelled, e.g. by a newer push: it would report every check as "did not run")
     if: ${{ !cancelled() && needs.which.result == 'success' }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     permissions:
       contents: write

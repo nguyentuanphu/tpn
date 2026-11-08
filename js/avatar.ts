@@ -1,14 +1,27 @@
 // Chibi characters whose face is the child's own photo.
-import { THREE, toon, glow, blobShadow, outline, P, merge, toonSmooth } from './gfx.js';
-import { GLIDERS, settings } from './state.js';
+import { THREE, toon, glow, blobShadow, outline, P, merge, toonSmooth, personLook } from './gfx.js';
+import { GLIDERS, settings, profiles, FRIEND_MIGRATE } from './state.js';
 import { customFace, familyOwnFace, onFamilyPhotos } from './custom.js';
 import { wearing, BOY_OF } from './content/shop.js';
+// (v1.08b friends) the friends' 3D models (js/friend-model.ts) are not in the first download: that file loads when a child
+// with a friend is first built, and fills these in; until then the code person in the friend's colours is drawn
+// (v1.08b friends) the friends' data (js/content/friends.ts) loads as Who's playing opens, not in the first download:
+// it moves every old save once, and from then on a child is drawn as their friend
+let friendLook = (l: any) => l;
+export const FRIEND_DATA = FRIEND_MIGRATE; // (the loaded file is FRIEND_DATA.lib)
+let friendsP: Promise<typeof import('./content/friends.js')> = null;
+export const friendsReady = () => friendsP || (friendsP = import('./content/friends.js').then(F => {
+  FRIEND_DATA.lib = F; friendLook = F.friendLook; FRIEND_MIGRATE.fn = F.migrateFriend; profiles.forEach(p => F.migrateFriend(p)); return F; }));
+export const FRIEND_MODELS: { ready?: (id: string) => boolean, load?: (id: string) => Promise<boolean>, attach?: (A, id: string, skin: string, wear?: { item?: boolean, shoes?: boolean }, hd?: boolean) => any, faceParts?: (it) => THREE.BufferGeometry[] } = {};
+export const loadFriendModels = (id: string): Promise<boolean> => FRIEND_MODELS.load ? FRIEND_MODELS.load(id)
+  : import('./friend-model.js').then(m => { Object.assign(FRIEND_MODELS, { ready: m.friendModelReady, load: m.loadFriendModel, attach: m.attachFriendModel, faceParts: m.faceParts }); return m.loadFriendModel(id as any); }).catch(() => false);
+const WEAR = <T extends THREE.Object3D>(o: T) => { o.userData.wear = true; return o; }; // (v1.08b) a hat, necklace or back: kept on a friend's model
 
 const gParts = {
   head: new THREE.SphereGeometry(.5, 32, 24),
   hairCap: new THREE.SphereGeometry(.54, 32, 18, 0, Math.PI * 2, 0, Math.PI * .55),
   hairBack: new THREE.SphereGeometry(.53, 24, 18, Math.PI, Math.PI, 0, Math.PI * .8),
-  lock: new THREE.SphereGeometry(.15, 14, 10), bun: new THREE.SphereGeometry(.17, 12, 10), tie: new THREE.TorusGeometry(.1, .035, 8, 16),
+  lock: new THREE.SphereGeometry(.15, 14, 10), lockS: new THREE.SphereGeometry(.15, 8, 6) /* (v1.08e: the small locks all round, fewer triangles) */, bun: new THREE.SphereGeometry(.17, 12, 10), tie: new THREE.TorusGeometry(.1, .035, 8, 16),
   spike: new THREE.ConeGeometry(.14, .4, 6),
   body: new THREE.CylinderGeometry(.27, .36, .62, 16),
   skirt: new THREE.ConeGeometry(.55, .55, 18, 1, true),
@@ -19,6 +32,8 @@ const gParts = {
   nonla: new THREE.ConeGeometry(.82, .5, 24, 1, false), cap: new THREE.SphereGeometry(.56, 20, 12, 0, Math.PI * 2, 0, Math.PI * .45), brim: new THREE.CylinderGeometry(.3, .3, .04, 16, 1, false, 0, Math.PI),
   crown: new THREE.CylinderGeometry(.26, .3, .22, 8, 1, true), ear: new THREE.CapsuleGeometry(.08, .38, 4, 8), petal: new THREE.SphereGeometry(.09, 8, 6)
 };
+// (v1.08e faces) each person by their root, for feelRoot (a WeakMap: a copy of a root or one torn down costs nothing)
+const AV_OF = new WeakMap<THREE.Object3D, SvAvatar>();
 // (TypeScript, r86) the head's shapes, and the face and glider made just below
 const G: typeof gParts & { face?: THREE.BufferGeometry, glider?: THREE.BufferGeometry } = gParts;
 G.face = (() => {
@@ -39,29 +54,93 @@ export function drawDefaultFace(x, S, look, mood = 'smile') {
   x.restore(); drawFeatures(x, S, look, mood);
 }
 // Just the eyes, brows, cheeks and mouth (painted straight onto the head, so the skin shading matches).
+// (v1.08e faces, owner 6 Nov 2026 AEDT: "soft eyes with lids") the villagers in the friends' style: the upper lid covers
+// the top of each eye (a soft dark lash line along it), so only a little white shows beside a big warm-brown iris with two
+// sparkles; rosy cheeks. Moods: smile, 'blink' (closed), 'half' (the lids half down, the frame either side of a blink),
+// 'lookL' and 'lookR' (the irises to the person's own left or right: the viewer's right or left), 'happy' (curved eyes, an open smile), 'o' (surprised: the lids lift),
+// 'curious' (one brow up), 'sad' (the lids droop at the outer corner, a small frown), 'shy' (eyes down, rosy cheeks),
+// 'excited' (wide bright eyes, an open smile) and 'sleep' (closed, a flat mouth, for the films).
+const LID = { smile: .58, lookL: .58, lookR: .58, curious: .66, o: .86, excited: .74, sad: .36 }; // (Release, 6 Nov: a heavy half-open lid looked bored; 'half' is now a flatter closing lid, inside a blink only)
 export function drawFeatures(x, S, look, mood = 'smile') {
-  x.save();
-  [.36, .64].forEach(cx => {
-    x.fillStyle = '#fff'; x.beginPath(); x.ellipse(cx * S, S * .55, S * .085, S * .075, 0, 0, 7); x.fill();
-    x.fillStyle = '#3a2418'; x.beginPath(); x.arc(cx * S, S * .56, S * .06, 0, 7); x.fill();
-    x.fillStyle = '#120a08'; x.beginPath(); x.arc(cx * S, S * .56, S * .03, 0, 7); x.fill();
-    x.fillStyle = '#fff'; x.beginPath(); x.arc(cx * S + S * .022, S * .535, S * .02, 0, 7); x.fill();
-    x.strokeStyle = '#2b1a14'; x.lineWidth = S * .02; x.lineCap = 'round'; x.beginPath(); x.ellipse(cx * S, S * .55, S * .088, S * .078, 0, Math.PI * 1.08, Math.PI * 1.92); x.stroke();
-    x.strokeStyle = look.hair; x.lineWidth = S * .022; x.beginPath(); x.moveTo(S * (cx - .07), S * .44); x.quadraticCurveTo(S * cx, S * .41, S * (cx + .07), S * .44); x.stroke();
+  x.save(); x.lineCap = 'round'; x.lineJoin = 'round';
+  const ey = .565, dot = (cx, cy, r) => { x.beginPath(); x.arc(cx * S, cy * S, r * S, 0, Math.PI * 2); x.fill(); };
+  const closed = mood === 'blink' || mood === 'half' || mood === 'happy' || mood === 'shy' || mood === 'sleep';
+  [.375, .625].forEach(cx => {
+    const out = cx < .5 ? -1 : 1;
+    if (closed) {
+      x.strokeStyle = '#2b1a14'; x.lineWidth = S * .024; x.beginPath();
+      if (mood === 'happy') { x.moveTo(S * (cx - .065), S * (ey + .02)); x.quadraticCurveTo(S * cx, S * (ey - .055), S * (cx + .065), S * (ey + .02)); }
+      else { const dy = mood === 'shy' ? .02 : mood === 'half' ? -.012 : 0, bow = mood === 'half' ? .018 : .045; x.moveTo(S * (cx - .072), S * (ey + dy)); x.quadraticCurveTo(S * cx, S * (ey + dy + bow), S * (cx + .072), S * (ey + dy)); } // (half: a flatter lid, closing)
+      x.stroke();
+      if (mood !== 'happy') { x.beginPath(); x.moveTo(S * (cx + out * .072), S * ey); x.lineTo(S * (cx + out * .092), S * (ey - .014)); x.stroke(); }
+    } else {
+      const rx = .084, ry = .098, open = LID[mood] ?? .58;
+      // the lid: an arch whose top is open × the eye's height above the middle, lower at the corners; the outer corner
+      // droops when sad. Everything above it is lid (the skin), so the eye's top is covered.
+      const top = ey - ry * open, xl = cx - rx * 1.06, xr = cx + rx * 1.06, cy0 = ey - ry * open * .3;
+      const yl = cy0 + (mood === 'sad' && out < 0 ? .03 : 0), yr = cy0 + (mood === 'sad' && out > 0 ? .03 : 0), ctl = 2 * top - (yl + yr) / 2;
+      const lidAt = (px: number) => { const u = (px - xl) / (xr - xl); return (1 - u) * (1 - u) * yl + 2 * u * (1 - u) * ctl + u * u * yr; };
+      x.save(); x.beginPath(); x.ellipse(cx * S, ey * S, rx * S, ry * S, 0, 0, Math.PI * 2); x.clip();
+      x.beginPath(); x.moveTo(xl * S, yl * S); x.quadraticCurveTo(cx * S, ctl * S, xr * S, yr * S); x.lineTo(xr * S, (ey + ry + .02) * S); x.lineTo(xl * S, (ey + ry + .02) * S); x.closePath(); x.clip();
+      x.fillStyle = '#fffdf8'; x.fillRect((cx - rx) * S, (ey - ry) * S, 2 * rx * S, 2 * ry * S);
+      const lookX = mood === 'lookL' ? .022 : mood === 'lookR' ? -.022 : mood === 'curious' ? .014 : 0, ix = cx + lookX, iy = ey + .016, ir = mood === 'o' ? .06 : .07;
+      const g = x.createRadialGradient(ix * S, (iy + .026) * S, S * .004, ix * S, (iy + .008) * S, S * ir);
+      g.addColorStop(0, '#b07444'); g.addColorStop(.6, '#5e361d'); g.addColorStop(1, '#2e180c');
+      x.fillStyle = g; dot(ix, iy, ir);
+      x.fillStyle = '#120a08'; dot(ix, iy + .004, ir * (mood === 'o' ? .38 : .46));
+      // two sparkles, the big one just under the lid
+      x.fillStyle = '#fff'; dot(ix + .022, Math.max(lidAt(ix + .022) + .022, iy - .02), mood === 'excited' ? .024 : .02); dot(ix - .02, iy + .03, .01);
+      x.restore();
+      // the lid's soft dark lash line, a little heavier at the outer corner, with a small flick
+      const e0 = cx - rx * .98, e1 = cx + rx * .98;
+      x.strokeStyle = '#2b1a14'; x.lineWidth = S * .026; x.beginPath();
+      for (let k = 0; k <= 12; k++) { const px = e0 + (e1 - e0) * k / 12; k ? x.lineTo(px * S, lidAt(px) * S) : x.moveTo(px * S, lidAt(px) * S); }
+      x.stroke();
+      const ox = out < 0 ? e0 : e1, oy = lidAt(ox); x.lineWidth = S * .02; x.beginPath(); x.moveTo(ox * S, oy * S); x.lineTo((ox + out * .02) * S, (oy - .016) * S); x.stroke();
+      // a faint lower line, so the eye reads as soft and round
+      x.strokeStyle = 'rgba(58,36,24,.35)'; x.lineWidth = S * .008; x.beginPath(); x.ellipse(cx * S, ey * S, rx * S, ry * S, 0, Math.PI * .2, Math.PI * .8); x.stroke();
+    }
+    // brows: soft, in the hair colour; raised when surprised or excited, tipped up in the middle when sad (v1.08e: they tipped
+    // the wrong way before and looked cross), one raised when curious
+    const by = mood === 'o' || mood === 'excited' ? .405 : .43, tip = mood === 'sad' ? out * .022 : 0, up = mood === 'curious' && out > 0 ? -.025 : 0;
+    x.strokeStyle = look.hair; x.lineWidth = S * .02; x.beginPath(); x.moveTo(S * (cx - .055), S * (by + .01 - tip + up)); x.quadraticCurveTo(S * cx, S * (by - .02 + up), S * (cx + .055), S * (by + .01 + tip + up)); x.stroke();
   });
-  x.fillStyle = 'rgba(240,110,110,.4)'; [.24, .76].forEach(cx => { x.beginPath(); x.ellipse(cx * S, S * .67, S * .065, S * .04, 0, 0, 7); x.fill(); });
-  x.fillStyle = '#a3485a'; x.beginPath();
-  if (mood === 'o') x.arc(S * .5, S * .72, S * .035, 0, Math.PI * 2); else { x.moveTo(S * .44, S * .69); x.quadraticCurveTo(S * .5, S * .77, S * .56, S * .69); x.closePath(); }
-  x.fill(); x.restore();
+  // soft pink cheeks (rosier when shy, happy or excited)
+  const rosy = mood === 'shy' ? .7 : mood === 'happy' || mood === 'excited' ? .62 : .52;
+  [.25, .75].forEach(cx => {
+    const g = x.createRadialGradient(cx * S, .675 * S, 0, cx * S, .675 * S, .1 * S);
+    g.addColorStop(0, `rgba(242,112,128,${rosy})`); g.addColorStop(1, 'rgba(242,112,128,0)');
+    x.fillStyle = g; x.fillRect((cx - .1) * S, .575 * S, .2 * S, .2 * S);
+  });
+  x.fillStyle = '#a3485a'; x.strokeStyle = '#a3485a'; x.lineWidth = S * .016;
+  if (mood === 'o') { x.beginPath(); x.ellipse(S * .5, S * .72, S * .026, S * .034, 0, 0, Math.PI * 2); x.fill(); }
+  else if (mood === 'curious') { x.beginPath(); x.ellipse(S * .515, S * .715, S * .018, S * .02, 0, 0, Math.PI * 2); x.fill(); }
+  else if (mood === 'sad') { x.beginPath(); x.moveTo(S * .455, S * .73); x.quadraticCurveTo(S * .5, S * .695, S * .545, S * .73); x.stroke(); }
+  else if (mood === 'sleep') { x.beginPath(); x.moveTo(S * .465, S * .715); x.lineTo(S * .535, S * .715); x.stroke(); }
+  else if (mood === 'happy' || mood === 'excited') {
+    x.beginPath(); x.moveTo(S * .44, S * .685); x.quadraticCurveTo(S * .5, S * .78, S * .56, S * .685); x.closePath(); x.fill();
+    x.fillStyle = '#ef8a92'; x.beginPath(); x.ellipse(S * .5, S * .74, S * .026, S * .014, 0, 0, Math.PI * 2); x.fill();
+  } else { const w = mood === 'shy' ? .035 : .05; x.beginPath(); x.moveTo(S * (.5 - w), S * .69); x.quadraticCurveTo(S * .5, S * .75, S * (.5 + w), S * .69); x.closePath(); x.fill(); }
+  x.restore();
 }
 // Painted faces (no photo) are shared by every villager with the same hair and skin, at 256 px: phones
 // (iPhones above all) have a small budget for pictures, and when it runs out new ones come out black.
+// (v1.08; v1.08b: seven moods, 3 by 3 on one 512 px picture) The moods are painted side by side on one picture;
+// each person gets their own copy of it (same picture, sent to the graphics once) showing their mood's quarter, so a
+// blink moves the view and makes no new picture (check longplaymem).
 const paintedFaces = {};
-export function faceTexture(look, photo?) {
+// (v1.08b) the moods on one picture; (v1.08e faces) twelve, 4 by 3 on one 640 by 480 picture (160 px each, as before)
+export const MOODS = ['smile', 'blink', 'happy', 'o', 'curious', 'sad', 'shy', 'half', 'lookL', 'lookR', 'excited', 'sleep'];
+export function setFaceMood(tex: THREE.Texture, mood: string) { const i = Math.max(0, MOODS.indexOf(mood)); tex.offset.set((i % 4) / 4, (2 - Math.floor(i / 4)) / 3); }
+export function faceTexture(look, photo?, mood = 'smile') {
   if (!photo) {
     const k = look.hair + look.skin;
-    if (!paintedFaces[k]) { const S = 256, c = document.createElement('canvas'); c.width = c.height = S; drawFeatures(c.getContext('2d'), S, look); paintedFaces[k] = new THREE.CanvasTexture(c); paintedFaces[k].colorSpace = THREE.SRGBColorSpace; }
-    return paintedFaces[k];
+    if (!paintedFaces[k]) {
+      const S = 160, c = document.createElement('canvas'); c.width = 640; c.height = 480; const x = c.getContext('2d');
+      MOODS.forEach((m, i) => { x.save(); x.translate((i % 4) * S, Math.floor(i / 4) * S); x.beginPath(); x.rect(0, 0, S, S); x.clip(); drawFeatures(x, S, look, m); x.restore(); });
+      paintedFaces[k] = new THREE.CanvasTexture(c); paintedFaces[k].colorSpace = THREE.SRGBColorSpace;
+    }
+    const t = paintedFaces[k].clone(); t.repeat.set(1 / 4, 1 / 3); setFaceMood(t, mood); return t;
   }
   const S = 512, c = document.createElement('canvas'); c.width = c.height = S; const x = c.getContext('2d');
   const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace;
@@ -77,11 +156,15 @@ export function faceTexture(look, photo?) {
 // Every character with an outline; the game hides outlines on far-away characters to keep phones fast.
 export const OUTLINED = [];
 const avatarCache = {};
+// (v1.08b friends) round pictures of the friends' models in each skin tone, made on this device (js/friend-view.ts)
+const PORTRAITS: Record<string, string> = {};
+export const setPortrait = (id: string, skin: string, url: string) => { if (url) PORTRAITS[id + skin] = url; };
 export function avatarURL(p) {
   // (audit, 9 Oct) the result goes into <img src="…">: only a plain base64 picture or a simple file path of our own
   if (p.photo && (/^data:image\/(png|jpeg|webp|gif);base64,[A-Za-z0-9+/]+={0,2}$/.test(p.photo) || /^[\w\/.-]+\.(png|jpe?g|webp)$/i.test(p.photo))) return p.photo;
-  const k = p.look.hair + p.look.skin;
-  if (!avatarCache[k]) { const c = document.createElement('canvas'); c.width = c.height = 160; drawDefaultFace(c.getContext('2d'), 160, p.look); avatarCache[k] = c.toDataURL(); }
+  const L = friendLook(p.look), k = L.hair + L.skin; // (v1.08b friends) the friend's hair in the child's skin tone
+  if (L.friend && PORTRAITS[L.friend + L.skin]) return PORTRAITS[L.friend + L.skin]; // (the model's portrait, once made: js/friend-view.ts)
+  if (!avatarCache[k]) { const c = document.createElement('canvas'); c.width = c.height = 160; drawDefaultFace(c.getContext('2d'), 160, L); avatarCache[k] = c.toDataURL(); }
   return avatarCache[k];
 }
 
@@ -94,9 +177,12 @@ const bParts = {
   aodai: new THREE.CylinderGeometry(.155, .24, .5, 20, 1, true),
   tunic: new THREE.CylinderGeometry(.155, .22, .24, 20, 1, true),
   hips: new THREE.CylinderGeometry(.155, .16, .14, 18),
-  upperArm: new THREE.CapsuleGeometry(.05, .3, 4, 10), hand: new THREE.SphereGeometry(.064, 12, 10),
+  // (v1.08, owner 2 Nov 2026 AEDT: "nhân vật đẹp, có hồn và uyển chuyển hơn", "làm hết, cả dáng người") arms and legs
+  // in two parts each, bending at the elbow and the knee; a mitten hand with a thumb
+  upperArm: new THREE.CapsuleGeometry(.052, .13, 4, 10), foreArm: new THREE.CapsuleGeometry(.047, .12, 4, 10), hand: new THREE.SphereGeometry(.064, 12, 10), thumb: new THREE.SphereGeometry(.026, 8, 6),
   sleeve: new THREE.CapsuleGeometry(.074, .12, 4, 12),
-  leg: new THREE.CapsuleGeometry(.064, .42, 4, 10), pants: new THREE.CapsuleGeometry(.074, .42, 4, 10), shorts: new THREE.CapsuleGeometry(.08, .1, 4, 10),
+  thigh: new THREE.CapsuleGeometry(.067, .17, 4, 10), shin: new THREE.CapsuleGeometry(.06, .16, 4, 10),
+  pantsThigh: new THREE.CapsuleGeometry(.077, .17, 4, 10), pantsShin: new THREE.CapsuleGeometry(.071, .16, 4, 10), shorts: new THREE.CapsuleGeometry(.08, .1, 4, 10),
   shoe: new THREE.CapsuleGeometry(.068, .1, 4, 12), sole: new THREE.CapsuleGeometry(.07, .11, 4, 12), neck: new THREE.CylinderGeometry(.05, .055, .08, 10),
   wing: new THREE.CircleGeometry(.3, 24), cape: new THREE.PlaneGeometry(.42, .62, 4, 6), hood: new THREE.SphereGeometry(.2, 16, 12, 0, Math.PI * 2, Math.PI * .3, Math.PI * .5)
 };
@@ -162,31 +248,42 @@ const TOP_STYLE = { tee: 'shirt', hoodie: 'hoodie', aodai: 'aodai', tunic: 'tuni
 export type SvAvatar = { root: THREE.Group, rig: THREE.Group, skinMat: THREE.Material & { color: THREE.Color }, look: Record<string, string | number | boolean | undefined>,
   torso?: THREE.Group, head?: THREE.Group, legL?: THREE.Group, legR?: THREE.Group, armL?: THREE.Group, armR?: THREE.Group, glider?: THREE.Object3D,
   wings?: THREE.Group[], cape?: THREE.Mesh, faceMat?: THREE.MeshStandardMaterial, faceLegacy?: string, outlines?: unknown, skinParts?: { g: THREE.BufferGeometry, ranges: number[][] }[],
-  still?: THREE.Group, stillLine?: THREE.Mesh, _still?: boolean, _ol?: boolean, anim?: (state: string, t: number, speed?: number) => void };
-export function buildAvatar(look, photo?) {
-  const root = new THREE.Group(), rig = new THREE.Group(); root.add(rig); root.userData.avatar = true;
+  still?: THREE.Group, stillLine?: THREE.Mesh, modelHD?: import('./friend-model.js').FriendModel, _hd?: boolean, _still?: boolean, _ol?: boolean, anim?: (state: string, t: number, speed?: number) => void,
+  // (v1.08) the knees, elbows and swinging hair, and what the animation remembers between frames
+  kneeL?: THREE.Group, kneeR?: THREE.Group, elbowL?: THREE.Group, elbowR?: THREE.Group, tail?: THREE.Group, painted?: boolean, life?: AvatarLife,
+  model?: import('./friend-model.js').FriendModel, height?: number, late?: boolean, lateFace?: unknown, latePhoto?: unknown, lateThen?: (() => void)[] };
+type AvatarLife = { t: number, st: string, chg: number, land: number, ph: number, blink: number, mood: string, seed: number, feel?: string, feelUntil?: number, glance?: number };
+export function buildAvatar(look, photo?, opts?: { code?: boolean, into?: SvAvatar, hd?: boolean }) {
+  const friendId = look && look.friend, useModel = !!friendId && !(opts && opts.code) && !!FRIEND_MODELS.ready && FRIEND_MODELS.ready(friendId);
+  if (friendId && !useModel && !(opts && opts.code)) loadFriendModels(friendId); // (v1.08b: the next build uses the model)
+  look = friendLook(look); // (v1.08b friends) a child is drawn as their friend (Finn, Sol, Clara or Lumi); villagers stay as they are
+  const into = opts && opts.into, root = into ? into.root : new THREE.Group(), rig = new THREE.Group(); root.add(rig); root.userData.avatar = true; // (v1.08d valley: into, a stand-in made by lateAvatar)
   const shadow = blobShadow(); root.add(shadow); shadow.position.y = .03; shadow.scale.setScalar(.65);
   const W = wearing(look), bot = W.bottom, ft = W.feet; // (round S) shop clothes: each piece one merged shape
   const style = W.top ? TOP_STYLE[W.top.shape] || 'shirt' : look.style || 'shirt', col = W.top ? W.top.color : look.color || '#3b6fe0';
   const skin = toon(look.skin, { roughness: .6 }), hairM = toon(look.hair, { roughness: .45, metalness: .05 }), cloth = toon(col, { roughness: .92 });
   const white = toon('#ffffff', { roughness: .9 }), shoeM = toon(ft ? ft.color : look.shoe || '#7a4a35', { roughness: .45 }), soleM = toon('#fff8ee');
   const trim = toon(style === 'aodai' ? '#ffd84a' : '#f2d16b', { roughness: .7 });
-  const A: SvAvatar = { root, rig, skinMat: skin, look };
+  const A: SvAvatar = into ? Object.assign(into, { rig, skinMat: skin, look }) : { root, rig, skinMat: skin, look };
+  AV_OF.set(root, A); // (v1.08e faces) for feelRoot
   // legs (pivot at the hip)
-  const legSpec = bot ? (bot.shape === 'shorts' ? 'shorts' : bot.shape === 'skirt' ? 'skin' : 'pants:' + bot.color) : STYLE_LEGS[style] || 'skin';
+  const legSpec = look.legs ? 'pants:' + look.legs : bot ? (bot.shape === 'shorts' ? 'shorts' : bot.shape === 'skirt' ? 'skin' : 'pants:' + bot.color) : STYLE_LEGS[style] || 'skin';
   const shortsCol = bot && bot.shape === 'shorts' ? bot.color : null;
   const legMat = legSpec === 'skin' ? skin : legSpec === 'shorts' ? skin : legSpec === 'pants' ? cloth : toon(legSpec.split(':')[1], { roughness: .9 });
+  // (v1.08) the thigh turns at the hip, the shin at the knee (y -.27); the shoe is on the shin, so it stays at y -.54
   const mkLeg = sx => {
-    const g = new THREE.Group(); g.position.set(sx, .6, 0);
-    const l = new THREE.Mesh(legSpec.startsWith('pants') ? B.pants : B.leg, legMat); l.position.y = -.28; g.add(l);
+    const g = new THREE.Group(), pants = legSpec.startsWith('pants'); g.position.set(sx, .6, 0);
+    const th = new THREE.Mesh(pants ? B.pantsThigh : B.thigh, legMat); th.position.y = -.12; g.add(th);
     if (legSpec === 'shorts') { const sh = new THREE.Mesh(B.shorts, toon(shortsCol || (col === '#ffffff' ? '#3a5a8a' : '#2f3a5a'), { roughness: .9 })); sh.position.y = -.08; g.add(sh); }
+    const knee = new THREE.Group(); knee.position.y = -.27; g.add(knee);
+    const sn = new THREE.Mesh(pants ? B.pantsShin : B.shin, legMat); sn.position.y = -.12; knee.add(sn);
     const sandal = ft && ft.shape === 'sandal'; // (round S) sandals: bare toes on a coloured sole with a strap; boots come up the leg
-    const s = new THREE.Mesh(B.shoe, sandal ? skin : shoeM); s.rotation.x = Math.PI / 2; s.position.set(0, -.54, .05); if (sandal) s.scale.set(.9, .95, .8); g.add(s); const so = new THREE.Mesh(B.sole, sandal ? shoeM : soleM); so.rotation.x = Math.PI / 2; so.scale.set(1, 1, .45); so.position.set(0, -.585, .05); g.add(so);
-    if (sandal) { const st = new THREE.Mesh(B.strap, shoeM); st.rotation.x = Math.PI / 2; st.position.set(0, -.53, .07); g.add(st); }
-    if (ft && ft.shape === 'boot') { const bt = new THREE.Mesh(B.boot, shoeM); bt.position.set(0, -.45, 0); g.add(bt); }
-    rig.add(g); return g;
+    const s = new THREE.Mesh(B.shoe, sandal ? skin : shoeM); s.rotation.x = Math.PI / 2; s.position.set(0, -.27, .05); if (sandal) s.scale.set(.9, .95, .8); knee.add(s); const so = new THREE.Mesh(B.sole, sandal ? shoeM : soleM); so.rotation.x = Math.PI / 2; so.scale.set(1, 1, .45); so.position.set(0, -.315, .05); knee.add(so);
+    if (sandal) { const st = new THREE.Mesh(B.strap, shoeM); st.rotation.x = Math.PI / 2; st.position.set(0, -.26, .07); knee.add(st); }
+    if (ft && ft.shape === 'boot') { const bt = new THREE.Mesh(B.boot, shoeM); bt.position.set(0, -.18, 0); knee.add(bt); }
+    rig.add(g); return [g, knee];
   };
-  A.legL = mkLeg(.08); A.legR = mkLeg(-.08);
+  [A.legL, A.kneeL] = mkLeg(.08); [A.legR, A.kneeR] = mkLeg(-.08);
   // body
   const torso = new THREE.Group(); rig.add(torso); A.torso = torso;
   const top = style === 'overalls' ? white : cloth;
@@ -200,19 +297,23 @@ export function buildAvatar(look, photo?) {
   if (bot && bot.shape === 'skirt' && style !== 'dress') { const sk = new THREE.Mesh(B.skirt, toon(bot.color, { roughness: .8 })); sk.position.y = .5; if (bot.id === 'tutu') sk.scale.set(1.25, .6, 1.25), sk.position.y = .56; torso.add(sk); }
   if (W.top && W.top.trim) torso.add(new THREE.Mesh(merge([.72, .8, .88].map(y => P(B.stripe, W.top.trim, [0, y, 0], [Math.PI / 2, 0, 0], [1.12, .84, 1])).concat(W.top.shape === 'dress' ? [P(B.stripe, W.top.trim, [0, .34, 0], [Math.PI / 2, 0, 0], [2.1, 2.1, 1])] : [])), toonSmooth()));
   const neck = new THREE.Mesh(B.neck, skin); neck.position.y = 1.08; torso.add(neck);
-  if (W.neck) torso.add(new THREE.Mesh(merge(neckParts(W.neck)), toonSmooth()));
+  if (W.neck) torso.add(WEAR(new THREE.Mesh(merge(neckParts(W.neck)), toonSmooth())));
   // (owner, 12 Oct: tester rewards) a tester's Bug Hunter badge on the chest (look.badge: lb1 to lb4), seen by friends too
-  if (/^lb[1-4]$/.test(look.badge || '')) torso.add(new THREE.Mesh(merge(badgeParts(look.badge)), toonSmooth()));
+  if (/^lb[1-4]$/.test(look.badge || '')) torso.add(WEAR(new THREE.Mesh(merge(badgeParts(look.badge)), toonSmooth())));
   // arms (pivot at the shoulder)
   const longSleeve = style === 'hoodie' || style === 'aodai' || style === 'tunic';
+  // (v1.08) the upper arm turns at the shoulder, the forearm at the elbow (y -.2); the hand stays at y -.42 when straight
   const mkArm = sx => {
-    const g = new THREE.Group(); g.position.set(sx * .2, .99, 0);
-    const a = new THREE.Mesh(B.upperArm, longSleeve ? (style === 'overalls' ? white : cloth) : skin); a.position.y = -.2; g.add(a);
+    const g = new THREE.Group(), armM = longSleeve ? cloth : skin; g.position.set(sx * .2, .99, 0);
+    const a = new THREE.Mesh(B.upperArm, armM); a.position.y = -.1; g.add(a);
     if (!longSleeve) { const sl = new THREE.Mesh(B.sleeve, top); sl.position.y = -.06; g.add(sl); }
-    const h = new THREE.Mesh(B.hand, skin); h.scale.set(.85, 1, .7); h.position.y = -.42; g.add(h);
-    g.rotation.z = sx * .12; torso.add(g); return g;
+    const elbow = new THREE.Group(); elbow.position.y = -.2; g.add(elbow);
+    const f = new THREE.Mesh(B.foreArm, armM); f.position.y = -.09; elbow.add(f);
+    const h = new THREE.Mesh(B.hand, skin); h.scale.set(.85, 1, .7); h.position.y = -.22; elbow.add(h);
+    const th = new THREE.Mesh(B.thumb, skin); th.scale.set(1, 1.3, 1); th.position.set(-sx * .045, -.19, .03); th.rotation.z = sx * .5; elbow.add(th);
+    g.rotation.z = sx * .12; torso.add(g); return [g, elbow];
   };
-  A.armL = mkArm(1); A.armR = mkArm(-1);
+  [A.armL, A.elbowL] = mkArm(1); [A.armR, A.elbowR] = mkArm(-1);
   // back accessories
   const bk = W.back; // (round S) the shop's backs: butterfly and dragon wings flap like the fairy wings
   if (look.back === 'wings' || (bk && (bk.shape === 'wings' || bk.shape === 'dragonwings'))) {
@@ -223,25 +324,37 @@ export function buildAvatar(look, photo?) {
       if (!dragon) { const lo = new THREE.Mesh(B.wing, wm); lo.scale.set(.7, .9, 1); lo.position.set(s * .17, -.12, 0); lo.rotation.z = s * .5; g.add(lo); }
       torso.add(g); return g; });
   }
-  if (bk && (bk.shape === 'backpack' || bk.shape === 'shell')) torso.add(new THREE.Mesh(merge(backParts(bk)), toonSmooth()));
+  if (bk && (bk.shape === 'backpack' || bk.shape === 'shell')) torso.add(WEAR(new THREE.Mesh(merge(backParts(bk)), toonSmooth())));
   if (look.back === 'cape' || (bk && bk.shape === 'cape')) { // (a tester's detective cape is a cape too)
     const cape = new THREE.Mesh(B.cape, toon(bk ? bk.color : '#e8332a', { side: THREE.DoubleSide, roughness: .7 })); cape.position.set(0, 1.0, -.14); cape.rotation.x = .12; torso.add(cape); A.cape = cape;
-    const clasp = new THREE.Mesh(new THREE.SphereGeometry(.025, 8, 6), toon('#ffcf3a', { metalness: .6, roughness: .3 })); clasp.position.set(0, 1.0, .12); torso.add(clasp);
+    const clasp = new THREE.Mesh(new THREE.SphereGeometry(.025, 8, 6), toon('#ffcf3a', { metalness: .6, roughness: .3 })); clasp.position.set(0, 1.0, .12); torso.add(WEAR(clasp));
   }
   // head (built big, then scaled down)
-  const head = new THREE.Group(); head.position.y = 1.33; head.scale.setScalar(HEAD_SCALE); rig.add(head); A.head = head;
+  // (v1.08b friends, WORLD-011) heights: a child 1.6, a grown-up 2.0, a grandparent 1.8 (look.age: 'adult', 'elder' or Studio's 'old'); a
+  // grown-up's head is a little smaller for their height, as the gallery's neighbours
+  const AGE = { adult: [1.25, .8], elder: [1.125, .86], old: [1.125, .86] }[look.age] || [1, 1]; A.height = AGE[0]; rig.scale.setScalar(AGE[0]);
+  const head = new THREE.Group(); head.position.y = 1.33; head.scale.setScalar(HEAD_SCALE * AGE[1]); rig.add(head); A.head = head;
   const skull = new THREE.Mesh(G.head, skin); skull.scale.set(.95, 1.04, .98); head.add(skull);
   [-1, 1].forEach(s => { const e = new THREE.Mesh(new THREE.SphereGeometry(.11, 10, 8), skin); e.scale.set(.5, 1, .8); e.position.set(s * .48, -.02, 0); head.add(e); });
+  A.painted = !photo; // (v1.08) a painted face blinks and smiles; a photo face stays as it is
   A.faceMat = new THREE.MeshStandardMaterial({ map: faceTexture(look, photo), transparent: true, alphaTest: .02, roughness: .62, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2 });
   const face = new THREE.Mesh(G.face, A.faceMat); head.add(face);
   const hc = new THREE.Mesh(G.hairCap, hairM); hc.rotation.x = -.38; hc.position.set(0, .04, -.05); head.add(hc);
   const back = new THREE.Mesh(G.hairBack, hairM); back.scale.set(1.02, .9, 1.02); back.position.y = .02; head.add(back);
   // soft locks of fringe across the forehead
-  for (let i = 0; i < 5; i++) { const a = (i - 2) * .32, l = new THREE.Mesh(G.lock, hairM); l.scale.set(.9, 1.25, .55); l.position.set(Math.sin(a) * .42, .32 - Math.abs(i - 2) * .03, Math.cos(a) * .33); l.rotation.set(-.75, a, (i - 2) * -.25); head.add(l); }
-  if (look.hairStyle === 'long') { const hb = new THREE.Mesh(G.hairBack, hairM); hb.scale.set(1.04, 1.6, 1.05); hb.position.y = -.28; head.add(hb); }
+  // (v1.08b) felt-look hair: the locks in front a shade lighter than the cap, like the friends' felt hair
+  const hairL = toon('#' + new THREE.Color(look.hair).offsetHSL(0, .02, .045).getHexString(), { roughness: .5 });
+  for (let i = 0; i < 5; i++) { const a = (i - 2) * .32, l = new THREE.Mesh(G.lock, hairL); l.scale.set(.9, 1.25, .55); l.position.set(Math.sin(a) * .42, .32 - Math.abs(i - 2) * .03, Math.cos(a) * .33); l.rotation.set(-.75, a, (i - 2) * -.25); head.add(l); }
+  // (v1.08e faces, Release: the crowd's hair read as a flat helmet) soft locks all round the sides and the back, in two
+  // shades, so the hair has the friends' felt shape (merged with the head: no extra draws)
+  for (let i = 0; i < 11; i++) { const a = 1.05 + i * (2 * Math.PI - 2.1) / 10, l = new THREE.Mesh(G.lockS, i % 2 ? hairL : hairM); l.scale.set(1, 1.15, .6); l.position.set(Math.sin(a) * .49, .06 + (i % 2) * .04, Math.cos(a) * .46 - .03); l.rotation.set(-.35 * Math.cos(a), a, 0); head.add(l); }
+  // (v1.08) long hair and the ponytail hang from their own pivot, so they swing as the child moves
+  const hang = (x, y, z) => { const g = new THREE.Group(); g.position.set(x, y, z); head.add(g); A.tail = g; return g; };
+  if (look.hairStyle === 'long') { const hb = new THREE.Mesh(G.hairBack, hairM); hb.scale.set(1.04, 1.6, 1.05); hb.position.y = -.43; hang(0, .15, 0).add(hb); }
   if (look.hairStyle === 'buns') [-1, 1].forEach(s => { const b = new THREE.Mesh(G.bun, hairM); b.scale.set(1, 1.5, 1); b.position.set(s * .5, -.08, -.15); b.rotation.z = s * .3; head.add(b); const tie = new THREE.Mesh(G.tie, toon(col)); tie.position.set(s * .44, .08, -.12); tie.rotation.y = Math.PI / 2; head.add(tie); });
-  if (look.hairStyle === 'ponytail') { const pt = new THREE.Mesh(new THREE.CapsuleGeometry(.13, .5, 4, 10), hairM); pt.position.set(0, -.15, -.58); pt.rotation.x = .35; head.add(pt); }
-  if (look.hairStyle === 'spiky') for (let i = 0; i < 6; i++) { const sp = new THREE.Mesh(G.spike, hairM); sp.position.set((i - 2.5) * .15, .5, -.06 - Math.abs(i - 2.5) * .04); sp.rotation.set(-.3, 0, (2.5 - i) * .22); head.add(sp); }
+  if (look.hairStyle === 'ponytail') { const pt = new THREE.Mesh(new THREE.CapsuleGeometry(.13, .5, 4, 10), hairM); pt.position.set(0, -.23, -.08); pt.rotation.x = .35; hang(0, .08, -.5).add(pt); }
+  // (owner, 6 Nov 2026 AEDT: "I don't want this spiky hair") the 'spiky' style is soft tousled felt locks on the crown, not spikes
+  if (look.hairStyle === 'spiky') for (let i = 0; i < 6; i++) { const a = (i - 2.5) * .42, sp = new THREE.Mesh(G.lock, i % 2 ? hairL : hairM); sp.scale.set(1.05, .8, .9); sp.position.set(Math.sin(a) * .3, .43 + (i % 2) * .04, -.1 + Math.cos(a) * .12); sp.rotation.set(-.5, a, 0); head.add(sp); }
   // hats
   const hat = new THREE.Group(); head.add(hat);
   // (r79) the girls' versions of the old shared hats (nonla_g, crown_g, bunny_g) are drawn like the old ones in their own colour
@@ -251,53 +364,198 @@ export function buildAvatar(look, photo?) {
   if (hid === 'crown') { const c = new THREE.Mesh(G.crown, toon(hcol('#ffcf3a'), { side: THREE.DoubleSide, metalness: .7, roughness: .25 })); c.position.y = .6; hat.add(c); [0, 1, 2, 3, 4].forEach(i => { const g = new THREE.Mesh(new THREE.OctahedronGeometry(.045), toon(['#e8434a', '#3cc7e8', '#5fd39a'][i % 3], { metalness: .3, roughness: .2 })); g.position.set(Math.cos(i * 1.256) * .28, .62, Math.sin(i * 1.256) * .28); hat.add(g); }); }
   if (hid === 'bunny') [-1, 1].forEach(s => { const e = new THREE.Mesh(G.ear, toon(hcol('#ffffff'))); e.position.set(s * .22, .78, -.05); e.rotation.z = -s * .2; hat.add(e); const inner = new THREE.Mesh(G.ear, toon('#ffb3cf')); inner.scale.set(.55, .85, .5); inner.position.set(s * .22, .78, -.01); inner.rotation.z = -s * .2; hat.add(inner); });
   if (look.hat === 'flower') { for (let i = 0; i < 6; i++) { const p = new THREE.Mesh(G.petal, toon(i % 2 ? '#ff7eb8' : '#ffd1e6')); p.position.set(.36 + Math.cos(i) * .1, .4 + Math.sin(i) * .1, .14); hat.add(p); } const c = new THREE.Mesh(new THREE.SphereGeometry(.06, 8, 6), toon('#ffd23f')); c.position.set(.36, .4, .18); hat.add(c); }
+  // (v1.08b story) the install gift's Home hat: a little house with a red roof, a door and a chimney
+  if (look.hat === 'homehat') { const wall = new THREE.Mesh(new THREE.BoxGeometry(.5, .3, .44), toon('#ffe8b0')); wall.position.y = .56; hat.add(wall); const roof = new THREE.Mesh(new THREE.ConeGeometry(.44, .3, 4), toon('#e8434a', { roughness: .6 })); roof.rotation.y = Math.PI / 4; roof.position.y = .86; hat.add(roof); const door = new THREE.Mesh(new THREE.BoxGeometry(.12, .17, .02), toon('#8a5a32')); door.position.set(0, .5, .23); hat.add(door); const ch = new THREE.Mesh(new THREE.BoxGeometry(.07, .16, .07), toon('#b5523a')); ch.position.set(.14, .92, -.06); hat.add(ch); }
   if (look.hat === 'akubra') { const felt = toon('#8a5a32', { roughness: .9 }); const br = new THREE.Mesh(new THREE.CylinderGeometry(.66, .68, .05, 24), felt); br.position.y = .44; hat.add(br); const cr = new THREE.Mesh(new THREE.CylinderGeometry(.33, .38, .32, 20), felt); cr.position.y = .6; hat.add(cr); const band = new THREE.Mesh(new THREE.CylinderGeometry(.385, .39, .07, 20), toon('#3a2618')); band.position.y = .5; hat.add(band); }
   if (look.hat === 'khanran') { const band = new THREE.Mesh(new THREE.TorusGeometry(.43, .07, 8, 24), toon('#2b2238')); band.rotation.x = Math.PI / 2 - .15; band.position.y = .3; hat.add(band); for (let i = 0; i < 12; i++) { const a = i / 12 * Math.PI * 2, d = new THREE.Mesh(new THREE.BoxGeometry(.06, .06, .06), toon('#ffffff')); d.position.set(Math.cos(a) * .44, .3 + Math.sin(a) * .066, Math.sin(a) * .44); hat.add(d); } [-1, 1].forEach(s => { const tail = new THREE.Mesh(new THREE.BoxGeometry(.08, .28, .03), toon('#2b2238')); tail.position.set(s * .07, .2, -.44); tail.rotation.z = s * .3; hat.add(tail); }); }
   if (look.hat === 'silkcap') { const c = new THREE.Mesh(new THREE.SphereGeometry(.43, 18, 10, 0, Math.PI * 2, 0, Math.PI / 2), toon('#2b2238', { roughness: .5 })); c.position.y = .3; hat.add(c); const rim = new THREE.Mesh(new THREE.TorusGeometry(.42, .03, 6, 24), toon('#c62828')); rim.rotation.x = Math.PI / 2; rim.position.y = .31; hat.add(rim); const k = new THREE.Mesh(new THREE.SphereGeometry(.08, 10, 8), toon('#e8433a')); k.position.y = .76; hat.add(k); }
   if (look.hat === 'pagri') { const cl = toon('#ff9f1a', { roughness: .8 }); for (let i = 0; i < 3; i++) { const r = new THREE.Mesh(new THREE.TorusGeometry(.36 - i * .07, .1, 8, 20), cl); r.rotation.x = Math.PI / 2; r.position.y = .42 + i * .12; hat.add(r); } const top = new THREE.Mesh(new THREE.SphereGeometry(.24, 12, 8), cl); top.position.y = .62; top.scale.y = .6; hat.add(top); const gem = new THREE.Mesh(new THREE.OctahedronGeometry(.06), toon('#3cc7e8', { metalness: .3, roughness: .2 })); gem.position.set(0, .52, .4); hat.add(gem); }
   if (look.hat === 'bow') { const bm = toon(col === '#ffffff' ? '#ff5fa2' : col, { roughness: .5 }); [-1, 1].forEach(s => { const l = new THREE.Mesh(new THREE.ConeGeometry(.16, .3, 12), bm); l.rotation.z = s * Math.PI / 2; l.position.set(s * .16, .55, -.05); hat.add(l); }); const k = new THREE.Mesh(new THREE.SphereGeometry(.07, 10, 8), bm); k.position.set(0, .55, -.05); hat.add(k); }
   const nh = W.hat && HAT_PARTS[W.hat.shape]; if (nh) hat.add(new THREE.Mesh(merge(nh(W.hat)), toonSmooth())); // (round S) the shop's new hats
+  // (v1.08b friends) glasses and the star mask, on the face in front of the eyes (head coordinates: the eyes at x ±.12, y -.09)
+  if (W.face && FRIEND_MODELS.faceParts) head.add(WEAR(new THREE.Mesh(merge(FRIEND_MODELS.faceParts(W.face)), toonSmooth()))); // (drawn by js/friend-model.ts, loaded with the friends)
+  else if (W.face) loadFriendModels('');
   // glider (hidden until gliding)
   const glider = new THREE.Group(); glider.visible = false; glider.position.y = 2.05;
   const gm = new THREE.Mesh(G.glider, toon(GLIDERS[look.glider || 0], { side: THREE.DoubleSide, roughness: .8 })); gm.rotation.x = -Math.PI / 2 + .25; glider.add(gm);
   [-.45, .45].forEach(x => { const r = new THREE.Mesh(new THREE.CylinderGeometry(.012, .012, .9, 4), toon('#7a5236')); r.position.set(x, -.42, 0); r.rotation.z = x * .7; glider.add(r); });
   rig.add(glider); A.glider = glider;
   root.traverse(o => { if (o instanceof THREE.Mesh && o !== shadow) { o.castShadow = true; } });
+  // (v1.08b friends) with the friend's model ready, the code person keeps only what the child wears (hats, necklace, badge,
+  // back, glider); the model, added below, follows its joints
+  if (useModel) {
+    [hat, ...(A.wings || []), A.cape].forEach(g => g && g.traverse(o => { o.userData.wear = true; }));
+    if (ft) [A.kneeL, A.kneeR].forEach(k => k && k.children.forEach(o => { if (o instanceof THREE.Mesh && o.geometry !== B.shin && o.geometry !== B.pantsShin) o.userData.wear = true; })); // (v1.08d polish) shop shoes stay on the model
+    const drop = []; rig.traverse(o => { if (o instanceof THREE.Mesh && !o.userData.wear) { let p = o.parent; while (p && p !== glider) p = p.parent; if (!p) drop.push(o); } });
+    drop.forEach(o => o.parent.remove(o));
+  }
   compact(A); // (battery round) each moving part one shape, before the outlines are made (one outline each, too)
+  rig.traverse(o => { if (o instanceof THREE.Mesh && !(o.material as THREE.Material).userData.shared) personLook(o.material); }); // (v1.08e faces, part 2) soft ramp, rim light
   A.outlines = outline(rig, .011, '#6a4a3a'); OUTLINED.push(A);
   A.anim = (state, t, speed) => animate(A, state, t, speed);
+  // (v1.08d polish) the friend's item in the hand once their quest is done (look.fitems), and the shop's shoes on the model
+  if (useModel) { A.model = FRIEND_MODELS.attach(A, friendId, look.skin, { item: typeof look.fitems === 'string' && look.fitems.split(' ').includes(friendId), shoes: !!ft }); A.root.userData.friendModel = friendId;
+    // (v1.08e faces, part 2) the child's own friend also gets the high-detail model once it is loaded: drawn up close
+    // (showHD, from js/player.ts), the light one far away
+    if (opts && opts.hd && A.model && FRIEND_MODELS.ready(friendId + '-hd')) { A.modelHD = FRIEND_MODELS.attach(A, friendId, look.skin, { item: A.model.item, shoes: !A.model.boots }, true); if (A.modelHD) showHD(A, true); } }
   return A;
 }
 
+// (v1.08, owner 2 Nov 2026 AEDT: "đẹp, có hồn và uyển chuyển hơn") How a person moves. Each frame the state gives a
+// target pose (every joint's turn, the lift and a squash); the joints then glide towards it instead of jumping, softly
+// for a moment after the state changes (walk to stand, landing) and almost at once otherwise, so a walk keeps its swing.
+// The knees and elbows bend, the hips sway, the head stays steady and looks round (or at the child close by), the
+// chest breathes, hair and capes swing, jumps stretch and landings squash, and a painted face blinks and smiles.
+// What the game sets on a joint after this (films, riders' hands on the handlebars) still wins, and fades out smoothly.
+const JOINTS = ['legL', 'legR', 'kneeL', 'kneeR', 'armL', 'armR', 'elbowL', 'elbowR', 'head', 'torso', 'rig', 'tail'];
+const JI: Record<string, number> = Object.fromEntries(JOINTS.map((j, i) => [j, i * 3]));
+const LIFT = JOINTS.length * 3, SQUASH = LIFT + 1, POSE = new Float32Array(LIFT + 2);
+const put = (j: string, x: number, y = 0, z = 0) => { const i = JI[j]; POSE[i] = x; POSE[i + 1] = y; POSE[i + 2] = z; };
+const add = (j: string, x: number, y = 0, z = 0) => { const i = JI[j]; POSE[i] += x; POSE[i + 1] += y; POSE[i + 2] += z; };
+// the child the villagers turn to look at (set by the player each frame)
+const lookAt = { on: false, x: 0, z: 0, self: null as SvAvatar | null }, _wp = new THREE.Vector3();
+export function setLookTarget(p: { x: number, z: number } | null, self?: SvAvatar) { lookAt.on = !!p; if (p) { lookAt.x = p.x; lookAt.z = p.z; lookAt.self = self || null; } }
+
 export function animate(A, state, t, speed = 0) {
-  const ph = t * (7 + speed * 1.3), sw = Math.sin(ph) * Math.min(1, speed / 4);
-  A.rig.rotation.set(0, 0, 0); A.rig.position.y = 0; A.glider.visible = false;
-  A.legL.rotation.set(0, 0, 0); A.legR.rotation.set(0, 0, 0); A.armL.rotation.set(0, 0, .12); A.armR.rotation.set(0, 0, -.12);
-  A.head.rotation.set(0, 0, 0); A.torso.rotation.set(0, 0, 0);
-  if (A.wings) A.wings.forEach((w, i) => { w.rotation.y = (i ? -1 : 1) * (.3 + Math.sin(t * (state === 'glide' || state === 'air' ? 14 : 3)) * .25); });
-  if (A.cape) A.cape.rotation.x = .12 + Math.min(.9, speed * .07) + Math.sin(t * 6) * .04;
+  const L: AvatarLife = A.life || (A.life = { t, st: state, chg: -9, land: -9, ph: 0, blink: t + 1 + Math.random() * 3, mood: 'smile', seed: Math.random() * 20 });
+  const dt = t - L.t, fresh = !(dt > 0 && dt < .3); L.t = t; // first frame, a film jumping, a long pause: straight to the pose
+  if (state !== L.st) { if (L.st === 'air' && state !== 'glide') L.land = t; L.st = state; L.chg = t; }
+  if (fresh) { L.blink = t + 1 + Math.random() * 3; L.chg = -9; } else L.ph += dt * (7 + speed * 1.3);
+  POSE.fill(0); put('armL', 0, 0, .12); put('armR', 0, 0, -.12); put('elbowL', -.12); put('elbowR', -.12);
+  const s = Math.min(1, speed / 4), run = Math.max(0, Math.min(1, (speed - 5) / 4)), since = t - L.chg, sd = L.seed;
+  let mood = 'smile', eyeTo = '';
   switch (state) {
-    case 'walk':
-      A.legL.rotation.x = sw * .75; A.legR.rotation.x = -sw * .75; A.armL.rotation.x = -sw * .65; A.armR.rotation.x = sw * .65;
-      A.rig.position.y = Math.abs(Math.sin(ph)) * .04 * Math.min(1, speed / 4); A.torso.rotation.x = Math.min(.12, speed * .012); A.torso.rotation.y = sw * .08;
-      break;
-    case 'air': A.legL.rotation.x = .6; A.legR.rotation.x = -.2; A.armL.rotation.z = 1.3; A.armR.rotation.z = -1.3; break;
-    case 'glide': A.glider.visible = true; A.armL.rotation.z = 2.8; A.armR.rotation.z = -2.8; A.legL.rotation.x = .25; A.legR.rotation.x = .1; A.rig.rotation.x = .12; A.rig.position.y = Math.sin(t * 2) * .04; break;
-    case 'swim': A.rig.rotation.x = 1.15; A.rig.position.y = -.55; A.armL.rotation.x = Math.sin(t * 5) * 1.6; A.armR.rotation.x = -Math.sin(t * 5) * 1.6; A.legL.rotation.x = Math.sin(t * 8) * .4; A.legR.rotation.x = -Math.sin(t * 8) * .4; break;
-    case 'climb': A.armL.rotation.x = -2.7 + Math.sin(t * 6) * .4; A.armR.rotation.x = -2.7 - Math.sin(t * 6) * .4; A.legL.rotation.x = Math.sin(t * 6) * .4; A.legR.rotation.x = -Math.sin(t * 6) * .4; break;
-    case 'sit': A.legL.rotation.set(-1.45, 0, .08); A.legR.rotation.set(-1.45, 0, -.08); A.armL.rotation.set(-.55, 0, .2); A.armR.rotation.set(-.55, 0, -.2); break;   // (round R: a passenger seat, a bench)
-    case 'ride': A.legL.rotation.set(-1.3, 0, .55); A.legR.rotation.set(-1.3, 0, -.55); A.rig.position.y = Math.abs(Math.sin(t * 7)) * .05 * Math.min(1, speed / 3); A.armL.rotation.x = -.7; A.armR.rotation.x = -.7; break;
-    case 'cheer': A.armL.rotation.z = 2.8 + Math.sin(t * 10) * .2; A.armR.rotation.z = -2.8 - Math.sin(t * 10) * .2; A.rig.position.y = Math.abs(Math.sin(t * 8)) * .18; break;
-    case 'wave': A.armR.rotation.z = -2.6 + Math.sin(t * 10) * .35; A.head.rotation.z = Math.sin(t * 3) * .1; break;
-    case 'dance': {
-      const b = t * 8.4;
-      A.rig.position.y = Math.abs(Math.sin(b)) * .1; A.torso.rotation.y = Math.sin(b / 2) * .4; A.head.rotation.z = Math.sin(b / 2) * .18;
-      A.armL.rotation.z = 1.6 + Math.sin(b) * .9; A.armR.rotation.z = -1.6 + Math.sin(b + 1.5) * .9; A.legL.rotation.x = Math.max(0, Math.sin(b)) * .5; A.legR.rotation.x = Math.max(0, -Math.sin(b)) * .5;
+    case 'walk': {
+      const ph = L.ph, sw = Math.sin(ph) * s, back = Math.cos(ph);
+      put('legL', sw * (.72 + .2 * run)); put('legR', -sw * (.72 + .2 * run));
+      // the knee bends as the leg swings forward, and a little as the foot takes the weight
+      put('kneeL', s * (.12 + (.45 + .55 * run) * Math.max(0, -back))); put('kneeR', s * (.12 + (.45 + .55 * run) * Math.max(0, back)));
+      put('armL', -sw * (.6 + .35 * run), 0, .12 + .05 * run); put('armR', sw * (.6 + .35 * run), 0, -.12 - .05 * run);
+      put('elbowL', -.25 - .55 * run - Math.max(0, -sw) * .25); put('elbowR', -.25 - .55 * run - Math.max(0, sw) * .25);
+      POSE[LIFT] = s * (.035 + .045 * run) * (.5 + .5 * Math.cos(2 * ph)); // highest as the legs pass each other
+      put('torso', Math.min(.12, speed * .012) + run * .08, -sw * .1, Math.sin(ph) * .035 * s);
+      put('head', -Math.min(.12, speed * .012) * .5 - Math.cos(2 * ph) * .02 * s, sw * .07, -Math.sin(ph) * .03 * s);
+      put('rig', 0, 0, Math.sin(ph) * .02 * s);
+      put('tail', .15 * s + .1 * run - Math.cos(2 * ph) * .08 * s, 0, Math.sin(ph) * .22 * s);
       break;
     }
-    default: A.rig.position.y = Math.sin(t * 2) * .008; A.armL.rotation.z = .12 + Math.sin(t * 2) * .03; A.armR.rotation.z = -.12 - Math.sin(t * 2) * .03; A.head.rotation.y = Math.sin(t * .7) * .15;
+    case 'air': {
+      put('legL', .3, 0, .04); put('legR', -.5, 0, -.04); put('kneeL', .75); put('kneeR', .7);
+      put('armL', -.2, 0, 1.25); put('armR', -.2, 0, -1.25); put('elbowL', -.35); put('elbowR', -.35);
+      put('tail', -.35); POSE[SQUASH] = .09 * Math.exp(-since * 7); break; // a stretch as the child leaves the ground
+    }
+    case 'glide': A.glider.visible = true; put('armL', 0, 0, 2.8); put('armR', 0, 0, -2.8); put('elbowL', -.1); put('elbowR', -.1); put('legL', .25); put('legR', .1); put('kneeL', .35); put('kneeR', .2);
+      put('rig', .12); POSE[LIFT] = Math.sin(t * 2) * .04; put('tail', .5 + Math.sin(t * 9) * .08); break;
+    case 'swim': put('rig', 1.15); POSE[LIFT] = -.55; put('armL', Math.sin(t * 5) * 1.6); put('armR', -Math.sin(t * 5) * 1.6); put('elbowL', -.3 - Math.max(0, Math.cos(t * 5)) * .5); put('elbowR', -.3 - Math.max(0, -Math.cos(t * 5)) * .5);
+      put('legL', Math.sin(t * 8) * .4); put('legR', -Math.sin(t * 8) * .4); put('kneeL', .2 + Math.max(0, Math.sin(t * 8)) * .4); put('kneeR', .2 + Math.max(0, -Math.sin(t * 8)) * .4); put('head', -.6); put('tail', .9); break;
+    case 'climb': put('armL', -2.7 + Math.sin(t * 6) * .4); put('armR', -2.7 - Math.sin(t * 6) * .4); put('elbowL', -.35 - Math.max(0, Math.sin(t * 6)) * .5); put('elbowR', -.35 - Math.max(0, -Math.sin(t * 6)) * .5);
+      put('legL', -.2 - Math.max(0, Math.sin(t * 6)) * .7); put('legR', -.2 - Math.max(0, -Math.sin(t * 6)) * .7); put('kneeL', .3 + Math.max(0, Math.sin(t * 6)) * 1.1); put('kneeR', .3 + Math.max(0, -Math.sin(t * 6)) * 1.1); break;
+    case 'sit': put('legL', -1.45, 0, .08); put('legR', -1.45, 0, -.08); put('kneeL', 1.35); put('kneeR', 1.35); put('armL', -.55, 0, .2); put('armR', -.55, 0, -.2); put('elbowL', -.5); put('elbowR', -.5); break; // (round R: a passenger seat, a bench)
+    case 'ride': put('legL', -1.3, 0, .55); put('legR', -1.3, 0, -.55); put('kneeL', 1); put('kneeR', 1); POSE[LIFT] = Math.abs(Math.sin(t * 7)) * .05 * Math.min(1, speed / 3);
+      put('armL', -.7, 0, .12); put('armR', -.7, 0, -.12); put('elbowL', -.4); put('elbowR', -.4); put('tail', .2, 0, Math.sin(t * 7) * .1 * Math.min(1, speed / 3)); break;
+    case 'cheer': { const b = Math.abs(Math.sin(t * 8)), low = 1 - b;
+      put('armL', 0, 0, 2.75 + Math.sin(t * 10) * .2); put('armR', 0, 0, -2.75 - Math.sin(t * 10) * .2); put('elbowL', -.25); put('elbowR', -.25);
+      POSE[LIFT] = b * .18; put('legL', -low * .3); put('legR', -low * .3); put('kneeL', low * .55); put('kneeR', low * .55);
+      POSE[SQUASH] = (b - .5) * .1; put('head', -.12); put('tail', -b * .4); mood = 'happy'; break; }
+    case 'wave': put('armR', -.2, 0, -2.05); put('elbowR', -.1, 0, -.55 + Math.sin(t * 9) * .4); put('head', .02, .1, Math.sin(t * 3) * .1); put('torso', 0, 0, Math.sin(t * 3) * .03); mood = 'happy'; break;
+    case 'dance': {
+      const b = t * 8.4;
+      POSE[LIFT] = Math.abs(Math.sin(b)) * .1; put('torso', 0, Math.sin(b / 2) * .4); put('head', 0, -Math.sin(b / 2) * .15, Math.sin(b / 2) * .18);
+      put('armL', 0, 0, 1.6 + Math.sin(b) * .9); put('armR', 0, 0, -1.6 + Math.sin(b + 1.5) * .9); put('elbowL', -.6 - Math.sin(b) * .3); put('elbowR', -.6 - Math.sin(b + 1.5) * .3);
+      put('legL', -Math.max(0, Math.sin(b)) * .5); put('legR', -Math.max(0, -Math.sin(b)) * .5); put('kneeL', Math.max(0, Math.sin(b)) * .9); put('kneeR', Math.max(0, -Math.sin(b)) * .9);
+      put('tail', 0, 0, Math.sin(b / 2) * .4); mood = 'happy'; break;
+    }
+    default: { // standing: breathing, the weight shifting from foot to foot, looking round now and then
+      const br = Math.sin(t * 2.1), shift = Math.sin(t * .45 + sd);
+      POSE[LIFT] = br * .006 - Math.abs(shift) * .008; put('torso', br * .015); put('rig', 0, 0, shift * .025);
+      put('armL', 0, 0, .12 + br * .03); put('armR', 0, 0, -.12 - br * .03);
+      put('kneeL', Math.max(0, shift) * .14); put('kneeR', Math.max(0, -shift) * .14); put('legL', -Math.max(0, shift) * .07); put('legR', -Math.max(0, -shift) * .07);
+      put('head', Math.sin(t * .23 + sd) * .05, .28 * Math.sin(t * .31 + sd) * Math.sin(t * .17 + sd * 2) + Math.sin(t * .7) * .06, Math.sin(t * .29 + sd * 3) * .05 - shift * .02);
+      put('tail', 0, 0, -shift * .05);
+      if (lookAt.on && lookAt.self !== A && A.root.parent) { // a villager turns their head to the child close by
+        A.root.getWorldPosition(_wp); const dx = lookAt.x - _wp.x, dz = lookAt.z - _wp.z, d2 = dx * dx + dz * dz;
+        if (d2 < 30 && d2 > .2) { let a = Math.atan2(dx, dz) - A.root.rotation.y; a = Math.atan2(Math.sin(a), Math.cos(a)); if (Math.abs(a) < 1.9) { const turn = Math.max(-1.1, Math.min(1.1, a)); add('head', 0, turn * .8 - POSE[JI.head + 1] * .7); add('torso', 0, turn * .2); if (Math.abs(a) > .3) eyeTo = a > 0 ? 'lookL' : 'lookR'; /* +x is a person's left */ } }
+      }
+    }
+  }
+  // landing: the knees give and the body squashes for a moment
+  const ld = t - L.land;
+  if (ld >= 0 && ld < .3 && state !== 'air') { const k = Math.sin(Math.PI * ld / .3); add('kneeL', k * .6); add('kneeR', k * .6); add('legL', -k * .3); add('legR', -k * .3); POSE[LIFT] -= k * .06; POSE[SQUASH] -= k * .1; add('tail', k * .3); }
+  if (state !== 'glide') A.glider.visible = false;
+  const k = fresh ? 1 : 1 - Math.exp(-dt * (since < .45 ? 10 : 38));
+  for (let n = 0; n < JOINTS.length; n++) {
+    const o = A[JOINTS[n]]; if (!o) continue;
+    const r = o.rotation, i = n * 3; r.x += (POSE[i] - r.x) * k; r.y += (POSE[i + 1] - r.y) * k; r.z += (POSE[i + 2] - r.z) * k;
+  }
+  A.rig.position.y += (POSE[LIFT] - A.rig.position.y) * k;
+  const sq = 1 + POSE[SQUASH], side = 1 / Math.sqrt(sq), H = A.height || 1; A.rig.scale.set(side * H, sq * H, side * H); // (v1.08b: H, a grown-up's height)
+  if (A.wings) A.wings.forEach((w, i) => { w.rotation.y = (i ? -1 : 1) * (.3 + Math.sin(t * (state === 'glide' || state === 'air' ? 14 : 3)) * .25); });
+  if (A.cape) A.cape.rotation.x += (.12 + Math.min(.9, speed * .07) + Math.sin(t * 6) * .04 + (state === 'air' ? .5 : 0) - A.cape.rotation.x) * (fresh ? 1 : 1 - Math.exp(-dt * 6));
+  // the face: a blink every 2 to 5 seconds (now and then two): the lids half down, closed, half down again, about 150 ms in
+  // all; (v1.08e faces) the eyes turn to the child close by, glance about now and then, and a feeling set by feel() (a
+  // find, a lost game, a greeting) shows for a moment; happy while cheering and waving, excited while dancing
+  if (A.painted && A.faceMat) {
+    if (t > L.blink + .15) L.blink = t + 1.85 + Math.random() * 3.6 - (Math.random() < .15 ? 1.6 + Math.random() * .2 : 0);
+    if (state === 'dance') mood = 'excited';
+    if (L.feel && t < L.feelUntil) mood = L.feel;
+    else if (mood === 'smile') {
+      if (eyeTo) mood = eyeTo;
+      else { if (!(L.glance > 0) || t > L.glance + 4) L.glance = t + 2.5 + Math.random() * 5; if (t >= L.glance && t < L.glance + .7) mood = (L.seed * 10 + L.glance) % 2 < 1 ? 'lookL' : 'lookR'; }
+    }
+    const into = t - L.blink, want = fresh || into < 0 || into >= .15 ? mood : into < .04 || into >= .11 ? 'half' : 'blink';
+    if (want !== L.mood && A.faceMat.map) { L.mood = want; setFaceMood(A.faceMat.map, want); }
   }
 }
+/** (v1.08e villagers) a named villager's own Blender model (models/villager-<id>.glb, made by tools/make-villagers.mts)
+ *  in place of the code person: the model follows the code person's joints and moods (js/friend-model.ts), stands at the
+ *  code person's height, and the code person's parts are hidden (kept, so a photo face or a rebuild can bring them back).
+ *  Far away the still copy of the code person is shown, as for everyone. False when it cannot be worn. */
+export function wearVillagerModel(A: SvAvatar, key: string): boolean {
+  if (!A || A.model || !A.painted || !FRIEND_MODELS.ready || !FRIEND_MODELS.ready(key)) return false;
+  stillOf(A); // (the far still copy is baked from the code person first)
+  // sizes are measured in the rest pose (no hop, no squash, joints straight), so a villager caught mid-jump stands right
+  const keep = JOINTS.map(j => A[j] ? A[j].rotation.clone() : null), lift = A.rig.position.y, sc = A.rig.scale.clone(), H = A.height || 1;
+  JOINTS.forEach(j => { if (A[j] && j !== 'rig') A[j].rotation.set(0, 0, 0); }); A.rig.position.y = 0; A.rig.scale.set(H, H, H); A.root.updateMatrixWorld(true);
+  const box = new THREE.Box3(), codeParts: THREE.Object3D[] = [];
+  // (only what is drawn: a hidden group, such as the folded glider over the head, made the code person seem far taller)
+  A.rig.traverse(o => { if (o instanceof THREE.Mesh && shown(o, A.rig) && !o.userData.outline) { box.expandByObject(o); codeParts.push(o); } }); // (inside the rig: it is hidden while the far still copy shows)
+  const codeH = box.max.y - box.min.y, m = FRIEND_MODELS.attach(A, key, String(A.look.skin || '#f6c7a5'), {}); // (attached in the rest pose, as a friend's is when built)
+  const back = () => { JOINTS.forEach((j, i) => { if (keep[i]) A[j].rotation.copy(keep[i]); }); A.rig.position.y = lift; A.rig.scale.copy(sc); };
+  if (!m) { back(); return false; }
+  codeParts.forEach(o => { o.visible = false; o.children.forEach(c => { if (c.userData.outline) c.visible = false; }); });
+  (A as any)._codeParts = codeParts; // (kept, to show them again when the model is taken off: unwearVillagerModel)
+  m.obj.updateMatrixWorld(true); const mb = new THREE.Box3().setFromObject(m.obj, true), mh = mb.max.y - mb.min.y;
+  // the model's head at the code person's head (a hat does not count), its feet on the code person's feet
+  let headBone: THREE.Object3D = null; m.obj.traverse(o => { if ((o as THREE.Bone).isBone && o.name === 'head') headBone = o; });
+  const wp = new THREE.Vector3(), hc = A.head ? A.head.getWorldPosition(new THREE.Vector3()).y : box.max.y, hm = headBone ? headBone.getWorldPosition(wp).y : mb.max.y;
+  const k = hm - mb.min.y > .1 && hc - box.min.y > .1 ? (hc - box.min.y) / (hm - mb.min.y) : codeH / Math.max(mh, .1);
+  if (mh > .1 && codeH > .1) { const O = m.obj.getWorldPosition(new THREE.Vector3()).y, ws = A.rig.getWorldScale(new THREE.Vector3()).y;
+    m.obj.scale.multiplyScalar(k); m.obj.position.y += (box.min.y - (O + (mb.min.y - O) * k)) / ws; }
+  back();
+  A.model = m; A.root.userData.villagerModel = key; showStill(A, false); return true; // (worn near the child: the moving model, not the still copy)
+}
+/** (v1.08e crowds) the gallery model taken off again, the code person shown (js/crowd-models.ts: a crowd person farther
+ *  away gives theirs up so the one beside the child can have one, check perf's limit) */
+export function unwearVillagerModel(A: SvAvatar): boolean {
+  const m: any = A && A.model, parts: THREE.Object3D[] = A && (A as any)._codeParts;
+  if (!m || !parts || !A.root.userData.villagerModel) return false;
+  if (Array.isArray(A.outlines)) { const mine = new Set<THREE.Object3D>(); m.obj.traverse(o => { if (o.userData.outline) mine.add(o); }); A.outlines = (A.outlines as THREE.Object3D[]).filter(o => !mine.has(o)); }
+  m.obj.traverse(o => { const mt = (o as THREE.Mesh).material as THREE.Material; if (mt && !Array.isArray(mt) && /^skin/.test(mt.name)) mt.dispose(); }); // (its own skin colour; the shapes are shared)
+  const sk = new Set<THREE.Skeleton>(); m.obj.traverse(o => { if ((o as THREE.SkinnedMesh).isSkinnedMesh) sk.add((o as THREE.SkinnedMesh).skeleton); });
+  sk.forEach(k => k.dispose()); // (each skeleton keeps its bone turns in a picture of its own, check longplaymem)
+  m.obj.removeFromParent();
+  parts.forEach(o => { o.visible = true; o.children.forEach(c => { if (c.userData.outline) c.visible = true; }); });
+  A.model = null; delete A.root.userData.villagerModel; (A as any)._codeParts = null; return true;
+}
+/** (v1.08e faces, part 2) the high-detail model up close, the light one far away (a child's own friend only) */
+export function showHD(A, near: boolean) { if (!A || !A.modelHD || A._hd === near) return; A._hd = near; A.modelHD.obj.visible = near; A.model.obj.visible = !near; }
+/** (v1.08e faces) a feeling on a person's face for a moment: 'o' (surprised at a find), 'sad' (a game lost), 'shy' (greeted),
+ *  'happy', 'excited', 'curious'; the blinks go on over it */
+export function feel(A, mood: string, secs = 2) { const L = A && A.life; if (!L) return; L.feel = mood; L.feelUntil = L.t + secs; }
+/** the same, for a person known by their root (a villager found in the scene) */
+/** (v1.08e crowds) the person built on a root, if any */
+export const avatarOf = (root: THREE.Object3D): SvAvatar => AV_OF.get(root);
+export function feelRoot(root: THREE.Object3D, mood: string, secs = 2) { feel(AV_OF.get(root), mood, secs); }
 
 // The wise owl guide.
 export function buildOwl() {
@@ -351,13 +609,20 @@ export const spriteGlow = c => glow(c);
 // the head, ears, hands and legs take the skin colour sampled from the photo, so the edge of the photo blends in.
 const NAMED: Record<string, SvAvatar[]> = {}; // villager name -> their avatars
 const baseOf = n => String(n).replace(/\s+[^\p{L}\p{N}]+$/u, '').trim();
+// (v1.08d polish, WORLD-011) the crowds (cities, homes, the regions, Asia, heritage games, hawkers, the festival, the folk
+// show, children playing) at the new heights, as the named villagers: a grown-up 2.0, a grandparent 1.8 (grey or white
+// hair), a child 1.6 (they no longer shrink a child by hand). A look with its own age keeps it.
+export const crowdLook = (look, kid = false) => { if (!look || look.age || kid) return look; const h = /^#[0-9a-f]{6}$/i.test(look.hair || '') ? [1, 3, 5].map(i => parseInt(look.hair.slice(i, i + 2), 16)) : null;
+  return { ...look, age: h && Math.max(...h) - Math.min(...h) < 20 && h[0] > 120 ? 'elder' : 'adult' }; };
 export function nameAvatar(A, name, remember = true, stableId?) { // remember: false for people in a room that is torn down later
   if (!A || !name) return A; const legacy = baseOf(name), id = stableId || legacy; A.faceLegacy = legacy; if (remember) (NAMED[id] = NAMED[id] || []).push(A);
   const f = familyOwnFace(id) || familyOwnFace(legacy) || (settings.npcFaces || {})[legacy] || customFace(legacy); if (f) setFace(A, f);
   return A;
 }
 function setFace(A, f) {
+  if (A.late) { A.lateFace = f; return; } // (v1.08d valley) a stand-in gets its face when it is built
   A.faceMat.map = f && f.photo ? faceTexture(A.look, f.photo) : faceTexture(A.look); A.faceMat.needsUpdate = true;
+  A.painted = !(f && f.photo); if (A.life) A.life.mood = 'smile';
   if (A.skinMat) { A.skinMat.color.set(f && f.skin ? f.skin : A.look.skin); recolorSkin(A); }
   dropStill(A); // (battery round) the skin colour may have changed: a far copy is baked again when next needed
 }
@@ -412,7 +677,13 @@ export function stillOf(A) {
   if (!stillMat) { stillMat = toonSmooth({ side: THREE.DoubleSide }); stillMat.userData.shared = true; }
   A.root.updateMatrixWorld(true); _inv.copy(A.root.matrixWorld).invert();
   const solid = [], lines = [], keep = [], still = new THREE.Group(); still.userData.still = true;
-  A.rig.traverse(m => {
+  // (v1.08 fix, check multiplayer) a villager wearing a Blender model (wearVillagerModel) is far away the code person's
+  // still copy, as showStill says: the code parts hidden under the model are copied, not the model, whose 18,000
+  // triangles and outline made each far still copy about 35,000 triangles (11 named villagers: 385,000 in every frame)
+  const parts: THREE.Object3D[] = A.model && A.root.userData.villagerModel && A._codeParts, show = (on: boolean) => {
+    parts.forEach(o => { o.visible = on; o.children.forEach(c => { if (c.userData.outline) c.visible = on; }); }); A.model.obj.visible = !on; };
+  if (parts) show(true);
+  try { A.rig.traverse(m => {
     if (!m.isMesh || !shown(m, A.root) || !m.geometry.attributes.normal) return;
     if (m.userData.outline) { lines.push({ m }); return; }
     const mt = m.material;
@@ -420,7 +691,7 @@ export function stillOf(A) {
     if (mt.vertexColors && m.geometry.attributes.color) solid.push({ m, c: null });
     else if (mt.color) solid.push({ m, c: mt.color });
     else keep.push(m);
-  });
+  }); } finally { if (parts) show(false); }
   if (solid.length) { const one = new THREE.Mesh(bake(solid, _inv, true), stillMat); one.castShadow = true; still.add(one); }
   for (const m of keep) { const c = new THREE.Mesh(m.geometry, m.material); _mm.multiplyMatrices(_inv, m.matrixWorld); _mm.decompose(c.position, c.quaternion, c.scale); c.renderOrder = m.renderOrder; still.add(c); }
   if (lines.length) { const ol = new THREE.Mesh(bake(lines, _inv, false), lines[0].m.material); ol.userData.outline = true; ol.visible = A._ol !== false; still.add(ol); A.stillLine = ol; }
@@ -435,11 +706,29 @@ export function stillOf(A) {
 // skin colour (setFace) still colours them.
 const compactMats = {};
 const compactMat = side => compactMats[side] || (compactMats[side] = Object.assign(toonSmooth({ side }), { userData: { shared: true } }));
+// (v1.08) A bending limb stays one shape: the thigh and the shin (the upper arm and the forearm, the head and its
+// hanging hair) are baked together and the knee bends it in the shader (bendMat). So the new knees, elbows and
+// swinging hair cost no extra draws (PERF-003) and no extra pictures.
+// a limb's material: the corners on the knee's side are turned by the knee (uBend), in the shader, so a bending
+// limb is one shape, one draw and no extra picture (a skinned shape's bones would be a picture each: check longplaymem)
+function bendMat(side: number, u: { value: THREE.Matrix4 }) {
+  const m = toonSmooth({ side });
+  m.onBeforeCompile = sh => {
+    sh.uniforms.uBend = u;
+    sh.vertexShader = 'attribute float bendW;\nuniform mat4 uBend;\n' + sh.vertexShader
+      .replace('#include <beginnormal_vertex>', '#include <beginnormal_vertex>\nif (bendW > .5) objectNormal = mat3(uBend) * objectNormal;')
+      .replace('#include <begin_vertex>', '#include <begin_vertex>\nif (bendW > .5) transformed = (uBend * vec4(transformed, 1.)).xyz;');
+  };
+  m.customProgramCacheKey = () => 'svbend' + side;
+  return m;
+}
+const JOINED = [['legL', 'kneeL'], ['legR', 'kneeR'], ['armL', 'elbowL'], ['armR', 'elbowR'], ['head', 'tail']];
 function compact(A) {
   const nodes = [A.rig, A.torso, A.head, A.legL, A.legR, A.armL, A.armR, A.glider, ...(A.wings || [])];
   A.rig.traverse(o => { if (o.isGroup && !nodes.includes(o)) nodes.push(o); });
-  A.skinParts = [];
-  for (const N of nodes) {
+  const kidOf = new Map(), joinedKid = new Set();
+  for (const [p, c] of JOINED) if (A[p] && A[c]) { kidOf.set(A[p], A[c]); joinedKid.add(A[c]); }
+  const pick = N => {
     const bySide: Record<string, THREE.Mesh<THREE.BufferGeometry, THREE.MeshToonMaterial>[]> = {};
     for (const m of N.children) {
       if (!m.isMesh || m.children.length || m === A.cape || !m.visible) continue;
@@ -448,26 +737,49 @@ function compact(A) {
       if (!mt.vertexColors && !mt.color) continue;
       (bySide[mt.side] = bySide[mt.side] || []).push(m);
     }
-    for (const [side, list] of Object.entries(bySide)) {
-      if (list.length < 2) continue;
+    return bySide;
+  };
+  A.skinParts = [];
+  for (const N of nodes) {
+    if (joinedKid.has(N)) continue; // a knee, an elbow or hanging hair: baked with its parent below
+    const kid = kidOf.get(N), bySide = pick(N), kidSide = kid ? pick(kid) : {};
+    for (const side of new Set([...Object.keys(bySide), ...Object.keys(kidSide)])) {
+      const list = bySide[side] || [], kl = kidSide[side] || [];
+      if (list.length + kl.length < 2 && !kl.length) continue;
       N.updateMatrixWorld(true); const inv = new THREE.Matrix4().copy(N.matrixWorld).invert();
       const ranges = []; let at = 0;
       // (r86: the baked shape keeps each part's corners once, so a skin range counts the part's corners)
-      const parts = list.map(m => { const n = m.geometry.attributes.position.count; if (m.material === A.skinMat) ranges.push([at, n]); at += n; return { m, c: m.material.vertexColors && m.geometry.attributes.color ? null : m.material.color }; });
-      const one = new THREE.Mesh(bake(parts, inv, true), compactMat(+side)); one.castShadow = true;
+      const parts = [...list, ...kl].map(m => { const n = m.geometry.attributes.position.count; if (m.material === A.skinMat) ranges.push([at, n]); at += n; return { m, c: m.material.vertexColors && m.geometry.attributes.color ? null : m.material.color }; });
+      const g = bake(parts, inv, true);
+      let one: THREE.Mesh;
+      if (kl.length) {
+        // each corner remembers whether it belongs to the knee's side (1) or the hip's (0)
+        const n0 = list.reduce((s, m) => s + m.geometry.attributes.position.count, 0), nv = g.attributes.position.count, w = new Float32Array(nv);
+        for (let i = n0; i < nv; i++) w[i] = 1;
+        g.setAttribute('bendW', new THREE.BufferAttribute(w, 1));
+        kid.updateMatrix(); const rest = kid.matrix.clone().invert(), u = { value: new THREE.Matrix4() };
+        one = new THREE.Mesh(g, bendMat(+side, u)); N.add(one);
+        // just before it is drawn: how far the knee has turned since it was built
+        one.onBeforeRender = () => { kid.updateMatrix(); u.value.multiplyMatrices(kid.matrix, rest); };
+        one.userData.bend = u;
+      } else { one = new THREE.Mesh(g, compactMat(+side)); N.add(one); }
+      one.castShadow = true;
       // (r67) an arm keeps an empty marker where each of its parts was (the hand at y -0.42), so a rider's grip can still be found
-      if (N === A.armL || N === A.armR) list.forEach(m => { const k = new THREE.Object3D(); k.position.copy(m.position); k.quaternion.copy(m.quaternion); k.userData.part = true; N.add(k); });
-      list.forEach(m => N.remove(m)); N.add(one);
-      if (ranges.length) A.skinParts.push({ g: one.geometry, ranges });
+      if (N === A.armL || N === A.armR) [[N, list, null], [N, kl, kid]].forEach(([G, l, from]) => l.forEach(m => { const k = new THREE.Object3D(); k.position.copy(m.position); if (from) k.position.add(from.position); k.quaternion.copy(m.quaternion); k.userData.part = true; G.add(k); }));
+      list.forEach(m => N.remove(m)); kl.forEach(m => kid.remove(m));
+      if (ranges.length) A.skinParts.push({ g, ranges });
     }
   }
 }
+// (v1.08) a copy of a person (the Bag's picture of the child): the copy's limbs bend as the person's do
+export function cloneAvatarRoot(root: THREE.Object3D) { return root.clone(true); }
 function recolorSkin(A) {
   const c = A.skinMat.color;
   for (const { g, ranges } of A.skinParts || []) { const C = g.attributes.color; for (const [a, n] of ranges) for (let i = a; i < a + n; i++) C.setXYZ(i, c.r, c.g, c.b); C.needsUpdate = true; }
 }
 // the moving person or the still copy (made the first time it is needed)
 export function showStill(A, yes) {
+  if (A.model && !A.root.userData.villagerModel) yes = false; // (v1.08b) a friend's model has no still copy: it is one of a few children; (v1.08e) a villager's model has: far away, the code person's still copy
   if (!!A._still === yes) return; A._still = yes;
   if (yes) stillOf(A).visible = true; else if (A.still) A.still.visible = false;
   A.rig.visible = !yes;
@@ -480,3 +792,39 @@ export function dropStill(A) {
 export function applyNpcFaces() { for (const [id, list] of Object.entries(NAMED)) list.forEach(A => setFace(A, familyOwnFace(id) || familyOwnFace(A.faceLegacy || id) || (settings.npcFaces || {})[A.faceLegacy || id] || customFace(A.faceLegacy || id) || null)); }
 onFamilyPhotos(() => applyNpcFaces()); // (round R privacy) the family's photo faces arrive after the start, with the family code
 export const namedVillagers = () => Object.keys(NAMED);
+
+// (v1.08d valley, owner 5 Nov 2026 AEDT: "the valley building as the child walks") villagers far from every child are
+// made as a stand-in: an empty group where they stand, with their look, their height and an animation that does
+// nothing. The first time a child comes within reach (js/main.ts: wakeLateAvatars four times a second, and at once round
+// a flight's landing spot) the real person is built into the same object and the same group, so everything that holds
+// the villager (their place, their day, their talk, their name and face) keeps it. Only villagers whose makers use
+// nothing but the group and anim before then are made this way (js/cities.ts, js/homes.ts, js/heritage.ts,
+// js/regions.ts); the checks build them all before they play (G.areas.all).
+const LATE: SvAvatar[] = [];
+export function lateAvatar(look, photo = null): SvAvatar {
+  const root = new THREE.Group(); root.userData.avatar = true;
+  const AGE = { adult: 1.25, elder: 1.125, old: 1.125 }[look && look.age] || 1;
+  const A: SvAvatar = { root, look, height: AGE, late: true, latePhoto: photo, anim: () => { } } as unknown as SvAvatar;
+  LATE.push(A); return A;
+}
+export function buildLate(A: SvAvatar) {
+  if (!A || !A.late) return; A.late = false; const i = LATE.indexOf(A); if (i >= 0) LATE.splice(i, 1);
+  buildAvatar(A.look, A.latePhoto, { into: A });
+  if (A.lateFace !== undefined) { const f = A.lateFace; A.lateFace = undefined; setFace(A, f); }
+  for (const f of A.lateThen || []) f(); A.lateThen = undefined;
+}
+/** runs fn once the person is really built (at once for one that is) */
+export function afterBuilt(A: SvAvatar, fn: () => void) { if (!A.late) fn(); else (A.lateThen = A.lateThen || []).push(fn); }
+const _lp = new THREE.Vector3();
+/** builds the stand-ins within r m of any of the points, at most max of them (the nearest first) */
+export function wakeLateAvatars(points: { x: number, z: number }[], r = 60, max = 3) {
+  if (!LATE.length || !points.length) return 0;
+  const near: [number, SvAvatar][] = [];
+  for (const A of LATE) { if (!A.root.parent) continue; A.root.getWorldPosition(_lp); let d = 1e9; for (const p of points) d = Math.min(d, Math.hypot(p.x - _lp.x, p.z - _lp.z)); if (d < r) near.push([d, A]); }
+  near.sort((a, b) => a[0] - b[0]); let n = 0; for (const [, A] of near) { if (n >= max) break; buildLate(A); n++; }
+  return n;
+}
+export const lateLeft = () => LATE.length;
+export function buildAllLate() { while (LATE.length) buildLate(LATE[0]); }
+/** where the stand-ins still waiting stand (for the checks) */
+export function lateSpots() { return LATE.filter(A => A.root.parent).map(A => { A.root.getWorldPosition(_lp); return [Math.round(_lp.x), Math.round(_lp.z)]; }); }

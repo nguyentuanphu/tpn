@@ -28,7 +28,8 @@ export function* paintWaterRows(size = 256): Generator<unknown, HTMLCanvasElemen
     col[k * 3] = cc[0] * dk; col[k * 3 + 1] = cc[1] * dk; col[k * 3 + 2] = cc[2] * dk;
     // (r89, owner: "the white thing over the bridge") a shallow pond (Ho Guom, .8 m) would be foam all over with a fixed
     // 1.5 m band, so a pond's band follows its own depth: only its edge is white
-    const P = PONDS.find(q => q.id === w), band = P ? Math.min(1.5, P.depth * .3) : 1.5;
+    // (v1.08e water) every water is shallow now (0.8 m at most), so every band follows its depth the same way
+    const P = PONDS.find(q => q.id === w), band = P ? Math.min(1.5, P.depth * .3) : .24;
     d[k * 4 + 3] = (.2 + .8 * (h >= WATER ? 1 : 1 - smooth(0, band, deep))) * 255;   // alpha: how near the shore (the foam line)
   }
   // soften where two waters meet (a river into the sea, two channels joining): a small box blur of the colours, twice

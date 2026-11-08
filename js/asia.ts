@@ -6,7 +6,7 @@ import { T, nm, onLang, registerName } from './i18n.js';
 import { settings } from './state.js';
 import { sayIn } from './voice.js';
 import { heightAt, CHINA, INDIA } from './world.js';
-import { buildAvatar } from './avatar.js';
+import { buildAvatar, lateAvatar, crowdLook } from './avatar.js';
 import { houseVillage, rbox } from './houses.js';
 import { LEARN } from './words2.js';
 
@@ -24,7 +24,8 @@ export function createAsia(G) {
     draw(); onLang(draw);
     const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: t, transparent: true, depthWrite: false })); s.scale.set(3, .75, 1); s.position.set(x, y, z); scene.add(s);
   };
-  const person = (look, x, z, face) => { const A = buildAvatar(look, null); A.root.position.set(x, heightAt(x, z), z); A.root.rotation.y = face; scene.add(A.root); world.colliders.push({ x, z, r: .6 }); return A; };
+  // (v1.08d valley) built when a child comes near (js/avatar.ts lateAvatar)
+  const person = (look, x, z, face) => { const A = lateAvatar(crowdLook(look)); A.root.position.set(x, heightAt(x, z), z); A.root.rotation.y = face; scene.add(A.root); world.colliders.push({ x, z, r: .6 }); return A; };
   const I = (id, x, z, r, icon, label, act) => G.interactables.push({ id, x, z, r, icon, label, act });
   // a greeting in the village's own language, said after the line (so children hear the real word)
   const greet = (lang, n) => setTimeout(() => sayIn(lang, LEARN[lang].words[n][3]), 300);

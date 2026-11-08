@@ -23,7 +23,8 @@ const snapshot={source:SOURCE_REF,reviewed:'23 October 2026 AEDT',quests:quests.
 fs.writeFileSync(new URL('./quest-snapshot.json',import.meta.url),JSON.stringify(snapshot,null,2)+'\n');
 console.log(JSON.stringify({quests:snapshot.quests.length,chapters:snapshot.chapters.map(c=>[c.id,c.steps.length]),daily:snapshot.adventures.length,family:snapshot.family.length,hunts:snapshot.hunts.length}));
 // Additional reward catalogues; extracting data never starts a game or changes a save.
-const stickers=run(read('js/content/stickers.js')),boxes=run(read('js/content/boxes.js'));
+// (v1.08) the sticker book imports the learning journeys (js/content/learnpaths.ts, no imports of its own)
+const stickers=run(read('js/content/stickers.js'),{'./learnpaths.js':run(read('js/content/learnpaths.js'))}),boxes=run(read('js/content/boxes.js'));
 const countryText=read('js/passport.js').split('export const COUNTRIES = ')[1].split('const ccOf')[0];
 const countryData=run('const T=(en,vi)=>[en,vi]; export const COUNTRIES = '+countryText).COUNTRIES;
 const hatText=read('js/data.js').split('export const HAT_ICON = ')[1].split('export const GATHER')[0];

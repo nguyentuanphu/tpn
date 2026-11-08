@@ -3,6 +3,7 @@
 // the Floor took one fixed order, Turn It Round won after three taps whatever the arrow showed, and Fold the Box wanted
 // the sides in one order nobody was told. Now the shapes are drawn, answers are mixed, tiles and sides go in any order,
 // and the arrow has to point at the star.
+import { deck, mover } from './variety.js';
 import { register, untilRight } from './frame.js';
 import { T } from '../i18n.js';
 import { pic } from '../art.js';
@@ -77,13 +78,14 @@ async function rounds(api, intro: [string, string], list: Round[], done: [string
   const wrap = el('div', 's2-board'), stage = el('div', 's2-stage'), controls = el('div', 's2-controls');
   api.stage.appendChild(wrap); wrap.append(stage, controls);
   await wait(1000);
+  const place = mover();   // (v1.08 variety) the right answer moves from round to round
   for (let k = 0; k < list.length; k++) {
     const q = list[k];
     stage.innerHTML = '';
     stage.append(el('div', 's2-picture', q.show));
     api.say(q.ask[0], q.ask[1]);
     controls.innerHTML = '';
-    const btns = mix(q.choices).map(c => { const b = el('button', 's2-btn', c.html); b.dataset.key = c.key; controls.appendChild(b); return b; });
+    const btns = place(q.choices, c => c.key === q.answer).map(c => { const b = el('button', 's2-btn', c.html); b.dataset.key = c.key; controls.appendChild(b); return b; });
     const target = btns.find(b => b.dataset.key === q.answer);
     api.plan(() => target, { maxActions: 5 });
     const clicked = await untilRight(api, btns, e => e === target);
@@ -105,7 +107,8 @@ register({
   id: 'solids', icon: '⚽', name: () => T('Ball, Box, Can', 'Khối Cầu, Hộp, Trụ'),
   run: api => {
     const things: [string, Solid, [string, string]][] = [['⚽', 'sphere', ['a ball', 'quả bóng']], ['🍊', 'sphere', ['an orange', 'quả cam']], ['📦', 'cube', ['a box', 'cái hộp']], ['🎲', 'cube', ['a dice', 'con xúc xắc']], ['🥫', 'cylinder', ['a can', 'cái lon']], ['🥁', 'cylinder', ['a drum', 'cái trống']]];
-    const pickOne = (s: Solid) => mix(things.filter(t => t[1] === s))[0];
+    // (v1.08 variety) each solid deals its things in turn, so a thing comes back only after the others
+    const decks = Object.fromEntries((['sphere', 'cube', 'cylinder'] as Solid[]).map(k => [k, deck(things.filter(t => t[1] === k))])), pickOne = (s: Solid) => decks[s]();
     return rounds(api, ['Match each thing to its solid shape!', 'Ghép đồ vật với khối của nó nhé!'],
       // (levels) more things from Medium; Talent: the solids have no names under them
       cycle(mix(['sphere', 'cube', 'cylinder'] as Solid[]), lv(api, 3, 4, 5, 6)).map(s => {
@@ -169,8 +172,12 @@ register({
     // 0 up, 1 right, 2 down, 3 left; the star sits on that side of the box
     const spots = [{ left: '81px', top: '0' }, { left: '162px', top: '81px' }, { left: '81px', top: '162px' }, { left: '0', top: '81px' }];
     let facing = Math.floor(Math.random() * 4);
+    const turns = new Set<string>();   // (v1.08 variety) a start and a goal not played before in this game, when there is one
     for (let r = 0; r < rounds; r++) {
-      const goal = (facing + lv(api, 1 + Math.floor(Math.random() * 3), 1 + Math.floor(Math.random() * 3), 2 + Math.floor(Math.random() * 2), 3)) % 4;
+      const away = () => lv(api, 1 + Math.floor(Math.random() * 3), 1 + Math.floor(Math.random() * 3), 2 + Math.floor(Math.random() * 2), 3);
+      let goal = (facing + away()) % 4;
+      for (let t = 0; t < 12 && turns.has(`${facing},${goal}`); t++) goal = (facing + away()) % 4;
+      turns.add(`${facing},${goal}`);
       Object.assign(star.style, spots[goal]);
       arrow.style.transform = `rotate(${facing * 90}deg)`;
       api.plan(() => facing !== goal ? turn : null, { maxActions: 5 });

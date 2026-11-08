@@ -6,7 +6,7 @@
 //               nothing that needs reading; under-5s get 64 px buttons
 //   wardrobe    what the child owns, worn with one tap (the character changes at once behind the sheet)
 // Owned things: profile.owned.clothes (js/content/shop.js, which also holds the prices). Game coins only.
-import { THREE, P, merge, toonVC } from './gfx.js';
+import { THREE, P, merge, toonVC, worldTag } from './gfx.js';
 import { T } from './i18n.js';
 import { featureOn } from './custom.js';
 import { farm, profiles, saveProfiles } from './state.js';
@@ -69,6 +69,10 @@ const SH = {
   cape: (c) => `<path d="M14 8h20l8 34H6z" fill="${c}" ${W}/><path d="M14 8c3 4 17 4 20 0" fill="none" ${W}/><circle cx="24" cy="11" r="3" fill="#ffcf3a" ${W}/>`,
   dragonwings: (c) => `<path d="M24 26L4 10l4 12-4 4 8 2-2 8zM24 26L44 10l-4 12 4 4-8 2 2 8z" fill="${c}" ${W}/>`,
   backpack: (c, t) => `<path d="M16 14c0-6 4-8 8-8s8 2 8 8" fill="none" ${W}/><rect x="10" y="12" width="28" height="30" rx="8" fill="${c}" ${W}/><rect x="10" y="12" width="28" height="10" rx="5" fill="${t}" ${W}/><rect x="16" y="28" width="16" height="9" rx="3" fill="${t}" ${W}/>`,
+  // (v1.08b friends) glasses and the star mask
+  glasses: (c) => `<rect x="5" y="18" width="16" height="12" rx="5" fill="${c}" ${W}/><rect x="27" y="18" width="16" height="12" rx="5" fill="${c}" ${W}/><path d="M21 23h6M5 22l-3-3M43 22l3-3" fill="none" ${W}/><path d="M9 22l4-2M31 22l4-2" stroke="#fff" stroke-width="2" opacity=".6"/>`,
+  roundglasses: (c) => `<circle cx="14" cy="24" r="8" fill="#e8f6ff" stroke="${c}" stroke-width="3"/><circle cx="34" cy="24" r="8" fill="#e8f6ff" stroke="${c}" stroke-width="3"/><path d="M22 23h4" stroke="${c}" stroke-width="3"/><path d="M10 21l3-2M30 21l3-2" stroke="#fff" stroke-width="2"/>`,
+  mask: (c) => `<path d="M24 12l3.5 7 7.5 1-5.5 5 1.5 7.5-7-3.6-7 3.6 1.5-7.5-5.5-5 7.5-1z" fill="${c}" ${W}/><path d="M6 24c0-6 8-8 18-8s18 2 18 8-8 8-18 8S6 30 6 24z" fill="${c}" fill-opacity=".55" ${W}/><circle cx="16" cy="24" r="3.4" fill="#2b2238"/><circle cx="32" cy="24" r="3.4" fill="#2b2238"/>`,
   shell: (c, t) => `<path d="M6 34a18 22 0 0 1 36 0z" fill="${c}" ${W}/><path d="M24 14l6 6-2 8h-8l-2-8zM12 28l6 0M30 28h6" fill="none" stroke="${t}" stroke-width="2.4"/><path d="M4 34h40" ${W}/>`
 };
 export const itemSVG = it => `<svg class="art kpic" viewBox="0 0 48 48" aria-hidden="true">${(SH[it.shape] || SH.tee)(it.color, it.trim)}</svg>`;
@@ -89,17 +93,20 @@ export function createShop(G, { say, save }) {
   ['#e8434a', '#ffd23f', '#3cc7e8', '#a66bff', '#5fd39a', '#ff9f43'].forEach((c, k) => parts.push(P(new THREE.BoxGeometry(.38, .46, .06), c, [-1.3 + k * .52, 1.7, -.8]), P(new THREE.BoxGeometry(.5, .1, .06), c, [-1.3 + k * .52, 1.88, -.8])));
   parts.push(P(new THREE.CylinderGeometry(.03, .03, 3.2, 6), '#8a5a3b', [0, 2.0, -.78], [0, 0, Math.PI / 2]));
   ([['#ecd9a0', -1.1], ['#e8434a', -.3], ['#ff7eb8', .5], ['#3b6fe0', 1.2]] as [string, number][]).forEach(([c, x], k) => parts.push(k ? P(new THREE.SphereGeometry(.2, 12, 8, 0, Math.PI * 2, 0, Math.PI / 2), c, [x, 1.05, .5]) : P(new THREE.ConeGeometry(.32, .22, 16), c, [x, 1.16, .5])));
-  const stall = new THREE.Mesh(merge(parts), toonVC()); stall.castShadow = true; stall.position.set(spot.x, heightAt(spot.x, spot.z), spot.z); stall.rotation.y = face; scene.add(stall);
+  const stall = new THREE.Mesh(merge(parts), toonVC()); stall.castShadow = true; stall.position.set(spot.x, heightAt(spot.x, spot.z), spot.z); stall.rotation.y = face; scene.add(stall); worldTag(stall, 'st-clothes');   // (v1.08e places)
   world.colliders.push({ x: spot.x, z: spot.z, r: 1.8 }); world.stalls.push({ id: 'shop_clothes', place: 'market', kind: 'stall', x: spot.x, z: spot.z, w: 3.6, d: 2.1, face, tap: 'shop_clothes' });
   const front = { x: spot.x + Math.sin(face) * 1.8, z: spot.z + Math.cos(face) * 1.8 };
   G.interactables.push({ id: 'shop_clothes', x: front.x, z: front.z, r: 3, icon: '🛍️', label: () => T('Clothes shop', 'Cửa hàng quần áo'), visible: () => on(), act: h => openShop(h.i) });
-  stall.visible = on(); world.updaters.push(() => { stall.visible = on(); });
+  // (v1.08f places-fix) once its Blender model is in (js/modelkit.ts), the model shows and hides with the shop, and the
+  // code shape stays hidden (it was switched back on every frame, drawn over the model)
+  const show = () => { const v = on(), mdl = stall.userData.model?.obj; if (mdl) { mdl.visible = v; stall.visible = false; } else stall.visible = v; };
+  show(); world.updaters.push(show);
 
   // ---------- the companion's hats ----------
   // (owner, 30 Oct 2026 AEDT: "where do I manage accessories for companions?") a tab in the shop and the mirror, shown once
   // a child has a companion: the hats bought with the coin goal are put on or taken off with a tap, and in the shop the
   // next hat can be bought (the same rule as the coin goal: the hats come in order; js/kidplay.js)
-  const PET_ICON = { party: '🎉', flower: '🌸', nonla: '👒', crown: '👑' };
+  const PET_ICON = { party: '🎉', flower: '🌸', nonla: '👒', crown: '👑', beanie: 'palhat:beanie', captain: 'palhat:captain', wizard: 'palhat:wizard', lotus: 'palhat:lotus' }; // (v1.08 companion: the four new hats)
   const petOf = p => { if (!G.kidplay || !(p.lanterns && p.lanterns.companion)) return null; const s = p.lanterns.pet = p.lanterns.pet || {}; s.hats = s.hats || []; return s; };
   const petTab = (p, on, attr) => petOf(p) ? `<button class="ktab ${on ? 'on' : ''}" ${attr} aria-label="${T('My companion’s hats', 'Mũ của bạn đồng hành')}">${pic('🐾')}</button>` : '';
   const petGrid = (h, shop) => { const s = petOf(h.profile), next = G.kidplay.nextHat(h);
@@ -116,9 +123,12 @@ export function createShop(G, { say, save }) {
   function openShop(i, host?) {
     if (!host && twoOpen(i)) return;
     const h = G.heroes[i], p = h.profile; adoptWorn(p);
+    // (v1.08 release fix 2, check friendoutfits on GitHub) the Outfits tab's code is fetched as the shop opens, so the first
+    // tap on Outfits shows the friend's outfits at once (on a slow device the tab stayed empty until the fetch ended)
+    import('./ui/friends-row.js').catch(() => { });
     const little = p.age !== 'big', m = host ? { close: () => {}, addEventListener: () => {} } : modal('kcard shopk' + (little ? ' little' : ''), ''), card = host || m.querySelector('.card');
     card.classList.add('shop-content', 'kcard'); if (little) card.classList.add('little'); let collection = setOf(p.look)==='girl'?'g':'b'; let recipient = p;
-    let pick = null, more = false;   // more: the other set too (Round U)
+    let pick = null, more = false, suitPick = null;   // more: the other set too (Round U); suitPick: an outfit tapped once (v1.08b)
     // (r79, owner 16 Oct) clothes of the other set are bought only as a gift (wrapped in the Backpack), never worn
     const isGift = it => recipient === p && !forSet(it, setOf(p.look));
     const close = () => { if (host) return; m.close(); G.paused = false; };
@@ -127,7 +137,7 @@ export function createShop(G, { say, save }) {
       const all = [...forSlot(tab), ...CLOTHES.filter(it => it.tester && it.slot === tab && owns(p, it.id))], list = all.filter(it => collection === 'all' || forSet(it, collection==='g'?'girl':'boy')), hidden = 0;
       card.innerHTML = `${host ? '' : `<button class="x" aria-label="${T('Close', 'Đóng')}">✕</button>`}
         <div class="khead"><span class="kbig">${pic('🛍️')}</span><h2>${T('Clothes shop', 'Cửa hàng quần áo')}</h2>${coins(farm.coins)}</div>
-        <div class="shop-collections">${[['all', 'All', 'Tất cả'], ['b', 'Men / boys', 'Nam / bé trai'], ['g', 'Ladies / girls', 'Nữ / bé gái']].map(([key, en, vi]) => `<button class="btn ${collection === key ? 'primary' : ''}" data-set="${key}">${T(en, vi)}</button>`).join('')}</div><label>${T('Buying for', 'Mua cho')} <select class="shop-recipient">${profiles.map(q => `<option value="${q.id}" ${recipient.id === q.id ? 'selected' : ''}>${escName(q.name)}</option>`).join('')}</select></label><p class="note">${T('Your own collection is for you to wear. Clothes from the other collection are gifts: they wait, wrapped, in your Backpack until you give them to a friend.', 'Bộ đồ của con là để con mặc. Đồ của bộ kia là quà: được gói trong Ba lô cho đến khi con tặng bạn.')}</p><img class="shop-preview" alt="${T('Your outfit preview', 'Xem trước trang phục')}" src="${G.avatarPreview(i)}"><div class="ktabs">${SLOTS.map(s => `<button class="ktab ${s.id === tab ? 'on' : ''}" data-tab="${s.id}" aria-label="${T(s.en, s.vi)}">${pic(s.icon)}</button>`).join('')}
+        <div class="shop-collections">${[['all', 'All', 'Tất cả'], ['b', 'Men / boys', 'Nam / bé trai'], ['g', 'Ladies / girls', 'Nữ / bé gái']].map(([key, en, vi]) => `<button class="btn ${collection === key ? 'primary' : ''}" data-set="${key}">${T(en, vi)}</button>`).join('')}</div><label>${T('Buying for', 'Mua cho')} <select class="shop-recipient">${profiles.map(q => `<option value="${q.id}" ${recipient.id === q.id ? 'selected' : ''}>${escName(q.name)}</option>`).join('')}</select></label><p class="note">${T('Your own collection is for you to wear. Clothes from the other collection are gifts: they wait, wrapped, in your Backpack until you give them to a friend.', 'Bộ đồ của con là để con mặc. Đồ của bộ kia là quà: được gói trong Ba lô cho đến khi con tặng bạn.')}</p><img class="shop-preview" alt="${T('Your outfit preview', 'Xem trước trang phục')}" src="${G.avatarPreview(i)}"><div class="ktabs">${SLOTS.map(s => `<button class="ktab ${s.id === tab ? 'on' : ''}" data-tab="${s.id}" aria-label="${T(s.en, s.vi)}">${pic(s.icon)}</button>`).join('')}${p.look.friend ? `<button class="ktab ${tab === 'suit' ? 'on' : ''}" data-stab="1" aria-label="${T('Outfits for your friend', 'Bộ đồ cho bạn của con')}">${pic('👗')}</button>` : ''}
           ${petTab(p, tab === 'pet', 'data-ptab="1"')}<button class="ktab alt" data-go="wardrobe" aria-label="${T('My wardrobe', 'Tủ đồ của con')}">${pic('🪞')}</button></div>
         <div class="kgrid">${list.map(it => { const gift = isGift(it), have = !gift && owns(recipient, it.id), worn = recipient === p && p.look[it.slot] === it.id;
           return `<button class="kitem ${have ? 'have' : ''} ${worn ? 'on' : ''} ${gift ? 'gift' : ''} ${!have && farm.coins < priceOf(it) ? 'poor' : ''}" data-id="${it.id}" aria-label="${T(it.en, it.vi)}${gift ? ' · ' + T('a gift to give', 'quà để tặng') : ''}">${itemSVG(it)}${gift ? `<span class="kgift">${pic('🎁')}</span>` : ''}${have ? `<span class="ktick">${pic('✅')}</span>` : coins(priceOf(it))}</button>`; }).join('')}</div>
@@ -139,6 +149,10 @@ export function createShop(G, { say, save }) {
       const mb = card.querySelector('.kmore'); if (mb) mb.onclick = () => { more = !more; SFX.tap(); draw(); };
       card.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => { tab = b.dataset.tab; pick = null; SFX.tap(); const s = SLOTS.find(x => x.id === tab); say(s.en, s.vi); draw(); });
       card.querySelector('[data-go="wardrobe"]').onclick = () => { openWardrobe(i, draw, card); };
+      // (v1.08b friends) the outfits of the child's friend: everyday (free), áo dài, festival and rain day; tap once to see
+      // the price, again to buy; an outfit the child has is put on with one tap
+      const st = card.querySelector('[data-stab]') as HTMLElement; if (st) st.onclick = () => { tab = 'suit'; pick = null; SFX.tap(); say('Outfits for your friend. Tap one to see it, tap again to buy it.', 'Bộ đồ cho bạn của con. Chạm một lần để xem, chạm lần nữa để mua.'); draw(); };
+      if (tab === 'suit') { import('./ui/friends-row.js').then(R => R.suitTab(card, { G, h, p, i, draw, coins, itemSVG, SHOP_LINES, save, pick: () => suitPick, setPick: v => { suitPick = v; }, back: () => { tab = 'hat'; draw(); } })); return; }
       const pt = card.querySelector('[data-ptab]'); if (pt) pt.onclick = () => { tab = 'pet'; pick = null; SFX.tap(); say('Save coins for a hat for your companion. Choose Buy when you are ready.', 'Để dành tiền mua mũ cho bạn đồng hành. Chọn Mua khi con đã sẵn sàng.'); draw(); };
       if (tab === 'pet') { if (!petOf(p)) { tab = 'hat'; draw(); return; } const g = card.querySelector('.kgrid'); if (g) g.innerHTML = petGrid(h, true); card.querySelectorAll('.shop-collections, .kmore').forEach(e => e.remove());
         card.querySelectorAll('[data-pet]').forEach(b => b.onclick = () => petTap(h, b.dataset.pet, draw)); return; }

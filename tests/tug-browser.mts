@@ -23,7 +23,9 @@ export async function tugBrowserCheck(browser:Browser){
  try{
   await start('vi',true);let taps=0,loops=0;const deadline=Date.now()+90000;
   while(!await P.page.locator('.gl-win').count()&&Date.now()<deadline&&loops++<1000){
-   const pull=P.page.locator('[data-tug-pull]:not([disabled])');if(await pull.count()){await pull.click();taps++;}
+   // (v1.08 fixes 2: passed only on its second try) the button can be disabled between the count and the click (the pause
+   // after a pull, the round ending): a tap that is no longer possible waits for the next turn instead of 30 s
+   const pull=P.page.locator('[data-tug-pull]:not([disabled])');if(await pull.count()&&await pull.click({timeout:1500}).then(()=>true,()=>false))taps++;
    await P.page.evaluate(()=>window.__tugTest!.drive());await P.page.waitForTimeout(60);
    assert.equal(await P.page.evaluate(()=>document.querySelector<HTMLElement>('.tug-shared')?.dataset.pulls===window.__tugTest!.pulls().join(',')),true,'rendered rope and invited peers must agree in the same event turn');
   }

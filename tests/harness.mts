@@ -1,12 +1,16 @@
 // Shared helpers for the browser checks: open the game, start a session, collect errors.
 import { chromium } from 'playwright';
 export const URL = process.env.SV_URL || 'http://localhost:8765/';
-export async function launch() {
+// (v1.08 fixes 2) full: Chromium's own new headless mode instead of Playwright's lighter headless shell, which cannot
+// show a service worker's notifications (check pushnotify was red on GitHub only); both come with "playwright install chromium"
+export async function launch({ full = false } = {}) {
   // SV_CHROME_ARGS: extra browser switches, e.g. to try fewer drawing threads when tests/suite.mts runs several at once
-  return chromium.launch({ executablePath: process.env.CHROMIUM || undefined, args: [...(process.env.SV_CHROME_ARGS || '').split(' ').filter(Boolean), '--use-gl=swiftshader', '--enable-unsafe-swiftshader', '--autoplay-policy=no-user-gesture-required', '--use-fake-ui-for-media-stream', '--use-fake-device-for-media-stream', '--js-flags=--expose-gc'] });
+  return chromium.launch({ executablePath: process.env.CHROMIUM || undefined, channel: full && !process.env.CHROMIUM ? 'chromium' : undefined, args: [...(process.env.SV_CHROME_ARGS || '').split(' ').filter(Boolean), '--use-gl=swiftshader', '--enable-unsafe-swiftshader', '--autoplay-policy=no-user-gesture-required', '--use-fake-ui-for-media-stream', '--use-fake-device-for-media-stream', '--js-flags=--expose-gc'] });
 }
 // (round P: a new device starts with nobody; the checks play as two children made beforehand)
-export const seedPlayers = () => { try { if (!localStorage.getItem('sv2_profiles')) localStorage.setItem('sv2_profiles', JSON.stringify([
+// (v1.08b platform) the checks' devices stay on the MP3 recordings (what Safari and older devices play), unless a check
+// chooses otherwise: the voice checks are about downloading and playing, the Opus copies are checked by voiceopus
+export const seedPlayers = () => { try { if (!localStorage.getItem('sv2_voiceFmt')) localStorage.setItem('sv2_voiceFmt', 'mp3'); } catch (e) { } try { if (!localStorage.getItem('sv2_profiles')) localStorage.setItem('sv2_profiles', JSON.stringify([
     { id: 'kna', name: 'Bé Na', photo: null, age: 'little', difficulty: 'easy', look: { style: 'dress', color: '#ff5fa2', hat: 'bow', back: 'wings', hairStyle: 'buns' }, created: 1 },
     { id: 'kbin', name: 'Bé Bin', photo: null, age: 'little', difficulty: 'easy', look: { style: 'shirt', color: '#3b6fe0', hat: 'cap', back: 'cape', hairStyle: 'short' }, created: 2 }])); } catch (e) { } };
 export async function open(browser, { w = 1180, h = 820, lang = 'en', mode = 'solo', touch = false, settings = {}, play = true, pre = null, dpr = 1, fast = true, url = URL, screen = 'valley', route = null, schedule = false } = {}) {
@@ -30,7 +34,10 @@ export async function open(browser, { w = 1180, h = 820, lang = 'en', mode = 'so
   // plays as after every batch has started: a rule whose start is still to come is left out, and the feature is on by its
   // own default and switched by CUSTOM.features as before the schedule; the second set of games and stories is switched
   // on. The rollout check, which checks the schedule itself, passes schedule: true and gets the file as shipped
-  if (!schedule) await ctx.route('**/content/custom.json', async r => {
+  // (v1.08 fixes) a check that closes its page while this file is still on its way made route.fetch throw outside any
+  // check ("Request context disposed"), which stopped the whole run and every check after it in that shard
+  if (!schedule) await ctx.route('**/content/custom.json', async r => { try { await customRoute(r); } catch (e) { if (!/disposed|closed|Target page, context or browser/i.test(String(e))) throw e; } });
+  async function customRoute(r) {
     const res = await r.fetch(); let j; try { j = await res.json(); } catch (e) { return r.fulfill({ response: res }); }
     const today = new Date().toISOString().slice(0, 10);
     for (const [id, rule] of Object.entries(j.releases || {})) if (rule && typeof rule === 'object' && 'start' in rule && typeof rule.start === 'string' && rule.start > today) delete j.releases[id];
@@ -45,7 +52,7 @@ export async function open(browser, { w = 1180, h = 820, lang = 'en', mode = 'so
     // Fruit Parade is likewise explicitly enabled for functional checks; dedicated gating cases override this route.
     j.releases = { ...(j.releases || {}), newGames: { on: true }, newStories: { on: true }, sparkleFruitParade_single: { on: true }, sparkleFruitParade_multi: { on: true } };
     await r.fulfill({ response: res, json: j });
-  });
+  }
   if (route) await route(ctx); // (marketing films) change what the page loads
   await page.goto(url);
   await page.waitForSelector('.screen.title', { timeout: 90000 });
@@ -70,7 +77,19 @@ export async function start(page, mode = 'solo', screen = 'valley') {
   // (round R) Ông Cú's prologue film starts by itself for a new child; the checks start without it unless they ask
   await page.evaluate(() => { if (window.__sv) window.__sv._owlAuto = true; });
   await page.click('.who .go', { timeout: 90000 });
+  // (v1.08b friends) the seeded children are old saves, so the one-time "New friends are here!" card comes first; the checks
+  // keep the friend they were moved to (Finn or Clara) and play on, as with the prologue below. The card itself is checked
+  // by "friendmigrate".
+  await page.waitForFunction(() => (window.__sv && window.__sv.heroes.length > 0) || !!document.querySelector('.modal.newfriends [data-go="play"]'), null, { timeout: 90000 });
+  for (let i = 0; i < 4; i++) { const b = await page.$('.modal.newfriends:not(.out) [data-go="play"]'); if (!b) break;
+    // (v1.08) with three game windows open at once (check phone) a busy machine can keep the pointer tap from landing for
+    // 30 s; this card is only set-up here (friendmigrate checks it), so the button is pressed directly if the tap stalls
+    await b.click({ timeout: 8000 }).catch(() => b.evaluate(e => (e as HTMLElement).click()).catch(() => { })); await page.waitForTimeout(250); }
   await page.waitForFunction(() => window.__sv && window.__sv.heroes.length > 0);
+  // (v1.08d valley) parts of the valley are built after the start, near the child first and far ones when the child comes
+  // near (js/areas.ts); the checks play in the whole valley, so every part is built first (check areastream checks the
+  // building as the child walks)
+  await page.evaluate(() => window.__sv.areas && !(window as unknown as { __svAreaStream?: boolean }).__svAreaStream && window.__sv.areas.all());
   // skip the prologue
   for (let i = 0; i < 40; i++) { const sb = await page.$('.storybook'); if (!sb) break; await page.evaluate(() => { const b = document.querySelector<HTMLElement>('.storybook .sb-next, .storybook .next, .storybook button:last-of-type'); b && b.click(); }); await page.waitForTimeout(80); }
   await page.evaluate(() => { document.querySelectorAll('.storybook').forEach(e => e.remove()); window.__sv.paused = false; });
@@ -91,6 +110,8 @@ export async function clear(page) {
 // The sticker checks leave the welcome alone.
 export async function noWelcome(page) {
   await page.evaluate(() => import(String('/js/stickers.js')).then(S => { for (const h of window.__sv.heroes) S.book(h.profile).welcomed = Date.now(); }));
+  // (v1.08b quality) and Lumi's welcome and the week's news on the Simple screen are counted as heard (js/lumi.ts)
+  await page.evaluate(() => Promise.all([import(String('/js/content/lumi.js')), import(String('/js/content/parents.js'))]).then(([L, P]) => { for (const h of window.__sv.heroes) h.profile.lumi = { met: Date.now(), news: L.weekKey(P.aestDate()) }; }));
 }
 
 // ---- which game code a check ran (SV_COVER=1; tests/suite.mts builds tests/check-map.json from it) ----

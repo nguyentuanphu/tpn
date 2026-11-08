@@ -2,12 +2,14 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath}from'node:url';
-import {speechRoutes,VOICE_DELIVERY}from'./voice-providers.mts';
+import {speechRoutes,VOICE_DELIVERY,ASIDE_VOICES_ON}from'./voice-providers.mts';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const read=(file:string)=>JSON.parse(fs.readFileSync(path.join(root,file),'utf8'));
 export function auditVoiceRoutes(){
  const held=new Set<string>(read('docs/fpt-leminh-full-20261025/inventory.json').privacyHeld.map((x:{id:string})=>x.id));
- const inventory=read('docs/v1.02-orchard-arcade/voice-delta.json'),optional=read('voices/fpt-leminh-v1/manifest.json');
+ const inventory=read('docs/v1.02-orchard-arcade/voice-delta.json'),// (owner, 3 Nov 2026 AEDT, v1.08 voices-aside) Lê Minh is put aside in voices-aside/: its pack is audited only when
+ // it is switched back on (SV_ASIDE_VOICES=1, voices-aside/README.md); otherwise no route asks for it
+ optional=ASIDE_VOICES_ON?read('voices/fpt-leminh-v1/manifest.json'):{lines:{},encoding:VOICE_DELIVERY};
  const publicTexts=new Map<string,{text:string;source:string}>();
  for(const file of['docs/fpt-leminh-full-20261025/inventory.json','docs/fpt-v102-labels-20261026/inventory.json','docs/v1.02-orchard-arcade/voice-delta.json'])for(const l of read(file).lines)if(!held.has(l.id))publicTexts.set(l.id,{text:l.text,source:file});
  const deltas=path.join(root,'docs/voice-recording-delta');
@@ -31,7 +33,7 @@ export function auditVoiceRoutes(){
   }
  }
  const vi=read('voices/manifest-vi.json');
- for(const l of inventory.mixedFragments||[])if(l.lang==='vi'&&!vi.lines[l.id]&&!held.has(l.id)){
+ for(const l of ASIDE_VOICES_ON?inventory.mixedFragments||[]:[])if(l.lang==='vi'&&!vi.lines[l.id]&&!held.has(l.id)){
   const destination=`voices/fpt-leminh-v1/${l.id}.mp3`;counts['fpt:leminh']=(counts['fpt:leminh']||0)+1;
   if(!optional.lines[l.id]||!fs.existsSync(path.join(root,destination)))missing.push({id:l.id,provider:'fpt',voice:'leminh',language:'vi',destination,reason:'Missing reviewed Vietnamese fragment'});
   ledger.push({id:l.id,language:'vi',provider:'fpt',voice:'leminh',text:l.text,source:l.source,delivery:destination});

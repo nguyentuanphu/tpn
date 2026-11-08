@@ -14,6 +14,7 @@ export const priceOf = it => Math.max(5, Math.round(DAY_COINS * (TIERS[it && it.
 
 export const SLOTS = [
   { id: 'hat', icon: '👒', en: 'Hats and nón', vi: 'Mũ và nón' },
+  { id: 'face', icon: '🕶️', en: 'Glasses and masks', vi: 'Kính và mặt nạ' }, // (v1.08b friends: the new glasses slot)
   { id: 'neck', icon: '📿', en: 'Necklaces', vi: 'Vòng cổ' },
   { id: 'top', icon: '👕', en: 'Tops', vi: 'Áo' },
   { id: 'bottom', icon: '👖', en: 'Shorts, trousers and skirts', vi: 'Quần và váy' },
@@ -95,6 +96,13 @@ export const CLOTHES: Cloth[] = [
   I('backpack_g', 'back', 'backpack', '#a66bff', 'small', 'g', 'Purple little backpack', 'Ba lô nhỏ màu tím', '#ffd23f'),
   I('shell', 'back', 'shell', '#5fa860', 'nice', 'b', 'Turtle shell', 'Mai rùa', '#a0724a'),
   I('shell_g', 'back', 'shell', '#5fbfb0', 'nice', 'g', 'Sea turtle shell', 'Mai rùa biển', '#c9a0e0'),
+  // (v1.08b friends) glasses and a mask: they fit all four friends (and every villager) on the face
+  I('sunglasses', 'face', 'glasses', '#2b2238', 'small', 'b', 'Sunglasses', 'Kính râm'),
+  I('sunglasses_g', 'face', 'glasses', '#ff5fa2', 'small', 'g', 'Pink sunglasses', 'Kính râm hồng'),
+  I('roundglasses', 'face', 'roundglasses', '#8a5a32', 'small', 'b', 'Round glasses', 'Kính tròn'),
+  I('roundglasses_g', 'face', 'roundglasses', '#a66bff', 'small', 'g', 'Purple round glasses', 'Kính tròn tím'),
+  I('starmask', 'face', 'mask', '#ffd23f', 'nice', 'b', 'Star mask', 'Mặt nạ ngôi sao'),
+  I('starmask_g', 'face', 'mask', '#ff9ac8', 'nice', 'g', 'Pink star mask', 'Mặt nạ ngôi sao hồng'),
   // (owner, 12 Oct: tester rewards) earned only by testers (js/testerrewards.js), never sold in the shop
   { ...I('sleuthhat', 'hat', 'sleuth', '#8a6a3a', 'special', 'b', 'Bug hunter hat (with a magnifying glass)', 'Mũ săn bọ (có kính lúp)', '#7fd3ff'), tester: true },
   { ...I('sleuthhat_g', 'hat', 'sleuth', '#b07ad0', 'special', 'g', 'Bug hunter hat, purple (with a magnifying glass)', 'Mũ săn bọ màu tím (có kính lúp)', '#7fd3ff'), tester: true },
@@ -109,8 +117,8 @@ export const forSlot = slot => CLOTHES.filter(x => x.slot === slot && !x.tester)
 
 // the two default outfits (owner: "only 2 default outfits, boy and girl"); hair is chosen when the character is made
 export const DEFAULT_OUTFITS = {
-  girl: { style: 'dress', color: '#ff5fa2', hat: 'none', neck: 'none', top: 'none', bottom: 'none', feet: 'none', back: 'none' },
-  boy: { style: 'shirt', color: '#3b6fe0', hat: 'none', neck: 'none', top: 'none', bottom: 'none', feet: 'none', back: 'none' }
+  girl: { style: 'dress', color: '#ff5fa2', hat: 'none', face: 'none', neck: 'none', top: 'none', bottom: 'none', feet: 'none', back: 'none' },
+  boy: { style: 'shirt', color: '#3b6fe0', hat: 'none', face: 'none', neck: 'none', top: 'none', bottom: 'none', feet: 'none', back: 'none' }
 };
 export const outfitOf = look => Object.keys(DEFAULT_OUTFITS).find(k => { const o = DEFAULT_OUTFITS[k]; return look && look.style === o.style && look.color === o.color; }) || null;
 

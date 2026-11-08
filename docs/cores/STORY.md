@@ -21,6 +21,15 @@ Under-5s get the same story with fewer steps and no reading. Big children (5 to 
 
 ## Chapters and release dates
 
+**Changed by the owner, 3 Nov 2026 AEDT (pop-ups), for v1.09** (see `docs/plans/v109-extras.md`):
+- **Chapter 4** is the end-of-year festive season in both countries, from Christmas to New Year's Eve, released in early December.
+- **Chapter 5** is Huế, Đà Nẵng, Melbourne and Uluru, released in January.
+- **The Finale** is at Tết.
+- **Season 2** explores more of Vietnam and Australia (Mekong, Hạ Long, Sapa, Central Highlands; Great Barrier Reef, Tasmania, Perth), not China Town and India Village.
+- **Season 2, Vietnam (v1.08d s2vn, built 5-6 Nov 2026 AEDT):** Chapter 6, the Mekong floating market (Út Hoa, the monkey bridge, 15 Feb 2027); Chapter 7, Hạ Long Bay (Hải, Hòn Trống Mái, 15 Mar 2027); Chapter 8, Sapa in spring (Mỷ, the rice terraces, 12 Apr 2027); Chapter 9, the gong festival of the Central Highlands (Y Đam, the nhà rông, 10 May 2027). Each opens with its region (`js/content/s2vn.ts`, `js/s2vn.ts`); files `js/content/chapter6.ts` to `chapter9.ts`. Chapters 10 to 12 are Australia's (s2au).
+
+The table below is the original plan of 9 Oct.
+
 | Chapter | Region | Lantern found by | Landmark that lights up | Festival night | Release |
 |---|---|---|---|---|---|
 | Prologue | Làng Sen (home) | Ông Cú tells the story; pick a companion | The valley's lantern tower | The lantern festival that was blown away | mid Oct |

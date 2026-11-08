@@ -7,7 +7,7 @@ import { T, nm } from '../i18n.js';
 import { say } from '../voice.js';
 import { SFX, ac } from '../audio.js';
 import { el, esc, $ } from '../util.js';
-import { REGION_NAMES } from '../world.js';
+import { REGION_NAMES, regionAt } from '../world.js';
 import { avatarURL } from '../avatar.js';
 import { Net, MAX_ROOM, ROOM_LEN, okPub } from '../net.js';
 import { dialog, toast, modal, openGrownups } from '../ui.js';
@@ -90,6 +90,8 @@ function friendNote(f, st) {
   const name = nm(st.name || f.name), where = st.at && REGION_NAMES[st.at] ? REGION_NAMES[st.at]() : '';
   const pop = el('div', 'vc-pop friendnote', `<p class="vc-heard">🟢 ${esc(T(`${name} is playing!`, `${name} đang chơi!`))}</p><div class="ff-row"><div class="ff-txt"><small>${esc(where)}${st.room ? ' · ' + T('in a room', 'đang ở trong phòng') + ` (${(st.players || 1)}/${MAX_ROOM})` : ''}</small></div></div>
     <div class="ff-btns"><button class="btn primary" data-inv>📨 ${T('Invite', 'Mời bạn')}</button>${st.room && (st.players || 1) < MAX_ROOM && Net.sameMap(st.map) ? `<button class="btn" data-go>▶ ${T('Go to their room', 'Sang phòng bạn')}</button>` : ''}<button class="btn" data-no>${T('Later', 'Để sau')}</button></div>`);
+  // (v1.08 release) when the card came, so the meet check counts its 10 still seconds from then (the card closes itself after 45 s)
+  pop.dataset.at = String(Date.now());
   document.body.appendChild(pop); SFX.chime(); say('Your friend is playing too!', 'Bạn của con cũng đang chơi!');
   const close = () => { pop.remove(); clearTimeout(t); }, t = setTimeout(close, 45000);
   pop.querySelector('[data-no]').onclick = () => { SFX.tap(); close(); };
@@ -99,7 +101,9 @@ function friendNote(f, st) {
 setInterval(() => G.autoMeet(), 12000);
 // what my friends see about me (only when sharing is switched on): (round R privacy, 9 Oct) everyone with my friend code
 // sees only "playing now"; my name, the place I am in and my room go locked to each saved friend whose key I have (net.js)
-G.shareStatus = () => { const h = G.heroes[0]; if (!h || !settings.online || !settings.friendsOn) return; Net.friendsShare({ map: Net.mapVersion, name: h.profile.name, at: G.regionOf[0] || '', room: Net.role && !Net.knocking ? Net.code : null, players: Net.role ? Net.count : 0, host: Net.role === 'host' }); };
+// (v1.08 cloud fix) where I am is worked out from where the hero stands now: G.regionOf follows only on the next frame,
+// which on a slow device came after this note had gone, so a friend kept seeing the place before a jump or a ride
+G.shareStatus = () => { const h = G.heroes[0]; if (!h || !settings.online || !settings.friendsOn) return; Net.friendsShare({ map: Net.mapVersion, name: h.profile.name, at: (h.indoors ? G.regionOf[0] : regionAt(h.pos.x, h.pos.z)) || '', room: Net.role && !Net.knocking ? Net.code : null, players: Net.role ? Net.count : 0, host: Net.role === 'host' }); };
 setInterval(() => { if (isPlaying()) G.shareStatus(); }, 45000);
 // signal bars: ▂▄▆█ with the strong ones lit
 G.netQuality = id => Net.quality(id);
@@ -160,7 +164,10 @@ G.drawOnlinePanel = (body, redraw) => {
     body.querySelectorAll<HTMLElement>('[data-rm]').forEach(b => b.onclick = () => { settings.friends = settings.friends.filter(f => f.code !== b.dataset.rm); saveSettings(); redraw(); });
     body.querySelectorAll<HTMLElement>('[data-joinf]').forEach(b => b.onclick = async () => { SFX.tap(); const f = settings.friends.find(x => x.code === b.dataset.fc), st = Net.friends.status[b.dataset.fc] || {}; await G.joinFriend(b.dataset.joinf, f && st.host ? f.pub : null); redraw(); });
     body.querySelectorAll<HTMLButtonElement>('[data-inv]').forEach(b => b.onclick = async () => { b.disabled = true; inviteToast(await G.inviteFriend(b.dataset.inv)); b.disabled = false; });
-    body.querySelectorAll<HTMLElement>('[data-mictest]').forEach(b => b.onclick = () => { SFX.tap(); import('../mictest.js').then(M => M.openMicTest()); });
+    // (v1.08 release fix 2, check mictest on GitHub) the test's code is fetched as soon as its button shows, so a grown-up's
+    // tap opens it at once (on a slow device the window came only after the fetch)
+    const micBtns = body.querySelectorAll<HTMLElement>('[data-mictest]'); if (micBtns.length) import('../mictest.js').catch(() => { });
+    micBtns.forEach(b => b.onclick = () => { SFX.tap(); import('../mictest.js').then(M => M.openMicTest()); });
   };
   if (Net.connected || Net.role === 'host') {
     const list = Object.values(Net.remotes);

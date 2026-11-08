@@ -462,7 +462,10 @@ await check('meet', async () => {
   for (const P of [A, B]) await P.page.evaluate(async () => { document.querySelectorAll('.storybook, .dialog, .modal, .reward').forEach(e => e.remove()); __sv.paused = false; window.__Net = (await import('/js/net.js')).Net; });
   await B.page.waitForSelector('.friendnote [data-inv]', { timeout: 90000 });
   const noteText = await B.page.textContent('.friendnote');
-  await B.page.waitForTimeout(10000);
+  // (v1.08 release, GitHub full suite 42366408968) 10 s from when the card came, not from when the check saw it: on a slow
+  // machine the card could already be 40 s old here and close itself (45 s, js/main/friends.ts) before the tap
+  const age = await B.page.evaluate(() => Date.now() - +(document.querySelector<HTMLElement>('.friendnote')?.dataset.at || Date.now()));
+  await B.page.waitForTimeout(Math.max(0, 10000 - age));
   const alone = await Promise.all([A, B].map(P => P.page.evaluate(() => ({ partners: Object.keys(__sv.partners).length, role: __Net.role }))));
   await B.page.click('.friendnote [data-inv]');
   await A.page.waitForSelector('.dialog .dchoices button', { timeout: 60000 }); await A.page.waitForTimeout(600); await A.page.evaluate(() => document.querySelector('.dialog .dchoices button').click()); // (the choices bounce in)
@@ -491,7 +494,9 @@ await check('cloud', async () => {
   const code = await A.page.evaluate(async () => __Net.host(__sv.sendHello()));
   await A.page.evaluate(async () => { const S = (await import('/js/world.js')).CITIES.find(c => c.id === 'saigon'); __sv.heroes[0].place(S.x, S.z); __sv.shareStatus(); });
   await B.page.waitForFunction(() => { const s = __Net.friends.status.AAAAA2; return s && s.online && s.room; }, null, { timeout: 30000 });
-  const status = await B.page.evaluate(() => { __sv.openPad(0, 'friend'); return new Promise(r => setTimeout(() => r(document.querySelector('.frow').innerText.replace(/\n+/g, ' ')), 600)); });
+  // (v1.08 cloud fix) the row redraws with each note; the note host() sent before A moved rightly names the start place
+  // and can be the one the wait above saw, so read the row once it names Saigon (10 s at most), not at a fixed 600 ms
+  const status = await B.page.evaluate(async () => { __sv.openPad(0, 'friend'); const row = () => (document.querySelector('.frow') as HTMLElement | null)?.innerText.replace(/\n+/g, ' ') || ''; await new Promise(r => setTimeout(r, 600)); for (let n = 0; n < 47 && !/TP\. Hồ Chí Minh/.test(row()); n++) await new Promise(r => setTimeout(r, 200)); return row(); });
   await B.page.evaluate(() => document.querySelector('[data-joinf]').click());
   await B.page.waitForFunction(() => Object.keys(__sv.partners).length > 0, null, { timeout: 45000 });
   await B.page.evaluate(() => { document.querySelectorAll('.modal').forEach(m => m.remove()); __sv.paused = false; });

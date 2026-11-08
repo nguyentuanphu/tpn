@@ -10,12 +10,12 @@
 //     works like the whistling kite: kept for good, carried beside the child (on or off in the Backpack), and a
 //     keepsake for the child's house (js/myhouse.js DECOR). Under-5s get it for joining in (no losing), big kids for a win.
 // Studio switch 'hoilang' (js/content/releases.js). Calm mode: the parade walks slowly and nobody bounces.
-import { THREE, P, merge, toonVC, sprite } from './gfx.js';
+import { THREE, P, merge, toonVC, sprite, worldTag } from './gfx.js';
 import { T } from './i18n.js';
 import { SFX, tone } from './audio.js';
 import { reduceMotion } from './state.js';
 import { heightAt, roadDist, WATER } from './world.js';
-import { buildAvatar } from './avatar.js';
+import { buildAvatar, crowdLook } from './avatar.js';
 import { featureOn } from './custom.js';
 import { events } from './core/events.js';
 import { id as makeId } from './core/ids.js';
@@ -53,7 +53,7 @@ export function createHoiLang(G, { say, save, reward }) {
     let at = null;
     for (let r = 4; r <= 14 && !at; r += 1.5) for (let a = 0; a < 16 && !at; a++) { const [x, z] = G.clearSpot(S.x + Math.cos(a / 16 * 6.283 + 2) * r, S.z + Math.sin(a / 16 * 6.283 + 2) * r, 1); if (free(x, z)) at = [x, z]; }
     if (!at) return;
-    const [x, z] = at, y = heightAt(x, z), pole = poleMesh(); pole.position.set(x, y, z); pole.rotation.y = k; scene.add(pole); world.colliders.push({ x, z, r: .4 });
+    const [x, z] = at, y = heightAt(x, z), pole = worldTag(poleMesh(), 'fe-hoilang-pole'); pole.position.set(x, y, z); pole.rotation.y = k; scene.add(pole); world.colliders.push({ x, z, r: .4 });
     const F = { k, S, x, z, stage, path: null };
     fests.push(F);
     G.interactables.push({ id: 'hoilang' + k, x, z, r: 2.6, icon: '🎪', bubble: '🎪', visible: () => on(),
@@ -108,12 +108,14 @@ export function createHoiLang(G, { say, save, reward }) {
 
   // ---------- the parade and the crowd ----------
   let walkers = null, crowd = null, active = null;
-  const make = (look, k) => { const A = buildAvatar(look, null); A.root.visible = false; scene.add(A.root); return A; };
+  const make = (look, k) => { const A = buildAvatar(crowdLook(look), null); A.root.visible = false; scene.add(A.root); return A; };
   const build = () => {
     walkers = LOOKS.slice(0, 4).map(make); crowd = LOOKS.slice(4, 9).map(make);
     // the first walker carries the festival flag
     const flag = new THREE.Mesh(merge([P(new THREE.CylinderGeometry(.03, .03, 2.4, 5), '#8a5a3b', [.35, 1.2, .1]), P(new THREE.BoxGeometry(.7, .45, .03), '#e8433a', [.72, 2.15, .1]), P(new THREE.SphereGeometry(.05, 6, 4), '#ffd23f', [.35, 2.42, .1])]), toonVC());
     walkers[0].root.add(flag);
+    // (v1.08g festivals) its Blender model when the parade comes near a child
+    worldTag(flag, 'fe-hoilang-flag');
   };
   // the village street: the stretch of road nearest the stage, up to 20 m each way (or a circle round the stage)
   const pathFor = F => {

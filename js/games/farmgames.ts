@@ -1,6 +1,7 @@
 // The original Sparkle Valley activities: order board, sorting baskets, feeding the bunny,
 // the photo jigsaw, odd one out, copy the tune, building a tower, the duckling maze,
 // the hot-air balloon and the bubble machine.
+import { deck } from './variety.js';
 import { register, untilRight, choiceButtons, tapOne, GAMES } from './frame.js';
 import { T, numWord, COLORS } from '../i18n.js';
 import { settings } from '../state.js';
@@ -176,12 +177,12 @@ const ODD_SETS = [
 register({
   id: 'oddone', icon: '🐸', name: () => T('Odd One Out', 'Tìm Hình Khác Loại'),
   async run(api) {
-    const rounds = 4;
+    const rounds = 4, set = deck(ODD_SETS);   // (v1.08 variety) every set once before any comes back
     for (let r = 0; r < rounds; r++) {
       api.dots(rounds, r); api.stage.innerHTML = '';
       // (levels) Talent: more alike to look through. (v1.07 levels) Medium was the same as Easy: now 3 alike on Easy, 4 on
       // Medium, 5 on Hard, 6 on Talent (each set has 3 pictures, doubled, so up to 6)
-      const [same, odd] = pick(ODD_SETS), k = api.talent ? 6 : Math.max(api.level >= 3 ? 4 : 3, lv(api, 3, 4, 5, 6));
+      const [same, odd] = set(), k = api.talent ? 6 : Math.max(api.level >= 3 ? 4 : 3, lv(api, 3, 4, 5, 6));
       mark(api, k + 1, rounds);
       const items = shuffle([...shuffle(same.concat(same)).slice(0, k), odd[0]]);
       api.say('Which one is different? Find the odd one out!', 'Cái nào khác loại? Tìm cái khác các bạn còn lại nhé!');

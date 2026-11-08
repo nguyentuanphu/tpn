@@ -56,11 +56,67 @@ await check('viwords', async () => {
     return { said, rec: pack && pack.lines[h], old: pack && pack.lines[H.packHash('en', line)], url: V.packUrl('en', line, 'f'), h };
   }, line);
   ok(JSON.stringify(r.said) === JSON.stringify([['en-AU', 'Buy some'], ['vi-VN', 'bánh khọt'], ['en-AU', 'from'], ['vi-VN', 'Vũng Tàu'], ['en-AU', ', please!']]), 'phone voice: ' + JSON.stringify(r.said));
-  ok(r.rec === 'fm' || r.rec === 'mf', `the pack has no two-voice recording of Cô Tam's line (${r.rec})`);
+  // (owner's decision, 3 Nov 2026 AEDT, v1.08 voices-aside: female voices only; not a weakened check) the male voice is put
+  // aside, so the line's recording is the female one
+  ok(r.rec === 'f', `the pack has no female recording of Cô Tam's line, or still names a male one (${r.rec})`);
   ok(!r.old && r.url.endsWith(r.h + '.mp3'), 'the old all-English recording is still used');
   const mp3 = fs.statSync(`../voices/en/f/${r.h}.mp3`).size;
   ok(!P.errors.length, P.errors.join(' | ')); await P.ctx.close();
-  return `${cases.length} lines cut right; the phone says the Vietnamese words with its Vietnamese voice; recorded lines use both voices (Cô Tam ${(mp3 / 1024).toFixed(0)} KB)`;
+  return `${cases.length} lines cut right; the phone says the Vietnamese words with its Vietnamese voice; recorded lines use the female voice (Cô Tam ${(mp3 / 1024).toFixed(0)} KB)`;
+});
+
+await check('enwords', async () => {
+  // (v1.08 aussie-voice, owner 3 Nov 2026 AEDT: "G'day" read by the Vietnamese voice came out as "gút dờ ay") the English
+  // slang inside Vietnamese lines is cut out and said by the English (en-AU) voice: by the recorded pack and the phone voice
+  const { enRuns, enMixed, mixedSsml } = await import('../../js/viwords.js'), { AUSSIE_SLANG } = await import('../../js/words.js');
+  const { lineHash, packHash } = await import('../../js/packhash.js'), { collectLines } = await import('../../tools/voice-lines.mts');
+  const show = t => enRuns(t).map(([l, x]) => l === 'en' ? '[' + x + ']' : x).join('');
+  const cases = [['"G\'day" nghĩa là gì?', '"[G\'day]" nghĩa là gì?'],
+    ["Ở Úc người ta nói G'day thay cho xin chào, và arvo nghĩa là buổi chiều!", "Ở Úc người ta nói [G'day] thay cho xin chào, và [arvo] nghĩa là buổi chiều!"],
+    ['"No worries, mate!" nghĩa là không sao đâu bạn ơi.', '"[No worries, mate!]" nghĩa là không sao đâu bạn ơi.'],
+    ['"Brekkie" là bữa sáng. Ai ăn bánh mì Vegemite không?', '"[Brekkie]" là bữa sáng. Ai ăn bánh mì [Vegemite] không?'],
+    ['"Kindy" nghĩa là trường mẫu giáo. Ví dụ: My little sister goes to kindy.', '"[Kindy]" nghĩa là trường mẫu giáo. Ví dụ: [My little sister goes to kindy.]'],
+    // Vietnamese that looks like English stays Vietnamese: "ta", a quoted word without marks, Chinese and Hindi words
+    ['Chúng ta đi chơi nhé. Ta ơi!', 'Chúng ta đi chơi nhé. Ta ơi!'], ['Gọi là "Ba" nhé, khi nghe tiếng "ập".', 'Gọi là "Ba" nhé, khi nghe tiếng "ập".'],
+    ['Tiếng Trung "xin chào" là "nǐ hǎo". Tiếng Hindi "cảm ơn" là "dhanyavaad".', 'Tiếng Trung "xin chào" là "nǐ hǎo". Tiếng Hindi "cảm ơn" là "dhanyavaad".'],
+    ['Xin chào! Con có khỏe không?', 'Xin chào! Con có khỏe không?']];
+  for (const [t, want] of cases) ok(show(t) === want, `cut: ${show(t)} (wanted ${want})`);
+  // every slang word the game teaches, in the Two Homes Words question and answer (js/games/folk2.ts)
+  for (const s of AUSSIE_SLANG) for (const t of [`"${s[0]}" nghĩa là gì?`, `Đúng rồi! "${s[0]}" nghĩa là ${s[2]}.`]) ok(enRuns(t).some(([l, x]) => l === 'en' && x === s[0]), `slang not in English: ${show(t)}`);
+  // the recording: the English pieces in the English voice of the same woman or man
+  const ssml = mixedSsml(enRuns('"G\'day" nghĩa là gì?'), 'en-AU-NatashaNeural', 'vi-VN-HoaiMyNeural', '', 'vi');
+  ok(/xml:lang="vi-VN"/.test(ssml) && /<voice name="en-AU-NatashaNeural">[^]*G&apos;day/.test(ssml) && /<voice name="vi-VN-HoaiMyNeural">[^]*nghĩa là gì/.test(ssml), 'SSML: ' + ssml);
+  // every Vietnamese line the game speaks with English words has its two-voice recording in the woman's voices (owner via
+  // Release, 3 Nov 2026 AEDT: only female voices from now on)
+  const man = JSON.parse(fs.readFileSync('../voices/manifest.json', 'utf8'));
+  let extra = []; try { extra = JSON.parse(fs.readFileSync('../tools/voice-extra.json', 'utf8')); } catch (e) { }
+  // (js/i18n.js expects a browser, as in tools/make-voice-pack.mts)
+  const g = globalThis as any; if (!g.document) Object.assign(g, { document: { documentElement: {} }, localStorage: { getItem: () => null, setItem: () => { } } });
+  const { swapNames } = await import('../../js/i18n.js');
+  const lines = [...new Set([...collectLines().map(l => swapNames(l.vi, 'vi')), ...extra.filter(l => l && l.lang === 'vi').map(l => String(l.text))])].filter(enMixed);
+  const missing = lines.filter(t => !String(man.lines[lineHash('vi', t)] || '').includes('f') || !fs.existsSync(`../voices/vi/f/${lineHash('vi', t)}.mp3`));
+  ok(lines.length >= 150 && lines.every(t => lineHash('vi', t) !== packHash('vi', t)), `only ${lines.length} Vietnamese lines with English words`);
+  ok(!missing.length, `${missing.length} not recorded with the English voice: ${missing.slice(0, 5).join(' | ')}`);
+  // the phone's own voices: the English pieces by its English voice, the rest by its Vietnamese voice
+  const P = await open(b, { w: 1180, h: 820 }); await clear(P.page);
+  const line = '"No worries, mate!" nghĩa là không sao đâu bạn ơi.';
+  const r = await P.page.evaluate(async line => {
+    const said = [], fake = [{ name: 'Karen', lang: 'en-AU', localService: true }, { name: 'Linh', lang: 'vi-VN', localService: true }];
+    window.SpeechSynthesisUtterance = class { constructor(t) { this.text = t; } };
+    speechSynthesis.getVoices = () => fake; speechSynthesis.speak = u => { said.push([u.lang, u.text]); setTimeout(() => u.onend && u.onend(), 5); };
+    speechSynthesis.dispatchEvent(new Event('voiceschanged'));
+    const V = await import('/js/voice.js'), H = await import('/js/packhash.js');
+    await V.sayDevice('vi', line);
+    const said2 = said.splice(0); await V.sayDevice('vi', "Ở Úc người ta nói G'day thay cho xin chào!");
+    const pack = V.voicePack(), h = H.lineHash('vi', line);
+    return { said: said2, said3: said, rec: pack && pack.lines[h], url: V.packUrl('vi', line, 'f'), h };
+  }, line);
+  ok(JSON.stringify(r.said) === JSON.stringify([['en-AU', 'No worries, mate!'], ['vi-VN', '" nghĩa là không sao đâu bạn ơi.']]), 'phone voice: ' + JSON.stringify(r.said));
+  ok(JSON.stringify(r.said3) === JSON.stringify([['vi-VN', 'Ở Úc người ta nói'], ['en-AU', "G'day"], ['vi-VN', 'thay cho xin chào!']]), 'phone voice: ' + JSON.stringify(r.said3));
+  // (the page in English loads only the English half of the pack list: the Vietnamese half is read from the file here)
+  ok(r.h === lineHash('vi', line) && String(man.lines[r.h] || '').includes('f') && r.url.endsWith(r.h + '.mp3'), `the game does not play the two-voice recording (${r.h}, ${r.url})`);
+  ok(!P.errors.length, P.errors.join(' | ')); await P.ctx.close();
+  return `${cases.length} lines and ${AUSSIE_SLANG.length} slang words cut right; ${lines.length} Vietnamese lines with English words recorded with the English voice for those words; the phone says them with its English voice`;
 });
 
 // No phone emoji anywhere (owner, round R): every emoji on screen is the game's own drawing (js/emojiswap.js), on the
@@ -161,5 +217,12 @@ await check('types', async () => {
   // (owner, 16-17 Oct AEDT: TypeScript batches 1 and 2) the website's server pieces, the Studio engine and the tools, as Node runs them
   let server = ''; try { server = runTsc(['-p', 'tsconfig.server.json', '--listFilesOnly']); runTsc(['-p', 'tsconfig.server.json']); } catch (e) { ok(false, 'tsconfig.server.json: ' + diagnostics(e)); }
   const n = JSON.parse(fs.readFileSync('tsconfig.json', 'utf8')).files.length, ts = server.split('\n').filter(f => /\.(mts|cts)$/.test(f) && !f.includes('node_modules')).length;
-  return `${n} explicit files type-checked; detector/outbox/family-backup modules additionally strict-checked; ${ts} TypeScript files of the server, Studio and tools; no errors`;
+  // (v1.08b quality, owner 3 Nov 2026 AEDT: "Make sure everything is built in ts") the test code and marketing/source
+  // (tsconfig.tests.json): their findings when first checked are in types-baseline.json; a file may only go down
+  let tout = ''; try { tout = runTsc(['-p', 'tsconfig.tests.json']); } catch (e) { tout = [e.stdout, e.stderr].filter(Boolean).join('\n'); }
+  const now = {}; for (const m of tout.matchAll(/^([^\s(]+)\(\d+,\d+\): error TS/gm)) now[m[1]] = (now[m[1]] || 0) + 1;
+  const base = JSON.parse(fs.readFileSync('types-baseline.json', 'utf8')).files, worse = Object.entries(now).filter(([f, k]) => k > (base[f] || 0));
+  ok(!worse.length, 'new type findings in the test code: ' + worse.map(([f, k]) => `${f} ${k} (was ${base[f] || 0})`).join(', ') + ' | ' + tout.split('\n').filter(l => worse.some(([f]) => l.startsWith(f + '('))).slice(0, 6).join(' | '));
+  let left = 0; for (const k of Object.values(now)) left += Number(k);
+  return `${n} explicit files type-checked; detector/outbox/family-backup modules additionally strict-checked; ${ts} TypeScript files of the server, Studio and tools; no errors; the test code and marketing/source checked too: ${left} known findings left (types-baseline.json, none new)`;
 });

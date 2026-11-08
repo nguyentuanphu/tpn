@@ -7,7 +7,7 @@ import {HorseSession} from './horse-session.js';
 import {tumble} from './reveal.js';
 import {COLORS,globalPos,legalMoves,npcChooseMove,ringLength,type Mode,type NPCDifficulty,type GameState} from './cacuangua-core.js';
 import type {Profile} from '../../types/save.js';
-type Api={stage:HTMLElement;players:Profile[];difficulty?:string;little:boolean;two:boolean;strong:boolean;level:number;smart?:number;talent?:boolean;online?:ArcadeOnline;closed:boolean;say(en:string,vi:string):void;right(e?:HTMLElement):void;sfx:{tap():void};plan(fn:()=>HTMLElement|null,opts:{maxActions:number}):void;onCleanup(fn:()=>void):void;win(extra:{title:string;titleVi:string}):Promise<unknown>};
+type Api={stage:HTMLElement;players:Profile[];difficulty?:string;little:boolean;two:boolean;strong:boolean;level:number;smart?:number;talent?:boolean;online?:ArcadeOnline;closed:boolean;say(en:string,vi:string):void;right(e?:HTMLElement):void;sfx:{tap():void};refit?():void;plan(fn:()=>HTMLElement|null,opts:{maxActions:number}):void;onCleanup(fn:()=>void):void;win(extra:{title:string;titleVi:string}):Promise<unknown>};
 const INK=['#cf475c','#347fbd','#22825d','#a97a12'];
 const FINISH:[string,string]=['The horses are home!','Ngựa về chuồng rồi!'];
 const NAMES:[string,string][]=[['Red','Đỏ'],['Blue','Xanh dương'],['Green','Xanh lá'],['Yellow','Vàng']];
@@ -84,7 +84,7 @@ async function run(api:Api){
  const changed=()=>queueMicrotask(render);
  const submit=(value:number)=>{if(session.submit(value))api.sfx.tap();};
  const start=()=>{session?.close();previousFinished=0;shownRolls=0;won=false;session=new HorseSession({online:api.online,mode:mode.value as Mode,seats:api.online?.names.length||Number(count.value),seed:api.online?.seed||'horse-local-'+Date.now(),changed});render();};
- const restart=control(T('Start a new local game','Bắt đầu ván cùng máy mới'),start);settingsRow.append(mode,count,helperLabel,difficulty,restart);helper.onchange=render;difficulty.onchange=render;
+ const restart=control(T('Start a new local game','Bắt đầu ván cùng máy mới'),()=>{start();api.refit?.();});settingsRow.append(mode,count,helperLabel,difficulty,restart);helper.onchange=render;difficulty.onchange=render;
  root.append(roster,board,status,actions,moves,wait,rules,settings);
  api.say('Move the horses home!','Đưa các chú ngựa về chuồng nhé!');start();
  api.plan(()=>{const s=session.state;if(!s||rolling||session.waiting||session.busy||!controlsArcadeTurn(s.turn,session.mine,session.online,helper.checked))return null;return s.pendingMove?moves.querySelector(`[data-horse-choice="${npcChooseMove(s,'standard').horse}"]`):roll;},{maxActions:4990});

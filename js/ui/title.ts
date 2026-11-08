@@ -3,10 +3,9 @@ import { T } from '../i18n.js';
 import { settings, autoPackOn } from '../state.js';
 import { SFX, ac } from '../audio.js';
 import { el, $ } from '../util.js';
-import { openCredits } from '../credits.js';
 import { installButton } from '../install.js';
 import { SHOWN } from '../build.js';
-import { hideCaption, flagBtns, learnBtns, bindLearn, bindLang, WEBSITE_ICON, openSite } from './common.js';
+import { hideCaption, flagBtns, bindLang, WEBSITE_ICON, openSite } from './common.js';
 // ---------- Title ----------
 export function showTitle(onStart) {
   // a storybook cover: the valley behind, the name on a cream card with little friends floating round it,
@@ -34,18 +33,21 @@ export function showTitle(onStart) {
     s.querySelector('.about').setAttribute('aria-label', T('About', 'Giới thiệu'));
     s.querySelector('.sitebtn-l').textContent = T('Website', 'Trang web'); s.querySelector('.sitebtn').setAttribute('aria-label', T('Sparkle Valley website for families', 'Trang web Thung Lũng Lấp Lánh cho gia đình'));
     s.querySelector('.title-foot').innerHTML = flagBtns();
-    s.querySelector('.title-learn').innerHTML = learnBtns(); bindLearn(s, redraw);
+    // (owner, 3 Nov 2026 AEDT, v1.08) Chinese and Hindi are not languages for the whole game, only extra learning: their
+    // "Also learn" buttons are not on the outside screens; they stay inside China Town, India Village and First Words
+    s.querySelector('.title-learn').innerHTML = '';
     // (owner, 31 Oct 2026 AEDT) the voices play over the internet unless a grown-up kept them all on the device; the
     // Welcome says so, and how to keep them for playing offline
-    const vn = s.querySelector('.tt-voice') as HTMLElement; vn.hidden = autoPackOn() && !!settings.packSaved;
-    vn.innerHTML = both('Voices play over the internet. To play offline with voices: Grown-ups → Sound and voices → Keep all voices on this device.',
-      'Giọng nói phát qua mạng. Để chơi offline có giọng nói: Người lớn → Âm thanh và giọng nói → Lưu tất cả giọng đọc vào máy.');
+    const vn = s.querySelector('.tt-voice') as HTMLElement; vn.hidden = (autoPackOn() && !!settings.packSaved) || settings.offlineLevel === 'light'; // (v1.08c: a grown-up chose Light)
+    vn.innerHTML = both('Voices play over the internet. To play offline with voices: Grown-ups → Sound and voices → Offline voices → Light or Full.',
+      'Giọng nói phát qua mạng. Để chơi offline có giọng nói: Người lớn → Âm thanh và giọng nói → Giọng đọc ngoại tuyến → Nhẹ hoặc Đầy đủ.');
     bindLang(s, redraw);
     const top = s.querySelector('.title-top'); top.innerHTML = '';
     const b = installButton(); if (b) top.appendChild(b);
   };
   redraw();
-  s.querySelector('.about').onclick = e => { e.stopPropagation(); ac(); openCredits(hideCaption); };
+  // (v1.08 startup, PERF-001) the credits load when the About button is tapped, not in the first download
+  s.querySelector('.about').onclick = e => { e.stopPropagation(); ac(); import('../credits.js').then(m => m.openCredits(hideCaption)).catch(err => console.warn('credits', err)); };
   // (r89, owner 23 Oct AEDT) the family website floats over the Welcome screen; closing it comes back here, not into play
   s.querySelector('.sitebtn').onclick = e => { e.stopPropagation(); ac(); SFX.tap(); openSite(e.currentTarget instanceof Element ? e.currentTarget : null); };
   let starting = false;

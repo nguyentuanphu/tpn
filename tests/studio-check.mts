@@ -101,7 +101,7 @@ export function memoryBlobs() {
 // (round R privacy) a clock the tests move on, so every sign-in has a fresh two-step code
 export const testClock = { t: Date.now() };
 const toURL = p => pathToFileURL(p).href;
-export async function fakeNetlify({ port, env, players, adminStore = memoryBlobs(), heldStore = memoryBlobs(), liveStore = memoryBlobs(), familyStore = memoryBlobs(), guardStore = memoryBlobs(), logStore = memoryBlobs(), testerStore = memoryBlobs(), parentAnalyticsStore = memoryBlobs(), managementDatabase = undefined, managementOperations = undefined }) {
+export async function fakeNetlify({ port, env, players, adminStore = memoryBlobs(), heldStore = memoryBlobs(), liveStore = memoryBlobs(), familyStore = memoryBlobs(), guardStore = memoryBlobs(), logStore = memoryBlobs(), testerStore = memoryBlobs(), parentAnalyticsStore = memoryBlobs(), pushStore = memoryBlobs(), managementDatabase = undefined, managementOperations = undefined }) {
   Object.assign(process.env, env);
   const { makeStudio } = await import(toURL(path.join(ROOT, 'netlify/functions/studio.mts')));
   const { makeHello } = await import(toURL(path.join(ROOT, 'netlify/functions/hello.mts')));
@@ -113,7 +113,7 @@ export async function fakeNetlify({ port, env, players, adminStore = memoryBlobs
   const { makeFamily } = await import(toURL(path.join(ROOT, 'netlify/functions/family.mts')));
   const { makeTester } = await import(toURL(path.join(ROOT, 'netlify/functions/tester.mts'))); // (owner, 12 Oct) tester reports
   const now = () => testClock.t, tester = makeTester({ testerStore: async () => testerStore, liveStore: async () => liveStore, guardStore: async () => guardStore, now }), family = makeFamily({ familyStore: async () => familyStore, guardStore: async () => guardStore, now });
-  const studio = makeStudio({ managementDatabase, managementOperations, playersStore: async () => players, adminStore: async () => adminStore, heldStore: async () => heldStore, liveStore: async () => liveStore, familyStore: async () => familyStore, guardStore: async () => guardStore, logStore: async () => logStore, testerStore: async () => testerStore, parentAnalyticsStore: async () => parentAnalyticsStore, now }), hello = makeHello({ playersStore: async () => players, botStore: async () => players, guardStore: async () => guardStore }), live = makeLive({ liveStore: async () => liveStore });
+  const studio = makeStudio({ managementDatabase, managementOperations, playersStore: async () => players, adminStore: async () => adminStore, heldStore: async () => heldStore, liveStore: async () => liveStore, familyStore: async () => familyStore, guardStore: async () => guardStore, logStore: async () => logStore, testerStore: async () => testerStore, parentAnalyticsStore: async () => parentAnalyticsStore, pushStore: async () => pushStore, now }), hello = makeHello({ playersStore: async () => players, botStore: async () => players, guardStore: async () => guardStore }), live = makeLive({ liveStore: async () => liveStore });
   const managementEndpoint=makeManagement({service:()=>managementService(async()=>liveStore,managementDatabase),guardStore:async()=>guardStore,now});
   const MIME = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.png': 'image/png', '.jpg': 'image/jpeg', '.svg': 'image/svg+xml', '.mp3': 'audio/mpeg', '.woff2': 'font/woff2' };
   const server = http.createServer(async (req, res) => {
@@ -380,7 +380,7 @@ export async function studioCheck(browser, open) {
     // (round R privacy) the exe reaches the website with a Studio key made online, never the password
     { const key = (await call('/studio/api/keys/make', { cookie: C, headers: X, body: { label: 'Test PC' } })).j.key; ok((await ex('settings', { studioKey: key })).status === 200, 'the exe did not take the Studio key'); }
     const ei = await ex('info'); ok(ei.j && ei.j.ok && !ei.j.online && ei.j.studio === info.j.studio, 'exe info: ' + JSON.stringify(ei.j));
-    ok((await ex('content', { message: { en: 'From the exe', vi: 'Từ máy' } })).status === 200 && /exe/.test(fs.readFileSync(path.join(game, 'content/custom.json'), 'utf8')), 'the exe did not save into its folder');
+    { const saved = await ex('content', { message: { en: 'From the exe', vi: 'Từ máy' } }); ok(saved.status === 200 && /exe/.test(fs.readFileSync(path.join(game, 'content/custom.json'), 'utf8')), 'the exe did not save into its folder: ' + JSON.stringify(saved).slice(0, 300)); }
     ok(fs.readdirSync(path.join(game, 'content/old')).length === 1, 'the exe kept no backup of the old content');
     { const web = (await call('/studio/api/players', { cookie: C })).j, exeR = (await ex('players')).j; ok(exeR && exeR.today && exeR.today.devices === web.today.devices && web.today.devices >= 3, 'the exe could not show the players: ' + JSON.stringify({ exe: exeR && exeR.today, web: web.today })); }
     ok((await ex('voices/inbox')).j.length === 2, 'the exe could not see the inbox');
@@ -733,7 +733,9 @@ export async function studioCheck(browser, open) {
         // (r81) the reading games are listed too (the game registers them only while the readingTrial switch is on), in the Reading corner
         await names('en'); const rd = await pe.evaluate(() => [...document.querySelectorAll<HTMLInputElement>('tr[data-id^="rd_"]')].map(r => ({ id: r.dataset.id, area: r.querySelector<HTMLInputElement>('[data-f="area"]').value, txt: r.textContent, head: r.closest('.card').querySelector<HTMLInputElement>('h3').textContent })));
         await names('vi'); const rdVi = await pe.evaluate(() => (document.querySelector<HTMLInputElement>('tr[data-id="rd_trace"]') || {}).textContent || '');
-        if (!(rd.length >= 10 && rd.every(r => r.area === 'reading') && /Lantern Letters/.test((rd.find(r => r.id === 'rd_trace') || {}).txt || '') && /reading trial/.test(rd[0].head) && /Đèn Lồng Chữ Cái/.test(rdVi))) bad.push('the Simple screen page does not list the reading games: ' + JSON.stringify({ rd: rd.slice(0, 3), n: rd.length, rdVi }));
+        // (v1.08b games, one home per game) Tone Marks and Vowel Hats (â ê ô) live in Tiếng Việt; every other reading game in the Reading corner
+        const RD_HOME = { rd_tones: 'hv_vi', rd_hats: 'hv_vi' };
+        if (!(rd.filter(r => r.area === 'reading').length >= 10 && Object.keys(RD_HOME).every(id => rd.some(r => r.id === id)) && rd.every(r => r.area === (RD_HOME[r.id] || 'reading')) && /Lantern Letters/.test((rd.find(r => r.id === 'rd_trace') || {}).txt || '') && /reading trial/.test(rd[0].head) && /Đèn Lồng Chữ Cái/.test(rdVi))) bad.push('the Simple screen page does not list the reading games: ' + JSON.stringify({ homes: rd.map(r => r.id + ':' + r.area), head: rd[0] && rd[0].head, rdVi: rdVi.slice(0, 80) }));
         else notes.push(`Simple screen: ${rd.length} reading games listed`);
         // (r85, owner 18 Oct AEDT) no group dropdown on the rows: a game opens its own panel; moving it says "Moved to …" with
         // Undo, and what is on the screen stays where it is (the page does not jump)

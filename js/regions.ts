@@ -7,13 +7,13 @@
 //    Bondi lifesavers' tower, Vũng Tàu lighthouse, Turtle Tower, One Pillar Pagoda, Hội An's covered bridge
 //    and Bến Thành market's clock tower.
 import { REAL, openPhotos, openStreetView } from './realworld.js';
-import { THREE, toon, toonVC, P, merge, sprite } from './gfx.js';
+import { THREE, toon, toonVC, P, merge, sprite, worldTag, geoKey } from './gfx.js';
 import { T, nm, onLang, registerName } from './i18n.js';
 import { say } from './voice.js';
 import { SFX, tone } from './audio.js';
 import { heightAt, MARKET, AUSSIE, WATER, ULURU, BRIDGES } from './world.js';
 import { landmarkAt, rowSlot, STALL } from './content/map.js';
-import { buildAvatar } from './avatar.js';
+import { buildAvatar, lateAvatar, crowdLook } from './avatar.js';
 import { Box, Cyl, gable, hip, win } from './town.js';
 import { dialog, reward } from './popups.js';
 import { farm, saveFarm } from './state.js';
@@ -92,7 +92,8 @@ export function createRegions(G) {
   const boxAround = (x, z, w, d, face) => { const hx = Math.abs(Math.cos(face)) * w / 2 + Math.abs(Math.sin(face)) * d / 2, hz = Math.abs(Math.sin(face)) * w / 2 + Math.abs(Math.cos(face)) * d / 2; box(x - hx, x + hx, z - hz, z + hz); };
   const signAt = (text, x, y, z, rot = 0, bg, fg, w, h) => { const s = signMesh(text, bg, fg, w, h); s.position.set(x, heightAt(x, z) + y, z); s.rotation.y = rot; scene.add(s); return s; };
   const people = [];
-  const person = (look, x, z, face) => { const A = buildAvatar(look, null); A.root.position.set(x, heightAt(x, z), z); A.root.rotation.y = face; scene.add(A.root); people.push(A); world.colliders.push({ x, z, r: .4 }); return A; };
+  const person = (look, x, z, face) => { const A = lateAvatar(crowdLook(look)); // (v1.08d valley: built when a child comes near, js/avatar.ts)
+    A.root.position.set(x, heightAt(x, z), z); A.root.rotation.y = face; scene.add(A.root); people.push(A); world.colliders.push({ x, z, r: .4 }); return A; };
   const I = (id, x, z, r, icon, label, act) => G.interactables.push({ id, x, z, r, icon, label, act, bubble: icon });
 
   // ================= Chợ Ba Miền =================
@@ -109,7 +110,7 @@ export function createRegions(G) {
   });
   // the entrance gate on the west
   { const p = [P(Box(1, 6, 1), '#c0392b', [0, 3, -4.8]), P(Box(1, 6, 1), '#c0392b', [0, 3, 4.8]), P(Box(1.4, .5, 11.4), '#e8c03a', [0, 6.2, 0]), P(Box(1.8, .3, 12.4), '#a24e3a', [0, 6.6, 0])];
-    put(merge(p), M.x0 + .5, mz).userData.noCam = true; signAt(['THREE REGIONS MARKET', 'CHỢ BA MIỀN'], M.x0 - .1, 5.3, mz, -Math.PI / 2, '#c0392b', '#ffe08a', 7, 1.2);
+    worldTag(put(merge(p), M.x0 + .5, mz), 'pl-marketgate').userData.noCam = true; signAt(['THREE REGIONS MARKET', 'CHỢ BA MIỀN'], M.x0 - .1, 5.3, mz, -Math.PI / 2, '#c0392b', '#ffe08a', 7, 1.2);
     world.colliders.push({ x: M.x0 + .5, z: mz - 4.8, r: .7 }, { x: M.x0 + .5, z: mz + 4.8, r: .7 }); }
   // lanterns along the central (Hội An) section
   for (let k = 0; k < 14; k++) { const l = sprite('🏮', .7); l.position.set(M.x - 7 + k, M.h + 4.3 - Math.sin(k / 13 * Math.PI) * .6, mz + (k % 2 ? 1.2 : -1.2)); scene.add(l); }
@@ -119,18 +120,18 @@ export function createRegions(G) {
   const pond = (cx, cz, w, d) => { put(merge([P(Box(w + .8, .3, d + .8), '#b9b09c', [0, .15, 0]), P(Box(w, .32, d), '#5f9fb0', [0, .17, 0])]), cx, cz); box(cx - w / 2 - .4, cx + w / 2 + .4, cz - d / 2 - .4, cz + d / 2 + .4); };
   const TURTLE = landmarkAt('turtle'), PILLAR = landmarkAt('onepillar');
   world.colliders.push({ x: TURTLE[0], z: TURTLE[1], r: 2.6 }); // (the island itself is in the map: js/content/map.js, Hồ Gươm's islet)
-  put(merge([P(Box(1.6, 1.2, 1.6), '#d8cdb6', [0, .8, 0]), P(Box(1.3, 1, 1.3), '#d8cdb6', [0, 1.9, 0]), P(Box(1, .9, 1), '#d8cdb6', [0, 2.85, 0]), P(new THREE.ConeGeometry(.9, .7, 4), '#8a7a5a', [0, 3.6, 0], [0, Math.PI / 4, 0]),
-    P(new THREE.SphereGeometry(.6, 8, 6), '#3f7d5c', [-1.6, .3, .5], [0, 0, 0], [1.4, .4, 1]), P(Box(.35, .7, .05), '#5a4a3a', [0, 1.9, .66])]), ...TURTLE);
+  worldTag(put(merge([P(Box(1.6, 1.2, 1.6), '#d8cdb6', [0, .8, 0]), P(Box(1.3, 1, 1.3), '#d8cdb6', [0, 1.9, 0]), P(Box(1, .9, 1), '#d8cdb6', [0, 2.85, 0]), P(new THREE.ConeGeometry(.9, .7, 4), '#8a7a5a', [0, 3.6, 0], [0, Math.PI / 4, 0]),
+    P(new THREE.SphereGeometry(.6, 8, 6), '#3f7d5c', [-1.6, .3, .5], [0, 0, 0], [1.4, .4, 1]), P(Box(.35, .7, .05), '#5a4a3a', [0, 1.9, .66])]), ...TURTLE), 'lm-turtle'); // (v1.08e places: the Blender model near the child)
   // Chùa Một Cột (One Pillar Pagoda) on its own little pond
   pond(...PILLAR, 4.4, 4.4);
-  put(merge([P(Cyl(.25, .3, 1.8, 8), '#cfc3a6', [0, 1, 0]), P(Box(1.9, .2, 1.9), '#8a5a3b', [0, 1.95, 0]), P(Box(1.5, 1, 1.5), '#a24e3a', [0, 2.5, 0]),
-    P(new THREE.ConeGeometry(1.6, .9, 4), '#5a4a3a', [0, 3.4, 0], [0, Math.PI / 4, 0]), ...[0, 1, 2, 3].map(k => P(new THREE.ConeGeometry(.12, .5, 4), '#5a4a3a', [Math.cos(k * 1.571 + .785) * 1.1, 3.1, Math.sin(k * 1.571 + .785) * 1.1], [0, 0, 0]))]), ...PILLAR);
+  worldTag(put(merge([P(Cyl(.25, .3, 1.8, 8), '#cfc3a6', [0, 1, 0]), P(Box(1.9, .2, 1.9), '#8a5a3b', [0, 1.95, 0]), P(Box(1.5, 1, 1.5), '#a24e3a', [0, 2.5, 0]),
+    P(new THREE.ConeGeometry(1.6, .9, 4), '#5a4a3a', [0, 3.4, 0], [0, Math.PI / 4, 0]), ...[0, 1, 2, 3].map(k => P(new THREE.ConeGeometry(.12, .5, 4), '#5a4a3a', [Math.cos(k * 1.571 + .785) * 1.1, 3.1, Math.sin(k * 1.571 + .785) * 1.1], [0, 0, 0]))]), ...PILLAR), 'lm-onepillar');
   // (Chùa Cầu is the real covered footbridge over the Hội An canal now: js/world.js builds it from the map's bridges)
   // Bến Thành clock tower on the east end
   { const p = [P(Box(3, 6, 10), '#f2e6c2', [0, 3, 0]), P(Box(2.4, 3, 2.4), '#f2e6c2', [0, 7.5, 0]), P(new THREE.ConeGeometry(1.8, 1.4, 4), '#a24e3a', [0, 9.7, 0], [0, Math.PI / 4, 0]),
       P(Cyl(.8, .8, .1, 16), '#ffffff', [-1.22, 7.6, 0], [0, 0, Math.PI / 2]), P(Box(.05, .6, .08), '#333', [-1.3, 7.75, 0]), P(Box(.05, .08, .45), '#333', [-1.3, 7.6, .15]),
       ...[-3, 0, 3].map(z => P(new THREE.TorusGeometry(.9, .12, 4, 10, Math.PI), '#d8b86a', [-1.52, 2.2, z], [0, Math.PI / 2, 0]))];
-    put(merge(p), M.x1 + 1.8, mz - 4, 0); box(M.x1 + .3, M.x1 + 3.3, mz - 9, mz + 1);
+    worldTag(put(merge(p), M.x1 + 1.8, mz - 4, 0), 'lm-benthanh'); box(M.x1 + .3, M.x1 + 3.3, mz - 9, mz + 1);
     signAt(['BẾN THÀNH MARKET', 'CHỢ BẾN THÀNH'], M.x1 + .25, 5.2, mz - 4, -Math.PI / 2, '#2f7ac8', '#ffffff', 5, .8); }
 
   // ---- market stalls and vendors ----
@@ -138,9 +139,11 @@ export function createRegions(G) {
   for (const v of VENDORS.filter(v => v.region !== 'au')) {
     const s = rowSlot(v.row.place, v.row.i, v.row.d), f = (k, n) => [s.x + s.fx * k + s.ax * n, s.z + s.fz * k + s.az * n];
     if (v.stall) {
-      put(stall(v.stall[0], v.stall[1], 2.8), s.x, s.z, s.face);
+      // (v1.08g props, owner 6 Nov 2026 AEDT) each stall its own Blender picture-book stall with its food on the counter
+      // (pp-stall-<seller>); the food pictures ride on the code shape, so they go when the model comes
+      const sm = worldTag(put(stall(v.stall[0], v.stall[1], 2.8), s.x, s.z, s.face), 'pp-stall-' + v.id); sm.updateMatrixWorld(true);
       const [nx, nz] = f(1.15, 0); signAt(v.sign, nx, 3.2, nz, s.face, v.stall[0], '#fff8e0', 2.8, .55);
-      v.goods.forEach((gd, k) => { const sp = sprite(gd, .55), [gx, gz] = f(0, -.6 + k * 1.2); sp.position.set(gx, M.h + 1.25, gz); scene.add(sp); });
+      v.goods.forEach((gd, k) => { const sp = sprite(gd, .55), [gx, gz] = f(0, -.6 + k * 1.2); sp.position.set(gx, M.h + 1.25, gz); scene.add(sp); sm.attach(sp); });
       boxAround(s.x, s.z, 2.8, 1.6, s.face);
       world.stalls.push({ id: v.id, place: 'market', kind: 'stall', x: s.x, z: s.z, w: 2.8, d: 1.6, face: s.face, tap: 'v_' + v.id });
     } else if (v.pole) world.stalls.push({ id: v.id, place: 'market', kind: 'pole', x: s.x, z: s.z, w: .8, d: 2.4, face: s.face, tap: 'v_' + v.id });
@@ -148,6 +151,8 @@ export function createRegions(G) {
     if (v.pole) { // gánh hàng rong: a bamboo pole with two baskets on her shoulder
       const pole = new THREE.Mesh(merge([P(Box(2.4, .07, .07), '#c9a35a', [0, 0, 0]), ...[-1.1, 1.1].flatMap(x => [P(Cyl(.32, .25, .35, 10), '#b98a4a', [x, -.75, 0]), P(new THREE.SphereGeometry(.26, 8, 5), '#7fc45a', [x, -.55, 0], [0, 0, 0], [1, .5, 1]), P(Box(.02, .6, .02), '#7a5a3a', [x, -.3, 0])])]), mat);
       pole.position.set(0, 1.18, .02); A.root.add(pole);
+      // (v1.08g props) the Blender pole with the com in lotus leaves near the child
+      worldTag(pole, 'pp-pole-' + v.id);
     }
     tag(scene, v.name, v.x, M.h + 2.5, v.z);
     const [tx, tz] = f(v.row.d / 2 + .75, 0); I('v_' + v.id, tx, tz, 3, v.food[0], () => nm(v.name), h => vendorTalk(G, h, v));
@@ -169,9 +174,9 @@ export function createRegions(G) {
     p.push(P(Box(w - 1.6, 2.2, .1), '#9fd2ee', [-.6, 1.6, d / 2 + .03]), P(Box(1, 2.2, .1), '#6a4a3a', [w / 2 - 1, 1.1, d / 2 + .03]));
     p.push(P(Box(w, .12, 2.4), awn, [0, 3.1, d / 2 + 1.1], [.22, 0, 0]));
     [-1, 1].forEach(sx => p.push(P(Box(.12, 3, .12), '#f4efe2', [sx * (w / 2 - .2), 1.5, d / 2 + 2.2])));
-    put(merge(p), x, cz); box(x - w / 2, x + w / 2, cz - d / 2, cz + d / 2);
+    { const g = merge(p); worldTag(put(g, x, cz), 'hs-' + geoKey(g)); } box(x - w / 2, x + w / 2, cz - d / 2, cz + d / 2);
     world.colliders.push({ x: x - w / 2 + .2, z: front + 2.2, r: .25 }, { x: x + w / 2 - .2, z: front + 2.2, r: .25 });
-    signAt(text, x, 3.9, front + .05, 0, signBg, '#ffffff', w - .8, .9);
+    signAt(text, x, 3.9, front + .22, 0, signBg, '#ffffff', w - .8, .9);   // (v1.08f places-fix: just in front of the cornice, which covered its top edge)
   };
   shop(A.x - 19, 8.5, '#f2e6c2', '#d9483a', ['MILK BAR · LOLLIES', 'TIỆM TẠP HÓA · KẸO'], '#d9483a');
   shop(A.x - 9, 8.5, '#cfe0e6', '#2f7ac8', ['FISH & CHIPS', 'CÁ & KHOAI CHIÊN'], '#2f7ac8');
@@ -179,7 +184,7 @@ export function createRegions(G) {
   // the Big Banana: a banana-smoothie shop wearing a giant banana
   { const p = [P(Box(7, 3.4, 6), '#fff3c4', [0, 1.7, 0]), P(Box(7.2, .4, 6.2), '#e8c03a', [0, 3.6, 0])];
     for (let k = 0; k <= 10; k++) { const a = -1.1 + k * .22, r = 6; p.push(P(new THREE.SphereGeometry(1.35 - Math.abs(k - 5) * .1, 10, 8), k === 0 || k === 10 ? '#6b5a2a' : '#f2d23a', [Math.sin(a) * r, 4.2 + Math.cos(a) * r - r + 3.2, 0])); }
-    put(merge(p), A.x + 12, az - 8); box(A.x + 8.5, A.x + 15.5, az - 11, az - 5); signAt(['THE BIG BANANA', 'QUẢ CHUỐI KHỔNG LỒ'], A.x + 12, 2.9, az - 4.95, 0, '#e8c03a', '#5a3a1a', 5, .8); }
+    worldTag(put(merge(p), A.x + 12, az - 8), 'lm-banana'); box(A.x + 8.5, A.x + 15.5, az - 11, az - 5); signAt(['THE BIG BANANA', 'QUẢ CHUỐI KHỔNG LỒ'], A.x + 12, 2.9, az - 4.95, 0, '#e8c03a', '#5a3a1a', 5, .8); }
   // the ice-cream van
   const van = new THREE.Group();
   { const p = [P(Box(5, 2.2, 2.2), '#f7c6d9', [0, 1.5, 0]), P(Box(5.02, .5, 2.22), '#ffffff', [0, 2.4, 0]), P(Box(1.4, 1.5, 2.1), '#f7c6d9', [3.1, 1.15, 0]), P(Box(.05, .8, 1.8), '#9fd2ee', [3.82, 1.5, 0]),
@@ -196,7 +201,8 @@ export function createRegions(G) {
   { const p = [P(Box(2.4, .9, 1.2), '#4a4a4a', [0, .45, 0]), P(Box(2.2, .06, 1), '#2a2a2a', [0, .93, 0]), ...[-.6, -.2, .2, .6].map(x => P(Cyl(.08, .08, .9, 6), '#b5483c', [x, 1, .1], [0, 0, Math.PI / 2])),
       ...[[-1.6, -1.4], [1.6, -1.4], [-1.6, 1.4], [1.6, 1.4]].map(([x, z]) => P(Box(.08, 2.6, .08), '#dddddd', [x, 1.3, z])), P(Box(3.4, .1, 3), '#2f7ac8', [0, 2.6, 0]), P(new THREE.ConeGeometry(2.4, .7, 4), '#ffffff', [0, 3, 0], [0, Math.PI / 4, 0])];
     const R = VENDORS.find(v => v.id === 'robbo').row, s = rowSlot(R.place, R.i, R.d);   // (T1b) in the market row, facing the street
-    put(merge(p), s.x, s.z, s.face); boxAround(s.x, s.z, 2.6, 1.4, s.face); world.stalls.push({ id: 'robbo', place: 'aussie', kind: 'tent', x: s.x, z: s.z, w: 3.4, d: 3, face: s.face, tap: 'v_robbo' }); const smoke = sprite('💨', .8); smoke.position.set(s.x, A.h + 1.6, s.z); scene.add(smoke); world.updaters.push((dt, t) => { smoke.position.y = A.h + 1.5 + (t * .6 % 1); smoke.material.opacity = 1 - (t * .6 % 1); }); }
+    // (v1.08g props) the Blender sausage sizzle near the child
+    worldTag(put(merge(p), s.x, s.z, s.face), 'pp-sizzle'); boxAround(s.x, s.z, 2.6, 1.4, s.face); world.stalls.push({ id: 'robbo', place: 'aussie', kind: 'tent', x: s.x, z: s.z, w: 3.4, d: 3, face: s.face, tap: 'v_robbo' }); const smoke = sprite('💨', .8); smoke.position.set(s.x, A.h + 1.6, s.z); scene.add(smoke); world.updaters.push((dt, t) => { smoke.position.y = A.h + 1.5 + (t * .6 % 1); smoke.material.opacity = 1 - (t * .6 % 1); }); }
 
   // the playground: flying fox, merry-go-round, see-saw
   const play = [];
@@ -260,21 +266,21 @@ export function createRegions(G) {
   { const p = [P(Box(16, 1.6, 10), '#cdb89a', [0, .8, 0]), P(Box(16, .3, 2), '#d9c9aa', [0, .15, 6])];
     const sail = (x, z, s, rot) => { p.push(P(new THREE.ConeGeometry(2.4 * s, 5 * s, 12, 1, true, 0, Math.PI), '#f4f1ea', [x, 1.6 + 2.2 * s, z], [-.35, rot, 0])); };
     sail(-4.5, 1, 1.15, 0); sail(-2, .8, 1, 0); sail(.2, .6, .8, 0); sail(3.5, 0, 1, Math.PI); sail(5.6, .2, .8, Math.PI);
-    put(merge(p), ox, oz, -Math.PI / 2); world.colliders.push({ x: ox, z: oz, r: 6.5 }); }
+    worldTag(put(merge(p), ox, oz, -Math.PI / 2), 'lm-opera'); world.colliders.push({ x: ox, z: oz, r: 6.5 }); }
   // lifesavers' tower and the red-and-yellow flags
   { const p = [...[[-1, -1], [1, -1], [-1, 1], [1, 1]].map(([x, z]) => P(Box(.15, 3, .15), '#dddddd', [x, 1.5, z])), P(Box(2.6, 1.6, 2.6), '#ffffff', [0, 3.8, 0]), P(Box(2.7, .4, 2.7), '#2f7ac8', [0, 4.4, 0]),
       ...[-6, 6].flatMap(x => [P(Box(.06, 2.4, .06), '#888', [x, 1.2, 4]), P(Box(.8, .3, .04), '#e8433a', [x + .4, 2.2, 4]), P(Box(.8, .3, .04), '#ffd23f', [x + .4, 1.9, 4])])];
-    put(merge(p), bx, bz); world.colliders.push({ x: bx, z: bz, r: 1.6 }); }
+    worldTag(put(merge(p), bx, bz), 'lm-bondi'); world.colliders.push({ x: bx, z: bz, r: 1.6 }); }
   // Vũng Tàu lighthouse on the hill
   { const p = [P(Cyl(1.3, 1.7, 8, 12), '#ffffff', [0, 4, 0]), P(Cyl(1.5, 1.5, .3, 12), '#cfd6da', [0, 8.1, 0]), P(Cyl(.9, .9, 1.4, 10), '#ffe9a0', [0, 8.9, 0]), P(new THREE.ConeGeometry(1.2, 1.2, 10), '#c0392b', [0, 10.2, 0]), P(Box(4, 1.8, 3), '#f2e6c2', [2.6, .9, 0])];
-    put(merge(p), hx, hz); world.colliders.push({ x: hx, z: hz, r: 1.8 }, { x: hx + 2.6, z: hz, r: 1.8 });
+    worldTag(put(merge(p), hx, hz), 'lm-lighthouse'); world.colliders.push({ x: hx, z: hz, r: 1.8 }, { x: hx + 2.6, z: hz, r: 1.8 });
     const beam = new THREE.Mesh(new THREE.ConeGeometry(2.5, 30, 12, 1, true), new THREE.MeshBasicMaterial({ color: '#fff3b0', transparent: true, opacity: .18, depthWrite: false, side: THREE.DoubleSide }));
     beam.geometry.translate(0, -15, 0); beam.geometry.rotateZ(Math.PI / 2); const piv = new THREE.Group(); piv.position.set(hx, heightAt(hx, hz) + 8.9, hz); piv.add(beam); scene.add(piv);
     world.updaters.push((dt, t) => { piv.rotation.y = t * .8; beam.visible = world.isNight(); }); }
   // Uluru in the far south-west
   { const p = [P(new THREE.SphereGeometry(1, 18, 10, 0, Math.PI * 2, 0, Math.PI / 2), '#c4542e', [0, -.5, 0], [0, 0, 0], [30, 11, 13])];
     for (let k = 0; k < 9; k++) p.push(P(Box(.6, 6, 1.5), '#a8442a', [-20 + k * 5, 3, 12.2 - Math.abs(k - 4) * .9]));
-    put(merge(p), ULURU.x, ULURU.z, .2); box(ULURU.x - 28, ULURU.x + 28, ULURU.z - 10, ULURU.z + 10); }
+    worldTag(put(merge(p), ULURU.x, ULURU.z, .2), 'lm-uluru'); box(ULURU.x - 28, ULURU.x + 28, ULURU.z - 10, ULURU.z + 10); }
   // the Harbour Bridge already carries the road: just add its postcard below
 
   // Children must not be able to walk inside a landmark (the camera would end up inside its walls), and

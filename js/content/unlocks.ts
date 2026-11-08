@@ -1,7 +1,7 @@
 // r90 content opens after every original item in its category or shelf has been finished three times.
 import { featureOn, itemEnabled } from '../custom.js';
 import { GAME_INFO } from './activities.js';
-import { SECOND_SET_GAMES, SECOND_SET_TALES, heldGame, heldTale } from './secondset.js';
+import { SECOND_SET_GAMES, SECOND_SET_TALES, heldGame, heldTale, calDue } from './secondset.js';
 export { SECOND_SET_GAMES, SECOND_SET_TALES };
 
 type Counts = Record<string, number | undefined>;
@@ -16,10 +16,13 @@ export type UnlockProfile = {
 
 
 const SECOND_GAME_IDS = new Set(Object.values(SECOND_SET_GAMES).flat());
+// (v1.08 money) games added after the second set open at once, and are not among the first games an area's second set
+// waits for (otherwise the money area's second set, already open for many children, would close again)
+const OPEN_AT_ONCE = new Set(['shoppay', 'givechange', 'toysave', 'needsfirst', 'pricesort', 'marketday', 'coinsort', 'makeamount', 'budgetpicnic', 'chores', 'twomoney']);
 
 export const FIRST_SET_GAMES: Record<string, string[]> = {};
 for (const [id, info] of Object.entries(GAME_INFO)) {
-  if (SECOND_GAME_IDS.has(id)) continue;
+  if (SECOND_GAME_IDS.has(id) || OPEN_AT_ONCE.has(id)) continue;
   const area = info[0];
   (FIRST_SET_GAMES[area] ||= []).push(id);
 }
@@ -72,6 +75,7 @@ export const isHeld = (id: string, type: 'game' | 'tale'): boolean => !itemEnabl
 export function isOpen(profile: UnlockProfile, id: string, type: 'game' | 'tale', areaOrShelf: string): boolean {
   if (isHeld(id, type)) return false;
   if (overrideOn(profile)) return true;
+  if (calDue(type === 'game' ? 'game' : 'story', id)) return true; // (v1.08b story) its release-calendar day has come
   const sourceArea=type==='game' ? GAME_INFO[id]?.[0]||areaOrShelf : areaOrShelf;
   if (!secondSet(type, sourceArea).includes(id)) return true;
   return progressOf(profile, type, sourceArea).done >= 3;

@@ -1,10 +1,10 @@
 // Ma Liang and the Magic Paintbrush (Thần bút Mã Lương): drawing with a stick in the sand, the old man's shining brush,
 // a painted bird flies away, buckets, ploughs and an ox for the farmers, the greedy king's sea and the big wind, and
 // a brush used to help people. The child helps twice: the bird comes alive (page 3) and the big wind (page 5).
-import { L, Pp, LOOK, THREE, P, mesh, PI, H, go, hop, speak, BUT, VILLAGER, chinaVillage, seaside, animal, bird, brush, afloat, board } from './kit.js';
+import { L, Pp, LOOK, THREE, P, mesh, PI, H, go, hop, speak, BUT, VILLAGER, chinaVillage, seaside, animal, bird, brush, afloat, board, cn } from './kit.js';
 
-const MA = LOOK({ style: 'shirt', color: '#4a8ac8', hairStyle: 'short', skin: '#e8b890' });
-const GREEDY = LOOK({ style: 'tunic', color: '#7a3a8a', hat: 'crown', skin: '#e0aa80' });
+const MA = LOOK({ kit: 'cn-hanfu-m', style: 'tunic', color: '#4a8ac8', hairStyle: 'short', skin: '#e8b890' });
+const GREEDY = LOOK({ kit: 'cn-hanfu-m', style: 'tunic', color: '#7a3a8a', hat: 'crown', skin: '#e0aa80' });
 // a drawing on a flat card (a bird, a bucket…) that can come alive
 const drawing = (c) => { const m = mesh([P(new THREE.BoxGeometry(.9, .02, .7), '#fbf3e4', [0, .01, 0]), P(new THREE.BoxGeometry(.4, .025, .2), c, [0, .02, 0]), P(new THREE.BoxGeometry(.1, .025, .3), c, [-.2, .02, 0])]); return m; };
 const bucket = () => mesh([P(new THREE.CylinderGeometry(.22, .17, .35, 10), '#8a6a4a', [0, .18, 0]), P(new THREE.TorusGeometry(.2, .015, 4, 12, PI), '#5a4a3a', [0, .4, 0])]);
@@ -52,7 +52,7 @@ export default { pages: [
   S => {
     chinaVillage(S); L.paddy(S, 8, 3, 8, 6);
     const ma = S.person(MA, 0, 2.6, 0), b = brush(); S.grab(ma, 0, b, [0, -.5, .1]);
-    const farmer = S.person(VILLAGER('shirt', '#8a6a4a', 'nonla', 'short'), 2.6, 3.4, -1.2);
+    const farmer = S.person(cn(VILLAGER('tunic', '#8a6a4a', 'nonla', 'short')), 2.6, 3.4, -1.2);
     const bk = bucket(), pl = plough(); S.add(bk, -1.4, 0, 4); S.add(pl, 1.2, 0, 4.4); bk.visible = false; pl.visible = false;
     const ox = animal(S, 'buffalo', 4, 1.6, -H); ox.visible = false;
     S.shot([0, 2.6, 10], [1, 1, 3]);
@@ -81,7 +81,7 @@ export default { pages: [
   S => {
     chinaVillage(S);
     const ma = S.person(MA, 0, 2, 0), b = brush(); S.grab(ma, 0, b, [0, -.5, .1]);
-    const kids = [VILLAGER('dress', '#ff7eb8', 'none', 'buns'), VILLAGER('shirt', '#43c463', 'none', 'spiky'), VILLAGER('aodai', '#ffd23f', 'none', 'long')].map((l, i) => S.person(l, -2 + i * 2, 4, PI, .75));
+    const kids = [cn(VILLAGER('dress', '#ff7eb8', 'none', 'buns')), cn(VILLAGER('tunic', '#43c463', 'none', 'spiky')), cn(VILLAGER('aodai', '#ffd23f', 'none', 'long'))].map((l, i) => S.person(l, -2 + i * 2, 4, PI, .75));
     S.shot([0, 2.4, 9], [0, 1, 2.6]);
     kids.forEach((k, i) => { S.mood(k, 0, 'happy'); S.do(k, .4 + i * .3, 'cheer', 1.8); }); S.do(ma, .3, 'swing', 2);
     S.cam(.3, 3.4, [0, 1.8, 7], [0, 1, 3]);

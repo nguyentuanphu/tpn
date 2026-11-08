@@ -61,7 +61,12 @@ G.netGames = createNetGames({
     const online = { mine: s.mine, names, seed: s.gid, size: s.size, connected: () => !!Net.connected, present: seat => seat === s.mine || !s.gone.has(seat) && !!Net.remotes[s.seats[seat]], leave: end,familyQuiz:()=>live()?G.netGames.familyQuiz():null,shareFamilyQuiz:(questions:import('../content/family-quiz.js').FamilyQuestion[])=>live()&&G.netGames.shareFamilyQuiz(questions),requestFamilyQuiz:()=>{if(live())G.netGames.requestFamilyQuiz();}, peek: (n, seat) => live() ? G.netGames.session?.moves.get(n)?.get(seat) : undefined, onMove: f => live() ? G.netGames.onMove(f) : undefined, move: (n, mv) => live() && G.netGames.move(n, mv), next: (n, seat) => live() ? G.netGames.next(n, seat) : Promise.resolve(null), all: n => live() ? G.netGames.all(n) : Promise.resolve([]) };
     if (/^tale-/.test(s.game)) { // a tale read together: page turns travel as moves
       const t = (G.TALES || []).find(x => 'tale-' + x.id === s.game); if (!t || !G.readTaleNow) { end(); return; }
-      let seq = 0; const sync = { send: p => online.move(seq++, p), listen: fn => online.onMove((seat, n, mv) => { if (seat !== s.mine) fn(mv); }) };
+      // (v1.08 Release, check ownertogetherstart) the story theatre now loads after the start (js/learn.ts), so it listens a
+      // moment after the game began: turns that came before it (a friend's early turns, replayed at the start) are handed
+      // to it when it listens, in order, as if they had come just then
+      let seq = 0; const sync = { send: p => online.move(seq++, p), listen: fn => { const off = online.onMove((seat, n, mv) => { if (seat !== s.mine) fn(mv); });
+        const had = live() ? G.netGames.session.moves : null; if (had) for (const n of [...had.keys()].sort((a, b) => a - b)) for (const [seat, mv] of had.get(n)) if (seat !== s.mine) fn(mv);
+        return off; } };
       G.readTaleNow(G.heroes[0], t, sync).finally(end); return;
     }
     // (Round V, owner 13 Oct) the Friends page closes when the game starts (it stayed in front of the game); "Play again"
@@ -170,7 +175,7 @@ G.findFriend = i => {
   const h = G.heroes[i]; if (!h) return null;
   const list = Object.values(G.partners).filter(P => P.pos.y > -40);
   if (!list.length) { G.openPad(i, 'friend'); return ['No friends are in your room yet. Start a room and tell your friend the number!', 'Chưa có bạn nào trong phòng. Tạo phòng rồi đọc số cho bạn nhé!']; }
-  document.querySelector<HTMLElement>('.vc-pop')?.remove();
+  document.querySelector<HTMLElement>('.vc-pop:not(.knockpop)')?.remove(); // (a friend at the door stays at the door)
   const pop = el('div', 'vc-pop friendfind', `<p class="vc-heard">👫 ${T('Where are my friends?', 'Bạn của con ở đâu?')}</p>
     ${list.map(P => { const d = Math.round(dist2(h.pos.x, h.pos.z, P.pos.x, P.pos.z)); return `<div class="ff-row"><img src="${P.photoURL || ''}" alt="" ${P.photoURL ? '' : 'hidden'}><div class="ff-txt"><b>${esc(nm(P.name))}</b><small>${d} m · ${compass(h, P.pos.x, P.pos.z)}${G.friendWhere(h, P) ? ' · ' + esc(G.friendWhere(h, P)) : ''}</small></div>
       <div class="ff-btns"><button class="btn primary" data-walk="${P.id}">👣 ${T('Walk', 'Đi bộ')}</button><button class="btn" data-fly="${P.id}">✨ ${T('Fly', 'Bay')}</button><button class="btn" data-call="${P.id}">📣 ${T('Ask to come', 'Gọi bạn đến')}</button><button class="btn${h.followId === P.id ? ' primary' : ''}" data-follow="${P.id}">🚶 ${h.followId === P.id ? T('Stop following', 'Thôi đi theo') : T('Follow', 'Đi theo')}</button></div></div>`; }).join('')}`);
@@ -262,5 +267,6 @@ const showKnock = () => {
   knockPop.querySelector('[data-no]').onclick = () => { SFX.tap(); Net.deny(k.id); };
 };
 Net.on('knock', () => { showKnock(); if (G.onNet) G.onNet(); });
+Net.on('knockagain', () => showKnock()); // (the card is drawn again only when it is not on screen)
   return { friendRide, _np };
 }

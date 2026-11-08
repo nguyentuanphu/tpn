@@ -12,14 +12,14 @@ import * as book from '../../js/stickers.js';
 // the SFX in js/audio.js a sticker may play (audio.js needs a browser, so its names are listed here and the browser
 // check `stickers` checks each one is really there)
 const SOUNDS = ['tap', 'ok', 'pop', 'chime', 'ding', 'secret', 'fanfare', 'coin', 'glide', 'splash', 'whoosh', 'hee', 'cook', 'moo', 'quack', 'woof', 'meow', 'baa', 'oink', 'cluck', 'neigh', 'sniff', 'bleat', 'chuff', 'calfmoo', 'purr', 'squeak', 'ribbit', 'water', 'harvest', 'trumpet', 'honk', 'squawk', 'chirp', 'hoot', 'tower', 'travel'];
-const WAYS = ['prize', 'enter', 'postcard', 'find', 'cook', 'taste', 'fest', 'secret', 'surprise', 'tower', 'stamp', 'meet', 'act'];
+const WAYS = ['prize', 'enter', 'postcard', 'find', 'cook', 'taste', 'fest', 'secret', 'surprise', 'tower', 'stamp', 'meet', 'act', 'learn'];
 // the song keys of js/content/songs.js (it needs a browser: read from its text)
 const SONG_KEYS = [...fs.readFileSync(new URL('../../js/content/songs.js', import.meta.url), 'utf8').matchAll(/\{ key: '([a-z0-9_]+)'/g)].map(m => m[1]);
 const both = a => Array.isArray(a) && a.length === 2 && a.every(x => typeof x === 'string' && x.trim().length > 0);
 
 test('the ten themes the owner named, each with a colour, a prize song and a house decoration', () => {
   for (const t of THEMES) assert.ok(both(t.tab) && t.tab.every(w => w.length <= 10), t.id + ' a short tab word in both languages');
-  assert.deepEqual(THEMES.map(t => t.id), ['farm', 'wild', 'dishes', 'fruit', 'treasure', 'vietnam', 'world', 'festivals', 'friends', 'rare']);
+  assert.deepEqual(THEMES.map(t => t.id), ['farm', 'wild', 'dishes', 'fruit', 'treasure', 'vietnam', 'world', 'festivals', 'friends', 'rare', 'learn']);
   for (const t of THEMES) {
     assert.match(t.color, /^#[0-9a-f]{6}$/i, t.id); assert.ok(hasArt(t.icon), t.id + ' tab picture');
     assert.ok(t.en && t.vi, t.id + ' both names'); assert.ok(SONG_KEYS.includes(t.song), t.id + ' song ' + t.song);

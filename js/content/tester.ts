@@ -55,26 +55,18 @@ export const LIMITS = {
   sameAgain: 10 * 60e3 // the same automatic problem is sent again only after 10 minutes (counted meanwhile)
 };
 
-// tester levels (Studio): auto reports only, or auto reports and the ladybird
-export type TesterLevel = 'auto' | 'ladybird';
-/** Studio's saved rule; old saves may lack fields or hold wrong kinds */
-export type TesterRelease = { on?: unknown, devices?: unknown, levels?: Record<string, unknown> | null, peeks?: unknown };
-const isLevel = (v: unknown): v is TesterLevel => v === 'auto' || v === 'ladybird';
-export const LEVELS: TesterLevel[] = ['auto', 'ladybird'];
-// the release rule for `tester` → this device's level, or '' when it is not a tester
-//   rule: { on, devices: [ids], levels: { id: 'auto' | 'ladybird' }, peeks: [release ids] }
-export function testerLevel(on: unknown, rule: TesterRelease | null | undefined, me: string): TesterLevel | '' {
-  if (!on || !me) return '';
-  const list = rule && Array.isArray(rule.devices) ? rule.devices.filter(d => typeof d === 'string') : [];
-  if (list.length && !list.includes(me)) return '';
-  const lv = rule && rule.levels && rule.levels[me];
-  return isLevel(lv) ? lv : 'ladybird';
-}
+// tester levels (Studio): js/content/tester-level.ts
+import type { TesterRelease } from './tester-level.js';
+export { type TesterLevel, type TesterRelease, LEVELS, testerLevel } from './tester-level.js';
 // the releases a tester sees early ("Tester preview")
 export const peeksOf = (rule: TesterRelease | null | undefined): string[] => rule && Array.isArray(rule.peeks) ? rule.peeks.filter(x => typeof x === 'string' && /^[\w-]{1,40}$/.test(x)).slice(0, 20) : [];
 
 // a problem's key on this device: the same kind, detail and place is one problem (the server groups by it too)
-export const keyOf = (kind: string, detail?: unknown, where?: unknown): string => [kind, String(detail || '').slice(0, 80), String(where || '').slice(0, 40)].join('|').replace(/[^\w .:/()'#,@|-]/g, '').slice(0, 160);
+// (v1.08 bugs, #780 #781: an Android tablet sent "freeze 3.1 s", "freeze 3.6 s", "freeze 3.0 s" and "slow 13 frames a
+// second" seconds apart, each a new report with a new picture of the screen, whose making on v1.05 froze the game again.
+// The server already counts them as one problem (netlify/lib/tester.mts problemKey turns numbers into #); the device now
+// does the same, so the same freeze in the same game is sent once in 10 minutes and counted meanwhile.)
+export const keyOf = (kind: string, detail?: unknown, where?: unknown): string => [kind, String(detail || '').slice(0, 80).replace(/\d+(\.\d+)?/g, '#'), String(where || '').slice(0, 40)].join('|').replace(/[^\w .:/()'#,@|-]/g, '').slice(0, 160);
 
 // ---------- rewards ----------
 // Bug Hunter badges by reports that helped (a problem fixed, or confirmed real): worn on the shirt, shown online

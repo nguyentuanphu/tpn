@@ -18,7 +18,7 @@ import {cleanFamilyQuiz,type FamilyQuestion} from './content/family-quiz.js';
 // A guest meets only players the starter introduces (directly, or on the members' list it sends locked to them).
 // Photos go only after being let in, locked for each player. Saved friends come straight in only if they bring the
 // key saved with the friend AND open a number locked with it; anyone else knocks.
-import { settings } from './state.js';
+import { settings, FRIEND_MIGRATE } from './state.js'; // (v1.08b friends: FRIEND_MIGRATE.lib, the friends' data once loaded)
 import { managementEvidence } from './core/events.js';
 import { micMode } from './audio.js';
 import { Channel } from './relay.js';
@@ -81,9 +81,11 @@ const okId = id => typeof id === 'string' && /^[\w-]{1,64}$/.test(id);
 export const okPub = p => typeof p === 'string' && /^[A-Za-z0-9+/]{87}=$/.test(p);
 const okSecret = s => typeof s === 'string' && /^[A-Za-z0-9+/]{43}=$/.test(s);
 const okCode = c => typeof c === 'string' && /^[A-Z0-9]{4,8}$/i.test(c);
+// (v1.08b friends) a friend on an older version has no look.friend: shown as the default friend of their set (Finn or Clara)
+const withFriend = l => { const F = FRIEND_MIGRATE.lib; return !F || (l.friend && F.FRIENDS[l.friend]) ? l : { ...l, friend: F.friendOf(l) }; };
 const okLook = l => l && typeof l === 'object' && !Array.isArray(l) ? Object.fromEntries(Object.entries(l).filter(([k, v]) => /^\w{1,16}$/.test(k) && (typeof v === 'number' ? Number.isFinite(v) : typeof v === 'string' && v.length < 40 && /^[#\w -]*$/.test(v)))) : {};
 // (round R privacy, 9 Oct) a hello never carries a photo: the photo goes after admission, locked for each player
-const cleanHello = (d, from) => ({ id: from, name: String(d.name || '').slice(0, 20), look: okLook(d.look), photo: null, friend: okCode(d.friend) ? d.friend.toUpperCase() : null, pub: okPub(d.pub) ? d.pub : null, s: null });
+const cleanHello = (d, from) => ({ id: from, name: String(d.name || '').slice(0, 20), look: withFriend(okLook(d.look)), photo: null, friend: okCode(d.friend) ? d.friend.toUpperCase() : null, pub: okPub(d.pub) ? d.pub : null, s: null });
 // a friend on this device's list (by friend code)
 const noPhoto = h => { const o = Object.assign({}, h || {}); delete o.photo; delete o.w; return o; };
 const friendEntry = code => (Array.isArray(settings.friends) ? settings.friends : []).find(f => f && f.code === String(code || '').toUpperCase()) || null;
@@ -153,7 +155,7 @@ export const Net = {
   _quiet: undefined as MediaStream | undefined,                // a silent stream (iPhone keeps a call's sound going)
   _mt: undefined as ReturnType<typeof setInterval> | null | undefined, _pt: undefined as ReturnType<typeof setInterval> | undefined,
   _askT: undefined as ReturnType<typeof setTimeout> | undefined,
-  _pinWeak: undefined as boolean | undefined, _noDirect: undefined as boolean | undefined, _slowTold: undefined as boolean | undefined,
+  _pinWeak: undefined as boolean | undefined, _noDirect: undefined as boolean | undefined, _slowTold: undefined as boolean | undefined, _knockViaCloud: false as boolean,
   _managementDirect: undefined as ((outcome:'success'|'timeout'|'rejected'|'failed')=>unknown)|undefined,
   _managementRelay: undefined as ((outcome:'success'|'timeout'|'rejected'|'failed')=>unknown)|undefined,
   _managementStarted: 0,
@@ -315,20 +317,27 @@ export const Net = {
     }
     // after 7 s without a direct link, knock through the cloud relay; explain, and give up with tips after 30 s
     // (knocking: the starter has heard the knock, so keep knocking for up to 2 minutes)
-    const t0 = Date.now(); this._slowTold = false; let viaCloud = false;
+    // (v1.08 cloud fix) on a slow device the door's broker can answer late and the 1 s timer can run seconds late:
+    // a knock only goes out on a connected door (the door says it again the moment a broker answers, _doorOpen), the
+    // knocks are timed by the clock (every 4 s), and the 30 s count starts when the door is connected (90 s at most
+    // when it never connects), so a knocking friend is not sent away before the starter could hear them
+    const t0 = Date.now(); this._slowTold = false; let viaCloud = false, doorAt = 0, lastSay = 0;
+    this._knockViaCloud = false;
+    const again = (every, f) => { if (Date.now() - lastSay < every) return; lastSay = Date.now(); f(); };
     const watch = setInterval(() => {
       if(generation!==this._roomGeneration){clearInterval(watch);return;}
       if (this.role !== 'guest' || this.code !== code) { clearInterval(watch); return; }
-      const c = this.conns.get(host), s = (Date.now() - t0) / 1000, tick = Math.floor(s);
+      const c = this.conns.get(host), s = (Date.now() - t0) / 1000, open = !!(this.door && this.door.connected);
       if (this.remotes[host]) { clearInterval(watch); return; }
+      if (open && !doorAt) doorAt = Date.now();
       // let in, waiting for the starter's welcome on the members' channel: say hello there until it answers
-      if (!this.knocking) { if (!(c && c.open) && tick % 2 === 0) this._helloCloud(); if (s > 150) { clearInterval(watch); this._managementFailure('timeout'); this.emit('status', { key: 'stuck' }); this.close(true); } return; }
-      if (this._heard) { if (!(c && c.open) && tick % 4 === 0) this._knockCloud(); if (Date.now() - this._heard > 120000) { clearInterval(watch); this._managementFailure('timeout'); this.emit('status', { key: 'noanswer' }); this.close(true); } return; }
+      if (!this.knocking) { if (!(c && c.open)) again(2000, () => this._helloCloud()); if (s > 150) { clearInterval(watch); this._managementFailure('timeout'); this.emit('status', { key: 'stuck' }); this.close(true); } return; }
+      if (this._heard) { if (!(c && c.open) && open) again(4000, () => this._knockCloud()); if (Date.now() - this._heard > 120000) { clearInterval(watch); this._managementFailure('timeout'); this.emit('status', { key: 'noanswer' }); this.close(true); } return; }
       if (c && c.open) return;
-      if ((s > 7 || !p || !p.open || (c && c.peerConnection && c.peerConnection.iceConnectionState === 'failed')) && !viaCloud) { viaCloud = true; this._knockCloud(); }
-      else if (viaCloud && s > 3 && tick % 4 === 0) this._knockCloud();
+      if ((s > 7 || !p || !p.open || (c && c.peerConnection && c.peerConnection.iceConnectionState === 'failed')) && !viaCloud) { viaCloud = true; this._knockViaCloud = true; }
+      if (viaCloud && open) again(4000, () => this._knockCloud());
       if (s > 12 && !this._slowTold) { this._slowTold = true; this.emit('status', { key: 'slow' }); }
-      if (s > 30) { clearInterval(watch); this._managementFailure('timeout'); this.emit('status', { key: this._noDirect && this.door && this.door.connected ? 'nocode' : 'stuck' }); this.close(true); }
+      if ((doorAt && Date.now() - doorAt > 30000 && s > 30) || s > 90) { clearInterval(watch); this._managementFailure('timeout'); this.emit('status', { key: this._noDirect && open ? 'nocode' : 'stuck' }); this.close(true); }
     }, 1000);
     this._startPings(); this._wake(true);
   },
@@ -490,7 +499,8 @@ export const Net = {
     if (this.role !== 'host') return;
     this.knocks.set(id, was ? Object.assign(was, h, { at: was.at }) : Object.assign(h, { at: Date.now() }));
     this._seal('door', id, h.pub).then(m => this._toDoor(id, m, h.via));
-    if (!was) this.emit('knock', this.knocks.get(id));
+    // (v1.08 cloud fix) a knock said again tells the screen too, so a knock card that another card took away comes back
+    if (!was) this.emit('knock', this.knocks.get(id)); else this.emit('knockagain', this.knocks.get(id));
   },
   // a saved friend opened the number: straight in
   _chalr(d, id) { const c = this._chal.get(id); if (!c || d.n !== c.n) return; clearTimeout(c.t); this._chal.delete(id); this.knocks.set(id, Object.assign(c.h, { at: Date.now(), proven: true })); this.admit(id); },
@@ -613,9 +623,11 @@ export const Net = {
   // the door: made from the room code (knocks and the starter's locked answers only)
   async _startDoor() {
     if (this.door) this.door.close();
-    const ch = this.door = new Channel({ kind: 'room', code: this.code, onMsg: m => { if (this.door === ch) this._doorMsg(m); } });
+    const ch = this.door = new Channel({ kind: 'room', code: this.code, onMsg: m => { if (this.door === ch) this._doorMsg(m); }, onOpen: () => { if (this.door === ch) this._doorOpen(); } });
     await ch.start();if(this.door!==ch)ch.close();
   },
+  // (a newcomer knocking through the cloud) a broker of the door has just answered: knock now, not at the next tick
+  _doorOpen() { if (this.role === 'guest' && this.knocking && this._knockViaCloud) this._knockCloud(); },
   _doorMsg(m) {
     if (!m || typeof m !== 'object' || !okId(m.from) || m.from === this.me || (typeof m.to === 'string' && m.to !== this.me)) return;
     const d = checkMsg(m, m.from); if (!d) return;
@@ -748,7 +760,7 @@ export const Net = {
     const f = friendEntry(d.from); if (!f || !okPub(f.pub) || d.pub !== f.pub) return null;
     const o = await openFrom(f.pub, d);
     if (!o || o.k !== d.t || o.to !== settings.friendCode || o.from !== f.code || !(Math.abs(Date.now() - o.ts) < 30 * 60e3)) return null;
-    return { code: f.code, name: String(o.name || '').slice(0, 20), room: okRoom(o.room) ? String(o.room) : null, at: typeof o.at === 'string' && /^[\w-]{0,24}$/.test(o.at) ? o.at : '', players: Number.isInteger(o.players) && o.players >= 0 && o.players <= MAX_ROOM ? o.players : 0, host: o.host === true, hostPub: o.host === true ? f.pub : null,
+    return { code: f.code, ts: o.ts, name: String(o.name || '').slice(0, 20), room: okRoom(o.room) ? String(o.room) : null, at: typeof o.at === 'string' && /^[\w-]{0,24}$/.test(o.at) ? o.at : '', players: Number.isInteger(o.players) && o.players >= 0 && o.players <= MAX_ROOM ? o.players : 0, host: o.host === true, hostPub: o.host === true ? f.pub : null,
       // (TypeScript, batch 3) the friend's map version, when their note has one (none does yet: BOARD, Online)
       map: typeof o.map === 'string' && /^[\w.-]{1,16}$/.test(o.map) ? o.map : undefined };
   },
@@ -793,7 +805,10 @@ export const Net = {
     if ((d.t === 'note' || d.t === 'invite') && d._topic === F.inboxTopic) {
       const o = await this._openFriend(d); if (!o || !settings.online) return;
       if (d.t === 'invite') { if (o.room) F.onInvite && F.onInvite(o); return; }
-      F.status[o.code] = Object.assign({}, F.status[o.code], { name: o.name, at: o.at, room: o.room, players: o.players, host: o.host, map: o.map, noteAt: Date.now() });
+      // (v1.08 cloud fix) notes are opened one by one, and one can finish after a newer one: an older note never
+      // replaces a newer one (a friend kept seeing the place they had just left)
+      if (o.ts < ((F.status[o.code] || {}).noteTs || 0)) return;
+      F.status[o.code] = Object.assign({}, F.status[o.code], { name: o.name, at: o.at, room: o.room, players: o.players, host: o.host, map: o.map, noteAt: Date.now(), noteTs: o.ts });
       F.onChange && F.onChange(o.code);
     }
   },
@@ -844,7 +859,7 @@ export const Net = {
     if (this.role && this.cloud && !this.knocking) try { this._cloudSend({ t: 'bye' }); } catch (e) { }
     if (this.role === 'guest' && this.knocking && this.door) try { this._doorSend({ t: 'bye', to: this.hostId }); } catch (e) { }
     const cl = this.cloud, dr = this.door; this.cloud = null; this.door = null; this.cloudOn = false; if (cl) setTimeout(() => cl.close(), 400); if (dr) setTimeout(() => dr.close(), 400);
-    clearInterval(this._pt); this._wake(false); this.hostId = null; this._noDirect = false;
+    clearInterval(this._pt); this._wake(false); this.hostId = null; this._noDirect = false; this._knockViaCloud = false;
     clearInterval(this._mt); this._mt = null; this._meters.clear();
     for (const c of this.calls.values()) try { c.close(); } catch (e) { }
     for (const c of this.conns.values()) try { c.close(); } catch (e) { }

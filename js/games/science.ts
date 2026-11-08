@@ -14,14 +14,14 @@ import { el, esc, shuffle, wait } from '../util.js';
 import { tone } from '../audio.js';
 import { reduceMotion } from '../state.js';
 
-type Pair = [string, string];
-type Choice = { key: string; pic?: string; html?: string; label: Pair };
-type Trial = { ask: Pair; choices: Choice[]; answer: string; why: Pair; focus?: () => void; done?: () => void };
-type Ctx = { api: any; scene: HTMLElement; controls: HTMLElement; target: (e: Element | null) => void; lv: number };
-type Round = { draw: (x: Ctx) => void; trials: Trial[]; act: Pair; tryIt: (x: Ctx) => Promise<void> };
+export type Pair = [string, string];
+export type Choice = { key: string; pic?: string; html?: string; label: Pair };
+export type Trial = { ask: Pair; choices: Choice[]; answer: string; why: Pair; focus?: () => void; done?: () => void };
+export type Ctx = { api: any; scene: HTMLElement; controls: HTMLElement; target: (e: Element | null) => void; lv: number };
+export type Round = { draw: (x: Ctx) => void; trials: Trial[]; act: Pair; tryIt: (x: Ctx) => Promise<void> };
 
 let styled = false;
-function style() {
+export function style() {
   if (styled) return; styled = true;
   document.head.appendChild(el('style', '', `
 .sx-board { display: flex; flex-direction: column; align-items: center; gap: 10px; width: max-content; max-width: 100%; }
@@ -67,21 +67,24 @@ function style() {
 .sx-note { position: absolute; font: 900 26px var(--font, sans-serif); color: #8a5cf6; pointer-events: none; animation: sx-note 1s ease-out forwards; }
 @keyframes sx-note { from { transform: translateY(0); opacity: 1; } to { transform: translateY(-50px); opacity: 0; } }
 body.calm .sx-item.sx-bob, body.calm .sx-bottle.sx-ring2 { animation: none; }
+.sx-fact { display: flex; align-items: center; gap: 10px; max-width: min(380px, 92vw); padding: 10px 14px; border-radius: 18px; background: #fff6d8; border: 3px solid #ffb020; font: 800 17px var(--font, sans-serif); color: #3b2a4f; line-height: 1.25; }
+.sx-fact svg.art { width: 52px; height: 52px; flex-shrink: 0; }
 `));
 }
 
 // ---------- the shared three steps ----------
 const NEXT: Pair = ['Next', 'Tiếp'];
 const FIX: Pair = ['Now you know! Tap what really happened.', 'Giờ con biết rồi! Chạm vào điều đã thật sự xảy ra nhé.'];
-const lvOf = (api): number => api.little ? 0 : 1 + Math.max(0, Math.min(3, api.smart | 0));
+export const lvOf = (api): number => api.little ? 0 : 1 + Math.max(0, Math.min(3, api.smart | 0));
 // (v1.07 levels) lvOf is only an index, so each experiment writes its real values (things, rounds, choices) on the stage
-const mark = (api, ...v: unknown[]) => { api.stage.dataset.lv = v.join(','); };
-const band = (lv: number) => lv <= 1 ? '1-1' : lv === 2 ? '1-2' : '2-3';   // how hard the things are (pickSet)
+export const mark = (api, ...v: unknown[]) => { api.stage.dataset.lv = v.join(','); };
+export const band = (lv: number) => lv <= 1 ? '1-1' : lv === 2 ? '1-2' : '2-3';   // how hard the things are (pickSet)
 const choiceHTML = (c: Choice) => `${c.html || pic(c.pic)}<small>${esc(T(...c.label))}</small>`;
 function buttonsFor(api, row: HTMLElement, trial: Trial) {
   return trial.choices.map(c => { const b = Object.assign(el('button', 'choice sx-opt', choiceHTML(c)), { _v: c.key }); b.setAttribute('aria-label', T(...c.label)); row.appendChild(b); return b; });
 }
-async function experiment(api, rounds: Round[]) {
+// (v1.08 science) fact: one line said and shown after the last round, before the win (the newer experiments)
+export async function experiment(api, rounds: Round[], fact?: Pair) {
   style();
   const lv = lvOf(api), wrap = el('div', 'sx-board'), scene = el('div', 'sx-scene'), controls = el('div', 'sx-controls');
   wrap.append(scene, controls); api.stage.appendChild(wrap);
@@ -133,13 +136,19 @@ async function experiment(api, rounds: Round[]) {
     }
   }
   api.dots(rounds.length, rounds.length);
+  if (fact && !api.closed) {
+    controls.innerHTML = ''; const card = el('div', 'sx-fact', `${pic('sci2:fact')}<span>${esc(T(...fact))}</span>`); controls.appendChild(card); api.say(...fact);
+    const next = el('button', 'sx-go', `${pic('▶️')}<span>${esc(T(...NEXT))}</span>`); controls.appendChild(next); x.target(next);
+    if (!await tapOne([next], api) || api.closed) return;
+    x.target(null); api.sfx.tap && api.sfx.tap();
+  }
   return api.win();
 }
 
 // ---------- dragging (or a plain tap) ----------
 // The handle follows the finger; dropping it in the zone (or anywhere, with no zone) or simply tapping it calls done
 // with the drop point in the scene (0-100 %), or null for a tap. One use only.
-function dragOrTap(api, scene: HTMLElement, handle: HTMLElement, done: (at: { x: number; y: number } | null) => void, opts: { zone?: () => DOMRect | null; move?: (at: { x: number; y: number }) => void } = {}) {
+export function dragOrTap(api, scene: HTMLElement, handle: HTMLElement, done: (at: { x: number; y: number } | null) => void, opts: { zone?: () => DOMRect | null; move?: (at: { x: number; y: number }) => void } = {}) {
   let start: { x: number; y: number; id: number } | null = null, moved = false, used = false;
   const sceneAt = (cx: number, cy: number) => { const r = scene.getBoundingClientRect(); return { x: (cx - r.left) / r.width * 100, y: (cy - r.top) / r.height * 100 }; };
   const ratio = () => { const r = scene.getBoundingClientRect(); return scene.offsetWidth ? r.width / scene.offsetWidth : 1; };
@@ -167,11 +176,11 @@ function dragOrTap(api, scene: HTMLElement, handle: HTMLElement, done: (at: { x:
   const off = () => { handle.removeEventListener('pointerdown', down); document.removeEventListener('pointermove', move); document.removeEventListener('pointerup', up); handle.removeEventListener('click', click); };
   api.onCleanup(off);
 }
-const item = (scene: HTMLElement, p: string, label: Pair, x: number, y: number, cls = '') => {
+export const item = (scene: HTMLElement, p: string, label: Pair, x: number, y: number, cls = '') => {
   const b = el('button', 'sx-item ' + cls, pic(p)); b.setAttribute('aria-label', T(...label)); b.style.left = x + '%'; b.style.top = y + '%'; scene.appendChild(b); return b;
 };
-const bg = (scene: HTMLElement, body: string, vb = '0 0 400 300') => scene.appendChild(el('div', '', `<svg class="sx-bg" viewBox="${vb}" preserveAspectRatio="none" aria-hidden="true">${body}</svg>`).firstElementChild);
-const slow = (ms: number) => reduceMotion() ? Math.min(ms, 250) : ms;
+export const bg = (scene: HTMLElement, body: string, vb = '0 0 400 300') => scene.appendChild(el('div', '', `<svg class="sx-bg" viewBox="${vb}" preserveAspectRatio="none" aria-hidden="true">${body}</svg>`).firstElementChild);
+export const slow = (ms: number) => reduceMotion() ? Math.min(ms, 250) : ms;
 // pick n things for a round: from the hardness the level allows, both answers present when there are several
 function pickSet<V extends { hard: number; yes: boolean }>(pool: V[], lv: number, n: number, used: Set<V>): V[] {
   const lo = lv <= 1 ? 1 : lv === 2 ? 1 : 2, hi = lv <= 1 ? 1 : lv === 2 ? 2 : 3;
@@ -180,7 +189,7 @@ function pickSet<V extends { hard: number; yes: boolean }>(pool: V[], lv: number
   const s = shuffle(ok).slice(0, n); s.forEach(v => used.add(v)); return s;
 }
 // how many rounds and things per round, by level: under-5 and Easy 3 x 1, Medium 4 x 1, Hard 5 x 1, Talent 3 x 3
-const PLAN = [[3, 1], [3, 1], [4, 1], [5, 1], [3, 3]];
+export const PLAN = [[3, 1], [3, 1], [4, 1], [5, 1], [3, 3]];
 
 // ---------- 1. Float or sink ----------
 type Thing = { p: string; name: Pair; yes: boolean; hard: number; why: Pair };
@@ -444,7 +453,10 @@ register({ id: 'sci_shadow', learn: true, icon: 'sci:shadow', name: () => T('Lam
     let lamp: HTMLElement = null, shade: SVGPathElement = null, ray: SVGPathElement = null, rings: HTMLElement[] = [];
     const put = (lx: number, ly: number) => {
       const tip = Math.max(-60, Math.min(460, tipOf(lx, ly))), w = 16;
-      shade.setAttribute('d', `M${TOY.x - w} ${TOY.ground}L${TOY.x + w} ${TOY.ground}L${tip} ${TOY.ground + 9}L${tip} ${TOY.ground - 2}z`);
+      // (v1.08f, #812: "the shadow must show more clearly") a dark band lying on the ground from the teddy's feet to the tip,
+      // thick at the feet; it was an 11 px grey sliver, half see-through, hidden under the teddy when the lamp was high
+      const g = TOY.ground, dir = tip >= TOY.x ? 1 : -1;
+      shade.setAttribute('d', `M${TOY.x - w} ${g}L${TOY.x + w} ${g}L${tip} ${g}Q${tip + dir * 7} ${g + 4} ${tip} ${g + 8}Q${(tip + TOY.x) / 2} ${g + 14} ${TOY.x + dir * w} ${g + 16}L${TOY.x - dir * w} ${g + 16}z`);
       if (ray) ray.setAttribute('d', `M${lx} ${ly}L${tip} ${TOY.ground}`);
     };
     const pct = ([a, b]: [number, number]) => [a / 4, b / 3];
@@ -454,7 +466,7 @@ register({ id: 'sci_shadow', learn: true, icon: 'sci:shadow', name: () => T('Lam
     else { ask = ['The lamp will move to the ring. Will the shadow get longer or shorter?', 'Đèn sẽ chuyển tới vòng tròn. Bóng sẽ dài ra hay ngắn lại?']; choices = [{ key: 'long', pic: 'sci:longer', label: ['Longer', 'Dài ra'] }, { key: 'short', pic: 'sci:shorter', label: ['Shorter', 'Ngắn lại'] }]; answer = R.kind === 'high' || R.kind === 'near' ? 'short' : 'long'; }
     rounds.push({
       draw: x => {
-        bg(x.scene, `<rect x="0" y="${TOY.ground}" width="400" height="${300 - TOY.ground}" fill="#cfe8b8"/><path d="M0 ${TOY.ground}H400" stroke="#3b2a4f" stroke-width="3"/><path class="sx-shade" fill="#4a405a" opacity=".55"/>${lv >= 3 ? '<path class="sx-ray" stroke="#ffb020" stroke-width="3" stroke-dasharray="8 6" fill="none"/>' : ''}${R.star != null ? `<path transform="translate(${R.star} ${TOY.ground + 30})" d="M0-14l4 9 10 1-7 7 2 10-9-5-9 5 2-10-7-7 10-1z" fill="#ffd23f" stroke="#3b2a4f" stroke-width="2.5"/>` : ''}`);
+        bg(x.scene, `<rect x="0" y="${TOY.ground}" width="400" height="${300 - TOY.ground}" fill="#cfe8b8"/><path d="M0 ${TOY.ground}H400" stroke="#3b2a4f" stroke-width="3"/><path class="sx-shade" fill="#2f2840" opacity=".82" stroke="#2f2840" stroke-width="2" stroke-linejoin="round"/>${lv >= 3 ? '<path class="sx-ray" stroke="#ffb020" stroke-width="3" stroke-dasharray="8 6" fill="none"/>' : ''}${R.star != null ? `<path transform="translate(${R.star} ${TOY.ground + 30})" d="M0-14l4 9 10 1-7 7 2 10-9-5-9 5 2-10-7-7 10-1z" fill="#ffd23f" stroke="#3b2a4f" stroke-width="2.5"/>` : ''}`);
         shade = x.scene.querySelector('.sx-shade'); ray = x.scene.querySelector('.sx-ray');
         const toy = el('div', 'sx-rider', pic('🧸')); toy.style.left = '50%'; toy.style.bottom = (100 - TOY.ground / 3) + '%'; toy.style.width = toy.style.height = '64px'; x.scene.appendChild(toy);
         rings = R.rings.map((p, i) => { const [a, b] = pct(p), g = el('button', 'sx-ring', R.rings.length > 1 ? String(i + 1) : ''); g.style.left = a + '%'; g.style.top = b + '%'; g.dataset.i = String(i); g.setAttribute('aria-label', T('Ring', 'Vòng tròn') + ' ' + (i + 1)); x.scene.appendChild(g); return g; });
@@ -498,9 +510,13 @@ const ring = (fill: number) => { const f = pitch(fill); tone(f, .9, { type: 'sin
 register({ id: 'sci_sound', learn: true, icon: 'sci:sound', name: () => T('Bottle Music', 'Nhạc Chai Nước'), async run(api) {
   const lv = lvOf(api), n = [3, 3, 4, 4, 3][lv], count = [2, 2, 3, 4, 5][lv], rounds: Round[] = [];
   mark(api, n, count, lv === 4 ? 'match' : 'high-low');   // rounds, bottles, question
+  // (v1.08f, #816: "every round of Bottle Music is the same") each round has bottles of other colours, and the under-5s
+  // too are asked for the highest and the lowest note in turn (they had two bottles, red and blue, and "highest" every time)
+  const hue0 = Math.floor(Math.random() * BOTTLE_C.length), lowFirst = Math.random() < .5;
   for (let r = 0; r < n; r++) {
+    const col = (i: number) => BOTTLE_C[(hue0 + r * count + i) % BOTTLE_C.length];
     const fills = lv <= 1 ? shuffle([.18, .86]) : lv === 2 ? shuffle([.15, .5, .85]) : lv === 3 ? shuffle([.2, .4, .6, .8]) : shuffle([.15, .32, .5, .68, .85]);
-    const mode = lv === 4 ? 'match' : lv === 0 || r % 2 === 0 ? 'high' : 'low';
+    const mode = lv === 4 ? 'match' : (r % 2 === 0) !== lowFirst ? 'high' : 'low';
     const best = mode === 'high' ? fills.indexOf(Math.min(...fills)) : mode === 'low' ? fills.indexOf(Math.max(...fills)) : Math.floor(Math.random() * count);
     let bottles: HTMLElement[] = [];
     const why: Pair = mode === 'high' ? ['Less water lets the bottle shake faster, so its note is higher.', 'Ít nước thì chai rung nhanh hơn, nên tiếng kêu cao hơn.'] : mode === 'low' ? ['More water makes the bottle shake more slowly, so its note is lower.', 'Nhiều nước làm chai rung chậm hơn, nên tiếng kêu trầm hơn.'] : ['The same amount of water makes the same shake, so the notes match.', 'Cùng một mực nước thì rung giống nhau, nên hai tiếng giống nhau.'];
@@ -508,11 +524,11 @@ register({ id: 'sci_sound', learn: true, icon: 'sci:sound', name: () => T('Bottl
     rounds.push({
       draw: x => {
         const row = el('div', 'sx-bottles' + (mode === 'match' ? ' sx-low' : '')); x.scene.appendChild(row);
-        bottles = fills.map((f, i) => { const b = el('button', 'sx-bottle', bottleSVG(f, BOTTLE_C[i].c)); b.setAttribute('aria-label', T(...BOTTLE_C[i].name)); row.appendChild(b); return b; });
+        bottles = fills.map((f, i) => { const b = el('button', 'sx-bottle', bottleSVG(f, col(i).c)); b.setAttribute('aria-label', T(...col(i).name)); row.appendChild(b); return b; });
         if (mode === 'match') { const hear = el('button', 'sx-go sx-hear', `${pic('🔊')}<span>${esc(T('Hear the note', 'Nghe nốt nhạc'))}</span>`); hear.onclick = () => ring(fills[best]); x.scene.appendChild(hear); setTimeout(() => { if (!x.api.closed) ring(fills[best]); }, 900); }
       },
       trials: [{ ask: mode === 'high' ? ['Which bottle will make the highest sound when you tap it?', 'Gõ vào thì chai nào kêu cao nhất?'] : mode === 'low' ? ['Which bottle will make the lowest sound when you tap it?', 'Gõ vào thì chai nào kêu trầm nhất?'] : ['Listen to the note. Which bottle plays the same note?', 'Nghe nốt nhạc này. Chai nào kêu giống như vậy?'],
-        answer: String(best), why, choices: fills.map((f, i) => ({ key: String(i), html: `<span class="sx-mini">${bottleSVG(f, BOTTLE_C[i].c).replace('<svg ', '<svg width="100%" height="100%" ')}</span>`, label: BOTTLE_C[i].name })) }],
+        answer: String(best), why, choices: fills.map((f, i) => ({ key: String(i), html: `<span class="sx-mini">${bottleSVG(f, col(i).c).replace('<svg ', '<svg width="100%" height="100%" ')}</span>`, label: col(i).name })) }],
       act: ['Now tap each bottle with the spoon and listen.', 'Giờ gõ thìa vào từng chai và lắng nghe nhé.'],
       tryIt: x => new Promise<void>(res => {
         const heard = new Set<number>(), next = () => x.target(bottles.find((_, i) => !heard.has(i)) || null);

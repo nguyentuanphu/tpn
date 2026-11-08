@@ -53,8 +53,10 @@ export function createVoiceStore(name: string, { open = n => caches.open(n), bas
   const compact = async () => { const ix = await load(), size = new Map<number, number>(); for (const f of Object.values(ix.files)) size.set(f[0], (size.get(f[0]) || 0) + f[2]);
     const small = [...size].filter(([, b]) => b < SMALL).map(([n]) => n); if (small.length < 8) return;
     const c = await open(name);
-    for (const n of small) { const r = await c.match(abs(bundle(n))); if (!r) continue; const blob = await r.blob();
-      for (const [k, f] of Object.entries(ix.files)) if (f[0] === n) { pending.push({ key: k, data: await blob.slice(f[1], f[1] + f[2]).arrayBuffer(), legacy: null }); pendingBytes += f[2]; }
+    // (v1.08 fixes, check voicearea) the small bundle is read once, whole, and cut here: reading slices of a cached
+    // Blob one after another never finished on Chromium 153, which held the store's queue and stopped the pack download
+    for (const n of small) { const r = await c.match(abs(bundle(n))); if (!r) continue; const all = await r.arrayBuffer();
+      for (const [k, f] of Object.entries(ix.files)) if (f[0] === n) { pending.push({ key: k, data: all.slice(f[1], f[1] + f[2]), legacy: null }); pendingBytes += f[2]; }
       if (pendingBytes >= LIMIT) await flushNow(); }
     await flushNow(); await tidy(); };
   const store = {
@@ -90,7 +92,26 @@ export function createVoiceStore(name: string, { open = n => caches.open(n), bas
       }
       await lock(compact); await lock(tidy); return moved;
     },
-    tidy() { return lock(tidy); }
+    tidy() { return lock(tidy); },
+    // (v1.08c voices, offline levels) how many bytes of recordings are kept in bundles (shown in Grown-ups)
+    async bytes() { const ix = await load(); let n = 0; for (const f of Object.values(ix.files)) n += f[2]; for (const p of pending) n += p.data.byteLength; return n; },
+    // (v1.08c voices) keep only the recordings `keep` says yes to, and give the space back: a bundle that still holds kept
+    // recordings is written again without the others, and bundles nothing points at are deleted. Returns the bytes freed.
+    prune(keep: (k: string) => boolean) { return lock(async () => {
+      let freed = 0; pending = pending.filter(p => keep(p.key) || (freed += p.data.byteLength, false)); pendingBytes = pending.reduce((a, p) => a + p.data.byteLength, 0);
+      const ix = await load(), c = await open(name), touched = new Set<number>();
+      for (const [k, f] of Object.entries(ix.files)) if (!keep(k)) { delete ix.files[k]; freed += f[2]; touched.add(f[0]); }
+      for (const k of [...await legacyKeys()]) if (!keep(k)) { try { await c.delete(abs(k)); } catch (e) { } legacy?.delete(k); }
+      if (!touched.size) return freed;
+      await writeIndex(c, ix);
+      for (const n of touched) {
+        const left = Object.entries(ix.files).filter(([, f]) => f[0] === n); if (!left.length) continue;
+        const r = await c.match(abs(bundle(n))); if (!r) { for (const [k] of left) delete ix.files[k]; continue; }
+        const all = await r.arrayBuffer(); for (const [k, f] of left) { pending.push({ key: k, data: all.slice(f[1], f[1] + f[2]), legacy: null }); pendingBytes += f[2]; }
+        if (pendingBytes >= LIMIT) await flushNow();
+      }
+      await flushNow(); await writeIndex(c, ix); await tidy(); return freed;
+    }); }
   };
   return store;
 }

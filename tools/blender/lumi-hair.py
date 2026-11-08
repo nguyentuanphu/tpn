@@ -1,0 +1,211 @@
+# Hair as big soft sculpted locks (owner, 3 Nov 2026 AEDT, pop-up: "Big soft sculpted locks"), run inside lumi.py after lumi-more.py.
+# A thin base gives the hairline; large, thick, tapering locks lie on it and flow in one direction: away from a parting, down with gravity,
+# or towards a bun, a ponytail or pigtails. Vietnamese hair: straight and black (neat side parts, long straight hair, low buns, straight bangs);
+# Australian hair: waves, tousled short hair, ponytails, curls, afro puffs.
+
+# (v1.08e hair round 3, owner 6 Nov 2026 9 pm AEDT: "the hair will 100% scare the kids": sharp shards and spikes) every lock
+# is a soft round clump now, like a clay sculpt: an oval tube with a rounded root and a blunt rounded tip, never a flat
+# strip with edges or a point; the villagers' locks are fewer and bigger; the export smooths them before thinning
+# (lumi-rig.py, game-hd.py) and gives them smooth weighted normals, one base colour and one soft highlight band
+# (game-light.py, game-hd.py). The friends keep their approved shapes and colours, only smoothed.
+CLUMP = .72 if WHO == 'villager' else 1.0   # (the villagers: about a quarter fewer locks, each wider)
+
+def slock(m, L, W, th=None, wave=0.0, curl=.25, flick=.15, hug=1.0, taper=.85, N=7):
+    """one soft lock along +Y (its outer side +Z): an oval clump, full at the root, narrowing a little and ending in a round tip;
+    wave makes a gentle S-curve, flick lifts the tip a little; the root and the tip are closed and round"""
+    th = th or W * (.78 if WHO == 'villager' else .55)
+    SEG = 8; bm = bmesh.new(); rows = []
+    t0 = 1 - min(.26, .8 * W / max(L, 1e-6))   # where the round tip starts: about one width from the end, so a long lock ends round, not in a point
+    for i in range(N + 1):
+        t = i / N
+        w = W * (1 - (.22 if WHO == 'villager' else .38) * t ** (1.3 * taper)) * (.94 + .06 * math.sin(math.pi * t))   # (the villagers' locks stay full to the tip)
+        if t > t0: w *= math.sqrt(max(0.0, 1 - ((t - t0) / (1 - t0)) ** 2)) * .9 + .1 * (1 - t) / (1 - t0)
+        y = t * L; z = -(y * y) / (2 * hug) + .6 * flick * L * t ** 3; xo = wave * W * math.sin(t * math.pi * 2)
+        if i == N:
+            rows.append([bm.verts.new((xo, y + .04 * W, z + .1 * th))]); break
+        rz = th * .5 * (w / W) ** .8; ring_ = []
+        for k in range(SEG):
+            a = 2 * math.pi * k / SEG; ca, sa = math.cos(a), math.sin(a)
+            zz = rz * sa * (1.0 if sa > 0 else .55) - curl * .35 * rz * ca * ca
+            ring_.append(bm.verts.new((xo + w * ca, y, z + .1 * th + zz)))
+        rows.append(ring_)
+    root = bm.verts.new((0, -.22 * W, .1 * th))
+    for k in range(SEG):
+        bm.faces.new((root, rows[0][(k + 1) % SEG], rows[0][k]))
+        for i in range(N - 1):
+            a, b = rows[i][k], rows[i][(k + 1) % SEG]; c, d = rows[i + 1][(k + 1) % SEG], rows[i + 1][k]
+            bm.faces.new((a, b, c, d))
+        bm.faces.new((rows[N - 1][k], rows[N - 1][(k + 1) % SEG], rows[N][0]))
+    bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
+    o = obj_from(bm, 'hairLock', m); subsurf(o, 2); return o
+
+def on_head(az, el, lift=1.04):
+    hx, hy, hz = P.get('head', (1.03, .96, .94))
+    n = Vector((math.cos(el) * math.sin(az), -math.cos(el) * math.cos(az), math.sin(el)))
+    return HC + Vector((n.x * hx, n.y * hy, n.z * hz)) * R * lift, n
+
+def lock_at(m, az, el, L, W, toward=None, away=None, gravity=.6, spin=.15, lift=None, out=None, **kw):
+    """a lock rooted on the head at (az, el), flowing towards a point, away from a point, or simply down"""
+    # volume (owner, 3 Nov: "the hair looks too flat"): locks stand off the head, more on the crown, and lean outwards
+    TOY = LOOK == 'toy'   # the soft-toy look: big locks lying close to the head, tips tucked in
+    lift = lift or ((1.04 + .04 * max(0, math.sin(el))) if TOY else (1.07 + .1 * max(0, math.sin(el)))); out = (0.0 if TOY else .1 * max(0, math.sin(el)) + .02) if out is None else out
+    if TOY: kw['flick'] = min(kw.get('flick', .2), .06); kw['wave'] = kw.get('wave', 0) * .5; spin = min(spin, .06)
+    base, n = on_head(az, el, lift)
+    down = Vector((0, 0, -1)); g = (down - down.project(n))
+    if toward is not None: d = (toward - base); d = d - d.project(n)
+    elif away is not None: d = (base - away); d = d - d.project(n)
+    else: d = g.copy()
+    if d.length < 1e-4: d = g
+    d = (d.normalized() * (1 - gravity) + (g.normalized() if g.length > 1e-4 else d.normalized()) * gravity + n * out).normalized()
+    kw.setdefault('flick', .2); o = slock(m, L * R * (1.0 if TOY else 1.1), W * R * (1.35 if TOY else 1.15) / CLUMP ** .45, hug=kw.pop('hug', 1.05) * R * lift * 1.15, **kw)
+    place(o, base, d, n, random.uniform(-spin, spin)); return o
+
+def hair_base(m, hairline=.3, sides=-.4, back=-.66):
+    """a thin base that shapes the hairline round the face (the locks give the volume)"""
+    hx, hy, hz = P.get('head', (1.03, .96, .94))
+    bm = bmesh.new(); bmesh.ops.create_uvsphere(bm, u_segments=48, v_segments=30, radius=1)
+    bmesh.ops.delete(bm, geom=[v for v in bm.verts if (v.co.y < -.18 and v.co.z < hairline + .3 * v.co.x ** 2) or (v.co.z < sides and v.co.y < .3) or v.co.z < back], context='VERTS')
+    # (round 3) the trimmed edge round the face smoothed along itself, so the hairline is a soft curve, not a staircase
+    for _ in range(8):
+        edge = [v for v in bm.verts if v.is_boundary]
+        new = {}
+        for v in edge:
+            nb = [e.other_vert(v) for e in v.link_edges if e.is_boundary]
+            if len(nb) == 2: new[v] = (v.co * 2 + nb[0].co + nb[1].co) / 4
+        for v, c in new.items(): v.co = c.normalized()
+    bmesh.ops.transform(bm, matrix=Matrix.Translation(HC + Vector((0, .02 * R, .04 * R))) @ Matrix.Diagonal((hx * 1.1 * R, hy * 1.09 * R, hz * 1.08 * R, 1)), verts=bm.verts)
+    o = obj_from(bm, 'hairCap', m); so = o.modifiers.new('thick', 'SOLIDIFY'); so.thickness = .05 * R; so.offset = -1; subsurf(o, 2); return o
+
+def ring(el, count, fn, skip_face=True, phase=0.0):
+    count = max(5, round(count * CLUMP))   # (fewer, bigger clumps for the villagers)
+    for k in range(count):
+        az = 2 * math.pi * (k + phase) / count + random.uniform(-.06, .06)
+        if skip_face and front_open(az, el): continue
+        if skip_face and CLUMP < 1 and math.cos(az) > .25 and el < .6: continue   # (the villagers' wider side locks start behind the temple, off the cheek)
+        fn(az, el, k)
+
+def style(name, A=None, Bm=None, side=1):
+    """build one hairstyle from sculpted locks; A main colour, Bm a lighter one"""
+    # (round 3: one base colour; the soft highlight band is added by the export, not stripes of light and dark locks)
+    A = A or HAIR; Bm = Bm or HAIRL; C = lambda k: A
+    top = HC + Vector((0, 0, R * 1.1))
+    if name == 'sidepart':   # neat and short, parted on one side, swept across (Vietnamese men, Finn)
+        hair_base(A, .4, -.32, -.6); part = HC + Vector((side * .4 * R, -.3 * R, R * 1.0))
+        ring(1.25, 8, lambda az, el, k: lock_at(C(k), az, el, .75, .5, away=part, gravity=.25), False)
+        ring(.85, 13, lambda az, el, k: lock_at(C(k), az, el, .6, .45, away=part, gravity=.55), True, .5)
+        ring(.4, 14, lambda az, el, k: lock_at(C(k), az, el, .5, .42, gravity=.9), True)
+        ring(0, 12, lambda az, el, k: lock_at(C(k), az, el, .38, .4, gravity=1), True, .5)
+        for k, az in enumerate((-.55, -.25, .05)): lock_at(C(k), side * az * -1, 1.05, .7, .5, toward=HC + Vector((-side * 1.2 * R, -1.0 * R, .2 * R)), gravity=.2, flick=.25)
+    elif name in ('bangs', 'messy'):   # a short cut with a fringe (Vietnamese boys), or tousled (Australian boys and dads)
+        hair_base(A, .22, -.36, -.6); crown = HC + Vector((0, .5 * R, R * .95))
+        mess = name == 'messy'
+        ring(1.3, 7, lambda az, el, k: lock_at(C(k), az, el, .7, .52, away=crown, gravity=.3, flick=.35 if mess else .15, spin=.25 if mess else .1), False)
+        ring(.9, 13, lambda az, el, k: lock_at(C(k), az, el, .62, .46, away=crown, gravity=.5, flick=.3 if mess else .15, spin=.2 if mess else .08), False, .5)
+        ring(.45, 14, lambda az, el, k: lock_at(C(k), az, el, .5, .42, gravity=.9, flick=.3 if mess else .1), True)
+        ring(.05, 12, lambda az, el, k: lock_at(C(k), az, el, .38, .4, gravity=1), True, .5)
+    elif name == 'long':   # long straight hair with a middle parting, down to the waist (Vietnamese women)
+        hair_base(A, .3, -.2, -.55); part = HC + Vector((0, -.35 * R, R * 1.05))
+        ring(1.2, 10, lambda az, el, k: None if math.cos(az) > .8 else lock_at(C(k), az, el, 1.0, .55, away=part, gravity=.5, flick=0), False)
+        ring(.7, 14, lambda az, el, k: lock_at(C(k), az, el, 2.6 if math.cos(az) < .2 else 1.6, .5, gravity=.95, flick=0, curl=.15), True)
+        ring(.25, 12, lambda az, el, k: lock_at(C(k), az, el, 2.4, .5, gravity=1, flick=0, curl=.15), True, .5)
+    elif name == 'lowbun':   # combed back to a low bun at the nape (it sits under a hat)
+        hair_base(A, .36, -.36, -.62); bun = HC + Vector((0, .95 * R, -.3 * R))
+        ring(1.25, 9, lambda az, el, k: lock_at(C(k), az, el, .9, .5, toward=bun, gravity=.1, flick=0), False)
+        ring(.75, 14, lambda az, el, k: lock_at(C(k), az, el, .85, .48, toward=bun, gravity=.1, flick=0), True, .5)
+        ring(.3, 12, lambda az, el, k: lock_at(C(k), az, el, .6, .45, toward=bun, gravity=.2, flick=0), True)
+        sphere('bun', A, bun + Vector((0, .1 * R, 0)), (.38 * R, .32 * R, .34 * R), 24, 12)
+        for k in range(5):
+            a = k * 2 * math.pi / 5; o = slock(C(k), .7 * R, .3 * R, curl=.5, flick=0, hug=.4 * R)
+            place(o, bun + Vector((math.cos(a) * .3 * R, .1 * R, math.sin(a) * .3 * R)), Vector((-math.sin(a), 0, math.cos(a))), Vector((math.cos(a), .3, math.sin(a))))
+    elif name == 'ponytail':   # pulled back to a high ponytail with a soft wave (Australian mums)
+        hair_base(A, .32, -.36, -.62); base = HC + Vector((0, .82 * R, .55 * R))
+        ring(1.25, 9, lambda az, el, k: lock_at(C(k), az, el, .9, .5, toward=base, gravity=.05, flick=0), False)
+        ring(.75, 14, lambda az, el, k: lock_at(C(k), az, el, .9, .48, toward=base, gravity=.05, flick=0), True, .5)
+        ring(.3, 12, lambda az, el, k: lock_at(C(k), az, el, .7, .45, toward=base + Vector((0, 0, -.2 * R)), gravity=.1, flick=0), True)
+        sphere('ponyTie', felt('tie', '#e2574c'), base, (.17 * R, .13 * R, .17 * R), 16, 8)
+        for k in range(6):
+            a = k * 2 * math.pi / 6; o = slock(C(k), 1.5 * R, .34 * R, wave=.35, flick=.15, hug=3 * R)
+            place(o, base + Vector((math.cos(a) * .08 * R, .05 * R, math.sin(a) * .08 * R)), Vector((math.cos(a) * .15, .35, -1)), Vector((math.cos(a), .6, math.sin(a))))
+    elif name == 'pigtails':   # straight bangs and two pigtails (Vietnamese schoolgirls)
+        hair_base(A, .18, -.36, -.62)
+        ring(1.25, 9, lambda az, el, k: lock_at(C(k), az, el, .8, .5, toward=HC + Vector((math.copysign(1.1, math.sin(az) or 1) * R, .2 * R, 0)), gravity=.2, flick=0), False)
+        ring(.75, 14, lambda az, el, k: lock_at(C(k), az, el, .7, .46, toward=HC + Vector((math.copysign(1.1, math.sin(az) or 1) * R, .2 * R, 0)), gravity=.3, flick=0), True, .5)
+        for k, az in enumerate((-.5, -.25, 0, .25, .5)): lock_at(C(k), az, 1.0, .72, .45, gravity=1, flick=0, curl=.1)   # straight bangs
+        for s in (-1, 1):
+            tie = HC + Vector((s * 1.05 * R, .2 * R, 0)); sphere('pigTie', felt('tie', '#e2574c'), tie, (.14 * R, .14 * R, .12 * R), 16, 8)
+            for k in range(3):
+                o = slock(C(k), 1.0 * R, .32 * R, flick=.1, hug=3 * R); place(o, tie + Vector((s * .05 * R, (k - 1) * .06 * R, 0)), Vector((s * .25, 0, -1)), Vector((s, (k - 1) * .4, .1)))
+    elif name == 'puffs':   # two round afro puffs (Australian girl)
+        hair_base(A, .3, -.38, -.62)
+        for s in (-1, 1):
+            c = HC + Vector((s * .8 * R, .15 * R, .8 * R)); sphere('hairPuff', A, c, (.44 * R, .42 * R, .42 * R), 24, 12)
+            for k in range(26):
+                a = random.uniform(0, 2 * math.pi); e = random.uniform(-1.2, 1.4); n = Vector((math.cos(e) * math.cos(a), math.cos(e) * math.sin(a), math.sin(e)))
+                sphere('hairCurl', C(k), c + n * .42 * R, (.14 * R,) * 3, 10, 5)
+            sphere('puffTie', felt('tie', '#f2c14e'), c + Vector((-s * .25 * R, -.05 * R, -.25 * R)), (.15 * R, .15 * R, .1 * R), 12, 6)
+        ring(.9, 12, lambda az, el, k: lock_at(C(k), az, el, .5, .45, gravity=.4, curl=.5, flick=.4), True)
+    elif name == 'curls':   # short soft curls (Australian grandma, Sol)
+        hair_base(A, .34, -.38, -.62)
+        cs = 1.0 if CLUMP == 1 else 1.3   # (the villagers: fewer, bigger soft curls)
+        for k in range(round(150 * CLUMP ** 2)):   # dense soft curls
+            az = random.uniform(-math.pi, math.pi); el = random.uniform(-.15, 1.57)
+            if front_open(az, el) and el < .95: continue
+            p, n = on_head(az, el, random.uniform(1.08, 1.2)); sphere('hairCurl', C(k), p, (.2 * R * cs, .2 * R * cs, .17 * R * cs), 12, 6)
+    elif name == 'waves':   # wavy hair to the shoulders, middle parting (Clara)
+        hair_base(A, .3, -.3, -.6); part = HC + Vector((0, -.35 * R, R * 1.05))
+        ring(1.2, 10, lambda az, el, k: None if math.cos(az) > .8 else lock_at(C(k), az, el, .95, .58, away=part, gravity=.55, flick=.05, wave=.12), False)
+        ring(.7, 14, lambda az, el, k: lock_at(C(k), az, el, 1.7, .55, gravity=1, flick=.12, wave=.18, out=.0), True, .5)
+        ring(.25, 12, lambda az, el, k: lock_at(C(k), az, el, 1.5, .52, gravity=1, flick=.15, wave=.18, out=.0), True)
+    else:   # tuft: bald on top, short hair round the back and sides (grandpas)
+        # (v1.08e, Release 6 Nov: Bác Ba's tufts were flat grey blocks) soft round tufts in two rows, from above the ears round the back
+        for row, el in enumerate((-.18, .1)):
+            for k in range(13):
+                az = math.pi * .36 + k * math.pi * 1.28 / 12 + .08 * row
+                p_, n_ = on_head(az, el, 1.0); sphere('hairTuft', C(k + row), p_, (.22 * R, .2 * R, .16 * R), 16, 8, n_.to_track_quat('Z', 'Y').to_euler())
+
+# the friends' hair in sculpted locks (Lumi keeps her leaves)
+def hair_finn():
+    style('messy', HAIR, HAIRL)
+    for k, az in enumerate((-.6, -.3, 0.0, .3)): lock_at(HAIR, az, 1.05, .75, .48, toward=HC + Vector((1.3 * R, -1.0 * R, .2 * R)), gravity=.25, flick=.3)   # a fringe swept to the side
+
+def hair_clara():
+    style('waves', HAIR, HAIRL)
+    _clara_braids_and_flower()
+
+def hair_sol():
+    style('curls', HAIR, HAIRL)
+
+VSTYLE = {'sidepart': 'sidepart', 'boybangs': 'bangs', 'messy': 'messy', 'long': 'long', 'lowbun': 'lowbun', 'ponytail': 'ponytail',
+          'bangspigtails': 'pigtails', 'puffs': 'puffs', 'curls': 'curls', 'tuft': 'tuft'}
+def _lift(hexs, k):
+    """a dark hair colour lifted toward a warm dark brown, so its locks show their soft shape in the light (never black)"""
+    c = [int(hexs[i:i + 2], 16) for i in (1, 3, 5)]; lum = (.3 * c[0] + .59 * c[1] + .11 * c[2]) / 255
+    if lum > .2: return hexs
+    w = (118, 80, 58); c = [round(a + (b - a) * k) for a, b in zip(c, w)]
+    return '#%02x%02x%02x' % tuple(c)
+def hair_villager():
+    # (v1.08e, Release 6 Nov: near-black hair drew as a flat black slab) the dark colours lifted a little, the second shade more
+    # (round 3, owner 6 Nov 9 pm: dark hair a warm dark brown, one base colour; the export adds one soft highlight band)
+    HS = mat('hairShell', _lift(PAL[1], .42), .5, .45); HL = HS
+    if V.get('kit'): return kit_hair(V['hair'], HS, HL)   # the costume kit's hair (costumes.py)
+    style(VSTYLE.get(VHAIR.get(ROLE, 'sidepart'), 'sidepart'), HS, HL)
+
+def _clara_braids_and_flower():
+    # two braids over the shoulders with lilac ties
+    for s in (-1, 1):
+        path = [H(s * .9, -.15, -.25), H(s * .98, -.32, -.8), H(s * .95, -.42, -1.35), H(s * .9, -.45, -1.75)]
+        segs = 9
+        for i in range(segs):
+            f = i / (segs - 1); seg = int(f * 2.999); u = f * 3 - seg
+            p = path[seg].lerp(path[seg + 1], u) + Vector((s * (.06 if i % 2 else -.06) * R, 0, 0))
+            sphere('braid', HAIR, p, (.19 * R * (1 - .3 * f), .16 * R * (1 - .3 * f), .2 * R), 16, 8, (0, s * (.4 if i % 2 else -.4), 0))
+        sphere('braidTie', DRESSL, path[-1] + Vector((0, 0, -.05 * R)), (.12 * R, .12 * R, .07 * R), 16, 8)
+        tube('braidTuft', HAIR, [path[-1] + Vector((0, 0, -.08 * R)), path[-1] + Vector((s * .05 * R, -.02 * R, -.35 * R))], [(.13 * R, .1 * R), (.02 * R, .02 * R)], 10)
+    # a cream flower clip with two leaves, high on Clara's right
+    c = H(-.62, -.58, .7); n = (c - HC).normalized(); q = n.to_track_quat('Z', 'Y').to_matrix()
+    for i in range(5):
+        a = i * 2 * math.pi / 5; p = c + q @ Vector((math.cos(a) * .13 * R, math.sin(a) * .13 * R, .06 * R))
+        sphere('petal', PETAL, p, (.13 * R, .08 * R, .04 * R), 16, 8, (q @ Matrix.Rotation(a, 3, 'Z')).to_euler())
+    sphere('flowerHeart', STAR, c + n * .1 * R, (.06 * R, .06 * R, .04 * R), 12, 6)
+    for a in (2.4, 3.6):
+        o = leaf('flowerLeaf', LEAFG, .22 * R, .1 * R, .2, .2, 10, .03 * R, .2); place(o, c + n * .03 * R, q @ Vector((math.cos(a), math.sin(a), 0)), n)

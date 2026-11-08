@@ -1,12 +1,13 @@
 // Road screenshots for v1.07 roads (issue #34): the same spots and camera on phone, tablet and computer.
 // Run from tests/ with the game served on :8765:  node ../docs/roads-concept-d/capture.mts before|after
+// (v1.08c roads) the pictures go into a folder named after the tag: docs/roads-concept-d/after/<spot>-<screen>.jpg
 import fs from 'node:fs';
 import { launch, open, clear, noWelcome } from '../../tests/harness.mts';
 const tag = process.argv[2] || 'after', dir = new URL('.', import.meta.url).pathname;
 // [name, hero x, z, camera yaw (radians, 0 = looking +z), pitch, zoom]
 const SPOTS = [
   ['town', 30, -24, -Math.PI / 2, .5, 1.1],          // island_e road at Phố Hai Quê's east gate
-  ['village', 166, -38, Math.PI / 2, .55, 1.1],      // Làng Sen: village_link asphalt into the dirt lane
+  ['village', 157, -45, Math.PI / 2, .55, 1.1],      // Làng Sen: village_link asphalt into the dirt lane (v1.08c: off the road's edge, 166,-38 put the camera in a wall)
   ['island-ring', 92, -40, 0, .5, 1.2],              // the ring road round the home island
   ['dirt-path', 125, 86, Math.PI / 2, .55, 1.0],     // mv_e1 dirt road to the Memory Village
   ['crossing-vn', 147, 3, Math.PI * .75, .6, 1.3],   // link_vn meets vn_north / vn_south
@@ -27,7 +28,7 @@ for (const [size, w, h] of SIZES) {
     await P.page.waitForTimeout(1500);
     await P.page.evaluate(([yaw, pitch]) => { const H = window.__sv.heroes[0]; H.camYaw = yaw; H.camPitch = pitch; H.manualCamT = 60; }, [yaw, pitch]);
     await P.page.waitForTimeout(700);
-    await P.page.screenshot({ path: `${dir}${tag}-${name}-${size}.jpg`, type: 'jpeg', quality: 72 });
+    fs.mkdirSync(`${dir}${tag}`, { recursive: true }); await P.page.screenshot({ path: `${dir}${tag}/${name}-${size}.jpg`, type: 'jpeg', quality: 72 });
   }
 }
 console.log(tag, 'errors:', P.errors.slice(0, 5));

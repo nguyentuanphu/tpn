@@ -10,6 +10,19 @@ await check('hocvui', async () => {
   // a win through real taps on the screen, at Easy and at Talent for a big kid, where Talent shows more than Easy
   const NEW = ['sci_float', 'sci_magnet', 'sci_ramp', 'sci_seesaw', 'sci_shadow', 'sci_sound', 'vi_tones', 'vi_build'];
   const MORE = { sci_float: '.sx-thing', sci_magnet: '.sx-thing', sci_ramp: '.sx-lane', sci_seesaw: 'button.sx-seat', sci_shadow: '.sx-ring', sci_sound: '.sx-bottle', vi_tones: '.choices .choice', vi_build: '.choices .choice' };
+  // (v1.08 science) the twelve new science experiments (js/games/science2.ts), each also played to a win at Easy and Talent
+  const SCI2 = ['sci_plant', 'sci_water', 'sci_daynight', 'sci_seasons', 'sci_homes', 'sci_body', 'sci_colours', 'sci_ice', 'sci_rainbow', 'sci_bulb', 'sci_gears', 'sci_recycle'];
+  NEW.push(...SCI2); for (const id of SCI2) MORE[id] = '.sx-thing';
+  // (v1.08 english) the English corner's eight games
+  const EN = ['en_words', 'en_listen', 'en_say', 'en_abc', 'en_count', 'en_sentence', 'en_greet', 'en_colshape'];
+  NEW.push(...EN); for (const id of EN) MORE[id] = '.choices .choice';
+  // (v1.08 vietnamese) the ten new Tiếng Việt games, and what Talent shows more of
+  const VI2 = { vi_tonemean: '.choices .choice', vi_rhyme: '.choices .choice', vi_letters: '.choices .choice', vi_opposite: '.vt-pair', vi_cadao: '.choices .choice',
+    vi_tucngu: '.choices .choice', vi_readalong: '.vt-word', vi_sentence: '.vt-text', vi_dictation: '.vt-letter', vi_riddle: '.choices .choice' };
+  NEW.push(...Object.keys(VI2)); Object.assign(MORE, VI2);
+  // (v1.08b games) the 27 new corner games (js/content/games108b.ts): Talent shows more answers than Easy
+  const G8 = await (async () => { const P0 = await openAllGamesFixture(b, { w: 390, h: 844 }); const ids = await P0.page.evaluate(async () => (await import('/js/content/games108b.js')).QUIZ_GAMES.map(g => g.id)); await P0.ctx.close(); return ids; })();
+  NEW.push(...G8); for (const id of G8) MORE[id] = '.mx-btn';
   const P = await openAllGamesFixture(b, { w: 390, h: 844, touch: true, settings: { voice: false } }); await clear(P.page);
   const fails = [];
   // the Play hub: the tab, its four corners, the new games as cards, existing games as links; Learning keeps its games
@@ -22,27 +35,30 @@ await check('hocvui', async () => {
     const plays = [...document.querySelectorAll('.hubbody [data-play]')].map(b => b.dataset.play), links = [...document.querySelectorAll('.hubbody [data-link]')].map(b => b.dataset.link);
     const small = [...document.querySelectorAll('.hubbody .hplay')].filter(b => { const r = b.getBoundingClientRect(); return r.width < 64 || r.height < 64; }).length;
     const art = [...document.querySelectorAll('.hubtabs [data-tab="hocvui"] .art, .hubbody .hubarea .art')].length;
-    document.querySelector('.hubtabs [data-tab="learn"]')?.click(); await wait(300);
-    const learn = [...document.querySelectorAll('.hubbody [data-play]')].map(b => b.dataset.play);
-    return { tabs, heads, plays, links, small, art, learn };
+    return { tabs, heads, plays, links, small, art };
   });
-  if (!hub.tabs.includes('hocvui') || hub.tabs[0] !== 'learn') fails.push('tabs ' + hub.tabs.join(','));
-  if (JSON.stringify(hub.heads) !== JSON.stringify(['Vietnamese', 'English', 'Maths', 'Science'])) fails.push('corners ' + hub.heads.join(' | '));
-  if (!NEW.every(id => hub.plays.includes(id)) || hub.plays.some(id => !NEW.includes(id))) fails.push('corner games ' + hub.plays.join(','));
-  for (const id of ['words', 'phonics', 'opposites', 'firstwords', 'counting', 'sums', 'numline']) if (!hub.links.includes(id)) fails.push('no link to ' + id);
-  for (const id of ['counting', 'sums', 'phonics', 'opposites', 'numline']) if (!hub.learn.includes(id)) fails.push(id + ' left the Learning tab');
+  // (v1.08b games, owner 3 Nov 2026 AEDT: one learning tab, one home per game) Học vui is the first tab and the only
+  // learning tab; its corners in order; every learning game is a card of its own there, and there are no link tiles
+  if (hub.tabs[0] !== 'hocvui' || hub.tabs.includes('learn')) fails.push('tabs ' + hub.tabs.join(','));
+  const HEADS = ['Vietnamese', 'English', 'Maths', 'Shapes', 'Money and shopping', 'Science', 'Letters and reading'];
+  if (JSON.stringify(hub.heads.filter(h => HEADS.includes(h))) !== JSON.stringify(HEADS) || !hub.heads.includes('Me and my family')) fails.push('corners ' + hub.heads.join(' | '));
+  // (v1.08b games) the new Big thinkers games (th_) live in the Suy nghĩ giỏi tab, not Học vui
+  if (!NEW.filter(id => !id.startsWith('th_')).every(id => hub.plays.includes(id))) fails.push('corner games missing ' + NEW.filter(id => !id.startsWith('th_') && !hub.plays.includes(id)).join(','));
+  for (const id of ['words', 'phonics', 'opposites', 'counting', 'sums', 'numline', 'shoppay']) if (!hub.plays.includes(id)) fails.push(id + ' is not in Học vui');
+  if (hub.links.length) fails.push('link tiles are back: ' + hub.links.join(','));
+  if (hub.plays.includes('firstwords')) fails.push('First Words (Chinese and Hindi) is in a Fun learning corner');
   if (hub.small) fails.push(hub.small + ' hub cards under 64 px'); if (hub.art < 5) fails.push('tab and corner pictures not drawn: ' + hub.art);
-  // a link opens the game it points to, by a real tap
-  const link = await P.page.evaluate(() => { const b = document.querySelector('.hubtabs [data-tab="hocvui"]'); b.click(); return new Promise(r => setTimeout(() => { const l = document.querySelector('.hubbody [data-link="counting"]'); l.scrollIntoView({ block: 'center' }); const q = l.getBoundingClientRect(); r({ x: q.left + q.width / 2, y: q.top + q.height / 2 }); }, 300)); });
+  // a card opens its game, by a real tap
+  const link = await P.page.evaluate(() => { const b = document.querySelector('.hubtabs [data-tab="hocvui"]'); b.click(); return new Promise(r => setTimeout(() => { const l = document.querySelector('.hubbody [data-play="counting"]'); l.scrollIntoView({ block: 'center' }); const q = l.getBoundingClientRect(); r({ x: q.left + q.width / 2, y: q.top + q.height / 2 }); }, 300)); });
   await P.page.touchscreen.tap(link.x, link.y);
-  if (!await P.page.waitForSelector('.gl[data-game-id="counting"]', { timeout: 10000 }).then(() => true, () => false)) fails.push('the Counting link did not open Counting');
+  if (!await P.page.waitForSelector('.gl[data-game-id="counting"]', { timeout: 10000 }).then(() => true, () => false)) fails.push('the Counting card did not open Counting');
   await P.page.evaluate(() => { document.querySelector('.gl .gl-x')?.click(); document.querySelectorAll('.modal').forEach(m => m.remove()); __sv.paused = false; }); await P.page.waitForTimeout(500);
-  // the Simple screen: the same four areas, in order, after the others; the new games in them and the links too
+  // the Simple screen: the same corners; the new games in them, each game once
   const simple = await P.page.evaluate(() => { __sv.simple.show('games'); __sv.simple.openGroup('games', null); const v = __sv.simple.view, out = { cats: v.cats, stops: v.stops }; __sv.simple.hide(); return out; });
   const corners = simple.cats.filter(c => c.startsWith('hv_'));
-  if (JSON.stringify(corners) !== JSON.stringify(['hv_vi', 'hv_en', 'hv_math', 'hv_sci']) || simple.cats.indexOf('hv_vi') < simple.cats.indexOf('money')) fails.push('Simple screen areas ' + simple.cats.join(','));
+  if (JSON.stringify(corners) !== JSON.stringify(['hv_vi', 'hv_en', 'hv_sci']) || simple.cats.indexOf('hv_vi') < simple.cats.indexOf('money')) fails.push('Simple screen areas ' + simple.cats.join(','));
   if (!NEW.every(id => simple.stops.includes(id))) fails.push('Simple screen without ' + NEW.filter(id => !simple.stops.includes(id)).join(','));
-  if (simple.stops.filter(id => id === 'counting').length !== 2) fails.push('Counting is not both in Numbers and in Maths on the Simple screen');
+  if (simple.stops.filter(id => id === 'counting').length !== 1) fails.push('Counting is not in exactly one place on the Simple screen');
   // each new game: Easy and Talent, a big kid, played to the win by tapping what the game asks for (its plan, or the
   // right answer of the question on screen), like a child's finger; quicker with Reduce motion (the same steps)
   await P.page.emulateMedia({ reducedMotion: 'reduce' });
@@ -91,7 +107,81 @@ await check('hocvui', async () => {
   const errs = P.errors.slice(); await P.ctx.close();
   if (errs.length) fails.push(...errs.slice(0, 3));
   ok(!fails.length, fails.slice(0, 12).join(' | ') + ' ' + JSON.stringify(played));
-  return `Fun learning tab with four corners (${hub.plays.length} own games, ${hub.links.length} links; the linked games stay in their own tab and open from the link); the same four areas on the Simple screen; ${NEW.length} new games won by real taps at Easy and Talent (${NEW.map(id => `${id} ${played[id + ':easy'].shown}→${played[id + ':talent'].shown}`).join(', ')}); pictures in tests/out/hocvui`;
+  return `one Fun learning tab, its corners in order (${hub.plays.length} games, no links; a card opens its game); the same corners on the Simple screen, each game once; ${NEW.length} new games won by real taps at Easy and Talent (${NEW.map(id => `${id} ${played[id + ':easy'].shown}→${played[id + ':talent'].shown}`).join(', ')}); pictures in tests/out/hocvui`;
+});
+
+// (v1.08f bugs, #816) Bottle Music: no two rounds the same, the under-5s too (tests/bottle-variety.mts)
+await check('bottlevariety', async () => (await import('../bottle-variety.mts')).bottleVarietyCheck(b));
+
+await check('englishmode', async () => {
+  // (v1.08 english, owner's plan 3 Nov 2026 AEDT, part C) English mode: a Vietnamese child opens Opposites from Học vui ›
+  // Tiếng Anh by a real tap, and it plays in English (its question line English, a Vietnamese hint under it with a speaker
+  // of 44 px or more); the same game from the Learning tab plays in Vietnamese; the child's language is back (and saved)
+  // after closing; an English game of its own is English wherever it opens; the English corner shows the English mode
+  // badge; First Words left the English corner for Going places. Pictures on a phone, a tablet and a computer.
+  const P = await openAllGamesFixture(b, { w: 390, h: 844, touch: true, lang: 'vi', settings: { voice: false, lang: 'vi', bilingual: true } }); await clear(P.page);
+  const fails = [];
+  // (a game is closed with its own Leave button, so it puts the language back, as a child's tap does)
+  const openHub = async tab => { await P.page.evaluate(() => (document.querySelector('.gl:not(.out) .gl-x') as HTMLElement)?.click()); await P.page.waitForTimeout(400);
+    await P.page.evaluate(t => { document.querySelectorAll('.gl, .modal').forEach(m => m.remove()); __sv.paused = false; __sv.heroes[0].profile.age = 'big'; __sv.openGamesHub(0); document.querySelector(`.hubtabs [data-tab="${t}"]`)?.click(); }, tab); await P.page.waitForTimeout(500); };
+  const tapIn = async sel => { const at = await P.page.evaluate(sel => { const l = document.querySelector(sel); if (!l) return null; l.scrollIntoView({ block: 'center' }); const q = l.getBoundingClientRect(); return { x: q.left + q.width / 2, y: q.top + q.height / 2 }; }, sel); if (at) await P.page.touchscreen.tap(at.x, at.y); return !!at; };
+  const state = () => P.page.evaluate(() => { const gl = document.querySelector('.gl:not(.out)'), h = gl?.querySelector('.gl-vihear'), r = h?.getBoundingClientRect(), saved = JSON.parse(localStorage.getItem('sv2_settings') || '{}');
+    return { open: !!gl, id: gl?.dataset.gameId, english: gl?.dataset.english === '1', lang: (window as any).__sv && document.documentElement && (window as any).__svLang?.(), help: gl?.querySelector('.gl-help')?.textContent || '', hint: gl?.querySelector('.gl-vitext')?.textContent || '', hear: r ? Math.min(r.width, r.height) : 0, saved: saved.lang }; });
+  await P.page.evaluate(async () => { const st = await import('/js/state.js'); (window as any).__svLang = () => st.settings.lang; });
+  // the English corner: the badge, no First Words, then Opposites by a real tap
+  await openHub('hocvui');
+  const corner = await P.page.evaluate(() => { const h = [...document.querySelectorAll('.hubbody .hubarea')].find(x => x.querySelector('.gl-enbadge')); const links = [...document.querySelectorAll('.hubbody [data-link]')].map(b => b.dataset.link); return { badge: h ? h.textContent.trim() : '', en: [...document.querySelectorAll('.hubbody [data-english]')].map(b => b.dataset.play || b.dataset.link), links }; });
+  if (!/Chế độ tiếng Anh/.test(corner.badge) || !/Tiếng Anh/.test(corner.badge)) fails.push('no English mode badge on the English corner: ' + corner.badge);
+  if (corner.en.includes('firstwords')) fails.push('First Words is still in a Fun learning corner');
+  // (v1.08b games) one home per game: First Sounds (English letter sounds) lives in the English corner and plays in English
+  if (!corner.en.includes('phonics') || !corner.en.includes('en_words')) fails.push('English corner cards not marked: ' + corner.en.join(','));
+  if (!await tapIn('.hubbody [data-play="phonics"][data-english]')) fails.push('no First Sounds card in the English corner');
+  await P.page.waitForSelector('.gl[data-game-id="phonics"]:not(.out)', { timeout: 10000 }).catch(() => { }); await P.page.waitForTimeout(1500);
+  const a = await state();
+  if (!a.english || a.lang !== 'en') fails.push(`First Sounds from the English corner is not in English mode (${JSON.stringify(a)})`);
+  if (/[ăâđêôơưạảấầẩậắằẳặẹẻếềểệịỉọỏốồổộớờởợụủứừửựỵỷ]/i.test(a.help) || !a.help) fails.push('the question line is not English: ' + a.help);
+  if (!/[ăâđêôơưàáạảãấầẩậắằẳặèéẹẻếềểệìíịỉòóọỏốồổộớờởợùúụủứừửựỳýỵỷ]/i.test(a.hint)) fails.push('no Vietnamese hint under the question: ' + a.hint);
+  if (a.hear < 44) fails.push('the Vietnamese hint speaker is under 44 px: ' + a.hear);
+  if (a.saved !== 'vi') fails.push('the saved language changed during English mode: ' + a.saved);
+  await P.page.evaluate(async () => { (await import('/js/state.js')).saveSettings(); });
+  if ((await state()).saved !== 'vi') fails.push('saving during English mode saved English');
+  await P.page.evaluate(() => (document.querySelector('.gl:not(.out) .gl-x') as HTMLElement)?.click()); await P.page.waitForTimeout(600);
+  const back = await state();
+  if (back.lang !== 'vi') fails.push('the language is not back to Vietnamese after closing: ' + back.lang);
+  // a game of Chữ và đọc (Opposites) plays in the child's language: Vietnamese, no hint
+  await openHub('hocvui');
+  if (!await tapIn('.hubbody [data-play="opposites"]:not([data-english])')) fails.push('no Opposites card in Chữ và đọc');
+  await P.page.waitForSelector('.gl[data-game-id="opposites"]:not(.out)', { timeout: 10000 }).catch(() => { }); await P.page.waitForTimeout(1500);
+  const c = await state();
+  if (c.english || c.lang !== 'vi' || c.hint) fails.push(`Opposites from Chữ và đọc is in English mode (${JSON.stringify(c)})`);
+  await P.page.evaluate(() => (document.querySelector('.gl:not(.out) .gl-x') as HTMLElement)?.click()); await P.page.waitForTimeout(600);
+  // an English game of its own is English mode wherever it opens (here straight from the game list)
+  await P.page.evaluate(() => { __sv.paused = false; __sv.playGame(0, 'en_words', 'hub'); });
+  await P.page.waitForSelector('.gl[data-game-id="en_words"]:not(.out) .choices .choice', { timeout: 10000 }).catch(() => { }); await P.page.waitForTimeout(600);
+  const d = await state();
+  if (!d.english || d.lang !== 'en' || !d.hint) fails.push(`Picture Words is not in English mode (${JSON.stringify(d)})`);
+  // First Words lives in Going places now
+  await openHub('places');
+  if (!await P.page.evaluate(() => !!document.querySelector('.hubbody [data-play="firstwords"]'))) fails.push('First Words is not in Going places');
+  // pictures: an English game in English mode on a phone, a tablet and a computer
+  fs.mkdirSync('out/englishmode', { recursive: true });
+  for (const [name, w, h] of [['phone', 390, 844], ['tablet', 820, 1180], ['computer', 1366, 800]]) {
+    await P.page.setViewportSize({ width: +w, height: +h });
+    await openHub('hocvui'); await P.page.evaluate(() => document.querySelector('.hubbody .gl-enbadge')?.scrollIntoView({ block: 'start' })); await P.page.waitForTimeout(300);
+    await P.page.screenshot({ path: `out/englishmode/corner-${name}.png` });
+    if (!await P.page.evaluate(() => /Học vui/.test(document.querySelector('.hubtabs')?.textContent || ''))) fails.push(name + ': the Play hub is not in Vietnamese after an English game');
+    await P.page.evaluate(() => { document.querySelectorAll('.modal').forEach(m => m.remove()); __sv.paused = false; const p = __sv.heroes[0].profile; p.gameDiff = { ...(p.gameDiff || {}), en_listen: 'medium' }; __sv.playGame(0, 'en_listen', 'hub'); });
+    await P.page.waitForSelector('.gl[data-game-id="en_listen"]:not(.out)', { timeout: 10000 }).catch(() => fails.push(name + ': Listen and Choose did not open'));
+    await P.page.waitForSelector('.gl:not(.out) .choices .choice', { timeout: 10000 }).catch(() => { }); await P.page.waitForTimeout(800);
+    await P.page.screenshot({ path: `out/englishmode/listen-${name}.png` });
+    const off = await P.page.evaluate(() => [...document.querySelectorAll('.gl:not(.out) .choices .choice, .gl:not(.out) .gl-vihear')].filter(e => { const r = e.getBoundingClientRect(); return r.right > innerWidth + 1 || r.left < -1 || r.width < 44 || r.height < 44; }).length);
+    if (off) fails.push(`${name}: ${off} buttons off screen or under 44 px`);
+    await P.page.evaluate(() => (document.querySelector('.gl:not(.out) .gl-x') as HTMLElement)?.click()); await P.page.waitForTimeout(500);
+  }
+  const errs = P.errors.slice(); await P.ctx.close();
+  if (errs.length) fails.push(...errs.slice(0, 3));
+  ok(!fails.length, fails.slice(0, 10).join(' | '));
+  return `English mode: First Sounds from the English corner plays in English with a Vietnamese hint (speaker ${a.hear} px), Opposites from Chữ và đọc in Vietnamese; the language comes back and is never saved as English; Picture Words is English wherever it opens; the English corner shows its badge; First Words is in Going places; pictures in tests/out/englishmode/`;
 });
 
 await check('school', async () => {
@@ -155,8 +245,11 @@ await check('school', async () => {
   ok(box, 'tapping Cô Tam opened no speech box');
   ok(/Tam/.test(box.name) && box.text === 'Welcome to the Fun Learning School! Shall we learn something fun today?' && box.n === 2 && box.h >= 44, 'her greeting: ' + JSON.stringify(box));
   await P.page.touchscreen.tap(box.x, box.y);
-  const hub = await P.page.waitForSelector('.hub .hubtabs [data-tab="hocvui"].on', { timeout: 10000 }).then(() => P.page.evaluate(() => ({ title: document.querySelector('.hub .hubbody h3')?.textContent || '', areas: document.querySelectorAll('.hub .hubbody .hubarea').length })), () => null);
-  ok(hub && /Fun learning/.test(hub.title) && hub.areas === 4, 'the tap did not open the Fun learning tab: ' + JSON.stringify(hub));
+  const hub = await P.page.waitForSelector('.hub .hubtabs [data-tab="hocvui"].on', { timeout: 10000 }).then(() => P.page.evaluate(() => ({ title: document.querySelector('.hub .hubbody h3')?.textContent || '', areas: document.querySelectorAll('.hub .hubbody .hubarea').length, heads: [...document.querySelectorAll('.hub .hubbody .hubarea')].map(h => [...h.childNodes].filter(n => n.nodeType === 3).map(n => n.textContent).join('').trim()) })), () => null);
+  // (v1.08b games, owner 3 Nov 2026 AEDT: one learning tab, commit e2f01a0dd) Học vui now holds every learning corner (it had
+  // four), with the learning journeys on top (74788c7b7): the corners are read by name, as check hocvui does
+  const CORNERS = ['Vietnamese', 'English', 'Maths', 'Shapes', 'Money and shopping', 'Science', 'Letters and reading', 'Me and my family'];
+  ok(hub && /Fun learning/.test(hub.title) && CORNERS.every(c => hub.heads.includes(c)), 'the tap did not open the Fun learning tab: ' + JSON.stringify(hub));
   // in Vietnamese too: her line and the sign's words
   const vi = await P.page.evaluate(async () => { document.querySelectorAll('.modal, .hub, .dialog').forEach(e => e.remove()); __sv.paused = false; const L = await import('/js/school.js'); return L.SCHOOL_GREETING[1]; });
   ok(vi === 'Chào mừng con đến Trường Học Vui! Hôm nay mình học điều gì vui nhé?', 'Vietnamese greeting ' + vi);
@@ -191,7 +284,9 @@ await check('reading', async () => {
   await Q.page.waitForFunction(async () => Object.keys((await import('/js/games/frame.js')).GAMES).filter(k => /^rd_/.test(k)).length === 13, null, { timeout: 30000 }).catch(() => { });
   const on = await Q.page.evaluate(async () => { const F = await import('/js/games/frame.js'), A = await import('/js/content/activities.js'); __sv.openGamesHub(0); await new Promise(r => setTimeout(r, 300)); document.querySelector('.hubtabs [data-tab="learn"]')?.click(); await new Promise(r => setTimeout(r, 200));
     const hub = [...document.querySelectorAll('.hubbody [data-play]')].map(b => b.dataset.play), head = [...document.querySelectorAll('.hubbody .hubarea')].map(h => h.textContent); document.querySelectorAll('.modal').forEach(m => m.remove()); __sv.paused = false;
-    return { games: Object.keys(F.GAMES).filter(k => /^rd_/.test(k)), big: A.gamesIn(F.GAMES, 'reading', false).map(g => g.id), little: A.gamesIn(F.GAMES, 'reading', true).map(g => g.id), hub: hub.filter(k => /^rd_/.test(k)), head }; });
+    return { games: Object.keys(F.GAMES).filter(k => /^rd_/.test(k)), big: ['reading', 'hv_vi'].flatMap(a => A.gamesIn(F.GAMES, a, false).map(g => g.id)).filter(k => /^rd_/.test(k)), little: ['reading', 'hv_vi'].flatMap(a => A.gamesIn(F.GAMES, a, true).map(g => g.id)).filter(k => /^rd_/.test(k)), hub: hub.filter(k => /^rd_/.test(k)), head }; });
+  // (v1.08b games) Tone Marks lives in Tiếng Việt (js/games/readingmenu.ts: rd_tones hv_vi), the rest in the Reading corner:
+  // big and little are read from both homes
   // (owner, 18 Oct AEDT) Story Helpers joins the Reading corner too, for 2 to 8 (played through by its own check, storyhelp)
   ok([...IDS, 'rd_storyhelp'].every(id => on.games.includes(id) && on.big.includes(id) && on.hub.includes(id)) && on.head.some(h => /Reading corner/.test(h)), 'with the switch on: ' + JSON.stringify(on));
   ok(BIG_ONLY.every(id => !on.little.includes(id)) && on.little.length === IDS.length - BIG_ONLY.length + 1 && [...IDS.filter(id => !BIG_ONLY.includes(id)), 'rd_storyhelp'].every(id => on.little.includes(id)), 'under-5s see: ' + on.little.join(','));
@@ -365,7 +460,7 @@ await check('ownerlearninglayout', async () => {
 });
 
 await check('owneractivityshell', async () => {
-  const P=await open(b,{w:320,h:640,touch:true,lang:'vi'});await clear(P.page);
+  const P=await open(b,{w:320,h:640,touch:true,lang:'vi',settings:{captions:true}});await clear(P.page);
   await P.page.evaluate(async()=>{const V=await import('/js/voice.js');V.spoken.forEach(f=>f('A surprise gift is waiting in the valley.'));});await P.page.waitForSelector('.caption.show');
   await P.page.evaluate(async()=>{const F=await import('/js/games/frame.js');__sv.paused=true;window.__learning=F.openGame('shapebuilders',{players:[__sv.heroes[0].profile],little:true,level:1});});await P.page.waitForSelector('.bt-piece');await P.page.evaluate(()=>document.fonts.ready);
   const before=await P.page.locator('.gl-head').boundingBox();await P.page.locator('.bt-piece').last().scrollIntoViewIfNeeded();

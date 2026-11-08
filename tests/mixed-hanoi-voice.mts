@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
 import type { Browser } from 'playwright';
 import { lineHash } from '../js/packhash.js';
 import { mixedVoiceFragments } from '../js/voice-fragments.js';
@@ -9,6 +10,11 @@ const PRIVATE = 'Our family has a private question about Hà Nội.';
 const WELCOME = 'Hello! Welcome to Sparkle Valley.';
 const fragments = mixedVoiceFragments(LINE)!;
 const hash = (data: Uint8Array) => createHash('sha256').update(data).digest('hex');
+// (owner's decision, 3 Nov 2026 AEDT, v1.08 voices-aside: female voices only; not a weakened check) Lê Minh and the male
+// voices are put aside behind ASIDE_VOICES_ON in js/state.ts. While it is off, every mode must play the whole female
+// recording with no Lê Minh fragment fetched, even with Lê Minh saved as the choice, and the male preview plays the
+// female file. With the switch on, the original Lê Minh composite expectations run unchanged.
+const ASIDE_ON = /export const ASIDE_VOICES_ON = true\b/.test(readFileSync(new URL('../js/state.ts', import.meta.url), 'utf8'));
 
 // Deliberately synthetic tones identify which prerecorded source was used. Production voice/text identity and
 // MP3 decoding are verified separately by the recording/package audit; this check does not claim a listening review.
@@ -87,7 +93,7 @@ export async function mixedHanoiVoiceCheck(browser: Browser) {
         assert.deepEqual(await page.evaluate(() => window.__mixedDeviceWords), mode==='private'?[PRIVATE]:[], 'private words never use a cloud-backed OS voice');
         assert.equal(requests.some(url => url.endsWith('.mp3')), false, 'private speech must not enter fragment lookups');
         assert.equal(await page.evaluate(async text => JSON.stringify((await import(String('/js/voice.js'))).voiceMisses()).includes(text), PRIVATE), false);
-      } else if (mode === 'cancel') {
+      } else if (ASIDE_ON && mode === 'cancel') {
         const speaking = page.evaluate(async text => { await (await import(String('/js/voice.js'))).sayAsync(text, text); }, LINE);
         for (let i = 0; i < 100 && !requests.some(url => /fpt-leminh-v1\/.+\.mp3$/.test(url)); i++) await page.waitForTimeout(20);
         assert.ok(requests.some(url => /fpt-leminh-v1\/.+\.mp3$/.test(url)), 'hold an actual in-flight fragment');
@@ -107,7 +113,7 @@ export async function mixedHanoiVoiceCheck(browser: Browser) {
         else await page.evaluate(async text => (await import(String('/js/voice.js'))).sayAsync(text, text), LINE);
         const recordings = await page.evaluate(() => window.__mixedVoiceBuffers!);
         assert.equal(recordings.length, 1, mode + ': a complete line uses one cancellable playback source: ' + JSON.stringify(recordings));
-        if (mode === 'mixed' || mode === 'warm' || mode === 'mixed-ui-vi') {
+        if (ASIDE_ON && (mode === 'mixed' || mode === 'warm' || mode === 'mixed-ui-vi')) {
           assert.ok(Math.abs(recordings[0].duration - 1.06) < .01, JSON.stringify(recordings));
           assert.equal(recordings[0].frequencies.length, 4);
           recordings[0].frequencies.forEach((frequency, i) => assert.ok(Math.abs(frequency - (i % 2 ? 660 : 330)) < 30, JSON.stringify(recordings)));
@@ -116,12 +122,14 @@ export async function mixedHanoiVoiceCheck(browser: Browser) {
         } else {
           assert.ok(Math.abs(recordings[0].duration - .2) < .01, 'missing/corrupt fragments preserve the original complete recording');
           assert.ok(Math.abs(recordings[0].frequencies[0] - 110) < 30);
-          if (mode === 'standard' || mode === 'preview') assert.equal(requests.some(url => url.includes('fpt-leminh-v1')), false, 'female default and male preview must avoid optional fragments');
-          if (mode === 'preview') assert.ok(requests.some(url => url.includes('/en/m/')), 'the male preview retains its requested slot');
+          if (!ASIDE_ON || mode === 'standard' || mode === 'preview') assert.equal(requests.some(url => url.includes('fpt-leminh-v1')), false, 'female default and male preview must avoid optional fragments' + (ASIDE_ON ? '' : ' (Lê Minh is put aside: never fetched)'));
+          if (ASIDE_ON && mode === 'preview') assert.ok(requests.some(url => url.includes('/en/m/')), 'the male preview retains its requested slot');
+          if (!ASIDE_ON) assert.equal(requests.some(url => url.includes('/en/m/')), false, mode + ': a male recording was asked for while the male voices are put aside');
         }
       }
       assert.deepEqual(errors, []);
     } finally { release(); await context.unrouteAll({ behavior: 'ignoreErrors' }); await context.close(); }
   }
+  if (!ASIDE_ON) return 'Lê Minh and the male voices put aside (owner, 3 Nov 2026 AEDT): every mode, with Lê Minh saved as the choice, plays the whole female recording with no Lê Minh fragment or male file fetched; private on-device speech and the English spoken language are still checked';
   return 'Deterministic recorded-audio identity checks: selected English/VI composite order and pauses, whole-recording fallback before any partial playback, cancellation, warmup, female default, male preview and private on-device speech';
 }

@@ -11,12 +11,13 @@ import { el, $, dist2, wait } from '../util.js';
 import { heightAt, MARKET, CHINA, INDIA, VILLAGE, HOME, REVEAL_R, PLATEAU, TOWN, AUSSIE, ULURU, SHRINES, TOWERS } from '../world.js';
 import { SCHOOL } from '../content/school-place.js';
 import { landmarkAt } from '../content/map.js';
-import { buildAvatar } from '../avatar.js';
+import { buildAvatar, cloneAvatarRoot } from '../avatar.js';
 import { fogMapFor } from '../hud.js';
 import { Net } from '../net.js';
 import { showWho, reward, openPad } from '../ui.js';
 import { dishInfo } from '../data.js';
 import { LANDMARKS } from '../regions.js';
+import { dropSpot } from '../dropspot.js';
 import type { SvMain } from '../main.js';
 
 export function installHeroEvents(G: SvMain, D: { renderer: any, scene: SvMain['scene'], world: any, save: () => void, hudFor: (h: { i: number }) => import('../hud.js').Hud, mapPic: any, checkQuests: (h: any) => Promise<void>, waterPic: any, twoHalves: () => boolean, startSession: (mode: any, chosen: any) => void, sendHello: () => any, setPlaying: (v: boolean) => void, nameTag: (name: string, color?: string) => any }) {
@@ -41,6 +42,14 @@ G.hurt = (h, n) => {
   h.hearts = Math.max(0, h.hearts - n); SFX.no(); hudFor(h).toast(T('Oof! Big fall!', 'Ui da! Ngã đau quá!'));
   if (h.hearts <= 0) G.rescue(h, true);
 };
+// (v1.08b quality) set a child down on open ground near (x, z), facing face, the camera behind with a clear view: after a
+// flight and at the end of every ride (js/traffic.ts, js/player.ts dismount)
+function setDown(h, x, z, face = null) {
+  const d = dropSpot(G.world, x, z, face); h.place(d.x, d.z); h.yaw = d.yaw; h.camYaw = d.camYaw; h.manualCamT = 0;
+  h.camPos.set(d.x + Math.sin(d.camYaw) * h.camDist, h.pos.y + 4, d.z + Math.cos(d.camYaw) * h.camDist);
+  return d;
+}
+G.setDown = setDown;
 G.rescue = async (h, fainted) => {
   if (!fainted && G.pets && G.pets.rescue(h)) return; // a pet comes to pull them out of the water
   if (h._rescuing) return; h._rescuing = true;
@@ -50,12 +59,14 @@ G.rescue = async (h, fainted) => {
   h.place(h.lastSafe.x, h.lastSafe.z); h.stamina = h.staminaMax; h.exhausted = false; if (fainted) h.hearts = h.profile.hearts;
   f.classList.add('out'); setTimeout(() => f.remove(), 600); h._rescuing = false;
 };
-G.travel = async (h, x, z) => {
+// (v1.08b quality, owner 5 Nov 2026 AEDT: flights "stuck behind a bus station") a flight lands on the nearest open ground
+// beside its place (js/dropspot.ts: a way out, a clear camera view), facing the place it was for (face, or the place itself)
+G.travel = async (h, x, z, face = null) => {
   if (!Number.isFinite(x) || !Number.isFinite(z)) { console.warn('travel: no place to go to'); return; } // never fly into nowhere (a black screen)
   const f = el('div', 'fade blue'); document.body.appendChild(f); SFX.travel();
-  await wait(650); if (h.riding) h.dismount();
+  await Promise.all([wait(650), G.areas ? G.areas.near(x, z) : null]); if (h.riding) h.dismount(); // (v1.08d valley) the parts round the landing spot are built while the fade is up (js/areas.ts)
   if (h.cancelCarry) { h.cancelCarry(); h.cancelCarry = null; }
-  h.place(x + 4.5, z + 1); h.gliding = false; h.camYaw = Math.PI;
+  setDown(h, x + 4.5, z + 1, face || { x, z }); h.gliding = false;
   f.classList.add('out'); setTimeout(() => f.remove(), 700);
 };
 G.eat = (h, id) => {
@@ -72,7 +83,7 @@ G.mapPic = mapPic; G.waterPic = waterPic; // (the checks read where each picture
 G.avatarPreview = i => {
   const h = G.heroes[i]; if (!h) return '';
   const preview = new THREE.Scene(); preview.background = new THREE.Color('#f1eaff'); preview.environment = scene.environment;
-  const avatar = h.av.root.clone(true); avatar.position.set(0, 0, 0); avatar.rotation.set(0, .12, 0); preview.add(avatar);
+  const avatar = cloneAvatarRoot(h.av.root); avatar.position.set(0, 0, 0); avatar.rotation.set(0, .12, 0); preview.add(avatar);
   preview.add(new THREE.HemisphereLight(0xffffff, 0xd9c79a, 1.8)); const sun = new THREE.DirectionalLight(0xffffff, 2); sun.position.set(3, 5, 4); preview.add(sun);
   // Hidden gliders/idle copies must not enlarge the bounds and shrink the outfit.
   avatar.updateMatrixWorld(true); const bounds=new THREE.Box3();

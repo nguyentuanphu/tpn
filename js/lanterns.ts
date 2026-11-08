@@ -14,7 +14,9 @@ import type { Profile } from '../types/save.js';
 import { THREE, glow } from './gfx.js';
 import { T } from './i18n.js';
 import { VILLAGE, heightAt, roadDist, WATER } from './world.js';
-import { featureOn, keptOn, markTried } from './custom.js';
+import { featureOn, keptOn, markTried, earlyDays, isPeek } from './custom.js';
+import { inCalendar, calOpen } from './content/releasecal-core.js';
+import { calMoves } from './content/secondset.js';
 import { RELEASES } from './content/releases.js';
 import { events } from './core/events.js';
 import { CHAPTERS, STORY_TALES, COMPANIONS, STORY_LINES } from './content/chapters.js';
@@ -27,7 +29,9 @@ const V = VILLAGE;
 // (each chapter's switch starts as its default in js/content/releases.js: chapter 2 is off until an admin switches it on or
 // schedules it in Studio, owner 10 Oct)
 // (batch rollout) a chapter held back or switched off stays open for a child who already played some of it
-const released = ch => keptOn('story_' + ch.id, undefined, (RELEASES.find(r => r.id === 'story_' + ch.id) || { def: true }).def);
+// (v1.08b story) chapters in the release calendar (4, 5 and the finale) also wait for their day there (testers 7 days early)
+const released = ch => keptOn('story_' + ch.id, undefined, (RELEASES.find(r => r.id === 'story_' + ch.id) || { def: true }).def)
+  && (!inCalendar('chapter:' + ch.id) || calOpen('chapter:' + ch.id, calMoves(), new Date(), earlyDays()) || isPeek('story_' + ch.id));
 const st = (p: Profile): LanternProgress => { const s = p.lanterns = p.lanterns && typeof p.lanterns === 'object' ? p.lanterns : {}; s.done = s.done || {}; s.chapters = s.chapters || {}; return s; };
 const unnamed = s => String(s).replace(/,?\s*\{name\}/g, '');
 const big = p => p.age === 'big';
@@ -112,7 +116,20 @@ export function createLanterns(G, { dialog, say, reward, save, openTheatre }) {
   // Thu; stone turtles; clues), chapter 3 Sydney (Chi, Jack and Ruby; the Opera House; fireworks). [file, its festival film,
   // the step before (its lantern found: then this chapter loads, so its words are there when its first step is told)]
   const LATER = { ch2: [() => import('./content/chapter2hanoi.js'), () => import('./content/chapter2films.js'), 'c1_find'],
-    ch3: [() => import('./content/chapter3sydney.js'), () => import('./content/chapter3films.js'), 'c2_find'] };
+    ch3: [() => import('./content/chapter3sydney.js'), () => import('./content/chapter3films.js'), 'c2_find'],
+    // (v1.08b story) chapters 4, 5 and the Tết finale, built by the shared kit (js/content/chapterkit.ts)
+    ch4: [() => import('./content/chapter4.js'), () => import('./content/kitfilms.js'), 'c3_find'],
+    ch5: [() => import('./content/chapter5.js'), () => import('./content/kitfilms.js'), 'c4_find'],
+    finale: [() => import('./content/chapterfinale.js'), () => import('./content/kitfilms.js'), 'c5_find'],
+    // (v1.08d s2vn) Season 2, Vietnam: chapters 6 to 9 in the new regions (js/s2vn.ts)
+    ch6: [() => import('./content/chapter6.js'), () => import('./content/s2vnfilms.js'), 'cf_find'],
+    ch7: [() => import('./content/chapter7.js'), () => import('./content/s2vnfilms.js'), 'c6_find'],
+    ch8: [() => import('./content/chapter8.js'), () => import('./content/s2vnfilms.js'), 'c7_find'],
+    ch9: [() => import('./content/chapter9.js'), () => import('./content/s2vnfilms.js'), 'c8_find'],
+    // (v1.08d s2au) Season 2, Australia: chapter 10 follows s2vn's chapter 9 (its lantern found: c9_find)
+    ch10: [() => import('./content/chapter10.js'), () => import('./content/s2aufilms.js'), 'c9_find'],
+    ch11: [() => import('./content/chapter11.js'), () => import('./content/s2aufilms.js'), 'c10_find'],
+    ch12: [() => import('./content/chapter12.js'), () => import('./content/s2aufilms.js'), 'c11_find'] };
   const loadCh = id => loadingCh[id] || (loadingCh[id] = LATER[id][0]().then(M => {
     const P = mods[id] = M.create(G, { current, isOn, A, st, big, gamesOf, say, save, dialog, reward, actions, plan, finish: (h, id) => finish(h, id), companions: () => companions });
     Object.assign(spots, P.spots); G.landmarksStory[id] = { x: P.front[0], z: P.front[1] }; addButtons(CHAPTERS.find(c => c.id === id));
@@ -329,7 +346,8 @@ export function createLanterns(G, { dialog, say, reward, save, openTheatre }) {
     owl: async h => { const c = current(h.profile); if (c && c.s.owl) { await prologue(h); return true; } return false; },
     // regions the child walks into
     onRegion: (h, rg) => { const c = current(h.profile); if (c && c.s.visit === rg && !catching(c.s)) finish(h, c.s.id); },
-    current, companions, paint, dinh: { x: dinhAt[0], z: dinhAt[1], front }, lanternAt, get hanoi() { return mods.ch2; }, get sydney() { return mods.ch3; }, places, loadCh, loadHanoi: () => loadCh('ch2'),
+    current, companions, paint, dinh: { x: dinhAt[0], z: dinhAt[1], front }, lanternAt, get hanoi() { return mods.ch2; }, get sydney() { return mods.ch3; }, mods, // (v1.08b story: chapters 4, 5 and the finale by id, for checks)
+    places, loadCh, loadHanoi: () => loadCh('ch2'),
     // (checks) do a step straight away
     _finish: finish
   };

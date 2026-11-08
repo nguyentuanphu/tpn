@@ -1,5 +1,5 @@
 import { releaseOn, liveRule } from '../custom.js';
-import { testerLevel } from './tester.js';
+import { testerLevel } from './tester-level.js';
 export type TesterArcade = 'sparkleorchard'|'sparklefruitbar';
 export const familyArcadeAllowed=(published:boolean,preview:boolean,tester:boolean)=>published||preview&&tester;
 // Orchard is always tester-only. Like the other fruit previews, its preview switch grants

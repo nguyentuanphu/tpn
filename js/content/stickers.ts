@@ -21,6 +21,8 @@
 //   { meet: 'chicken' }   tapping an animal in the valley (its kind in js/animals.js, or a duck, hen or butterfly)
 //   { act: 'npc_owl' }    talking to someone or doing something there (InteractionStarted; 'ferry*' = any ferry)
 
+import { LEARN_PATHS, STEPS, stepSticker } from './learnpaths.js'; // (v1.08b games)
+
 export const THEMES = [
   { id: 'farm', tab: ['Farm', 'Nông trại'], color: '#43c463', icon: '🐃', en: 'Farm friends', vi: 'Bạn nông trại', song: 'farm', decor: ['🐃', 'Golden frame: farm friends', 'Khung vàng: bạn nông trại'] },
   { id: 'wild', tab: ['Wild', 'Hoang dã'], color: '#2e9e5b', icon: '🐼', en: 'Wild animals', vi: 'Thú hoang dã', song: 'folk', decor: ['🐼', 'Golden frame: wild animals', 'Khung vàng: thú hoang dã'] },
@@ -31,7 +33,9 @@ export const THEMES = [
   { id: 'world', tab: ['World', 'Thế giới'], color: '#29b6f6', icon: '🦘', en: 'Australia and the world', vi: 'Nước Úc và thế giới', song: 'ausday', decor: ['🦘', 'Golden frame: Australia and the world', 'Khung vàng: nước Úc và thế giới'] },
   { id: 'festivals', tab: ['Festivals', 'Lễ hội'], color: '#8a5cf6', icon: '🏮', en: 'Festivals', vi: 'Lễ hội', song: 'trungthu1', decor: ['🏮', 'Golden frame: festivals', 'Khung vàng: lễ hội'] },
   { id: 'friends', tab: ['Friends', 'Bạn bè'], color: '#ff8a3d', icon: '🦉', en: 'Friends and family', vi: 'Bạn bè và gia đình', song: 'pond', decor: ['🦉', 'Golden frame: friends and family', 'Khung vàng: bạn bè và gia đình'] },
-  { id: 'rare', tab: ['Rare', 'Hiếm'], color: '#5b6ee8', icon: '🌈', en: 'Rare and shiny', vi: 'Hiếm và lấp lánh', song: 'trungthu2', decor: ['🌈', 'Golden frame: rare and shiny', 'Khung vàng: hiếm và lấp lánh'] }
+  { id: 'rare', tab: ['Rare', 'Hiếm'], color: '#5b6ee8', icon: '🌈', en: 'Rare and shiny', vi: 'Hiếm và lấp lánh', song: 'trungthu2', decor: ['🌈', 'Golden frame: rare and shiny', 'Khung vàng: hiếm và lấp lánh'] },
+  // (v1.08b games, owner 5 Nov 2026 AEDT) the learning journeys: a page of 9 step stickers for each subject
+  { id: 'learn', tab: ['Learning', 'Học vui'], color: '#3b6fe0', icon: 'lp:tab', en: 'Learning journeys', vi: 'Hành trình học', song: 'twinkle', decor: ['lp:tab', 'Golden frame: learning journeys', 'Khung vàng: hành trình học'] }
 ];
 
 // the hint every older reward sticker shares (one recorded line)
@@ -268,7 +272,12 @@ const RARE = [
   S('rare', 'train', '🚂', 'Little train', 'Tàu hỏa nhỏ', PRIZE, [{ prize: '🚂' }], 'chuff')
 ];
 
-export const STICKERS = [...FARM, ...WILD, ...DISHES, ...FRUIT, ...TREASURE, ...VIETNAM, ...WORLD, ...FESTIVALS, ...FRIENDS, ...RARE];
+// (v1.08b games) the learning journeys (js/content/learnpaths.ts): step n of a subject's journey, won, gives its sticker;
+// step 1 is the page's welcome sticker (STK-3)
+const LEARN_HINT = ['Win the steps of a learning journey in Học vui', 'Thắng các bước hành trình học trong Học vui'];
+const LEARN = LEARN_PATHS.flatMap(L => Array.from({ length: STEPS }, (_, k) => S('learn', stepSticker(L.key, k + 1), `lp:${L.key}:${k + 1}`, `${L.name[0].replace(' journey', '')} step ${k + 1}`, `${L.name[1].replace('Hành trình ', '')}: bước ${k + 1}`,
+  LEARN_HINT, [{ learn: `${L.key}:${k + 1}` }], k === STEPS - 1 ? 'fanfare' : 'ding', k === 0 ? { starter: true } : {})));
+export const STICKERS = [...FARM, ...WILD, ...DISHES, ...FRUIT, ...TREASURE, ...VIETNAM, ...WORLD, ...FESTIVALS, ...FRIENDS, ...RARE, ...LEARN];
 export const BY_ID = Object.fromEntries(STICKERS.map(s => [s.id, s]));
 export const PER_PAGE = 9;
 

@@ -7,14 +7,14 @@
 // · Each village also has a singer on a little round stage: tap them and they sing a Vietnamese folk song
 //   (traditional songs, played on the game's own synthesiser, with the words shown in a bubble).
 //   Their names are in the villager list, so the grown-ups can rename them (Grown-ups, or Sparkle Studio).
-import { THREE, P, merge, toonVC } from './gfx.js';
+import { THREE, P, merge, toonVC, worldTag } from './gfx.js';
 import { T, nm, onLang, registerName } from './i18n.js';
 import { say } from './voice.js';
 import { SFX, Music, tone, noise, ac } from './audio.js';
 import { dialog, folkGames } from './ui.js';
 import { dist2 } from './util.js';
 import { heightAt, roadDist, WATER, VILLAGE, TOWN, AUSSIE, MARKET, CHINA, INDIA, CITIES } from './world.js';
-import { buildAvatar, nameAvatar } from './avatar.js';
+import { buildAvatar, crowdLook, nameAvatar } from './avatar.js';
 import { GAMES } from './games/frame.js';
 
 export const SLOT = 150, ON = 75; // a game every two and a half minutes; friends play it for the first 75 s
@@ -124,7 +124,8 @@ export function createFolkShow(G, { looks = [] } = {}) {
     const [bx, bz] = at, y = heightAt(bx, bz);
     // the board on a post
     const post = new THREE.Mesh(merge([P(new THREE.CylinderGeometry(.09, .11, 3.4, 6), '#7a5236', [0, 1.7, 0]), P(new THREE.CylinderGeometry(.35, .45, .25, 8), '#8a6a4a', [0, .12, 0])]), toonVC());
-    post.position.set(bx, y, bz); scene.add(post); world.colliders.push({ x: bx, z: bz, r: .35 });
+    post.position.set(bx, y, bz); scene.add(post);
+    worldTag(post, 'fe-folk-post'); world.colliders.push({ x: bx, z: bz, r: .35 });
     const board = boardSprite(); board.position.set(bx, y + 4.1, bz); scene.add(board);
     const S = { id: 'fs' + k, x: bx, z: bz, y, hosts: g.hosts, where, board, off: 0, live: -1 };
     shows.push(S);
@@ -190,22 +191,31 @@ export function createFolkShow(G, { looks = [] } = {}) {
     const [x, z] = at, y = heightAt(x, z), face = Math.atan2(S.x - x, S.z - z) + Math.PI;
     const stage = new THREE.Mesh(merge([P(new THREE.CylinderGeometry(1.5, 1.6, .3, 20), '#7a3a8a', [0, .15, 0]), P(new THREE.CylinderGeometry(1.42, 1.42, .04, 20), '#ffd23f', [0, .31, 0]),
       P(new THREE.CylinderGeometry(.03, .03, 1.3, 6), '#444', [.5, .95, .5]), P(new THREE.SphereGeometry(.08, 8, 6), '#222', [.5, 1.64, .5]), P(new THREE.CylinderGeometry(.22, .25, .05, 10), '#444', [.5, .34, .5])]), toonVC());
-    stage.position.set(x, y, z); scene.add(stage); const col = { x, z, r: 1.6 }; world.colliders.push(col);
+    stage.position.set(x, y, z); scene.add(stage);
+    worldTag(stage, 'fe-folk-stage'); const col = { x, z, r: 1.6 }; world.colliders.push(col);
     const look = { style: gender === 'f' ? 'aodai' : 'shirt', color, hat: 'none', back: 'none', hair, hairStyle: hs, skin: '#f2c19e', glider: 0 };
-    const A = nameAvatar(buildAvatar(look, null), name); A.root.position.set(x, y + .33, z); A.root.rotation.y = face; scene.add(A.root);
+    const A = nameAvatar(buildAvatar(crowdLook(look), null), name); A.root.position.set(x, y + .33, z); A.root.rotation.y = face; scene.add(A.root);
     registerName(name, '🎤');
     const tag = textTag(scene); tag.position.set(x, y + 2.75, z); const draw = () => tag.set('🎤 ' + T('Singer ', 'Ca sĩ ') + nm(name)); draw(); onLang(draw);
     const bub = lyricBubble(scene); bub.position.set(x, y + 3.5, z);
     const Sg = { name, song, A, x, z, y, bub, singing: false, face, parts: [stage, A.root, tag], col };
     singers.push(Sg);
-    G.interactables.push({ id: 'sing' + k, x: x + Math.sin(face) * 2.2, z: z + Math.cos(face) * 2.2, r: 2.8, icon: '🎤', bubble: '🎤', label: () => T('Ask ', 'Nhờ ') + T('singer ', 'ca sĩ ') + nm(name) + T(' to sing', ' hát'), visible: () => singOn(),
+    // (Release, v1.08: check solid sing4) the tap spot goes in front of the singer when the ground there is open, else to the
+    // first open side of the stage, so a child always has somewhere to stand
+    const openAt = (px, pz) => !world.colliders.some(c => c !== col && Math.hypot(c.x - px, c.z - pz) < c.r + .6) && !world.boxes.some(b => px > b.x0 - .6 && px < b.x1 + .6 && pz > b.z0 - .6 && pz < b.z1 + .6);
+    let tx = x + Math.sin(face) * 2.2, tz = z + Math.cos(face) * 2.2;
+    if (!openAt(tx, tz)) for (let i = 1; i < 12; i++) { const a = face + i * Math.PI / 6, px = x + Math.sin(a) * 2.2, pz = z + Math.cos(a) * 2.2; if (openAt(px, pz)) { tx = px; tz = pz; break; } }
+    G.interactables.push({ id: 'sing' + k, x: tx, z: tz, r: 2.8, icon: '🎤', bubble: '🎤', label: () => T('Ask ', 'Nhờ ') + T('singer ', 'ca sĩ ') + nm(name) + T(' to sing', ' hát'), visible: () => singOn(),
       act: h => { if (G.tried) G.tried(h, 'singers'); sing(Sg); } });
   });
   G.singers = singers;
   // (batch rollout) Studio switch 'singers': off or not started yet, the stages wait (hidden) for children who never asked
   // a singer to sing
   function singOn() { return !G.keep || G.keep('singers'); }
-  world.updaters.push(() => { const on = singOn(); if (singers.length && singers[0].parts[0].visible !== on) singers.forEach(Sg => { Sg.parts.forEach(o => { o.visible = on; }); Sg.col.r = on ? 1.6 : 0; }); });   // (no wall where nothing shows)
+  world.updaters.push(() => { const on = singOn(); if (singers.length && (singers[0].col.r > 0) !== on) singers.forEach(Sg => { Sg.parts.forEach(o => { const md = o.userData.model || o.userData.offModel; if (md) { md.obj.visible = on; o.visible = false; if (on) { o.userData.model = md; delete o.userData.offModel; } else { o.userData.offModel = md; delete o.userData.model; } } else o.visible = on; }); Sg.col.r = on ? 1.6 : 0; }); });
+  world.updaters.push(() => { if (!singers.length || singers[0].col.r > 0) return; for (const Sg of singers) for (const o of Sg.parts) { const md = o.userData.model; if (md) { md.obj.visible = false; o.userData.offModel = md; delete o.userData.model; } } });
+  // (the line above: a stage model that arrives while the singers are off stays hidden too)
+  // (v1.08g festivals: an off stage with its Blender model is left out of the solid map, as the hidden code stage is: js/solids.ts reads a hidden code shape only while it has a model)   // (no wall where nothing shows)
   async function sing(Sg) {
     if (Sg.singing) return; Sg.singing = true;
     const s = Sg.song, beat = 60 / s.bpm;

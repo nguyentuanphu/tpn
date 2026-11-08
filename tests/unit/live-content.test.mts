@@ -26,6 +26,7 @@ test('each section keeps only its own keys and well-formed values', () => {
     activities: { cats: { area: 'animals', little: true, hide: true, top: 1 }, dogs: { area: 'BAD AREA' } },
     reportingPolicy:{schemaVersion:1,collect:false,process:false,show:true,expiresAt:null},
     itemAvailability: {'game:cats':false,'story:cats':true,'cats':false,'game:bad!':true,'game:odd':'no'},
+    releaseCalendar: { moves: { 'game:crabwalk': '2026-12-07', 'story:x': 'soon', 'bad': '2026-12-07' }, other: 1 },
     defaults: { restMins: 30, lang: 'vi', calm: true, bad: { a: 1 }, long: 'x'.repeat(40) },
     features: { traffic: false, powerPoles: true, odd: 'yes' },
     ads: { enabled: true, perDay: 99, items: [{ image: 'content/ads/a.png', by: 'Shop', en: 'Books', vi: 'Sách', link: 'https://shop.test/', where: ['boards', 'popup'], track: 1 }, { image: '../secret.png', en: 'x' }] },
@@ -34,6 +35,7 @@ test('each section keeps only its own keys and well-formed values', () => {
   });
   assert.deepEqual(Object.keys(c).sort(), LIVE_SECTIONS.slice().sort());
   assert.deepEqual(c.itemAvailability,{'game:cats':false,'story:cats':true});
+  assert.deepEqual(c.releaseCalendar, { moves: { 'game:crabwalk': '2026-12-07' } });
   assert.deepEqual(c.message, { en: 'Hello', vi: 'Chào con' });
   assert.deepEqual(c.missions, [{ id: 'm1', en: 'Set the table', vi: 'Dọn bàn' }]);
   assert.deepEqual(c.quiz, [{ q: ['Who?', 'Ai?'], answers: [['Ba', 'Ba'], ['Me', 'Mẹ']], right: 1, pic: 'cat' }]);

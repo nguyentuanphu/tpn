@@ -9,6 +9,7 @@ import { register, untilRight } from './frame.js';
 import { T } from '../i18n.js';
 import { pic } from '../art.js';
 import { el, esc, shuffle, pick, wait } from '../util.js';
+import { fresh } from './variety.js';
 import { sayIn, sayAsync, captionOnly } from '../voice.js';
 import { TONE_FAMILIES, TONE_NAMES, TONE_WORDS, RHYMES, BUILD_WORDS, ONSETS, type BuildWord } from '../content/hocvui.js';
 
@@ -66,6 +67,8 @@ register({ id: 'vi_tones', learn: true, icon: 'vi:tones', name: () => T('Tone De
   api.stage.dataset.lv = [rounds, lv === 0 ? 2 : MARKS.length, lv === 4 ? 1 : 0].join(',');
   const board = el('div', 'tv-board'); api.stage.appendChild(board);
   api.plan(() => null, { maxActions: rounds * 4 });
+  // (v1.08 variety) a word not heard before in this game (the marks stay in their own order, so a mark keeps its place)
+  const nextTone = fresh(() => { const fam = pick(families), use = lv === 0 ? shuffle(MARKS).slice(0, 2) : MARKS.slice(), mark = pick(use); return { fam, use, mark }; }, x => x.fam[x.mark]);
   for (let r = 0; r < rounds; r++) {
     if (api.closed) return;
     api.dots(rounds, r); board.innerHTML = '';
@@ -73,8 +76,8 @@ register({ id: 'vi_tones', learn: true, icon: 'vi:tones', name: () => T('Tone De
     let target: string, opts: string[], mark = -1;
     if (word) { target = word[0]; opts = shuffle(word); }
     else {
-      const fam = pick(families), use = lv === 0 ? shuffle(MARKS).slice(0, 2) : MARKS.slice();
-      mark = pick(use); target = fam[mark]; opts = use.map(k => fam[k]);
+      const t = nextTone(), fam = t.fam, use = t.use;
+      mark = t.mark; target = fam[mark]; opts = use.map(k => fam[k]);
     }
     const card = el('div', 'tv-card', `<span class="tv-big">${word ? '? ?' : esc(target.normalize('NFD').replace(/[̣̀́̃̉]/g, '').normalize('NFC'))}<i>?</i></span>`);
     card.appendChild(ear(api, () => target)); board.appendChild(card);

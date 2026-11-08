@@ -7,14 +7,21 @@ import { SFX } from '../audio.js';
 import { fmt } from '../money.js';
 import { $, dist2, wait } from '../util.js';
 import { heightAt, SHRINES, WATER, HALF } from '../world.js';
+import { dropSpot } from '../dropspot.js';
 import { dialog, dialogHooks, reward, openCooking, openShop } from '../ui.js';
 import { openChat, personaByName, PERSONAS } from '../chat.js';
 import { voiceCommand, voiceControlOn } from '../commands.js';
-import { gameOpen } from '../games/frame.js';
+import { gameOpen, GAMES } from '../games/frame.js';
 import { openHowTo } from '../howto.js';
 import { solidCircleHit } from '../solids.js';
 import { openGamesHub, openQuick } from '../ui.js';
 import type { SvMain } from '../main.js';
+import { SCIENCE_PLACES } from '../content/science-places.js';   // (v1.08 science)
+import { areaSpot, AREA_PLACE } from '../content/gameplace.js';
+import { FEST_OF_GAME } from '../content/festgame-ids.js';   // (v1.08b games) a place and a host for every game (v1.08d valley: the map only)
+import { gameInfo } from '../content/activities.js';
+import { isOpen } from '../content/unlocks.js';
+import { say } from '../voice.js';
 
 export function installTalks(G: SvMain, D: { playGame: (i: number, id: string, source: string, shrine?: any) => Promise<any>, twoHalves: () => boolean, save: () => void, checkQuests: (h: any) => Promise<void>, hudFor: (h: { i: number }) => import('../hud.js').Hud, goAndDo: (h: any, it: any) => any, currentQuest: (p: any) => any, addMoney: (p: any, xu: number) => void, NPCS: any[] }) {
   const { playGame, twoHalves, save, checkQuests, hudFor, goAndDo, currentQuest, addMoney, NPCS } = D;
@@ -114,20 +121,48 @@ dialogHooks.chat = name => {
 // ---------- the Games hub: every game, by place, playable straight away ----------
 const GAME_SPOT = { music: 'musiccorner', firstwords: 'g_firstwords', tangram: 'g_tangram', snakes: 'g_snakes', rangoli: 'g_rangoli', datnieu: 'g_datnieu', kite: 'g_kite', chichi: 'g_chichi', sackrace: 'g_sackrace', cricket: 'g_cricket', parcel: 'g_parcel', words: 'g_words', snap: 'cards', tienlen: 'tienlen', tienlenbac: 'tienlen', dacau: 'dacau', mrwolf: 'npc_jack', chuyen: 'npc_mit', dragon: 'npc_bom', marbles: 'npc_ruby', skipping: 'npc_lan', oanquan: 'npc_teo', hopscotch: 'npc_ti', caro: 'npc_bong', tug: 'npc_su', market: 'npc_mai', jigsaw: 'easel', bunny: 'hutch', balloon: 'balloon', bubbles: 'bubbles',
   tower: 'blocks', order: 'order', sortout: 'bear', duckmaze: 'duckmaze', memory: 'chest', tune: 'xylo', shapes: 'theatre', oddone: 'frog' };
-G.gameSpot = id => G.interactables.find(it => it.id === (GAME_SPOT[id] || (G.GAME_SPOT || {})[id] || (SHRINES.find(s => s.game === id) || {}).id));
+// (v1.08 english) the English corner's own games are found at the Fun Learning School, with Cô Tam (js/school.ts)
+const LEARN_SPOT = id => /^en_/.test(id) ? 'school' : '';
+// (v1.08 money) the new money games' places: Cô Mai's market for buying and selling, the family's stall for sorting and
+// making amounts, and home for saving and chores
+const MONEY3_SPOT = { shoppay: 'npc_mai', givechange: 'npc_mai', needsfirst: 'npc_mai', pricesort: 'npc_mai', marketday: 'npc_mai', budgetpicnic: 'npc_mai', twomoney: 'npc_mai', coinsort: 'stall', makeamount: 'stall', toysave: 'myhouse_door', chores: 'myhouse_door' };
+G.gameSpot = id => G.interactables.find(it => it.id === (GAME_SPOT[id] || MONEY3_SPOT[id] || (G.GAME_SPOT || {})[id] || SCIENCE_PLACES[id] || (SHRINES.find(s => s.game === id) || {}).id || LEARN_SPOT(id))) || (FEST_OF_GAME[id] && G.interactables.find(it => it.id === 'festival_' + FEST_OF_GAME[id])) || G.interactables.find(it => it.id === areaSpot(gameInfo(id).area)); // (v1.08b games) a festival game at its festival's table, else its area's place
+// (v1.08b games, owner's plan: "when a game opens for the first time, its host says so once as the child passes") a
+// child who walks past a game's place while a game there is newly open hears its host's line once, with the game's name
+// on screen. The games already open the first time this runs are counted as known (no burst of news on an old save).
+let newsAt = 0, spots: Map<string, string[]> | null = null, spotsAt = 0;
+const STORY_NEWS: [string, string] = ['There is a new story on my mat! Sit down and I will read it to you.', 'Có truyện mới trên chiếu của bà đó! Ngồi xuống bà kể cho nghe nhé.'];
+G.hostNews = h => {
+  const now = performance.now(); if (now - newsAt < 1000 || gameOpen() || G.paused) return; newsAt = now;
+  const p = h.profile; if (!p) return;
+  if (!spots || now - spotsAt > 60000) { spots = new Map(); spotsAt = now; for (const id of Object.keys(GAMES)) { const it = G.gameSpot(id); if (it) spots.set(it.id, [...(spots.get(it.id) || []), id]); } }
+  const openNow = id => { const g = gameInfo(id); return !g.hidden && isOpen(p, id, 'game', g.area); };
+  // (stories too: a tale newly open is told about by Bà Năm, the storyteller, as the child passes her mat)
+  const tales = (G.TALES || []) as unknown as { id: string; flag: string; title?: [string, string] }[], taleOpen = t => isOpen(p, t.id, 'tale', t.flag);
+  if (!p.hostNews) { p.hostNews = {}; for (const ids of spots.values()) for (const id of ids) if (openNow(id)) p.hostNews[id] = 1; for (const t of tales) if (taleOpen(t)) p.hostNews['tale:' + t.id] = 1; save(); return; }
+  const teller = (G as unknown as { storyteller?: { x: number; z: number } }).storyteller;
+  if (teller && dist2(h.pos.x, h.pos.z, teller.x, teller.z) < 64) {
+    const fresh = tales.filter(t => !p.hostNews['tale:' + t.id] && taleOpen(t));
+    if (fresh.length) { fresh.forEach(t => { p.hostNews['tale:' + t.id] = 1; }); save(); say(...STORY_NEWS); hudFor(h).toast('✨ ' + T('New story!', 'Truyện mới!')); return; }
+  }
+  for (const it of G.interactables) {
+    const ids = spots.get(it.id); if (!ids || dist2(h.pos.x, h.pos.z, it.x, it.z) > 64) continue;
+    const fresh = ids.filter(id => !p.hostNews[id] && openNow(id)); if (!fresh.length) continue;
+    fresh.forEach(id => { p.hostNews[id] = 1; }); save();
+    const line = G.hostLineOf?.(fresh[0]) || (AREA_PLACE[gameInfo(fresh[0]).area] || AREA_PLACE.words).line; // (v1.08d s2vn: a region's friend tells of its own games)
+    say(line[0], line[1]); hudFor(h).toast('✨ ' + T('New: ', 'Trò mới: ') + fresh.map(id => GAMES[id]?.name?.() || id).join(', '));
+    return;
+  }
+};
 G.openQuick = i => { if (twoHalves()) G.lastPlayer = i; if (G.paused) return; G.paused = true; openQuick(G, i); };
 G.openGamesHub = i => { if (twoHalves()) G.lastPlayer = i; if (G.paused) return; G.paused = true; openGamesHub(G, i, () => { G.paused = false; }); };
 // Games hub / map: fly straight to the friend who runs a game (or a place), then start it there
 const npcLike = it => /^(npc_|g_|v_|pc_|cards$|dacau$|musiccorner$|bear$|stall$|school$)/.test(it.id || ''); // (school: Cô Tam at the school door)
 // the nearest open spot to (x, z): not inside a building, tree or stall, not in water. Travelling lands there.
-G.clearSpot = (x, z, pad = .9) => {
-  // (reports #251/#256) inside the valley's walkable edge, as G.goodSpot: past it the child is held at the edge beside what stands there
-  const W = G.world, free = (px, pz) => Math.abs(px) <= HALF - 10 && Math.abs(pz) <= HALF - 10 && heightAt(px, pz) > WATER + .3 && !(W.solidAt && (W.solidAt(px, pz) || W.solidAt(px + .6, pz) || W.solidAt(px - .6, pz) || W.solidAt(px, pz + .6) || W.solidAt(px, pz - .6))) && !solidCircleHit(W, px, pz) && !W.colliders.some(c => c.r > 0 && Math.hypot(c.x - px, c.z - pz) < c.r + pad) && !W.boxes.some(b => px > b.x0 - pad && px < b.x1 + pad && pz > b.z0 - pad && pz < b.z1 + pad);
-  if (free(x, z)) return [x, z];
-  for (let r = 1.5; r <= 14; r += 1.25) for (let k = 0; k < 16; k++) { const a = k / 16 * Math.PI * 2, px = x + Math.cos(a) * r, pz = z + Math.sin(a) * r; if (free(px, pz)) return [px, pz]; }
-  return [x, z];
-};
-G.landBy = async (h, x, z) => { const [sx, sz] = G.clearSpot(x + 1.8, z + 1.4); await G.travel(h, sx - 4.5, sz - 1); h.yaw = Math.atan2(x - h.pos.x, z - h.pos.z); h.camYaw = h.yaw + Math.PI; };
+// (v1.08b quality) the nearest open ground to (x, z) with a way out and a clear camera view (js/dropspot.ts): every
+// flight lands there (G.travel), the same rule as the end of every ride
+G.clearSpot = (x, z) => { const d = dropSpot(G.world, x, z); return [d.x, d.z]; };
+G.landBy = async (h, x, z) => { await G.travel(h, x + 1.8 - 4.5, z + 1.4 - 1, { x, z }); };
 G.meetAndPlay = async (i, id, source = 'place') => {
   const h = G.heroes[i], it = G.gameSpot(id); if (!h) return;
   if (!it) { return G.playGame(i, id, source); return; }

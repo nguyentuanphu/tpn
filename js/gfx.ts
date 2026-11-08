@@ -37,16 +37,36 @@ export function P(geo, color, pos = [0, 0, 0], rot = [0, 0, 0], scl = [1, 1, 1])
   const g = (geo.index ? geo.toNonIndexed() : geo.clone()).applyMatrix4(_m);
   return { g, color };
 }
+// (v1.08e places) a code shape that a Blender model (models/world/<name>.glb) takes over when a child comes near:
+// js/modelkit.ts picks this list up after the start (nothing is loaded here). opts: as modelFor, plus outline [width,
+// colour] for the model (the same edge as the code shape) and carry (the code shape's own children, such as a clock face
+// or a turning wheel, move onto the model so they stay seen).
+// (v1.08 startup, PERF-001) afterGameStart(): resolves when the valley's game has started (js/main.ts, with its other
+// after-the-start parts), so the Blender model code (js/modelkit.ts, the GLTF loader) and the models are not in the first
+// download. A page with no valley booting (Sparkle Studio, a check's page) gets it at once.
+let gameStart: Promise<void> | null = null, gameStartDone: (() => void) | null = null;
+export const gameBooting = () => { if (!gameStart) gameStart = new Promise<void>(r => { gameStartDone = r; }); };
+export const gameStarted = () => { if (gameStartDone) gameStartDone(); else gameStart = Promise.resolve(); };
+export const afterGameStart = (): Promise<void> => gameStart || Promise.resolve();
+export const WORLD_TAGS: [any, string, any][] = [];
+export const worldTag = <T>(obj: T, name: string, opts: any = {}): T => { WORLD_TAGS.push([obj, name, opts]); return obj; };
+// a short name for a merged shape (houses, stalls: one model for every copy of the same shape): from its corners and colours
+export function geoKey(g: THREE.BufferGeometry) {
+  let h = 2166136261; const add = (a: ArrayLike<number>) => { for (let i = 0; i < a.length; i++) h = Math.imul(h ^ Math.round(a[i] * 100), 16777619); };
+  add(g.attributes.position.array); if (g.attributes.color) add(g.attributes.color.array);
+  return (h >>> 0).toString(36);
+}
 export function merge(parts) {
   let n = 0; parts.forEach(p => n += p.g.attributes.position.count);
   const pos = new Float32Array(n * 3), nor = new Float32Array(n * 3), col = new Float32Array(n * 3);
   let o = 0;
   for (const p of parts) {
-    const a = p.g.attributes.position, b = p.g.attributes.normal; _c.set(p.color);
+    // (v1.08e places) a part with no colour keeps the colours in its own corners (a Blender prop: js/festivals.ts)
+    const a = p.g.attributes.position, b = p.g.attributes.normal, vc = p.color == null ? p.g.attributes.color : null; if (!vc) _c.set(p.color);
     for (let i = 0; i < a.count; i++, o++) {
       pos[o * 3] = a.getX(i); pos[o * 3 + 1] = a.getY(i); pos[o * 3 + 2] = a.getZ(i);
       nor[o * 3] = b.getX(i); nor[o * 3 + 1] = b.getY(i); nor[o * 3 + 2] = b.getZ(i);
-      col[o * 3] = _c.r; col[o * 3 + 1] = _c.g; col[o * 3 + 2] = _c.b;
+      if (vc) { col[o * 3] = vc.getX(i); col[o * 3 + 1] = vc.getY(i); col[o * 3 + 2] = vc.getZ(i); } else { col[o * 3] = _c.r; col[o * 3 + 1] = _c.g; col[o * 3 + 2] = _c.b; }
     }
   }
   const g = new THREE.BufferGeometry();
@@ -82,6 +102,37 @@ export const blobShadow = (() => {
   return () => new THREE.Mesh(geo, mat);
 })();
 
+// (v1.08e faces, part 2: owner 6 Nov 2026 AEDT "better refinement") the people's look: a smoother ramp of five soft bands
+// (more depth than the valley's four) and a soft warm rim light on the edges turned away from the camera, so a person
+// stands out from the grass and the walls. One shader for every person (no new picture, no extra draw).
+const personBands = (() => {
+  const d = new Uint8Array([128, 166, 200, 228, 246, 255]);
+  const t = new THREE.DataTexture(d, d.length, 1, THREE.RedFormat); t.minFilter = t.magFilter = THREE.LinearFilter; t.generateMipmaps = false; t.needsUpdate = true; return t;
+})();
+export const RIM = { color: new THREE.Color('#fff1d6'), strength: .24 };
+const rimUniforms = { uRimCol: { value: RIM.color }, uRim: { value: RIM.strength } };
+export function personLook(m) {
+  if (!m || !m.isMeshToonMaterial || m.userData.person) return m;
+  m.userData.person = true; m.gradientMap = personBands;
+  const before = m.onBeforeCompile; // (a material's own change goes first: the friend models' corner light, js/friend-model.ts)
+  m.onBeforeCompile = (sh, r) => {
+    if (before) before.call(m, sh, r);
+    Object.assign(sh.uniforms, rimUniforms);
+    sh.fragmentShader = 'uniform vec3 uRimCol;\nuniform float uRim;\n' + sh.fragmentShader.replace('#include <opaque_fragment>',
+      'float rimK = 1.0 - clamp(dot(normalize(normal), normalize(vViewPosition)), 0.0, 1.0);\noutgoingLight += uRimCol * uRim * smoothstep(.55, 1.0, rimK);\n#include <opaque_fragment>');
+  };
+  m.customProgramCacheKey = () => 'person' + (m.userData.cornerLight ? '-corner' : ''); m.needsUpdate = true; return m;
+}
+/** an outline for a skinned model (the friends' Blender models): the same inverted hull, bent by the same bones */
+export function outlineSkinned(o, width = .011, color = '#6a4a3a') {
+  const key = 'skin' + width + color; let m = outlineMats[key];
+  if (!m) { m = outlineMats[key] = new THREE.MeshBasicMaterial({ color, side: THREE.BackSide }); m.userData.shared = true;
+    m.onBeforeCompile = sh => { sh.vertexShader = sh.vertexShader.replace('#include <begin_vertex>', `vec3 transformed = position + normalize(normal) * ${width.toFixed(4)};`); };
+    m.customProgramCacheKey = () => 'outlineSkin' + key; }
+  const h = new THREE.SkinnedMesh(o.geometry, m); h.bind(o.skeleton, o.bindMatrix); h.frustumCulled = false; h.userData.outline = true; h.raycast = () => { };
+  h.position.copy(o.position); h.quaternion.copy(o.quaternion); h.scale.copy(o.scale); o.parent.add(h); return h;
+}
+
 // Soft ink outline (inverted hull) for the picture-book look. Returns the outline meshes so far-away
 // characters can hide theirs. Transparent meshes (faces, glass wings, shadows) are skipped.
 const outlineMats = {};
@@ -95,5 +146,13 @@ export function outline(obj, width = .011, color = '#6a4a3a') {
   }
   const add = [];
   obj.traverse(o => { if (o.isMesh && !o.userData.outline && !o.material.transparent && o.geometry.attributes.normal) add.push(o); });
-  return add.map(o => { const h = new THREE.Mesh(o.geometry, m); h.userData.outline = true; h.raycast = () => { }; o.add(h); return h; });
+  // (v1.08) a bending limb's outline bends with it (js/avatar.ts bendMat): its own material, the same knee
+  return add.map(o => { const u = o.userData.bend; let h: THREE.Mesh;
+    if (u) {
+      const bm = new THREE.MeshBasicMaterial({ color, side: THREE.BackSide });
+      bm.onBeforeCompile = sh => { sh.uniforms.uBend = u; sh.vertexShader = 'attribute float bendW;\nuniform mat4 uBend;\n' + sh.vertexShader.replace('#include <begin_vertex>', `vec3 transformed = position + normalize(normal) * ${width.toFixed(4)};\nif (bendW > .5) transformed = (uBend * vec4(transformed, 1.)).xyz;`); };
+      bm.customProgramCacheKey = () => 'outlineBend' + key;
+      h = new THREE.Mesh(o.geometry, bm); h.onBeforeRender = o.onBeforeRender;
+    } else h = new THREE.Mesh(o.geometry, m);
+    h.userData.outline = true; h.raycast = () => { }; o.add(h); return h; });
 }

@@ -1,5 +1,5 @@
 {
-  "source": "380ed908b79b94ac32f83865af7d87758e5932d0",
+  "source": "802d543c268ae0450acafdeb95d45d2983df4dab",
   "stickers": [
     {
       "id": "hen",
@@ -4396,6 +4396,1238 @@
         }
       ],
       "sound": "chuff"
+    },
+    {
+      "id": "lp_vi_1",
+      "theme": "learn",
+      "icon": "lp:vi:1",
+      "en": "Vietnamese step 1",
+      "vi": "Tiếng Việt: bước 1",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "vi:1"
+        }
+      ],
+      "sound": "ding",
+      "starter": true
+    },
+    {
+      "id": "lp_vi_2",
+      "theme": "learn",
+      "icon": "lp:vi:2",
+      "en": "Vietnamese step 2",
+      "vi": "Tiếng Việt: bước 2",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "vi:2"
+        }
+      ],
+      "sound": "ding"
+    },
+    {
+      "id": "lp_vi_3",
+      "theme": "learn",
+      "icon": "lp:vi:3",
+      "en": "Vietnamese step 3",
+      "vi": "Tiếng Việt: bước 3",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "vi:3"
+        }
+      ],
+      "sound": "ding"
+    },
+    {
+      "id": "lp_vi_4",
+      "theme": "learn",
+      "icon": "lp:vi:4",
+      "en": "Vietnamese step 4",
+      "vi": "Tiếng Việt: bước 4",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "vi:4"
+        }
+      ],
+      "sound": "ding"
+    },
+    {
+      "id": "lp_vi_5",
+      "theme": "learn",
+      "icon": "lp:vi:5",
+      "en": "Vietnamese step 5",
+      "vi": "Tiếng Việt: bước 5",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "vi:5"
+        }
+      ],
+      "sound": "ding"
+    },
+    {
+      "id": "lp_vi_6",
+      "theme": "learn",
+      "icon": "lp:vi:6",
+      "en": "Vietnamese step 6",
+      "vi": "Tiếng Việt: bước 6",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "vi:6"
+        }
+      ],
+      "sound": "ding"
+    },
+    {
+      "id": "lp_vi_7",
+      "theme": "learn",
+      "icon": "lp:vi:7",
+      "en": "Vietnamese step 7",
+      "vi": "Tiếng Việt: bước 7",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "vi:7"
+        }
+      ],
+      "sound": "ding"
+    },
+    {
+      "id": "lp_vi_8",
+      "theme": "learn",
+      "icon": "lp:vi:8",
+      "en": "Vietnamese step 8",
+      "vi": "Tiếng Việt: bước 8",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "vi:8"
+        }
+      ],
+      "sound": "ding"
+    },
+    {
+      "id": "lp_vi_9",
+      "theme": "learn",
+      "icon": "lp:vi:9",
+      "en": "Vietnamese step 9",
+      "vi": "Tiếng Việt: bước 9",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "vi:9"
+        }
+      ],
+      "sound": "fanfare"
+    },
+    {
+      "id": "lp_en_1",
+      "theme": "learn",
+      "icon": "lp:en:1",
+      "en": "English step 1",
+      "vi": "Tiếng Anh: bước 1",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "en:1"
+        }
+      ],
+      "sound": "ding",
+      "starter": true
+    },
+    {
+      "id": "lp_en_2",
+      "theme": "learn",
+      "icon": "lp:en:2",
+      "en": "English step 2",
+      "vi": "Tiếng Anh: bước 2",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "en:2"
+        }
+      ],
+      "sound": "ding"
+    },
+    {
+      "id": "lp_en_3",
+      "theme": "learn",
+      "icon": "lp:en:3",
+      "en": "English step 3",
+      "vi": "Tiếng Anh: bước 3",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "en:3"
+        }
+      ],
+      "sound": "ding"
+    },
+    {
+      "id": "lp_en_4",
+      "theme": "learn",
+      "icon": "lp:en:4",
+      "en": "English step 4",
+      "vi": "Tiếng Anh: bước 4",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "en:4"
+        }
+      ],
+      "sound": "ding"
+    },
+    {
+      "id": "lp_en_5",
+      "theme": "learn",
+      "icon": "lp:en:5",
+      "en": "English step 5",
+      "vi": "Tiếng Anh: bước 5",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "en:5"
+        }
+      ],
+      "sound": "ding"
+    },
+    {
+      "id": "lp_en_6",
+      "theme": "learn",
+      "icon": "lp:en:6",
+      "en": "English step 6",
+      "vi": "Tiếng Anh: bước 6",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "en:6"
+        }
+      ],
+      "sound": "ding"
+    },
+    {
+      "id": "lp_en_7",
+      "theme": "learn",
+      "icon": "lp:en:7",
+      "en": "English step 7",
+      "vi": "Tiếng Anh: bước 7",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "en:7"
+        }
+      ],
+      "sound": "ding"
+    },
+    {
+      "id": "lp_en_8",
+      "theme": "learn",
+      "icon": "lp:en:8",
+      "en": "English step 8",
+      "vi": "Tiếng Anh: bước 8",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "en:8"
+        }
+      ],
+      "sound": "ding"
+    },
+    {
+      "id": "lp_en_9",
+      "theme": "learn",
+      "icon": "lp:en:9",
+      "en": "English step 9",
+      "vi": "Tiếng Anh: bước 9",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "en:9"
+        }
+      ],
+      "sound": "fanfare"
+    },
+    {
+      "id": "lp_math_1",
+      "theme": "learn",
+      "icon": "lp:math:1",
+      "en": "Maths step 1",
+      "vi": "Toán: bước 1",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "math:1"
+        }
+      ],
+      "sound": "ding",
+      "starter": true
+    },
+    {
+      "id": "lp_math_2",
+      "theme": "learn",
+      "icon": "lp:math:2",
+      "en": "Maths step 2",
+      "vi": "Toán: bước 2",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "math:2"
+        }
+      ],
+      "sound": "ding"
+    },
+    {
+      "id": "lp_math_3",
+      "theme": "learn",
+      "icon": "lp:math:3",
+      "en": "Maths step 3",
+      "vi": "Toán: bước 3",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "math:3"
+        }
+      ],
+      "sound": "ding"
+    },
+    {
+      "id": "lp_math_4",
+      "theme": "learn",
+      "icon": "lp:math:4",
+      "en": "Maths step 4",
+      "vi": "Toán: bước 4",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "math:4"
+        }
+      ],
+      "sound": "ding"
+    },
+    {
+      "id": "lp_math_5",
+      "theme": "learn",
+      "icon": "lp:math:5",
+      "en": "Maths step 5",
+      "vi": "Toán: bước 5",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "math:5"
+        }
+      ],
+      "sound": "ding"
+    },
+    {
+      "id": "lp_math_6",
+      "theme": "learn",
+      "icon": "lp:math:6",
+      "en": "Maths step 6",
+      "vi": "Toán: bước 6",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "math:6"
+        }
+      ],
+      "sound": "ding"
+    },
+    {
+      "id": "lp_math_7",
+      "theme": "learn",
+      "icon": "lp:math:7",
+      "en": "Maths step 7",
+      "vi": "Toán: bước 7",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "math:7"
+        }
+      ],
+      "sound": "ding"
+    },
+    {
+      "id": "lp_math_8",
+      "theme": "learn",
+      "icon": "lp:math:8",
+      "en": "Maths step 8",
+      "vi": "Toán: bước 8",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "math:8"
+        }
+      ],
+      "sound": "ding"
+    },
+    {
+      "id": "lp_math_9",
+      "theme": "learn",
+      "icon": "lp:math:9",
+      "en": "Maths step 9",
+      "vi": "Toán: bước 9",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "math:9"
+        }
+      ],
+      "sound": "fanfare"
+    },
+    {
+      "id": "lp_shape_1",
+      "theme": "learn",
+      "icon": "lp:shape:1",
+      "en": "Shapes step 1",
+      "vi": "Hình khối: bước 1",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "shape:1"
+        }
+      ],
+      "sound": "ding",
+      "starter": true
+    },
+    {
+      "id": "lp_shape_2",
+      "theme": "learn",
+      "icon": "lp:shape:2",
+      "en": "Shapes step 2",
+      "vi": "Hình khối: bước 2",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "shape:2"
+        }
+      ],
+      "sound": "ding"
+    },
+    {
+      "id": "lp_shape_3",
+      "theme": "learn",
+      "icon": "lp:shape:3",
+      "en": "Shapes step 3",
+      "vi": "Hình khối: bước 3",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "shape:3"
+        }
+      ],
+      "sound": "ding"
+    },
+    {
+      "id": "lp_shape_4",
+      "theme": "learn",
+      "icon": "lp:shape:4",
+      "en": "Shapes step 4",
+      "vi": "Hình khối: bước 4",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "shape:4"
+        }
+      ],
+      "sound": "ding"
+    },
+    {
+      "id": "lp_shape_5",
+      "theme": "learn",
+      "icon": "lp:shape:5",
+      "en": "Shapes step 5",
+      "vi": "Hình khối: bước 5",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "shape:5"
+        }
+      ],
+      "sound": "ding"
+    },
+    {
+      "id": "lp_shape_6",
+      "theme": "learn",
+      "icon": "lp:shape:6",
+      "en": "Shapes step 6",
+      "vi": "Hình khối: bước 6",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "shape:6"
+        }
+      ],
+      "sound": "ding"
+    },
+    {
+      "id": "lp_shape_7",
+      "theme": "learn",
+      "icon": "lp:shape:7",
+      "en": "Shapes step 7",
+      "vi": "Hình khối: bước 7",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "shape:7"
+        }
+      ],
+      "sound": "ding"
+    },
+    {
+      "id": "lp_shape_8",
+      "theme": "learn",
+      "icon": "lp:shape:8",
+      "en": "Shapes step 8",
+      "vi": "Hình khối: bước 8",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "shape:8"
+        }
+      ],
+      "sound": "ding"
+    },
+    {
+      "id": "lp_shape_9",
+      "theme": "learn",
+      "icon": "lp:shape:9",
+      "en": "Shapes step 9",
+      "vi": "Hình khối: bước 9",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "shape:9"
+        }
+      ],
+      "sound": "fanfare"
+    },
+    {
+      "id": "lp_money_1",
+      "theme": "learn",
+      "icon": "lp:money:1",
+      "en": "Money step 1",
+      "vi": "Tiền: bước 1",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "money:1"
+        }
+      ],
+      "sound": "ding",
+      "starter": true
+    },
+    {
+      "id": "lp_money_2",
+      "theme": "learn",
+      "icon": "lp:money:2",
+      "en": "Money step 2",
+      "vi": "Tiền: bước 2",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "money:2"
+        }
+      ],
+      "sound": "ding"
+    },
+    {
+      "id": "lp_money_3",
+      "theme": "learn",
+      "icon": "lp:money:3",
+      "en": "Money step 3",
+      "vi": "Tiền: bước 3",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "money:3"
+        }
+      ],
+      "sound": "ding"
+    },
+    {
+      "id": "lp_money_4",
+      "theme": "learn",
+      "icon": "lp:money:4",
+      "en": "Money step 4",
+      "vi": "Tiền: bước 4",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "money:4"
+        }
+      ],
+      "sound": "ding"
+    },
+    {
+      "id": "lp_money_5",
+      "theme": "learn",
+      "icon": "lp:money:5",
+      "en": "Money step 5",
+      "vi": "Tiền: bước 5",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "money:5"
+        }
+      ],
+      "sound": "ding"
+    },
+    {
+      "id": "lp_money_6",
+      "theme": "learn",
+      "icon": "lp:money:6",
+      "en": "Money step 6",
+      "vi": "Tiền: bước 6",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "money:6"
+        }
+      ],
+      "sound": "ding"
+    },
+    {
+      "id": "lp_money_7",
+      "theme": "learn",
+      "icon": "lp:money:7",
+      "en": "Money step 7",
+      "vi": "Tiền: bước 7",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "money:7"
+        }
+      ],
+      "sound": "ding"
+    },
+    {
+      "id": "lp_money_8",
+      "theme": "learn",
+      "icon": "lp:money:8",
+      "en": "Money step 8",
+      "vi": "Tiền: bước 8",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "money:8"
+        }
+      ],
+      "sound": "ding"
+    },
+    {
+      "id": "lp_money_9",
+      "theme": "learn",
+      "icon": "lp:money:9",
+      "en": "Money step 9",
+      "vi": "Tiền: bước 9",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "money:9"
+        }
+      ],
+      "sound": "fanfare"
+    },
+    {
+      "id": "lp_sci_1",
+      "theme": "learn",
+      "icon": "lp:sci:1",
+      "en": "Science step 1",
+      "vi": "Khoa học: bước 1",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "sci:1"
+        }
+      ],
+      "sound": "ding",
+      "starter": true
+    },
+    {
+      "id": "lp_sci_2",
+      "theme": "learn",
+      "icon": "lp:sci:2",
+      "en": "Science step 2",
+      "vi": "Khoa học: bước 2",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "sci:2"
+        }
+      ],
+      "sound": "ding"
+    },
+    {
+      "id": "lp_sci_3",
+      "theme": "learn",
+      "icon": "lp:sci:3",
+      "en": "Science step 3",
+      "vi": "Khoa học: bước 3",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "sci:3"
+        }
+      ],
+      "sound": "ding"
+    },
+    {
+      "id": "lp_sci_4",
+      "theme": "learn",
+      "icon": "lp:sci:4",
+      "en": "Science step 4",
+      "vi": "Khoa học: bước 4",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "sci:4"
+        }
+      ],
+      "sound": "ding"
+    },
+    {
+      "id": "lp_sci_5",
+      "theme": "learn",
+      "icon": "lp:sci:5",
+      "en": "Science step 5",
+      "vi": "Khoa học: bước 5",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "sci:5"
+        }
+      ],
+      "sound": "ding"
+    },
+    {
+      "id": "lp_sci_6",
+      "theme": "learn",
+      "icon": "lp:sci:6",
+      "en": "Science step 6",
+      "vi": "Khoa học: bước 6",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "sci:6"
+        }
+      ],
+      "sound": "ding"
+    },
+    {
+      "id": "lp_sci_7",
+      "theme": "learn",
+      "icon": "lp:sci:7",
+      "en": "Science step 7",
+      "vi": "Khoa học: bước 7",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "sci:7"
+        }
+      ],
+      "sound": "ding"
+    },
+    {
+      "id": "lp_sci_8",
+      "theme": "learn",
+      "icon": "lp:sci:8",
+      "en": "Science step 8",
+      "vi": "Khoa học: bước 8",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "sci:8"
+        }
+      ],
+      "sound": "ding"
+    },
+    {
+      "id": "lp_sci_9",
+      "theme": "learn",
+      "icon": "lp:sci:9",
+      "en": "Science step 9",
+      "vi": "Khoa học: bước 9",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "sci:9"
+        }
+      ],
+      "sound": "fanfare"
+    },
+    {
+      "id": "lp_read_1",
+      "theme": "learn",
+      "icon": "lp:read:1",
+      "en": "Reading step 1",
+      "vi": "Chữ và đọc: bước 1",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "read:1"
+        }
+      ],
+      "sound": "ding",
+      "starter": true
+    },
+    {
+      "id": "lp_read_2",
+      "theme": "learn",
+      "icon": "lp:read:2",
+      "en": "Reading step 2",
+      "vi": "Chữ và đọc: bước 2",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "read:2"
+        }
+      ],
+      "sound": "ding"
+    },
+    {
+      "id": "lp_read_3",
+      "theme": "learn",
+      "icon": "lp:read:3",
+      "en": "Reading step 3",
+      "vi": "Chữ và đọc: bước 3",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "read:3"
+        }
+      ],
+      "sound": "ding"
+    },
+    {
+      "id": "lp_read_4",
+      "theme": "learn",
+      "icon": "lp:read:4",
+      "en": "Reading step 4",
+      "vi": "Chữ và đọc: bước 4",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "read:4"
+        }
+      ],
+      "sound": "ding"
+    },
+    {
+      "id": "lp_read_5",
+      "theme": "learn",
+      "icon": "lp:read:5",
+      "en": "Reading step 5",
+      "vi": "Chữ và đọc: bước 5",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "read:5"
+        }
+      ],
+      "sound": "ding"
+    },
+    {
+      "id": "lp_read_6",
+      "theme": "learn",
+      "icon": "lp:read:6",
+      "en": "Reading step 6",
+      "vi": "Chữ và đọc: bước 6",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "read:6"
+        }
+      ],
+      "sound": "ding"
+    },
+    {
+      "id": "lp_read_7",
+      "theme": "learn",
+      "icon": "lp:read:7",
+      "en": "Reading step 7",
+      "vi": "Chữ và đọc: bước 7",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "read:7"
+        }
+      ],
+      "sound": "ding"
+    },
+    {
+      "id": "lp_read_8",
+      "theme": "learn",
+      "icon": "lp:read:8",
+      "en": "Reading step 8",
+      "vi": "Chữ và đọc: bước 8",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "read:8"
+        }
+      ],
+      "sound": "ding"
+    },
+    {
+      "id": "lp_read_9",
+      "theme": "learn",
+      "icon": "lp:read:9",
+      "en": "Reading step 9",
+      "vi": "Chữ và đọc: bước 9",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "read:9"
+        }
+      ],
+      "sound": "fanfare"
+    },
+    {
+      "id": "lp_me_1",
+      "theme": "learn",
+      "icon": "lp:me:1",
+      "en": "Me and my family step 1",
+      "vi": "Em và gia đình: bước 1",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "me:1"
+        }
+      ],
+      "sound": "ding",
+      "starter": true
+    },
+    {
+      "id": "lp_me_2",
+      "theme": "learn",
+      "icon": "lp:me:2",
+      "en": "Me and my family step 2",
+      "vi": "Em và gia đình: bước 2",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "me:2"
+        }
+      ],
+      "sound": "ding"
+    },
+    {
+      "id": "lp_me_3",
+      "theme": "learn",
+      "icon": "lp:me:3",
+      "en": "Me and my family step 3",
+      "vi": "Em và gia đình: bước 3",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "me:3"
+        }
+      ],
+      "sound": "ding"
+    },
+    {
+      "id": "lp_me_4",
+      "theme": "learn",
+      "icon": "lp:me:4",
+      "en": "Me and my family step 4",
+      "vi": "Em và gia đình: bước 4",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "me:4"
+        }
+      ],
+      "sound": "ding"
+    },
+    {
+      "id": "lp_me_5",
+      "theme": "learn",
+      "icon": "lp:me:5",
+      "en": "Me and my family step 5",
+      "vi": "Em và gia đình: bước 5",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "me:5"
+        }
+      ],
+      "sound": "ding"
+    },
+    {
+      "id": "lp_me_6",
+      "theme": "learn",
+      "icon": "lp:me:6",
+      "en": "Me and my family step 6",
+      "vi": "Em và gia đình: bước 6",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "me:6"
+        }
+      ],
+      "sound": "ding"
+    },
+    {
+      "id": "lp_me_7",
+      "theme": "learn",
+      "icon": "lp:me:7",
+      "en": "Me and my family step 7",
+      "vi": "Em và gia đình: bước 7",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "me:7"
+        }
+      ],
+      "sound": "ding"
+    },
+    {
+      "id": "lp_me_8",
+      "theme": "learn",
+      "icon": "lp:me:8",
+      "en": "Me and my family step 8",
+      "vi": "Em và gia đình: bước 8",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "me:8"
+        }
+      ],
+      "sound": "ding"
+    },
+    {
+      "id": "lp_me_9",
+      "theme": "learn",
+      "icon": "lp:me:9",
+      "en": "Me and my family step 9",
+      "vi": "Em và gia đình: bước 9",
+      "hint": [
+        "Win the steps of a learning journey in Học vui",
+        "Thắng các bước hành trình học trong Học vui"
+      ],
+      "earn": [
+        {
+          "learn": "me:9"
+        }
+      ],
+      "sound": "fanfare"
     }
   ],
   "themes": [
@@ -4567,6 +5799,23 @@
         "🌈",
         "Golden frame: rare and shiny",
         "Khung vàng: hiếm và lấp lánh"
+      ]
+    },
+    {
+      "id": "learn",
+      "tab": [
+        "Learning",
+        "Học vui"
+      ],
+      "color": "#3b6fe0",
+      "icon": "lp:tab",
+      "en": "Learning journeys",
+      "vi": "Hành trình học",
+      "song": "twinkle",
+      "decor": [
+        "lp:tab",
+        "Golden frame: learning journeys",
+        "Khung vàng: hành trình học"
       ]
     }
   ],

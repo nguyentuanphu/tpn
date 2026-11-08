@@ -43,7 +43,8 @@ register({
     let caught = 0;
     while (caught < target) {
       stage.innerHTML = '';
-      const fish = el('button', 'n2-float', pic('🐟'));
+      // (v1.08 variety) a different little fish each time, in a new place
+      const fish = el('button', 'n2-float', pic(['🐟', '🐠', '🐡'][caught % 3]));
       fish.style.left = rand(20, 260) + 'px';
       fish.style.top = rand(20, 220) + 'px';
       fish.setAttribute('aria-label', T('Fish', 'Con cá'));

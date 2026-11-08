@@ -164,8 +164,8 @@ async function sweepDevice(b, dev) {
 
   // ---------- Welcome screen ----------
   await panel('welcome', [['cover', '.screen.title .tt-cover'], ['logo', '.screen.title .logo'], ['start', '.screen.title .press'], ['languages', '.screen.title .tt-panel']], async () => { }, [
-    ['Tieng Viet', '.screen.title .seg.lang button[data-l="vi"]'], ['English', '.screen.title .seg.lang button[data-l="en"]'],
-    ['learn Chinese on', '.screen.title .learnrow [data-learn="zh"]'], ['learn Chinese off', '.screen.title .learnrow [data-learn="zh"]']]);
+    ['Tieng Viet', '.screen.title .seg.lang button[data-l="vi"]'], ['English', '.screen.title .seg.lang button[data-l="en"]']]);
+  // (owner, 3 Nov 2026 AEDT, v1.08) the Chinese/Hindi "Also learn" buttons left the Welcome screen: no Chinese switch to tap
   // ---------- Who is playing ----------
   await panel('who', [['card', '.screen.who .who-card'], ['go button', '.screen.who .who-card .go'], ['grown-ups button', '.screen.who .grown']], async () => { await page.click('.screen.title .press', { force: true, timeout: 90000 }); }, [
     ['pick player 1', '.screen.who .pick[data-id]:nth-child(1)'], ['pick player 2', '.screen.who .pick[data-id]:nth-child(2)'],

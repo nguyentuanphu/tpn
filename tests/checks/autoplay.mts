@@ -278,7 +278,9 @@ await check('ownerautoplaynormalduck', async () => {
 });
 
 await check('ownerautoplay2x', async () => {
-  return await ownerSmoke('owner-autoplay-plans.mts', ['--speed=x2']);
+  // (v1.08 fixes 2: spawnSync ETIMEDOUT on GitHub) at 2x a tap takes about 1.5 s by design and a random maze needs 40 to 78
+  // taps, so the eight games took 519 to 652 s (GitHub and here) against 10 minutes: 15 minutes, the play is not slower
+  return await ownerSmoke('owner-autoplay-plans.mts', ['--speed=x2'], 900000);
 });
 
 await check('ownerautoplay3x', async () => {

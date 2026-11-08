@@ -62,8 +62,8 @@ FILMS.lantern_ch2 = { pages: [
     const kid = S.person(kidOf(S), -1, 5.2, 0, .72), teo = S.person(TEO, .4, 5.6, 0, .72);
     const others = KIDS.map((k, i) => S.person(k, -6 + i * 1.6, 3.2, 0, .7));
     // star lanterns, dark until the child lights them
-    const stars = [kid, teo, ...others].map((a, i) => { const st = buildStarLantern(['#ff4a3a', '#ffd23f', '#ff7eb8', '#5fd3ff', '#ffb020', '#ff4a3a'][i % 6], false); S.add(st); S.grab(a, 0, st, [0, -.75, .15], 'armR', .9); return st; });
-    const lit = [kid, teo, ...others].map((a, i) => { const st = buildStarLantern(['#ff4a3a', '#ffd23f', '#ff7eb8', '#5fd3ff', '#ffb020', '#ff4a3a'][i % 6], true); st.visible = false; S.add(st); S.grab(a, 0, st, [0, -.75, .15], 'armL', .9); return st; });
+    const stars = [kid, teo, ...others].map((a, i) => { const st = buildStarLantern(['#ff4a3a', '#ffd23f', '#ff7eb8', '#5fd3ff', '#ffb020', '#ff4a3a'][i % 6], false, true); S.add(st); S.grab(a, 0, st, [0, -.75, .15], 'armR', .9); return st; });
+    const lit = [kid, teo, ...others].map((a, i) => { const st = buildStarLantern(['#ff4a3a', '#ffd23f', '#ff7eb8', '#5fd3ff', '#ffb020', '#ff4a3a'][i % 6], true, true); st.visible = false; S.add(st); S.grab(a, 0, st, [0, -.75, .15], 'armL', .9); return st; });
     const comp = buildCompanion(S.ctx.companion || 'firefly'); S.add(comp, -.2, 1.8, 5.4); flap(S, comp, 1.9);
     S.shot([0, 2.6, 13], [0, 1.6, 0]);
     // (films batch, 13 Oct) the tap comes once the parade has walked, so the film is not held still under the words

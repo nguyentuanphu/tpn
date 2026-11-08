@@ -61,6 +61,7 @@ register({
     });
 
     let played = 0, tune: number[] = [];
+    let last = -1;   // (v1.08 variety) a lit string is never the one just played
     const light = (idx: number) => stringEls.forEach(s => s.wire.classList.toggle('lit', s.idx === idx));
     while (played < targetNotes) {
       if (mode === 'tune' && !tune.length) {
@@ -69,7 +70,9 @@ register({
         await wait(500);
         for (const idx of tune) { if (api.closed) return; light(idx); api.sfx.pop(idx); await wait(550); light(-1); await wait(200); }
       }
-      const targetIdx = mode === 'tune' ? tune[0] : mode === 'steps' ? (played * 2) % 5 : Math.floor(Math.random() * 5);
+      let targetIdx = mode === 'tune' ? tune[0] : mode === 'steps' ? (played * 2) % 5 : Math.floor(Math.random() * 5);
+      if (mode !== 'tune' && mode !== 'steps' && targetIdx === last) targetIdx = (targetIdx + 1 + Math.floor(Math.random() * 4)) % 5;
+      last = targetIdx;
       light(mode === 'tune' ? -1 : targetIdx);
       const dim = mode === 'blink' ? setTimeout(() => light(-1), 700) : 0;
 
@@ -232,6 +235,8 @@ register({
     // (owner, 29 Oct 2026 AEDT audit) a mixed order every game, a really loud roar or a tiny squeak (both were
     // ordinary pops, always loud, quiet, loud), and the drum on stage plays it again
     const answers = [loudBtn, quietBtn].concat(Array.from({ length: rounds - 2 }, () => Math.random() < .5 ? loudBtn : quietBtn)).sort(() => Math.random() - .5);
+    // (v1.08 variety) never the same answer three times in a row
+    for (let i = 2; i < answers.length; i++) if (answers[i] === answers[i - 1] && answers[i] === answers[i - 2]) answers[i] = answers[i] === loudBtn ? quietBtn : loudBtn;
     let current = 0;
     let play = () => {};
     iconEl.style.cursor = 'pointer';

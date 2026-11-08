@@ -18,10 +18,12 @@ import { WILD } from '../gather.js';
 import { snackOf, eatSnack } from '../snacks.js';
 import { saveToDevice, savesByShare } from '../photos.js';
 import { pic } from '../art.js';
+// (v1.08b friends) the friend and outfit rows load with the first Backpack (not in the first download, check startup)
+let FR: typeof import('./friends-row.js') = null;
 import { COMPANIONS } from '../content/companions.js';
 import { modal } from '../popups.js';
-import { PET_ICON, PAL_HAT_ICON, PALS_NAME, toast, foldHeadings, jumpNav } from './common.js';
-import { festCalendarHTML } from './festivals-ui.js';
+import { PET_ICON, PAL_HAT_ICON, PALS_NAME, PALS_TAB, toast, foldHeadings, jumpNav } from './common.js';
+import { festCalendarHTML, wireCalendar, CAL_TITLE } from './festivals-ui.js';
 import { valleyPicture } from './pad-map.js';
 import { albumTab } from './pad-album.js';
 // ---------- the Sparkle Pad ----------
@@ -34,11 +36,14 @@ export const openPad = Object.assign(function (game, i, tab) {
   const hero = game.heroes[i], p: Profile = hero.profile;
   const m = modal('pad', '');
   const card = m.querySelector('.card');
-  const TABS = [['map', '🗺️', T('Map', 'Bản đồ')], ['bag', '🎒', T('Backpack', 'Ba lô')], ['log', '📜', T('Adventures', 'Nhiệm vụ')], ['album', '⭐', T('Stickers', 'Hình dán')], ['passport', '🛂', T('Passport', 'Hộ chiếu')], ['games', '🎲', T('Games', 'Trò chơi')], ['cam', '📷', T('Camera', 'Máy ảnh')], ['cal', '📅', T('Festivals', 'Lễ hội')]];
+  const TABS = [['map', '🗺️', T('Map', 'Bản đồ')], ['bag', '🎒', T('Backpack', 'Ba lô')], ['log', '📜', T('Adventures', 'Nhiệm vụ')], ['album', '⭐', T('Stickers', 'Hình dán')], ['passport', '🛂', T('Passport', 'Hộ chiếu')], ['games', '🎲', T('Games', 'Trò chơi')], ['cam', '📷', T('Camera', 'Máy ảnh')], ['cal', '📅', T('Calendar', 'Lịch')]];
   if (game.mode === 'online' || game.mode === 'solo') TABS.push(['friend', '📞', T('Friend', 'Bạn bè')]);
   // (Round V, owner 13 Oct: "the shop button should be right next to the bag") a Shop tab straight after Backpack opens the
   // clothes shop right there (no travel); it replaces the dock's Shop button
-  if (game.shop && game.shop.on() && game.heroes.length < 2) TABS.splice(TABS.findIndex(t => t[0] === 'bag') + 1, 0, ['shop', '🛍️', T('Shop', 'Cửa hàng')]);
+  // (v1.08 companion, owner's plan E, 3 Nov 2026 AEDT) the companion, the pets and their hats have their own tab right after
+  // the Backpack: Bản đồ, Ba lô, Bạn đồng hành, Cửa hàng, Nhiệm vụ, Hình dán
+  TABS.splice(TABS.findIndex(t => t[0] === 'bag') + 1, 0, ['pals', '🐾', PALS_TAB()]);
+  if (game.shop && game.shop.on() && game.heroes.length < 2) TABS.splice(TABS.findIndex(t => t[0] === 'pals') + 1, 0, ['shop', '🛍️', T('Shop', 'Cửa hàng')]);
   const pageCleanups: (() => void)[] = [];
   const cleanPage = () => { pageCleanups.splice(0).forEach(clean => clean()); };
   const draw = () => {
@@ -49,8 +54,8 @@ export const openPad = Object.assign(function (game, i, tab) {
     card.querySelectorAll('.pad-tabs button').forEach(b => b.onclick = () => { SFX.tap(); tab = b.dataset.t; draw(); });
     card.querySelector('.x').onclick = close;
     const body = card.querySelector('.pad-body');
-    ({ shop: b => game.shop.openShop(i, b), map: drawMap, bag: drawBag, log: drawLog, album: drawAlbum, games: drawGames, cam: drawCam, friend: drawFriend, passport: b => game.drawPassport(b, hero), cal: drawCal })[tab](body);
-    if (tab === 'bag' || tab === 'log' || tab === 'album') foldHeadings(body, tab); // (owner, 13 Oct) each part opens and closes
+    ({ shop: b => game.shop.openShop(i, b), map: drawMap, bag: drawBag, pals: drawPals, log: drawLog, album: drawAlbum, games: drawGames, cam: drawCam, friend: drawFriend, passport: b => game.drawPassport(b, hero), cal: drawCal })[tab](body);
+    if (tab === 'bag' || tab === 'pals' || tab === 'log' || tab === 'album') foldHeadings(body, tab); // (owner, 13 Oct) each part opens and closes
   };
   // computer keyboards: 1–8 pick a tab, ← → step through them, Esc closes
   const onKey = e => {
@@ -189,85 +194,41 @@ export const openPad = Object.assign(function (game, i, tab) {
       ok.querySelector('.no').onclick = () => ok.remove();
     };
   }
-  function drawBag(body) {
-    // (Round V) what an ingredient is for: the dishes it goes into at a cooking pot
-    const ingInfo = id => { const it = ITEMS[id], uses = RECIPES.filter(r => r.need.includes(id)), names = uses.map(r => r.name());
-      const en = `${it.name()}: an ingredient. ${uses.length ? 'Cook it at a cooking pot to make ' + names.join(', ') + '.' : 'Cook it at a cooking pot.'}`, vi = `${it.name()}: nguyên liệu. ${uses.length ? 'Nấu ở nồi để làm ' + names.join(', ') + '.' : 'Nấu ở nồi nhé.'}`;
-      return [T(en, vi), en, vi]; };
-    const isGem = id => WILD[id] && WILD[id].kind === 'gem';
-    const items = Object.entries<number>(p.inv).filter(([id, n]) => n > 0 && ITEMS[id] && !isGem(id)), gems = Object.entries<number>(p.inv).filter(([id, n]) => n > 0 && isGem(id)).sort((a, b) => WILD[b[0]].sell - WILD[a[0]].sell);
-    const bought = Object.entries<number>(p.bought || {}).filter(([id, n]) => n > 0 && snackOf(id));
-    const dishes = Object.entries<number>(p.dishes).filter(([, n]) => n > 0);
-    // (issue #738, tester on an iPhone 430x517, 31 Oct 2026 AEDT: "I can't see the pets in the Bag; put the pets and the
-    // companion in one place, where their accessories are bought and managed too") the pets were one button above the coins:
-    // no heading, so no chip in the sticky jump row and no fold, and on a short phone it scrolled away for good; the
-    // companion and its hats were only in the shop. Now one section, first in the Bag and first in the jump row: the
-    // companion, each pet, adopting, and the hats (put on whoever should wear it, or buy the next one)
-    const pals = (() => {
-      const kp = game.kidplay, comp = p.lanterns && p.lanterns.companion && COMPANIONS[p.lanterns.companion], pets = (p.pets || []).slice(0, game.pets?.max || 2), petNm = pt => game.pets?.nameOf ? game.pets.nameOf(pt) : (pt.name || '');
-      const ps = (p.lanterns && p.lanterns.pet) || {}, owned = (ps.hats || []), next = kp && (comp || pets.length) ? kp.nextHat(hero) : null;
-      const badge = id => id && PAL_HAT_ICON[id] ? `<i class="pal-hat">${pic(PAL_HAT_ICON[id])}</i>` : '';
-      const friends = (comp ? `<button class="slot pal" data-pal="buddy" title="${esc(T(comp.en, comp.vi))}"><span>${pic(comp.icon)}</span>${badge(ps.hat)}<small>${esc(comp.name)}</small></button>` : '')
-        + pets.map((pt, k) => `<button class="slot pal" data-pal="${k}" title="${esc(petNm(pt))}"><span>${pic(PET_ICON[pt.kind] || '🐾')}</span>${badge(pt.hat)}<small>${esc(petNm(pt))}</small></button>`).join('')
-        + (() => { const yard = pets.length >= (game.pets?.max || 2), nm = yard ? T('Pet yard', 'Sân thú cưng') : T('Adopt a pet', 'Nhận nuôi'), tip = yard ? T('Pet yard: name and care for your pets', 'Sân thú cưng: đặt tên và chăm sóc thú cưng') : T('Adopt a pet: choose a friend to follow you', 'Nhận nuôi: chọn một bạn thú đi theo con');
-          return `<button class="slot pal" data-adopt="1" title="${esc(tip)}"><span>${pic('🐾')}</span><small>${nm}</small></button>`; })();
-      const hats = kp && (comp || pets.length) ? kp.HATS.map(x => { const have = owned.includes(x.id), buyable = next && next.id === x.id, who = have && kp.wearerOf ? kp.wearerOf(hero, x.id) : null;
-        return `<button class="slot pal-hatslot ${who != null ? 'on' : ''} ${!have && !buyable ? 'locked' : ''}" data-phat="${x.id}" title="${esc(T(x.en, x.vi))}"><span>${pic(PAL_HAT_ICON[x.id] || '🎩')}</span>${have ? '' : buyable ? `<b class="pal-price">${fmt(x.price)}</b>` : `<i class="pal-lock">${pic('🔒')}</i>`}<small>${esc(T(x.en, x.vi))}</small></button>`; }).join('') : '';
-      return `<h3 class="bag-pals-h">${pic('🐾')} ${PALS_NAME()} <small>${T('tap one', 'chạm để xem')}</small></h3>
-      <div class="slots bag-pals">${friends}</div>${hats ? `<p class="note pal-hatnote">${T('Hats for your friends: tap one to put it on, or buy the next one.', 'Mũ cho các bạn: chạm để đội cho bạn nào, hoặc mua mũ tiếp theo.')}</p><div class="slots bag-pal-hats">${hats}</div>` : ''}`;
-    })();
-    body.innerHTML = `
-      <div class="bag-top"><button class="chip bagc" data-chip="money" title="${T('Coins', 'Đồng xu')}"><i>💰</i><b>${fmt(farm.coins)}</b><small>${T('Coins', 'Đồng xu')}</small></button><button class="chip bagc" data-chip="orbs" title="${T('Sparkle Orbs', 'Ngọc Lấp Lánh')}"><i>🔮</i><b>${p.orbs}</b><small>${T('Sparkle Orbs', 'Ngọc Lấp Lánh')}</small></button><button class="chip bagc" data-chip="leafy" title="${T('Leafies', 'Bạn Lá')}"><i>🍃</i><b>${Object.keys(p.leafies).length}/24</b><small>${T('Leafies', 'Bạn Lá')}</small></button></div>
-      ${pals}
-      <h3>${T('Food', 'Món ăn')} <small>${T('tap to eat', 'chạm để ăn')}</small></h3>
-      <div class="slots">${dishes.map(([id, n]) => { const r = dishInfo(id) || { icon: '🥘', name: () => T('Mystery stew', 'Món hầm bí ẩn') }; return `<button class="slot" data-eat="${id}" title="${esc(r.name() + ' · ' + T('tap to eat: hearts and energy back', 'chạm để ăn: thêm tim và sức'))}"><span>${r.icon}</span><b>${n}</b><small>${esc(r.name())}</small></button>`; }).join('') || `<p class="note">${T('Cook at a cooking pot to make food.', 'Nấu ăn ở nồi nấu để có món ăn.')}</p>`}</div>
-      <h3>🛍️ ${T('From shops and stalls', 'Mua ở quán và sạp')} <small>${T('tap to eat', 'chạm để ăn')}</small></h3>
-      <div class="slots">${bought.map(([id, n]) => { const v = snackOf(id); return `<button class="slot" data-snack="${id}" title="${esc(T(v.food[1], v.food[2]) + ' · ' + T('tap to eat', 'chạm để ăn'))}"><span>${v.food[0]}</span><b>${n}</b><small>${esc(T(v.food[1], v.food[2]))}</small></button>`; }).join('') || `<p class="note">${T('Buy food at kiosks, market stalls and from street sellers. It goes in here!', 'Mua đồ ăn ở quán, sạp chợ và các cô gánh hàng rong. Đồ mua sẽ nằm ở đây!')}</p>`}</div>
-      <h3>💎 ${T('Treasures', 'Báu vật')} <small>${T('tap for help', 'chạm để xem hướng dẫn')}</small></h3>
-      <div class="slots">${gems.map(([id, n]) => `<button class="slot gemslot" data-sellgem="${id}" title="${esc(WILD[id].name() + ' · ' + T('a treasure: choose Sell one in its help card', 'báu vật: chọn Bán một trong hướng dẫn'))}"><span>${WILD[id].icon}</span><b>${n}</b><small>${esc(WILD[id].name()) + ' · ' + fmt(WILD[id].sell)}</small></button>`).join('') || `<p class="note">${T('Dig at the sparkly mounds of earth and crack rocks open to find treasures!', 'Đào ở những ụ đất lấp lánh và gõ vỡ hòn đá để tìm báu vật!')}</p>`}</div>
-      <h3>${T('Ingredients', 'Nguyên liệu')}</h3>
-      <div class="slots">${items.map(([id, n]) => `<button class="slot" data-ing="${id}" title="${esc(ingInfo(id)[0])}"><span>${ITEMS[id].icon}</span><b>${n}</b><small>${esc(ITEMS[id].name())}</small></button>`).join('') || `<p class="note">${T('Empty! Shake apple trees and look for herbs and mushrooms.', 'Trống trơn! Rung cây táo và tìm rau thơm, nấm nhé.')}</p>`}</div>
-      ${(() => { const SLOT_ICON = { hat: '👒', neck: '📿', top: '👕', bottom: '👖', feet: '👟', back: '🪽' }; // (Round U, owner 11 Oct: everything bought shows here until it is worn) the clothes and accessories the child owns
-        const itemSVG = it => game.shop && game.shop.itemSVG ? game.shop.itemSVG(it) : pic(SLOT_ICON[it.slot] || '👕'), mine = CLOTHES.filter(it => owns(p, it.id) && it.for === (setOfLook(p.look) === 'girl' ? 'g' : 'b')), off = mine.filter(it => p.look[it.slot] !== it.id), on = mine.filter(it => p.look[it.slot] === it.id);
-        const hats = HATS.concat(REWARD_HATS.filter(h => p.owned.hats.includes(h))).filter(h => h !== 'none' && !ITEM[h]);
-        return `<h3>${pic('👕')} ${T('Clothes and accessories', 'Quần áo và phụ kiện')} <small>${T('tap to wear', 'chạm để mặc')}</small></h3>
-      <div class="slots">${off.map(it => `<button class="slot" data-wear="${it.id}" title="${esc(T(it.en, it.vi))}">${itemSVG(it)}<small>${esc(T(it.en, it.vi))}</small></button>`).join('')}${hats.filter(h => p.look.hat !== h).map(h => `<button class="slot" data-hat="${h}"><span>${HAT_ICON[h]}</span><small>${esc(HAT_NAME[h]())}</small></button>`).join('')}${!off.length && !hats.filter(h => p.look.hat !== h).length ? `<p class="note">${T('Everything you have is on! Find more at the clothes shop.', 'Con đang mặc hết đồ rồi! Ghé cửa hàng quần áo để mua thêm nhé.')}</p>` : ''}</div>
-      ${on.length || (p.look.hat && p.look.hat !== 'none' && !ITEM[p.look.hat]) ? `<h3>${T('Wearing now', 'Đang mặc')} <small>${T('tap to take off', 'chạm để cởi ra')}</small></h3>
-      <div class="slots">${on.map(it => `<button class="slot on" data-unwear="${it.slot}" title="${esc(T(it.en, it.vi))}">${itemSVG(it)}<small>${esc(T(it.en, it.vi))}</small></button>`).join('')}${p.look.hat && p.look.hat !== 'none' && !ITEM[p.look.hat] && HAT_ICON[p.look.hat] ? `<button class="slot on" data-hat="none"><span>${HAT_ICON[p.look.hat]}</span><small>${esc(HAT_NAME[p.look.hat] ? HAT_NAME[p.look.hat]() : '')}</small></button>` : ''}</div>` : ''}`; })()}
-      ${(() => { // (r79, owner 16 Oct) clothes of the other set, bought to give away: wrapped gift boxes, one tile for each kind
-        const gifts = (p.owned && p.owned.gifts || []).filter(id => ITEM[id]), kinds = [...new Set(gifts)];
-        return kinds.length ? `<h3>🎁 ${T('Gifts to give', 'Quà để tặng')} <small>${T('tap to give', 'chạm để tặng')}</small></h3>
-      <div class="slots">${kinds.map(id => { const it = ITEM[id], n = gifts.filter(x => x === id).length; return `<button class="slot giftbox" data-gift="${id}" title="${esc(T(it.en, it.vi))}"><span>🎁</span>${n > 1 ? `<b>${n}</b>` : ''}<small>${esc(T(it.en, it.vi))}</small></button>`; }).join('')}</div>` : ''; })()}
-      <h3>🪁 ${T('Whistling kite', 'Diều sáo')}</h3>
-      <div class="slots">${p.kite ? `<button class="slot ${p.kiteOn !== false ? 'on' : ''}" data-kite="1"><span>🪁</span><small>${p.kiteOn !== false ? T('Flying', 'Đang bay') : T('Put away', 'Cất đi')}</small></button><button class="slot" data-whistle="1"><span>🎶</span><small>${T('Whistle!', 'Thổi sáo!')}</small></button>` : `<p class="note">${T('Win the Kite Flying game to get a kite with a bamboo flute that sings in the wind!', 'Thắng trò Thả Diều để nhận diều sáo hát vi vu trong gió!')}</p>`}</div>
-      ${game.hoilang ? game.hoilang.bagHTML(p) : ''}
-      <h3>${T('Glider', 'Cánh lượn')}</h3>
-      <div class="slots">${p.glider ? p.owned.gliders.map(g => `<button class="slot ${p.look.glider === g ? 'on' : ''}" data-gl="${g}"><span class="sw big" style="background:${GLIDERS[g]}"></span></button>`).join('') : `<p class="note">${T('Not yet! Ông Cú has something for you…', 'Chưa có! Ông Cú có món quà cho con đấy…')}</p>`}</div>`;
-    jumpNav(body, body.querySelector('.bag-top')); // (owner, 13 Oct AEDT: the Backpack's section-button row back, after the tester's notes took it out)
-    // (Round V, owner 13 Oct) food asks first ("Eat it?"); an ingredient says what it is and which dishes it makes
-    // (r79, owner point 14: the "Eat it?" question was too big) food asks in one small row: the picture, "Eat it?" and the
-    // two buttons; what the food does is said aloud, not written out
-    const helpCard = (name, art, en, vi, action, run, small: boolean | undefined = undefined) => {
-      body.querySelector('.bag-help')?.remove();
-      const c = small
-        ? el('div', 'bag-help bag-ask' + (p.age !== 'big' ? ' little' : ''), `${art}<b><span class="nm">${esc(name)}</span><small>${T('Eat it?', 'Ăn nhé?')}</small></b><button class="btn primary bh-act">${action}</button><button class="btn bh-close">${T('Not now', 'Để sau')}</button>`)
-        : el('div', 'bag-help', `<div>${art}<b>${esc(name)}</b></div><p>${esc(T(en, vi))}</p><div class="actions">${action ? `<button class="btn primary bh-act">${action}</button>` : ''}<button class="btn bh-close">${T('Not now', 'Để sau')}</button></div>`);
-      c.setAttribute('role', 'region'); c.setAttribute('aria-label', name); body.appendChild(c); say(`${name}. ${en}`, `${name}. ${vi}`);
-      c.querySelector('.bh-close').onclick = () => { c.remove(); run?.(false); };
-      if (action) c.querySelector('.bh-act').onclick = () => { c.remove(); run?.(true); }; return c;
-    };
-    const askEat = (name, icon, en, vi) => new Promise(resolve => { SFX.tap(); helpCard(name, pic(icon), 'Eat it? ' + en, 'Ăn nhé? ' + vi, T('Eat', 'Ăn'), resolve, true); });
-    body.querySelectorAll('[data-eat]').forEach(b => b.onclick = async () => { const r = dishInfo(b.dataset.eat) || { icon: '🥘', heal: 1, name: () => T('Mystery stew', 'Món hầm bí ẩn') };
-      if (await askEat(r.name(), r.icon, `Restores up to ${r.heal} hearts and refills energy. Hearts only fall for older children on Hard.`, `Hồi tối đa ${r.heal} tim và nạp năng lượng. Chỉ trẻ lớn ở mức Khó mới mất tim.`)) game.eat(hero, b.dataset.eat); draw(); });
-    body.querySelectorAll('[data-snack]').forEach(b => b.onclick = async () => { const v = snackOf(b.dataset.snack);
-      if (await askEat(T(v.food[1], v.food[2]), v.food[0], 'a treat from the market.', 'một món ngon mua ở chợ.')) eatSnack(game, hero, b.dataset.snack, true); draw(); });
-    body.querySelectorAll('[data-ing]').forEach(b => b.onclick = () => { SFX.tap(); const [line, en, vi] = ingInfo(b.dataset.ing); toast(line); say(en, vi); });
-    body.querySelectorAll('[data-sellgem]').forEach(b => b.onclick = () => {
-      const id = b.dataset.sellgem, w = WILD[id];
-      if (!(p.inv[id] > 0)) return;
-      p.inv[id]--; if (p.inv[id] <= 0) delete p.inv[id]; farm.coins += w.sell; saveFarm(); game.save(); SFX.coin();
-      say(`Sold! Now you have ${money(farm.coins)}.`, `Bán rồi! Giờ con có ${money(farm.coins)}.`); game.job && game.job('sell', 1, hero); draw();
-    });
+  // a small help card at the bottom of a pad page: what a thing is, said aloud, with its one action (Backpack, Companions)
+  const helpCardFor = body => (name, art, en, vi, action, run?, small: boolean | undefined = undefined) => {
+    body.querySelector('.bag-help')?.remove();
+    const c = small
+      ? el('div', 'bag-help bag-ask' + (p.age !== 'big' ? ' little' : ''), `${art}<b><span class="nm">${esc(name)}</span><small>${T('Eat it?', 'Ăn nhé?')}</small></b><button class="btn primary bh-act">${action}</button><button class="btn bh-close">${T('Not now', 'Để sau')}</button>`)
+      : el('div', 'bag-help', `<div>${art}<b>${esc(name)}</b></div><p>${esc(T(en, vi))}</p><div class="actions">${action ? `<button class="btn primary bh-act">${action}</button>` : ''}<button class="btn bh-close">${T('Not now', 'Để sau')}</button></div>`);
+    c.setAttribute('role', 'region'); c.setAttribute('aria-label', name); body.appendChild(c); say(`${name}. ${en}`, `${name}. ${vi}`);
+    c.querySelector('.bh-close').onclick = () => { c.remove(); run?.(false); };
+    if (action) c.querySelector('.bh-act').onclick = () => { c.remove(); run?.(true); }; return c;
+  };
+  // (v1.08 companion, owner's plan E, 3 Nov 2026 AEDT) the Companions tab (Bạn đồng hành): what was the Backpack's "Pets &
+  // Buddy" section (issue #738) in a tab of its own between the Backpack and the Shop. Three parts: the companion (its tile,
+  // Feed and the coin goal), the pets (each pet, adopting, naming and care) and the hats, put on whoever should wear one
+  function drawPals(body) {
+    const kp = game.kidplay, comp = p.lanterns && p.lanterns.companion && COMPANIONS[p.lanterns.companion], pets = (p.pets || []).slice(0, game.pets?.max || 2), petNm = pt => game.pets?.nameOf ? game.pets.nameOf(pt) : (pt.name || '');
+    const ps = (p.lanterns && p.lanterns.pet) || {}, owned = (ps.hats || []), next = kp && (comp || pets.length) ? kp.nextHat(hero) : null;
+    const badge = id => id && PAL_HAT_ICON[id] ? `<i class="pal-hat">${pic(PAL_HAT_ICON[id])}</i>` : '';
+    const fedToday = !!(comp && kp && kp.fedToday && kp.fedToday(hero));
+    const buddy = comp ? `<button class="slot pal" data-pal="buddy" title="${esc(T(comp.en, comp.vi))}"><span>${pic(comp.icon)}</span>${badge(ps.hat)}<small>${esc(comp.name)}</small></button>`
+      + (kp ? `<button class="slot pal pal-feed ${fedToday ? 'on' : ''}" data-palfeed="1"><span>${pic(fedToday ? '😊' : '🍓')}</span><small>${fedToday ? T('Full today', 'No rồi') : T('Feed', 'Cho ăn')}</small></button>` : '') : '';
+    const petTiles = pets.map((pt, k) => `<button class="slot pal" data-pal="${k}" title="${esc(petNm(pt))}"><span>${pic(PET_ICON[pt.kind] || '🐾')}</span>${badge(pt.hat)}<small>${esc(petNm(pt))}</small></button>`).join('')
+      + (() => { const yard = pets.length >= (game.pets?.max || 2), nm = yard ? T('Pet yard', 'Sân thú cưng') : T('Adopt a pet', 'Nhận nuôi'), tip = yard ? T('Pet yard: name and care for your pets', 'Sân thú cưng: đặt tên và chăm sóc thú cưng') : T('Adopt a pet: choose a friend to follow you', 'Nhận nuôi: chọn một bạn thú đi theo con');
+      return `<button class="slot pal" data-adopt="1" title="${esc(tip)}"><span>${pic('🐾')}</span><small>${nm}</small></button>`; })();
+    // the coin goal, as on the chip by the coins: the next hat and the coins saved, or "All hats!" once every hat is bought
+    const goal = comp && kp ? (next
+      ? `<button class="pal-goal ${farm.coins >= next.price ? 'ready' : ''}" data-palgoal="${next.id}"><span>${pic(PAL_HAT_ICON[next.id] || '🎯')}</span><b>${esc(T('Coin goal', 'Mục tiêu để dành'))}: ${esc(T(next.en, next.vi))}<small>${fmt(Math.min(farm.coins, next.price))} / ${fmt(next.price)}</small><i class="pal-bar"><i style="width:${Math.round(Math.min(1, farm.coins / next.price) * 100)}%"></i></i></b></button>`
+      : `<button class="pal-goal allhats" data-palgoal=""><span>${pic('palhat:all')}</span><b>${T('All hats!', 'Đủ mũ rồi!')}<small>${T('Your companion has every hat.', 'Bạn đồng hành có tất cả các mũ.')}</small></b></button>`) : '';
+    const hats = kp && (comp || pets.length) ? kp.HATS.map(x => { const have = owned.includes(x.id), buyable = next && next.id === x.id, who = have && kp.wearerOf ? kp.wearerOf(hero, x.id) : null;
+      return `<button class="slot pal-hatslot ${who != null ? 'on' : ''} ${!have && !buyable ? 'locked' : ''}" data-phat="${x.id}" title="${esc(T(x.en, x.vi))}"><span>${pic(PAL_HAT_ICON[x.id] || '🎩')}</span>${have ? '' : buyable ? `<b class="pal-price">${fmt(x.price)}</b>` : `<i class="pal-lock">${pic('🔒')}</i>`}<small>${esc(T(x.en, x.vi))}</small></button>`; }).join('') : '';
+    body.innerHTML = `<h3 class="pals-buddy-h">${pic(comp ? comp.icon : '✨')} ${T('Your companion', 'Bạn đồng hành của con')}</h3>
+      ${comp ? `<div class="slots bag-pals pals-buddy">${buddy}</div>${goal}` : `<p class="note">${T('Follow the lantern story with Ông Cú to meet your companion. It flies with you and lights the way.', 'Theo truyện đèn lồng cùng Ông Cú để gặp bạn đồng hành. Bạn sẽ bay cùng con và soi đường.')}</p>`}
+      <h3 class="pals-pets-h">${pic('🐾')} ${T('Pets', 'Thú cưng')} <small>${T('tap one', 'chạm để xem')}</small></h3>
+      <div class="slots bag-pals pals-pets">${petTiles}</div>
+      ${hats ? `<h3 class="pals-hats-h">${pic('👒')} ${T('Hats for your friends', 'Mũ cho các bạn')}</h3><p class="note pal-hatnote">${T('Tap a hat to put it on your companion or a pet, or buy the next one.', 'Chạm vào mũ để đội cho bạn đồng hành hoặc thú cưng, hoặc mua mũ tiếp theo.')}</p><div class="slots bag-pal-hats">${hats}</div>` : ''}`;
+    const helpCard = helpCardFor(body);
     // (#738) Pets & Buddy: a friend says who it is and offers what it can do; a hat offers who can wear it, or Buy
     const toPets = () => { close(); setTimeout(() => game.pets.openAdopt(hero), 220); };
     body.querySelectorAll('[data-adopt]').forEach(b => b.onclick = () => { SFX.tap(); toPets(); });
@@ -298,7 +259,73 @@ export const openPad = Object.assign(function (game, i, tab) {
       c.querySelector('.bh-off')?.addEventListener('click', () => { const who = kp.wearerOf(hero, id); if (who != null) kp.wearHat(hero, who, null); SFX.tap(); draw(); });
       c.querySelector('.bh-buy')?.addEventListener('click', () => { kp.buy(hero, id); draw(); });
     });
+  
+    body.querySelectorAll('[data-palfeed]').forEach(b => b.onclick = () => { SFX.tap(); kp.feed(hero); draw(); });
+    body.querySelectorAll('[data-palgoal]').forEach(b => b.onclick = () => { const id = b.dataset.palgoal;
+      if (id) body.querySelector(`.bag-pal-hats [data-phat="${id}"]`)?.dispatchEvent(new MouseEvent('click'));
+      else { SFX.tap(); say('All hats! Your companion has every hat. Tap a hat to choose who wears it.', 'Đủ mũ rồi! Bạn đồng hành có tất cả các mũ. Chạm vào mũ để chọn bạn nào đội.'); } });
+  }
+  function drawBag(body) {
+    // (v1.08 Release) the friends' rows come in after the Backpack is first drawn: a help card the child already opened
+    // stays open over the redrawn page (it was wiped, so the first tap on a thing seemed to do nothing; check wearbag)
+    if (!FR) import('./friends-row.js').then(m => { FR = m; if (!body.isConnected || !body.querySelector('.bag-top')) return;
+      const open = body.querySelector('.bag-help'); drawBag(body); if (open && !body.querySelector('.bag-help')) body.appendChild(open); });
+    // (Round V) what an ingredient is for: the dishes it goes into at a cooking pot
+    const ingInfo = id => { const it = ITEMS[id], uses = RECIPES.filter(r => r.need.includes(id)), names = uses.map(r => r.name());
+      const en = `${it.name()}: an ingredient. ${uses.length ? 'Cook it at a cooking pot to make ' + names.join(', ') + '.' : 'Cook it at a cooking pot.'}`, vi = `${it.name()}: nguyên liệu. ${uses.length ? 'Nấu ở nồi để làm ' + names.join(', ') + '.' : 'Nấu ở nồi nhé.'}`;
+      return [T(en, vi), en, vi]; };
+    const isGem = id => WILD[id] && WILD[id].kind === 'gem';
+    const items = Object.entries<number>(p.inv).filter(([id, n]) => n > 0 && ITEMS[id] && !isGem(id)), gems = Object.entries<number>(p.inv).filter(([id, n]) => n > 0 && isGem(id)).sort((a, b) => WILD[b[0]].sell - WILD[a[0]].sell);
+    const bought = Object.entries<number>(p.bought || {}).filter(([id, n]) => n > 0 && snackOf(id));
+    const dishes = Object.entries<number>(p.dishes).filter(([, n]) => n > 0);
+    body.innerHTML = `
+      <div class="bag-top"><button class="chip bagc" data-chip="money" title="${T('Coins', 'Đồng xu')}"><i>💰</i><b>${fmt(farm.coins)}</b><small>${T('Coins', 'Đồng xu')}</small></button><button class="chip bagc" data-chip="orbs" title="${T('Sparkle Orbs', 'Ngọc Lấp Lánh')}"><i>🔮</i><b>${p.orbs}</b><small>${T('Sparkle Orbs', 'Ngọc Lấp Lánh')}</small></button><button class="chip bagc" data-chip="leafy" title="${T('Leafies', 'Bạn Lá')}"><i>🍃</i><b>${Object.keys(p.leafies).length}/24</b><small>${T('Leafies', 'Bạn Lá')}</small></button></div>
+      <h3>${T('Food', 'Món ăn')} <small>${T('tap to eat', 'chạm để ăn')}</small></h3>
+      <div class="slots">${dishes.map(([id, n]) => { const r = dishInfo(id) || { icon: '🥘', name: () => T('Mystery stew', 'Món hầm bí ẩn') }; return `<button class="slot" data-eat="${id}" title="${esc(r.name() + ' · ' + T('tap to eat: hearts and energy back', 'chạm để ăn: thêm tim và sức'))}"><span>${r.icon}</span><b>${n}</b><small>${esc(r.name())}</small></button>`; }).join('') || `<p class="note">${T('Cook at a cooking pot to make food.', 'Nấu ăn ở nồi nấu để có món ăn.')}</p>`}</div>
+      <h3>🛍️ ${T('From shops and stalls', 'Mua ở quán và sạp')} <small>${T('tap to eat', 'chạm để ăn')}</small></h3>
+      <div class="slots">${bought.map(([id, n]) => { const v = snackOf(id); return `<button class="slot" data-snack="${id}" title="${esc(T(v.food[1], v.food[2]) + ' · ' + T('tap to eat', 'chạm để ăn'))}"><span>${v.food[0]}</span><b>${n}</b><small>${esc(T(v.food[1], v.food[2]))}</small></button>`; }).join('') || `<p class="note">${T('Buy food at kiosks, market stalls and from street sellers. It goes in here!', 'Mua đồ ăn ở quán, sạp chợ và các cô gánh hàng rong. Đồ mua sẽ nằm ở đây!')}</p>`}</div>
+      <h3>💎 ${T('Treasures', 'Báu vật')} <small>${T('tap for help', 'chạm để xem hướng dẫn')}</small></h3>
+      <div class="slots">${gems.map(([id, n]) => `<button class="slot gemslot" data-sellgem="${id}" title="${esc(WILD[id].name() + ' · ' + T('a treasure: choose Sell one in its help card', 'báu vật: chọn Bán một trong hướng dẫn'))}"><span>${WILD[id].icon}</span><b>${n}</b><small>${esc(WILD[id].name()) + ' · ' + fmt(WILD[id].sell)}</small></button>`).join('') || `<p class="note">${T('Dig at the sparkly mounds of earth and crack rocks open to find treasures!', 'Đào ở những ụ đất lấp lánh và gõ vỡ hòn đá để tìm báu vật!')}</p>`}</div>
+      <h3>${T('Ingredients', 'Nguyên liệu')}</h3>
+      <div class="slots">${items.map(([id, n]) => `<button class="slot" data-ing="${id}" title="${esc(ingInfo(id)[0])}"><span>${ITEMS[id].icon}</span><b>${n}</b><small>${esc(ITEMS[id].name())}</small></button>`).join('') || `<p class="note">${T('Empty! Shake apple trees and look for herbs and mushrooms.', 'Trống trơn! Rung cây táo và tìm rau thơm, nấm nhé.')}</p>`}</div>
+      ${(() => { const SLOT_ICON = { hat: '👒', neck: '📿', top: '👕', bottom: '👖', feet: '👟', back: '🪽' }; // (Round U, owner 11 Oct: everything bought shows here until it is worn) the clothes and accessories the child owns
+        const itemSVG = it => game.shop && game.shop.itemSVG ? game.shop.itemSVG(it) : pic(SLOT_ICON[it.slot] || '👕'), mine = CLOTHES.filter(it => owns(p, it.id) && it.for === (setOfLook(p.look) === 'girl' ? 'g' : 'b')), off = mine.filter(it => p.look[it.slot] !== it.id), on = mine.filter(it => p.look[it.slot] === it.id);
+        const hats = HATS.concat(REWARD_HATS.filter(h => p.owned.hats.includes(h))).filter(h => h !== 'none' && !ITEM[h]);
+        return `<h3>${pic('👕')} ${T('Character & Outfits', 'Nhân vật & Trang phục')} <small>${T('tap to wear', 'chạm để mặc')}</small></h3>
+      ${FR ? FR.friendRowHTML(p) + FR.suitRowHTML(p) : ''}
+      <div class="slots">${off.map(it => `<button class="slot" data-wear="${it.id}" title="${esc(T(it.en, it.vi))}">${itemSVG(it)}<small>${esc(T(it.en, it.vi))}</small></button>`).join('')}${hats.filter(h => p.look.hat !== h).map(h => `<button class="slot" data-hat="${h}"><span>${HAT_ICON[h]}</span><small>${esc(HAT_NAME[h]())}</small></button>`).join('')}${!off.length && !hats.filter(h => p.look.hat !== h).length ? `<p class="note">${T('Everything you have is on! Find more at the clothes shop.', 'Con đang mặc hết đồ rồi! Ghé cửa hàng quần áo để mua thêm nhé.')}</p>` : ''}</div>
+      ${on.length || (p.look.hat && p.look.hat !== 'none' && !ITEM[p.look.hat]) ? `<h3>${T('Wearing now', 'Đang mặc')} <small>${T('tap to take off', 'chạm để cởi ra')}</small></h3>
+      <div class="slots">${on.map(it => `<button class="slot on" data-unwear="${it.slot}" title="${esc(T(it.en, it.vi))}">${itemSVG(it)}<small>${esc(T(it.en, it.vi))}</small></button>`).join('')}${p.look.hat && p.look.hat !== 'none' && !ITEM[p.look.hat] && HAT_ICON[p.look.hat] ? `<button class="slot on" data-hat="none"><span>${HAT_ICON[p.look.hat]}</span><small>${esc(HAT_NAME[p.look.hat] ? HAT_NAME[p.look.hat]() : '')}</small></button>` : ''}</div>` : ''}`; })()}
+      ${(() => { // (r79, owner 16 Oct) clothes of the other set, bought to give away: wrapped gift boxes, one tile for each kind
+        const gifts = (p.owned && p.owned.gifts || []).filter(id => ITEM[id]), kinds = [...new Set(gifts)];
+        return kinds.length ? `<h3>🎁 ${T('Gifts to give', 'Quà để tặng')} <small>${T('tap to give', 'chạm để tặng')}</small></h3>
+      <div class="slots">${kinds.map(id => { const it = ITEM[id], n = gifts.filter(x => x === id).length; return `<button class="slot giftbox" data-gift="${id}" title="${esc(T(it.en, it.vi))}"><span>🎁</span>${n > 1 ? `<b>${n}</b>` : ''}<small>${esc(T(it.en, it.vi))}</small></button>`; }).join('')}</div>` : ''; })()}
+      <h3>🪁 ${T('Whistling kite', 'Diều sáo')}</h3>
+      <div class="slots">${p.kite ? `<button class="slot ${p.kiteOn !== false ? 'on' : ''}" data-kite="1"><span>🪁</span><small>${p.kiteOn !== false ? T('Flying', 'Đang bay') : T('Put away', 'Cất đi')}</small></button><button class="slot" data-whistle="1"><span>🎶</span><small>${T('Whistle!', 'Thổi sáo!')}</small></button>` : `<p class="note">${T('Win the Kite Flying game to get a kite with a bamboo flute that sings in the wind!', 'Thắng trò Thả Diều để nhận diều sáo hát vi vu trong gió!')}</p>`}</div>
+      ${game.hoilang ? game.hoilang.bagHTML(p) : ''}
+      <h3>${T('Glider', 'Cánh lượn')}</h3>
+      <div class="slots">${p.glider ? p.owned.gliders.map(g => `<button class="slot ${p.look.glider === g ? 'on' : ''}" data-gl="${g}"><span class="sw big" style="background:${GLIDERS[g]}"></span></button>`).join('') : `<p class="note">${T('Not yet! Ông Cú has something for you…', 'Chưa có! Ông Cú có món quà cho con đấy…')}</p>`}</div>`;
+    jumpNav(body, body.querySelector('.bag-top')); // (owner, 13 Oct AEDT: the Backpack's section-button row back, after the tester's notes took it out)
+    // (Round V, owner 13 Oct) food asks first ("Eat it?"); an ingredient says what it is and which dishes it makes
+    // (r79, owner point 14: the "Eat it?" question was too big) food asks in one small row: the picture, "Eat it?" and the
+    // two buttons; what the food does is said aloud, not written out
+    const helpCard = helpCardFor(body);
+    const askEat = (name, icon, en, vi) => new Promise(resolve => { SFX.tap(); helpCard(name, pic(icon), 'Eat it? ' + en, 'Ăn nhé? ' + vi, T('Eat', 'Ăn'), resolve, true); });
+    body.querySelectorAll('[data-eat]').forEach(b => b.onclick = async () => { const r = dishInfo(b.dataset.eat) || { icon: '🥘', heal: 1, name: () => T('Mystery stew', 'Món hầm bí ẩn') };
+      if (await askEat(r.name(), r.icon, `Restores up to ${r.heal} hearts and refills energy. Hearts only fall for older children on Hard.`, `Hồi tối đa ${r.heal} tim và nạp năng lượng. Chỉ trẻ lớn ở mức Khó mới mất tim.`)) game.eat(hero, b.dataset.eat); draw(); });
+    body.querySelectorAll('[data-snack]').forEach(b => b.onclick = async () => { const v = snackOf(b.dataset.snack);
+      if (await askEat(T(v.food[1], v.food[2]), v.food[0], 'a treat from the market.', 'một món ngon mua ở chợ.')) eatSnack(game, hero, b.dataset.snack, true); draw(); });
+    body.querySelectorAll('[data-ing]').forEach(b => b.onclick = () => { SFX.tap(); const [line, en, vi] = ingInfo(b.dataset.ing); toast(line); say(en, vi); });
+    body.querySelectorAll('[data-sellgem]').forEach(b => b.onclick = () => {
+      const id = b.dataset.sellgem, w = WILD[id];
+      if (!(p.inv[id] > 0)) return;
+      p.inv[id]--; if (p.inv[id] <= 0) delete p.inv[id]; farm.coins += w.sell; saveFarm(); game.save(); SFX.coin();
+      say(`Sold! Now you have ${money(farm.coins)}.`, `Bán rồi! Giờ con có ${money(farm.coins)}.`); game.job && game.job('sell', 1, hero); draw();
+    });
     body.querySelectorAll('[data-hat]').forEach(b => b.onclick = () => { p.look.hat = b.dataset.hat; saveProfiles(); game.rebuildHero(i); SFX.ok(); draw(); });
+    // (v1.08b friends) change friend (free, same set) and outfit
+    body.querySelectorAll('[data-befriend]').forEach(b => b.onclick = () => { if (FR.setFriend(p, b.dataset.befriend as any)) { saveProfiles(); game.rebuildHero(i); SFX.pop(1); FR.sayHello(b.dataset.befriend); draw(); } });
+    body.querySelectorAll('[data-suit]').forEach(b => b.onclick = () => { if (FR.wearSuit(p, b.dataset.suit)) { saveProfiles(); game.rebuildHero(i); SFX.ok(); draw(); } });
     body.querySelectorAll('[data-wear]').forEach(b => b.onclick = () => { const it = ITEM[b.dataset.wear]; if (it && wearItem(p, it.slot, it.id)) { saveProfiles(); game.rebuildHero(i); SFX.ok(); draw(); } });
     body.querySelectorAll('[data-unwear]').forEach(b => b.onclick = () => { if (wearItem(p, b.dataset.unwear, 'none')) { saveProfiles(); game.rebuildHero(i); SFX.tap(); draw(); } });
     // (r79) a gift box says what is inside and who it is for, and offers the players on this device it fits
@@ -320,7 +347,7 @@ export const openPad = Object.assign(function (game, i, tab) {
     body.querySelectorAll('[data-gl]').forEach(b => b.onclick = () => { p.look.glider = +b.dataset.gl; saveProfiles(); game.rebuildHero(i); SFX.ok(); draw(); });
     // Help is the first tap; every change requires an explicit action inside the same Bag.
     for (const b of body.querySelectorAll('.slot')) {
-      if (b.dataset.eat || b.dataset.snack || b.dataset.gift || b.dataset.pal || b.dataset.adopt || b.dataset.phat) continue;
+      if (b.dataset.eat || b.dataset.snack || b.dataset.gift || b.dataset.befriend) continue; // (v1.08b friends: one tap changes friend)
       const oldAction = b.onclick, name = b.querySelector('small')?.textContent || b.title || T('Item', 'Đồ dùng');
       const it = ITEM[b.dataset.wear], ingredient = b.dataset.ing, treasure = WILD[b.dataset.sellgem];
       let en = 'Keep this item in your Backpack and use its action when you need it.', vi = 'Giữ món này trong Ba lô và chọn hành động khi cần.';
@@ -331,11 +358,12 @@ export const openPad = Object.assign(function (game, i, tab) {
       if (b.dataset.hat && b.dataset.hat !== 'none' && !ITEM[b.dataset.hat]) { en = 'A hat you won on an adventure. Tap Wear to put it on.'; vi = 'Chiếc mũ con giành được trong chuyến phiêu lưu. Chạm Mặc để đội.'; }
       if (b.dataset.hat === 'none') { en = 'The hat you won, on your head now. Tap Take off to take it off.'; vi = 'Chiếc mũ con giành được, đang đội trên đầu. Chạm Cởi ra để bỏ mũ.'; }
       if (b.dataset.hlcarry) { en = 'A prize you won at the village festival. Carry it to show everyone, or put it away. It is a keepsake in your house too.'; vi = 'Phần quà con giành được ở hội làng. Mang theo cho mọi người xem, hoặc cất đi. Nó cũng là kỷ vật trong nhà con.'; }
+      if (b.dataset.suit) { en = 'An outfit for your friend. Tap Wear to put it on.'; vi = 'Một bộ đồ cho bạn của con. Chạm Mặc để mặc vào.'; } // (v1.08b friends)
       if (b.dataset.gl) { en = 'Choose the colour of your glider for flying safely from high places.'; vi = 'Chọn màu cánh lượn để bay an toàn từ nơi cao.'; }
       if (b.dataset.kite || b.dataset.whistle) { en = 'Your whistling kite follows you; its bamboo flute sings in the wind.'; vi = 'Diều sáo bay theo con; sáo tre hát trong gió.'; }
       if (ingredient) { const info = ingInfo(ingredient); en = info[1]; vi = info[2]; }
       if (treasure) { en = `A treasure you found. Sell one for ${money(treasure.sell)} or keep it.`; vi = `Báu vật con tìm được. Bán một món lấy ${money(treasure.sell)} hoặc giữ lại.`; }
-      const action = treasure ? T('Sell one', 'Bán một') : b.dataset.unwear || b.dataset.hat === 'none' ? T('Take off', 'Cởi ra') : b.dataset.wear || b.dataset.hat ? T('Wear', 'Mặc') : b.dataset.kite ? (p.kiteOn !== false ? T('Put away', 'Cất đi') : T('Fly', 'Thả diều')) : b.dataset.hlcarry ? (p.hoilang?.carryOn !== false && p.hoilang?.carry === b.dataset.hlcarry ? T('Put away', 'Cất đi') : T('Carry', 'Mang theo')) : b.dataset.whistle ? T('Whistle', 'Thổi sáo') : b.dataset.gl !== undefined ? T('Choose', 'Chọn') : T('Use', 'Dùng');
+      const action = treasure ? T('Sell one', 'Bán một') : b.dataset.unwear || b.dataset.hat === 'none' ? T('Take off', 'Cởi ra') : b.dataset.wear || b.dataset.hat || b.dataset.suit ? T('Wear', 'Mặc') : b.dataset.kite ? (p.kiteOn !== false ? T('Put away', 'Cất đi') : T('Fly', 'Thả diều')) : b.dataset.hlcarry ? (p.hoilang?.carryOn !== false && p.hoilang?.carry === b.dataset.hlcarry ? T('Put away', 'Cất đi') : T('Carry', 'Mang theo')) : b.dataset.whistle ? T('Whistle', 'Thổi sáo') : b.dataset.gl !== undefined ? T('Choose', 'Chọn') : T('Use', 'Dùng');
       b.onclick = () => { const art = b.querySelector('svg, .art, .sw')?.outerHTML || ''; helpCard(name, art, en, vi, oldAction && !ingredient ? action : '', ok => { if (ok) { oldAction?.call(b); } }); };
     }
 
@@ -343,7 +371,7 @@ export const openPad = Object.assign(function (game, i, tab) {
   // (round R, owner 9 Oct) side stories in their own list: the child picks one to follow on the goal bar
   const sideHTML = () => { const list = game.sideStories ? game.sideStories() : []; if (!list.length) return '';
     return `<h3>${T('Side stories', 'Truyện phụ')}</h3><div class="sides">${list.map(sd => { const st = sd.status(p), on = p.follow === sd.id;
-      return `<div class="side ${st.done ? 'done' : ''}"><span>${pic(sd.icon)}</span><div><b>${esc(sd.title())}</b><small>${st.done ? T('Finished!', 'Xong rồi!') : esc(st.step)}</small></div>${st.done || !st.started ? '' : `<button class="btn ${on ? 'on' : ''}" data-follow="${sd.id}">${on ? T('Following', 'Đang theo') : T('Follow', 'Theo truyện này')}</button>`}</div>`; }).join('')}</div>`; };
+      return `<div class="side ${st.done ? 'done' : ''}"><span>${pic(sd.icon)}</span><div><b>${esc(sd.title(p))}</b><small>${st.done ? T('Finished!', 'Xong rồi!') : esc(st.step)}</small></div>${st.done || !st.started ? '' : `<button class="btn ${on ? 'on' : ''}" data-follow="${sd.id}">${on ? T('Following', 'Đang theo') : T('Follow', 'Theo truyện này')}</button>`}</div>`; }).join('')}</div>`; };
   // (tester's notes, 12 Oct) what a dish not cooked yet needs: every ingredient, the ones in the bag bright with a tick,
   // the ones still to find faded, so a child can see what is collected for which recipe
   const recNeed = r => r.need.map((n, k) => { const have = (p.inv[n] || 0) >= r.need.slice(0, k + 1).filter(x => x === n).length;
@@ -386,7 +414,8 @@ export const openPad = Object.assign(function (game, i, tab) {
   }
   // the festival calendar (round R): only a calendar, nothing to visit from it
   function drawCal(body) {
-    body.innerHTML = `<div class="fcal">${festCalendarHTML(game)}</div>`;
+    body.innerHTML = `<div class="fcal"><h3 class="fcal-title">${CAL_TITLE()}</h3>${festCalendarHTML(game)}</div>`;
+    wireCalendar(body, game, i, close); // (v1.08b story) tap a step to fly there
   }
   function drawCam(body) {
     const howTo = savesByShare() ? T('Then tap “Save to my photos” and choose “Save Image”.', 'Rồi chạm “Lưu vào ảnh của máy” và chọn “Lưu hình ảnh”.') : T('Then tap “Save to my photos”.', 'Rồi chạm “Lưu vào ảnh của máy”.');

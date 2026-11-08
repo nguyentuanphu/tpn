@@ -3,10 +3,10 @@
 // home again for Tết. The child helps twice: letting the carp go (page 3) and the carp leaping into dragons (page 4).
 import { L, Pp, LOOK, THREE, P, mesh, PI, H, speak, go, hop, KID, VILLAGER, village, kitchen, heaven, carp, serpent, slither, moonDisc, flat, firecrackers } from './kit.js';
 
-const TAO = LOOK({ style: 'tunic', color: '#c62f2f', hat: 'silkcap', hairStyle: 'short', hair: '#e8e8e8', skin: '#e8b890' });
-const JADE = LOOK({ style: 'tunic', color: '#ffd23f', hat: 'crown', hairStyle: 'short', hair: '#f4f4f4', skin: '#e8c0a0' });
-const MOM = VILLAGER('aodai', '#c84a6a', 'none', 'buns'), DAD = VILLAGER('shirt', '#3b6fe0', 'none', 'short');
-const BOY = KID('shirt', '#ffb52e', 'spiky'), GIRL = KID('dress', '#ff7eb8', 'buns');
+const TAO = LOOK({ kit: 'vn-aothe', style: 'tunic', color: '#c62f2f', hat: 'silkcap', hairStyle: 'short', hair: '#e8e8e8', skin: '#e8b890' });
+const JADE = LOOK({ kit: 'vn-king', style: 'tunic', color: '#ffd23f', hat: 'crown', hairStyle: 'short', hair: '#f4f4f4', skin: '#e8c0a0' });
+const MOM = VILLAGER('aodai', '#c84a6a', 'none', 'buns'), DAD = VILLAGER('tunic', '#3b6fe0', 'none', 'short');
+const BOY = KID('tunic', '#ffb52e', 'spiky'), GIRL = KID('dress', '#ff7eb8', 'buns');
 const dragon = S => serpent(S, { n: 16, r: .3, colors: ['#e8b62a', '#ffd23f', '#e8332a'], head: '#e8b62a', horns: true, y: 2, waveAmp: .7 });
 const pondAt = (S, x, z, r = 2.4) => S.add(mesh([P(new THREE.CylinderGeometry(r, r, .06, 24), '#4fa8c8', [0, .03, 0]), P(new THREE.CylinderGeometry(r + .3, r + .3, .03, 24), '#a88a5a', [0, .01, 0])]), x, 0, z);
 
@@ -38,6 +38,7 @@ export default { pages: [
   S => {
     village(S, { house: [-5, -8], paddy: false }); pondAt(S, 0, 0);
     const kids = [S.person(BOY, -1, 3, PI, .7), S.person(GIRL, 1, 3, PI, .7)], mom = S.person(MOM, 0, 4, PI), bowl = Pp.bowl(false); bowl.scale.setScalar(2.4); S.grab(mom, 0, bowl, [0, -.55, .2]);
+    kids.forEach(k => S.mood(k, 0, 'excited')); S.mood(mom, 0, 'happy');   // (faces with feeling) the children eager to set the carp free
     const fish = [0, 1, 2].map(i => { const f = carp(); f.scale.setScalar(.35); f.visible = false; S.add(f, -.6 + i * .6, .1, 1.4); return f; });
     S.shot([0, 2.6, 8], [0, .6, 1]);
     S.walk(mom, .3, [0, 2.6]); S.do(mom, 1.8, 'kneel', 4.6); kids.forEach(k => S.do(k, 1.8, 'kneel', 4.6));
@@ -52,7 +53,7 @@ export default { pages: [
   S => {
     village(S, { house: [-5, -8], paddy: false }); pondAt(S, 0, 0);
     const fish = [0, 1, 2].map(i => { const f = carp(); f.scale.setScalar(.5); S.add(f, -1 + i, 0, 0); return f; });
-    const tao = S.person(TAO, 0, 2.6, PI, .8);
+    const tao = S.person(TAO, 0, 2.6, PI, .8); S.mood(tao, 0, 'excited');   // (faces with feeling) ready to fly
     S.shot([0, 2.4, 8], [0, 1, 0]);
     fish.forEach((f, i) => S.tw(.3 + i * .3, 1, k => { f.position.y = Math.sin(k * PI) * 1.4; f.rotation.x = -Math.sin(k * PI * 2) * .6; }));
     S.cam(.3, 3, [2, 1.8, 6], [0, 1, 0]);

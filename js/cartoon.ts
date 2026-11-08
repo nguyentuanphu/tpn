@@ -23,18 +23,19 @@ function person(p) {
     bun: `<circle cx="50" cy="12" r="9" fill="${h}" ${W}/><path d="M27 40c0-17 11-25 23-25s23 8 23 25c-6-8-13-11-23-11s-17 3-23 11z" fill="${h}" ${W}/>`,
     bald: `<path d="M28 34c4-12 12-16 22-16s18 4 22 16" fill="none" stroke="${h}" stroke-width="5" stroke-linecap="round"/>`,
     tuft: `<path d="M44 16c2-6 8-6 10 0" fill="${h}" ${W}/>`
-  }[p.hairStyle || 'short'];
+  }[p.hairStyle || 'short'] + (p.hairStyle === 'bald' || p.hairStyle === 'tuft' ? '' : `<path d="M33 27q8-7 17-6" stroke="#fff" stroke-opacity=".22" stroke-width="3" fill="none" stroke-linecap="round"/>`); // (v1.08b) a soft felt shine, like the friends' hair
   const hat = p.crown ? `<path d="M32 22l6-14 6 9 6-11 6 11 6-9 6 14z" fill="#ffd23f" ${W}/><circle cx="50" cy="12" r="2.5" fill="#e8433a"/>`
     : p.hat === 'nonla' ? `<path d="M14 30L50 4l36 26z" fill="#e8d8a0" ${W}/><path d="M30 22h40" stroke="#c9a05a" stroke-width="2"/>`
     : p.hat === 'wizard' ? `<path d="M26 28L52 -6 74 28z" fill="#7a4aa0" ${W}/><circle cx="50" cy="10" r="3" fill="#ffd23f"/>` : '';
   const beard = p.beard ? `<path d="M34 50c2 18 10 26 16 26s14-8 16-26c-4 6-10 8-16 8s-12-2-16-8z" fill="${p.beard}" ${W}/>` : '';
   const wings = p.wings ? `<g class="ct-wings" style="transform-origin:50px 72px"><ellipse cx="24" cy="66" rx="18" ry="26" fill="#d8f4ff" fill-opacity=".85" ${W} transform="rotate(-25 24 66)"/><ellipse cx="76" cy="66" rx="18" ry="26" fill="#d8f4ff" fill-opacity=".85" ${W} transform="rotate(25 76 66)"/></g>` : '';
   // a picture-book face: eyes with a coloured iris and a shine, eyebrows, a little nose, rosy cheeks, and soft shading
+  // (v1.08b friends) in the new friends' style: a slightly rounder head, smaller eyes set lower, softer rounder cheeks
   const iris = p.eyes || '#5a3a24';
-  const face = `<g class="ct-eyes" style="transform-origin:50px 40px"><ellipse cx="41" cy="40" rx="5" ry="6" fill="#fff" ${W.replace('3"', '1.6"')}/><ellipse cx="59" cy="40" rx="5" ry="6" fill="#fff" ${W.replace('3"', '1.6"')}/><circle class="ct-pupil" cx="41.6" cy="41" r="3.4" fill="${iris}"/><circle class="ct-pupil" cx="59.6" cy="41" r="3.4" fill="${iris}"/><circle cx="41.8" cy="41.2" r="1.7" fill="${O}"/><circle cx="59.8" cy="41.2" r="1.7" fill="${O}"/><circle cx="40.4" cy="39.2" r="1.2" fill="#fff"/><circle cx="58.4" cy="39.2" r="1.2" fill="#fff"/></g>
+  const face = `<g class="ct-eyes" style="transform-origin:50px 40px"><ellipse cx="41" cy="41" rx="4.2" ry="4.8" fill="#fff" ${W.replace('3"', '1.6"')}/><ellipse cx="59" cy="41" rx="4.2" ry="4.8" fill="#fff" ${W.replace('3"', '1.6"')}/><circle class="ct-pupil" cx="41.5" cy="41.8" r="2.9" fill="${iris}"/><circle class="ct-pupil" cx="59.5" cy="41.8" r="2.9" fill="${iris}"/><circle cx="41.8" cy="41.2" r="1.7" fill="${O}"/><circle cx="59.8" cy="41.2" r="1.7" fill="${O}"/><circle cx="40.4" cy="39.2" r="1.2" fill="#fff"/><circle cx="58.4" cy="39.2" r="1.2" fill="#fff"/></g>
     <path d="M36 32q5-3 9 0M55 32q5-3 9 0" stroke="${p.hairStyle === 'bald' || /e8|f2|ff/.test(h) ? '#9a8a80' : h}" stroke-width="2.4" fill="none" stroke-linecap="round"/>
     <path d="M49 45q1.6 2.4 3.4 0" stroke="${O}" stroke-width="1.6" fill="none" stroke-linecap="round" opacity=".7"/>
-    <circle cx="35" cy="50" r="4.4" fill="#ff8aa8" opacity=".5"/><circle cx="65" cy="50" r="4.4" fill="#ff8aa8" opacity=".5"/>
+    <circle cx="35" cy="49" r="5.8" fill="#ff8aa8" opacity=".45"/><circle cx="65" cy="49" r="5.8" fill="#ff8aa8" opacity=".45"/>
     <path class="ct-mouth-shut" d="M44 52q6 5 12 0" fill="none" ${W}/><ellipse class="ct-mouth-open" cx="50" cy="54" rx="5" ry="4" fill="#a8304a" ${W.replace('3"', '2"')}/>
     <path d="M62 22a22 22 0 0 1 0 36 26 26 0 0 0 0-36z" fill="#3b2a4f" opacity=".07"/>`;
   const ears = `<circle cx="28" cy="43" r="5" fill="${s}" ${W}/><circle cx="72" cy="43" r="5" fill="${s}" ${W}/>`;
@@ -45,7 +46,7 @@ function person(p) {
     <g class="ct-all" style="transform-origin:50px 145px;transform:scale(${sc})">${wings}
       ${leg(42, 'ct-legL')}${leg(58, 'ct-legR')}
       <g class="ct-body" style="transform-origin:50px 100px">${arm(30, -1, 'ct-armL')}${neck}${body}${shade}${arm(70, 1, 'ct-armR')}
-        <g class="ct-head" style="transform-origin:50px 60px">${p.hairStyle === 'long' ? hair : ''}${ears}<circle cx="50" cy="40" r="22" fill="${s}" ${W}/>${p.hairStyle === 'long' ? '' : hair}${face}${beard}${hat}</g>
+        <g class="ct-head" style="transform-origin:50px 60px">${p.hairStyle === 'long' ? hair : ''}${ears}<circle cx="50" cy="40" r="23" fill="${s}" ${W}/>${p.hairStyle === 'long' ? '' : hair}${face}${beard}${hat}</g>
       </g></g></svg>`;
 }
 

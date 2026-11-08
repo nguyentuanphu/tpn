@@ -13,7 +13,7 @@ const plainName = (s: string) => s.normalize('NFC').replace(/[\u200B-\u200D\uFEF
 // Under-5s see the toy look; when every child playing is 5 or older (and realVehicles is on) the real look is used.
 // apply() rebuilds the meshes when the look changes (G.traffic.apply(real) at the start of each session).
 import { THREE, blobShadow, P, merge, toonVC, sprite } from './gfx.js';
-import { build, seatRider } from './vehicles.js';
+import { build, seatRider, wear } from './vehicles.js';
 import { CITIES, ROADS, VILLAGE, HOME, TOWN, AUSSIE, WATER, heightAt, roadDist } from './world.js';
 import { WORLD as MAP_WORLD } from './content/map.js';
 const KEEP_LEFT = MAP_WORLD.keepLeft;
@@ -53,7 +53,11 @@ const pointAt = (r, s) => { s = Math.max(0, Math.min(r.len, s)); let i = 1; whil
 // a city's main street: through its two gates, or from its gate through the middle and out the far side
 const mainStreet = c => { const [g0, g1] = c.gates; const b = g1 || [2 * c.x - g0[0], 2 * c.z - g0[1]]; return [g0, b]; };
 
+// (v1.08b quality, owner 5 Nov 2026 AEDT: every drop-off on open ground) the end of a ride sets the child down where the
+// shared rule says (js/dropspot.ts through G.setDown: open ground, a way out, a clear camera view)
+
 export function createTraffic(G) {
+  const setDown = (h, x, z, face = null) => { if (G.setDown) G.setDown(h, x, z, face); else h.place(x, z); };
   const { scene, world } = G, W = world;
   const slots = [];        // every vehicle: { id, args, x, z, yaw, mover?, rider?, ride?, cc }
   const ground = (x, z) => (W.groundAt ? W.groundAt(x, z) : heightAt(x, z));
@@ -133,6 +137,7 @@ export function createTraffic(G) {
     const at = where(sl), yaw0 = sl.v ? sl.v.o.rotation.y : sl.yaw || 0;
     if (sl.v) scene.remove(sl.v.o);
     const v = sl.v = copy(sl.id);
+    wear(v);   // (v1.08e) the Blender model, once a child comes near (js/vehicles.ts)
     // (owner, 29 Oct AEDT) a vehicle can be driven away, so it is never part of the still solid map: it would leave an invisible wall
     v.o.userData.moving = true;
     if (TWO_WHEEL.has(sl.id) && !sl.rideable && v.seat && sl.mover) {
@@ -182,7 +187,7 @@ export function createTraffic(G) {
       label: () => T('Ride the xích lô', 'Đi xích lô'), visible: h => !sl.passenger && !h.riding && !h.carry && keep('xichloRides'),
       act: h => { if (!sl.v) make(sl); sl.passenger = h; tried(h, 'xichloRides'); sl.mover.wait = 0; let left = sl.mover.r.len * 2 + 4;
         h.carry = (dt, t, pad) => {
-          left -= dt * SPEED.xichlo; if (pad.jump() || left <= 0) { h.carry = null; sl.passenger = null; const o = sl.v.o; h.place(o.position.x + Math.cos(o.rotation.y) * 1.6, o.position.z - Math.sin(o.rotation.y) * 1.6); return null; }
+          left -= dt * SPEED.xichlo; if (pad.jump() || left <= 0) { h.carry = null; sl.passenger = null; const o = sl.v.o; setDown(h, o.position.x + Math.cos(o.rotation.y) * 1.6, o.position.z - Math.sin(o.rotation.y) * 1.6); return null; }
           const p = sl.v.o.localToWorld(new THREE.Vector3(...sl.v.passenger)); return { x: p.x, y: p.y - .55, z: p.z, yaw: sl.v.o.rotation.y, state: 'sit', speed: 0, rest: true };
         };
       } });
@@ -213,12 +218,12 @@ export function createTraffic(G) {
           const m = sl.mover; if (m.wait <= 0) started = true; gone += dt;
           if (trip) {
             const off = () => { h.carry = null; sl.passenger = null; trip.back = true; };
-            if (trip.arrived) { off(); say(`Here we are: ${dest.name()}! Bye bye!`, `Tới ${dest.name()} rồi! Tạm biệt!`); h.place(dest.x + 1.2, dest.z + 1.2); return null; }
-            if (pad.jump()) { off(); const o = sl.v.o; h.place(o.position.x + Math.cos(o.rotation.y) * 2.6, o.position.z - Math.sin(o.rotation.y) * 2.6); say('Bye bye!', 'Tạm biệt con!'); return null; }
+            if (trip.arrived) { off(); say(`Here we are: ${dest.name()}! Bye bye!`, `Tới ${dest.name()} rồi! Tạm biệt!`); setDown(h, dest.x + 1.2, dest.z + 1.2, dest.place || null); return null; }
+            if (pad.jump()) { off(); const o = sl.v.o; setDown(h, o.position.x + Math.cos(o.rotation.y) * 2.6, o.position.z - Math.sin(o.rotation.y) * 2.6); say('Bye bye!', 'Tạm biệt con!'); return null; }
             const p = sl.v.o.localToWorld(new THREE.Vector3(...seatOf(sl, sl.v))); return { vehicle: sl.v, x: p.x, y: p.y - .55, z: p.z, yaw: sl.v.o.rotation.y, state: 'sit', speed: 0, rest: true };
           }
           // off at the next stop (the end of its route, where it rests), or when Jump is pressed
-          if (pad.jump() || (started && m.wait > 0 && gone > 2)) { h.carry = null; sl.passenger = null; const o = sl.v.o; h.place(o.position.x + Math.cos(o.rotation.y) * 2.6, o.position.z - Math.sin(o.rotation.y) * 2.6); say('Here we are! Bye bye!', 'Tới nơi rồi! Tạm biệt con!'); return null; }
+          if (pad.jump() || (started && m.wait > 0 && gone > 2)) { h.carry = null; sl.passenger = null; const o = sl.v.o; setDown(h, o.position.x + Math.cos(o.rotation.y) * 2.6, o.position.z - Math.sin(o.rotation.y) * 2.6); say('Here we are! Bye bye!', 'Tới nơi rồi! Tạm biệt con!'); return null; }
           const p = sl.v.o.localToWorld(new THREE.Vector3(...seatOf(sl, sl.v))); return { vehicle: sl.v, x: p.x, y: p.y - .55, z: p.z, yaw: sl.v.o.rotation.y, state: 'sit', speed: 0, rest: true };
         };
       } });
@@ -312,6 +317,10 @@ export function createTraffic(G) {
       if (W.busStops.some(b => Math.hypot(b.x - sx, b.z - sz) < 8) || !free(sx, sz, 1.4)) continue;
       const m = new THREE.Mesh(stopGeo, toonVC()); m.position.set(sx, ground(sx, sz), sz); m.rotation.y = Math.atan2(-rx, -rz); m.castShadow = true; scene.add(m);
       const col = { x: sx, z: sz, r: .45 }; W.colliders.push(col); stopCols.push(col);
+      // (v1.08b quality, owner 5 Nov: "stuck behind a bus station") the shelter's two posts, its glass back and the sign
+      // post are solid too, so nobody lands or walks inside it (the posts at x ±1.2 and the glass at z -.6 of the shelter)
+      const ry = m.rotation.y, at = (lx: number, lz: number) => [sx + Math.cos(ry) * lx + Math.sin(ry) * lz, sz - Math.sin(ry) * lx + Math.cos(ry) * lz];
+      for (const [lx, lz] of [[-1.2, -.55], [-.6, -.6], [.6, -.6], [1.2, -.55], [1.6, .2]]) { const [cx, cz] = at(lx, lz), c = { x: cx, z: cz, r: .45 }; W.colliders.push(c); stopCols.push(c); }
       const pic = sprite('🚌', .55), clock = sprite('⏰', .45); pic.position.set(sx, ground(sx, sz) + 3.1, sz); clock.position.set(sx, ground(sx, sz) + 2.55, sz); scene.add(pic, clock);
       stopParts.push(m, pic, clock);   // (rollout: shown while 'busFares' is kept)
       const near = (G.PLACES || []).reduce((a, p) => !a || Math.hypot(p.x - sx, p.z - sz) < Math.hypot(a.x - sx, a.z - sz) ? p : a, null);

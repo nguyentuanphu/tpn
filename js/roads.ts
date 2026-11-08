@@ -6,6 +6,7 @@ import { T, onLang } from './i18n.js';
 import { SFX } from './audio.js';
 import { heightAt, levelAt, riverDist, roadDist, edgeDist, ROADS, CITIES, TOWN, AUSSIE, DRAGON, WATER, REGION_NAMES, setRoadBeds, roadBedsOn, bridgeAt, bridgeBox, PADDIES, PLOTS, plotBox } from './world.js';
 import { settings } from './state.js';
+import { natureModel } from './nature-tag.js';
 import { featureOn } from './custom.js';
 import { remember } from './worldmemo.js';
 import { ROAD_TONES } from './content/map.js';
@@ -48,20 +49,25 @@ export function roadTexture(kind, tint = null, style = null) {
     const path = kind === 'footpath', outback = style === 'outback';
     const base = outback ? '#d27434' : path ? '#c27a50' : '#b9653e', deep = outback ? 'rgba(150,62,20,' : 'rgba(130,60,35,', pale = outback ? 'rgba(255,190,130,' : 'rgba(255,214,176,';
     // the edge wanders in and out (whole waves along the picture, so it tiles)
-    const edge = (y, k) => 5 + 2.6 * Math.sin((y / H) * Math.PI * 2 * (3 + k) + k * 2.1) + 1.6 * Math.sin((y / H) * Math.PI * 2 * (11 + k) + k) + 1.2 * Math.sin((y / H) * Math.PI * 2 * 23 + k * 4);
+    // (v1.08c roads, #34: the drawing's edge is a soft line, not a ragged one) half the wander it had
+    const edge = (y, k) => 5 + 1.5 * Math.sin((y / H) * Math.PI * 2 * (3 + k) + k * 2.1) + .9 * Math.sin((y / H) * Math.PI * 2 * (11 + k) + k) + .5 * Math.sin((y / H) * Math.PI * 2 * 23 + k * 4);
     g.fillStyle = base; g.beginPath(); g.moveTo(edge(0, 0), 0);
     for (let y = 0; y <= H; y += 4) g.lineTo(edge(y, 0), y);
     for (let y = H; y >= 0; y -= 4) g.lineTo(W - edge(y, 1), y);
     g.closePath(); g.fill();
     g.save(); g.clip();
-    mottle(70, pale + '.10)', deep + '.10)', 8, 26);
+    // (v1.08c roads, #34 Concept D) the drawing: one warm, even colour with a darker rim along both edges, two clean wheel
+    // tracks and a row of grass down the middle; far less speckle (close up it read as rubble, far away it shimmered)
+    mottle(36, pale + '.07)', deep + '.07)', 12, 30);
+    for (const [w, a] of [[14, .10], [8, .14]]) { g.fillStyle = deep + a + ')'; for (let y = 0; y < H; y += 4) { g.fillRect(edge(y, 0) - 2, y, w, 4); g.fillRect(W - edge(y, 1) - w + 2, y, w, 4); } }
     if (path) { g.fillStyle = pale + '.16)'; g.fillRect(W * .3, 0, W * .4, H); g.fillStyle = pale + '.10)'; g.fillRect(W * .2, 0, W * .6, H); }
-    else for (const cx of [W * .27, W * .73]) for (const [w, a] of [[22, .10], [16, .14], [10, .16]]) { // the wheel tracks, a little wavy
-      g.fillStyle = deep + a + ')'; for (let y = 0; y < H; y += 4) g.fillRect(cx - w / 2 + 2 * Math.sin(y / H * Math.PI * 4), y, w, 4); }
-    grit(2200, pale + '.20)', deep + '.20)');
-    for (let i = 0; i < 70; i++) { const x = 10 + rnd() * (W - 20), y = rnd() * H, r = 1 + rnd() * 1.6; blob(x, y, r, r * .8, rnd() < .5 ? '#a39a8e' : '#8c8378'); } // little stones
-    if (!path) for (let y = 4; y < H; y += 40) { const n = 4 + Math.floor(rnd() * 4), cy = y + rnd() * 10; // grass tufts down the middle
-      for (let k = 0; k < n; k++) { const x = W / 2 + (rnd() - .5) * 10, yy = cy + rnd() * 18; g.fillStyle = rnd() < .5 ? '#7fae5a' : '#6a9a48'; g.beginPath(); g.ellipse(x, yy, 2.2, 4.5, (rnd() - .5) * .8, 0, 7); g.fill(); } }
+    else for (const cx of [W * .3, W * .7]) for (const [w, a] of [[20, .10], [12, .16]]) { // the wheel tracks, a little wavy
+      g.fillStyle = deep + a + ')'; for (let y = 0; y < H; y += 4) g.fillRect(cx - w / 2 + 1.5 * Math.sin(y / H * Math.PI * 4), y, w, 4); }
+    grit(600, pale + '.14)', deep + '.14)');
+    for (let i = 0; i < 24; i++) { const x = 10 + rnd() * (W - 20), y = rnd() * H, r = 1 + rnd() * 1.6; blob(x, y, r, r * .8, rnd() < .5 ? '#a39a8e' : '#8c8378'); } // little stones
+    if (!path) { // the row of grass down the middle: short green dashes, as in the drawing, with a fuller tuft now and then
+      for (let y = 6; y < H; y += 16) { g.fillStyle = (y / 16) % 2 ? '#7fae5a' : '#6a9a48'; g.beginPath(); g.ellipse(W / 2 + 1.5 * Math.sin(y / H * Math.PI * 4), y, 3, 5, 0, 0, 7); g.fill(); }
+      for (let y = 30; y < H; y += 96) for (let k = 0; k < 5; k++) { const x = W / 2 + (rnd() - .5) * 12, yy = y + rnd() * 14; g.fillStyle = rnd() < .5 ? '#86b85e' : '#6a9a48'; g.beginPath(); g.ellipse(x, yy, 2.4, 5, (rnd() - .5) * .8, 0, 7); g.fill(); } }
     g.restore();
     for (let y = 10; y < H; y += 46) for (const side of [0, 1]) { // edging pebbles along both edges
       const yy = (y + side * 23 + rnd() * 8) % H, x = side ? W - edge(yy, 1) - 3 : edge(yy, 0) + 3, r = 3 + rnd() * 1.8;
@@ -70,11 +76,13 @@ export function roadTexture(kind, tint = null, style = null) {
   }
   // asphalt. Concept D: grey Vietnamese asphalt, darker Australian asphalt; other roads keep the region's tint (ROAD-014)
   // gently enough that it does not turn the asphalt pink or tan
-  const base = style === 'au' ? '#45484c' : style === 'vn' ? '#5f6266' : '#6f747a';
+  // (v1.08c roads, #34 Concept D) the drawing's asphalt is one clean grey with crisp markings: much less speckle (it
+  // shimmered at a distance and looked worn close up), softer patches, faint tyre wear
+  const base = style === 'au' ? '#47494e' : style === 'vn' ? '#606368' : '#666b71';
   g.fillStyle = tint ? '#' + new THREE.Color(base).lerp(new THREE.Color(tint), style === 'au' ? .06 : style === 'vn' ? .10 : .32).getHexString() : base; g.fillRect(0, 0, W, H);
-  mottle(90, 'rgba(255,255,255,.035)', 'rgba(0,0,0,.05)', 6, 22);
-  for (const cx of [.3, .7]) { g.fillStyle = 'rgba(0,0,0,.05)'; g.fillRect(W * cx - 12, 0, 24, H); g.fillStyle = 'rgba(0,0,0,.04)'; g.fillRect(W * cx - 7, 0, 14, H); } // tyre wear in each lane
-  grit(2600, 'rgba(255,255,255,.10)', 'rgba(0,0,0,.12)');
+  mottle(40, 'rgba(255,255,255,.025)', 'rgba(0,0,0,.035)', 12, 30);
+  for (const cx of [.3, .7]) { g.fillStyle = 'rgba(0,0,0,.03)'; g.fillRect(W * cx - 10, 0, 20, H); } // tyre wear in each lane
+  grit(700, 'rgba(255,255,255,.06)', 'rgba(0,0,0,.07)');
   { const y = rnd() * H * .7, x = W * (.15 + rnd() * .35); g.fillStyle = 'rgba(0,0,0,.07)'; g.fillRect(x, y, W * .22, 46); g.fillStyle = 'rgba(0,0,0,.12)'; g.fillRect(x, y, W * .22, 1); g.fillRect(x, y + 45, W * .22, 1); } // one old patch
   if (kind !== 'asphalt') return done(); // ('plain' asphalt without lines)
   const line = (x, w, col, from = 0, len = H) => { g.fillStyle = col; g.fillRect(x, from, w, len); g.fillStyle = 'rgba(255,255,255,.18)'; g.fillRect(x, from, w * .4, len); };
@@ -86,11 +94,11 @@ export function roadTexture(kind, tint = null, style = null) {
     g.fillStyle = 'rgba(0,0,0,.25)'; g.fillRect(12, 0, 1, H); g.fillRect(W - 13, 0, 1, H);
     dashes('#f4f1e8', 160, 96);
   } else { // Vietnam (and the other roads): a stone kerb, white edge lines, centre dashes (yellow in Vietnam)
-    const vn = style === 'vn'; g.fillStyle = vn ? '#cfcac0' : '#c4c1b8'; g.fillRect(0, 0, 6, H); g.fillRect(W - 6, 0, 6, H);
-    g.fillStyle = 'rgba(0,0,0,.2)'; for (let y = 0; y < H; y += 28) { g.fillRect(0, y, 6, 1.5); g.fillRect(W - 6, y + 14, 6, 1.5); } // the joints between kerb stones
-    g.fillStyle = 'rgba(0,0,0,.22)'; g.fillRect(6, 0, 1.5, H); g.fillRect(W - 7.5, 0, 1.5, H);
-    line(10, 4, '#ece8dc'); line(W - 14, 4, '#ece8dc');
-    dashes(vn ? '#f2c230' : '#f4f1e8', 156, 100);
+    const vn = style === 'vn'; g.fillStyle = vn ? '#d8d3c8' : '#d0ccc2'; g.fillRect(0, 0, 7, H); g.fillRect(W - 7, 0, 7, H);
+    g.fillStyle = 'rgba(0,0,0,.16)'; for (let y = 0; y < H; y += 28) { g.fillRect(0, y, 7, 1.5); g.fillRect(W - 7, y + 14, 7, 1.5); } // the joints between kerb stones
+    g.fillStyle = 'rgba(0,0,0,.22)'; g.fillRect(7, 0, 1.5, H); g.fillRect(W - 8.5, 0, 1.5, H);
+    line(11, 5, '#f3f0e6'); line(W - 16, 5, '#f3f0e6');   // the white edge lines (for motorbikes, in the drawing)
+    dashes(vn ? '#f5c51e' : '#f6f3ea', 156, 100);
   }
   return done();
 }
@@ -124,7 +132,18 @@ function denseLine(R) {
 // the deck height at (x, z), over the deck or its apron; DECK_CORE says whether it was over the deck itself
 let DECK_CORE = false;
 const deckAt = (world, x, z) => { for (const p of world.platforms) { const b = p.apron || p; if (!p.tower && x > b.x0 && x < b.x1 && z > b.z0 && z < b.z1) { DECK_CORE = x > p.x0 && x < p.x1 && z > p.z0 && z < p.z1; return p.y; } } return null; };
+// (v1.08d valley, PERF-001) a road's profile is worked out up to four times on a first start (again round each joint
+// with its anchors); the ground under it does not change in between, so the ground's answers (and the deck and level
+// tests) are kept per road and only copied the later times: the same numbers, a fraction of the work
+const BASES = new WeakMap<object, { base: number[], deck: boolean[], apron: boolean[], lvl: (number | null)[] }>();
 function profile(R, world, pts, anchors = null) {
+  const kept = BASES.get(pts);
+  const { base: base0, deck, apron, lvl } = kept || profileBase(R, world, pts);
+  if (!kept) BASES.set(pts, { base: base0, deck, apron, lvl });
+  const base = base0.slice();
+  return profileFrom(R, pts, anchors, base, deck, apron, lvl);
+}
+function profileBase(R, world, pts) {
   const hw = R.w / 2, deck = [], apron = [], base = pts.map(([x, z], i) => {
     const [px, pz] = pts[Math.max(0, i - 1)], [nx, nz] = pts[Math.min(pts.length - 1, i + 1)], L = Math.hypot(nx - px, nz - pz) || 1, ux = -(nz - pz) / L, uz = (nx - px) / L;
     // a real bridge deck: the deck is well above the ground under it (near the ends the bank is the ground)
@@ -140,6 +159,9 @@ function profile(R, world, pts, anchors = null) {
   // HARD RULE: inside a village or city the road runs at the place's own level (places are flat); on a bridge, on its deck
   const lvl = pts.map(([x, z], i) => { if (deck[i]) return null; const L = levelAt(x, z); return L != null && riverDist(x, z) > 13 && !bridgeAt(x, z, 9, 12, 18) ? L : null; });
   lvl.forEach((L, i) => { if (L != null) base[i] = L; });
+  return { base, deck, apron, lvl };
+}
+function profileFrom(R, pts, anchors, base, deck, apron, lvl) {
   if (anchors) anchors.forEach((y, i) => { base[i] = y; });
   const n = pts.length, deepIn = lvl.map((L, i) => { if (L == null) return false; for (let k = -6; k <= 6; k++) { const j = i + k; if (j >= 0 && j < n && lvl[j] == null) return false; } return true; }); // (the outer 6 m eases in)
   const gates = R.gates || [], gateEnd = i => (gates[0] && i < 2) || (gates[1] && i > n - 3);
@@ -318,6 +340,7 @@ export function plantRoadside(G) {
     let cxs = 0, czs = 0;
     spots.forEach(([x, y, z, s, r, c], j) => { q.setFromAxisAngle(new THREE.Vector3(0, 1, 0), r); m4.compose(ps.set(x, y - .02, z), q, sc.set(s, s, s)); stems.setMatrixAt(j, m4); heads.setMatrixAt(j, m4); heads.setColorAt(j, c); cxs += x; czs += z; });
     for (const M of [stems, heads]) { M.computeBoundingSphere(); M.userData.noCam = true; scene.add(M); }
+    natureModel(stems, 'flower-roadside'); // (v1.08e nature: the stem, leaves and middle from Blender; the tinted petals stay)
     groups.push({ meshes: [stems, heads], spots });
   });
   // (#34, Concept D) along the main roads: red lamp posts and bougainvillea on the Vietnam side, orange lamp posts and gum
@@ -343,7 +366,13 @@ export function plantRoadside(G) {
   const bushGeo = ([P(new THREE.IcosahedronGeometry(.6, 1), '#4f8f3e', [0, .55, 0], [0, 0, 0], [1.2, .9, 1]), ...[[.35, .9, .2], [-.3, .85, -.25], [.05, 1.05, -.1], [-.2, .7, .4], [.4, .6, -.3]].map(([x, y, z]) => P(new THREE.IcosahedronGeometry(.2, 0), '#e0328c', [x, y, z]))]);
   const gumGeo = ([P(new THREE.CylinderGeometry(.16, .28, 5.4, 6), '#e9e1d2', [0, 2.7, 0]), P(new THREE.CylinderGeometry(.09, .13, 2.2, 5), '#e9e1d2', [.6, 4.6, 0], [0, 0, -.6]),
     ...[[0, 6, 0, 1.5], [1.3, 5.5, .4, 1.1], [-.9, 5.7, -.5, 1.2]].map(([a, b, c, r]) => P(new THREE.IcosahedronGeometry(r, 1), '#7a9a6a', [a, b, c]))]);
-  const solidMat = toonVC(); place(lampGeo('#b3261e'), lampVN, solidMat); place(lampGeo('#e07b26'), lampAU, solidMat); place(bushGeo, bushes, solidMat); place(gumGeo, gums, solidMat);
+  const solidMat = toonVC(); place(lampGeo('#b3261e'), lampVN, solidMat); place(lampGeo('#e07b26'), lampAU, solidMat);
+  // (v1.08e nature) the bushes and gum trees are one InstancedMesh each (still one draw), so their Blender models can take
+  // the code shape's place near the child (js/world-nature.ts); the same turn for each as before (j * 1.7)
+  const placeMany = (parts, list, name) => { if (!list.length) return null; const m = new THREE.InstancedMesh(merge(parts), toonVC(), list.length), o = new THREE.Object3D();
+    list.forEach(([x, y, z], j) => { o.position.set(x, y, z); o.rotation.set(0, j * 1.7, 0); o.updateMatrix(); m.setMatrixAt(j, o.matrix); });
+    m.computeBoundingSphere(); m.castShadow = true; m.userData.noSolid = true; scene.add(m); return natureModel(m, name); };
+  placeMany(bushGeo, bushes, 'bush-bougainvillea'); placeMany(gumGeo, gums, 'tree-gum');
   // (#34 Concept D, owner plan 30 Oct AEDT) paddy dikes (bờ ruộng): low earth paths along the rice terraces' steps (every 9 m)
   // and across them, with shallow water glinting in each field; children walk along them (no solid, nothing to climb)
   const dikes = [], pools = [], R = (PADDIES.r || 16) - 1.5, inside = (x, z) => Math.hypot(x - PADDIES.x, z - PADDIES.z) < R;
@@ -364,7 +393,7 @@ export function plantRoadside(G) {
   const VT = CITIES.find(c => c.id === 'vungtau'), at = (dx: number, dz: number) => [VT.x + dx, VT.z + dz];
   for (const [x, z] of VT ? [at(-19, 36), at(-15, 38), at(-1, 38), at(-13, 48), at(-5, 50)] : []) { const h = heightAt(x, z), dry = h > WATER + .05;
     if (dry && h > WATER + 1.6 || !free(x, z, 1.2) || !plotFree(x, z, 1)) continue;
-    const y = dry ? h - .5 : WATER - .45, yaw = (x * 7 + z) % 6.3; boats.push(...boatParts.map(p => { const g = p.g.clone(); g.rotateY(yaw); g.translate(x, y, z); return { g, color: p.color }; }));
+    const y = dry ? h - .5 : Math.max(WATER - .2, h + .32),   /* (v1.08e water) floating high on the shallow sea, never inside its bed */ yaw = (x * 7 + z) % 6.3; boats.push(...boatParts.map(p => { const g = p.g.clone(); g.rotateY(yaw); g.translate(x, y, z); return { g, color: p.color }; }));
     if (dry) world.colliders.push({ x, z, r: .9 }); }
   if (boats.length) { const m = new THREE.Mesh(merge(boats), toonVC()); m.castShadow = true; m.userData.noSolid = true; scene.add(m); }
   // only roads near a player show their flowers
@@ -635,13 +664,18 @@ export function createRoads(G) {
 
 // Henry's road-safety request: explain the existing crossings without changing their roads or artwork.
 // Signs stand beside the footpath approaches; the walking strip, doors and existing interactions stay clear.
-export function createCrossings(G) {
-  const { scene, world } = G, list = [], missing = [];
+// (v1.08d valley) ids: the streets to build now (js/areas.ts builds each street's crossing as its own part)
+export function createCrossings(G, ids: string[] = ['town', 'aussie']) {
+  const { scene, world } = G, C = G.crossings || (G.crossings = { list: [], missing: [] }), list = C.list, missing = C.missing;
   const postGeometry = merge([P(new THREE.CylinderGeometry(.07, .07, 2.7, 8), '#6a4a3a', [0, 1.35, 0]), P(new THREE.CylinderGeometry(.18, .23, .12, 8), '#a8a296', [0, .06, 0])]), postMaterial = toonVC();
   const stopBoard = gateSign(['STOP', 'DỪNG'], 1.7, .9, '#d9483a', '#fff8e0'), watchBoard = gateSign(['LOOK · LISTEN', 'NHÌN · NGHE'], 2.4, .65, '#ffd23f', '#4a3a3f');
   // A clear footprint is insufficient: tall warning posts must also clear shop awnings/roofs.
   scene.updateMatrixWorld(true);
-  const overheadMeshes=[];scene.traverse(o=>{if(o.isMesh)overheadMeshes.push(o);});
+  // (v1.08d valley) only the meshes that reach within 30 m of a street asked for: the rays are 2.75 m long and start
+  // within 12 m of the crossing, so nothing farther can be hit (the same answers, a fraction of the work)
+  const wanted = ([['town', TOWN], ['aussie', AUSSIE]] as const).filter(([id]) => ids.includes(id)).map(([, p]) => p), sph = new THREE.Sphere();
+  const overheadMeshes=[];scene.traverse(o=>{if(!o.isMesh||o===world.terrain)return; /* (the ground itself: a ray straight up from just above it never meets it again, and testing its every triangle was most of the time) */const g=(o as THREE.Mesh).geometry;if(!g)return;if(!g.boundingSphere)g.computeBoundingSphere();sph.copy(g.boundingSphere).applyMatrix4(o.matrixWorld);
+    if(wanted.some(p=>Math.hypot(sph.center.x-(p.x-4),sph.center.z-p.roadZ)<30+sph.radius))overheadMeshes.push(o);});
   const headRay=new THREE.Raycaster(new THREE.Vector3(),new THREE.Vector3(0,1,0),.05,2.75);
   const headroom=(x,z)=>{headRay.ray.origin.set(x,heightAt(x,z)+.1,z);return !headRay.intersectObjects(overheadMeshes,false).some(hit=>{for(let o=hit.object;o;o=o.parent)if(!o.visible)return false;const m=(hit.object as THREE.Mesh).material;const mats=Array.isArray(m)?m:[m];return mats.some((mm): mm is THREE.Material => !!mm && mm.visible!==false && (mm.opacity??1)>.95);});};
   // Bubble width3.2 plus board width2.4 requires2.8m between their centres.
@@ -650,7 +684,7 @@ export function createCrossings(G) {
     && !((G.homes && G.homes.list) || []).some(h => h.door && Math.hypot(h.door.x - x, h.door.z - z) < 2.2)
     && G.interactables.every(it => !Number.isFinite(it.x) || Math.hypot(it.x - x, it.z - z) > (it.bubble ? 2.9 : 1.8))
     && [-1.25,0,1.25].every(dx=>headroom(x+dx,z));
-  for (const [id, place] of [['town', TOWN], ['aussie', AUSSIE]] as const) {
+  for (const [id, place] of ([['town', TOWN], ['aussie', AUSSIE]] as const).filter(([id]) => ids.includes(id))) {
     const crossing = { id, x: place.x - 4, z: place.roadZ, halfRoad: 3.5, signs: [] };
     for (const side of [-1, 1]) {
       let at = null;
@@ -671,5 +705,5 @@ export function createCrossings(G) {
     }
     list.push(crossing);
   }
-  return (G.crossings = { list, missing });
+  return C;
 }
