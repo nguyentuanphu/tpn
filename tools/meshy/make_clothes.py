@@ -65,7 +65,7 @@ for s in 'LR':
 SH_X = (abs(J['armL'].x) + abs(J['armR'].x)) / 2
 isarm = (armd < .09) & (armd < legd) & (np.abs(fc[:, 0]) > SH_X - .01) & (fc[:, 2] < NECK)   # (closer to the arm than the leg: a hand beside the thigh)
 isleg = ~isarm & (fc[:, 2] < HIP + .02) & (legd < .14)
-istorso = ~isarm & ~isleg & (fc[:, 2] < NECK) & (fc[:, 2] > HIP - .16) & (np.abs(fc[:, 0]) < SH_X + .02)   # (not a hand beside the hip)
+istorso = ~isarm & ~isleg & (fc[:, 2] < NECK + .02) & (fc[:, 2] > HIP - .16) & ((np.abs(fc[:, 0]) < SH_X + .02) | (fc[:, 2] > WAIST + .1))   # (the shoulder tops, where the collar sits, too; hands beside the hips are lower)   # (not a hand beside the hip)
 # hair is never clothed: everything above the neck, and anything hanging in front of or behind the grey shirt (Clara's
 # braids, Lumi's leaves on the shoulders): a ray from it towards the body's middle meets grey shirt more than 1 cm on
 gbm = bmesh.new(); gv = {}
@@ -79,7 +79,7 @@ for i in np.nonzero(grey)[0]:
 gtree = BVHTree.FromBMesh(gbm)
 cyz = float(np.median(fc[istorso, 1])) if istorso.any() else 0.
 infront = np.zeros(NP, bool)
-for i in np.nonzero(~grey & (fc[:, 2] < NECK) & (fc[:, 2] > HIP - .1) & ~isarm)[0]:
+for i in np.nonzero(~grey & ((fS > .3) | (fV < .25)) & (fc[:, 2] < NECK) & (fc[:, 2] > HIP - .1) & ~isarm)[0]:   # (hair-coloured only: the kit's raised collar ring is not hair)
     P = Vector(fc[i]); d = Vector((0, 1 if P.y < cyz else -1, 0)); h = gtree.ray_cast(P, d, .25)
     if h[0] is not None and h[3] > .01: infront[i] = True
 gbm.free()
@@ -87,11 +87,26 @@ hair = ((fc[:, 2] >= NECK) & ~grey) | infront   # (the grey neckline is clothes)
 clothable = ~hair
 print('CL hair in front of the shirt', int(infront.sum()))
 
+# (owner review 8 Nov: a grey collar showed above every top) the kit is everything on the body that is neither skin
+# (the skin marks from fitting) nor hair: its shaded parts fail the plain grey test. Tops reach 1.2 cm past its top edge.
+kit = (~skin if skin.any() else grey) & ~hair & (fS < .3)
+_kc = kit & (np.abs(fc[:, 0]) < SH_X * .7) & (fc[:, 2] > WAIST) & (fc[:, 2] < NECK)
+KIT_TOP = float(fc[_kc, 2].max()) if _kc.any() else NECK - .02
+NECKBAND = min(KIT_TOP + .012, NECK + .02)
+print('CL kit top', round(KIT_TOP, 3), 'neckband', round(NECKBAND, 3), 'neck', round(NECK, 3))
+_vf = {}
+for p in me.polygons:
+    for vi in p.vertices: _vf.setdefault(vi, []).append(p.index)
+def dilate(faces, n=2):   # (two rings of neighbouring triangles more: no small holes at seams between parts; the hem cuts trim the edges)
+    s = set(int(i) for i in faces)
+    for _ in range(n):
+        s |= {j for i in list(s) for vi in me.polygons[i].vertices for j in _vf[vi] if clothable[j]}
+    return np.array(sorted(s))
 def faces_for(top=None, sleeve=None, leg=None, under_waist=False, front_only=False, z_min=None):
     """the body triangles a garment covers: torso between z_min and the neck, sleeves to `sleeve` (0..2), legs to `leg`"""
     sel = np.zeros(NP, bool)
-    if top is not None:   # (and all the grey shirt above that line, up to its neckline)
-        sel |= (istorso | (grey & ~isarm & (np.abs(fc[:, 0]) < SH_X + .02))) & (fc[:, 2] > top) & ((fc[:, 2] < NECK + .03) | grey)   # (all the grey collar, however high it reaches)
+    if top is not None:   # (and all the kit above that line, and the neck's skin up to the neckband)
+        sel |= (istorso | (kit & ~isarm & (np.abs(fc[:, 0]) < SH_X + .02))) & (fc[:, 2] > top) & ((fc[:, 2] < NECKBAND) | kit)
     if under_waist:   # (and all the grey shorts, wherever they are)
         sel |= istorso & (fc[:, 2] <= WAIST + .02) | (isleg & (legt <= .05)) | (grey & ~isarm & (fc[:, 2] <= WAIST + .02))
     if sleeve is not None:
@@ -101,7 +116,8 @@ def faces_for(top=None, sleeve=None, leg=None, under_waist=False, front_only=Fal
     sel &= clothable
     if front_only: sel &= fc[:, 1] < float(np.median(fc[istorso, 1]))
     if z_min is not None: sel &= fc[:, 2] > z_min
-    return np.nonzero(sel)[0]
+    out = np.nonzero(sel)[0]
+    return dilate(out) if not front_only else out
 
 btree = BVHTree.FromObject(body, bpy.context.evaluated_depsgraph_get())
 # the body without its hair, one surface per part (torso, each arm, each leg): shell() casts outward from a bone onto
@@ -116,7 +132,7 @@ def _tree(mask):
         try: bm_.faces.new(vs)
         except ValueError: pass
     t = BVHTree.FromBMesh(bm_); bm_.free(); return t
-RTREE = {'torso': _tree(clothable & istorso)}
+RTREE = {'torso': _tree(clothable & (istorso | (kit & ~isarm & ~isleg & (fc[:, 2] < NECK + .02))))}   # (with the kit's collar: tops wrap over it)
 for s in 'LR':
     RTREE['arm' + s] = _tree(clothable & isarm & ((fc[:, 0] >= 0) == (s == 'L')))
     RTREE['leg' + s] = _tree(clothable & isleg & ((fc[:, 0] >= 0) == (s == 'L')))
@@ -126,6 +142,7 @@ def seg_point(a_, b_, c_, t):   # the point and direction at t (0..2) along a tw
 def arm_cut(s, t): p, d = seg_point(J['arm' + s], J['elbow' + s], J['hand' + s], t); return ('arm', s, p, d)
 def leg_cut(s, t): p, d = seg_point(J['leg' + s], J['knee' + s], J['ankle' + s], t); return ('leg', s, p, d)
 def hem_cut(z): return ('torso', None, Vector((0, 0, z)), Vector((0, 0, -1)))
+def neck_cut(): return ('torso', None, Vector((0, 0, NECKBAND)), Vector((0, 0, 1)))   # (a top's neckband: straight, just past the kit's collar)
 def limb_cuts(kind, t): return [(arm_cut if kind == 'arm' else leg_cut)(s, t) for s in 'LR']
 
 def shell(name, faces, thick, smooth=6, cuts=()):
@@ -258,11 +275,11 @@ parts = []
 # tops (the T-shirt's grey and the skin they reach): length by the lowest point, sleeves to 0.45 (short), 1.9 (long)
 # (each chosen a little too big, then cut straight at its hems; tops end below the trousers' top, so nothing shows between)
 TOP_HEM = HIP - .03
-parts.append(shell('top-short', faces_for(top=TOP_HEM - .06, sleeve=.75), .012, cuts=[hem_cut(TOP_HEM)] + limb_cuts('arm', .5)))
-parts.append(shell('top-long', faces_for(top=TOP_HEM - .06, sleeve=1.8), .013, cuts=[hem_cut(TOP_HEM)] + limb_cuts('arm', 1.55)))
+parts.append(shell('top-short', faces_for(top=TOP_HEM - .06, sleeve=.75), .012, cuts=[neck_cut(), hem_cut(TOP_HEM)] + limb_cuts('arm', .5)))
+parts.append(shell('top-long', faces_for(top=TOP_HEM - .06, sleeve=1.8), .013, cuts=[neck_cut(), hem_cut(TOP_HEM)] + limb_cuts('arm', 1.55)))
 parts.append(shell('tunic-long', np.union1d(faces_for(top=HIP - .2, sleeve=1.8, under_waist=True), faces_for(leg=.8)), .015,
-                   cuts=[hem_cut(HIP - .12)] + limb_cuts('arm', 1.55) + limb_cuts('leg', .55)))
-parts.append(shell('bodice', faces_for(top=WAIST - .06, sleeve=.6), .012, cuts=[hem_cut(WAIST - .015)] + limb_cuts('arm', .35)))
+                   cuts=[neck_cut(), hem_cut(HIP - .12)] + limb_cuts('arm', 1.55) + limb_cuts('leg', .55)))
+parts.append(shell('bodice', faces_for(top=WAIST - .06, sleeve=.6), .012, cuts=[neck_cut(), hem_cut(WAIST - .015)] + limb_cuts('arm', .35)))
 # bottoms
 parts.append(shell('shorts', faces_for(under_waist=True, leg=.75), .010, cuts=limb_cuts('leg', .5)))
 parts.append(shell('trousers', faces_for(under_waist=True, leg=1.95), .011, cuts=limb_cuts('leg', 1.82)))
