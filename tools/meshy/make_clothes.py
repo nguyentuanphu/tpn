@@ -104,9 +104,36 @@ def faces_for(top=None, sleeve=None, leg=None, under_waist=False, front_only=Fal
     return np.nonzero(sel)[0]
 
 btree = BVHTree.FromObject(body, bpy.context.evaluated_depsgraph_get())
-def shell(name, faces, thick, smooth=6, open_neck=True):
+# the body without its hair, one surface per part (torso, each arm, each leg): shell() casts outward from a bone onto
+# that part's surface only (one surface for all caught the arms beside the body and stretched shirts out to the hands)
+def _tree(mask):
+    bm_ = bmesh.new(); vv = {}
+    for i in np.nonzero(mask)[0]:
+        p = me.polygons[int(i)]; vs = []
+        for vi in p.vertices:
+            if vi not in vv: vv[vi] = bm_.verts.new(me.vertices[vi].co)
+            vs.append(vv[vi])
+        try: bm_.faces.new(vs)
+        except ValueError: pass
+    t = BVHTree.FromBMesh(bm_); bm_.free(); return t
+RTREE = {'torso': _tree(clothable & istorso)}
+for s in 'LR':
+    RTREE['arm' + s] = _tree(clothable & isarm & ((fc[:, 0] >= 0) == (s == 'L')))
+    RTREE['leg' + s] = _tree(clothable & isleg & ((fc[:, 0] >= 0) == (s == 'L')))
+def seg_point(a_, b_, c_, t):   # the point and direction at t (0..2) along a two-segment limb a-b-c
+    p0, p1 = (a_, b_) if t <= 1 else (b_, c_); k = t if t <= 1 else t - 1
+    return p0 + (p1 - p0) * k, (p1 - p0).normalized()
+def arm_cut(s, t): p, d = seg_point(J['arm' + s], J['elbow' + s], J['hand' + s], t); return ('arm', s, p, d)
+def leg_cut(s, t): p, d = seg_point(J['leg' + s], J['knee' + s], J['ankle' + s], t); return ('leg', s, p, d)
+def hem_cut(z): return ('torso', None, Vector((0, 0, z)), Vector((0, 0, -1)))
+def limb_cuts(kind, t): return [(arm_cut if kind == 'arm' else leg_cut)(s, t) for s in 'LR']
+
+def shell(name, faces, thick, smooth=6, cuts=()):
     """a copy of these body triangles, pushed out `thick` metres along the surface, softened (no body detail), never
-    inside the body; it keeps the body's joint weights and picture coordinates; corner colours = Meshy's painted shade"""
+    inside the body; it keeps the body's joint weights and picture coordinates; corner colours = Meshy's painted shade.
+    (owner review 8 Nov: ragged hems) each cut is a flat plane at a hem or cuff: the part is chosen a little too big and
+    cut there, so hems run straight across the body instead of following its triangles. A torso hem cuts only the torso,
+    a sleeve cut only that arm, a leg cut only that leg."""
     o = body.copy(); o.data = body.data.copy(); o.name = 'g-' + name; sc.collection.objects.link(o)
     bm = bmesh.new(); bm.from_mesh(o.data); bm.faces.ensure_lookup_table()
     keep = set(int(i) for i in faces)
@@ -114,9 +141,21 @@ def shell(name, faces, thick, smooth=6, open_neck=True):
     bmesh.ops.remove_doubles(bm, verts=bm.verts[:], dist=.0004)   # (Meshy's file splits vertices at picture seams)
     bm.normal_update()
     for _ in range(smooth): bmesh.ops.smooth_vert(bm, verts=bm.verts[:], factor=.5, use_axis_x=True, use_axis_y=True, use_axis_z=True)
-    # (owner review 8 Nov: ragged hems) the open edges (hems, cuffs, neckline) are evened out along themselves: each edge
-    # point moves towards the middle of its two edge neighbours, so a hem runs in a clean line instead of following triangles
-    for _ in range(14):
+    for region, s, p, d in cuts:
+        def mine(f):
+            c = f.calc_center_median()
+            if region == 'torso': return abs(c.x) < SH_X + .03
+            side_ok = (c.x >= 0) == (s == 'L')
+            P = np.array([c[:]])
+            da = along(P, J['arm' + s], J['elbow' + s], J['hand' + s])[0][0]; dl = along(P, J['leg' + s], J['knee' + s], J['ankle' + s])[0][0]
+            return side_ok and ((da < dl) if region == 'arm' else (dl < da))
+        fs = [f for f in bm.faces if mine(f)]
+        if not fs: continue
+        geom = list({v for f in fs for v in f.verts}) + list({e for f in fs for e in f.edges}) + fs
+        bmesh.ops.bisect_plane(bm, geom=geom, plane_co=p, plane_no=d, clear_outer=True, dist=.0001)
+    bmesh.ops.delete(bm, geom=[v for v in bm.verts if not v.link_faces], context='VERTS')
+    # the open edges (hems, cuffs, neckline) are evened out a little along themselves
+    for _ in range(3):
         new = {}
         for v in bm.verts:
             ed = [e for e in v.link_edges if len(e.link_faces) == 1]
@@ -124,8 +163,32 @@ def shell(name, faces, thick, smooth=6, open_neck=True):
         for v, p in new.items(): v.co = p
     bm.normal_update()
     for v in bm.verts:
-        hit = btree.find_nearest(v.co)
-        if hit[0] is not None: v.co = hit[0] + hit[1].normalized() * thick
+        # (owner review 8 Nov: loose shorts and shirt edges poked out) each point goes just outside the body's OUTERMOST
+        # surface along the line from its bone (the arm, the leg, or the spine at its height) through it, so a garment
+        # wraps over looser clothes painted underneath; hair is never in that surface, so it is never wrapped over
+        # the part this point belongs to: the body part of the nearest original body triangle (arm, leg or torso)
+        hit = btree.find_nearest(v.co); fi = hit[2] if hit[0] is not None else None
+        if fi is None: continue
+        s = 'L' if fc[fi, 0] >= 0 else 'R'
+        if isarm[fi]: region, chain = 'arm' + s, (J['arm' + s], J['elbow' + s], J['hand' + s])
+        elif isleg[fi]: region, chain = 'leg' + s, (J['leg' + s], J['knee' + s], J['ankle' + s])
+        else: region, chain = 'torso', None
+        if chain:   # (arms and legs: along the point's own surface direction, from a little inside: the knee joint sits in
+            # front of the leg, so rays from the bone missed the shins)
+            dvec = v.normal.normalized() if v.normal.length > .5 else hit[1].normalized(); origin = v.co - dvec * .05; reach = .11
+        else:
+            axis = Vector((0, cyz, v.co.z)); dvec = v.co - axis
+            if dvec.length < 1e-5: continue
+            dvec.normalize(); origin = axis.copy(); reach = .4
+        last = None
+        for _ in range(8):
+            h = RTREE[region].ray_cast(origin, dvec, reach - (origin - (v.co - dvec * .05 if chain else axis)).length)
+            if h[0] is None: break
+            last = h[0]; origin = h[0] + dvec * .0005
+        if last is not None: v.co = last + dvec * thick
+        else:
+            hit = btree.find_nearest(v.co)
+            if hit[0] is not None: v.co = hit[0] + hit[1].normalized() * thick
     bm.normal_update()
     # painted shade: the body's own colour under each corner, as brightness relative to the grey clothes / the skin
     uv = bm.loops.layers.uv.active; col = bm.loops.layers.color.new('shade')
@@ -193,20 +256,23 @@ if RDIR and os.environ.get('CL_CLASSES'):   # (check picture of how each body tr
     raise SystemExit(0)
 parts = []
 # tops (the T-shirt's grey and the skin they reach): length by the lowest point, sleeves to 0.45 (short), 1.9 (long)
-parts.append(shell('top-short', faces_for(top=HIP + .01, sleeve=.5), .010))
-parts.append(shell('top-long', faces_for(top=HIP + .01, sleeve=1.55), .011))
-parts.append(shell('tunic-long', np.union1d(faces_for(top=HIP - .08, sleeve=1.55, under_waist=True), faces_for(leg=.62)), .013))
-parts.append(shell('bodice', faces_for(top=WAIST - .01, sleeve=.35), .010))
+# (each chosen a little too big, then cut straight at its hems; tops end below the trousers' top, so nothing shows between)
+TOP_HEM = HIP - .03
+parts.append(shell('top-short', faces_for(top=TOP_HEM - .06, sleeve=.75), .012, cuts=[hem_cut(TOP_HEM)] + limb_cuts('arm', .5)))
+parts.append(shell('top-long', faces_for(top=TOP_HEM - .06, sleeve=1.8), .013, cuts=[hem_cut(TOP_HEM)] + limb_cuts('arm', 1.55)))
+parts.append(shell('tunic-long', np.union1d(faces_for(top=HIP - .2, sleeve=1.8, under_waist=True), faces_for(leg=.8)), .015,
+                   cuts=[hem_cut(HIP - .12)] + limb_cuts('arm', 1.55) + limb_cuts('leg', .55)))
+parts.append(shell('bodice', faces_for(top=WAIST - .06, sleeve=.6), .012, cuts=[hem_cut(WAIST - .015)] + limb_cuts('arm', .35)))
 # bottoms
-parts.append(shell('shorts', faces_for(under_waist=True, leg=.5), .008))
-parts.append(shell('trousers', faces_for(under_waist=True, leg=1.82), .009))
-parts.append(shell('leggings', faces_for(under_waist=True, leg=1.85), .005))
+parts.append(shell('shorts', faces_for(under_waist=True, leg=.75), .010, cuts=limb_cuts('leg', .5)))
+parts.append(shell('trousers', faces_for(under_waist=True, leg=1.95), .011, cuts=limb_cuts('leg', 1.82)))
+parts.append(shell('leggings', faces_for(under_waist=True, leg=1.95), .007, cuts=limb_cuts('leg', 1.85)))
 # overalls: the bib over the chest's front, below the arms
 _bf = faces_for(top=HIP + .01, front_only=True)
 parts.append(shell('bib', _bf[(fc[_bf, 2] < NECK - (NECK - WAIST) * .35) & (np.abs(fc[_bf, 0]) < SH_X * .75)], .014))
 # skirts and the áo dài's panels
 parts.append(cone('skirt', WAIST, KNEE + .03, .55, .02))
-parts.append(cone('aodai-panels', WAIST, ANKLE + .04, .3, .022, panels=True, slit=.18))
+parts.append(cone('aodai-panels', WAIST, ANKLE + .04, .5, .03, panels=True, slit=.14))
 # shoes: over the feet to just above the ankle
 if feet is not None:
     fm = feet.data; feet.name = feet.name.replace('-shoes', '-feet')
