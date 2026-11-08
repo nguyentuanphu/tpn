@@ -2,7 +2,7 @@
   "budget": 1000,
   "planned": 990,
   "reserve": 10,
-  "charged": 745,
+  "charged": 835,
   "entries": [
     {
       "assetId": "clara",
@@ -370,6 +370,20 @@
   },
   "extras": [
     {
+      "kind": "model-revision",
+      "source": "finn-body",
+      "chargedCredits": 30,
+      "taskId": "01a1b907-3a92-737a-9e49-4a72588c86b4",
+      "state": "SUCCEEDED"
+    },
+    {
+      "kind": "model-revision",
+      "source": "sol-body",
+      "chargedCredits": 30,
+      "taskId": "01a1b90b-8b1d-75e1-959c-5e7a0125d8a8",
+      "state": "SUCCEEDED"
+    },
+    {
       "kind": "remesh",
       "source": "clara-r2",
       "chargedCredits": 5,
@@ -594,6 +608,34 @@
       "state": "SUCCEEDED"
     },
     {
+      "kind": "remesh",
+      "source": "finn-body",
+      "chargedCredits": 5,
+      "taskId": "01a1b908-8db2-73e8-8502-39fb64f70b3e",
+      "state": "SUCCEEDED"
+    },
+    {
+      "kind": "remesh",
+      "source": "finn-body@9000",
+      "chargedCredits": 5,
+      "taskId": "01a1b909-dc03-76d8-bf66-e9e7cebb4795",
+      "state": "SUCCEEDED"
+    },
+    {
+      "kind": "remesh",
+      "source": "sol-body",
+      "chargedCredits": 5,
+      "taskId": "01a1b90c-e2db-7530-9df1-db0df0c97ab4",
+      "state": "SUCCEEDED"
+    },
+    {
+      "kind": "remesh",
+      "source": "sol-body@9000",
+      "chargedCredits": 5,
+      "taskId": "01a1b90e-2c98-75e7-8cd9-d33107001c4d",
+      "state": "SUCCEEDED"
+    },
+    {
       "kind": "rigging",
       "source": "clara-r2",
       "chargedCredits": 5,
@@ -697,6 +739,20 @@
       "chargedCredits": 5,
       "taskId": "01a1b636-2d07-75c0-a34b-274cc0c23059",
       "state": "SUCCEEDED"
+    },
+    {
+      "kind": "rigging",
+      "source": "finn-body",
+      "chargedCredits": 5,
+      "taskId": "01a1b90b-25a1-71d3-83b9-261505a8e6d3",
+      "state": "SUCCEEDED"
+    },
+    {
+      "kind": "rigging",
+      "source": "sol-body",
+      "chargedCredits": 5,
+      "taskId": "01a1b90f-76ee-71eb-8fa6-114202efea8d",
+      "state": "IN_PROGRESS"
     }
   ],
   "syncedFrom": "tools/meshy/ledger_sync.py (private job journal)"

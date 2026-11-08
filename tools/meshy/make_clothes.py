@@ -1,0 +1,255 @@
+# (Meshy production, 8 Nov 2026; owner: "Body + code-made clothes") Clothes made from a Meshy body's own surface.
+#   blender -b -P tools/meshy/make_clothes.py -- <fitted rigged .blend from transfer_rig.py> <out.glb> [<render dir>]
+# The body (ChatGPT body sheet -> Meshy -> fit_person.ps1) wears a plain grey T-shirt and shorts, bare feet. Each garment
+# here is a shell over part of the body: the body's own triangles in that part (grey clothes and skin, never hair: the
+# braids and leaf hair stay outside), pushed out along the surface and smoothed, keeping the body's joint weights so it
+# bends with it. Skirts and the áo dài's long panels are cones hung from the waist. The shading Meshy painted on the grey
+# shirt and shorts (folds, shade) is kept in each shell's corner colours (grey: 1 = as lit); the game gives each part its
+# colour (js/friend-model.ts GARMENTS), so any outfit colour works. Meshes are named "lit-g-<part>" (drawn by their
+# corner colours and own light, as the gallery villagers' "lit-" parts), all hidden until the game shows the parts of the
+# outfit worn. The bare feet become "skin-feet" (always shown; shoes are a garment).
+import bpy, bmesh, sys, os, math
+import numpy as np
+from mathutils import Vector
+from mathutils.bvhtree import BVHTree
+a = sys.argv[sys.argv.index('--') + 1:]
+BLEND, OUT = a[0], a[1]; RDIR = a[2] if len(a) > 2 else None
+bpy.ops.wm.open_mainfile(filepath=BLEND)
+sc = bpy.context.scene; VL = bpy.context.view_layer
+rig = bpy.data.objects['rig']
+body = next(o for o in bpy.data.objects if o.type == 'MESH' and o.name.endswith('-body'))
+feet = next((o for o in bpy.data.objects if o.type == 'MESH' and o.name.endswith('-shoes')), None)
+J = {b.name: rig.matrix_world @ b.head_local for b in rig.data.bones}
+# the joints this needs, from the game's 11: wrists and ankles continue the elbow and knee bones
+for s in 'LR':
+    J['wrist' + s] = J['elbow' + s] + (J['elbow' + s] - J['arm' + s]) * .95
+    J['hand' + s] = J['wrist' + s] + (J['wrist' + s] - J['elbow' + s]) * .6
+    J['ankle' + s] = J['knee' + s] + (J['knee' + s] - J['leg' + s]) * .92
+NECK = J['head'].z - .01; WAIST = J['root'].z + .01; HIP = (J['legL'].z + J['legR'].z) / 2
+print('CL joints neck', round(NECK, 3), 'waist', round(WAIST, 3), 'hip', round(HIP, 3), 'knee', round(J['kneeL'].z, 3), 'ankle', round(J['ankleL'].z, 3))
+
+# ---- the painted picture: each body triangle's colour, and whether it is grey clothes, skin or neither (hair, eyes)
+me = body.data; uvl = me.uv_layers.active.data
+img = next(n.image for m in me.materials if m and m.use_nodes for n in m.node_tree.nodes if n.type == 'TEX_IMAGE' and n.image)
+W_, H_ = img.size; PX = np.array(img.pixels[:], np.float32).reshape(H_, W_, 4)[..., :3]
+def sample(u, v): return PX[min(H_ - 1, max(0, int((v % 1) * H_))), min(W_ - 1, max(0, int((u % 1) * W_)))]
+NP = len(me.polygons)
+fcol = np.array([np.mean([sample(*uvl[l].uv) for l in p.loop_indices], axis=0) for p in me.polygons])
+fV = fcol.max(1); fS = (fV - fcol.min(1)) / np.maximum(fV, 1e-4)
+grey = (fS < .12) & (fV > .38) & (fV < .95)
+skw = me.color_attributes.get('skinw')
+skin = np.zeros(NP, bool)
+if skw is not None:
+    w = np.array([c.color[0] for c in skw.data], np.float32)
+    skin = np.array([w[list(p.loop_indices)].mean() > .5 for p in me.polygons])
+fc = np.array([p.center[:] for p in me.polygons])
+print('CL faces', NP, 'grey', int(grey.sum()), 'skin', int(skin.sum()))
+GREY_LUM = float(np.median(fV[grey])) if grey.any() else .7
+SKIN_LUM = float(np.median(fV[skin])) if skin.any() else .8
+
+# ---- where each triangle is on the body: arm (and how far down it: 0 shoulder, 1 elbow, 2 wrist), leg (0 hip, 1 knee,
+# 2 ankle), torso, head
+def along(P, a_, b_, c_):   # distance to the two-segment line a-b-c and the position along it (0..2)
+    best = (1e9, 0.)
+    for k, (p0, p1) in enumerate(((a_, b_), (b_, c_))):
+        p0 = np.array(p0[:]); p1 = np.array(p1[:]); d = p1 - p0; t = np.clip(((P - p0) @ d) / max(d @ d, 1e-9), 0, 1)
+        dist = np.linalg.norm(P - (p0 + t[:, None] * d), axis=1); best = (dist, k + t) if k == 0 else (np.minimum(best[0], dist), np.where(dist < best[0], k + t, best[1]))
+    return best
+side = np.where(fc[:, 0] >= 0, 'L', 'R')
+armd = np.full(NP, 9.); armt = np.zeros(NP); legd = np.full(NP, 9.); legt = np.zeros(NP)
+for s in 'LR':
+    m = side == s
+    d, t = along(fc[m], J['arm' + s], J['elbow' + s], J['hand' + s]); armd[m] = d; armt[m] = t * 1.0
+    # (the second segment runs on to the fingertips: 1 elbow, 2 fingertips; the wrist is at about 1.6)
+    d, t = along(fc[m], J['leg' + s], J['knee' + s], J['ankle' + s]); legd[m] = d; legt[m] = t
+SH_X = (abs(J['armL'].x) + abs(J['armR'].x)) / 2
+isarm = (armd < .09) & (armd < legd) & (np.abs(fc[:, 0]) > SH_X - .01) & (fc[:, 2] < NECK)   # (closer to the arm than the leg: a hand beside the thigh)
+isleg = ~isarm & (fc[:, 2] < HIP + .02) & (legd < .14)
+istorso = ~isarm & ~isleg & (fc[:, 2] < NECK) & (fc[:, 2] > HIP - .16)
+# hair is never clothed: everything above the neck, and anything hanging in front of or behind the grey shirt (Clara's
+# braids, Lumi's leaves on the shoulders): a ray from it towards the body's middle meets grey shirt more than 1 cm on
+gbm = bmesh.new(); gv = {}
+for i in np.nonzero(grey)[0]:
+    p = me.polygons[int(i)]; vs = []
+    for vi in p.vertices:
+        if vi not in gv: gv[vi] = gbm.verts.new(me.vertices[vi].co)
+        vs.append(gv[vi])
+    try: gbm.faces.new(vs)
+    except ValueError: pass
+gtree = BVHTree.FromBMesh(gbm)
+cyz = float(np.median(fc[istorso, 1])) if istorso.any() else 0.
+infront = np.zeros(NP, bool)
+for i in np.nonzero(~grey & (fc[:, 2] < NECK) & (fc[:, 2] > HIP - .1) & ~isarm)[0]:
+    P = Vector(fc[i]); d = Vector((0, 1 if P.y < cyz else -1, 0)); h = gtree.ray_cast(P, d, .25)
+    if h[0] is not None and h[3] > .01: infront[i] = True
+gbm.free()
+hair = (fc[:, 2] >= NECK) | infront
+clothable = ~hair
+print('CL hair in front of the shirt', int(infront.sum()))
+
+def faces_for(top=None, sleeve=None, leg=None, under_waist=False, front_only=False, z_min=None):
+    """the body triangles a garment covers: torso between z_min and the neck, sleeves to `sleeve` (0..2), legs to `leg`"""
+    sel = np.zeros(NP, bool)
+    if top is not None:   # (and all the grey shirt above that line)
+        sel |= (istorso | (grey & ~isarm)) & (fc[:, 2] > top)
+    if under_waist:   # (and all the grey shorts, wherever they are)
+        sel |= istorso & (fc[:, 2] <= WAIST + .02) | (isleg & (legt <= .05)) | (grey & ~isarm & (fc[:, 2] <= WAIST + .02))
+    if sleeve is not None:
+        sel |= isarm & (armt <= sleeve)
+    if leg is not None:
+        sel |= isleg & (legt <= leg)
+    sel &= clothable
+    if front_only: sel &= fc[:, 1] < float(np.median(fc[istorso, 1]))
+    if z_min is not None: sel &= fc[:, 2] > z_min
+    return np.nonzero(sel)[0]
+
+btree = BVHTree.FromObject(body, bpy.context.evaluated_depsgraph_get())
+def shell(name, faces, thick, smooth=6, open_neck=True):
+    """a copy of these body triangles, pushed out `thick` metres along the surface, softened (no body detail), never
+    inside the body; it keeps the body's joint weights and picture coordinates; corner colours = Meshy's painted shade"""
+    o = body.copy(); o.data = body.data.copy(); o.name = 'g-' + name; sc.collection.objects.link(o)
+    bm = bmesh.new(); bm.from_mesh(o.data); bm.faces.ensure_lookup_table()
+    keep = set(int(i) for i in faces)
+    bmesh.ops.delete(bm, geom=[f for f in bm.faces if f.index not in keep], context='FACES')
+    bmesh.ops.remove_doubles(bm, verts=bm.verts[:], dist=.0004)   # (Meshy's file splits vertices at picture seams)
+    bm.normal_update()
+    for _ in range(smooth): bmesh.ops.smooth_vert(bm, verts=bm.verts[:], factor=.5, use_axis_x=True, use_axis_y=True, use_axis_z=True)
+    bm.normal_update()
+    for v in bm.verts:
+        hit = btree.find_nearest(v.co)
+        if hit[0] is not None: v.co = hit[0] + hit[1].normalized() * thick
+    bm.normal_update()
+    # painted shade: the body's own colour under each corner, as brightness relative to the grey clothes / the skin
+    uv = bm.loops.layers.uv.active; col = bm.loops.layers.color.new('shade')
+    for f in bm.faces:
+        for l in f.loops:
+            c = sample(*l[uv].uv); lum = float(max(c)); s_ = (lum - float(min(c))) / max(lum, 1e-4)
+            k = lum / (GREY_LUM if s_ < .15 else SKIN_LUM); k = min(1.15, max(.55, k))
+            l[col] = (k, k, k, 1)
+    bm.to_mesh(o.data); bm.free()
+    for nm in [ca.name for ca in o.data.color_attributes if ca.name and ca.name != 'shade']: o.data.color_attributes.remove(o.data.color_attributes[nm])
+    o.data.color_attributes.active_color = o.data.color_attributes['shade']
+    o.data.materials.clear(); m = bpy.data.materials.new('lit-g-' + name); o.data.materials.append(m)
+    for p in o.data.polygons: p.use_smooth = True
+    print('CL part', name, 'triangles', len(o.data.polygons))
+    return o
+
+def cone(name, z_top, z_bot, flare, thick, panels=False, slit=.0):
+    """a skirt (or the áo dài's long panels with side slits) hung from the waist: rings round the body's own waist,
+    widening to the hem; weighted to the torso at the top, more to each leg's side lower down"""
+    ring = [(fc[i]) for i in np.nonzero(istorso & (np.abs(fc[:, 2] - z_top) < .02))[0]]
+    cx = float(np.mean([p[0] for p in ring])) if ring else 0.; cy = float(np.mean([p[1] for p in ring])) if ring else 0.
+    rx = max(abs(p[0] - cx) for p in ring) + thick if ring else .12; ry = max(abs(p[1] - cy) for p in ring) + thick if ring else .08
+    N, R = 48, 10; bm = bmesh.new(); rows = []
+    for r in range(R + 1):
+        t = r / R; z = z_top + (z_bot - z_top) * t; k = 1 + flare * t ** 1.4
+        rows.append([bm.verts.new((cx + math.cos(2 * math.pi * i / N) * rx * k, cy + math.sin(2 * math.pi * i / N) * ry * k, z)) for i in range(N)])
+    for r in range(R):
+        for i in range(N):
+            ang = 2 * math.pi * (i + .5) / N
+            if panels and abs(math.cos(ang)) > 1 - slit and r >= R * .25: continue   # (the side slits, below the hips)
+            bm.faces.new((rows[r][i], rows[r][(i + 1) % N], rows[r + 1][(i + 1) % N], rows[r + 1][i]))
+    bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
+    col = bm.loops.layers.color.new('shade')
+    for f in bm.faces:
+        for l in f.loops:
+            zt = (z_top - l.vert.co.z) / max(z_top - z_bot, 1e-4); k = 1.0 - .18 * zt   # (a little darker towards the hem)
+            l[col] = (k, k, k, 1)
+    me2 = bpy.data.meshes.new('g-' + name); bm.to_mesh(me2); bm.free()
+    o = bpy.data.objects.new('g-' + name, me2); sc.collection.objects.link(o)
+    for g in ('torso', 'legL', 'legR'): o.vertex_groups.new(name=g)
+    for v in me2.vertices:
+        t = (z_top - v.co.z) / max(z_top - z_bot, 1e-4); s = 'legL' if v.co.x >= cx else 'legR'
+        o.vertex_groups['torso'].add([v.index], 1 - .45 * t, 'REPLACE'); o.vertex_groups[s].add([v.index], .45 * t, 'REPLACE')
+    m = bpy.data.materials.new('lit-g-' + name); me2.materials.append(m)
+    for p in me2.polygons: p.use_smooth = True
+    print('CL part', name, 'triangles', len(me2.polygons) * 2)
+    return o
+
+KNEE = (J['kneeL'].z + J['kneeR'].z) / 2; ANKLE = (J['ankleL'].z + J['ankleR'].z) / 2
+if RDIR and os.environ.get('CL_CLASSES'):   # (check picture of how each body triangle was read: arm blue, leg green, torso red, hair black, none yellow)
+    import shutil
+    os.makedirs(RDIR, exist_ok=True)
+    ca = me.color_attributes.new('cls', 'BYTE_COLOR', 'CORNER')
+    for p in me.polygons:
+        i = p.index; c = (0, 0, 0, 1) if hair[i] else (.2, .3, 1, 1) if isarm[i] else (.2, .9, .2, 1) if isleg[i] else (1, .2, .2, 1) if istorso[i] else (1, 1, 0, 1)
+        for l in p.loop_indices: ca.data[l].color = c
+    dm_ = bpy.data.materials.new('dbg'); dm_.use_nodes = True
+    vc = dm_.node_tree.nodes.new('ShaderNodeVertexColor'); vc.layer_name = 'cls'; dm_.node_tree.links.new(vc.outputs['Color'], dm_.node_tree.nodes['Principled BSDF'].inputs['Base Color'])
+    for k in range(len(me.materials)): me.materials[k] = dm_
+    sc.render.engine = 'BLENDER_EEVEE_NEXT'; sc.render.resolution_x, sc.render.resolution_y = 480, 640
+    cam = bpy.data.cameras.new('c'); cam.type = 'ORTHO'; cam.ortho_scale = (J['head'].z + .3) * 1.05
+    co = bpy.data.objects.new('c', cam); sc.collection.objects.link(co); sc.camera = co
+    for nm, loc, rot in (('front', (0, -5, (J['head'].z + .3) / 2), (math.radians(90), 0, 0)), ('back', (0, 5, (J['head'].z + .3) / 2), (math.radians(90), 0, math.pi))):
+        co.location = loc; co.rotation_euler = rot; sc.render.filepath = os.path.join(RDIR, 'classes-' + nm + '.png'); bpy.ops.render.render(write_still=True)
+    raise SystemExit(0)
+parts = []
+# tops (the T-shirt's grey and the skin they reach): length by the lowest point, sleeves to 0.45 (short), 1.9 (long)
+parts.append(shell('top-short', faces_for(top=HIP + .01, sleeve=.5), .010))
+parts.append(shell('top-long', faces_for(top=HIP + .01, sleeve=1.55), .011))
+parts.append(shell('tunic-long', np.union1d(faces_for(top=HIP - .08, sleeve=1.55, under_waist=True), faces_for(leg=.45)), .013))
+parts.append(shell('bodice', faces_for(top=WAIST - .01, sleeve=.35), .010))
+# bottoms
+parts.append(shell('shorts', faces_for(under_waist=True, leg=.5), .008))
+parts.append(shell('trousers', faces_for(under_waist=True, leg=1.82), .009))
+parts.append(shell('leggings', faces_for(under_waist=True, leg=1.85), .005))
+# overalls: the bib over the chest's front, below the arms
+_bf = faces_for(top=HIP + .01, front_only=True)
+parts.append(shell('bib', _bf[(fc[_bf, 2] < NECK - (NECK - WAIST) * .35) & (np.abs(fc[_bf, 0]) < SH_X * .75)], .014))
+# skirts and the áo dài's panels
+parts.append(cone('skirt', WAIST, KNEE + .03, .55, .02))
+parts.append(cone('aodai-panels', WAIST, ANKLE + .04, .3, .022, panels=True, slit=.18))
+# shoes: over the feet to just above the ankle
+if feet is not None:
+    fm = feet.data; feet.name = feet.name.replace('-shoes', '-feet')
+    for m in fm.materials:
+        if m and m.name.startswith('cloth-shoes'): m.name = 'skin-feet'
+    fo = feet.copy(); fo.data = feet.data.copy(); sc.collection.objects.link(fo)
+    bm = bmesh.new(); bm.from_mesh(fo.data); bmesh.ops.remove_doubles(bm, verts=bm.verts[:], dist=.0004); bm.normal_update()
+    ftree = BVHTree.FromObject(feet, bpy.context.evaluated_depsgraph_get())
+    for _ in range(4): bmesh.ops.smooth_vert(bm, verts=bm.verts[:], factor=.5, use_axis_x=True, use_axis_y=True, use_axis_z=True)
+    for v in bm.verts:
+        h = ftree.find_nearest(v.co)
+        if h[0] is not None: v.co = h[0] + h[1].normalized() * (.012 if v.co.z > .03 else .016)
+    col = bm.loops.layers.color.new('shade')
+    for f in bm.faces:
+        for l in f.loops: k = .8 + .25 * min(1, l.vert.co.z / .1); l[col] = (k, k, k, 1)
+    bm.to_mesh(fo.data); bm.free(); fo.name = 'g-boots'
+    for nm in [ca.name for ca in fo.data.color_attributes if ca.name and ca.name != 'shade']: fo.data.color_attributes.remove(fo.data.color_attributes[nm])
+    fo.data.color_attributes.active_color = fo.data.color_attributes['shade']
+    fo.data.materials.clear(); fo.data.materials.append(bpy.data.materials.new('lit-g-boots')); parts.append(fo)
+
+# every part follows the rig as the body does
+for o in parts:
+    o.parent = rig
+    if not any(md.type == 'ARMATURE' for md in o.modifiers):
+        md = o.modifiers.new('Armature', 'ARMATURE'); md.object = rig
+
+if RDIR:   # a check picture: every part over the body in turn, in its own test colour
+    os.makedirs(RDIR, exist_ok=True)
+    sc.render.engine = 'BLENDER_EEVEE_NEXT'; sc.render.resolution_x, sc.render.resolution_y = 480, 640
+    cam = bpy.data.cameras.new('c'); cam.type = 'ORTHO'; cam.ortho_scale = (J['head'].z + .3) * 1.05
+    co = bpy.data.objects.new('c', cam); sc.collection.objects.link(co); sc.camera = co
+    co.location = (0, -5, (J['head'].z + .3) / 2); co.rotation_euler = (math.radians(90), 0, 0)
+    w = bpy.data.worlds.new('w'); sc.world = w; w.use_nodes = True; w.node_tree.nodes['Background'].inputs[1].default_value = 3.5
+    for o in parts:
+        m = o.data.materials[0]; m.use_nodes = True; bs = m.node_tree.nodes['Principled BSDF']
+        ca = m.node_tree.nodes.new('ShaderNodeVertexColor'); ca.layer_name = 'shade'
+        mix = m.node_tree.nodes.new('ShaderNodeMix'); mix.data_type = 'RGBA'; mix.blend_type = 'MULTIPLY'; mix.inputs[0].default_value = 1
+        mix.inputs[6].default_value = (.85, .3, .3, 1); m.node_tree.links.new(ca.outputs['Color'], mix.inputs[7]); m.node_tree.links.new(mix.outputs[2], bs.inputs['Base Color'])
+    for show in parts:
+        for o in parts: o.hide_render = o is not show
+        sc.render.filepath = os.path.join(RDIR, show.name + '.png'); bpy.ops.render.render(write_still=True)
+    for o in parts: o.hide_render = False
+    for o in parts:   # (the check colours are not exported)
+        m = o.data.materials[0]; m.use_nodes = False
+
+for o in parts: o.data.materials[0]['garment'] = o.name[2:]
+bpy.ops.object.select_all(action='DESELECT')
+for o in bpy.data.objects:   # the rig, everything on it (body, feet, faces, clothes) and the friend's item
+    if o is rig or o.parent is rig or (o.type == 'MESH' and '-item' in o.name): o.select_set(True)
+VL.objects.active = rig
+bpy.ops.export_scene.gltf(filepath=OUT, export_format='GLB', use_selection=True, export_animations=False, export_skins=True, export_morph=False,
+                          export_yup=True, export_image_format='AUTO', export_vertex_color='ACTIVE', export_extras=True)
+bpy.ops.wm.save_as_mainfile(filepath=os.path.splitext(OUT)[0] + '.blend')
+print('CL done', OUT, 'parts', len(parts))
