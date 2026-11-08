@@ -2,7 +2,7 @@
   "budget": 1000,
   "planned": 990,
   "reserve": 10,
-  "charged": 835,
+  "charged": 880,
   "entries": [
     {
       "assetId": "clara",
@@ -384,6 +384,13 @@
       "state": "SUCCEEDED"
     },
     {
+      "kind": "model-revision",
+      "source": "finn-swim",
+      "chargedCredits": 30,
+      "taskId": "01a1b972-0464-7020-9dbf-6aacc1f91c7b",
+      "state": "SUCCEEDED"
+    },
+    {
       "kind": "remesh",
       "source": "clara-r2",
       "chargedCredits": 5,
@@ -636,6 +643,20 @@
       "state": "SUCCEEDED"
     },
     {
+      "kind": "remesh",
+      "source": "finn-swim",
+      "chargedCredits": 5,
+      "taskId": "01a1b973-0790-701b-8459-9a315b320b90",
+      "state": "SUCCEEDED"
+    },
+    {
+      "kind": "remesh",
+      "source": "finn-swim@9000",
+      "chargedCredits": 5,
+      "taskId": "01a1b974-5164-7073-a682-7390cc34c58f",
+      "state": "SUCCEEDED"
+    },
+    {
       "kind": "rigging",
       "source": "clara-r2",
       "chargedCredits": 5,
@@ -752,6 +773,13 @@
       "source": "sol-body",
       "chargedCredits": 5,
       "taskId": "01a1b90f-76ee-71eb-8fa6-114202efea8d",
+      "state": "SUCCEEDED"
+    },
+    {
+      "kind": "rigging",
+      "source": "finn-swim",
+      "chargedCredits": 5,
+      "taskId": "01a1b975-9b33-77eb-88ca-0143ee4ca67e",
       "state": "SUCCEEDED"
     }
   ],

@@ -333,7 +333,13 @@ _nd = dark.copy(); _r = max(2, int(W_ * .05))
 for _ in range(_r): _nd = _nd | np.roll(_nd, 1, 0) | np.roll(_nd, -1, 0) | np.roll(_nd, 1, 1) | np.roll(_nd, -1, 1)
 WHT &= _nd
 for side, cols in (('R', xx < W_ / 2), ('L', xx >= W_ / 2)):
-    bw = box_of(WHT & cols) if (WHT & cols).sum() > 40 else None
+    # (8 Nov 2026, Finn's swim body: the face box reached into the fringe, and light spots there passed as eye white)
+    # only the eye white round the row where it is densest: an eye is far less tall than the face
+    _w = WHT & cols
+    if _w.sum() > 40:
+        _rows = _w.sum(1).astype(np.float32); _rows = np.convolve(_rows, np.ones(9) / 9, 'same'); _r0 = int(np.argmax(_rows))
+        _w &= np.abs(yy - _r0) < H_ * .12
+    bw = box_of(_w) if _w.sum() > 40 else None
     if bw:
         ww_, wh_ = bw[2] - bw[0], bw[3] - bw[1]
         eyes[side] = [max(0, int(bw[0] - ww_ * .15)), max(0, int(bw[1] - wh_ * .45)), min(W_, int(bw[2] + ww_ * .15)), min(H_, int(bw[3] + wh_ * .25))]; continue

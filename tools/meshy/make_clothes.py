@@ -91,7 +91,7 @@ def faces_for(top=None, sleeve=None, leg=None, under_waist=False, front_only=Fal
     """the body triangles a garment covers: torso between z_min and the neck, sleeves to `sleeve` (0..2), legs to `leg`"""
     sel = np.zeros(NP, bool)
     if top is not None:   # (and all the grey shirt above that line, up to its neckline)
-        sel |= (istorso | (grey & ~isarm & (np.abs(fc[:, 0]) < SH_X + .02))) & (fc[:, 2] > top) & (fc[:, 2] < NECK + .03)
+        sel |= (istorso | (grey & ~isarm & (np.abs(fc[:, 0]) < SH_X + .02))) & (fc[:, 2] > top) & ((fc[:, 2] < NECK + .03) | grey)   # (all the grey collar, however high it reaches)
     if under_waist:   # (and all the grey shorts, wherever they are)
         sel |= istorso & (fc[:, 2] <= WAIST + .02) | (isleg & (legt <= .05)) | (grey & ~isarm & (fc[:, 2] <= WAIST + .02))
     if sleeve is not None:
