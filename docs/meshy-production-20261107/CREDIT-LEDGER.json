@@ -752,7 +752,7 @@
       "source": "sol-body",
       "chargedCredits": 5,
       "taskId": "01a1b90f-76ee-71eb-8fa6-114202efea8d",
-      "state": "IN_PROGRESS"
+      "state": "SUCCEEDED"
     }
   ],
   "syncedFrom": "tools/meshy/ledger_sync.py (private job journal)"

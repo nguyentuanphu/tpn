@@ -1,0 +1,210 @@
+{
+  "pack": "docs/friends-swim-sheets-20261108",
+  "variant": "grey",
+  "assets": [
+    {
+      "id": "finn",
+      "image": "grey/finn.png",
+      "imageSHA256": "a583e90c39dd6e9ef56dda59e3e8e1219bf36d03197e53bb63d19eed65fd88f5",
+      "viewCrops": [
+        {
+          "view": "front",
+          "path": "crops-grey/finn-front.png",
+          "sha256": "72e1cb71e6e78912c8aa3d9a40c0382294ce4a245d1fe886022572170485d883",
+          "box": [
+            29,
+            35,
+            457,
+            909
+          ]
+        },
+        {
+          "view": "left-side",
+          "path": "crops-grey/finn-left-side.png",
+          "sha256": "962c456a2aa6b67fe6be061311f3bccfcef7d0f6fd228c0a6a5077e1197b1862",
+          "box": [
+            475,
+            37,
+            744,
+            909
+          ]
+        },
+        {
+          "view": "back",
+          "path": "crops-grey/finn-back.png",
+          "sha256": "93398d22e34149f84355f4e7ee0c3e36c14eda5a67ec2a9812920a2c114c2bf5",
+          "box": [
+            724,
+            35,
+            1140,
+            909
+          ]
+        },
+        {
+          "view": "three-quarter-front",
+          "path": "crops-grey/finn-three-quarter-front.png",
+          "sha256": "bc42d5d6b5a6b1262e9dae0782f7d0205f72139c42a338077846c939cea33feb",
+          "box": [
+            1158,
+            34,
+            1507,
+            912
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sol",
+      "image": "grey/sol.png",
+      "imageSHA256": "c43cf7b58fed12280662f5893add79c18d6a1ca231d10ef5313e38c3cc21f7c4",
+      "viewCrops": [
+        {
+          "view": "front",
+          "path": "crops-grey/sol-front.png",
+          "sha256": "278d87ec9aacc7059d88a99ca700ac6f01b4af212f3aa18ecbc6aca71fd78641",
+          "box": [
+            49,
+            24,
+            453,
+            908
+          ]
+        },
+        {
+          "view": "left-side",
+          "path": "crops-grey/sol-left-side.png",
+          "sha256": "d6c116bc24e084fc3598add3223b4f768f684ac8889dcec1f0978adb99577a9c",
+          "box": [
+            479,
+            27,
+            743,
+            908
+          ]
+        },
+        {
+          "view": "back",
+          "path": "crops-grey/sol-back.png",
+          "sha256": "c00d8a7ad5057622e8bffa3f87a4c6cb31a73900962ea1f722cd4afa64b9da1d",
+          "box": [
+            738,
+            25,
+            1133,
+            908
+          ]
+        },
+        {
+          "view": "three-quarter-front",
+          "path": "crops-grey/sol-three-quarter-front.png",
+          "sha256": "2eecb2999d12f95cf8febd7fdfae2f83a41b108257395f95a0360d5e2952d7cb",
+          "box": [
+            1146,
+            24,
+            1483,
+            912
+          ]
+        }
+      ]
+    },
+    {
+      "id": "clara",
+      "image": "grey/clara.png",
+      "imageSHA256": "141b64f6a63c038c95e1f2416a0cc37764dd6248f9236948528bdf330b08471e",
+      "viewCrops": [
+        {
+          "view": "front",
+          "path": "crops-grey/clara-front.png",
+          "sha256": "586642de41d0c85e56e98a9c4b4e0acefeab4b1bce213d51162ebaee108595b1",
+          "box": [
+            23,
+            51,
+            445,
+            912
+          ]
+        },
+        {
+          "view": "left-side",
+          "path": "crops-grey/clara-left-side.png",
+          "sha256": "8105aead343e1e6f02526d095e743a2ad754abfb7a4a31614cd9033452b5f871",
+          "box": [
+            475,
+            51,
+            700,
+            910
+          ]
+        },
+        {
+          "view": "back",
+          "path": "crops-grey/clara-back.png",
+          "sha256": "aa6532bbc3900756c2438b19b37a71d333a9b9dc5476981eead20dad86ef6eb2",
+          "box": [
+            746,
+            51,
+            1136,
+            911
+          ]
+        },
+        {
+          "view": "three-quarter-front",
+          "path": "crops-grey/clara-three-quarter-front.png",
+          "sha256": "3c6502a7cdad29b839b70c65d84886c4dd16872363d93929fc14e7c48845238c",
+          "box": [
+            1152,
+            51,
+            1514,
+            914
+          ]
+        }
+      ]
+    },
+    {
+      "id": "lumi",
+      "image": "grey/lumi.png",
+      "imageSHA256": "13af03b742f018f08a888cbe878799650993314f54b094d46a983aaae17ab09d",
+      "viewCrops": [
+        {
+          "view": "front",
+          "path": "crops-grey/lumi-front.png",
+          "sha256": "f66fc4564235bc124c7d8cf9d93dc5ad68fabb148353491451f595ee516e2f01",
+          "box": [
+            59,
+            52,
+            460,
+            828
+          ]
+        },
+        {
+          "view": "left-side",
+          "path": "crops-grey/lumi-left-side.png",
+          "sha256": "c07ef255c7745dd981090b4fa74651ae9f9e0774d30655f310a47dfe3fd5f129",
+          "box": [
+            530,
+            56,
+            849,
+            829
+          ]
+        },
+        {
+          "view": "back",
+          "path": "crops-grey/lumi-back.png",
+          "sha256": "b35d3e7e02146428fcb0a669766b648021f2cb5d3bc625afbc7c18a3565e2742",
+          "box": [
+            907,
+            57,
+            1295,
+            829
+          ]
+        },
+        {
+          "view": "three-quarter-front",
+          "path": "crops-grey/lumi-three-quarter-front.png",
+          "sha256": "d33df26bf60a189cb416259525c1d5d038a2608c3d641e921e32f5c8086ae9fb",
+          "box": [
+            1361,
+            53,
+            1725,
+            831
+          ]
+        }
+      ]
+    }
+  ]
+}

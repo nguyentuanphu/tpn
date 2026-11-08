@@ -29,3 +29,21 @@ The existing body pack is already referenced by other-chat crops/job specificati
 ## Short takeover prompt
 
 Continue on meshy-production-20261107. Read docs/friends-swim-sheets-20261108/README.md, GALLERY.md and MANIFEST.json, plus the earlier friends-body-sheets-20261108 handoff. All four grey and bright pink swim-kit sheets and an additional Finn grey variant are ready. Review and select sources before following BODY-SHEETS-PROMPT.md. Preserve character identity, Clara's forward braids, Lumi's flower, current job inputs and paid-task history. Keep skin/clothes separate; obtain required approval before new paid Meshy calls.
+
+## Review and selection for 3D (8 Nov 2026, Claude Code)
+
+All nine sheets reviewed against the friends' earlier sheets: faces, eyes, freckles, hair shapes and colours match;
+Clara's braids are in front in every view with none down the back; Lumi's flower is there in every view (on the
+far side in the back view, as it should be). Every sheet: sleeveless top, mid-thigh shorts, bare feet, same A-pose.
+
+**Selected: grey** for all four (`grey/<friend>.png`). Skin below the face measures closest to the T-shirt body
+sheets (Finn #EFB193, Sol #F3AC8D, Clara #F3B2A0, Lumi #FBBF99); the pink kit reflects onto the skin and lightens it,
+and grey stays neutral if any of the kit shows under a garment. The extra Finn variant matches the grey Finn closely
+(#F2B395); the main grey Finn is kept so all four come from the same set. Pink is kept for reference only (generations
+are never mixed in one input).
+
+Views cut by `tools/meshy/crop_body_sheets.py --pack docs/friends-swim-sheets-20261108 --variant grey` into
+`crops-grey/` (16 centred square views); `SELECTION.json` records the chosen sheets, their hashes and the views. This
+pack's MANIFEST.json is unchanged. Draft jobs, not submitted: `job-specifications/48-clara-swim.json` to
+`51-lumi-swim.json` (front, left side, back), checked offline by `run_batch.py check --asset <friend>-swim`. They need
+the owner's approval (`approvedBodies` in the account record) before any submission: 45 credits each, 180 in all.

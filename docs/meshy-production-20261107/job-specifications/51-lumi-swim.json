@@ -1,0 +1,46 @@
+{
+    "assetId":  "lumi-swim",
+    "bodyOf":  "lumi",
+    "bodyPack":  "docs/friends-swim-sheets-20261108",
+    "bodyReason":  "Owner, 8 Nov 2026: the friends as a Meshy body in a plain light-grey swim kit (sleeveless top, mid-thigh shorts, bare feet: underwear was refused by the image tool) with clothes made in the game from the body\u0027s own surface. Grey chosen over bright pink: its skin is closest to the earlier body sheets and it is neutral if any of the kit shows. Views cut from docs/friends-swim-sheets-20261108/grey/lumi.png by tools/meshy/crop_body_sheets.py.",
+    "group":  "A",
+    "endpoint":  "https://api.meshy.ai/openapi/v1/multi-image-to-3d",
+    "method":  "POST",
+    "parameters":  {
+                       "ai_model":  "meshy-7.1",
+                       "geometry_resolution":  "standard",
+                       "should_texture":  true,
+                       "texture_resolution":  "2k",
+                       "enable_pbr":  false,
+                       "pose_mode":  "",
+                       "target_formats":  [
+                                              "glb"
+                                          ],
+                       "image_enhancement":  false
+                   },
+    "inputImages":  [
+                        {
+                            "view":  "front",
+                            "localPath":  "docs/friends-swim-sheets-20261108/crops-grey/lumi-front.png",
+                            "sha256":  "f66fc4564235bc124c7d8cf9d93dc5ad68fabb148353491451f595ee516e2f01"
+                        },
+                        {
+                            "view":  "left-side",
+                            "localPath":  "docs/friends-swim-sheets-20261108/crops-grey/lumi-left-side.png",
+                            "sha256":  "c07ef255c7745dd981090b4fa74651ae9f9e0774d30655f310a47dfe3fd5f129"
+                        },
+                        {
+                            "view":  "back",
+                            "localPath":  "docs/friends-swim-sheets-20261108/crops-grey/lumi-back.png",
+                            "sha256":  "b35d3e7e02146428fcb0a669766b648021f2cb5d3bc625afbc7c18a3565e2742"
+                        }
+                    ],
+    "transportNote":  "Runner sends the views as data URIs in this order.",
+    "plannedCredits":  30,
+    "followUps":  "Remesh 30k (5), remesh 9k (5), Meshy rig (5): 45 credits in all",
+    "ownerApproval":  null,
+    "submitted":  false,
+    "taskId":  null,
+    "rawDownloadDestination":  "raw-models/A/lumi-swim.glb",
+    "runtimeDestinationAfterFittingAndValidation":  "models/lumi.glb (after in-game owner review)"
+}

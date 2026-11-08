@@ -3,16 +3,26 @@ on the same grey, and record them with hashes in that folder's MANIFEST.json ("v
 Each separate shape on the sheet (a child, or a hand that touches nothing) belongs to the view whose big shape is
 nearest; touching views (Finn's hand reaches the next child) are split at the emptiest column between their centres.
 Each view is centred on its own child; nothing of a neighbour is copied.
-   python tools/meshy/crop_body_sheets.py [--check]       (needs numpy, scipy, Pillow)"""
+   python tools/meshy/crop_body_sheets.py [--check]       (needs numpy, scipy, Pillow)
+(8 Nov 2026) Another pack, one colour of it, without touching that pack's manifest: the crops go to <pack>/crops-<variant>/
+and a SELECTION.json beside them records the chosen sheets, their hashes and the views (what run_batch.py reads):
+   python tools/meshy/crop_body_sheets.py --pack docs/friends-swim-sheets-20261108 --variant grey"""
 import hashlib, json, sys
 from pathlib import Path
 import numpy as np
 from PIL import Image
 from scipy import ndimage
 ROOT = Path(__file__).resolve().parents[2]; DIR = ROOT / 'docs/friends-body-sheets-20261108'
+arg = lambda k: sys.argv[sys.argv.index(k) + 1] if k in sys.argv else None
+PACK, VARIANT = arg('--pack'), arg('--variant')
+if PACK: DIR = ROOT / PACK
 VIEWS = ['front', 'left-side', 'back', 'three-quarter-front']
 check = '--check' in sys.argv
 man = json.loads((DIR / 'MANIFEST.json').read_text(encoding='utf-8')); out = {}
+if PACK:   # (a pack with several colours per character: only the chosen colour, as a selection of its own)
+    man = {'pack': PACK, 'variant': VARIANT, 'assets': [{'id': x['character'], 'image': x['path'], 'imageSHA256': x['sha256']} for x in man['assets'] if x.get('variant') == VARIANT]}
+    for x in man['assets']: assert hashlib.sha256((DIR / x['image']).read_bytes()).hexdigest() == x['imageSHA256'], x['image']
+CROPS = f'crops-{VARIANT}' if PACK else 'crops'
 for a in man['assets']:
     im = Image.open(DIR / a['image']).convert('RGB'); A = np.asarray(im).astype(np.float32); H, W = A.shape[:2]
     bg = np.median(np.concatenate([A[:8].reshape(-1, 3), A[-8:].reshape(-1, 3), A[:, :8].reshape(-1, 3), A[:, -8:].reshape(-1, 3)]), axis=0)
@@ -58,9 +68,9 @@ for a in man['assets']:
         own = ndimage.binary_dilation(mine[Y0:Y1, X0:X1], iterations=6) & ~((view_of[Y0:Y1, X0:X1] >= 0) & (view_of[Y0:Y1, X0:X1] != vi))
         patch = src[Y0:Y1, X0:X1].copy(); patch[~own] = bg.astype(np.uint8)
         canvas[Y0 - oy:Y1 - oy, X0 - ox:X1 - ox] = patch
-        rel = f"crops/{a['id']}-{v}.png"; p = DIR / rel
+        rel = f"{CROPS}/{a['id']}-{v}.png"; p = DIR / rel
         if not check: p.parent.mkdir(exist_ok=True); Image.fromarray(canvas).save(p, optimize=True)
         crops.append({'view': v, 'path': rel, 'sha256': hashlib.sha256(p.read_bytes()).hexdigest() if p.exists() else None, 'box': [int(x0), int(y0), int(x1), int(y1)]})
     a['viewCrops'] = crops; out[a['id']] = [c['box'] for c in crops]
-if not check: (DIR / 'MANIFEST.json').write_text(json.dumps(man, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
+if not check: (DIR / ('SELECTION.json' if PACK else 'MANIFEST.json')).write_text(json.dumps(man, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
 print(json.dumps({'check': check, 'boxes': out, 'paidCalls': 0}))

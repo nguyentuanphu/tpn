@@ -45,11 +45,19 @@ def body_spec(spec):
     """(8 Nov 2026, owner: friends as a Meshy body + clothes made in the game) a body job (assetId '<friend>-body') sends
     views cut from that friend's body sheet (tools/meshy/crop_body_sheets.py), checked against their recorded hashes:
     an ordered subset of the sheet's views starting with the front, the reviewed model tier, 30 credits."""
-    man = json.loads((BODY/'MANIFEST.json').read_text(encoding='utf-8'))
+    # (the T-shirt pack's views are in its MANIFEST; a later pack's chosen colour in its own SELECTION.json, e.g. the grey
+    # swim kit: <friend>-swim, docs/friends-swim-sheets-20261108)
+    pack = spec.get('bodyPack', 'docs/friends-body-sheets-20261108')
+    if pack not in ('docs/friends-body-sheets-20261108', 'docs/friends-swim-sheets-20261108'):
+        raise ValueError('Unknown body-sheet pack')
+    suffix = '-body' if pack.endswith('body-sheets-20261108') else '-swim'
+    man = json.loads(((ROOT/pack)/('MANIFEST.json' if suffix == '-body' else 'SELECTION.json')).read_text(encoding='utf-8'))
     friend = spec['bodyOf']; a = next((x for x in man['assets'] if x['id']==friend), None)
-    if a is None or spec['assetId'] != friend+'-body':
-        raise ValueError('A body job must be <friend>-body for a friend in the body-sheet manifest')
-    reviewed = [('docs/friends-body-sheets-20261108/'+c['path'], c['sha256']) for c in a.get('viewCrops', [])]
+    if a is None or spec['assetId'] != friend+suffix:
+        raise ValueError('A body job must be <friend>-body or <friend>-swim for a friend in its pack')
+    if suffix == '-swim' and hashlib.sha256((ROOT/pack/a['image']).read_bytes()).hexdigest() != a['imageSHA256']:
+        raise ValueError('The chosen swim sheet changed since it was selected')
+    reviewed = [(pack+'/'+c['path'], c['sha256']) for c in a.get('viewCrops', [])]
     inputs = [(i['localPath'], i['sha256']) for i in spec['inputImages']]
     if not reviewed or len(inputs) < 2 or not all(x in reviewed for x in inputs) or inputs != [r for r in reviewed if r in inputs] or inputs[0] != reviewed[0]:
         raise ValueError('Body job inputs differ from the recorded body-sheet views')
@@ -93,7 +101,7 @@ def spec_for(asset):
 def payload_for(spec):
     payload = dict(spec['parameters'])
     urls = []
-    base = BODY if spec.get('bodyOf') else OUT   # (a body job's views are repository paths in the body-sheet folder)
+    base = (ROOT/spec.get('bodyPack', 'docs/friends-body-sheets-20261108')) if spec.get('bodyOf') else OUT   # (a body job's views are repository paths in its pack)
     for image in spec['inputImages']:
         path = ((ROOT if spec.get('bodyOf') else OUT)/image['localPath']).resolve()
         if not path.is_relative_to(base) or not path.is_file():
