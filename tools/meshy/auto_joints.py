@@ -32,6 +32,14 @@ J['hip'][0] = 300.0; J['neck'][0] = 300.0; J['top'][0] = 300.0
 ht, nk = J['top'][1], J['neck'][1]; hh = nk - ht
 J['facebox'] = [[round(300 - .33 * hh, 1), round(ht + .37 * hh, 1)], [round(300 + .33 * hh, 1), round(ht + .91 * hh, 1)]]
 J.update({'trim_back_hair': False, 'original_skin': True, 'keep_meshy_uvs': True, 'skin_shift': True, 'skin_ref': '#f6c7a5'})
+# (9 Nov 2026) hand-set keys already in the file stay (ears_hidden, Clara's): the joints are measured again each fit
+import os
+if os.path.exists(OUT):
+    try:
+        _old = json.load(open(OUT, encoding='utf-8'))
+        for k in ('ears_hidden', 'ears_hidden_note'):
+            if k in _old: J[k] = _old[k]
+    except Exception: pass
 json.dump(J, open(OUT, 'w', encoding='utf-8'), indent=1)
 print('AJ', json.dumps(J))
 # check picture: the front render with the points

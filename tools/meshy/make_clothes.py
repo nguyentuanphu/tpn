@@ -97,6 +97,7 @@ print('CL hair in front of the shirt', int(infront.sum()))
 # (owner 8 Nov 2026: Clara on her own Meshy head and braids) CL_OWN_BRAIDS marks the braids hanging in front as hair here,
 # as graft_head.py does for a grafted head: hair-coloured by hue (the top of the head's colour) in front of and beside the
 # neck down the chest, grown through coloured triangles that are neither skin nor grey kit (shaded strands, ties)
+OWNB = np.zeros(NP, bool)   # (the braids marked here, CL_OWN_BRAIDS)
 if os.environ.get('CL_OWN_BRAIDS') and me.attributes.get('own_hair') is None:
     _hc = np.median(fcol[fc[:, 2] > fc[:, 2].max() - .05], axis=0); _hcc = _hc / max(float(_hc.max()), 1e-4)
     _n0 = (fc[:, 2] > NECK - .04) & (fc[:, 2] < NECK) & ~hair
@@ -110,7 +111,7 @@ if os.environ.get('CL_OWN_BRAIDS') and me.attributes.get('own_hair') is None:
             for k in e.link_faces:
                 j = k.index
                 if not _own[j] and _bz[j] and not skin[j] and not grey[j] and fS[j] > .22: _own[j] = True; _st.append(j)
-    _bmo.free(); hair |= _own; clothable = ~hair
+    _bmo.free(); hair |= _own; clothable = ~hair; OWNB = _own
     print('CL own braids (marked here)', int(_own.sum()))
 kit = (~skin if skin.any() else grey) & ~hair & (fS < .3)
 _kc = kit & (np.abs(fc[:, 0]) < SH_X * .7) & (fc[:, 2] > WAIST) & (fc[:, 2] < NECK + .04)   # (owner 8 Nov: a grey ring under the chins; Finn's kit rose 2 cm past the neck joint)
@@ -123,7 +124,7 @@ print('CL kit top', round(KIT_TOP, 3), 'neckband', round(NECKBAND, 3), 'neck', r
 _nr = (fc[:, 2] > NECK - .04) & (fc[:, 2] < NECK) & ~hair
 NAX = fc[_nr, 0].mean() if _nr.any() else 0.; NAY = fc[_nr, 1].mean() if _nr.any() else 0.
 _nd = np.hypot(fc[:, 0] - NAX, fc[:, 1] - NAY); NRAD = float(np.median(_nd[_nr])) if _nr.any() else .05
-neckcol = (fc[:, 2] > NECK - .06) & (fc[:, 2] < NECKBAND + .03) & (_nd < NRAD * 1.3) & ~infront & ~((fV < .3) & (fS < .6))
+neckcol = (fc[:, 2] > NECK - .06) & (fc[:, 2] < NECKBAND + .03) & (_nd < NRAD * 1.3) & ~infront & ~((fV < .3) & (fS < .6)) & ~OWNB   # (never the braids: owner 9 Nov, purple strips across Clara's braid tops)
 clothable = clothable | neckcol
 _vf = {}
 for p in me.polygons:
@@ -397,6 +398,17 @@ if LIGHT:
         print('CL light body reduced', n0, '->', len(body.data.polygons))
 # (owner 8 Nov 2026: a grey ring under the chins) under the collar the body's own grey kit sinks 8 mm in: looking down past
 # a collar's edge shows a shadow, not the swimsuit (its shared edge with the neck's skin stays, under the collar)
+# (owner 9 Nov 2026: Clara's braid ends vanished into the skirt's top) the braids' tips at the waist lift forward a
+# little, so they hang over a skirt's waistband instead of inside it
+if OWNB.any():
+    _bv = set()
+    for p_ in me.polygons:
+        if OWNB[p_.index]: _bv.update(p_.vertices)
+    _lift = 0
+    for vi in _bv:
+        v_ = me.vertices[vi]; t_ = max(0., min(1., (WAIST + .06 - v_.co.z) / .08))
+        if t_ > 0: v_.co.y -= .03 * t_; _lift += 1
+    print('CL braid tips lifted over the waistband', _lift)
 _kv = set()
 for p_ in me.polygons:
     if kit[p_.index] and p_.center.z > NECKBAND - .06 and math.hypot(p_.center.x - NAX, p_.center.y - NAY) < NRAD * 3: _kv.update(p_.vertices)

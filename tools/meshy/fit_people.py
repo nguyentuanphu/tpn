@@ -419,12 +419,19 @@ if ORIGINAL:   # the skin is not recoloured: the face layer covers the face's sk
     _c = _nc or _c
     HAIRC = min(_c, key=lambda c: float(np.sum(c[:3]))) if _c else None
     hairish = (np.linalg.norm(F[..., :3] - HAIRC, axis=-1) < .16) & ~skin_mask(F) if HAIRC is not None else np.zeros(F.shape[:2], bool)
+    if OWN and HAIRC is not None:   # (owner 9 Nov 2026, the skin tones: Clara's hair round her face is nearly her skin's colour, passed
+        # the skin test and was tinted with the face) hair is also what is clearly more saturated than her face skin and
+        # nearer the hair's colour mix than the skin's
+        _ch = F[..., :3] / (F[..., :3].sum(-1, keepdims=True) + 1e-4); _cr = np.array(REF[:3]) / max(float(np.sum(REF[:3])), 1e-4); _chh = np.array(HAIRC[:3]) / max(float(np.sum(HAIRC[:3])), 1e-4)
+        _sr = (max(REF[:3]) - min(REF[:3])) / max(max(REF[:3]), 1e-4)
+        hairish |= (S_ > _sr * 1.2) & (np.linalg.norm(_ch - _chh, axis=-1) < np.linalg.norm(_ch - _cr, axis=-1)) & (V > .3)
     print('FIT hair colour', None if HAIRC is None else np.round(HAIRC, 3), 'hair pixels in the face picture', int(hairish.sum()))
     keep = ~hairish; HAIRISH = hairish
     for b in eyes.values():
         w_, h_ = b[2] - b[0], b[3] - b[1]
         keep |= (xx >= b[0] - w_ * .1) & (xx <= b[2] + w_ * .1) & (yy >= b[1] - h_ * .15) & (yy <= b[3] + h_ * .1)
         keep |= (xx >= b[0] - w_ * .1) & (xx <= b[2] + w_ * .1) & (yy >= b[1] - h_ * .9) & (yy < b[1]) & (V < .55)   # the brow
+    if mouth: keep |= (xx >= mouth[0] - 4) & (xx <= mouth[2] + 4) & (yy >= mouth[1] - 4) & (yy <= mouth[3] + 4)   # (the mouth and its moods stay on the layer)
     al = keep.astype(np.float32)
     for _ in range(2): al = (al + np.roll(al, 1, 0) + np.roll(al, -1, 0) + np.roll(al, 1, 1) + np.roll(al, -1, 1)) / 5
     base[..., 3] = al
@@ -476,6 +483,11 @@ def lid(img, b, top=0., bot=1.):   # (original_skin) a closed lid painted over t
         for _ in range(2): _ls = _ls | (np.roll(_ls, 1, 0) | np.roll(_ls, -1, 0) | np.roll(_ls, 1, 1) | np.roll(_ls, -1, 1))   # (its soft edge too)
         _ls &= ~((yy < b[1] + h_ * .08) & (xx > b[0]) & (xx < b[2]) & HAIRISH)
         hole |= _ls
+        # (owner 9 Nov 2026, circled again: a pale crescent of the open eye at the outer rim of one closed eye) the whole eye
+        # area, a little past its box, is closed: the outline's paler edge is not dark enough to be traced (fringe strands
+        # over the top stay hair)
+        _wide = (np.hypot((xx - cx_) / (w_ * .76), (yy - (b[1] + b[3]) / 2) / (h_ * .64)) < 1) & ~(HAIRISH & (yy < b[1] + h_ * .15)) & ~(HAIRISH & ~_inb & (S_ > .3) & (V > .45) & ~((V > .7) & (S_ < .22)))   # (dark lash flicks close even when hair-coloured, Lumi's; only bright, strongly coloured hair beside the eye stays: the faint grey edge of Lumi's outline closes, 9 Nov)   # (an eye's white is never hair: Clara's inner corner; Lumi's outer arc, 9 Nov; a strand of hair beside the eye stays hair: Clara's)
+        hole |= _wide & (yy >= b[1] + h_ * .24)   # (below the brows: b reaches up over them, and closed eyes lost Clara's and Lumi's brows)
     if top > 0: hole &= yy >= y0
     if PART: hole &= yy < lidline(xx)
     # her own skin flows in from all round the eye (a smooth fill, no disc edge): the eye pixels are repeatedly
@@ -799,7 +811,7 @@ for p in me.polygons:
         else: col.data[li].color_srgb = (*cv, 1) if TEX == 0 else (1, 1, 1, 1)   # light model: the clothes' colour in the corners, no picture
 print('FIT skin faces', nskin, 'of', len(me.polygons))
 SKIN_TEX = TEX > 0 and (not ORIGINAL or SHIFT)   # (original_skin alone: no skin part at all)
-CLEAR_FACE = TEX > 0 and not ORIGINAL   # (an opaque face layer needs no clearing underneath)
+CLEAR_FACE = TEX > 0 and not ORIGINAL   # (an opaque face layer needs no clearing underneath; an own face's open eyes ARE the painted ones under it, 9 Nov)
 # the high-detail model keeps Meshy's painted skin ("skin-tex"); the light one its corner colours
 def uv_texels(polys, shape):   # texels covered by these faces' UV triangles
     hh, ww = shape; out = np.zeros((hh, ww), bool)
@@ -1091,11 +1103,12 @@ if TEX and KEEP and SHIFT:
         a = np.array(a[:]); b = np.array(b[:]); ab = b - a; t = np.clip(((P - a) @ ab) / max(float(ab @ ab), 1e-9), 0, 1); return np.linalg.norm(P - (a + t[:, None] * ab), axis=1)
     _limb = np.zeros(NP, bool)
     for sd in 'LR':
-        sh, el, wr = L['shoulder' + sd], L['elbow' + sd], L['wrist' + sd]; hand = wr + (wr - el) * .7
-        _limb |= (_segd(_pc3, sh, el) < .075) | (_segd(_pc3, el, wr) < .065) | (_segd(_pc3, wr, hand) < .07)
+        sh, el, wr = L['shoulder' + sd], L['elbow' + sd], L['wrist' + sd]; hand = wr + (wr - el) * 1.0   # (to the fingertips: owner 9 Nov, orange fingertips on dark tones)
+        _limb |= (_segd(_pc3, sh, el) < .1) | (_segd(_pc3, el, wr) < .085) | (_segd(_pc3, wr, hand) < .09)
         hp, kn, an = L['hip' + sd], L['knee' + sd], L['ankle' + sd]
         _limb |= (_segd(_pc3, hp, kn) < .09) | (_segd(_pc3, kn, an) < .075)
     _neck = (~_hz) & (_pc3[:, 2] > L['neck'].z - .08) & (np.abs(_pc3[:, 0] - _hcx) < _hw * .55)
+    if J.get('ears_hidden'): _ear[:] = False; _face &= np.abs(_pc3[:, 0] - _hcx) < _hw * .85   # (ears under the hair, Clara's: the hair beside the cheeks is not skin)
     _where = _face | _ear | _limb | _neck
     _seed &= _where
     # (arms, hands and legs away from the face, in their own shade: Lumi's arms and legs, Sol's hands past his bracers)
@@ -1111,6 +1124,36 @@ if TEX and KEEP and SHIFT:
         for b_ in _nb[a_]:
             if _skp[b_] or _tot[b_] == 0 or not _where[b_]: continue
             if np.abs(_mc[b_] - _mc[a_]).max() < .05 and _mcd[b_] < .13 and _skc[b_] < .085 and _mc[b_].max() > .25 and _satok[b_]: _skp[b_] = True; _st.append(b_)
+    # (owner 9 Nov 2026: "thử các màu skin" - on dark tones Sol's arms were speckled orange and Clara's hair beside her face
+    # speckled dark) the mark is evened out by its neighbours: an unmarked triangle mostly surrounded by skin on an arm, leg,
+    # hand or neck, still skin-coloured, joins; a lone marked triangle off the face's core (in the hair) leaves
+    _core = _face & (np.abs(_pc3[:, 0] - _hcx) < _hw * .8)
+    # (owner 9 Nov 2026, the skin tones: Clara's hair round her face darkened with the skin) a head triangle whose colour mix
+    # is nearer the hair's (the top of the head) than the face skin's, and more saturated than the skin, is hair
+    _top = _hz & (_pc3[:, 2] > _pc3[_hz, 2].max() - .05) if _hz.any() else _hz
+    _hcm = np.median(_mc[_top & (_tot > 0)], axis=0) if (_top & (_tot > 0)).any() else _sk_med
+    _chm = _mc / (_mc.sum(-1, keepdims=True) + 1e-4)
+    _hairlike = _hz & (_sat > _ssk * 1.08) & (np.linalg.norm(_chm - _hcm / max(float(_hcm.sum()), 1e-4), axis=-1) < np.linalg.norm(_chm - _sk_med / max(float(_sk_med.sum()), 1e-4), axis=-1))
+    _hairlike &= ~(_core & (_pc3[:, 2] < fz1 - (fz1 - fz0) * .12))   # (never the face below the brows: Clara's blush is her hair's red, 9 Nov)
+    _skp &= ~_hairlike
+    print('FIT hair-like head triangles unmarked', int(_hairlike.sum()))
+    for _ in range(8):
+        _fr = np.array([np.mean([_skp[j] for j in _nb[i]]) if _nb[i] else 0. for i in range(NP)])
+        _add = ~_skp & (_limb | _neck | _ear) & (_fr >= .5) & (_tot > 0) & (_skc < .2) & (_mc.max(-1) > .2)
+        # (owner 9 Nov 2026, the skin tones: Clara's strong blush, nose tip and lips stayed pink) inside the face, a warm
+        # coloured triangle mostly surrounded by skin is skin too (the eyes: pale whites and dark irises, not warm enough)
+        _add |= ~_skp & _core & (_fr >= .5) & (_tot > 0) & (_mc.max(-1) > .45) & (_sat > _ssk * .6) & (_mc[:, 0] > _mc[:, 1]) & (_mc[:, 1] >= _mc[:, 2] * .8)
+        _skp = _skp | _add
+        _rem = (_skp & _hz & ~_core & (_fr < .34)) | (_skp & _hz & ~_face & (_sat > _ssk * 1.2))   # (and hair more strongly coloured than her face skin: Clara's)
+        _skp = (_skp | _add) & ~_rem
+    # (owner 9 Nov 2026, the skin tones: thin unmarked slivers on Sol's arms showed as orange streaks) on a swim body the arms and
+    # legs are bare: every coloured triangle there that is not the grey kit nor hair is skin
+    if 'swim' in ID:
+        _skp |= _limb & ~_hz & (_tot > 0) & (_sat > _ssk * .45) & (_skc < .3) & (_mc.max(-1) > .15)
+    # (owner 9 Nov 2026, the skin tones: blush under Clara's eyes and her nose stayed pink, inside the eye and nose holes of the
+    # mark) the whole face core is skin but its hair: the game's own test keeps the eye whites (pale) and lines (dark) as painted
+    _skp |= _core & (_tot > 0) & ~_hairlike
+    print('FIT skin mark evened: now', int(_skp.sum()))
     _onskin = np.where(_ok, _skp[np.clip(ids, 0, None)], False)
     _tsat = (A_.max(-1) - A_.min(-1)) / np.maximum(A_.max(-1), 1e-4)
     _keep = (_V < .3) | (_d > .2) | (_tsat < _ssk * .5)   # (and pale cream texels on a skin triangle's edge)   # (dark lines, irises, hair strands, clothes painted on a skin triangle)
@@ -1119,8 +1162,13 @@ if TEX and KEEP and SHIFT:
     # with its own per-texel test, which keeps eyes, brows, freckles and lines on skin triangles as painted.
     _cw = body.data.color_attributes.get('skinw') or body.data.color_attributes.new('skinw', 'BYTE_COLOR', 'CORNER')
     _cd = _cw.data; _wl = np.repeat(_skp.astype(np.float32), [len(p.loop_indices) for p in me.polygons])
-    _buf = np.zeros(len(_cd) * 4, np.float32); _buf[0::4] = _wl; _buf[1::4] = _wl; _buf[2::4] = _wl; _buf[3::4] = 1
+    _lw = np.repeat((_skp & (_limb | _neck) & ~_hz).astype(np.float32), [len(p.loop_indices) for p in me.polygons])   # (an arm, leg or neck triangle; the game tints its texels more fully, owner 9 Nov: Sol's streaky arms on dark tones)
+    _buf = np.zeros(len(_cd) * 4, np.float32); _buf[0::4] = _wl; _buf[1::4] = _wl; _buf[2::4] = _wl * (1 - _lw); _buf[3::4] = 1   # (an arm or leg: green above blue; older models have them equal)
     _cd.foreach_set('color', _buf); body.data.color_attributes.active_color = _cw
+    # (9 Nov 2026) the skin mark must be the body's only corner colour: Meshy's own all-white 'Color' went out first as COLOR_0,
+    # the game read that (every triangle skin: Clara's hair tinted with her face) and never saw the mark
+    for _n in [c.name for c in body.data.color_attributes if c.name != 'skinw']: body.data.color_attributes.remove(body.data.color_attributes[_n])
+    _cw = body.data.color_attributes['skinw']; body.data.color_attributes.active_color = _cw; body.data.color_attributes.render_color_index = body.data.color_attributes.find('skinw')
     print('FIT skin mark: skin triangles', int(_skp.sum()), 'of', len(me.polygons))
     for m_ in (clothm, skinm): m_['skin_mark'] = True
 if TEX:

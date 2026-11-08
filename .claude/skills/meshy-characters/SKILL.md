@@ -74,6 +74,14 @@ One friend end to end: `GF_SKIP_REFIT=1 powershell -File tools/meshy/graft_frien
 
 - 9 Nov 2026: the owner chose the own-head way (B) for all four friends. On an own head, closed eyes left a ghost of the open eye, and a black mark at the face's edge from the side, wherever the hair is as dark as the eye's outline (Finn's black, Lumi's darkest leaves) or the eye has a pale rim (Sol). `fit_people.py` now traces the eye's outline itself (very dark or pale-white pixels joined to the eye, out to its corners), and it always closes. Refit with `fit_person.ps1 -Id <id>-swim -Ref <ref> -Prefix <id>-` (2 min each), then run `dress_own.ps1`.
 
+- Skin tones (9 Nov): test every model with `game_shots.mts tones`.
+  - The body must carry `skinw` as its only colour layer. Meshy's own all-white `Color` used to be exported first, so the game read it, never saw the mark, and tinted hair with the face.
+  - In the mark, red means skin. Green above blue means a bare arm, leg or neck triangle, which the game tints fully to the tone, keeping only the painted light and shade.
+  - The face core is all skin except hair, and the game's own per-texel test keeps the eye whites and lines as painted.
+  - Hair that is nearly the skin's colour (Clara's) is told apart by its hue and saturation, except below the brows, because her blush is her hair's red.
+  - `ears_hidden` in a joints file keeps the hair beside the cheeks out of the skin. `auto_joints.py` preserves that key.
+- Closed eyes on own heads: trace the eye's outline (very dark or pale-white pixels joined to the eye) and close a slightly wider area below the brows. Only bright, strongly coloured hair beside the eye stays hair. Dark lash flicks close even when they are hair-coloured (Lumi).
+
 ## Scaling up
 
 When a method is proven on one person (owner-approved), the rest can be split across chats or accounts: one chat per group (e.g. friends, VN-north villagers, VN-central, VN-south, Australia, animals by skeleton type), each using this skill, the same tools and its own review sheets, never two chats writing the same files. Paid Meshy jobs stay on one account's journal per group; each group syncs its ledger.

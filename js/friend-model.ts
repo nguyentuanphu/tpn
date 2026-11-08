@@ -48,11 +48,18 @@ vec3 pc_ = uPaint / (uPaint.r + uPaint.g + uPaint.b); vec3 tx_ = sampledDiffuseC
 #ifdef USE_COLOR
 // (the triangles marked skin when the model was made, tools/meshy/fit_people.py: red of the corner colour) times a loose
 // per-texel test on them, so eyes, brows, lashes and painted lines on skin triangles stay as painted
-float w_ = vColor.r * (1.0 - smoothstep(.10, .24, distance(tx_ / sm_, pc_))) * smoothstep(.06, .16, sm_);
+float lb_ = clamp(vColor.g - vColor.b, 0.0, 1.0); float w_ = vColor.r * mix((1.0 - smoothstep(.16, .32, distance(tx_ / sm_, pc_))) * smoothstep(.06, .16, sm_) * smoothstep(.15, .25, (max(tx_.r, max(tx_.g, tx_.b)) - min(tx_.r, min(tx_.g, tx_.b))) / max(max(tx_.r, max(tx_.g, tx_.b)), 1e-4)), 1.0, lb_); // (owner 9 Nov 2026: blush and the nose tip are redder than the skin and stayed pink on dark tones; the mark already keeps hair out, eye whites are kept by their paleness) // (owner 9 Nov 2026: freckles and shade on Sol's arms stayed orange on dark tones; arms, legs and neck (green above blue in the mark: bare skin, nothing painted on them) take the tone whole; the face keeps its fine test)
 #else
-float w_ = (1.0 - smoothstep(${lax ? '.10, .24' : '.025, .06'}, distance(tx_ / sm_, pc_))) * smoothstep(.03, .1, sm_) * (${lax ? 'smoothstep(.46, .56, (max(tx_.r, max(tx_.g, tx_.b)) - min(tx_.r, min(tx_.g, tx_.b))) / max(tx_.r, max(max(tx_.g, tx_.b), 1e-4)))' : '1.0'});   // (skin is strongly coloured; a cream blouse marked skin is not)
+float w_ = (1.0 - smoothstep(${lax ? '.16, .32' : '.025, .06'}, distance(tx_ / sm_, pc_))) * smoothstep(.03, .1, sm_) * (${lax ? 'smoothstep(.46, .56, (max(tx_.r, max(tx_.g, tx_.b)) - min(tx_.r, min(tx_.g, tx_.b))) / max(tx_.r, max(max(tx_.g, tx_.b), 1e-4)))' : '1.0'});   // (skin is strongly coloured; a cream blouse marked skin is not) (owner 9 Nov 2026: the face pieces' blush stayed pink on dark tones: .10-.24 widened)
 #endif // (the picture's own colour: the material colour is near black)
-vec3 k_ = mix(vec3(1.0), uTint, w_); diffuseColor.rgb *= k_;`)
+vec3 k_ = mix(vec3(1.0), uTint, w_);
+#ifdef USE_COLOR
+// (owner 9 Nov 2026, the skin tones: Meshy's painted light strokes on bare arms kept their orange under a dark tone) an arm or
+// leg takes the tone's colour, keeping only the painted light and shade (its brightness against the painted skin's)
+vec3 lim_ = uTint * uPaint * (sm_ / (uPaint.r + uPaint.g + uPaint.b + 1e-4)) / max(tx_, vec3(.02));
+k_ = mix(k_, lim_, lb_ * vColor.r * smoothstep(.06, .16, sm_));
+#endif
+diffuseColor.rgb *= k_;`)
       .replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\ntotalEmissiveRadiance *= k_;')
       .replace('#include <color_fragment>', ''); }; // (the corner colour is the skin mark, not a colour)
   m.customProgramCacheKey = () => 'meshy-skintint' + (lax ? '-lax' : '') + (m.vertexColors ? '-mark' : ''); m.needsUpdate = true; return m;

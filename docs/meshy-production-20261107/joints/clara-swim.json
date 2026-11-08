@@ -52,5 +52,7 @@
  "original_skin": true,
  "keep_meshy_uvs": true,
  "skin_shift": true,
- "skin_ref": "#f6c7a5"
+ "skin_ref": "#f6c7a5",
+ "ears_hidden": true,
+ "ears_hidden_note": "owner 9 Nov 2026, skin tones: her ears are under her hair; the hair beside her cheeks is not skin"
 }
