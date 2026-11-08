@@ -7,7 +7,7 @@ const worker = self;
 // Offline support: cache the whole game on first visit, then serve from the cache.
 // Bump VERSION whenever files change so devices pick up the update. Updates only replace the game's files:
 // saved progress (localStorage, IndexedDB, and the 'sv-save' copy) and the voice pack are never deleted.
-const VERSION = 'sv-2026-11-02-v1.07';
+const VERSION = 'sv-2026-11-08-v1.08';
 const FILES = [
   // (v1.08, Release) the files the v1.08 helpers added, all offline (checks offline and swupdate)
   'js/areas.js', 'js/art/emoji108b.js', 'js/art/frienditems.js', 'js/art/games108b.js', 'js/art/handson.js', 'js/art/lumi.js', 'js/art/maths3.js', 'js/art/money3.js', 'js/art/s2au.js',
