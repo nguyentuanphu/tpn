@@ -62,6 +62,39 @@ const shots: Record<string, string> = await P.page.evaluate(async ([MODE, LIST])
       top.remove(av.root);
     }
   }
+  // nape: the back of the neck up close, level and from a little below, standing, running and looking to each side
+  if (MODE === 'nape') for (const id of ids) {
+    await A.loadFriendModels(id); await A.loadFriendModels(id + '-hd');
+    const av: any = A.buildAvatar({ set: LOOK[id] || 'girl', friend: id, skin: '#f6c7a5' }, null, { hd: true }); A.showHD(av, true);
+    top.add(av.root); av.root.position.set(h.pos.x + 3, h.av.root.position.y, h.pos.z + 3); av.root.rotation.y = 0;
+    const M = av.modelHD; let k = 0;
+    for (const [state, t, look] of [['idle', 1, null], ['run', 1.3, null], ['idle', 2, 2.5], ['idle', 2.3, -2.5]] as [string, number, number | null][]) {
+      A.setLookTarget(look == null ? null : { x: av.root.position.x + look, z: av.root.position.z + 1.2 });
+      for (let f = 0; f < 6; f++) A.animate(av, state, t + f / 30); av.root.updateMatrixWorld(true);
+      let head: any = null; M.obj.traverse((o: any) => { if (o.isBone && o.name === 'head') head = o; });
+      const hp = head.getWorldPosition(new THREE.Vector3());
+      for (const [dy, side] of [[0, Math.PI], [-.25, Math.PI], [0, 2.4], [0, -2.4]] as [number, number][]) {
+        const fwd = new THREE.Vector3(Math.sin(side), 0, Math.cos(side)), cam = new THREE.PerspectiveCamera(30, 1, .02, 50);
+        const at = hp.clone().add(new THREE.Vector3(0, -.03, 0)); cam.position.copy(at).addScaledVector(fwd, .55); cam.position.y += dy; cam.lookAt(at);
+        grab(`${id}-nape-${k++}`, cam, 400, 400);
+      }
+    }
+    A.setLookTarget(null); top.remove(av.root);
+  }
+  // motion: running and looking to each side, close on the neck and shoulders (a join must never open)
+  if (MODE === 'motion') for (const id of ids) {
+    await A.loadFriendModels(id); await A.loadFriendModels(id + '-hd');
+    const av: any = A.buildAvatar({ set: LOOK[id] || 'girl', friend: id, skin: '#f6c7a5' }, null, { hd: true }); A.showHD(av, true);
+    top.add(av.root); av.root.position.set(h.pos.x + 3, h.av.root.position.y, h.pos.z + 3); av.root.rotation.y = 0;
+    const M = av.modelHD; let k = 0;
+    for (const [state, t, look] of [['run', 1.1, null], ['run', 1.35, null], ['run', 1.6, null], ['idle', 2, 2.5], ['idle', 2.3, -2.5], ['cheer', 1.4, null]] as [string, number, number | null][]) {
+      A.setLookTarget(look == null ? null : { x: av.root.position.x + look, z: av.root.position.z + 1.2 });
+      for (let f = 0; f < 6; f++) A.animate(av, state, t + f / 30); av.root.updateMatrixWorld(true);
+      for (const s of [0, 1.6, Math.PI]) headShot(`${id}-motion-${k}-${state}-${s.toFixed(1)}`, av.root, M, 0, s);
+      k++;
+    }
+    A.setLookTarget(null); top.remove(av.root);
+  }
   if (MODE === 'tones') for (const id of ids) {
     FM.setMeshyTones(true); await A.loadFriendModels(id); await A.loadFriendModels(id + '-hd');
     let i = 0;

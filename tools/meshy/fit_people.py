@@ -457,6 +457,7 @@ def lid(img, b, top=0., bot=1.):   # (original_skin) a closed lid painted over t
             _h2 = _n
         for _ in range(2): _h2 = _h2 | (_far & (np.roll(_h2, 1, 0) | np.roll(_h2, -1, 0) | np.roll(_h2, 1, 1) | np.roll(_h2, -1, 1)))
         hole = (_h2 | (d < .6)) & (yy >= cy_ - ry * .7)   # (the brows just above stay: Clara's and Lumi's vanished)
+        hole &= ~(HAIRISH & (yy < b[1] + (b[3] - b[1]) * .08))   # (b is the eye box grown upwards: only strands above the eye itself; dark lashes close)   # (fringe strands in the top of the eye area stay hair: no skin patch over them)
     if top > 0: hole &= yy >= y0
     # her own skin flows in from all round the eye (a smooth fill, no disc edge): the eye pixels are repeatedly
     # replaced by the mean of their neighbours, the skin round them held fixed
@@ -582,7 +583,9 @@ if OWN:
     MOUTH_A = soft_oval(mouth, 1.7, 2.6) if mouth else np.zeros((H_, W_), np.float32)
     # (hair in front stays the 3D hair; but never inside the eyes: Sol's amber irises are hair-coloured and stayed open)
     _ineyes = np.zeros((H_, W_), bool)
-    for b in eyes.values(): g_ = grow(b); _ineyes |= (xx >= g_[0]) & (xx < g_[2]) & (yy >= g_[1]) & (yy < g_[3])
+    # (8 Nov 2026: a light patch over Finn's fringe on every blink) only the lower part of the eye area counts as "eye":
+    # fringe strands hanging into its top stay hair (the iris, even a hair-coloured one, is lower)
+    for b in eyes.values(): g_ = grow(b); _ineyes |= (xx >= g_[0]) & (xx < g_[2]) & (yy >= b[1] - (b[3] - b[1]) * .05) & (yy < g_[3])
     _ie = _ineyes.astype(np.float32)
     for _ in range(6): _ie = (_ie + np.roll(_ie, 1, 0) + np.roll(_ie, -1, 0) + np.roll(_ie, 1, 1) + np.roll(_ie, -1, 1)) / 5   # (soft: its box edge showed as straight lines on Clara)
     NOHAIR = 1 - np.clip(HAIRISH.astype(np.float32) * 1.5, 0, 1) * (1 - _ie)
