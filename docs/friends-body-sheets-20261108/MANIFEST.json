@@ -27,7 +27,53 @@
         "hint": "Generated images are saved to /workspace/generated_images as /workspace/generated_images/exec-ae0dfba7-6e25-4524-b1f7-d9ec4c9038cf.png by default.\nIf you need to use a generated image at another path, copy it and leave the original in place unless the user explicitly asks you to delete it.\nThe generated image is already displayed to the user. There is no need to render it in the final response as a Markdown image or file link.",
         "prompt": "Create ONE NEW FOUR-VIEW TURNAROUND SHEET of the SAME child finn from this child's OWN attached reference. This is a wardrobe-only change plus the requested four-view pose/layout. Preserve identity exactly: same face/head silhouette, eye size/shape/colour, eyebrows, freckles, skin colour, age, overall height-to-head proportions, hair shape and hair colour. Finn's exact black/blue-black curly tousled hair silhouette, brown eyes, eyebrows, light warm skin and freckles. Keep the reference's soft premium cozy stylized 3D animation art style, not a redesigned child. CLOTHING: ONLY a plain close-fitting opaque LIGHT GREY short-sleeved crew-neck undershirt/T-shirt and plain opaque LIGHT GREY regular shorts ending ABOVE THE KNEES, comfortable modest everyday child clothing. No pattern, logo, buttons, piping, pockets, belt, shoes or socks. BARE FEET fully visible. Remove ALL original bags, straps, capes, gloves, bracelets, necklaces, earrings, hats, boots, tights and held items. No accessories except features that belong to the hair described above. POSE: stand straight relaxed A-pose, arms approximately 30 degrees away from torso, clear gaps arms/body and between legs, open empty hands with fingers together, no waving, friendly CLOSED-mouth smile and OPEN eyes, head aligned straight with each view. LAYOUT: exactly FOUR complete full-body views side by side, equal height/scale and baseline, in this exact left-to-right order: FRONT; STRICT LEFT SIDE with face/nose pointing image LEFT; BACK; THREE-QUARTER FRONT view. Four views of the SAME single child, not four different children. Include crown/hair, fingers and bare toes with generous margins and space between views. Same hairstyle in every angle. Plain uniform MID-GREY background (darker than light grey clothes), soft even studio lighting, NO floor shadows, no text, no labels, no watermark or logos. Wide landscape four-view production sheet.",
         "source": "docs/meshy-production-20261107/reference-images/02-finn/turnaround.png"
-      }
+      },
+      "viewCrops": [
+        {
+          "view": "front",
+          "path": "crops/finn-front.png",
+          "sha256": "de0ea9a87ecea8ff33896ff669fac8a98bba576b11efcbdb5f91b4b9f92f8038",
+          "box": [
+            29,
+            34,
+            457,
+            909
+          ]
+        },
+        {
+          "view": "left-side",
+          "path": "crops/finn-left-side.png",
+          "sha256": "abe03ba58d9dc03ee969eba8654fabe61c8a7e881a2c80358bae9225de9ecf8c",
+          "box": [
+            476,
+            37,
+            745,
+            909
+          ]
+        },
+        {
+          "view": "back",
+          "path": "crops/finn-back.png",
+          "sha256": "54e177bc5d6b188d638ccf7012601fcec498466fb44fd4cbafc4d779c45ef671",
+          "box": [
+            724,
+            36,
+            1140,
+            909
+          ]
+        },
+        {
+          "view": "three-quarter-front",
+          "path": "crops/finn-three-quarter-front.png",
+          "sha256": "19a2afbbda78943313ed27fce71d91cdf158615063157c8a2d36f19015f9973c",
+          "box": [
+            1158,
+            34,
+            1507,
+            912
+          ]
+        }
+      ]
     },
     {
       "id": "sol",
@@ -54,7 +100,53 @@
         "hint": "Generated images are saved to /workspace/generated_images as /workspace/generated_images/exec-4b12c71d-7974-40d5-ae00-8c483e4e446e.png by default.\nIf you need to use a generated image at another path, copy it and leave the original in place unless the user explicitly asks you to delete it.\nThe generated image is already displayed to the user. There is no need to render it in the final response as a Markdown image or file link.",
         "prompt": "Create ONE NEW FOUR-VIEW TURNAROUND SHEET of the SAME child sol from this child's OWN attached reference. This is a wardrobe-only change plus the requested four-view pose/layout. Preserve identity exactly: same face/head silhouette, eye size/shape/colour, eyebrows, freckles, skin colour, age, overall height-to-head proportions, hair shape and hair colour. Sol's exact curly copper red-brown hair silhouette, amber-brown eyes, eyebrows, warm light skin and freckles. Keep the reference's soft premium cozy stylized 3D animation art style, not a redesigned child. CLOTHING: ONLY a plain close-fitting opaque LIGHT GREY short-sleeved crew-neck undershirt/T-shirt and plain opaque LIGHT GREY regular shorts ending ABOVE THE KNEES, comfortable modest everyday child clothing. No pattern, logo, buttons, piping, pockets, belt, shoes or socks. BARE FEET fully visible. Remove ALL original bags, straps, capes, gloves, bracelets, necklaces, earrings, hats, boots, tights and held items. No accessories except features that belong to the hair described above. POSE: stand straight relaxed A-pose, arms approximately 30 degrees away from torso, clear gaps arms/body and between legs, open empty hands with fingers together, no waving, friendly CLOSED-mouth smile and OPEN eyes, head aligned straight with each view. LAYOUT: exactly FOUR complete full-body views side by side, equal height/scale and baseline, in this exact left-to-right order: FRONT; STRICT LEFT SIDE with face/nose pointing image LEFT; BACK; THREE-QUARTER FRONT view. Four views of the SAME single child, not four different children. Include crown/hair, fingers and bare toes with generous margins and space between views. Same hairstyle in every angle. Plain uniform MID-GREY background (darker than light grey clothes), soft even studio lighting, NO floor shadows, no text, no labels, no watermark or logos. Wide landscape four-view production sheet.",
         "source": "docs/meshy-production-20261107/reference-images/03-sol/turnaround.png"
-      }
+      },
+      "viewCrops": [
+        {
+          "view": "front",
+          "path": "crops/sol-front.png",
+          "sha256": "a95a83b4f5d15c67dac2fe380b5556a7ac12dd4b98a5c55e827f1bb3bca67b9e",
+          "box": [
+            49,
+            24,
+            454,
+            908
+          ]
+        },
+        {
+          "view": "left-side",
+          "path": "crops/sol-left-side.png",
+          "sha256": "b4d2a4ea08fbf65f5e6cf3107c6c2c1e8172c98e4b5059e51c102f67f619d104",
+          "box": [
+            479,
+            27,
+            743,
+            908
+          ]
+        },
+        {
+          "view": "back",
+          "path": "crops/sol-back.png",
+          "sha256": "ebb27cf969fb519948daa9f848e8b748c11c7db9051e4a346af8f33819eea378",
+          "box": [
+            739,
+            25,
+            1133,
+            908
+          ]
+        },
+        {
+          "view": "three-quarter-front",
+          "path": "crops/sol-three-quarter-front.png",
+          "sha256": "a1d8731f8b8cdcc004854e83fd6d0f591f0905e0809bdf8a8e2f8a1c06e035fb",
+          "box": [
+            1146,
+            24,
+            1483,
+            912
+          ]
+        }
+      ]
     },
     {
       "id": "clara",
@@ -87,7 +179,53 @@
           "prompt": "Create ONE NEW FOUR-VIEW TURNAROUND SHEET of the SAME child clara from this child's OWN attached reference. This is a wardrobe-only change plus the requested four-view pose/layout. Preserve identity exactly: same face/head silhouette, eye size/shape/colour, eyebrows, freckles, skin colour, age, overall height-to-head proportions, hair shape and hair colour. Clara's exact peach-pink hair and two long braids draping IN FRONT of the shoulders in every view. Rear view: back of the head and nape only, absolutely NO braids hanging down her back. Keep her brown eyes, brows and rosy complexion. Remove flower earrings; retain the reference hairstyle and its small flowers in the hair only. Keep the reference's soft premium cozy stylized 3D animation art style, not a redesigned child. CLOTHING: ONLY a plain close-fitting opaque LIGHT GREY short-sleeved crew-neck undershirt/T-shirt and plain opaque LIGHT GREY regular shorts ending ABOVE THE KNEES, comfortable modest everyday child clothing. No pattern, logo, buttons, piping, pockets, belt, shoes or socks. BARE FEET fully visible. Remove ALL original bags, straps, capes, gloves, bracelets, necklaces, earrings, hats, boots, tights and held items. No accessories except features that belong to the hair described above. POSE: stand straight relaxed A-pose, arms approximately 30 degrees away from torso, clear gaps arms/body and between legs, open empty hands with fingers together, no waving, friendly CLOSED-mouth smile and OPEN eyes, head aligned straight with each view. LAYOUT: exactly FOUR complete full-body views side by side, equal height/scale and baseline, in this exact left-to-right order: FRONT; STRICT LEFT SIDE with face/nose pointing image LEFT; BACK; THREE-QUARTER FRONT view. Four views of the SAME single child, not four different children. Include crown/hair, fingers and bare toes with generous margins and space between views. Same hairstyle in every angle. Plain uniform MID-GREY background (darker than light grey clothes), soft even studio lighting, NO floor shadows, no text, no labels, no watermark or logos. Wide landscape four-view production sheet.",
           "source": "docs/meshy-production-20261107/reference-images/01-clara/turnaround.png"
         }
-      }
+      },
+      "viewCrops": [
+        {
+          "view": "front",
+          "path": "crops/clara-front.png",
+          "sha256": "00475e0c2c5412c76a9d9dcab34f2befa6ad47a0b6e0dcff927be01743df3587",
+          "box": [
+            23,
+            51,
+            445,
+            912
+          ]
+        },
+        {
+          "view": "left-side",
+          "path": "crops/clara-left-side.png",
+          "sha256": "1f4be0a8afedfb4551915aa6ba5cf4940bb83c89234c821864559cd52cf69ff8",
+          "box": [
+            475,
+            51,
+            700,
+            911
+          ]
+        },
+        {
+          "view": "back",
+          "path": "crops/clara-back.png",
+          "sha256": "835ccd7df294faa49343c2063ea969b5e0d9b9586013ae1f9dfaa6a77c9e25a1",
+          "box": [
+            745,
+            51,
+            1136,
+            912
+          ]
+        },
+        {
+          "view": "three-quarter-front",
+          "path": "crops/clara-three-quarter-front.png",
+          "sha256": "cf8a6891cfe61d6bc7481abd677f08579a3a8e9b9daf7d0f38c06cc1991d4713",
+          "box": [
+            1152,
+            51,
+            1514,
+            915
+          ]
+        }
+      ]
     },
     {
       "id": "lumi",
@@ -114,7 +252,53 @@
         "hint": "Generated images are saved to /workspace/generated_images as /workspace/generated_images/exec-0397be8b-cc69-4f8c-a192-9abb83246977.png by default.\nIf you need to use a generated image at another path, copy it and leave the original in place unless the user explicitly asks you to delete it.\nThe generated image is already displayed to the user. There is no need to render it in the final response as a Markdown image or file link.",
         "prompt": "Create ONE NEW FOUR-VIEW TURNAROUND SHEET of the SAME child lumi from this child's OWN attached reference. This is a wardrobe-only change plus the requested four-view pose/layout. Preserve identity exactly: same face/head silhouette, eye size/shape/colour, eyebrows, freckles, skin colour, age, overall height-to-head proportions, hair shape and hair colour. Lumi's exact green LEAF HAIR, its small flower and layered leaf silhouette, big green eyes, tiny brows and warm peach complexion. Leaves and flower are hair, not a hat. Keep Lumi's original shorter sprite-child proportions and age. Keep the reference's soft premium cozy stylized 3D animation art style, not a redesigned child. CLOTHING: ONLY a plain close-fitting opaque LIGHT GREY short-sleeved crew-neck undershirt/T-shirt and plain opaque LIGHT GREY regular shorts ending ABOVE THE KNEES, comfortable modest everyday child clothing. No pattern, logo, buttons, piping, pockets, belt, shoes or socks. BARE FEET fully visible. Remove ALL original bags, straps, capes, gloves, bracelets, necklaces, earrings, hats, boots, tights and held items. No accessories except features that belong to the hair described above. POSE: stand straight relaxed A-pose, arms approximately 30 degrees away from torso, clear gaps arms/body and between legs, open empty hands with fingers together, no waving, friendly CLOSED-mouth smile and OPEN eyes, head aligned straight with each view. LAYOUT: exactly FOUR complete full-body views side by side, equal height/scale and baseline, in this exact left-to-right order: FRONT; STRICT LEFT SIDE with face/nose pointing image LEFT; BACK; THREE-QUARTER FRONT view. Four views of the SAME single child, not four different children. Include crown/hair, fingers and bare toes with generous margins and space between views. Same hairstyle in every angle. Plain uniform MID-GREY background (darker than light grey clothes), soft even studio lighting, NO floor shadows, no text, no labels, no watermark or logos. Wide landscape four-view production sheet.",
         "source": "docs/meshy-production-20261107/reference-images/04-lumi/turnaround.png"
-      }
+      },
+      "viewCrops": [
+        {
+          "view": "front",
+          "path": "crops/lumi-front.png",
+          "sha256": "7ca7361e66d1a6ebad6e9b396a06839ecc89108a0a07273c54d1a31ab175d981",
+          "box": [
+            57,
+            53,
+            460,
+            828
+          ]
+        },
+        {
+          "view": "left-side",
+          "path": "crops/lumi-left-side.png",
+          "sha256": "b2cc09e965d96dabb82867d80b5b45eddb8cc538d0350e01710b7d3ffd5e5ff8",
+          "box": [
+            530,
+            56,
+            850,
+            829
+          ]
+        },
+        {
+          "view": "back",
+          "path": "crops/lumi-back.png",
+          "sha256": "82773497a20244050fd550e7c96e97acdef624d82a84094358c2846edd2fde1b",
+          "box": [
+            908,
+            57,
+            1295,
+            829
+          ]
+        },
+        {
+          "view": "three-quarter-front",
+          "path": "crops/lumi-three-quarter-front.png",
+          "sha256": "703d690080fd3b821804764b39ecf47b7f99d54d252bd01a78a79e469d73bd2c",
+          "box": [
+            1361,
+            53,
+            1725,
+            831
+          ]
+        }
+      ]
     }
   ],
   "meshGenerationCallsForThisPack": 0,

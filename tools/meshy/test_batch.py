@@ -20,6 +20,16 @@ class BatchTests(unittest.TestCase):
     def tearDown(self):
         self.db.close()
         self.temp.cleanup()
+    def test_body_jobs_need_recorded_views_and_owner_approval(self):
+        # (8 Nov 2026) the four body jobs pass as recorded; a changed view hash is refused; no approval, no submission
+        for friend in ('finn','sol','clara','lumi'):
+            spec = batch.spec_for(friend+'-body'); self.assertEqual(spec['bodyOf'], friend)
+            bad = json.loads(json.dumps(spec)); bad['inputImages'][0]['sha256'] = '0'*64
+            with self.assertRaises(ValueError): batch.body_spec(bad)
+        calls=[]
+        with self.assertRaises(ValueError):
+            batch.submit(self.db,batch.spec_for('finn-body'),self.account,lambda *a:calls.append(a) or {'result':'t'})
+        self.assertEqual(calls, [])
     def test_duplicate_does_not_call_transport_twice(self):
         calls=[]
         def send(*args):calls.append(args);return {'result':'task-123'}

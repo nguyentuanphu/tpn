@@ -26,3 +26,16 @@ Read the owner's [body-and-clothes plan](../meshy-production-20261107/BODY-SHEET
 Short takeover prompt:
 
 Continue on meshy-production-20261107. Read docs/friends-body-sheets-20261108/README.md, GALLERY.md and MANIFEST.json. Four new body sheets are ready: body-finn.png, body-sol.png, body-clara.png and body-lumi.png, each with front/left/back/three-quarter views, plain grey clothing and bare feet. Preserve their reference identities, Clara's forward braids and Lumi's leaf hair/flower. Follow BODY-SHEETS-PROMPT.md for the body-and-code-clothes workflow; preserve all existing paid task records and obtain the required owner approval before new Meshy spending or runtime changes.
+
+## Review for 3D (8 Nov 2026, Claude Code)
+
+Compared with each friend's current turnaround: faces, eyes, brows, freckles, hair shape and colour match; Clara's
+braids are in front with none down the back; Lumi's leaf hair and flower kept. Noted for the owner: Clara's small
+flower hair pins were removed (they could come back as a shop accessory), and all four keep the grey T-shirt and
+shorts, so every code-made outfit must cover at least the shirt and shorts.
+
+Views cut by `tools/meshy/crop_body_sheets.py` into `crops/` (16 square views on the same grey, each centred on its
+own child, nothing of a neighbour; hashes in MANIFEST.json `viewCrops`). Draft jobs, not submitted:
+`job-specifications/44-clara-body.json` to `47-lumi-body.json` (front, left side, back). `run_batch.py check
+--asset <friend>-body` validates them offline; submission needs `approvedBodies` in the account record (owner
+approval). Planned cost 45 credits each (model 30, remesh 30k 5, remesh 9k 5, rig 5), 180 in all; balance 2,304.

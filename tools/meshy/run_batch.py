@@ -37,11 +37,33 @@ def api(method, suffix, payload=None):
     with build_opener(NoRedirect).open(request, timeout=60) as response:
         return json.load(response)
 
+BODY = ROOT/'docs/friends-body-sheets-20261108'
+BODY_PARAMETERS = {'ai_model':'meshy-7.1','geometry_resolution':'standard','should_texture':True,'texture_resolution':'2k',
+    'enable_pbr':False,'pose_mode':'','target_formats':['glb'],'image_enhancement':False}
+
+def body_spec(spec):
+    """(8 Nov 2026, owner: friends as a Meshy body + clothes made in the game) a body job (assetId '<friend>-body') sends
+    views cut from that friend's body sheet (tools/meshy/crop_body_sheets.py), checked against their recorded hashes:
+    an ordered subset of the sheet's views starting with the front, the reviewed model tier, 30 credits."""
+    man = json.loads((BODY/'MANIFEST.json').read_text(encoding='utf-8'))
+    friend = spec['bodyOf']; a = next((x for x in man['assets'] if x['id']==friend), None)
+    if a is None or spec['assetId'] != friend+'-body':
+        raise ValueError('A body job must be <friend>-body for a friend in the body-sheet manifest')
+    reviewed = [('docs/friends-body-sheets-20261108/'+c['path'], c['sha256']) for c in a.get('viewCrops', [])]
+    inputs = [(i['localPath'], i['sha256']) for i in spec['inputImages']]
+    if not reviewed or len(inputs) < 2 or not all(x in reviewed for x in inputs) or inputs != [r for r in reviewed if r in inputs] or inputs[0] != reviewed[0]:
+        raise ValueError('Body job inputs differ from the recorded body-sheet views')
+    if spec['parameters'] != BODY_PARAMETERS or spec['plannedCredits'] != 30 or not spec.get('bodyReason'):
+        raise ValueError('Body job parameters, budget or reason differ from the reviewed plan')
+    return spec
+
 def spec_for(asset):
     paths = list((OUT/'job-specifications').glob(f'*-{asset}.json'))
     if len(paths) != 1:
         raise ValueError('Unknown or ambiguous asset')
     spec = json.loads(paths[0].read_text())
+    if spec.get('bodyOf'):
+        return body_spec(spec)
     manifest = json.loads((OUT/'ASSET-MANIFEST.json').read_text())
     if len(manifest['assets'])!=43 or not all(a['reviewStatus']=='technical_pass' and len(a.get('viewCrops',[]))==len(a['views']) for a in manifest['assets']):
         raise ValueError('Finish technical review and cropping for all 43 original assets first')
@@ -71,9 +93,10 @@ def spec_for(asset):
 def payload_for(spec):
     payload = dict(spec['parameters'])
     urls = []
+    base = BODY if spec.get('bodyOf') else OUT   # (a body job's views are repository paths in the body-sheet folder)
     for image in spec['inputImages']:
-        path = (OUT/image['localPath']).resolve()
-        if not path.is_relative_to(OUT) or not path.is_file():
+        path = ((ROOT if spec.get('bodyOf') else OUT)/image['localPath']).resolve()
+        if not path.is_relative_to(base) or not path.is_file():
             raise ValueError('Invalid local image')
         data = path.read_bytes()
         if hashlib.sha256(data).hexdigest() != image['sha256']:
@@ -124,6 +147,8 @@ def check_account(account, spec):
         raise ValueError('This batch needs at least 1000 verified API credits')
     if spec.get('revisionOf') and spec['assetId'] not in (account.get('approvedRevisions') or []):
         raise ValueError('The owner has not approved this revision in the account record')
+    if spec.get('bodyOf') and spec['assetId'] not in (account.get('approvedBodies') or []):
+        raise ValueError('The owner has not approved this body job in the account record')
     if spec['assetId'] != 'clara' and spec.get('revisionOf') != 'clara' and account.get('claraPilotAccepted') is not True:
         raise ValueError('Inspect the Clara pilot before continuing A to G')
 
@@ -178,7 +203,7 @@ def download(db, asset, raw_root):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('command',nargs='?',default='plan',choices=['plan','submit','poll','attach','download'])
+    parser.add_argument('command',nargs='?',default='plan',choices=['plan','check','submit','poll','attach','download'])
     parser.add_argument('--asset')
     parser.add_argument('--journal',type=Path)
     parser.add_argument('--account',type=Path)
@@ -188,6 +213,11 @@ def main():
     args = parser.parse_args()
     if args.command == 'plan':
         print(json.dumps({'assets':43,'plannedCredits':990,'reserveCredits':10,'networkCalls':0,'next':'Clara pilot after verified account connection'}))
+        return
+    if args.command == 'check':   # (offline: the job's views and payload as they would be sent; no key, no journal, no network)
+        spec = spec_for(args.asset); payload = payload_for(spec)
+        print(json.dumps({'asset':spec['assetId'],'views':[i['view'] for i in spec['inputImages']],'plannedCredits':spec['plannedCredits'],
+            'payloadSHA256':hashlib.sha256(json.dumps(payload,sort_keys=True).encode()).hexdigest(),'networkCalls':0}))
         return
     if not args.journal or not args.asset:
         parser.error('--journal outside the repository and --asset are required')

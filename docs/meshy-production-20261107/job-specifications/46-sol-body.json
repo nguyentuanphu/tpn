@@ -1,0 +1,45 @@
+{
+    "assetId":  "sol-body",
+    "bodyOf":  "sol",
+    "bodyReason":  "Owner decision, 8 Nov 2026: friends as a Meshy body (face, hair, skin; plain grey T-shirt and shorts, bare feet) with clothes made in the game from the body\u0027s own surface, so shop outfits fit and the skin tone can change. Views cut from docs/friends-body-sheets-20261108/body-sol.png by tools/meshy/crop_body_sheets.py.",
+    "group":  "A",
+    "endpoint":  "https://api.meshy.ai/openapi/v1/multi-image-to-3d",
+    "method":  "POST",
+    "parameters":  {
+                       "ai_model":  "meshy-7.1",
+                       "geometry_resolution":  "standard",
+                       "should_texture":  true,
+                       "texture_resolution":  "2k",
+                       "enable_pbr":  false,
+                       "pose_mode":  "",
+                       "target_formats":  [
+                                              "glb"
+                                          ],
+                       "image_enhancement":  false
+                   },
+    "inputImages":  [
+                        {
+                            "view":  "front",
+                            "localPath":  "docs/friends-body-sheets-20261108/crops/sol-front.png",
+                            "sha256":  "a95a83b4f5d15c67dac2fe380b5556a7ac12dd4b98a5c55e827f1bb3bca67b9e"
+                        },
+                        {
+                            "view":  "left-side",
+                            "localPath":  "docs/friends-body-sheets-20261108/crops/sol-left-side.png",
+                            "sha256":  "b4d2a4ea08fbf65f5e6cf3107c6c2c1e8172c98e4b5059e51c102f67f619d104"
+                        },
+                        {
+                            "view":  "back",
+                            "localPath":  "docs/friends-body-sheets-20261108/crops/sol-back.png",
+                            "sha256":  "ebb27cf969fb519948daa9f848e8b748c11c7db9051e4a346af8f33819eea378"
+                        }
+                    ],
+    "transportNote":  "Runner sends the views as data URIs in this order.",
+    "plannedCredits":  30,
+    "followUps":  "Remesh 30k (5), remesh 9k (5), Meshy rig (5): 45 credits in all",
+    "ownerApproval":  null,
+    "submitted":  false,
+    "taskId":  null,
+    "rawDownloadDestination":  "raw-models/A/sol-body.glb",
+    "runtimeDestinationAfterFittingAndValidation":  "models/sol.glb (after in-game owner review)"
+}
