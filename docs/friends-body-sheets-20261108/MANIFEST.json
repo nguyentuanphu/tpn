@@ -1,0 +1,124 @@
+{
+  "recordedAtSydney": "2026-11-08T11:50:04.686752+11:00",
+  "purpose": "Four friends in plain light-grey T-shirts and above-knee shorts, barefoot; four-view reference images for the body-and-code-clothes workflow.",
+  "assets": [
+    {
+      "id": "finn",
+      "image": "body-finn.png",
+      "imageSHA256": "129d47eb0aeb3ebe21f573d772800eb3c299d57668bc47ece5220ae7fb8b6c5c",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "referencePath": "docs/meshy-production-20261107/reference-images/02-finn/turnaround.png",
+      "referenceSHA256": "c550fa47d3f5f4578dd9acde20b4a9141f787f8c8981564abbdf581a7943e800",
+      "referenceProvenance": "Owner attached inline turnarounds; the matching existing repo turnaround was visually inspected and supplied to image generation.",
+      "views": [
+        "front",
+        "left-side",
+        "back",
+        "three-quarter-front"
+      ],
+      "technicalReview": "visual_pass",
+      "ownerReview": "pending",
+      "newMeshyTaskId": null,
+      "generation": {
+        "id": "finn",
+        "hint": "Generated images are saved to /workspace/generated_images as /workspace/generated_images/exec-ae0dfba7-6e25-4524-b1f7-d9ec4c9038cf.png by default.\nIf you need to use a generated image at another path, copy it and leave the original in place unless the user explicitly asks you to delete it.\nThe generated image is already displayed to the user. There is no need to render it in the final response as a Markdown image or file link.",
+        "prompt": "Create ONE NEW FOUR-VIEW TURNAROUND SHEET of the SAME child finn from this child's OWN attached reference. This is a wardrobe-only change plus the requested four-view pose/layout. Preserve identity exactly: same face/head silhouette, eye size/shape/colour, eyebrows, freckles, skin colour, age, overall height-to-head proportions, hair shape and hair colour. Finn's exact black/blue-black curly tousled hair silhouette, brown eyes, eyebrows, light warm skin and freckles. Keep the reference's soft premium cozy stylized 3D animation art style, not a redesigned child. CLOTHING: ONLY a plain close-fitting opaque LIGHT GREY short-sleeved crew-neck undershirt/T-shirt and plain opaque LIGHT GREY regular shorts ending ABOVE THE KNEES, comfortable modest everyday child clothing. No pattern, logo, buttons, piping, pockets, belt, shoes or socks. BARE FEET fully visible. Remove ALL original bags, straps, capes, gloves, bracelets, necklaces, earrings, hats, boots, tights and held items. No accessories except features that belong to the hair described above. POSE: stand straight relaxed A-pose, arms approximately 30 degrees away from torso, clear gaps arms/body and between legs, open empty hands with fingers together, no waving, friendly CLOSED-mouth smile and OPEN eyes, head aligned straight with each view. LAYOUT: exactly FOUR complete full-body views side by side, equal height/scale and baseline, in this exact left-to-right order: FRONT; STRICT LEFT SIDE with face/nose pointing image LEFT; BACK; THREE-QUARTER FRONT view. Four views of the SAME single child, not four different children. Include crown/hair, fingers and bare toes with generous margins and space between views. Same hairstyle in every angle. Plain uniform MID-GREY background (darker than light grey clothes), soft even studio lighting, NO floor shadows, no text, no labels, no watermark or logos. Wide landscape four-view production sheet.",
+        "source": "docs/meshy-production-20261107/reference-images/02-finn/turnaround.png"
+      }
+    },
+    {
+      "id": "sol",
+      "image": "body-sol.png",
+      "imageSHA256": "7283ca872677b504f25bec5950f28ff1c40f43d389fd8abdb7c77616a4c4ffbe",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "referencePath": "docs/meshy-production-20261107/reference-images/03-sol/turnaround.png",
+      "referenceSHA256": "4029cb21450c4cf558c815aa267392a53ab4121e600b8da47ab5ba210ccd3a9a",
+      "referenceProvenance": "Owner attached inline turnarounds; the matching existing repo turnaround was visually inspected and supplied to image generation.",
+      "views": [
+        "front",
+        "left-side",
+        "back",
+        "three-quarter-front"
+      ],
+      "technicalReview": "visual_pass",
+      "ownerReview": "pending",
+      "newMeshyTaskId": null,
+      "generation": {
+        "id": "sol",
+        "hint": "Generated images are saved to /workspace/generated_images as /workspace/generated_images/exec-4b12c71d-7974-40d5-ae00-8c483e4e446e.png by default.\nIf you need to use a generated image at another path, copy it and leave the original in place unless the user explicitly asks you to delete it.\nThe generated image is already displayed to the user. There is no need to render it in the final response as a Markdown image or file link.",
+        "prompt": "Create ONE NEW FOUR-VIEW TURNAROUND SHEET of the SAME child sol from this child's OWN attached reference. This is a wardrobe-only change plus the requested four-view pose/layout. Preserve identity exactly: same face/head silhouette, eye size/shape/colour, eyebrows, freckles, skin colour, age, overall height-to-head proportions, hair shape and hair colour. Sol's exact curly copper red-brown hair silhouette, amber-brown eyes, eyebrows, warm light skin and freckles. Keep the reference's soft premium cozy stylized 3D animation art style, not a redesigned child. CLOTHING: ONLY a plain close-fitting opaque LIGHT GREY short-sleeved crew-neck undershirt/T-shirt and plain opaque LIGHT GREY regular shorts ending ABOVE THE KNEES, comfortable modest everyday child clothing. No pattern, logo, buttons, piping, pockets, belt, shoes or socks. BARE FEET fully visible. Remove ALL original bags, straps, capes, gloves, bracelets, necklaces, earrings, hats, boots, tights and held items. No accessories except features that belong to the hair described above. POSE: stand straight relaxed A-pose, arms approximately 30 degrees away from torso, clear gaps arms/body and between legs, open empty hands with fingers together, no waving, friendly CLOSED-mouth smile and OPEN eyes, head aligned straight with each view. LAYOUT: exactly FOUR complete full-body views side by side, equal height/scale and baseline, in this exact left-to-right order: FRONT; STRICT LEFT SIDE with face/nose pointing image LEFT; BACK; THREE-QUARTER FRONT view. Four views of the SAME single child, not four different children. Include crown/hair, fingers and bare toes with generous margins and space between views. Same hairstyle in every angle. Plain uniform MID-GREY background (darker than light grey clothes), soft even studio lighting, NO floor shadows, no text, no labels, no watermark or logos. Wide landscape four-view production sheet.",
+        "source": "docs/meshy-production-20261107/reference-images/03-sol/turnaround.png"
+      }
+    },
+    {
+      "id": "clara",
+      "image": "body-clara.png",
+      "imageSHA256": "bd8dc7cbfb4a7f189c56911d6d9e92cccefcc2f31b050b6990e54596a24f5d6e",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "referencePath": "docs/meshy-production-20261107/reference-images/01-clara/turnaround.png",
+      "referenceSHA256": "c238e20dac0bc194d7cf57eaf45884f3f7a5d062fb3ccf6ff6353ca2c0905a4c",
+      "referenceProvenance": "Owner attached inline turnarounds; the matching existing repo turnaround was visually inspected and supplied to image generation.",
+      "views": [
+        "front",
+        "left-side",
+        "back",
+        "three-quarter-front"
+      ],
+      "technicalReview": "visual_pass",
+      "ownerReview": "pending",
+      "newMeshyTaskId": null,
+      "generation": {
+        "id": "clara",
+        "hint": "Generated images are saved to /workspace/generated_images as /workspace/generated_images/exec-98af9b61-8f80-44a1-86d5-c71c28dd0163.png by default.\nIf you need to use a generated image at another path, copy it and leave the original in place unless the user explicitly asks you to delete it.\nThe generated image is already displayed to the user. There is no need to render it in the final response as a Markdown image or file link.",
+        "prompt": "Remove Clara's removable flower hair ornaments and leaves; keep functional braid ties. Preserve all other sheet details.",
+        "source": "docs/meshy-production-20261107/reference-images/01-clara/turnaround.png",
+        "previousGeneration": {
+          "id": "clara",
+          "hint": "Generated images are saved to /workspace/generated_images as /workspace/generated_images/exec-cad70a69-ef91-4991-b646-dbdad22e32b2.png by default.\nIf you need to use a generated image at another path, copy it and leave the original in place unless the user explicitly asks you to delete it.\nThe generated image is already displayed to the user. There is no need to render it in the final response as a Markdown image or file link.",
+          "prompt": "Create ONE NEW FOUR-VIEW TURNAROUND SHEET of the SAME child clara from this child's OWN attached reference. This is a wardrobe-only change plus the requested four-view pose/layout. Preserve identity exactly: same face/head silhouette, eye size/shape/colour, eyebrows, freckles, skin colour, age, overall height-to-head proportions, hair shape and hair colour. Clara's exact peach-pink hair and two long braids draping IN FRONT of the shoulders in every view. Rear view: back of the head and nape only, absolutely NO braids hanging down her back. Keep her brown eyes, brows and rosy complexion. Remove flower earrings; retain the reference hairstyle and its small flowers in the hair only. Keep the reference's soft premium cozy stylized 3D animation art style, not a redesigned child. CLOTHING: ONLY a plain close-fitting opaque LIGHT GREY short-sleeved crew-neck undershirt/T-shirt and plain opaque LIGHT GREY regular shorts ending ABOVE THE KNEES, comfortable modest everyday child clothing. No pattern, logo, buttons, piping, pockets, belt, shoes or socks. BARE FEET fully visible. Remove ALL original bags, straps, capes, gloves, bracelets, necklaces, earrings, hats, boots, tights and held items. No accessories except features that belong to the hair described above. POSE: stand straight relaxed A-pose, arms approximately 30 degrees away from torso, clear gaps arms/body and between legs, open empty hands with fingers together, no waving, friendly CLOSED-mouth smile and OPEN eyes, head aligned straight with each view. LAYOUT: exactly FOUR complete full-body views side by side, equal height/scale and baseline, in this exact left-to-right order: FRONT; STRICT LEFT SIDE with face/nose pointing image LEFT; BACK; THREE-QUARTER FRONT view. Four views of the SAME single child, not four different children. Include crown/hair, fingers and bare toes with generous margins and space between views. Same hairstyle in every angle. Plain uniform MID-GREY background (darker than light grey clothes), soft even studio lighting, NO floor shadows, no text, no labels, no watermark or logos. Wide landscape four-view production sheet.",
+          "source": "docs/meshy-production-20261107/reference-images/01-clara/turnaround.png"
+        }
+      }
+    },
+    {
+      "id": "lumi",
+      "image": "body-lumi.png",
+      "imageSHA256": "3165cfeec35dc8dfbc2d5731b4bad7d6a5276d43d90d97aa24ca8c39068b9b1e",
+      "dimensions": [
+        1774,
+        887
+      ],
+      "referencePath": "docs/meshy-production-20261107/reference-images/04-lumi/turnaround.png",
+      "referenceSHA256": "fa091e3e9bc0bbe2421d61ff1a907eee09ed5ca4c635a42267dc496abe0e736d",
+      "referenceProvenance": "Owner attached inline turnarounds; the matching existing repo turnaround was visually inspected and supplied to image generation.",
+      "views": [
+        "front",
+        "left-side",
+        "back",
+        "three-quarter-front"
+      ],
+      "technicalReview": "visual_pass",
+      "ownerReview": "pending",
+      "newMeshyTaskId": null,
+      "generation": {
+        "id": "lumi",
+        "hint": "Generated images are saved to /workspace/generated_images as /workspace/generated_images/exec-0397be8b-cc69-4f8c-a192-9abb83246977.png by default.\nIf you need to use a generated image at another path, copy it and leave the original in place unless the user explicitly asks you to delete it.\nThe generated image is already displayed to the user. There is no need to render it in the final response as a Markdown image or file link.",
+        "prompt": "Create ONE NEW FOUR-VIEW TURNAROUND SHEET of the SAME child lumi from this child's OWN attached reference. This is a wardrobe-only change plus the requested four-view pose/layout. Preserve identity exactly: same face/head silhouette, eye size/shape/colour, eyebrows, freckles, skin colour, age, overall height-to-head proportions, hair shape and hair colour. Lumi's exact green LEAF HAIR, its small flower and layered leaf silhouette, big green eyes, tiny brows and warm peach complexion. Leaves and flower are hair, not a hat. Keep Lumi's original shorter sprite-child proportions and age. Keep the reference's soft premium cozy stylized 3D animation art style, not a redesigned child. CLOTHING: ONLY a plain close-fitting opaque LIGHT GREY short-sleeved crew-neck undershirt/T-shirt and plain opaque LIGHT GREY regular shorts ending ABOVE THE KNEES, comfortable modest everyday child clothing. No pattern, logo, buttons, piping, pockets, belt, shoes or socks. BARE FEET fully visible. Remove ALL original bags, straps, capes, gloves, bracelets, necklaces, earrings, hats, boots, tights and held items. No accessories except features that belong to the hair described above. POSE: stand straight relaxed A-pose, arms approximately 30 degrees away from torso, clear gaps arms/body and between legs, open empty hands with fingers together, no waving, friendly CLOSED-mouth smile and OPEN eyes, head aligned straight with each view. LAYOUT: exactly FOUR complete full-body views side by side, equal height/scale and baseline, in this exact left-to-right order: FRONT; STRICT LEFT SIDE with face/nose pointing image LEFT; BACK; THREE-QUARTER FRONT view. Four views of the SAME single child, not four different children. Include crown/hair, fingers and bare toes with generous margins and space between views. Same hairstyle in every angle. Plain uniform MID-GREY background (darker than light grey clothes), soft even studio lighting, NO floor shadows, no text, no labels, no watermark or logos. Wide landscape four-view production sheet.",
+        "source": "docs/meshy-production-20261107/reference-images/04-lumi/turnaround.png"
+      }
+    }
+  ],
+  "meshGenerationCallsForThisPack": 0,
+  "runtimeAssetsChanged": false,
+  "historicalPaidTaskRecordsChanged": false,
+  "claraHairOrnaments": "Removable flower pins and leaves removed; functional braid ties retained. Lumi retains her botanical hair flower."
+}
