@@ -1,3 +1,7 @@
+## Grey and bright pink swim-kit reference upload — 8 November 2026 AEDT
+
+[Gallery, manifest and takeover notes](../friends-swim-sheets-20261108/README.md): four grey swim sheets, four bright pink sheets, and one additional Finn grey/warm-peach-skin variant. Earlier T-shirt/shorts sheets, other-chat crops, job specifications, ledger and runtime assets preserved. New images are alternative reference inputs, not an automatic switch for submitted jobs. Owner selection/model fit/in-game checks remain downstream; no paid Meshy calls or deployment for this pack.
+
 ## Four friends body reference sheets — 8 November 2026 AEDT
 
 Owner requested and authorized GitHub upload of four new four-view sheets: Finn, Sol, Clara and Lumi in plain light-grey short-sleeved T-shirts/above-knee shorts and bare feet. [Pack, gallery and short takeover prompt](../friends-body-sheets-20261108/README.md). Own reference identity/hair preserved in the rendering brief; Clara braids forward with none down back, removable hair ornaments removed, Lumi leaf hair/flower retained. Full front/left-side/back/three-quarter layouts on mid-grey. Technical image review complete; owner review pending. Separate pack: no overwrite of dressed references, submitted specifications, ledger, runtime models or current other-chat work. No paid Meshy calls or deployment in this task. Continue the already-recorded BODY-SHEETS-PROMPT.md workflow after owner review; images do not constitute fitted/rigged models or in-game acceptance.
