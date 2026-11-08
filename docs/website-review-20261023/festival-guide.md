@@ -1,6 +1,6 @@
 # Festivals, decorations and activities / Lễ hội, trang trí và hoạt động
 
-Facts generated from source: [380ed908b79b94ac32f83865af7d87758e5932d0](https://github.com/nguyentuanphu/Sparkle-Valley/tree/380ed908b79b94ac32f83865af7d87758e5932d0). [Interactive festival directory](prototype.html#festivals) · [Folk games and parent learning guide](parent-guide.md) · [Quest Guide](quest-guide.md) · [Prizes and badges](rewards-guide.md)
+Facts generated from source: [802d543c268ae0450acafdeb95d45d2983df4dab](https://github.com/nguyentuanphu/Sparkle-Valley/tree/802d543c268ae0450acafdeb95d45d2983df4dab). [Interactive festival directory](prototype.html#festivals) · [Folk games and parent learning guide](parent-guide.md) · [Quest Guide](quest-guide.md) · [Prizes and badges](rewards-guide.md)
 
 ## Join, watch or explore / Tham gia, xem hoặc khám phá
 
@@ -23,7 +23,7 @@ The dates below are the game’s default calendar, including its lunar conversio
 
 **Decorations / Trang trí:** Peach and yellow apricot blossoms, red banners and festive bunting. / Hoa đào, hoa mai vàng, câu đối đỏ và dây trang trí.
 
-**Participate / Tham gia:** Dragon Snake to the Clouds / Rồng Rắn Lên Mây.
+**Participate / Tham gia:** Wrap the Bánh Chưng / Gói Bánh Chưng.
 
 **Watch / Xem:** Fireworks / Pháo hoa.
 
@@ -37,7 +37,7 @@ The dates below are the game’s default calendar, including its lunar conversio
 
 **Decorations / Trang trí:** Lanterns, including đèn ông sao, with lights and festive strings. / Đèn lồng, trong đó có đèn ông sao, cùng ánh sáng và dây trang trí.
 
-**Participate / Tham gia:** Kite Flying / Thả Diều.
+**Participate / Tham gia:** First Full Moon Lanterns / Thả Đèn Rằm Tháng Giêng.
 
 **Watch / Xem:** Lantern-parade display / Trình diễn rước đèn.
 
@@ -51,7 +51,7 @@ The dates below are the game’s default calendar, including its lunar conversio
 
 **Decorations / Trang trí:** Red-and-gold Vietnamese flags and matching decorations. / Cờ Việt Nam đỏ sao vàng và trang trí cùng màu.
 
-**Participate / Tham gia:** Water Puppets / Múa rối nước.
+**Participate / Tham gia:** The Hùng Kings’ Cakes / Bánh Dâng Vua Hùng.
 
 **Watch / Xem:** No scheduled evening show / Không có màn buổi tối theo lịch. A quiet day of remembrance. / Ngày trang nghiêm để tưởng nhớ.
 
@@ -65,7 +65,7 @@ The dates below are the game’s default calendar, including its lunar conversio
 
 **Decorations / Trang trí:** Small decorative dragon boats and colourful festival bunting. / Thuyền rồng nhỏ để trang trí và dây cờ nhiều màu.
 
-**Participate / Tham gia:** Tug of War / Kéo Co.
+**Participate / Tham gia:** Dragon Boat Race / Đua Thuyền Rồng.
 
 **Watch / Xem:** Parade display / Trình diễn diễu hành.
 
@@ -79,7 +79,7 @@ The dates below are the game’s default calendar, including its lunar conversio
 
 **Decorations / Trang trí:** Heart decorations and flower pots. / Hình trái tim và chậu hoa.
 
-**Participate / Tham gia:** Family Quiz / Đố Vui Gia Đình. Requires valid parent-authored questions; otherwise a feelings game is offered. / Cần câu hỏi hợp lệ do người lớn thêm; nếu chưa có, mời chơi trò cảm xúc.
+**Participate / Tham gia:** A Rose for Mum / Bông Hồng Cài Áo.
 
 **Watch / Xem:** No scheduled evening show / Không có màn buổi tối theo lịch. A quiet day of remembrance. / Ngày trang nghiêm để tưởng nhớ.
 
@@ -93,7 +93,7 @@ The dates below are the game’s default calendar, including its lunar conversio
 
 **Decorations / Trang trí:** Lanterns, including đèn ông sao, with lights and festive strings. / Đèn lồng, trong đó có đèn ông sao, cùng ánh sáng và dây trang trí.
 
-**Participate / Tham gia:** Kite Flying / Thả Diều.
+**Participate / Tham gia:** Star Lantern Maker / Làm Đèn Ông Sao.
 
 **Watch / Xem:** Lantern-parade display / Trình diễn rước đèn.
 
@@ -107,7 +107,7 @@ The dates below are the game’s default calendar, including its lunar conversio
 
 **Decorations / Trang trí:** Decorative basins with golden carp. / Chậu trang trí có cá chép vàng.
 
-**Participate / Tham gia:** Market Helper / Bé Đi Chợ.
+**Participate / Tham gia:** Carp to the Sky / Thả Cá Chép Tiễn Ông Táo.
 
 **Watch / Xem:** No scheduled evening show / Không có màn buổi tối theo lịch.
 
@@ -121,7 +121,7 @@ The dates below are the game’s default calendar, including its lunar conversio
 
 **Decorations / Trang trí:** Colourful balloons and festive bunting. / Bóng bay nhiều màu và dây cờ lễ hội.
 
-**Participate / Tham gia:** Balloon Flight / Khinh Khí Cầu.
+**Participate / Tham gia:** Children’s Day Balloons / Bóng Bay Ngày 1/6.
 
 **Watch / Xem:** Parade display / Trình diễn diễu hành.
 
@@ -135,7 +135,7 @@ The dates below are the game’s default calendar, including its lunar conversio
 
 **Decorations / Trang trí:** Red-and-gold Vietnamese flags and matching decorations. / Cờ Việt Nam đỏ sao vàng và trang trí cùng màu.
 
-**Participate / Tham gia:** Water Puppets / Múa rối nước.
+**Participate / Tham gia:** Flags for National Day / Treo Cờ Mừng Quốc Khánh.
 
 **Watch / Xem:** Fireworks / Pháo hoa.
 
@@ -149,7 +149,7 @@ The dates below are the game’s default calendar, including its lunar conversio
 
 **Decorations / Trang trí:** Thank-you cards and flower pots. / Thiệp cảm ơn và chậu hoa.
 
-**Participate / Tham gia:** Two Homes Words / Từ Ngữ Hai Quê.
+**Participate / Tham gia:** Flowers for the Teacher / Hoa Tặng Thầy Cô.
 
 **Watch / Xem:** No scheduled evening show / Không có màn buổi tối theo lịch.
 
@@ -163,7 +163,7 @@ The dates below are the game’s default calendar, including its lunar conversio
 
 **Decorations / Trang trí:** Painted eggs in soft colours. / Trứng tô màu dịu nhẹ.
 
-**Participate / Tham gia:** Egg Hunt / Nhặt Trứng.
+**Participate / Tham gia:** Easter Egg Painting / Tô Trứng Phục Sinh.
 
 **Watch / Xem:** Parade display / Trình diễn diễu hành.
 
@@ -177,7 +177,7 @@ The dates below are the game’s default calendar, including its lunar conversio
 
 **Decorations / Trang trí:** Heart decorations and flower pots. / Hình trái tim và chậu hoa.
 
-**Participate / Tham gia:** Family Quiz / Đố Vui Gia Đình. Requires valid parent-authored questions; otherwise a feelings game is offered. / Cần câu hỏi hợp lệ do người lớn thêm; nếu chưa có, mời chơi trò cảm xúc.
+**Participate / Tham gia:** Card for Mum / Thiệp Tặng Mẹ.
 
 **Watch / Xem:** No scheduled evening show / Không có màn buổi tối theo lịch.
 
@@ -191,7 +191,7 @@ The dates below are the game’s default calendar, including its lunar conversio
 
 **Decorations / Trang trí:** Heart decorations and flower pots. / Hình trái tim và chậu hoa.
 
-**Participate / Tham gia:** Family Quiz / Đố Vui Gia Đình. Requires valid parent-authored questions; otherwise a feelings game is offered. / Cần câu hỏi hợp lệ do người lớn thêm; nếu chưa có, mời chơi trò cảm xúc.
+**Participate / Tham gia:** Picnic with Dad / Dã Ngoại Cùng Bố.
 
 **Watch / Xem:** No scheduled evening show / Không có màn buổi tối theo lịch.
 
@@ -205,7 +205,7 @@ The dates below are the game’s default calendar, including its lunar conversio
 
 **Decorations / Trang trí:** Smiling pumpkins, friendly ghosts and skeletons, webs with little spiders, a black cat, a cauldron, a scarecrow and a witch’s hat. / Bí ngô cười, ma và bộ xương thân thiện, mạng nhện có nhện nhỏ, mèo đen, vạc, bù nhìn và mũ phù thủy.
 
-**Participate / Tham gia:** Memory Match / Lật Hình Ghi Nhớ.
+**Participate / Tham gia:** Pumpkin Lantern / Đèn Bí Ngô.
 
 **Watch / Xem:** Light show / Trình diễn ánh sáng.
 
@@ -221,7 +221,7 @@ The dates below are the game’s default calendar, including its lunar conversio
 
 **Decorations / Trang trí:** Decorated Christmas trees, coloured lights and wrapped presents. / Cây thông trang trí, đèn màu và quà gói.
 
-**Participate / Tham gia:** Pass the Parcel / Chuyền Quà.
+**Participate / Tham gia:** Trim the Christmas Tree / Trang Trí Cây Thông.
 
 **Watch / Xem:** Light show / Trình diễn ánh sáng.
 
@@ -235,7 +235,7 @@ The dates below are the game’s default calendar, including its lunar conversio
 
 **Decorations / Trang trí:** Bright balloons and celebration bunting. / Bóng bay rực rỡ và dây cờ mừng lễ.
 
-**Participate / Tham gia:** Balloon Flight / Khinh Khí Cầu.
+**Participate / Tham gia:** Countdown to New Year / Đếm Ngược Năm Mới.
 
 **Watch / Xem:** Fireworks / Pháo hoa.
 
@@ -249,7 +249,7 @@ The dates below are the game’s default calendar, including its lunar conversio
 
 **Decorations / Trang trí:** Green-and-gold flags and matching decorations. / Cờ màu xanh lá và vàng cùng trang trí phù hợp.
 
-**Participate / Tham gia:** Backyard Cricket / Cricket Sân Sau.
+**Participate / Tham gia:** Backyard Cricket Day / Cricket Sân Sau.
 
 **Watch / Xem:** Fireworks / Pháo hoa.
 
@@ -263,7 +263,7 @@ The dates below are the game’s default calendar, including its lunar conversio
 
 **Decorations / Trang trí:** Recycling and rubbish-bin decorations. / Trang trí thùng tái chế và thùng rác.
 
-**Participate / Tham gia:** Small to Big / Từ Bé Đến Lớn.
+**Participate / Tham gia:** Clean Up the Park / Dọn Sạch Công Viên.
 
 **Watch / Xem:** No scheduled evening show / Không có màn buổi tối theo lịch.
 
@@ -277,7 +277,7 @@ The dates below are the game’s default calendar, including its lunar conversio
 
 **Decorations / Trang trí:** Orange balloons and matching festive strings. / Bóng bay cam và dây trang trí cùng màu.
 
-**Participate / Tham gia:** First Words: Chinese and Hindi / Từ đầu tiên: tiếng Trung và tiếng Hindi.
+**Participate / Tham gia:** Hello in Many Languages / Xin Chào Nhiều Thứ Tiếng.
 
 **Watch / Xem:** Parade display / Trình diễn diễu hành.
 
@@ -291,7 +291,7 @@ The dates below are the game’s default calendar, including its lunar conversio
 
 **Decorations / Trang trí:** Little piles of bright coloured powder. / Những đống bột màu nhỏ, rực rỡ.
 
-**Participate / Tham gia:** Rainbow Paints / Pha Màu Cầu Vồng.
+**Participate / Tham gia:** Colour Splash / Tung Bột Màu Holi.
 
 **Watch / Xem:** Parade display / Trình diễn diễu hành.
 
@@ -305,7 +305,7 @@ The dates below are the game’s default calendar, including its lunar conversio
 
 **Decorations / Trang trí:** Quiet red-poppy wreaths. / Vòng hoa anh túc đỏ trang nghiêm.
 
-**Participate / Tham gia:** Copy the Tune / Nhại Giai Điệu.
+**Participate / Tham gia:** Anzac Biscuits / Bánh Quy Anzac.
 
 **Watch / Xem:** No scheduled evening show / Không có màn buổi tối theo lịch. A quiet day of remembrance. / Ngày trang nghiêm để tưởng nhớ.
 
@@ -319,7 +319,7 @@ The dates below are the game’s default calendar, including its lunar conversio
 
 **Decorations / Trang trí:** Ochre-coloured dot-pattern panels. / Bảng họa tiết chấm màu đất.
 
-**Participate / Tham gia:** Koala Breakfast / Bữa sáng của Koala.
+**Participate / Tham gia:** Hands Together / Những Bàn Tay Nắm Lấy Nhau.
 
 **Watch / Xem:** No scheduled evening show / Không có màn buổi tối theo lịch. A quiet day of remembrance. / Ngày trang nghiêm để tưởng nhớ.
 
@@ -333,7 +333,7 @@ The dates below are the game’s default calendar, including its lunar conversio
 
 **Decorations / Trang trí:** Ochre-coloured dot-pattern panels. / Bảng họa tiết chấm màu đất.
 
-**Participate / Tham gia:** Koala Breakfast / Bữa sáng của Koala.
+**Participate / Tham gia:** Dot Painting Story / Tranh Chấm Kể Chuyện.
 
 **Watch / Xem:** Parade display / Trình diễn diễu hành.
 
@@ -347,7 +347,7 @@ The dates below are the game’s default calendar, including its lunar conversio
 
 **Decorations / Trang trí:** Little clay lamps and marigold rings. / Đèn đất nhỏ và vòng hoa cúc vạn thọ.
 
-**Participate / Tham gia:** Rangoli Patterns / Tranh Rangoli.
+**Participate / Tham gia:** Light the Diyas / Thắp Đèn Diya.
 
 **Watch / Xem:** Fireworks / Pháo hoa.
 
@@ -366,10 +366,10 @@ The website’s featured folk-game guide also explains Ô Ăn Quan and Đánh Ch
 
 The two decoration photographs are existing game screenshots of Tết in Lotus Village and Hội An from the project’s saved verification captures. They are not new r88/live-state captures. Artwork remains the game’s own drawings. This design preview does not schedule festivals, change gameplay or read child saves.
 
-- [js/content/festcal.js](https://github.com/nguyentuanphu/Sparkle-Valley/blob/380ed908b79b94ac32f83865af7d87758e5932d0/js/content/festcal.js)
-- [js/festivals.js](https://github.com/nguyentuanphu/Sparkle-Valley/blob/380ed908b79b94ac32f83865af7d87758e5932d0/js/festivals.js)
-- [js/festdecor.js](https://github.com/nguyentuanphu/Sparkle-Valley/blob/380ed908b79b94ac32f83865af7d87758e5932d0/js/festdecor.js)
-- [js/festhunt.js](https://github.com/nguyentuanphu/Sparkle-Valley/blob/380ed908b79b94ac32f83865af7d87758e5932d0/js/festhunt.js)
-- [js/lunar.js](https://github.com/nguyentuanphu/Sparkle-Valley/blob/380ed908b79b94ac32f83865af7d87758e5932d0/js/lunar.js)
-- [js/ui.ts](https://github.com/nguyentuanphu/Sparkle-Valley/blob/380ed908b79b94ac32f83865af7d87758e5932d0/js/ui.ts)
-- [js/games/catalog.ts](https://github.com/nguyentuanphu/Sparkle-Valley/blob/380ed908b79b94ac32f83865af7d87758e5932d0/js/games/catalog.ts)
+- [js/content/festcal.js](https://github.com/nguyentuanphu/Sparkle-Valley/blob/802d543c268ae0450acafdeb95d45d2983df4dab/js/content/festcal.js)
+- [js/festivals.js](https://github.com/nguyentuanphu/Sparkle-Valley/blob/802d543c268ae0450acafdeb95d45d2983df4dab/js/festivals.js)
+- [js/festdecor.js](https://github.com/nguyentuanphu/Sparkle-Valley/blob/802d543c268ae0450acafdeb95d45d2983df4dab/js/festdecor.js)
+- [js/festhunt.js](https://github.com/nguyentuanphu/Sparkle-Valley/blob/802d543c268ae0450acafdeb95d45d2983df4dab/js/festhunt.js)
+- [js/lunar.js](https://github.com/nguyentuanphu/Sparkle-Valley/blob/802d543c268ae0450acafdeb95d45d2983df4dab/js/lunar.js)
+- [js/ui.ts](https://github.com/nguyentuanphu/Sparkle-Valley/blob/802d543c268ae0450acafdeb95d45d2983df4dab/js/ui.ts)
+- [js/games/catalog.ts](https://github.com/nguyentuanphu/Sparkle-Valley/blob/802d543c268ae0450acafdeb95d45d2983df4dab/js/games/catalog.ts)

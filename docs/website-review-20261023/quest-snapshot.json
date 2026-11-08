@@ -1,5 +1,5 @@
 {
-  "source": "380ed908b79b94ac32f83865af7d87758e5932d0",
+  "source": "802d543c268ae0450acafdeb95d45d2983df4dab",
   "reviewed": "23 October 2026 AEDT",
   "quests": [
     {
@@ -6079,7 +6079,7 @@
       ],
       "theme": "tet",
       "show": "fireworks",
-      "game": "dragon",
+      "game": "fg_tet",
       "treat": null,
       "lines": [
         [
@@ -6118,7 +6118,7 @@
       ],
       "theme": "lanterns",
       "show": "lanterns",
-      "game": "kite",
+      "game": "fg_ramthang1",
       "treat": null,
       "lines": [
         [
@@ -6157,7 +6157,7 @@
       ],
       "theme": "flags-vn",
       "show": "none",
-      "game": "puppets",
+      "game": "fg_giotohung",
       "treat": "banhchung",
       "lines": [
         [
@@ -6196,7 +6196,7 @@
       ],
       "theme": "dragonboat",
       "show": "parade",
-      "game": "tug",
+      "game": "fg_doanngo",
       "treat": "fruit",
       "lines": [
         [
@@ -6234,7 +6234,7 @@
       ],
       "theme": "hearts",
       "show": "none",
-      "game": "familyquiz",
+      "game": "fg_vulan",
       "treat": null,
       "lines": [
         [
@@ -6280,7 +6280,7 @@
       ],
       "theme": "lanterns",
       "show": "lanterns",
-      "game": "kite",
+      "game": "fg_midautumn",
       "treat": "mooncake",
       "lines": [
         [
@@ -6319,7 +6319,7 @@
       ],
       "theme": "kitchen",
       "show": "none",
-      "game": "market",
+      "game": "fg_ongtao",
       "treat": "cakho",
       "lines": [
         [
@@ -6359,7 +6359,7 @@
       ],
       "theme": "kids",
       "show": "parade",
-      "game": "balloon",
+      "game": "fg_thieunhi",
       "treat": "chechuoi",
       "lines": [
         [
@@ -6400,7 +6400,7 @@
       ],
       "theme": "flags-vn",
       "show": "fireworks",
-      "game": "puppets",
+      "game": "fg_quockhanh",
       "treat": "pho",
       "lines": [
         [
@@ -6439,7 +6439,7 @@
       ],
       "theme": "teacher",
       "show": "none",
-      "game": "words",
+      "game": "fg_nhagiao",
       "treat": null,
       "lines": [
         [
@@ -6477,7 +6477,7 @@
       ],
       "theme": "eggs",
       "show": "parade",
-      "game": "eggs",
+      "game": "fg_easter",
       "treat": "lamington",
       "lines": [
         [
@@ -6517,7 +6517,7 @@
       ],
       "theme": "hearts",
       "show": "none",
-      "game": "familyquiz",
+      "game": "fg_mothersday",
       "treat": null,
       "lines": [
         [
@@ -6557,7 +6557,7 @@
       ],
       "theme": "hearts",
       "show": "none",
-      "game": "familyquiz",
+      "game": "fg_fathersday",
       "treat": "sizzle",
       "lines": [
         [
@@ -6595,7 +6595,7 @@
       ],
       "theme": "pumpkins",
       "show": "lights",
-      "game": "memory",
+      "game": "fg_halloween",
       "treat": null,
       "lines": [
         [
@@ -6641,7 +6641,7 @@
       ],
       "theme": "xmas",
       "show": "lights",
-      "game": "parcel",
+      "game": "fg_christmas",
       "treat": "xmascookie",
       "lines": [
         [
@@ -6681,7 +6681,7 @@
       ],
       "theme": "sparkle",
       "show": "fireworks",
-      "game": "balloon",
+      "game": "fg_newyear",
       "treat": null,
       "lines": [
         [
@@ -6720,7 +6720,7 @@
       ],
       "theme": "flags-au",
       "show": "fireworks",
-      "game": "cricket",
+      "game": "fg_ausday",
       "treat": "sizzle",
       "lines": [
         [
@@ -6764,7 +6764,7 @@
       ],
       "theme": "clean",
       "show": "none",
-      "game": "sorting",
+      "game": "fg_cleanup",
       "treat": null,
       "lines": [
         [
@@ -6804,7 +6804,7 @@
       ],
       "theme": "harmony",
       "show": "parade",
-      "game": "firstwords",
+      "game": "fg_harmony",
       "treat": "dumplings",
       "lines": [
         [
@@ -6847,7 +6847,7 @@
       ],
       "theme": "colours",
       "show": "parade",
-      "game": "colors",
+      "game": "fg_holi",
       "treat": "ladoo",
       "lines": [
         [
@@ -6886,7 +6886,7 @@
       ],
       "theme": "poppies",
       "show": "none",
-      "game": "tune",
+      "game": "fg_anzac",
       "treat": null,
       "lines": [
         [
@@ -6925,7 +6925,7 @@
       ],
       "theme": "ochre",
       "show": "none",
-      "game": "koala",
+      "game": "fg_reconciliation",
       "treat": "damper",
       "lines": [
         [
@@ -6962,7 +6962,7 @@
       ],
       "theme": "ochre",
       "show": "parade",
-      "game": "koala",
+      "game": "fg_naidoc",
       "treat": "damper",
       "lines": [
         [
@@ -7006,7 +7006,7 @@
       ],
       "theme": "diyas",
       "show": "fireworks",
-      "game": "rangoli",
+      "game": "fg_diwali",
       "treat": "ladoo",
       "lines": [
         [
