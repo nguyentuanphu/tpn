@@ -5,7 +5,7 @@ For a new Claude session or account taking over on the owner's PC. Read `.claude
 ## Update, 10 Nov 2026 (read this first)
 
 - **The four friends' models are on the branch** (owner, 10 Nov: "Tất cả mọi việc đẩy lên nhánh"), commit 40d44b765 and later. Not merged, not deployed, no version change.
-- **Audit round 65** (`D:\WorkSpace\meshy\fitted\audit-f65`): 305 of 944 cases fail. There are no swim kit, eye, skin tone or hair tone faults. What is left:
+- **Audit round 66** (`D:\WorkSpace\meshy\fitted\audit-f66`, a refit of all four; these models are on the branch): 302 of 944 cases fail. There are no swim kit, eye, skin tone or hair tone faults. What is left:
   - holes 133, folds 108, tears 115 and pokes 56, mostly áo dài (holes and folds in side views), rain (tears) and festival;
   - poses run, sit, climb, jump and cheer.
 - **Fixed on 10 Nov, each checked in game pictures:**
