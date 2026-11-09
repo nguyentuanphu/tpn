@@ -14,13 +14,15 @@ if (-not $ids[0]) { throw 'give -Id or -Batch' }
 $stamp = Get-Date -Format 'yyyyMMdd-HHmm'
 if (-not $Out) { $Out = "D:\WorkSpace\meshy\fitted\audit-$stamp" }
 $log = @()
+# (a model file is sometimes held open for a moment by a scanner: copy again, up to 10 times, 2 s apart)
+function CopyRetry($from, $to) { for ($k = 0; $k -lt 10; $k++) { try { Copy-Item $from $to -Force -ErrorAction Stop; return } catch { Start-Sleep -Seconds 2 } }; throw "could not copy $from to $to" }
 foreach ($i in $ids) {
   $t0 = Get-Date
   if ($Kind -eq 'friend') {
     if (-not $SkipFit) { powershell -File tools/meshy/fit_person.ps1 -Id "$i-swim" -Ref "D:\WorkSpace\meshy\work-v108\$i-game-hd.glb" -Prefix "$i-"; if ($LASTEXITCODE) { throw "fit failed: $i" } }
     $r = powershell -File tools/meshy/dress_own.ps1 -Id $i; if ($LASTEXITCODE) { throw "dress failed: $i" }
-    Copy-Item "D:\WorkSpace\meshy\fitted\$i-own\$i-dressed-light-packed.glb" "models\$i.glb" -Force
-    Copy-Item "D:\WorkSpace\meshy\fitted\$i-own\$i-dressed-hd-packed.glb" "models\$i-hd.glb" -Force
+    CopyRetry "D:\WorkSpace\meshy\fitted\$i-own\$i-dressed-light-packed.glb" "models\$i.glb"
+    CopyRetry "D:\WorkSpace\meshy\fitted\$i-own\$i-dressed-hd-packed.glb" "models\$i-hd.glb"
     $kb = [int]((Get-Item "models\$i.glb").Length / 1KB); if ($kb -gt 500) { throw "light model $i is $kb KB (limit 500)" }
     $log += "$i built in $([int]((Get-Date) - $t0).TotalSeconds) s: $r"
   } else {

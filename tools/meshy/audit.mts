@@ -58,18 +58,25 @@ gl_FragColor = vec4(code_ / 255.0, floor(dm_ / 256.0) / 255.0, mod(dm_, 256.0) /
     m.customProgramCacheKey = () => 'audit-id-' + code + (isBody ? 'b' : '') + (m.vertexColors ? 'v' : '') + '-l' + layer + (isBody && orig.userData && orig.userData.kitU ? '-k' + orig.userData.kitU.on.value + '-' + orig.userData.kitU.neck.value : ''); return m;
   };
   const POSES: [string, string, number, number][] = [['rest', 'idle', 0, 1], ['walk', 'walk', 3, 9], ['run', 'walk', 9, 14], ['cheer', 'cheer', 0, 3], ['wave', 'wave', 0, 3], ['dance', 'dance', 0, 5], ['jump', 'air', 0, 2], ['sit', 'sit', 0, 2], ['climb', 'climb', 0, 4]];
-  const poses = QUICK ? POSES.filter(p => ['rest', 'walk', 'cheer'].includes(p[0])) : POSES;
+  // (owner 9 Nov 2026: the auditor must be trustworthy) QUICK = 'selftest:<fault>': one friend, everyday, rest and cheer,
+  // with a fault planted on purpose: the check for it must fire (kit: hiding and kit painting off; poke: body 4% bigger;
+  // fold: a top drawn from inside; eyes: the eyes left open while counted as shut)
+  const PLANT = String(QUICK).startsWith('selftest:') ? String(QUICK).slice(9) : '';
+  const poses = PLANT ? POSES.filter(p => ['rest', 'cheer'].includes(p[0])) : QUICK ? POSES.filter(p => ['rest', 'walk', 'cheer'].includes(p[0])) : POSES;
   const LOOK: any = { finn: 'boy', sol: 'boy', clara: 'girl', lumi: 'girl' };
   const cases: any[] = [], pics: Record<string, string> = {}, HREF: Record<string, number[]> = {};
   for (const id of LIST.split(',')) {
     await A.loadFriendModels(id); await A.loadFriendModels(id + '-hd');
-    for (const kind of ['everyday', 'aodai', 'festival', 'rain']) {
+    for (const kind of (PLANT ? ['everyday'] : ['everyday', 'aodai', 'festival', 'rain'])) {
       FM.setMeshyTones(true);
       const av: any = A.buildAvatar({ set: LOOK[id] || 'girl', friend: id, skin: '#f6c7a5', suit: `${id}-${kind}` }, null, { hd: true }); A.showHD(av, true);
       top.add(av.root); av.root.position.set(h.pos.x + 3, h.av.root.position.y, h.pos.z + 3); av.root.rotation.y = 0;
       const M = av.modelHD, meshes: any[] = [];
       M.obj.traverse((o: any) => { if (o.isMesh) meshes.push(o); });
       const worn = meshes.filter(o => /^lit-g-/.test(o.material.name || '') && o.visible).map(o => o.material.name.slice(6));
+      if (PLANT === 'kit') meshes.forEach((o: any) => { const u = o.material.userData; if (u.coverU && !/^lit-g-/.test(o.material.name || '')) u.coverU.value = 0; if (u.kitU) u.kitU.on.value = 0; });
+      if (PLANT === 'poke') meshes.forEach((o: any) => { if (/^(cloth-body|skin-tex)/.test(o.material.name || '')) { const u = o.material.userData; if (u.coverU) u.coverU.value = 0; o.scale.multiplyScalar(1.04); } });
+      if (PLANT === 'fold') meshes.forEach((o: any) => { if (/^lit-g-top/.test(o.material.name || '')) { o.material.side = THREE.BackSide; o.material.needsUpdate = true; } });
       const solo = new THREE.Scene();   // (the ID pictures: the friend alone, nothing of the valley)
       for (const [pn, st, sp, frames] of poses) {
         av.life = null; for (let f = 0; f <= frames; f++) A.animate(av, st, 10 + f * .05, sp);
@@ -157,7 +164,7 @@ gl_FragColor = vec4(code_ / 255.0, floor(dm_ / 256.0) / 255.0, mod(dm_, 256.0) /
   // (pale, colourless pixels where the open eye's white was) may be left. The open eye's whites are found in the smile.
   const solo = new THREE.Scene();
   const head = (M: any) => { let hb: any = null; M.obj.traverse((o: any) => { if (o.isBone && o.name === 'head') hb = o; }); return hb; };
-  for (const id of LIST.split(',')) {
+  for (const id of (PLANT && PLANT !== 'eyes' ? [] : LIST.split(','))) {
     const av: any = A.buildAvatar({ set: LOOK[id] || 'girl', friend: id, skin: '#f6c7a5' }, null, { hd: true }); A.showHD(av, true);
     top.add(av.root); av.root.position.set(h.pos.x + 3, h.av.root.position.y, h.pos.z + 3); av.root.rotation.y = 0; A.animate(av, 'idle', 1); av.root.updateMatrixWorld(true);
     const M = av.modelHD, hb = head(M); if (!hb) { top.remove(av.root); continue; }
@@ -179,7 +186,7 @@ gl_FragColor = vec4(code_ / 255.0, floor(dm_ / 256.0) / 255.0, mod(dm_, 256.0) /
       for (let i = 0; i < N; i++) { if (!Pf[i * 4 + 3]) continue; const [v, sa] = hsv(O, i); if (v > .82 && sa < .16 && nearDark(i)) white[i] = 1; }   // (an eye's white lies by its dark iris: a cream collar under the face piece is not an eye)
       const grow = new Uint8Array(N); for (let i = 0; i < N; i++) if (white[i]) { const x = i % W, y = (i / W) | 0; for (let dy = -3; dy <= 3; dy++) for (let dx = -3; dx <= 3; dx++) { const xx = x + dx, yy = y + dy; if (xx >= 0 && yy >= 0 && xx < W && yy < H) grow[yy * W + xx] = 1; } }
       for (const m of ['blink', 'half', 'happy', 'sad']) {
-        setMood(m); const C = read(top, cam), f = new Uint8Array(N); let k = 0;
+        setMood(PLANT === 'eyes' ? 'smile' : m); const C = read(top, cam), f = new Uint8Array(N); let k = 0;
         for (let i = 0; i < N; i++) { if (!grow[i]) continue; const [v, sa] = hsv(C, i); if (m !== 'half' && m !== 'sad' ? (v > .8 && sa < .18) : false) { f[i] = 1; k++; } }
         const r = { id, kind: 'face', pose: m, view: String(s), kit: 0, poke: 0, hairtone: 0, skintone: 0, eyes: k }; cases.push(r);
         if (k > LIMIT.eyes) pics[`${id}-face-${m}-${s}-eyes`] = png(C, f);

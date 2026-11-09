@@ -247,6 +247,32 @@ def _move_with_body(bm, o, name):
             for u in nb:
                 for k, w in (cur.get(u) or getw(u)).items(): acc[k] = acc.get(k, 0) + w
             setw(v, acc)
+    # (3) (owner 9 Nov 2026: "cái nào đẹp và chỉn chu hơn thì làm": keep the full poses, fix the cloth) corrective helper bones,
+    # the standard fix for armpits and crotches: a bone at the shoulder (hip) that turns half as far as the arm (thigh). The
+    # part of a point's weight shared between trunk and limb moves onto the helper, so the cloth there bends round by half
+    # the angle instead of being squeezed flat between two full turns and folding inside out (js/friend-model.ts drives them)
+    _helper_bones()
+    for hb, limb, trunk_ in (('helpArmL', 'armL', ('torso',)), ('helpArmR', 'armR', ('torso',)), ('helpLegL', 'legL', ('root', 'torso')), ('helpLegR', 'legR', ('root', 'torso'))):
+        if hb not in gi:
+            g_ = o.vertex_groups.new(name=hb); gi[hb] = g_.index; gn[g_.index] = hb
+        jp = J[limb]
+        for v in bm.verts:
+            if (v.co - jp).length > .16: continue
+            w = getw(v); wl = w.get(limb, 0.); wt = sum(w.get(t_, 0.) for t_ in trunk_)
+            m_ = min(wl, wt)
+            if m_ < .02: continue
+            new = dict(w); new[limb] = wl - m_
+            for t_ in trunk_:
+                if t_ in new: new[t_] = new[t_] * (1 - m_ / max(wt, 1e-6))
+            new[hb] = new.get(hb, 0) + 2 * m_; setw(v, new)
+def _helper_bones():
+    if 'helpArmL' in rig.data.bones: return
+    VL.objects.active = rig; rig.select_set(True); bpy.ops.object.mode_set(mode='EDIT')
+    eb = rig.data.edit_bones; inv = rig.matrix_world.inverted()
+    for hb, limb, par in (('helpArmL', 'armL', 'torso'), ('helpArmR', 'armR', 'torso'), ('helpLegL', 'legL', 'root'), ('helpLegR', 'legR', 'root')):
+        src = eb.get(limb); b = eb.new(hb); b.head = src.head.copy(); b.tail = src.head + (src.tail - src.head) * .4
+        b.parent = eb.get(par) or eb.get('torso'); b.use_deform = True
+    bpy.ops.object.mode_set(mode='OBJECT'); print('CL helper bones added')
 def shell(name, faces, thick, smooth=6, cuts=()):
     """a copy of these body triangles, pushed out `thick` metres along the surface, softened (no body detail), never
     inside the body; it keeps the body's joint weights and picture coordinates; corner colours = Meshy's painted shade.

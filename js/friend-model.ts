@@ -280,6 +280,12 @@ export function attachFriendModel(A, id: string, skinHex: string, wear: FriendMo
   // swung furthest back, so the cloth is carried by the leg instead of the leg passing through it
   const skirt = (['skirtF', 'skirtB', 'skirtF2', 'skirtB2'] as const).filter(n => bones[n] && bones[n].parent).map(n => ({ n, b: bones[n], r: inRig(bones[n], new THREE.Quaternion()) }));
   const X = new THREE.Vector3(1, 0, 0), sq = new THREE.Quaternion();
+  // (owner 9 Nov 2026: keep the full poses, fix the cloth) corrective helper bones at the shoulders and hips
+  // (tools/meshy/make_clothes.py): each turns half way between the trunk and its limb, so armpits and crotches bend round
+  const helpers = ([['helpArmL', 'torso', 'armL'], ['helpArmR', 'torso', 'armR'], ['helpLegL', 'root', 'legL'], ['helpLegR', 'root', 'legR']] as const)
+    .filter(([h, t, l]) => bones[h] && bones[h].parent && bones[t] && bones[l])
+    .map(([h, t, l]) => ({ b: bones[h], t: bones[t], l: bones[l], r: inRig(bones[h], new THREE.Quaternion()), rt: inRig(bones[t], new THREE.Quaternion()).invert(), rl: inRig(bones[l], new THREE.Quaternion()).invert() }));
+  const hq1 = new THREE.Quaternion(), hq2 = new THREE.Quaternion();
   let face = '', shown = 'smile';
   const follow = (mood = 'smile', riding = false) => {
     A.rig.getWorldQuaternion(rigQ); const inv = rigQ.clone().invert(), parentQ = new THREE.Quaternion();
@@ -289,6 +295,13 @@ export function attachFriendModel(A, id: string, skinHex: string, wear: FriendMo
       b.parent.getWorldQuaternion(parentQ); parentQ.premultiply(inv);
       b.quaternion.copy(parentQ.invert().multiply(q));
       b.updateMatrixWorld(true);
+    }
+    for (const h of helpers) {   // (half way between the trunk's turn and the limb's, from their rests)
+      h.t.getWorldQuaternion(hq1); hq1.premultiply(inv).multiply(h.rt);
+      h.l.getWorldQuaternion(hq2); hq2.premultiply(inv).multiply(h.rl);
+      hq1.slerp(hq2, .5); sq.copy(hq1).multiply(h.r);
+      h.b.parent.getWorldQuaternion(parentQ); parentQ.premultiply(inv);
+      h.b.quaternion.copy(parentQ.invert().multiply(sq)); h.b.updateMatrixWorld(true);
     }
     if (skirt.length && A.legL && A.legR) {
       const lx = A.legL.rotation.x, rx = A.legR.rotation.x; // (the code person's legs: negative is forward)
