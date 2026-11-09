@@ -1157,7 +1157,9 @@ if TEX and KEEP and SHIFT:
     # (owner 9 Nov 2026, the skin tones: thin unmarked slivers on Sol's arms showed as orange streaks) on a swim body the arms and
     # legs are bare: every coloured triangle there that is not the grey kit nor hair is skin
     if 'swim' in ID:
-        _skp |= _limb & ~_hz & (_tot > 0) & (_sat > _ssk * .45) & (_skc < .3) & (_mc.max(-1) > .15)
+        # (9 Nov, the auditor: with the limbs measured from the front, the swim kit's sides by the hands and Clara's braid
+        # ties fell in the limb zone and passed a loose colour test: only skin-strong colours here, near the skin's mix)
+        _skp |= _limb & ~_hz & (_tot > 0) & (_sat > _ssk * .7) & (_skc < .2) & (_mc.max(-1) > .15)
     # (owner 9 Nov 2026, the skin tones: blush under Clara's eyes and her nose stayed pink, inside the eye and nose holes of the
     # mark) the whole face core is skin but its hair: the game's own test keeps the eye whites (pale) and lines (dark) as painted
     _skp |= _core & (_tot > 0) & ~_hairlike
@@ -1175,13 +1177,20 @@ if TEX and KEEP and SHIFT:
     if EYEBOX:
         _ex0 = min(b[0] for b in EYEBOX) - .01; _ex1 = max(b[1] for b in EYEBOX) + .01; _ez = min(b[2] for b in EYEBOX)
         _brow &= ((_pc3[:, 0] > _ex0) & (_pc3[:, 0] < _ex1)) | (_pc3[:, 2] < _ez)
+    # (9 Nov, the auditor: Lumi's leaves hanging by her jaw took the skin tone) a strongly coloured triangle whose hue is far
+    # from the skin's (green leaves, never Clara's blush, which is her skin's hue) is not kept as face below the eyes
+    def _hue(c):
+        mx_, mn_ = c.max(-1), c.min(-1); d_ = np.maximum(mx_ - mn_, 1e-6); r_, g_, b_ = c[..., 0], c[..., 1], c[..., 2]
+        h_ = np.where(mx_ == r_, ((g_ - b_) / d_) % 6, np.where(mx_ == g_, (b_ - r_) / d_ + 2, (r_ - g_) / d_ + 4)) * 60; return h_
+    _hd = np.abs(_hue(_mc) - _hue(_sk_med[None])[0]); _hd = np.minimum(_hd, 360 - _hd)
+    _brow &= ~((_hd > 40) & (_sat > _ssk * .8) & ~((_pc3[:, 0] > _ex0) & (_pc3[:, 0] < _ex1) & (_pc3[:, 2] > _ez)) if EYEBOX else (_hd > 40) & (_sat > _ssk * .8))
     # (Sol's curls at the temples and Finn's strands over the ear are loose pieces, not joined to the top of the head:
     # any head triangle off the face core clearly of the hair's colour starts the growth too)
     _hreg = (_top & _hairish & ~_brow) | (_hz & ~_core & (_tot > 0) & (_dh < _ds * .6)); _st = list(np.nonzero(_hreg)[0])
     while _st:
         a_ = _st.pop()
         for b_ in _nb[a_]:
-            if not _hreg[b_] and _hairish[b_] and not _brow[b_] and _pc3[b_, 2] > L['hipL'].z: _hreg[b_] = True; _st.append(b_)
+            if not _hreg[b_] and _hairish[b_] and not _brow[b_] and _pc3[b_, 2] > L['kneeL'].z: _hreg[b_] = True; _st.append(b_)   # (down to the knees: Clara's braid tips hang below the hips, the auditor caught them toned, 9 Nov)
     # (thin slivers between hair triangles: mostly hair round them and nearer hair's colour than skin's)
     for _ in range(2):
         _fr = np.array([np.mean([_hreg[j] for j in _nb[i]]) if _nb[i] else 0. for i in range(NP)])

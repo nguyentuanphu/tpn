@@ -83,6 +83,17 @@ const shots: Record<string, string> = await P.page.evaluate(async ([MODE, LIST, 
       top.remove(av.root);
     }
   }
+  // skirt: the driven skirt bones in the áo dài while walking (bone names, the code person's legs, the bones' turn)
+  if (MODE === 'skirt') for (const id of ids) {
+    await A.loadFriendModels(id); await A.loadFriendModels(id + '-hd');
+    const av: any = A.buildAvatar({ set: LOOK[id] || 'girl', friend: id, skin: '#f6c7a5', suit: `${id}-aodai` }, null, { hd: true }); A.showHD(av, true);
+    top.add(av.root); av.life = null; for (let f = 0; f <= 9; f++) A.animate(av, 'walk', 10 + f * .05, 3); av.root.updateMatrixWorld(true);
+    const names: string[] = []; let sk: any = null; av.modelHD.obj.traverse((o: any) => { if (o.isBone) { names.push(o.name); if (o.name === 'skirtF') sk = o; } });
+    out[id + ' bones'] = names.join(','); out[id + ' legs'] = [av.legL && av.legL.rotation.x, av.legR && av.legR.rotation.x].map(v => v && v.toFixed(2)).join(' ');
+    out[id + ' skirtF'] = sk ? sk.quaternion.toArray().map((v: number) => v.toFixed(2)).join(' ') + ' parent ' + (sk.parent && sk.parent.name) : 'none';
+    let wsk = 0; av.modelHD.obj.traverse((o: any) => { if (o.isSkinnedMesh && /panels/.test(o.material.name || '')) wsk = o.skeleton.bones.map((b: any) => b.name).indexOf('skirtF'); }); out[id + ' panel skeleton has skirtF at'] = String(wsk);
+    top.remove(av.root);
+  }
   // cover: which parts of a dressed friend hide what lies under worn garments (uCover), for checking the hiding is on
   if (MODE === 'cover') for (const id of ids) {
     await A.loadFriendModels(id); await A.loadFriendModels(id + '-hd');
@@ -165,7 +176,7 @@ const shots: Record<string, string> = await P.page.evaluate(async ([MODE, LIST, 
   }
   return out;
 }, [MODE, LIST, !!process.env.BARE] as any);
-if (MODE === 'cover') for (const [k, v] of Object.entries(shots)) if (!String(v).startsWith('data:')) console.log(k, v);
+if (MODE === 'cover' || MODE === 'skirt') for (const [k, v] of Object.entries(shots)) if (!String(v).startsWith('data:')) console.log(k, v);
 for (const [k, v] of Object.entries(shots)) { if (v) writeFileSync(`${OUT}/${k}.png`, Buffer.from(v.split(',')[1], 'base64')); else console.log('missing', k); }
 console.log('shots', Object.keys(shots).length, 'in', OUT);
 await b.close();

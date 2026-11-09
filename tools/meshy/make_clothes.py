@@ -179,6 +179,74 @@ def hem_cut(z): return ('torso', None, Vector((0, 0, z)), Vector((0, 0, -1)))
 def neck_cut(): return ('torso', None, Vector((0, 0, NECKBAND)), Vector((0, 0, 1)))   # (a top's neckband: straight, just past the kit's collar)
 def limb_cuts(kind, t): return [(arm_cut if kind == 'arm' else leg_cut)(s, t) for s in 'LR']
 
+# (owner 9 Nov 2026, the poses: thighs came out through shirt hems when walking and sitting, shirts folded inside out in the
+# armpits when the arms went up) a garment copies the body's joint weights, which change sharply where the trunk meets a
+# leg or an arm. Cloth does not: (1) a top's lowest band takes more and more of the thigh's weights towards its hem (the
+# body's weights 6 cm lower, on the same side), so the hem lifts with a thigh going forward; (2) round each shoulder the
+# weights are smoothed over the garment's own surface, so the cloth bends in a wide curve instead of folding.
+_BKD = None
+def _body_weights():
+    global _BKD
+    if _BKD is None:
+        from mathutils.kdtree import KDTree as _K
+        vs = [v for v in me.vertices if not any(body.vertex_groups[g.group].name == 'hair-v' for g in v.groups if g.group < len(body.vertex_groups))]
+        kd = _K(len(vs)); W = []
+        for i_, v in enumerate(vs):
+            kd.insert(v.co, i_); W.append({body.vertex_groups[g.group].name: g.weight for g in v.groups if g.group < len(body.vertex_groups) and g.weight > 1e-4})
+        kd.balance(); _BKD = (kd, W)
+    return _BKD
+def _move_with_body(bm, o, name):
+    dl = bm.verts.layers.deform.active
+    print('CL move', name, 'deform layer', dl is not None, 'groups', len(o.vertex_groups))
+    if dl is None: return
+    gi = {g.name: g.index for g in o.vertex_groups}; gn = {g.index: g.name for g in o.vertex_groups}
+    def getw(v): return {gn[k]: w for k, w in v[dl].items() if k in gn and gn[k] != 'hair-v'}
+    def setw(v, d):
+        dv = v[dl]; dv.clear(); tot = sum(d.values()) or 1.
+        for k, w in d.items():
+            if w > 1e-3 and k in gi: dv[gi[k]] = w / tot
+    bm.verts.ensure_lookup_table()
+    if LAYER.get(name) == 1 or name in ('top-short', 'top-long', 'tunic-long', 'bodice'):   # (1) the hem follows the thighs
+        # (the whole trunk, sides too: the sides at the hips are wider than the shoulder joints, and a thigh sitting up came
+        # through them, Sol's; sleeves hanging by the hips are told apart by the body part under them)
+        _onarm = lambda v: (lambda h_: h_[0] is not None and bool(isarm[h_[2]]))(btree.find_nearest(v.co))
+        trunk = [v for v in bm.verts if not _onarm(v)]
+        if trunk:
+            hem = min(v.co.z for v in trunk); kd, W = _body_weights(); band = .12; tset = set(trunk)
+            for v in bm.verts:
+                if v not in tset or v.co.z > hem + band: continue
+                t = .8 * (1 - (v.co.z - hem) / band) ** .8   # (a sitting thigh came through the shirt's sides at .65 over 8 cm)
+                q = Vector((v.co.x, v.co.y, v.co.z - .06)); _co, j, _d = kd.find(q)
+                low = {k: w for k, w in W[j].items() if k.startswith(('leg', 'knee'))}
+                if not low: continue
+                own = getw(v); s_low = sum(low.values()) or 1.
+                new = {k: w * (1 - t) for k, w in own.items()}
+                for k, w in low.items(): new[k] = new.get(k, 0) + t * w / s_low
+                setw(v, new); _nh = locals().get('_nh', 0) + 1
+            print('CL move', name, 'hem band points', sum(1 for v in bm.verts if v in tset and v.co.z <= hem + band), 'hem z', round(hem, 3))
+    # (1b) the trunk of a top below the armpits follows the trunk only: Meshy's rig gives the trunk's sides some arm weight,
+    # and raised arms lifted the shirt's sides off the trousers and shorts (Lumi's, Clara's, in the auditor's cheer pose)
+    if LAYER.get(name) in (0, 1, 2):   # (trousers and shorts too: their waistband's sides carried a little arm weight and ran up the shirt's sides when the arms went up, the auditor's cheer pose)
+        arm_z = (J['armL'].z + J['armR'].z) / 2 - .05
+        for v in bm.verts:
+            if (LAYER.get(name) != 0 and abs(v.co.x) >= SH_X * .95) or v.co.z > arm_z: continue   # (trousers never cover an arm: every point of theirs)
+            w = getw(v); arm = sum(x for k, x in w.items() if k.startswith(('arm', 'elbow')))
+            if arm <= 1e-3: continue
+            t = min(1., (arm_z - v.co.z) / .06)   # (fading in over 6 cm below the armpit)
+            new = {k: (x * (1 - t) if k.startswith(('arm', 'elbow')) else x) for k, x in w.items()}
+            new['torso'] = new.get('torso', 0) + arm * t; setw(v, new)
+    # (2) smooth weights round the shoulders (and hips, for trousers and shorts): 6 passes over neighbours
+    joints = [J['armL'], J['armR'], J['elbowL'], J['elbowR']] + ([J['legL'], J['legR'], J['kneeL'], J['kneeR']] if LAYER.get(name) == 0 else [])   # (elbows and knees too: the auditor found trousers and sleeves folding inside out there)
+    near = [v for v in bm.verts if min((v.co - j_).length for j_ in joints) < .15]   # (the auditor: shirts folded inside out under raised arms at .11 and 6 passes; .18 and 30 made pokes worse and models bigger)
+    for _ in range(14):
+        cur = {v: getw(v) for v in near}
+        for v in near:
+            nb = [e.other_vert(v) for e in v.link_edges]
+            if not nb: continue
+            acc = dict(cur[v])
+            for u in nb:
+                for k, w in (cur.get(u) or getw(u)).items(): acc[k] = acc.get(k, 0) + w
+            setw(v, acc)
 def shell(name, faces, thick, smooth=6, cuts=()):
     """a copy of these body triangles, pushed out `thick` metres along the surface, softened (no body detail), never
     inside the body; it keeps the body's joint weights and picture coordinates; corner colours = Meshy's painted shade.
@@ -259,7 +327,15 @@ def shell(name, faces, thick, smooth=6, cuts=()):
             # nearest body point lay 3 cm lower and dragged the collar down past the kit; a point far from it lifts in place
             if hit[0] is not None and (hit[0] - v.co).length < .008: v.co = hit[0] + hit[1].normalized() * _th
             elif v.normal.length > .5: v.co = v.co + v.normal.normalized() * _th
+    # (one winding, outward: copied and cut body triangles came out mixed, and the auditor read the outside as an inside;
+    # Blender's own recalculation turned whole open shells inward) each face is turned to agree with the body under it
+    bm.normal_update(); _flip = []
+    for f in bm.faces:
+        h_ = btree.find_nearest(f.calc_center_median())
+        if h_[0] is not None and f.normal.dot(h_[1]) < 0: _flip.append(f)
+    if _flip: bmesh.ops.reverse_faces(bm, faces=_flip)
     bm.normal_update()
+    _move_with_body(bm, o, name)
     # painted shade: the body's own colour under each corner, as brightness relative to the grey clothes / the skin
     uv = bm.loops.layers.uv.active; col = bm.loops.layers.color.new('shade')
     bm.verts.ensure_lookup_table(); _vk = np.zeros(len(bm.verts)); _vn = np.zeros(len(bm.verts))
@@ -285,6 +361,21 @@ def shell(name, faces, thick, smooth=6, cuts=()):
     print('CL part', name, 'triangles', len(o.data.polygons))
     return o
 
+def _skirt_bones():
+    if 'skirtF' in rig.data.bones: return
+    VL.objects.active = rig; rig.select_set(True); bpy.ops.object.mode_set(mode='EDIT')
+    eb = rig.data.edit_bones; par = eb.get('root') or eb.get('torso')
+    hy = (J['legL'].y + J['legR'].y) / 2; inv = rig.matrix_world.inverted()
+    for nm, dy in (('skirtF', -1), ('skirtB', 1)):
+        # (the hinge on the hip's own front (back) surface, not its middle: turned about the middle, a sitting child's skirt front
+        # swung up through her thighs, Clara's; about the front of the hips it lies along the top of the thighs)
+        fy = hy + dy * .07
+        KZ = (J['kneeL'].z + J['kneeR'].z) / 2
+        b = eb.new(nm); b.head = inv @ Vector((0, fy, HIP + .02)); b.tail = inv @ Vector((0, fy + dy * .02, KZ)); b.parent = par; b.use_deform = True
+        # (owner 9 Nov 2026, the auditor: a sitting child's áo dài front stood out flat like a board) a second bone from the knee
+        # down: the cloth over the thighs turns with them, and below the knees hangs down again (js/friend-model.ts)
+        b2 = eb.new(nm + '2'); b2.head = b.tail.copy(); b2.tail = inv @ Vector((0, fy + dy * .03, KZ - .3)); b2.parent = b; b2.use_deform = True
+    bpy.ops.object.mode_set(mode='OBJECT'); print('CL skirt bones added')
 def cone(name, z_top, z_bot, flare, thick, panels=False, slit=.0):
     """a skirt (or the áo dài's long panels with side slits) hung from the waist: rings round the body's own waist,
     widening to the hem; weighted to the torso at the top, more to each leg's side lower down"""
@@ -320,11 +411,21 @@ def cone(name, z_top, z_bot, flare, thick, panels=False, slit=.0):
             zt = (z_top - l.vert.co.z) / max(z_top - z_bot, 1e-4); k = 1.0 - .18 * zt   # (a little darker towards the hem)
             l[col] = (k, k, k, 1)
     me2 = bpy.data.meshes.new('g-' + name); bm.to_mesh(me2); bm.free()
-    o = bpy.data.objects.new('g-' + name, me2); sc.collection.objects.link(o)
-    for g in ('torso', 'legL', 'legR'): o.vertex_groups.new(name=g)
+    o = bpy.data.objects.new('g-' + name, me2); sc.collection.objects.link(o); o['cone_c'] = (cx, cy, z_top, z_bot)
+    # (owner 9 Nov 2026, the poses: legs came through skirts and the áo dài's panels when walking, running and sitting) the
+    # front and back of a skirt hang from two extra bones at the hips, skirtF and skirtB, which the game turns with the leg
+    # swung furthest forward or back (js/friend-model.ts), the standard driven skirt bones; the sides follow their own leg
+    _skirt_bones()
+    for g in ('torso', 'legL', 'legR', 'skirtF', 'skirtB', 'skirtF2', 'skirtB2'): o.vertex_groups.new(name=g)
+    KZ = (J['kneeL'].z + J['kneeR'].z) / 2
+    _ys = [v.co.y for v in me2.vertices]; _ry = max(max(_ys) - cy, cy - min(_ys), .02)
     for v in me2.vertices:
         t = (z_top - v.co.z) / max(z_top - z_bot, 1e-4); s = 'legL' if v.co.x >= cx else 'legR'
-        o.vertex_groups['torso'].add([v.index], 1 - .45 * t, 'REPLACE'); o.vertex_groups[s].add([v.index], .45 * t, 'REPLACE')
+        k = min(1., abs(v.co.y - cy) / _ry) ** .7; fb = 'skirtF' if v.co.y < cy else 'skirtB'   # (k: 1 at the middle of the front or back, 0 at the sides)
+        sw = min(1., .35 + 2.2 * t)   # (the waistband too: tops' hems follow the thighs under it)  # (fully carried by the legs and skirt bones from a third of the way down: at .8 t the thighs came through)
+        lo = max(0., min(1., (KZ + .04 - v.co.z) / .08))   # (below the knee: the lower bone, blended over 8 cm)
+        o.vertex_groups['torso'].add([v.index], max(1e-3, 1 - sw), 'REPLACE'); o.vertex_groups[s].add([v.index], sw * (1 - k), 'REPLACE'); o.vertex_groups[fb].add([v.index], sw * k * (1 - lo), 'REPLACE')
+        if lo > 0: o.vertex_groups[fb + '2'].add([v.index], sw * k * lo, 'REPLACE')
     m = bpy.data.materials.new('lit-g-' + name); me2.materials.append(m)
     for p in me2.polygons: p.use_smooth = True
     print('CL part', name, 'triangles', len(me2.polygons) * 2)
@@ -356,25 +457,40 @@ TOP_HEM = HIP - .03
 istorso |= kit & ~isarm & ~isleg & (fc[:, 2] > HIP - .16) & (fc[:, 2] < NECK)
 _kl = kit & isleg; KIT_LEG_T = float(np.percentile(legt[_kl], 97)) + .06 if _kl.any() else .5
 print('CL kit shorts reach', round(KIT_LEG_T, 2))
-parts.append(shell('top-short', faces_for(top=TOP_HEM - .06, sleeve=.75), .012, cuts=[neck_cut(), hem_cut(TOP_HEM)] + limb_cuts('arm', .5)))
-parts.append(shell('top-long', faces_for(top=TOP_HEM - .06, sleeve=1.8), .013, cuts=[neck_cut(), hem_cut(TOP_HEM)] + limb_cuts('arm', 1.55)))
-parts.append(shell('tunic-long', np.union1d(faces_for(top=HIP - .2, sleeve=1.8, under_waist=True), faces_for(leg=.8)), .015,
-                   cuts=[neck_cut(), hem_cut(HIP - .12)] + limb_cuts('arm', 1.55) + limb_cuts('leg', .55)))
-parts.append(shell('bodice', faces_for(top=HIP - .09, sleeve=.6), .012, cuts=[neck_cut(), hem_cut(HIP - .03)] + limb_cuts('arm', .35)))
-# bottoms
-parts.append(shell('shorts', faces_for(under_waist=True, leg=max(.75, KIT_LEG_T + .2)), .010, cuts=limb_cuts('leg', max(.5, KIT_LEG_T))))
-parts.append(shell('trousers', faces_for(under_waist=True, leg=1.95), .011, cuts=limb_cuts('leg', 1.82)))
-parts.append(shell('leggings', faces_for(under_waist=True, leg=1.95), .007, cuts=limb_cuts('leg', 1.85)))
-# overalls: the bib over the chest's front, below the arms
-# (owner review 8 Nov: Lumi's bib was a round blob) a straight-edged bib: the chest's front, cut flat at its top and sides
+# (owner 9 Nov 2026: dozens of outfits to come) the shapes are rows of tools/meshy/garments.json, measured on this body
+import json as _json
 _bf = faces_for(top=HIP - .04, front_only=True)
 BIB_TOP = WAIST + (NECK - WAIST) * .55; BIB_X = SH_X * .55
-parts.append(shell('bib', _bf[(fc[_bf, 2] < BIB_TOP + .05) & (np.abs(fc[_bf, 0]) < BIB_X + .05)], .016, smooth=2,
-                   cuts=[('torso', None, Vector((0, 0, BIB_TOP)), Vector((0, 0, 1))), ('torso', None, Vector((BIB_X, 0, 0)), Vector((1, 0, 0))),
-                         ('torso', None, Vector((-BIB_X, 0, 0)), Vector((-1, 0, 0))), hem_cut(WAIST - .01)]))
-# skirts and the áo dài's panels
-parts.append(cone('skirt', WAIST, KNEE + .03, .55, .02))
-parts.append(cone('aodai-panels', WAIST, ANKLE + .04, .5, .03, panels=True, slit=.14))
+_V = dict(NECK=NECK, WAIST=WAIST, HIP=HIP, KNEE=KNEE, ANKLE=ANKLE, TOP_HEM=TOP_HEM, KIT_LEG_T=KIT_LEG_T, BIB_TOP=BIB_TOP, BIB_X=BIB_X, max=max, min=min)
+def _num(x): return float(eval(x, {'__builtins__': {}}, _V)) if isinstance(x, str) else float(x)
+def _cut(c):
+    k, _, v = c.partition(':')
+    if k == 'neck': return [neck_cut()]
+    if k == 'hem': return [hem_cut(_num(v))]
+    if k in ('arm', 'leg'): return limb_cuts(k, _num(v))
+    if k == 'up': return [('torso', None, Vector((0, 0, _num(v))), Vector((0, 0, 1)))]
+    if k == 'side': x_ = _num(v); return [('torso', None, Vector((x_, 0, 0)), Vector((1 if x_ >= 0 else -1, 0, 0)))]
+    raise ValueError('garments.json: unknown cut ' + c)
+def _faces(spec):
+    out = None
+    for f in spec:
+        kw = {k: (_num(v) if k in ('top', 'sleeve', 'leg', 'z_min') else v) for k, v in f.items() if k in ('top', 'sleeve', 'leg', 'under_waist', 'front_only', 'z_min')}
+        fs = faces_for(**kw)
+        if 'below' in f: fs = fs[fc[fs, 2] < _num(f['below'])]
+        if 'within_x' in f: fs = fs[np.abs(fc[fs, 0]) < _num(f['within_x'])]
+        out = fs if out is None else np.union1d(out, fs)
+    return out
+SHAPES = _json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'garments.json'), encoding='utf-8'))['shapes']
+LAYER = {}
+for g in SHAPES:
+    LAYER[g['name']] = g['layer']
+    if g['kind'] == 'shell':
+        cuts = [c_ for c in g.get('cuts', []) for c_ in _cut(c)]
+        parts.append(shell(g['name'], _faces(g['faces']), g['thick'], smooth=g.get('smooth', 6), cuts=cuts))
+    elif g['kind'] == 'cone':
+        parts.append(cone(g['name'], _num(g['top']), _num(g['bottom']), g['flare'], g['thick'], panels=g.get('panels', False), slit=g.get('slit', .0)))
+    else: raise ValueError('garments.json: unknown kind ' + g['kind'])
+print('CL shapes from garments.json', [g['name'] for g in SHAPES])
 # shoes: over the feet to just above the ankle
 if feet is not None:
     fm = feet.data; feet.name = feet.name.replace('-shoes', '-feet')
@@ -482,7 +598,19 @@ me.update(); print('CL kit sunk under the collar', _sunk)
 # garment within 8 cm, at least 6 mm in from the garment's open edges (hems, cuffs, neckline: the body round them stays,
 # so no gap opens), on a garment surface facing the same way. Hair is never covered. Garment and body bend with the same
 # joint weights, so what is covered at rest stays covered when the child moves.
-COVER_BIT = {'top-short': 1, 'top-long': 2, 'tunic-long': 4, 'bodice': 8, 'skirt': 16, 'shorts': 32, 'trousers': 64, 'leggings': 128}
+_cov = [g['name'] for g in SHAPES if g['layer'] <= 2 and g['name'] not in ('bib', 'aodai-panels')]   # (the body under a bib or panels is under a top or trousers too)
+assert len(_cov) <= 8, 'more than 8 body-covering shapes: widen the cover mark'
+COVER_BIT = {n_: 1 << i for i, n_ in enumerate(_cov)}
+# (9 Nov, the auditor: tops showed under a skirt's waistband) under a skirt or the áo dài's panels (cones hung from the waist)
+# a point is covered when a level line from the cone's axis out through it meets the cone: inside the skirt, whatever the
+# surfaces' directions; the panels' slits let the line out, so the trousers there stay drawn
+def _in_cone(o, tr, co):
+    cx_, cy_, zt_, zb_ = o['cone_c']
+    if not (zb_ - .02 < co.z < zt_ - .004): return False
+    d_ = Vector((co.x - cx_, co.y - cy_, 0))
+    if d_.length < 1e-4: return True
+    d_.normalize(); return tr.ray_cast(co + d_ * .0005, d_, .3)[0] is not None
+
 _cbits = np.zeros(len(me.vertices), np.int32)
 _hgi2 = body.vertex_groups['hair-v'].index
 _ishair = np.array([any(g.group == _hgi2 for g in v.groups) for v in me.vertices])
@@ -505,6 +633,9 @@ for o in parts:
     n_cov = 0
     for v_ in me.vertices:
         if _ishair[v_.index] or v_.co.z > NECK + .06: continue
+        if 'cone_c' in o:
+            if _in_cone(o, tr, v_.co): _cbits[v_.index] |= COVER_BIT[nm]; n_cov += 1
+            continue
         n_ = v_.normal; hit = None
         for d_ in (n_, -n_):
             h_ = tr.ray_cast(v_.co - d_ * .0005, d_, .08)
@@ -518,13 +649,15 @@ if _ca is not None and _ca.domain == 'CORNER':
     _al = np.array([_cbits[l.vertex_index] for l in me.loops], np.float32) / 255.
     _buf = np.zeros(len(_ca.data) * 4, np.float32); _ca.data.foreach_get('color', _buf); _buf[3::4] = _al; _ca.data.foreach_set('color', _buf)
     for m_ in me.materials:
-        if m_ is not None: m_['cover_mark'] = True
+        if m_ is not None: m_['cover_mark'] = True; m_['kit_waist'] = float(WAIST); m_['kit_neck'] = float(NECK); m_['kit_grey'] = float(GREY_LUM)   # (the game paints the swim kit in the worn clothes' colours: above the waist the top's, below the trousers')
     print('CL cover bits written on', int((_cbits > 0).sum()), 'of', len(me.vertices), 'body points')
 # (owner 9 Nov 2026, the poses: trousers came out through tops, leggings and trousers through skirts and the áo dài's
 # panels, the bib and shorts through Lumi's top, when the children walked, waved and sat) a garment worn under another is
 # not drawn where that one covers it, the same way (bits of the outer garments, js/friend-model.ts GCOVER_BIT, in the
 # alpha of the inner garment's corner colour). Covered at rest stays covered as they bend: what pokes out is hidden.
-GCOVER_BIT = {'top-short': 1, 'top-long': 2, 'tunic-long': 4, 'bodice': 8, 'skirt': 16, 'aodai-panels': 32, 'bib': 64}
+_gcov = [g['name'] for g in SHAPES if g['layer'] in (1, 2)]
+assert len(_gcov) <= 8, 'more than 8 covering garments: widen the cover mark'
+GCOVER_BIT = {n_: 1 << i for i, n_ in enumerate(_gcov)}
 _byname = {o.name[2:]: o for o in parts}
 _gtr = {}
 for nm in GCOVER_BIT:
@@ -545,7 +678,7 @@ for o in parts:
     if ca is None or ca.domain != 'CORNER': continue
     # (only an outer layer hides an inner one: trousers, shorts, leggings < tops < skirt, áo dài panels, bib; the bib lay "under"
     # the top as much as over it and both vanished)
-    _rank = lambda n_: 0 if n_ in ('trousers', 'shorts', 'leggings') else 2 if n_ in ('skirt', 'aodai-panels', 'bib') else 1
+    _rank = lambda n_: LAYER.get(n_, 3)
     overs = [k for k in _gtr if k != nm and _rank(k) > _rank(nm)]
     if not overs: continue
     o.data.update(); bits = np.zeros(len(o.data.vertices), np.int32); _per = {}
@@ -553,6 +686,9 @@ for o in parts:
         n_ = v_.normal
         for k in overs:
             tr, fn, kd = _gtr[k]; hit = None
+            if 'cone_c' in _byname[k]:
+                if _in_cone(_byname[k], tr, v_.co): bits[v_.index] |= GCOVER_BIT[k]; _per[k] = _per.get(k, 0) + 1
+                continue
             # (a skirt, the áo dài's panels and the bib hang well clear of the legs and chest: out to 25 cm, outward only, or a
             # ray back through the leg met the back panel and hid a shin seen from the front)
             far_ = _rank(k) == 2
@@ -560,7 +696,7 @@ for o in parts:
                 h_ = tr.ray_cast(v_.co - d_ * .0005, d_, .25 if far_ else .08)
                 if h_[0] is not None and (hit is None or h_[3] < hit[3]): hit = h_
             if hit is None or abs(fn[hit[2]].dot(n_)) < .3: continue
-            if kd is not None and kd.find(hit[0])[2] < .006: continue
+            if kd is not None and kd.find(hit[0])[2] < (.002 if far_ else .006): continue   # (a skirt's or panels' waistband: 2 mm, or a top's hem showed over it, Lumi's)
             bits[v_.index] |= GCOVER_BIT[k]; _per[k] = _per.get(k, 0) + 1
     _buf = np.zeros(len(ca.data) * 4, np.float32); ca.data.foreach_get('color', _buf)
     _buf[3::4] = np.array([bits[l.vertex_index] for l in o.data.loops], np.float32) / 255.; ca.data.foreach_set('color', _buf)
@@ -591,7 +727,8 @@ if RDIR:   # a check picture: every part over the body in turn, in its own test 
     for o in parts:   # (the check colours are not exported)
         m = o.data.materials[0]; m.use_nodes = False
 
-for o in parts: o.data.materials[0]['garment'] = o.name[2:]
+for o in parts:   # (the game reads each garment's bits and layer from here: js/friend-model.ts, no table of its own)
+    m_ = o.data.materials[0]; nm_ = o.name[2:]; m_['garment'] = nm_; m_['cover_bit'] = COVER_BIT.get(nm_, 0); m_['gcover_bit'] = GCOVER_BIT.get(nm_, 0); m_['layer'] = LAYER.get(nm_, 3)
 bpy.ops.object.select_all(action='DESELECT')
 for o in bpy.data.objects:   # the rig, everything on it (body, feet, faces, clothes) and the friend's item
     if o is rig or o.parent is rig or (o.type == 'MESH' and '-item' in o.name): o.select_set(True)

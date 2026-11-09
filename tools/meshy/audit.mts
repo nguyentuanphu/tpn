@@ -1,7 +1,7 @@
 // (Meshy production, 9 Nov 2026; owner: "Why dont you build a tool like a designer auditor to audit all these points? I have
 // been making and spotting your mistakes many times") The friends' auditor: the game draws every friend in every outfit,
 // pose and view, and the faults are measured, not looked for by eye:
-//   kit      the grey swim kit showing while dressed
+//   kit      the grey swim kit showing while dressed (the game paints it in the clothes' colours: only grey kit counts)
 //   poke     the body or an inner garment showing where a worn outer garment should cover it, less than 1.2 cm in front of
 //            that garment (ID and depth pictures of each layer alone; an arm well in front of the shirt is not a fault)
 //   hairtone hair-coloured pixels that change with the skin tone (hair tinted like skin: Clara's braids, Sol's curls)
@@ -15,7 +15,7 @@ const { chromium } = createRequire(new URL('../../tests/package.json', import.me
 import { writeFileSync, mkdirSync } from 'node:fs';
 const [OUT, LIST = 'finn,sol,clara,lumi', QUICK = ''] = process.argv.slice(2);
 mkdirSync(OUT, { recursive: true });
-const LIMIT = { kit: 12, poke: 25, hairtone: 30, skintone: 30 };   // pixels in a 360 x 480 picture
+const LIMIT = { kit: 12, poke: 25, hairtone: 30, skintone: 30, eyes: 6, fold: 150 };   // (fold: the inside of a top or trousers looks like the outside, same colour and light: only a large inside-out patch shows)   // pixels in a 360 x 480 picture
 const b = await chromium.launch({ args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'] });
 const P = await open(b, { w: 900, h: 700, fast: false }); await clear(P.page);
 const res: any = await P.page.evaluate(async ([LIST, QUICK, LIMIT]) => {
@@ -33,30 +33,34 @@ const res: any = await P.page.evaluate(async ([LIST, QUICK, LIMIT]) => {
   // ID + depth materials: R = layer code, G/B = depth from the camera in mm; the cover hiding (js/friend-model.ts) kept
   const RANK: Record<string, number> = { trousers: 0, shorts: 0, leggings: 0, 'top-short': 1, 'top-long': 1, 'tunic-long': 1, bodice: 1, skirt: 2, 'aodai-panels': 2, bib: 2, boots: 3 };
   const GCODE: Record<string, number> = {}; Object.keys(RANK).forEach((k, i) => { GCODE[k] = 20 + i; });
-  const idMat = (orig: any, code: number, isBody: boolean) => {
+  const BIAS = [.002, .010, .016, .002];   // (js/friend-model.ts LAYER_BIAS: the game's depth order for layered clothes, measured as the player sees it)
+  const idMat = (orig: any, code: number, isBody: boolean, layer = -1) => {
     const m = new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide }); m.vertexColors = !!orig.vertexColors;
     const cu = orig.userData && orig.userData.coverU ? orig.userData.coverU : { value: 0 };
     m.onBeforeCompile = (sh: any) => { sh.uniforms.uCover = cu;
-      sh.vertexShader = 'uniform float uCover;\nvarying float vCov;\nvarying float vDz;\nvarying vec4 vMk;\n' + sh.vertexShader
+      sh.vertexShader = 'uniform float uCover;\nvarying float vCov;varying float vAny;\nvarying float vDz;\nvarying vec4 vMk;\n' + sh.vertexShader
         .replace('#include <color_vertex>', `#include <color_vertex>
-vCov = 0.0; vMk = vec4(1.0, 0.0, 0.0, 0.0);
+vCov = 0.0; vAny = 0.0; vMk = vec4(1.0, 0.0, 0.0, 0.0);
 #ifdef USE_COLOR_ALPHA
 vMk = color; float cb_ = floor(color.a * 255.0 + .5);
 for (int k = 0; k < 8; k++) { float p_ = exp2(float(k)); if (mod(floor(cb_ / p_), 2.0) > .5 && mod(floor(uCover / p_), 2.0) > .5) vCov = 1.0; }
-#endif`).replace('#include <project_vertex>', '#include <project_vertex>\nvDz = -mvPosition.z;');
-      sh.fragmentShader = 'varying float vCov;\nvarying float vDz;\nvarying vec4 vMk;\n' + sh.fragmentShader
+vAny = vCov;
+#endif`).replace('#include <project_vertex>', '#include <project_vertex>\n' + (layer >= 0 ? `mvPosition.xyz -= normalize(mvPosition.xyz) * ${BIAS[layer].toFixed(4)}; gl_Position = projectionMatrix * mvPosition;\n` : '')
+          + (isBody && orig.userData && orig.userData.kitU && orig.userData.kitU.on.value > .5 ? `#ifdef USE_COLOR_ALPHA\nif (color.r < .5 && color.a * 255.0 < .5 && position.y < ${Number(orig.userData.kitU.neck.value).toFixed(4)}) { mvPosition.xyz -= normalize(mvPosition.xyz) * .012; gl_Position = projectionMatrix * mvPosition; }\n#endif\n` : '') + 'vDz = -mvPosition.z;');
+      sh.fragmentShader = 'varying float vCov;varying float vAny;\nvarying float vDz;\nvarying vec4 vMk;\n' + sh.fragmentShader
         .replace('void main() {', 'void main() {\nif (vCov > .999) discard;')
         .replace('#include <dithering_fragment>', `#include <dithering_fragment>
 float code_ = ${code.toFixed(1)};
-${isBody ? 'if (vMk.r < .5) code_ = vMk.a * 255.0 > .5 ? 2.0 : 3.0; // (1 skin, 2 swim kit (under some garment), 3 hair or eyes)' : ''}
+${isBody ? 'if (vMk.r < .5) code_ = vMk.a * 255.0 > .5 ? 2.0 : 3.0; else if (vAny < .01) code_ = 5.0; // (1 skin under the worn clothes, 5 skin no worn garment covers (face, hands: never a poke), 2 swim kit, 3 hair or eyes)' : ''}
+${!isBody && code >= 20 && layer >= 0 && layer <= 1 ? 'if (!gl_FrontFacing) code_ += 100.0; // (a garment seen from inside: folded inside out, unless at an opening)' : ''}
 float dm_ = clamp(vDz * 1000.0, 0.0, 65535.0);
 gl_FragColor = vec4(code_ / 255.0, floor(dm_ / 256.0) / 255.0, mod(dm_, 256.0) / 255.0, 1.0);`); };
-    m.customProgramCacheKey = () => 'audit-id-' + code + (isBody ? 'b' : '') + (m.vertexColors ? 'v' : ''); return m;
+    m.customProgramCacheKey = () => 'audit-id-' + code + (isBody ? 'b' : '') + (m.vertexColors ? 'v' : '') + '-l' + layer + (isBody && orig.userData && orig.userData.kitU ? '-k' + orig.userData.kitU.on.value + '-' + orig.userData.kitU.neck.value : ''); return m;
   };
   const POSES: [string, string, number, number][] = [['rest', 'idle', 0, 1], ['walk', 'walk', 3, 9], ['run', 'walk', 9, 14], ['cheer', 'cheer', 0, 3], ['wave', 'wave', 0, 3], ['dance', 'dance', 0, 5], ['jump', 'air', 0, 2], ['sit', 'sit', 0, 2], ['climb', 'climb', 0, 4]];
   const poses = QUICK ? POSES.filter(p => ['rest', 'walk', 'cheer'].includes(p[0])) : POSES;
   const LOOK: any = { finn: 'boy', sol: 'boy', clara: 'girl', lumi: 'girl' };
-  const cases: any[] = [], pics: Record<string, string> = {};
+  const cases: any[] = [], pics: Record<string, string> = {}, HREF: Record<string, number[]> = {};
   for (const id of LIST.split(',')) {
     await A.loadFriendModels(id); await A.loadFriendModels(id + '-hd');
     for (const kind of ['everyday', 'aodai', 'festival', 'rain']) {
@@ -71,7 +75,7 @@ gl_FragColor = vec4(code_ / 255.0, floor(dm_ / 256.0) / 255.0, mod(dm_, 256.0) /
         av.life = null; for (let f = 0; f <= frames; f++) A.animate(av, st, 10 + f * .05, sp);
         av.root.updateMatrixWorld(true); M.follow(av.life && av.life.mood || 'smile');
         const box = new THREE.Box3().setFromObject(M.obj, true), c = box.getCenter(new THREE.Vector3()), Hh = Math.max(box.max.y - box.min.y, 1);
-        for (const [s, vn] of [[0, 'front'], [Math.PI / 2, 'left'], [Math.PI, 'back'], [-Math.PI / 2, 'right']] as [number, string][]) {
+        for (const [s, vn] of [[0, 'front'], [.8, 'tq'], [Math.PI / 2, 'left'], [Math.PI, 'back'], [2.4, 'tqback'], [-Math.PI / 2, 'right']] as [number, string][]) {   // (three-quarter views too: the owner's pose sheets showed a fold under the arm the four straight views missed)
           const cam = new THREE.PerspectiveCamera(30, W / H, .05, 100), dir = new THREE.Vector3(Math.sin(s), 0, Math.cos(s));
           cam.position.copy(c).addScaledVector(dir, Hh * 2.1); cam.lookAt(c); cam.updateMatrixWorld(true);
           // the looks: light tone and dark tone, in the valley
@@ -82,48 +86,106 @@ gl_FragColor = vec4(code_ / 255.0, floor(dm_ / 256.0) / 255.0, mod(dm_, 256.0) /
             const isBody = !g && !n.startsWith('face-') && !n.startsWith('cloth-item');
             const vis0 = saved.find(x => x[0] === o)[2];
             o.visible = vis0 && !n.startsWith('face-') && (only === null || g === only);
-            if (o.visible) o.material = idMat(saved.find(x => x[0] === o)[1], g ? GCODE[g] : 1, isBody); });
+            if (o.visible) o.material = idMat(saved.find(x => x[0] === o)[1], g ? GCODE[g] : 1, isBody, g ? (RANK[g] ?? -1) : -1); });
           solo.add(av.root); av.root.updateMatrixWorld(true);
           const others: any[] = []; av.root.traverse((o: any) => { if (o.isMesh && !meshes.includes(o) && o.visible) { others.push(o); o.visible = false; } });   // (the code person's own parts and the ground ring: not the model)
           setPass(null); const Pall = read(solo, cam);
+          // the face piece shown now (mood pieces lie over eyes and mouth; tone faults there are the eyes' own business: the eyes check)
+          saved.forEach(([o, m, v]: any) => { o.material = m; o.visible = v; });
+          meshes.forEach((o: any) => { const n = o.material.name || ''; const v0 = saved.find(x => x[0] === o)[2]; o.visible = v0 && n.startsWith('face-'); if (o.visible) o.material = idMat({}, 4, false); });
+          const Pf = read(solo, cam);
           const Pg: Record<string, Uint8Array> = {}; for (const g of worn) { saved.forEach(([o, m, v]: any) => { o.material = m; o.visible = v; }); setPass(g); Pg[g] = read(solo, cam); }
           saved.forEach(([o, m, v]: any) => { o.material = m; o.visible = v; });
           others.forEach(o => { o.visible = true; }); top.add(av.root); av.root.updateMatrixWorld(true);
           // the faults
           const N = W * H, fk = new Uint8Array(N), fp = new Uint8Array(N), fh = new Uint8Array(N), fs = new Uint8Array(N);
           const dep = (px: Uint8Array, i: number) => (px[i * 4 + 1] * 256 + px[i * 4 + 2]) / 1000;
-          const rankOf = (code: number) => code === 1 || code === 2 ? -1 : code === 3 ? -9 : RANK[Object.keys(GCODE).find(k => GCODE[k] === code)] ?? 9;
+          const rankOf = (code0: number) => { const code = code0 >= 120 ? code0 - 100 : code0; return rankOf0(code); }; const rankOf0 = (code: number) => code === 1 ? -1 : code === 2 || code === 3 || code === 5 ? -9 : RANK[Object.keys(GCODE).find(k => GCODE[k] === code)] ?? 9;
           // reference colours of this picture: skin from the skin-marked body, hair from the top of the head
-          let yTop = -1; for (let y = H - 1; y >= 0 && yTop < 0; y--) for (let x = 0; x < W; x++) { const i = y * W + x; if (Pall[i * 4 + 3] && Pall[i * 4] >= 1 && Pall[i * 4] <= 3) { yTop = y; break; } }
+          let yTop = -1; for (let y = H - 1; y >= 0 && yTop < 0; y--) for (let x = 0; x < W; x++) { const i = y * W + x; if (Pall[i * 4 + 3] && ((Pall[i * 4] >= 1 && Pall[i * 4] <= 3) || Pall[i * 4] === 5)) { yTop = y; break; } }
           const sk: number[][] = [], hr: number[][] = [];
           for (let i = 0; i < N; i++) { if (!Pall[i * 4 + 3]) continue; const code = Pall[i * 4], col = [L[i * 4], L[i * 4 + 1], L[i * 4 + 2]];
-            if (code === 1) sk.push(col); if ((code === 3 || code === 1) && yTop >= 0 && Math.floor(i / W) > yTop - H * .04) hr.push(col); }
+            if (code === 1 || code === 5) sk.push(col); if ((code === 3 || code === 1 || code === 5) && yTop >= 0 && Math.floor(i / W) > yTop - H * .04) hr.push(col); }
           const med = (a: number[][]) => a.length ? [0, 1, 2].map(k => a.map(v => v[k]).sort((p, q) => p - q)[a.length >> 1]) : null;
-          const skR = med(sk), hrR = med(hr), dist = (a: number[], b: number[]) => Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]) / 255;
+          if (pn === 'rest' && vn === 'front' && hr.length) HREF[id] = med(hr);
+          const skR = med(sk), hrR = HREF[id] || med(hr), dist = (a: number[], b: number[]) => Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]) / 255;
           for (let i = 0; i < N; i++) {
             if (!Pall[i * 4 + 3]) continue; const code = Pall[i * 4];
             if (code === 2) { const l = [L[i * 4], L[i * 4 + 1], L[i * 4 + 2]], mx = Math.max(...l); if (mx > 60 && (mx - Math.min(...l)) / mx < .18) fk[i] = 1; }   // (the kit is grey; a skin ankle under a trouser hem is not kit)
             const rc = rankOf(code);
-            if (rc > -9) for (const g of worn) { if (RANK[g] <= rc || RANK[g] >= 3) continue; const q = Pg[g]; if (!q[i * 4 + 3] || q[i * 4] !== GCODE[g]) continue;
+            const inside = (q: Uint8Array, g: string) => { const x = i % W, y = (i / W) | 0; for (const [dx, dy] of [[4, 0], [-4, 0], [0, 4], [0, -4]]) { const xx = x + dx, yy = y + dy; if (xx < 0 || yy < 0 || xx >= W || yy >= H) return false; const j = yy * W + xx; if (!q[j * 4 + 3] || q[j * 4] % 100 !== GCODE[g]) return false; } return true; };
+            if (rc > -9) for (const g of worn) { if (RANK[g] <= rc || RANK[g] >= 3) continue; const q = Pg[g]; if (!q[i * 4 + 3] || q[i * 4] % 100 !== GCODE[g] || !inside(q, g)) continue;
               if (dep(q, i) - dep(Pall, i) < .012) { fp[i] = 1; break; } }
-            if (code >= 1 && code <= 3 && skR && hrR) {
+            const edge = () => { const x = i % W, y = (i / W) | 0; for (let dy = -2; dy <= 2; dy++) for (let dx = -2; dx <= 2; dx++) { const xx = x + dx, yy = y + dy; if (xx < 0 || yy < 0 || xx >= W || yy >= H) return true; const j = yy * W + xx; if (!Pall[j * 4 + 3] || Pall[j * 4] !== code) return true; } return false; };   // (colours mix along a border: not judged there)
+            if (((code >= 1 && code <= 3) || code === 5) && skR && hrR && !edge()) {
               const l = [L[i * 4], L[i * 4 + 1], L[i * 4 + 2]], d = [D[i * 4], D[i * 4 + 1], D[i * 4 + 2]], ch = dist(l, d) > .12;
               const mx = Math.max(...l), sat = mx ? (mx - Math.min(...l)) / mx : 0, ds = dist(l, skR), dh = dist(l, hrR);
               const lum = (a: number[]) => a[0] * .3 + a[1] * .59 + a[2] * .11;
-              if (lum(d) < lum(l) * .75 && mx > 64 && dh < ds * .8 && sat > .15 && dist(skR, hrR) > .08) fh[i] = 1;   // (hair taking the tone darkens with it; eyes and lines barely move)
+              // (hair-like: by hue when hair and skin differ in hue (Lumi's leaves, Finn's black, Sol's brown), else by colour mix
+              // without brightness (Clara's salmon hair by her pink skin): shaded skin is darker skin, not hair)
+              const hue = (a: number[]) => { const [r, g, b] = a, M2 = Math.max(r, g, b), m2 = Math.min(r, g, b); if (M2 === m2) return 0; const d2 = M2 - m2; let hh = M2 === r ? (g - b) / d2 : M2 === g ? 2 + (b - r) / d2 : 4 + (r - g) / d2; hh *= 60; return hh < 0 ? hh + 360 : hh; };
+              const hd = (a: number, b2: number) => { const x = Math.abs(a - b2) % 360; return x > 180 ? 360 - x : x; };
+              const mix = (a: number[]) => { const t2 = a[0] + a[1] + a[2] + 1; return [a[0] / t2, a[1] / t2, a[2] / t2]; };
+              const byHue = hd(hue(hrR), hue(skR)) > 20;
+              const ambiguous = !byHue && dist(skR, hrR) < .25;   // (hair and skin of one colour, Clara's: the picture cannot tell them apart; her skin-mark sheet checks her hair)
+              const satOf = (a: number[]) => { const M2 = Math.max(...a); return M2 ? (M2 - Math.min(...a)) / M2 : 0; };
+              const hairlike = byHue ? hd(hue(l), hue(hrR)) < hd(hue(l), hue(skR)) * .5 : Math.hypot(...[0, 1, 2].map(k2 => mix(l)[k2] - mix(hrR)[k2])) < Math.hypot(...[0, 1, 2].map(k2 => mix(l)[k2] - mix(skR)[k2])) * .5 && satOf(l) > satOf(skR) * 1.1;   // (Clara: her hair is more strongly coloured than her skin; a shaded neck is not)
+              if (!ambiguous && !Pf[i * 4 + 3] && lum(d) < lum(l) * .75 && mx > 64 && hairlike && sat > .2 && dist(skR, hrR) > .08) fh[i] = 1;   // (hair taking the tone darkens with it; eyes and lines barely move)
               if (!ch && ds < dh * .6 && ds < .18 && sat > .15 && code !== 3) fs[i] = 1;
             }
           }
+          const ff = new Uint8Array(N);
+          for (let i = 0; i < N; i++) { if (!Pall[i * 4 + 3] || Pall[i * 4] < 120) continue; const x = i % W, y = (i / W) | 0; let open_ = false;
+            for (let dy = -6; dy <= 6 && !open_; dy += 2) for (let dx = -6; dx <= 6; dx += 2) { const xx = x + dx, yy = y + dy; if (xx < 0 || yy < 0 || xx >= W || yy >= H) { open_ = true; break; } const j = yy * W + xx; if (!Pall[j * 4 + 3] || Pall[j * 4] < 20) { open_ = true; break; } }
+            if (!open_) ff[i] = 1; }
           const cnt = (a: Uint8Array) => a.reduce((s, v) => s + v, 0);
-          const r = { id, kind, pose: pn, view: vn, kit: cnt(fk), poke: cnt(fp), hairtone: cnt(fh), skintone: cnt(fs) };
+          const r = { id, kind, pose: pn, view: vn, kit: cnt(fk), poke: cnt(fp), hairtone: cnt(fh), skintone: cnt(fs), fold: cnt(ff) };
           cases.push(r);
           const bad = (Object.keys(LIMIT) as string[]).filter(k => r[k] > LIMIT[k]);
-          if (bad.length) { const all = new Uint8Array(N); for (let i = 0; i < N; i++) all[i] = fk[i] | fp[i] | ((bad.includes('hairtone') || bad.includes('skintone')) ? (fh[i] | fs[i]) : 0);
-            pics[`${id}-${kind}-${pn}-${vn}-${bad.join('+')}`] = png(bad.some(k => k.endsWith('tone')) ? D : L, all); }
+          if (bad.length) { const all = new Uint8Array(N); for (let i = 0; i < N; i++) all[i] = fk[i] | fp[i] | ff[i] | ((bad.includes('hairtone') || bad.includes('skintone')) ? (fh[i] | fs[i]) : 0);
+            pics[`${id}-${kind}-${pn}-${vn}-${bad.join('+')}`] = png(bad.some(k => k.endsWith('tone')) ? D : L, all);
+            const C = new Uint8Array(N * 4), PAL: Record<number, number[]> = { 1: [230, 60, 60], 2: [60, 90, 230], 3: [20, 20, 20] };   // (skin red, kit blue, hair black; garments by layer: inner green, tops yellow, outer purple)
+            for (let i = 0; i < N; i++) { if (!Pall[i * 4 + 3]) { C.set([235, 235, 235, 255], i * 4); continue; } const code = Pall[i * 4], rk = rankOf(code);
+              const col = PAL[code] || (rk === 0 ? [60, 190, 80] : rk === 1 ? [240, 210, 60] : rk === 2 ? [160, 80, 200] : [140, 140, 140]); C.set([...col, 255], i * 4); }
+            pics[`${id}-${kind}-${pn}-${vn}-layers`] = png(C, all); }
         }
       }
       FM.setMeshyTones(false); top.remove(av.root);
     }
+  }
+  // eyes: every closed or half-closed mood, close to the head from the front, three-quarters and the sides: no eye white
+  // (pale, colourless pixels where the open eye's white was) may be left. The open eye's whites are found in the smile.
+  const solo = new THREE.Scene();
+  const head = (M: any) => { let hb: any = null; M.obj.traverse((o: any) => { if (o.isBone && o.name === 'head') hb = o; }); return hb; };
+  for (const id of LIST.split(',')) {
+    const av: any = A.buildAvatar({ set: LOOK[id] || 'girl', friend: id, skin: '#f6c7a5' }, null, { hd: true }); A.showHD(av, true);
+    top.add(av.root); av.root.position.set(h.pos.x + 3, h.av.root.position.y, h.pos.z + 3); av.root.rotation.y = 0; A.animate(av, 'idle', 1); av.root.updateMatrixWorld(true);
+    const M = av.modelHD, hb = head(M); if (!hb) { top.remove(av.root); continue; }
+    const box = new THREE.Box3().setFromObject(M.obj, true), Hh = box.max.y - box.min.y;
+    const at = hb.getWorldPosition(new THREE.Vector3()).add(new THREE.Vector3(0, .12, 0));
+    const setMood = (m: string) => { if (av.life) { av.life.mood = m; av.life.blink = av.life.t + 60; av.life.glance = av.life.t + 60; av.life.feel = ''; } M.follow(m); };
+    for (const s of [0, .7, -.7, 1.2, -1.2]) {
+      const cam = new THREE.PerspectiveCamera(28, W / H, .05, 100), dir = new THREE.Vector3(Math.sin(s), 0, Math.cos(s));
+      cam.position.copy(at).addScaledVector(dir, Hh * .75); cam.lookAt(at); cam.updateMatrixWorld(true);
+      // (only on the face: under the face pieces, never the sky, a name label or the clouds)
+      const saved = [] as any[]; M.obj.traverse((o: any) => { if (o.isMesh) saved.push([o, o.material, o.visible]); });
+      setMood('smile'); saved.forEach(([o, m, v]: any) => { o.visible = v && /^face-/.test(m.name || ''); if (o.visible) o.material = idMat({}, 4, false); });
+      solo.add(av.root); av.root.updateMatrixWorld(true); const Pf = read(solo, cam); top.add(av.root); av.root.updateMatrixWorld(true);
+      saved.forEach(([o, m, v]: any) => { o.material = m; o.visible = v; });
+      const O = read(top, cam);
+      const N = W * H, white = new Uint8Array(N), hsv = (px: Uint8Array, i: number) => { const r = px[i * 4], g = px[i * 4 + 1], b = px[i * 4 + 2], mx = Math.max(r, g, b); return [mx / 255, mx ? (mx - Math.min(r, g, b)) / mx : 0]; };
+      const dark = new Uint8Array(N); for (let i = 0; i < N; i++) { if (!Pf[i * 4 + 3]) continue; const [v] = hsv(O, i); if (v < .35) dark[i] = 1; }
+      const nearDark = (i: number) => { const x = i % W, y = (i / W) | 0; for (let dy = -8; dy <= 8; dy += 2) for (let dx = -8; dx <= 8; dx += 2) { const xx = x + dx, yy = y + dy; if (xx >= 0 && yy >= 0 && xx < W && yy < H && dark[yy * W + xx]) return true; } return false; };
+      for (let i = 0; i < N; i++) { if (!Pf[i * 4 + 3]) continue; const [v, sa] = hsv(O, i); if (v > .82 && sa < .16 && nearDark(i)) white[i] = 1; }   // (an eye's white lies by its dark iris: a cream collar under the face piece is not an eye)
+      const grow = new Uint8Array(N); for (let i = 0; i < N; i++) if (white[i]) { const x = i % W, y = (i / W) | 0; for (let dy = -3; dy <= 3; dy++) for (let dx = -3; dx <= 3; dx++) { const xx = x + dx, yy = y + dy; if (xx >= 0 && yy >= 0 && xx < W && yy < H) grow[yy * W + xx] = 1; } }
+      for (const m of ['blink', 'half', 'happy', 'sad']) {
+        setMood(m); const C = read(top, cam), f = new Uint8Array(N); let k = 0;
+        for (let i = 0; i < N; i++) { if (!grow[i]) continue; const [v, sa] = hsv(C, i); if (m !== 'half' && m !== 'sad' ? (v > .8 && sa < .18) : false) { f[i] = 1; k++; } }
+        const r = { id, kind: 'face', pose: m, view: String(s), kit: 0, poke: 0, hairtone: 0, skintone: 0, eyes: k }; cases.push(r);
+        if (k > LIMIT.eyes) pics[`${id}-face-${m}-${s}-eyes`] = png(C, f);
+      }
+    }
+    setMood('smile'); top.remove(av.root);
   }
   return { cases, pics };
 }, [LIST, QUICK, LIMIT] as any);
@@ -131,7 +193,7 @@ for (const [k, v] of Object.entries(res.pics as Record<string, string>)) writeFi
 const cs: any[] = res.cases, keys = Object.keys(LIMIT);
 const fail = cs.filter(c => keys.some(k => c[k] > LIMIT[k]));
 const lines = [`audit ${new Date().toISOString()} cases ${cs.length} failing ${fail.length}`];
-for (const k of keys) lines.push(`${k}: ${cs.filter(c => c[k] > LIMIT[k]).length} cases over ${LIMIT[k]} px, worst ${Math.max(0, ...cs.map(c => c[k]))}`);
+for (const k of keys) lines.push(`${k}: ${cs.filter(c => c[k] > LIMIT[k]).length} cases over ${LIMIT[k]} px, worst ${Math.max(0, ...cs.map(c => c[k] || 0))}`);
 for (const id of [...new Set(cs.map(c => c.id))]) for (const kind of [...new Set(cs.map(c => c.kind))]) {
   const f = fail.filter(c => c.id === id && c.kind === kind); if (f.length) lines.push(`${id} ${kind}: ` + f.map(c => `${c.pose}/${c.view} ` + keys.filter(k => c[k] > LIMIT[k]).map(k => `${k} ${c[k]}`).join(' ')).join('; '));
 }
