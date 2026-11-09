@@ -20,6 +20,7 @@ For a new Claude session or account taking over on the owner's PC. Read `.claude
   - Lumi festival sit front: the skirt's front swings up with the thighs, and you see inside the skirt (`skirtF` bone angles in `follow()`, `js/friend-model.ts`).
   - Clara's rain and everyday run left: tears.
   - Lumi's left shoulder is a little ragged when she cheers.
+  - Sol's trouser cuffs are a little ragged just above the boots.
 - **Tools added:**
   - `HIDE=<garment|face>` in `game_shots.mts`, to tell which layer shows.
   - `poses:<list>,pics` in `audit.mts`, to keep every case's picture and layers.
