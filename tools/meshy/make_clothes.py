@@ -324,7 +324,7 @@ def shell(name, faces, thick, smooth=6, cuts=()):
                 for e2 in vv.link_edges:
                     if e2 in _bnd: _bnd.remove(e2); comp.append(e2); st.append(e2)
         zc = sum((vv.co.z for e in comp for vv in e.verts)) / (2 * len(comp))
-        if len(comp) <= 16 and zc > HIP: _fill += comp
+        if len(comp) <= 16 and zc > KNEE + .05: _fill += comp   # (10 Nov: and below the hips, small holes in the trousers' seat and front, the auditor)
     if _fill: bmesh.ops.holes_fill(bm, edges=_fill, sides=0)
     print('CL part', name, 'small holes filled, edges', len(_fill))
     # the open edges (hems, cuffs, neckline) are evened out a little along themselves

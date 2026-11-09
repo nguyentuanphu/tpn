@@ -9,7 +9,7 @@
     { "name": "trousers", "kind": "shell", "layer": 0, "thick": 0.011, "faces": [{ "under_waist": true, "leg": 2.0 }], "cuts": ["leg:2.1"] },
     { "name": "leggings", "kind": "shell", "layer": 0, "thick": 0.007, "faces": [{ "under_waist": true, "leg": 2.0 }], "cuts": ["leg:2.1"] },
     { "name": "bib", "kind": "shell", "layer": 2, "thick": 0.016, "smooth": 2, "faces": [{ "top": "HIP - .04", "front_only": true, "below": "BIB_TOP + .05", "within_x": "BIB_X + .05" }], "cuts": ["up:BIB_TOP", "side:BIB_X", "side:-BIB_X", "hem:WAIST - .01"] },
-    { "name": "skirt", "kind": "cone", "layer": 2, "top": "WAIST + .03", "bottom": "KNEE + .03", "flare": 0.55, "thick": 0.035 },
+    { "name": "skirt", "kind": "cone", "layer": 2, "top": "WAIST + .05", "bottom": "KNEE + .03", "flare": 0.55, "thick": 0.035 },
     { "name": "aodai-panels", "kind": "cone", "layer": 2, "top": "WAIST + .02", "bottom": "ANKLE + .04", "flare": 0.5, "thick": 0.04, "panels": true, "slit": 0.14 }
   ]
 }

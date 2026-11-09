@@ -80,6 +80,11 @@ Then the checks: `node suite.mts --only faces,friendmodel,frienditems,friendoutf
 - Before telling the owner something is done, look at the close-ups yourself, including the ones that look boring (back, neck, three-quarter closed eyes).
 - PowerShell `String.Replace` on `fit_people.py` silently does nothing when the line ends differ (CRLF): use the Edit tool, and check "found True".
 - `fit_person.ps1` must fail loudly (it checks the exit code and `EXCEPTION_`), or an old model gets installed without notice.
+- (10 Nov) When a fix does not move the auditor's count, measure the parts in Blender (z range of each mesh) before trying again. Smoothing a shell moves its open edges: cuffs below the knee climbed 6 cm up the shin and the boot mouth sank 4 cm. Open edges of cuffs and boot mouths are held while smoothing.
+- (10 Nov) Meshy's "feet" are its shoes, wider than the shin: a boot made from them must come up above their top edge (its mouth is raised straight across, never cut lower), or the feet show through the trouser cuffs as a band of skin.
+- (10 Nov) Closed eyes: the painted eye's own triangles (lashes, iris) are not skin-marked, so the game's skin paint skipped them; the eye areas mark every non-hair triangle in them as skin, and reach the face's middle (the far eye's inner corner, three-quarters, lay between them).
+- (10 Nov) The auditor's checks must ask what the player sees: a hole counts only where the friend drawn with nothing hidden would show something (not the valley between an arm and the side, or between the legs); a tear counts only where nothing (hair, a hand, the same or an outer garment) lies in front of it. Before loosening a check, look at its marked pixels at full size and say why each is false.
+- Python for pictures: `D:\WorkSpace\meshy\tools\pyenv\Scripts\python.exe` (there is no `python` on the path).
 
 ## Friends: old head on a swim body, clothes made in code (8 Nov 2026)
 
