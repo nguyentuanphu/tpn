@@ -2,6 +2,18 @@
 
 For a new Claude session or account taking over on the owner's PC. Read `.claude/skills/meshy-characters/SKILL.md` first: the owner's rules there override everything.
 
+## Update, 9 Nov 2026 evening (read this first)
+
+- Plan and tools for working at scale: `docs/meshy-pipeline-20261109/PLAN.md` and the skill's "Working at scale".
+- One command: `powershell -File tools/meshy/make_character.ps1 -Batch clara,sol,finn,lumi -Kind friend -SkipFit -Out <dir>`
+  (build, install in the working copy, full audit; exit 2 when the audit fails). Self-test of the auditor:
+  `powershell -File tools/meshy/audit_selftest.ps1`.
+- Owner's decisions: keep the full poses and fix the cloth (helper bones, the polished way); tier C merged into tier B
+  (every villager and animal gets the full audit and review); commit AND push to GitHub about every 2 hours.
+- Latest audit rounds: `D:\WorkSpace\meshyittedudit-f*` (summary.txt, cases.json, fault and layer pictures).
+  Remaining at round 18: pokes and folds when the arms are raised high and when sitting, Lumi's bib losing its shape.
+- Models in `models/` are the working copy only; they go on the branch after the owner approves.
+
 ## Owner's rules (short)
 
 - Branch `meshy-production-20261107`, worktree `D:\WorkSpace\sv-meshy-prod`.

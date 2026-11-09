@@ -56,7 +56,7 @@ failure; `-Batch <list>` runs many overnight and writes one report.
 
 - Hard poses keep their full range (arms up, sitting); the clothes are fixed with corrective helper bones at the
   shoulders and hips (the polished way), not by limiting the poses.
-- Commit and push the branch about every 3 hours (tools and game code; models only after approval).
+- Commit and push the branch about every 2 hours (owner: the account may run out of usage) (tools and game code; models only after approval).
 
 ## What the auditor still needs to be trustworthy
 
