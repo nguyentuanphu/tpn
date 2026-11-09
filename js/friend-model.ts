@@ -221,7 +221,7 @@ for (int k = 0; k < 8; k++) { float p_ = exp2(float(k)); if (mod(floor(cb_ / p_)
  * each garment is drawn a little nearer the camera along its own line of sight, more for outer layers (trousers 2 mm,
  * tops 10 mm, skirts, panels and the bib 16 mm; 5 and 9 left a sitting thigh through the shirt and panels): its outline on screen is unchanged, but where two layers meet, the outer
  * one wins, the standard depth order for layered clothes */
-const LAYER_BIAS = [.002, .018, .026, .002];
+const LAYER_BIAS = [.002, .018, .026, .012];   // (10 Nov 2026: boots .012: the trouser cuffs inside them showed as a ragged edge over the boot tops, Sol's)
 function layerBias(m, layer: number) {
   const b = LAYER_BIAS[layer] ?? 0, prev = m.onBeforeCompile, key = m.customProgramCacheKey;
   if (!b) return m;

@@ -33,7 +33,7 @@ const res: any = await P.page.evaluate(async ([LIST, QUICK, LIMIT]) => {
   // ID + depth materials: R = layer code, G/B = depth from the camera in mm; the cover hiding (js/friend-model.ts) kept
   const RANK: Record<string, number> = { trousers: 0, shorts: 0, leggings: 0, 'top-short': 1, 'top-long': 1, 'tunic-long': 1, bodice: 1, skirt: 2, 'aodai-panels': 2, bib: 2, boots: 3 };
   const GCODE: Record<string, number> = {}; Object.keys(RANK).forEach((k, i) => { GCODE[k] = 20 + i; });
-  const BIAS = [.002, .018, .026, .002];   // (js/friend-model.ts LAYER_BIAS: the game's depth order for layered clothes, measured as the player sees it)
+  const BIAS = [.002, .018, .026, .012];   // (js/friend-model.ts LAYER_BIAS: the game's depth order for layered clothes, measured as the player sees it)
   const NODISC = { value: 0 };   // (1: nothing hidden, for the holes check: what the friend would show with no hiding at all)
   const idMat = (orig: any, code: number, isBody: boolean, layer = -1) => {
     const m = new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide }); m.vertexColors = !!orig.vertexColors;
