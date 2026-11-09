@@ -1230,6 +1230,7 @@ if TEX and KEEP and SHIFT:
         if _flat:
             _bmh = bmesh.new(); _bmh.from_mesh(me); _bmh.faces.ensure_lookup_table()
             bmesh.ops.delete(_bmh, geom=[_bmh.faces[i] for i in _flat], context='FACES'); _bmh.to_mesh(me); _bmh.free(); me.update()
+            _kf = np.ones(len(_skp), bool); _kf[_flat] = False; _skp = _skp[_kf]; _hreg = _hreg[_kf]; _hz = _hz[_kf]   # (the per-triangle marks follow: the eye areas below use them)
         print('FIT flat hair locks on the cheeks removed', len(_flat))
     for m_ in (clothm, skinm): m_['skin_mark'] = True
     # (owner 9 Nov 2026, circled: Lumi's closed eyes still showed the open eye's rim faintly, and from the side the far eye)
@@ -1240,7 +1241,26 @@ if TEX and KEEP and SHIFT:
         for b in list(eyes.values())[:2]:   # (wider at the sides and below; not above, where the brows are)
             _eb += [fx0 + (b[0] - 18) / W_ * (fx1 - fx0), fx0 + (b[2] + 18) / W_ * (fx1 - fx0), fz1 - (b[3] + 10) / H_ * (fz1 - fz0), fz1 - (b[1] - 2) / H_ * (fz1 - fz0)]
         while len(_eb) < 8: _eb += _eb[:4]
+        # (auditor 10 Nov 2026: Clara's far eye, three-quarters: its inner corner, past the nose, lay between the two areas)
+        # each area reaches the face's middle on its inner side
+        for _k in (0, 4):
+            if _eb[_k + 1] < 0: _eb[_k + 1] = 0.
+            elif _eb[_k] > 0: _eb[_k] = 0.
         for m_ in (clothm, skinm): m_['eye_boxes'] = [float(x) for x in _eb[:8]]
+        # (auditor 10 Nov 2026: Clara's far eye, three-quarters, kept its open lashes while shut) the eye's own triangles,
+        # dark lashes and iris, were not marked skin, so the game never painted them over: every non-hair head triangle in
+        # an eye area is marked skin now (open eyes keep their paint: the game's per-texel test keeps dark lines)
+        if 'swim' in ID and '_pc3' in dir():
+            _fcx = np.array([p.center.x for p in me.polygons]); _fcz = np.array([p.center.z for p in me.polygons])
+            _ine = np.zeros(len(me.polygons), bool)
+            for _k in range(0, 8, 4): _ine |= (_fcx > _eb[_k]) & (_fcx < _eb[_k + 1]) & (_fcz > _eb[_k + 2]) & (_fcz < _eb[_k + 3])
+            _add = _ine & ~_skp & ~_hreg & _hz
+            if _add.any():
+                _cd = body.data.color_attributes['skinw'].data; _b2 = np.zeros(len(_cd) * 4, np.float32); _cd.foreach_get('color', _b2)
+                _li = np.concatenate([list(me.polygons[int(i)].loop_indices) for i in np.nonzero(_add)[0]]).astype(int)
+                for _c in range(3): _b2[_li * 4 + _c] = 1.
+                _cd.foreach_set('color', _b2)
+            print('FIT eye-area triangles marked skin', int(_add.sum()))
 if TEX:
     colour.scale(TEX, TEX); colour.file_format = 'JPEG'; colour.save(filepath=jp, quality=88 if TEX >= 1024 else 72)   # (owner 8 Nov 2026: 62 left speckles on the necks)
     jimg = bpy.data.images.load(jp); jimg.name = ID + '-colour'

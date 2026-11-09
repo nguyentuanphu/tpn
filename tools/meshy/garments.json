@@ -6,8 +6,8 @@
     { "name": "tunic-long", "kind": "shell", "layer": 1, "thick": 0.015, "faces": [{ "top": "HIP - .2", "sleeve": 1.8, "under_waist": true }, { "leg": 0.8 }], "cuts": ["neck", "hem:HIP - .12", "arm:1.55", "leg:.55"] },
     { "name": "bodice", "kind": "shell", "layer": 1, "thick": 0.012, "faces": [{ "top": "HIP - .09", "sleeve": 0.6 }], "cuts": ["neck", "hem:HIP - .03", "arm:.35"] },
     { "name": "shorts", "kind": "shell", "layer": 0, "thick": 0.010, "faces": [{ "under_waist": true, "leg": "max(.75, KIT_LEG_T + .2)" }], "cuts": ["leg:max(.5, KIT_LEG_T)"] },
-    { "name": "trousers", "kind": "shell", "layer": 0, "thick": 0.011, "faces": [{ "under_waist": true, "leg": 1.95 }], "cuts": ["leg:1.82"] },
-    { "name": "leggings", "kind": "shell", "layer": 0, "thick": 0.007, "faces": [{ "under_waist": true, "leg": 1.95 }], "cuts": ["leg:1.85"] },
+    { "name": "trousers", "kind": "shell", "layer": 0, "thick": 0.011, "faces": [{ "under_waist": true, "leg": 2.0 }], "cuts": ["leg:2.1"] },
+    { "name": "leggings", "kind": "shell", "layer": 0, "thick": 0.007, "faces": [{ "under_waist": true, "leg": 2.0 }], "cuts": ["leg:2.1"] },
     { "name": "bib", "kind": "shell", "layer": 2, "thick": 0.016, "smooth": 2, "faces": [{ "top": "HIP - .04", "front_only": true, "below": "BIB_TOP + .05", "within_x": "BIB_X + .05" }], "cuts": ["up:BIB_TOP", "side:BIB_X", "side:-BIB_X", "hem:WAIST - .01"] },
     { "name": "skirt", "kind": "cone", "layer": 2, "top": "WAIST + .03", "bottom": "KNEE + .03", "flare": 0.55, "thick": 0.035 },
     { "name": "aodai-panels", "kind": "cone", "layer": 2, "top": "WAIST + .02", "bottom": "ANKLE + .04", "flare": 0.5, "thick": 0.04, "panels": true, "slit": 0.14 }

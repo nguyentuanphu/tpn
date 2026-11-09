@@ -159,7 +159,11 @@ gl_FragColor = vec4(code_ / 255.0, floor(dm_ / 256.0) / 255.0, mod(dm_, 256.0) /
           const ft = new Uint8Array(N);
           for (const g of worn) { if ((RANK[g] ?? 9) > 1) continue; const q = Pg[g]; const isG = (j: number) => q[j * 4 + 3] && q[j * 4] % 100 === GCODE[g];
             for (let i = 0; i < N; i++) { if (isG(i)) continue; const x = i % W, y = (i / W) | 0; let enc = true;
-              for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { let hit = false; for (let k = 1; k <= 5; k++) { const xx = x + dx * k, yy = y + dy * k; if (xx < 0 || yy < 0 || xx >= W || yy >= H) break; if (isG(yy * W + xx)) { hit = true; break; } } if (!hit) { enc = false; break; } }
+              let dg = 1e9;
+              for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { let hit = false; for (let k = 1; k <= 5; k++) { const xx = x + dx * k, yy = y + dy * k; if (xx < 0 || yy < 0 || xx >= W || yy >= H) break; if (isG(yy * W + xx)) { hit = true; dg = Math.min(dg, dep(q, yy * W + xx)); break; } } if (!hit) { enc = false; break; } }
+              /* (10 Nov 2026: the gap under a hanging arm, seen from the side, was counted though the arm in front hides it: a tear
+                 counts only where the finished picture shows something behind the garment there, or nothing) */
+              if (enc && Pall[i * 4 + 3] && (Pall[i * 4] === 3 || dep(Pall, i) < dg - .005)) enc = false;   /* (hair lying over the shirt: the shirt is open under a braid) */
               if (enc) ft[i] = 1; } }
           const cnt = (a: Uint8Array) => a.reduce((s, v) => s + v, 0);
           const r = { id, kind, pose: pn, view: vn, kit: cnt(fk), poke: cnt(fp), hairtone: cnt(fh), skintone: cnt(fs), fold: cnt(ff), hole: cnt(fo), tear: cnt(ft) };

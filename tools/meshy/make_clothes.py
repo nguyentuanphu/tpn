@@ -292,7 +292,9 @@ def shell(name, faces, thick, smooth=6, cuts=()):
     bm.normal_update()
     # (owner 8 Nov 2026: a grey ring under the chins) the collar's open edge is not smoothed: smoothing pulled a top's neckline
     # 3 cm down below the kit's collar, before its neckband cut could shape it (the cuts trim the edges straight below)
-    _inner = [v for v in bm.verts if not (v.is_boundary and v.co.z > NECKBAND - .06)]   # (only the collar's edge: other open edges, the hems and small gaps, smooth as before or they tore)
+    _inner = [v for v in bm.verts if not (v.is_boundary and (v.co.z > NECKBAND - .06 or v.co.z < KNEE - .1))]   # (only the collar's edge: other open edges, the hems and small gaps, smooth as before or they tore)
+    # (auditor 10 Nov 2026, holes at every ankle: smoothing pulled the trouser and legging cuffs 6 cm up the shin, above the
+    # boots, and a band of bare ankle showed with the background through the boot's mouth) cuffs below the knee are held
     for _ in range(smooth): bmesh.ops.smooth_vert(bm, verts=_inner, factor=.5, use_axis_x=True, use_axis_y=True, use_axis_z=True)
     for region, s, p, d in cuts:
         def mine(f):
@@ -545,10 +547,18 @@ if feet is not None:
     fo = feet.copy(); fo.data = feet.data.copy(); sc.collection.objects.link(fo)
     bm = bmesh.new(); bm.from_mesh(fo.data); bmesh.ops.remove_doubles(bm, verts=bm.verts[:], dist=.0004); bm.normal_update()
     ftree = BVHTree.FromObject(feet, bpy.context.evaluated_depsgraph_get())
-    for _ in range(4): bmesh.ops.smooth_vert(bm, verts=bm.verts[:], factor=.5, use_axis_x=True, use_axis_y=True, use_axis_z=True)
+    for _ in range(4): bmesh.ops.smooth_vert(bm, verts=[v for v in bm.verts if not v.is_boundary], factor=.5, use_axis_x=True, use_axis_y=True, use_axis_z=True)
     for v in bm.verts:
         h = ftree.find_nearest(v.co)
         if h[0] is not None: v.co = h[0] + h[1].normalized() * (.012 if v.co.z > .03 else .016)
+    # (auditor 10 Nov 2026: the boot's mouth was Meshy's ragged ankle edge, with bare skin and background in its notches)
+    # the mouth is raised straight across to just above the edge's highest point. Cutting it lower failed: the bare feet
+    # (Meshy's shoes, wider than the shin) then stood out through the trouser cuffs as a band of skin
+    _rimv = [v for v in bm.verts if v.is_boundary and v.co.z > .06]   # (not an opening under the sole)
+    if _rimv:
+        _rz = [v.co.z for v in _rimv]; BOOT_TOP = max(_rz) + .008
+        for v in _rimv: v.co.z = BOOT_TOP
+        print('CL boots mouth raised to', round(BOOT_TOP, 3), 'from a ragged edge', round(min(_rz), 3), '-', round(max(_rz), 3))
     col = bm.loops.layers.color.new('shade')
     for f in bm.faces:
         for l in f.loops: k = .8 + .25 * min(1, l.vert.co.z / .1); l[col] = (k, k, k, 1)
