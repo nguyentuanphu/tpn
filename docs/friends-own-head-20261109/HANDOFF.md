@@ -2,7 +2,30 @@
 
 For a new Claude session or account taking over on the owner's PC. Read `.claude/skills/meshy-characters/SKILL.md` first: the owner's rules there override everything.
 
-## Update, 9 Nov 2026 evening (read this first)
+## Update, 10 Nov 2026 (read this first)
+
+- **The four friends' models are on the branch** (owner, 10 Nov: "Tất cả mọi việc đẩy lên nhánh"), commit 40d44b765 and later. Not merged, not deployed, no version change.
+- **Audit round 65** (`D:\WorkSpace\meshy\fitted\audit-f65`): 305 of 944 cases fail. There are no swim kit, eye, skin tone or hair tone faults. What is left:
+  - holes 133, folds 108, tears 115 and pokes 56, mostly áo dài (holes and folds in side views), rain (tears) and festival;
+  - poses run, sit, climb, jump and cheer.
+- **Fixed on 10 Nov, each checked in game pictures:**
+  - Lumi's closed eyes from every side. The shut-eye paint never ran before: gltfpack stores positions as whole numbers, so `uDeq` in `js/friend-model.ts` now turns them back to metres. The waist and neck tests had the same bug.
+  - Finn's streaks before the ears: the blink mood piece was too wide.
+  - Lumi's shorts showing through her shirt's back and sides. Shirts now cover the trunk under the armpits (`ARMPIT` in `make_clothes.py`), and trousers and shorts above a top's local hem are hidden.
+  - The ankle gap: boots now cover the bare feet.
+- **Known false alarms in the auditor (next fix there):**
+  - "Holes" between the legs in run and walk side views. With nothing hidden, the body's stretched crotch webbing fills that space, so the gap is counted. It is really the gap between the legs.
+  - "Folds" of white trousers seen through the áo dài slits: same colour, hardly visible.
+- **Next real fixes:**
+  - Lumi festival sit front: the skirt's front swings up with the thighs, and you see inside the skirt (`skirtF` bone angles in `follow()`, `js/friend-model.ts`).
+  - Clara's rain and everyday run left: tears.
+  - Lumi's left shoulder is a little ragged when she cheers.
+- **Tools added:**
+  - `HIDE=<garment|face>` in `game_shots.mts`, to tell which layer shows.
+  - `poses:<list>,pics` in `audit.mts`, to keep every case's picture and layers.
+  - Rendering one garment alone in Blender (workbench) finds holes in a garment fast; see SKILL.md lessons.
+
+## Update, 9 Nov 2026 evening
 
 - Plan and tools for working at scale: `docs/meshy-pipeline-20261109/PLAN.md` and the skill's "Working at scale".
 - One command: `powershell -File tools/meshy/make_character.ps1 -Batch clara,sol,finn,lumi -Kind friend -SkipFit -Out <dir>`
