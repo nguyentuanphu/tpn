@@ -52,6 +52,47 @@ game reads the same table (cover bits, layers) so they never disagree.
 `tools/meshy/make_character.ps1 -Id <id> -Kind friend|villager|animal` runs everything above and stops at the first
 failure; `-Batch <list>` runs many overnight and writes one report.
 
+## Owner, 9 Nov 2026 (evening): "cái nào đẹp và chỉn chu hơn thì làm"; push every 3 hours
+
+- Hard poses keep their full range (arms up, sitting); the clothes are fixed with corrective helper bones at the
+  shoulders and hips (the polished way), not by limiting the poses.
+- Commit and push the branch about every 3 hours (tools and game code; models only after approval).
+
+## What the auditor still needs to be trustworthy
+
+1. **Tested itself:** a set of planted faults (cover bits removed, a braid toned, a hole cut in a shirt, an eye left
+   open) that every check must catch, and clean references where every check must stay quiet. Run before trusting a
+   round's numbers.
+2. **Full coverage:** each animation sampled over its whole cycle (not one frame), eight views plus from above and below,
+   near and far (the light model), day and night, every mood, every outfit and accessory.
+3. **More checks:** shapes against the design (a bib must stay a bib: silhouette compared with the rest pose), flicker
+   between frames (z-fighting), hats and gear on their sockets, feet on the ground, hair through shoulders, mouths in
+   every mood, likeness to the ChatGPT reference sheet, budgets (triangles, KB, bones, influences per vertex).
+4. **A review page** for the owner: worst first, before/after against the last approved version, approve buttons, so
+   the owner looks only at style and at what the checks cannot judge.
+5. **Speed:** several browsers in parallel, unchanged characters skipped, quick mode while working, full mode before a
+   round goes out.
+
+## Tools for bulk work
+
+- Reference-sheet check before paying Meshy (views agree, body only, proportions, no props in hands).
+- Meshy queue with the owner's approved budget and the ledger (exists: `overnight.ps1`, journal).
+- Rig check (joints where they belong) and one animation set per skeleton type: child, adult, elder, four-legged,
+  bird; driven helper bones (skirts, shoulders, ears, tails).
+- Faces and moods per kind: people (own painted face, mood pieces), animals (eyes and mouth found on the animal face,
+  plus body emotes: ears, tail, head tilt, hop).
+- Garments and gear as data (`garments.json`, sockets for hats, glasses, backs).
+- One command per character and per batch, with the audit gate and the review page.
+
+## Quality tiers
+
+- **Tier A, the four friends (the player's own character):** body plus code-made clothes that change, every pose,
+  every tone, every mood, full audit, helper bones, hand review of every sheet.
+- **Tier B, named villagers (11) and later animals companions:** whole Meshy models (clothes painted on, no
+  changing), own face moods, their own animations (idle, walk, talk, wave, sit), full audit of those; owner reviews.
+- **Tier C, regional villagers (61) and background animals:** the same pipeline in batches; the audit gate decides,
+  the owner reviews a gallery and spot-checks.
+
 ## Order
 
 1. Auditor without false alarms; eyes and mouth checks added. Run on the four friends.
