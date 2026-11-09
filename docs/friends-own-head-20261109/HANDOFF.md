@@ -5,7 +5,11 @@ For a new Claude session or account taking over on the owner's PC. Read `.claude
 ## Update, 10 Nov 2026 (read this first)
 
 - **The four friends' models are on the branch** (owner, 10 Nov: "Tất cả mọi việc đẩy lên nhánh"), commit 40d44b765 and later. Not merged, not deployed, no version change.
-- **Audit round 67** (`D:\WorkSpace\meshy\fitted\audit-f67`; these models are on the branch): 303 of 944 cases fail. Round 66, after a refit of all four, had 302. There are no swim kit, eye, skin tone or hair tone faults. What is left:
+- **Audit round 68** (`D:\WorkSpace\meshy\fitted\audit-f68`; these models are on the branch): 159 of 944 cases fail. Folds 108, pokes 48, holes 18, tears 8.
+  - In this round the auditor no longer counts a hole or tear whose sides are far apart in depth (5 cm for holes, 3 cm for tears). That is the gap between the legs in run and walk side views.
+  - The same rule also skips small gaps between the áo dài's panels and the trousers. If those matter, look at them by eye.
+  - Round 67, with the old checks, had 303.
+  - The self-test passes again. Its poke plant now pushes the trousers 3 cm out in the shader: `o.scale` never moved a skinned mesh. There are no swim kit, eye, skin tone or hair tone faults. What is left:
   - holes 133, folds 108, tears 115 and pokes 56, mostly áo dài (holes and folds in side views), rain (tears) and festival;
   - poses run, sit, climb, jump and cheer.
 - **Fixed on 10 Nov, each checked in game pictures:**

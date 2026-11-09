@@ -46,7 +46,7 @@ vCov = 0.0; vAny = 0.0; vMk = vec4(1.0, 0.0, 0.0, 0.0); vKy = (uDeq * vec4(posit
 vMk = color; float cb_ = floor(color.a * 255.0 + .5);
 for (int k = 0; k < 8; k++) { float p_ = exp2(float(k)); if (mod(floor(cb_ / p_), 2.0) > .5 && mod(floor(uCover / p_), 2.0) > .5) vCov = 1.0; }
 vAny = vCov;
-#endif`).replace('#include <project_vertex>', '#include <project_vertex>\n' + (layer >= 0 ? `mvPosition.xyz -= normalize(mvPosition.xyz) * ${BIAS[layer].toFixed(4)}; gl_Position = projectionMatrix * mvPosition;\n` : '')
+#endif`).replace('#include <project_vertex>', '#include <project_vertex>\n' + (orig.userData && orig.userData.plantInflate ? `mvPosition.xyz += normalize(normalMatrix * objectNormal) * ${Number(orig.userData.plantInflate).toFixed(4)}; gl_Position = projectionMatrix * mvPosition;\n` : '') + (layer >= 0 ? `mvPosition.xyz -= normalize(mvPosition.xyz) * ${BIAS[layer].toFixed(4)}; gl_Position = projectionMatrix * mvPosition;\n` : '')
           + (isBody && orig.userData && orig.userData.kitU && orig.userData.kitU.on.value > .5 ? `#ifdef USE_COLOR_ALPHA\nif (color.r < .5 && color.a * 255.0 < .5 && (uDeq * vec4(position, 1.0)).y < ${Number(orig.userData.kitU.neck.value).toFixed(4)}) { mvPosition.xyz -= normalize(mvPosition.xyz) * .012; gl_Position = projectionMatrix * mvPosition; }\n#endif\n` : '') + 'vDz = -mvPosition.z;');
       sh.fragmentShader = 'uniform float uNoDisc;\nvarying float vCov;varying float vAny;\nvarying float vDz;\nvarying vec4 vMk;\nvarying float vKy;\n' + sh.fragmentShader
         .replace('void main() {', 'void main() {\nif (uNoDisc < .5 && vCov > .999) discard;' +(isBody && orig.userData && orig.userData.kitU && orig.userData.kitU.on.value > .5 ? `\n#ifdef USE_COLOR_ALPHA\nif (uNoDisc < .5 && vMk.r < .5 && vMk.a * 255.0 > .5 && vKy > ${(Number(orig.userData.kitU.waist.value) - .40).toFixed(4)}) discard;\n#endif` : ''))   // (dressed: the game does not draw the swim kit either)
@@ -56,7 +56,7 @@ ${isBody ? 'if (vMk.r < .5) code_ = vMk.a * 255.0 > .5 ? 2.0 : 3.0; else if (vAn
 ${!isBody && code >= 20 && layer >= 0 && layer <= 1 ? 'if (!gl_FrontFacing) code_ += 100.0; // (a garment seen from inside: folded inside out, unless at an opening)' : ''}
 float dm_ = clamp(vDz * 1000.0, 0.0, 65535.0);
 gl_FragColor = vec4(code_ / 255.0, floor(dm_ / 256.0) / 255.0, mod(dm_, 256.0) / 255.0, 1.0);`); };
-    m.customProgramCacheKey = () => 'audit-id-' + code + (isBody ? 'b' : '') + (m.vertexColors ? 'v' : '') + '-l' + layer + (isBody && orig.userData && orig.userData.kitU ? '-k' + orig.userData.kitU.on.value + '-' + orig.userData.kitU.neck.value : ''); return m;
+    m.customProgramCacheKey = () => 'audit-id-' + (orig.userData && orig.userData.plantInflate ? 'inf' : '') + code + (isBody ? 'b' : '') + (m.vertexColors ? 'v' : '') + '-l' + layer + (isBody && orig.userData && orig.userData.kitU ? '-k' + orig.userData.kitU.on.value + '-' + orig.userData.kitU.neck.value : ''); return m;
   };
   const POSES: [string, string, number, number][] = [['rest', 'idle', 0, 1], ['walk', 'walk', 3, 9], ['run', 'walk', 9, 14], ['cheer', 'cheer', 0, 3], ['wave', 'wave', 0, 3], ['dance', 'dance', 0, 5], ['jump', 'air', 0, 2], ['sit', 'sit', 0, 2], ['climb', 'climb', 0, 4]];
   // (owner 9 Nov 2026: the auditor must be trustworthy) QUICK = 'selftest:<fault>': one friend, everyday, rest and cheer,
@@ -64,7 +64,7 @@ gl_FragColor = vec4(code_ / 255.0, floor(dm_ / 256.0) / 255.0, mod(dm_, 256.0) /
   // fold: a top drawn from inside; eyes: the eyes left open while counted as shut)
   const PLANT = String(QUICK).startsWith('selftest:') ? String(QUICK).slice(9) : '';
   const ONLY = String(QUICK).startsWith('poses:') ? String(QUICK).slice(6).split(',') : null;
-  const ALLPICS = !!ONLY && ONLY.includes('pics');   // ('poses:sit,pics': the pictures and layers of every case, faults or not, to look at one by eye)   // ('poses:sit,jump': just those, for a quick look at one fault)
+  const ALLPICS = (!!ONLY && ONLY.includes('pics')) || !!PLANT;   // ('poses:sit,pics': the pictures and layers of every case, faults or not, to look at one by eye)   // ('poses:sit,jump': just those, for a quick look at one fault)
   const poses = PLANT ? POSES.filter(p => ['rest', 'cheer'].includes(p[0])) : ONLY ? POSES.filter(p => ONLY.includes(p[0])) : QUICK ? POSES.filter(p => ['rest', 'walk', 'cheer'].includes(p[0])) : POSES;
   const LOOK: any = { finn: 'boy', sol: 'boy', clara: 'girl', lumi: 'girl' };
   const cases: any[] = [], pics: Record<string, string> = {}, HREF: Record<string, number[]> = {};
@@ -78,7 +78,8 @@ gl_FragColor = vec4(code_ / 255.0, floor(dm_ / 256.0) / 255.0, mod(dm_, 256.0) /
       M.obj.traverse((o: any) => { if (o.isMesh) meshes.push(o); });
       const worn = meshes.filter(o => /^lit-g-/.test(o.material.name || '') && o.visible).map(o => o.material.name.slice(6));
       if (PLANT === 'kit') meshes.forEach((o: any) => { const u = o.material.userData; if (u.coverU && !/^lit-g-/.test(o.material.name || '')) u.coverU.value = 0; if (u.kitU) u.kitU.on.value = 0; });
-      if (PLANT === 'poke') meshes.forEach((o: any) => { if (/^lit-g-(trousers|shorts|leggings)/.test(o.material.name || '')) { const u = o.material.userData; if (u.coverU) u.coverU.value = 0; o.scale.set(1.12, 1.03, 1.12); } });   // (the trousers swollen through the top)
+      // (10 Nov 2026: o.scale never moved a skinned mesh, attached bind mode undoes it; the plant now pushes the trousers 3 cm out in the ID pictures)
+      if (PLANT === 'poke') meshes.forEach((o: any) => { if (/^lit-g-(trousers|shorts|leggings)/.test(o.material.name || '')) { const u = o.material.userData; u.coverU = { value: 0 }; u.plantInflate = .03; } });   // (the trousers swollen through the top, never hidden by it: their own cover value, which the game's dress() cannot set back, 10 Nov)
       if (PLANT === 'fold') meshes.forEach((o: any) => { if (/^lit-g-(top|trousers|shorts|leggings|bodice|tunic)/.test(o.material.name || '')) { o.scale.x *= -1; } });   // (every top and trousers turned inside out by a mirror (the winding flips): far over the 400 px limit; the ID pictures draw both sides, so BackSide alone changed nothing)
       const solo = new THREE.Scene();   // (the ID pictures: the friend alone, nothing of the valley)
       for (const [pn, st, sp, frames] of poses) {
@@ -156,16 +157,18 @@ gl_FragColor = vec4(code_ / 255.0, floor(dm_ / 256.0) / 255.0, mod(dm_, 256.0) /
           const fo = new Uint8Array(N);
           /* (10 Nov 2026: the valley between an arm and the side, and between the legs under a skirt, was counted: a hole is
              now only where the friend with nothing hidden would show something, so the hiding made a see-through gap) */
-          for (let i = 0; i < N; i++) { if (Pall[i * 4 + 3] || !Pnd[i * 4 + 3]) continue; const x = i % W, y = (i / W) | 0; let enc = true;
-            for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { let hit = false; for (let k = 1; k <= 6; k++) { const xx = x + dx * k, yy = y + dy * k; if (xx < 0 || yy < 0 || xx >= W || yy >= H) break; if (Pall[(yy * W + xx) * 4 + 3]) { hit = Pall[(yy * W + xx) * 4] !== 3; if (!hit) enc = false; break; } } /* (gaps between curls of hair are hair, not holes) */ if (!hit) { enc = false; break; } }
+          for (let i = 0; i < N; i++) { if (Pall[i * 4 + 3] || !Pnd[i * 4 + 3]) continue; const x = i % W, y = (i / W) | 0; let enc = true, hd0 = 1e9, hd1 = -1e9;
+            for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { let hit = false; for (let k = 1; k <= 6; k++) { const xx = x + dx * k, yy = y + dy * k; if (xx < 0 || yy < 0 || xx >= W || yy >= H) break; if (Pall[(yy * W + xx) * 4 + 3]) { hit = Pall[(yy * W + xx) * 4] !== 3; if (!hit) enc = false; else { const d_ = dep(Pall, yy * W + xx); hd0 = Math.min(hd0, d_); hd1 = Math.max(hd1, d_); } break; } } /* (gaps between curls of hair are hair, not holes) */ if (!hit) { enc = false; break; } }
+            if (enc && hd1 - hd0 > .05) enc = false;   /* (10 Nov 2026: its sides 5 cm apart in depth: the gap between the legs in a run, seen from the side, not a hole) */
             if (enc) fo[i] = 1; }
           // (tears: a hole in a garment itself, seen in its picture alone: an empty pixel the garment closes round within 5 pixels
           // on all four sides; owner circled the dark inner layer showing through such holes in Sol's shirt)
           const ft = new Uint8Array(N);
           for (const g of worn) { if ((RANK[g] ?? 9) > 1) continue; const q = Pg[g]; const isG = (j: number) => q[j * 4 + 3] && q[j * 4] % 100 === GCODE[g];
             for (let i = 0; i < N; i++) { if (isG(i)) continue; const x = i % W, y = (i / W) | 0; let enc = true;
-              let dg = 1e9;
-              for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { let hit = false; for (let k = 1; k <= 5; k++) { const xx = x + dx * k, yy = y + dy * k; if (xx < 0 || yy < 0 || xx >= W || yy >= H) break; if (isG(yy * W + xx)) { hit = true; dg = Math.min(dg, dep(q, yy * W + xx)); break; } } if (!hit) { enc = false; break; } }
+              let dg = 1e9, dgx = -1e9;
+              for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { let hit = false; for (let k = 1; k <= 5; k++) { const xx = x + dx * k, yy = y + dy * k; if (xx < 0 || yy < 0 || xx >= W || yy >= H) break; if (isG(yy * W + xx)) { hit = true; dg = Math.min(dg, dep(q, yy * W + xx)); dgx = Math.max(dgx, dep(q, yy * W + xx)); break; } } if (!hit) { enc = false; break; } }
+              if (enc && dgx - dg > .03) enc = false;   /* (10 Nov 2026: its sides 3 cm apart in depth: the gap between two legs of the trousers, a front and a back leg seen from the side, not a tear) */
               /* (10 Nov 2026: the gap under a hanging arm, seen from the side, was counted though the arm in front hides it: a tear
                  counts only where the finished picture shows something behind the garment there, or nothing) */
               if (enc && Pall[i * 4 + 3]) { const c_ = Pall[i * 4]; if (c_ === 3 || c_ === 5 || (c_ >= 20 && rankOf(c_) >= (RANK[g] ?? 9)) || dep(Pall, i) < dg - .005) enc = false; }   /* (hair, a hand or a braid tip, or the same or an outer garment in front: hidden) */   /* (hair lying over the shirt: the shirt is open under a braid) */

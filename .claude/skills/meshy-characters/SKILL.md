@@ -98,6 +98,8 @@ Then the checks: `node suite.mts --only faces,friendmodel,frienditems,friendoutf
 - (10 Nov) Editing a long one-line Python statement: a `#` comment inserted in the middle turns the rest of the line into comment. `isarm` lost three of its conditions this way, and rounds 61 and 62 were wrong. After any sed or Edit on such a line, print the whole line.
 - (10 Nov) Logs of background runs: send everything to a file (`*> file.log`). A `ForEach-Object { $_.Substring(...) }` on PowerShell output fails on error records and fails the run.
 - (10 Nov) Two layers that lie together, such as trouser cuffs inside boot mouths, need different depth biases. With both at .002 the cuff showed as a ragged edge over the boot. Boots are now .012 (`LAYER_BIAS` in `js/friend-model.ts`, and `BIAS` in `audit.mts` must match).
+- (10 Nov) An auditor hole or tear whose sides lie far apart in depth (5 cm for holes, 3 cm for tears) is the gap between two parts: front and back leg, or panel and trousers. It is not a hole in a garment. This took the counts from 131 to 18 holes and from 117 to 8 tears.
+- (10 Nov) The self-test's planted faults must really change the picture. `o.scale` does nothing to a skinned mesh, because attached bind mode undoes it; push vertices in the shader instead. Plant the fault on a friend whose outfit can show it: Sol, top over trousers, not Clara, whose skirt covers the waist. After every change to depth biases, run `audit_selftest.ps1` again: the old plant became invisible once tops drew 1.8 cm over trousers.
 - Python for pictures: `D:\WorkSpace\meshy\tools\pyenv\Scripts\python.exe` (there is no `python` on the path).
 
 ## Friends: old head on a swim body, clothes made in code (8 Nov 2026)
