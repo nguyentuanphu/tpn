@@ -67,7 +67,7 @@ for s in 'LR':
 SH_X = (abs(J['armL'].x) + abs(J['armR'].x)) / 2
 isarm = (armd < .09) & (armd < legd) & (np.abs(fc[:, 0]) > SH_X - .01) & (fc[:, 2] < NECK)   # (closer to the arm than the leg: a hand beside the thigh)
 isleg = ~isarm & (fc[:, 2] < HIP + .02) & (legd < .14)
-istorso = ~isarm & ~isleg & (fc[:, 2] < NECK + .02) & (fc[:, 2] > HIP - .16) & ((np.abs(fc[:, 0]) < SH_X + .02) | (fc[:, 2] > WAIST + .1))   # (the shoulder tops, where the collar sits, too; hands beside the hips are lower)   # (not a hand beside the hip)
+istorso = ~isarm & ~isleg & (fc[:, 2] < NECK + .02) & (fc[:, 2] > HIP - .16) & ((np.abs(fc[:, 0]) < SH_X + .08) | (fc[:, 2] > WAIST + .1))   # (10 Nov 2026: 8 cm past the shoulder joints, not 2: Lumi's hips are wider than her shoulders and her shirt had no sides there, her shorts showed)   # (the shoulder tops, where the collar sits, too; hands beside the hips are lower)   # (not a hand beside the hip)
 # hair is never clothed: everything above the neck, and anything hanging in front of or behind the grey shirt (Clara's
 # braids, Lumi's leaves on the shoulders): a ray from it towards the body's middle meets grey shirt more than 1 cm on
 gbm = bmesh.new(); gv = {}
@@ -299,7 +299,7 @@ def shell(name, faces, thick, smooth=6, cuts=()):
     for region, s, p, d in cuts:
         def mine(f):
             c = f.calc_center_median()
-            if region == 'torso': return abs(c.x) < SH_X + .03
+            if region == 'torso': return abs(c.x) < SH_X + .09   # (10 Nov 2026: the hips' sides too, wider than the shoulders on Lumi)
             side_ok = (c.x >= 0) == (s == 'L')
             P = np.array([c[:]])
             da = along(P, J['arm' + s], J['elbow' + s], J['hand' + s])[0][0]; dl = along(P, J['leg' + s], J['knee' + s], J['ankle' + s])[0][0]
@@ -749,7 +749,7 @@ for o in parts:
             # ray back through the leg met the back panel and hid a shin seen from the front)
             far_ = _rank(k) == 2
             for d_ in ((n_,) if far_ else (n_, -n_)):
-                h_ = tr.ray_cast(v_.co - d_ * .0005, d_, .25 if far_ else .08)
+                h_ = tr.ray_cast(v_.co - d_ * .0005, d_, .25 if far_ else (.2 if d_ is n_ else .08))   # (10 Nov 2026: a loose top hangs 8 cm or more off the hips, Lumi's: outward to 20 cm, or the shorts there were never hidden and came out through it when she sat and walked)
                 if h_[0] is not None and (hit is None or h_[3] < hit[3]): hit = h_
             if hit is None or abs(fn[hit[2]].dot(n_)) < .3: continue
             if kd is not None and kd.find(hit[0])[2] < (.002 if far_ else .006): continue   # (a skirt's or panels' waistband: 2 mm, or a top's hem showed over it, Lumi's)

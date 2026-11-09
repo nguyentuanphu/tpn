@@ -261,7 +261,7 @@ if J.get('trim_back_hair'):
 # ---- 2. the face layer: the face's front surface, lifted a little, its own front-facing picture
 activate(body); bm = bmesh.new(); bm.from_mesh(body.data); bm.faces.ensure_lookup_table()
 def infb(p): return fx0 <= p.x <= fx1 and fz0 <= p.z <= fz1
-front = [f for f in bm.faces if infb(f.calc_center_median()) and f.normal.y < -.15 and f.calc_center_median().y < 0]
+front = [f for f in bm.faces if infb(f.calc_center_median()) and f.normal.y < -.45 and f.calc_center_median().y < 0]   # (10 Nov 2026: -.45, was -.15: a front-drawn mood piece on the cheek's sides stretched the lash ends into dark streaks before Finn's ears; the body's own eye areas cover the rest while shut)
 FACEF = {f.index for f in front}
 dbm = bmesh.new(); vmap = {}
 for f in front:
@@ -1226,10 +1226,10 @@ if TEX and KEEP and SHIFT:
         _kd.balance()
         _ear_y = float(np.median(_pc3[_ear & _skp, 1])) if (_ear & _skp).any() else _hcy
         _zone = _hreg & _hz & (np.abs(_pc3[:, 0] - _hcx) > _hw * .75) & (_pc3[:, 1] < _ear_y) & (_pc3[:, 2] < fz1) & (_pc3[:, 2] > fz0)
-        _flat = [int(i) for i in np.nonzero(_zone)[0] if _kd.find(Vector(_pc3[i]))[2] < .006]
+        _flat = [int(i) for i in np.nonzero(_zone)[0] if _kd.find(Vector(_pc3[i]))[2] < .015]   # (10 Nov 2026: 15 mm, owner "cả 3": Finn's sideburn locks stood 6 to 15 mm off the cheek)
         # (owner circled again 9 Nov, 10 Nov shots: the streaks were also painted on the skin itself, Meshy's sideburn strokes)
         # dark texels on the skin triangles of the same cheek and temple zone are painted over with that zone's own skin
-        _tz = _skp & _hz & ~_ear & (np.abs(_pc3[:, 0] - _hcx) > _hw * .75) & (_pc3[:, 1] < _ear_y) & (_pc3[:, 2] < fz1) & (_pc3[:, 2] > fz0)
+        _tz = _skp & _hz & (np.abs(_pc3[:, 0] - _hcx) > _hw * .75) & (_pc3[:, 1] < _ear_y) & (_pc3[:, 2] < fz1) & (_pc3[:, 2] > fz0)
         for _b in (list(eyes.values()) if eyes else []):   # (never an eye's outer corner and lashes)
             _xa = fx0 + (_b[0] - 24) / W_ * (fx1 - fx0); _xb = fx0 + (_b[2] + 24) / W_ * (fx1 - fx0); _za = fz1 - (_b[3] + 14) / H_ * (fz1 - fz0); _zb = fz1 - (_b[1] - 14) / H_ * (fz1 - fz0)
             _tz &= ~((_pc3[:, 0] > _xa) & (_pc3[:, 0] < _xb) & (_pc3[:, 2] > _za) & (_pc3[:, 2] < _zb))
@@ -1244,7 +1244,7 @@ if TEX and KEEP and SHIFT:
         if _flat:
             _bmh = bmesh.new(); _bmh.from_mesh(me); _bmh.faces.ensure_lookup_table()
             bmesh.ops.delete(_bmh, geom=[_bmh.faces[i] for i in _flat], context='FACES'); _bmh.to_mesh(me); _bmh.free(); me.update()
-            _kf = np.ones(len(_skp), bool); _kf[_flat] = False; _skp = _skp[_kf]; _hreg = _hreg[_kf]; _hz = _hz[_kf]; _hairlike = _hairlike[_kf]   # (the per-triangle marks follow: the eye areas below use them)
+            _kf = np.ones(len(_skp), bool); _kf[_flat] = False; _skp = _skp[_kf]; _hreg = _hreg[_kf]; _hz = _hz[_kf]; _hairlike = _hairlike[_kf]; _mc = _mc[_kf]   # (the per-triangle marks follow: the eye areas below use them)
         print('FIT flat hair locks on the cheeks removed', len(_flat))
     for m_ in (clothm, skinm): m_['skin_mark'] = True
     # (owner 9 Nov 2026, circled: Lumi's closed eyes still showed the open eye's rim faintly, and from the side the far eye)
@@ -1268,7 +1268,7 @@ if TEX and KEEP and SHIFT:
             _fcx = np.array([p.center.x for p in me.polygons]); _fcz = np.array([p.center.z for p in me.polygons]); _fcy = np.array([p.center.y for p in me.polygons])
             _ine = np.zeros(len(me.polygons), bool)
             for _k in range(0, 8, 4): _ine |= (_fcx > _eb[_k]) & (_fcx < _eb[_k + 1]) & (_fcz > _eb[_k + 2]) & (_fcz < _eb[_k + 3])
-            _add = _ine & ~_skp & _hz & (~_hreg | ~_hairlike) & (_fcy < _ear_y)   # (the face side only: the back of the head has the same x and height, Finn's black hair there was marked)   # (Lumi's far eye, three-quarters, lay in her hair region: a triangle there not coloured like hair is the eye)
+            _add = _ine & ~_skp & _hz & (~_hreg | ~_hairlike | ((_mc.max(-1) < .35) & (_mc.max(-1) > 0))) & (_fcy < _ear_y)   # (and dark: Lumi's green irises are coloured like her hair)   # (the face side only: the back of the head has the same x and height, Finn's black hair there was marked)   # (Lumi's far eye, three-quarters, lay in her hair region: a triangle there not coloured like hair is the eye)
             if _add.any():
                 _cd = body.data.color_attributes['skinw'].data; _b2 = np.zeros(len(_cd) * 4, np.float32); _cd.foreach_get('color', _b2)
                 _li = np.concatenate([list(me.polygons[int(i)].loop_indices) for i in np.nonzero(_add)[0]]).astype(int)
