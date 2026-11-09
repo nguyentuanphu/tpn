@@ -1238,8 +1238,8 @@ if TEX and KEEP and SHIFT:
     # the body's own painted eye there in skin (js/friend-model.ts), so nothing of it shows past the lid piece at any angle
     if eyes:
         _eb = []
-        for b in list(eyes.values())[:2]:   # (wider at the sides and below; not above, where the brows are)
-            _eb += [fx0 + (b[0] - 18) / W_ * (fx1 - fx0), fx0 + (b[2] + 18) / W_ * (fx1 - fx0), fz1 - (b[3] + 10) / H_ * (fz1 - fz0), fz1 - (b[1] - 2) / H_ * (fz1 - fz0)]
+        for b in list(eyes.values())[:2]:   # (wider at the sides and below, a little above (Lumi's rim, 10 Nov); the brows stay)
+            _eb += [fx0 + (b[0] - 18) / W_ * (fx1 - fx0), fx0 + (b[2] + 18) / W_ * (fx1 - fx0), fz1 - (b[3] + 10) / H_ * (fz1 - fz0), fz1 - (b[1] - 10) / H_ * (fz1 - fz0)]
         while len(_eb) < 8: _eb += _eb[:4]
         # (auditor 10 Nov 2026: Clara's far eye, three-quarters: its inner corner, past the nose, lay between the two areas)
         # each area reaches the face's middle on its inner side
