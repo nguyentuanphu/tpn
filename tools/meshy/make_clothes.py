@@ -115,6 +115,11 @@ if os.environ.get('CL_OWN_BRAIDS') and me.attributes.get('own_hair') is None:
     _bmo.free(); hair |= _own; clothable = ~hair; OWNB = _own
     print('CL own braids (marked here)', int(_own.sum()))
 kit = (~skin if skin.any() else grey) & ~hair & (fS < .3)
+_axx = np.zeros(NP)
+for s in 'LR':
+    m = side == s; a_, e_, h_ = (np.array(J[n + s][:]) for n in ('arm', 'elbow', 'hand')); t_ = armt[m]
+    _axx[m] = np.where(t_ <= 1, a_[0] + (e_[0] - a_[0]) * t_, e_[0] + (h_[0] - e_[0]) * np.clip(t_ - 1, 0, 1))
+ARMPIT = isarm & kit & (np.abs(fc[:, 0]) < np.abs(_axx) - .02) & (fc[:, 2] < (J['armL'].z + J['armR'].z) / 2 - .04)   # (the trunk under each armpit: swim kit, not the bare arm, on the trunk's side of the arm's line, below the shoulder joints)
 _kc = kit & (np.abs(fc[:, 0]) < SH_X * .7) & (fc[:, 2] > WAIST) & (fc[:, 2] < NECK + .04)   # (owner 8 Nov: a grey ring under the chins; Finn's kit rose 2 cm past the neck joint)
 KIT_TOP = float(fc[_kc, 2].max()) if _kc.any() else NECK - .02
 NECKBAND = min(KIT_TOP + .012, NECK + .05)
@@ -139,7 +144,8 @@ def faces_for(top=None, sleeve=None, leg=None, under_waist=False, front_only=Fal
     """the body triangles a garment covers: torso between z_min and the neck, sleeves to `sleeve` (0..2), legs to `leg`"""
     sel = np.zeros(NP, bool)
     if top is not None:   # (and all the kit above that line, and the neck's skin up to the neckband)
-        sel |= (istorso | ((kit | isleg) & ~isarm & (np.abs(fc[:, 0]) < SH_X + .08))) & (fc[:, 2] > top) & ((fc[:, 2] < NECKBAND) | kit)   # (10 Nov 2026: the hips' sides below the hip joints count as leg; a shirt took only 2 cm past the shoulders there and Lumi's shorts, wider, showed through)
+        sel |= (istorso | ((kit | isleg) & ~isarm & (np.abs(fc[:, 0]) < SH_X + .08))) & (fc[:, 2] > top) & ((fc[:, 2] < NECKBAND) | kit)
+        sel |= ARMPIT & (fc[:, 2] > top)   # (10 Nov 2026: the trunk's sides under the armpits, under the swim kit but within the arm's 9 cm, were in no shirt: a hole each side, Lumi's sides see-through when she sat)   # (10 Nov 2026: the hips' sides below the hip joints count as leg; a shirt took only 2 cm past the shoulders there and Lumi's shorts, wider, showed through)
         sel |= neckcol
     if under_waist:   # (and all the grey shorts, wherever they are)
         sel |= istorso & (fc[:, 2] <= WAIST + .02) | (isleg & (legt <= .05)) | (grey & ~isarm & (fc[:, 2] <= WAIST + .02))
@@ -305,7 +311,7 @@ def shell(name, faces, thick, smooth=6, cuts=()):
             da = along(P, J['arm' + s], J['elbow' + s], J['hand' + s])[0][0]; dl = along(P, J['leg' + s], J['knee' + s], J['ankle' + s])[0][0]
             if region == 'arm':   # (owner 9 Nov 2026, r62-66: the swim kit showed at the back beside the armpits, Clara's and Sol's) the cut plane across a hanging arm also crosses the trunk's side: only the arm's own surface is cut
                 hb = btree.find_nearest(c)
-                if hb[0] is not None and not isarm[hb[2]]: return False
+                if hb[0] is not None and (not isarm[hb[2]] or ARMPIT[hb[2]]): return False   # (nor the trunk under the armpit, 10 Nov)
             return side_ok and ((da < dl and da < .1) if region == 'arm' else (dl < da and dl < .15))   # (only the limb itself: the chest is closer to an arm than to a leg, and a sleeve cut sliced the shirt's belly off, Sol's and Clara's)
         fs = [f for f in bm.faces if mine(f)]
         if not fs: continue
