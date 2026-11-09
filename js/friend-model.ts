@@ -42,7 +42,7 @@ function skinTint(m, paintHex: string) {
   m.userData.skinTint = true; m.userData.paintHex = paintHex; const lax = /^(skin|face-)/.test(m.name || ''); // (parts marked skin: blush, shine and shade follow the tone too; clothes only their skin-coloured texels)
   m.userData.tint = { value: new THREE.Color(1, 1, 1) }; m.userData.paint = { value: new THREE.Color(paintHex) };
   const cover = !!m.userData.cover; m.userData.coverU = { value: 0 };
-  const kit = cover && m.userData.kit_waist != null; m.userData.kitU = { top: { value: new THREE.Color(1, 1, 1) }, bot: { value: new THREE.Color(1, 1, 1) }, on: { value: 0 }, waist: { value: m.userData.kit_waist || 0 }, neck: { value: m.userData.kit_neck || 0 }, grey: { value: m.userData.kit_grey || .7 }, shut: { value: 0 } };
+  const kit = cover && m.userData.kit_waist != null; m.userData.kitU = { top: { value: new THREE.Color(1, 1, 1) }, bot: { value: new THREE.Color(1, 1, 1) }, on: { value: 0 }, waist: { value: m.userData.kit_waist || 0 }, neck: { value: m.userData.kit_neck || 0 }, grey: { value: m.userData.kit_grey || .7 }, shut: { value: 0 }, eyeA: { value: new THREE.Vector4(...((m.userData.eye_boxes || [0, 0, 0, 0]).slice(0, 4))) }, eyeB: { value: new THREE.Vector4(...((m.userData.eye_boxes || [0, 0, 0, 0, 0, 0, 0, 0]).slice(4, 8))) } };
   m.onBeforeCompile = sh => { sh.uniforms.uTint = m.userData.tint; sh.uniforms.uPaint = m.userData.paint;
     // (owner 9 Nov 2026: the swim kit and skin showed through the tops in spots) a body point covered by a garment being
     // worn (its bits, from tools/meshy/make_clothes.py, in the alpha of the skin mark; the worn garments' bits in uCover) is
@@ -52,10 +52,10 @@ function skinTint(m, paintHex: string) {
       sh.vertexShader = 'uniform float uCover;\nvarying float vCov;\n' + sh.vertexShader.replace('#include <color_vertex>', `#include <color_vertex>
 float cb_ = floor(color.a * 255.0 + .5); vCov = 0.0;
 for (int k = 0; k < 8; k++) { float p_ = exp2(float(k)); if (mod(floor(cb_ / p_), 2.0) > .5 && mod(floor(uCover / p_), 2.0) > .5) vCov = 1.0; }
-vKitY = position.y;`).replace('void main() {', 'varying float vKitY;\nuniform float uKitOn;\nuniform float uKitNeck;\nvoid main() {').replace('#include <project_vertex>', `#include <project_vertex>
+vKitY = position.y; vKitX = position.x;`).replace('void main() {', 'varying float vKitY;\nvarying float vKitX;\nuniform float uKitOn;\nuniform float uKitNeck;\nvoid main() {').replace('#include <project_vertex>', `#include <project_vertex>
 if (uKitOn > .5 && color.r < .5 && color.a * 255.0 < .5 && position.y < uKitNeck) { mvPosition.xyz -= normalize(mvPosition.xyz) * .012; gl_Position = projectionMatrix * mvPosition; }`); // (dressed: hair hanging below the neck, Clara's braids, drawn in front of the clothes it lies on)
-      sh.fragmentShader = 'varying float vCov;\nvarying float vKitY;\nuniform vec3 uKitTop;\nuniform vec3 uKitBot;\nuniform float uKitOn;\nuniform float uKitWaist;\nuniform float uKitGrey;\nuniform float uKitNeck;\nuniform float uShut;\n' + sh.fragmentShader.replace('void main() {', 'void main() {\nif (vCov > .999) discard;');
-      Object.assign(sh.uniforms, { uKitTop: m.userData.kitU.top, uKitBot: m.userData.kitU.bot, uKitOn: m.userData.kitU.on, uKitWaist: m.userData.kitU.waist, uKitNeck: m.userData.kitU.neck, uKitGrey: m.userData.kitU.grey, uShut: m.userData.kitU.shut });
+      sh.fragmentShader = 'varying float vCov;\nvarying float vKitY;\nuniform vec3 uKitTop;\nuniform vec3 uKitBot;\nuniform float uKitOn;\nuniform float uKitWaist;\nuniform float uKitGrey;\nuniform float uKitNeck;\nuniform float uShut;\nuniform vec4 uEyeA;\nuniform vec4 uEyeB;\nvarying float vKitX;\n' + sh.fragmentShader.replace('void main() {', 'void main() {\nif (vCov > .999) discard;');
+      Object.assign(sh.uniforms, { uKitTop: m.userData.kitU.top, uKitBot: m.userData.kitU.bot, uKitOn: m.userData.kitU.on, uKitWaist: m.userData.kitU.waist, uKitNeck: m.userData.kitU.neck, uKitGrey: m.userData.kitU.grey, uShut: m.userData.kitU.shut, uEyeA: m.userData.kitU.eyeA, uEyeB: m.userData.kitU.eyeB });
     }
     sh.fragmentShader = 'uniform vec3 uTint;\nuniform vec3 uPaint;\n' + sh.fragmentShader
       .replace('#include <map_fragment>', `#include <map_fragment>
@@ -80,6 +80,8 @@ ${kit ? `#ifdef USE_COLOR_ALPHA
 // and shade: looking into a sleeve or an armpit shows the clothes' inside, never the swimsuit
 // (owner 9 Nov 2026, the auditor: from the side, the far eye's white showed past the closed-lid piece) while the eyes are shut,
 // the painted eye whites on the face (pale, colourless, skin-marked, above the neck) take the skin's own colour
+bool inEye_ = (vKitX > uEyeA.x && vKitX < uEyeA.y && vKitY > uEyeA.z && vKitY < uEyeA.w) || (vKitX > uEyeB.x && vKitX < uEyeB.y && vKitY > uEyeB.z && vKitY < uEyeB.w);
+if (uShut > .5 && vColor.r > .5 && inEye_) k_ = uTint * uPaint / max(tx_, vec3(.02));   // (the whole painted eye, rim and lashes too, inside the eye areas: owner circled Lumi's faint rim)
 if (uShut > .5 && vColor.r > .5 && vKitY > uKitNeck && max(tx_.r, max(tx_.g, tx_.b)) > .78 && (max(tx_.r, max(tx_.g, tx_.b)) - min(tx_.r, min(tx_.g, tx_.b))) < .2 * max(tx_.r, max(tx_.g, tx_.b))) k_ = uTint * uPaint / max(tx_, vec3(.02));
 if (uKitOn > .5 && vColor.r < .5 && vColor.a * 255.0 > .5) { float kl_ = max(tx_.r, max(tx_.g, tx_.b)) / max(uKitGrey, .05); k_ = (vKitY > uKitWaist ? uKitTop : uKitBot) * clamp(kl_, .55, 1.15) / max(tx_, vec3(.02)); }
 #endif` : ''}
@@ -125,7 +127,7 @@ export function loadFriendModel(id: FriendId | `${FriendId}-hd`): Promise<boolea
         if (isBaked && m.map && !mats.has(m)) {   // (a Meshy model: see baked() above)
           const t = baked(name, m.map), ref = m.userData && m.userData.skin_ref;
           if (m.userData && m.userData.skin_mark && o.geometry.attributes.color) t.vertexColors = true; // (the skin mark from tools/meshy/fit_people.py, read by skinTint, not drawn as a colour)
-          if (t.vertexColors && m.userData && m.userData.cover_mark && o.geometry.attributes.color.itemSize === 4) { t.userData.cover = true; if (m.userData.kit_waist != null) { t.userData.kit_waist = m.userData.kit_waist; t.userData.kit_neck = m.userData.kit_neck; t.userData.kit_grey = m.userData.kit_grey; } } // (which garments cover each body point: COVER_BIT)
+          if (t.vertexColors && m.userData && m.userData.cover_mark && o.geometry.attributes.color.itemSize === 4) { t.userData.cover = true; if (m.userData.kit_waist != null) { t.userData.kit_waist = m.userData.kit_waist; t.userData.kit_neck = m.userData.kit_neck; t.userData.kit_grey = m.userData.kit_grey; if (Array.isArray(m.userData.eye_boxes)) t.userData.eye_boxes = m.userData.eye_boxes; } } // (which garments cover each body point: COVER_BIT)
           // (owner 8 Nov 2026, "Meshy's own face") an own-face mood piece: soft-edged and see-through round the eyes or
           // mouth over the painted face, taking the child's tone as a whole like the painted skin under it
           const own = name.startsWith('face-') && m.userData && m.userData.own_face;

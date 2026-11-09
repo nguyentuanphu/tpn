@@ -218,8 +218,8 @@ def _move_with_body(bm, o, name):
             hem = min(v.co.z for v in trunk); kd, W = _body_weights(); band = .12; tset = set(trunk)
             for v in bm.verts:
                 if v not in tset or v.co.z > hem + band: continue
-                t = .8 * (1 - (v.co.z - hem) / band) ** .8   # (a sitting thigh came through the shirt's sides at .65 over 8 cm)
-                t *= max(0., min(1., (cyz + .03 - v.co.y) / .06))   # (the front and sides only: the back's hem pulled by a sitting thigh came out over a skirt's back waistband, Clara's)
+                t = (1 - (v.co.z - hem) / band) ** .8   # (a sitting thigh came through the shirt's sides at .65 over 8 cm, and shorts rose over the hem at .8: the hem itself lies on the thigh)
+                t *= .6 + .4 * max(0., min(1., (cyz + .03 - v.co.y) / .06))   # (the back at 60%: at 0 Lumi's shorts rose over her shirt's back when walking (owner circled); at 100% a sitting thigh pulled a bodice's back out over a skirt's waistband, Clara's)
                 q = Vector((v.co.x, v.co.y, v.co.z - .06)); _co, j, _d = kd.find(q)
                 low = {k: w for k, w in W[j].items() if k.startswith(('leg', 'knee'))}
                 if not low: continue

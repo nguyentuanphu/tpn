@@ -1216,7 +1216,31 @@ if TEX and KEEP and SHIFT:
     for _n in [c.name for c in body.data.color_attributes if c.name != 'skinw']: body.data.color_attributes.remove(body.data.color_attributes[_n])
     _cw = body.data.color_attributes['skinw']; body.data.color_attributes.active_color = _cw; body.data.color_attributes.render_color_index = body.data.color_attributes.find('skinw')
     print('FIT skin mark: skin triangles', int(_skp.sum()), 'of', len(me.polygons))
+    # (owner 9 Nov 2026, circled twice: dark streaks before Finn's ear from the side) Meshy's thin locks of hair lying flat on
+    # the cheek and temple, in front of the ears, read as dirt in the game: hair triangles there within 6 mm of the skin are
+    # removed (the hair standing off the head, the fringe and the hair behind the ears stay)
+    if 'swim' in ID and _hreg.any() and _skp.any():
+        from mathutils.kdtree import KDTree as _KD
+        _sc = np.nonzero(_skp & _hz)[0]; _kd = _KD(len(_sc))
+        for _k, _i in enumerate(_sc): _kd.insert(Vector(_pc3[_i]), _k)
+        _kd.balance()
+        _ear_y = float(np.median(_pc3[_ear & _skp, 1])) if (_ear & _skp).any() else _hcy
+        _zone = _hreg & _hz & (np.abs(_pc3[:, 0] - _hcx) > _hw * .75) & (_pc3[:, 1] < _ear_y) & (_pc3[:, 2] < fz1) & (_pc3[:, 2] > fz0)
+        _flat = [int(i) for i in np.nonzero(_zone)[0] if _kd.find(Vector(_pc3[i]))[2] < .006]
+        if _flat:
+            _bmh = bmesh.new(); _bmh.from_mesh(me); _bmh.faces.ensure_lookup_table()
+            bmesh.ops.delete(_bmh, geom=[_bmh.faces[i] for i in _flat], context='FACES'); _bmh.to_mesh(me); _bmh.free(); me.update()
+        print('FIT flat hair locks on the cheeks removed', len(_flat))
     for m_ in (clothm, skinm): m_['skin_mark'] = True
+    # (owner 9 Nov 2026, circled: Lumi's closed eyes still showed the open eye's rim faintly, and from the side the far eye)
+    # the two eye areas, a little wider than the eyes, in model space (x, height): while the eyes are shut the game paints
+    # the body's own painted eye there in skin (js/friend-model.ts), so nothing of it shows past the lid piece at any angle
+    if eyes:
+        _eb = []
+        for b in list(eyes.values())[:2]:   # (wider at the sides and below; not above, where the brows are)
+            _eb += [fx0 + (b[0] - 18) / W_ * (fx1 - fx0), fx0 + (b[2] + 18) / W_ * (fx1 - fx0), fz1 - (b[3] + 10) / H_ * (fz1 - fz0), fz1 - (b[1] - 2) / H_ * (fz1 - fz0)]
+        while len(_eb) < 8: _eb += _eb[:4]
+        for m_ in (clothm, skinm): m_['eye_boxes'] = [float(x) for x in _eb[:8]]
 if TEX:
     colour.scale(TEX, TEX); colour.file_format = 'JPEG'; colour.save(filepath=jp, quality=88 if TEX >= 1024 else 72)   # (owner 8 Nov 2026: 62 left speckles on the necks)
     jimg = bpy.data.images.load(jp); jimg.name = ID + '-colour'

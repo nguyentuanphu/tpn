@@ -1,7 +1,7 @@
 // (Meshy production, 9 Nov 2026; owner: "Why dont you build a tool like a designer auditor to audit all these points? I have
 // been making and spotting your mistakes many times") The friends' auditor: the game draws every friend in every outfit,
 // pose and view, and the faults are measured, not looked for by eye:
-//   kit      the grey swim kit showing while dressed (the game paints it in the clothes' colours: only grey kit counts)
+//   kit      the swim kit showing through a gap in the clothes, whatever colour the game paints it
 //   poke     the body or an inner garment showing where a worn outer garment should cover it, less than 1.2 cm in front of
 //            that garment (ID and depth pictures of each layer alone; an arm well in front of the shirt is not a fault)
 //   hairtone hair-coloured pixels that change with the skin tone (hair tinted like skin: Clara's braids, Sol's curls)
@@ -77,7 +77,7 @@ gl_FragColor = vec4(code_ / 255.0, floor(dm_ / 256.0) / 255.0, mod(dm_, 256.0) /
       const worn = meshes.filter(o => /^lit-g-/.test(o.material.name || '') && o.visible).map(o => o.material.name.slice(6));
       if (PLANT === 'kit') meshes.forEach((o: any) => { const u = o.material.userData; if (u.coverU && !/^lit-g-/.test(o.material.name || '')) u.coverU.value = 0; if (u.kitU) u.kitU.on.value = 0; });
       if (PLANT === 'poke') meshes.forEach((o: any) => { if (/^lit-g-(trousers|shorts|leggings)/.test(o.material.name || '')) { const u = o.material.userData; if (u.coverU) u.coverU.value = 0; o.scale.set(1.12, 1.03, 1.12); } });   // (the trousers swollen through the top)
-      if (PLANT === 'fold') meshes.forEach((o: any) => { if (/^lit-g-(top|trousers|shorts|leggings|bodice|tunic)/.test(o.material.name || '')) { o.material.side = THREE.BackSide; o.material.needsUpdate = true; } });   // (every top and trousers inside out: far over the 400 px limit)
+      if (PLANT === 'fold') meshes.forEach((o: any) => { if (/^lit-g-(top|trousers|shorts|leggings|bodice|tunic)/.test(o.material.name || '')) { o.scale.x *= -1; } });   // (every top and trousers turned inside out by a mirror (the winding flips): far over the 400 px limit; the ID pictures draw both sides, so BackSide alone changed nothing)
       const solo = new THREE.Scene();   // (the ID pictures: the friend alone, nothing of the valley)
       for (const [pn, st, sp, frames] of poses) {
         av.life = null; for (let f = 0; f <= frames; f++) A.animate(av, st, 10 + f * .05, sp);
@@ -119,9 +119,12 @@ gl_FragColor = vec4(code_ / 255.0, floor(dm_ / 256.0) / 255.0, mod(dm_, 256.0) /
           const skR = med(sk), hrR = HREF[id] || med(hr), dist = (a: number[], b: number[]) => Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]) / 255;
           for (let i = 0; i < N; i++) {
             if (!Pall[i * 4 + 3]) continue; const code = Pall[i * 4];
-            if (code === 2) { const l = [L[i * 4], L[i * 4 + 1], L[i * 4 + 2]], mx = Math.max(...l); if (mx > 60 && (mx - Math.min(...l)) / mx < .18) fk[i] = 1; }   // (the kit is grey; a skin ankle under a trouser hem is not kit)
+            // (owner 9 Nov 2026, circled: dark patches in the sides of Sol's shirt, the swim kit painted in the trousers' colour showing
+            // through a gap) any swim-kit pixel seen while dressed is a gap in the clothes, whatever colour the game paints it;
+            // only its 2-pixel border is not judged (colours mix there)
+            if (code === 2) { let edge2 = false; const x = i % W, y = (i / W) | 0; for (let dy = -2; dy <= 2 && !edge2; dy++) for (let dx = -2; dx <= 2; dx++) { const xx = x + dx, yy = y + dy; if (xx < 0 || yy < 0 || xx >= W || yy >= H) { edge2 = true; break; } const j = yy * W + xx; if (!Pall[j * 4 + 3] || (Pall[j * 4] !== 2 && Pall[j * 4] < 20)) { edge2 = true; break; } } if (!edge2) fk[i] = 1; }
             const rc = rankOf(code);
-            const inside = (q: Uint8Array, g: string) => { const x = i % W, y = (i / W) | 0, e_ = g === 'aodai-panels' ? 8 : 4; for (const [dx, dy] of [[e_, 0], [-e_, 0], [0, e_], [0, -e_]]) {   // (the áo dài's slits: a leg stepping out through them is the dress, not a fault) const xx = x + dx, yy = y + dy; if (xx < 0 || yy < 0 || xx >= W || yy >= H) return false; const j = yy * W + xx; if (!q[j * 4 + 3] || q[j * 4] % 100 !== GCODE[g]) return false; } return true; };
+            const inside = (q: Uint8Array, g: string) => { const x = i % W, y = (i / W) | 0, e_ = g === 'aodai-panels' ? 8 : 4; /* (the áo dài's slits: a leg stepping out through them is the dress, not a fault) */ for (const [dx, dy] of [[e_, 0], [-e_, 0], [0, e_], [0, -e_]]) { const xx = x + dx, yy = y + dy; if (xx < 0 || yy < 0 || xx >= W || yy >= H) return false; const j = yy * W + xx; if (!q[j * 4 + 3] || q[j * 4] % 100 !== GCODE[g]) return false; } return true; };
             if (rc > -9) for (const g of worn) { if (RANK[g] <= rc || RANK[g] >= 3) continue; const q = Pg[g]; if (!q[i * 4 + 3] || q[i * 4] % 100 !== GCODE[g] || !inside(q, g)) continue;
               if (dep(q, i) - dep(Pall, i) < .012) { fp[i] = 1; break; } }
             const edge = () => { const x = i % W, y = (i / W) | 0; for (let dy = -2; dy <= 2; dy++) for (let dx = -2; dx <= 2; dx++) { const xx = x + dx, yy = y + dy; if (xx < 0 || yy < 0 || xx >= W || yy >= H) return true; const j = yy * W + xx; if (!Pall[j * 4 + 3] || Pall[j * 4] !== code) return true; } return false; };   // (colours mix along a border: not judged there)
