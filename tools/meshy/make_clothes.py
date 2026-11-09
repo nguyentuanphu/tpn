@@ -65,7 +65,15 @@ for s in 'LR':
     # (the second segment runs on to the fingertips: 1 elbow, 2 fingertips; the wrist is at about 1.6)
     d, t = along(fc[m], J['leg' + s], J['knee' + s], J['ankle' + s]); legd[m] = d; legt[m] = t
 SH_X = (abs(J['armL'].x) + abs(J['armR'].x)) / 2
-isarm = (armd < .09) & (armd < legd) & (np.abs(fc[:, 0]) > SH_X - .01) & (fc[:, 2] < NECK)   # (closer to the arm than the leg: a hand beside the thigh)
+# (10 Nov 2026, Blender picture of Lumi's shirt alone: a big hole in each side under the arms, her shorts showing through)
+# the trunk's sides under the armpits lay within 9 cm of the arm's line and were taken for arm, which no shirt covered: on
+# the inner side of the arm's line (towards the trunk) only 4.5 cm counts, an arm's own thickness
+_axx = np.zeros(NP)
+for s in 'LR':
+    m = side == s; a_, e_, h_ = (np.array(J[n + s][:]) for n in ('arm', 'elbow', 'hand')); t_ = armt[m]
+    _axx[m] = np.where(t_ <= 1, a_[0] + (e_[0] - a_[0]) * t_, e_[0] + (h_[0] - e_[0]) * np.clip(t_ - 1, 0, 1))
+_inner = np.abs(fc[:, 0]) < np.abs(_axx)
+isarm = (armd < np.where((armt > 1) & ~skin, 0., .09))   # (the 4.5 cm inner rule, _inner, was tried 10 Nov: the arm's underside then came off as jagged flaps on the shirt's sides) & (armd < legd) & (np.abs(fc[:, 0]) > SH_X - .01) & (fc[:, 2] < NECK)   # (closer to the arm than the leg: a hand beside the thigh)   # (10 Nov 2026: 5 cm below the elbow: the hips' sides beside a hanging hand were taken for arm, and Lumi's shirt had no sides there)
 isleg = ~isarm & (fc[:, 2] < HIP + .02) & (legd < .14)
 istorso = ~isarm & ~isleg & (fc[:, 2] < NECK + .02) & (fc[:, 2] > HIP - .16) & ((np.abs(fc[:, 0]) < SH_X + .08) | (fc[:, 2] > WAIST + .1))   # (10 Nov 2026: 8 cm past the shoulder joints, not 2: Lumi's hips are wider than her shoulders and her shirt had no sides there, her shorts showed)   # (the shoulder tops, where the collar sits, too; hands beside the hips are lower)   # (not a hand beside the hip)
 # hair is never clothed: everything above the neck, and anything hanging in front of or behind the grey shirt (Clara's
@@ -139,7 +147,7 @@ def faces_for(top=None, sleeve=None, leg=None, under_waist=False, front_only=Fal
     """the body triangles a garment covers: torso between z_min and the neck, sleeves to `sleeve` (0..2), legs to `leg`"""
     sel = np.zeros(NP, bool)
     if top is not None:   # (and all the kit above that line, and the neck's skin up to the neckband)
-        sel |= (istorso | (kit & ~isarm & (np.abs(fc[:, 0]) < SH_X + .02))) & (fc[:, 2] > top) & ((fc[:, 2] < NECKBAND) | kit)
+        sel |= (istorso | ((kit | isleg) & ~isarm & (np.abs(fc[:, 0]) < SH_X + .08))) & (fc[:, 2] > top) & ((fc[:, 2] < NECKBAND) | kit)   # (10 Nov 2026: the hips' sides below the hip joints count as leg; a shirt took only 2 cm past the shoulders there and Lumi's shorts, wider, showed through)
         sel |= neckcol
     if under_waist:   # (and all the grey shorts, wherever they are)
         sel |= istorso & (fc[:, 2] <= WAIST + .02) | (isleg & (legt <= .05)) | (grey & ~isarm & (fc[:, 2] <= WAIST + .02))
@@ -220,6 +228,7 @@ def _move_with_body(bm, o, name):
                 if v not in tset or v.co.z > hem + band: continue
                 t = (1 - (v.co.z - hem) / band) ** .8   # (a sitting thigh came through the shirt's sides at .65 over 8 cm, and shorts rose over the hem at .8: the hem itself lies on the thigh)
                 t *= .6 + .4 * max(0., min(1., (cyz + .03 - v.co.y) / .06))   # (the back at 60%: at 0 Lumi's shorts rose over her shirt's back when walking (owner circled); at 100% a sitting thigh pulled a bodice's back out over a skirt's waistband, Clara's)
+                t *= 1 - .5 * max(0., min(1., (abs(v.co.x) - SH_X * .6) / (SH_X * .4)))   # (10 Nov 2026: the sides at half: sitting, the thighs turned the shirt's sides forward and folded them in, a see-through slit each side, Lumi's)
                 q = Vector((v.co.x, v.co.y, v.co.z - .06)); _co, j, _d = kd.find(q)
                 low = {k: w for k, w in W[j].items() if k.startswith(('leg', 'knee'))}
                 if not low: continue
@@ -735,7 +744,10 @@ for o in parts:
     # (only an outer layer hides an inner one: trousers, shorts, leggings < tops < skirt, áo dài panels, bib; the bib lay "under"
     # the top as much as over it and both vanished)
     _rank = lambda n_: LAYER.get(n_, 3)
-    overs = [k for k in _gtr if k != nm and _rank(k) > _rank(nm)]
+    def _hem_of(k, _c={}):   # (a top's hem: its lowest point on the trunk, sleeves left out)
+        if k not in _c: _c[k] = min((v.co.z for v in _byname[k].data.vertices if abs(v.co.x) < SH_X), default=-1.)
+        return _c[k]
+    overs =[k for k in _gtr if k != nm and _rank(k) > _rank(nm)]
     if not overs: continue
     o.data.update(); bits = np.zeros(len(o.data.vertices), np.int32); _per = {}
     for v_ in o.data.vertices:
@@ -745,6 +757,10 @@ for o in parts:
             if 'cone_c' in _byname[k]:
                 if _in_cone(_byname[k], tr, v_.co): bits[v_.index] |= GCOVER_BIT[k]; _per[k] = _per.get(k, 0) + 1
                 continue
+            # (10 Nov 2026, owner "cả 3": sitting and walking, Lumi's shorts came out through her shirt's sides and back
+            # whatever the shirt's width, weights or depth order) trousers and shorts above a top's hem are never drawn
+            # while it is worn: the top lies over all of that
+            if _rank(nm) == 0 and _rank(k) == 1 and v_.co.z > _hem_of(k) + .015: bits[v_.index] |= GCOVER_BIT[k]; _per[k] = _per.get(k, 0) + 1; continue
             # (a skirt, the áo dài's panels and the bib hang well clear of the legs and chest: out to 25 cm, outward only, or a
             # ray back through the leg met the back panel and hid a shin seen from the front)
             far_ = _rank(k) == 2
