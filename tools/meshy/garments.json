@@ -4,7 +4,7 @@
     { "name": "top-short", "kind": "shell", "layer": 1, "thick": 0.012, "faces": [{ "top": "TOP_HEM - .06", "sleeve": 0.75 }], "cuts": ["neck", "hem:TOP_HEM", "arm:.5"] },
     { "name": "top-long", "kind": "shell", "layer": 1, "thick": 0.013, "faces": [{ "top": "TOP_HEM - .06", "sleeve": 1.8 }], "cuts": ["neck", "hem:TOP_HEM", "arm:1.55"] },
     { "name": "tunic-long", "kind": "shell", "layer": 1, "thick": 0.015, "faces": [{ "top": "HIP - .2", "sleeve": 1.8, "under_waist": true }, { "leg": 0.8 }], "cuts": ["neck", "hem:HIP - .12", "arm:1.55", "leg:.55"] },
-    { "name": "bodice", "kind": "shell", "layer": 1, "thick": 0.012, "faces": [{ "top": "HIP - .09", "sleeve": 0.6 }], "cuts": ["neck", "hem:HIP - .03", "arm:.35"] },
+    { "name": "bodice", "kind": "shell", "layer": 1, "thick": 0.012, "faces": [{ "top": "WAIST - .04", "sleeve": 0.6 }], "cuts": ["neck", "hem:WAIST + .01", "arm:.35"], "_why": "10 Nov 2026, the auditor: always worn under the skirt (Lumi festival dress); below the waist it came out through the skirt when she walked, jumped and sat, so it ends 4 cm under the skirt top" },
     { "name": "shorts", "kind": "shell", "layer": 0, "thick": 0.010, "faces": [{ "under_waist": true, "leg": "max(.75, KIT_LEG_T + .2)" }], "cuts": ["leg:max(.5, KIT_LEG_T)"] },
     { "name": "trousers", "kind": "shell", "layer": 0, "thick": 0.011, "faces": [{ "under_waist": true, "leg": 2.0 }], "cuts": ["leg:2.1"] },
     { "name": "leggings", "kind": "shell", "layer": 0, "thick": 0.007, "faces": [{ "under_waist": true, "leg": 2.0 }], "cuts": ["leg:2.1"] },

@@ -221,7 +221,8 @@ for (int k = 0; k < 8; k++) { float p_ = exp2(float(k)); if (mod(floor(cb_ / p_)
  * each garment is drawn a little nearer the camera along its own line of sight, more for outer layers (trousers 2 mm,
  * tops 10 mm, skirts, panels and the bib 16 mm; 5 and 9 left a sitting thigh through the shirt and panels): its outline on screen is unchanged, but where two layers meet, the outer
  * one wins, the standard depth order for layered clothes */
-const LAYER_BIAS = [.002, .018, .026, .012];   // (10 Nov 2026: boots .012: the trouser cuffs inside them showed as a ragged edge over the boot tops, Sol's)
+const LAYER_BIAS = [.002, .018, .034, .012];   // (10 Nov 2026: skirts .034: a skirt's waistband always lies over the top tucked under it; at .026 Lumi's bodice showed over it at the back when she walked)
+//   // (10 Nov 2026: boots .012: the trouser cuffs inside them showed as a ragged edge over the boot tops, Sol's)
 function layerBias(m, layer: number) {
   const b = LAYER_BIAS[layer] ?? 0, prev = m.onBeforeCompile, key = m.customProgramCacheKey;
   if (!b) return m;
@@ -285,6 +286,21 @@ export function attachFriendModel(A, id: string, skinHex: string, wear: FriendMo
   // swung furthest back, so the cloth is carried by the leg instead of the leg passing through it
   const skirt = (['skirtF', 'skirtB', 'skirtF2', 'skirtB2'] as const).filter(n => bones[n] && bones[n].parent).map(n => ({ n, b: bones[n], r: inRig(bones[n], new THREE.Quaternion()) }));
   const X = new THREE.Vector3(1, 0, 0), sq = new THREE.Quaternion();
+  // (10 Nov 2026, the auditor: Lumi's festival skirt sitting) the upper skirt bones turn about the hip joints' own axis, the
+  // axis the thighs turn about, not about their hinge in front of (behind) the hips: about the hinge the front lay below the
+  // tops of her raised thighs, they came through it and the inside of the skirt showed from the front. The hinge itself is
+  // carried round that axis, so the cloth lies over the thighs like the trousers under it.
+  const rigP = (o: any) => A.rig.worldToLocal(o.getWorldPosition(new THREE.Vector3()));
+  const hipMid = () => bones.legL && bones.legR ? rigP(bones.legL).add(rigP(bones.legR)).multiplyScalar(.5) : null;
+  const H0 = hipMid(), skirtOff: Record<string, any> = {};
+  if (H0) for (const s of skirt) if (s.n === 'skirtF') skirtOff[s.n] = rigP(s.b).sub(H0);   // (the front only: about the hip axis a back swung back by the walking leg pushed its top into the bodice)
+  const sp = new THREE.Vector3();
+  // (the thigh's turn about the rig's side axis, measured on the model's own thigh from hip to knee: the code leg's own
+  // angle missed the hips' tilt, and a sitting child's knees rose above her skirt)
+  const thigh = (l: string, k: string) => bones[l] && bones[k] ? rigP(bones[k]).sub(rigP(bones[l])) : null;
+  const T0 = { L: thigh('legL', 'kneeL'), R: thigh('legR', 'kneeR') };
+  const thighAng = (side: 'L' | 'R', fallback: number) => { const d0 = T0[side], d = d0 && thigh('leg' + side, 'knee' + side); if (!d) return fallback;
+    return Math.atan2(d0.y * d.z - d0.z * d.y, d0.y * d.y + d0.z * d.z); };
   // (owner 9 Nov 2026: keep the full poses, fix the cloth) corrective helper bones at the shoulders and hips
   // (tools/meshy/make_clothes.py): each turns half way between the trunk and its limb, so armpits and crotches bend round
   const helpers = ([['helpArmL', 'torso', 'armL'], ['helpArmR', 'torso', 'armR'], ['helpLegL', 'root', 'legL'], ['helpLegR', 'root', 'legR']] as const)
@@ -309,12 +325,17 @@ export function attachFriendModel(A, id: string, skinHex: string, wear: FriendMo
       h.b.quaternion.copy(parentQ.invert().multiply(sq)); h.b.updateMatrixWorld(true);
     }
     if (skirt.length && A.legL && A.legR) {
-      const lx = A.legL.rotation.x, rx = A.legR.rotation.x; // (the code person's legs: negative is forward)
+      const lx = thighAng('L', A.legL.rotation.x), rx = thighAng('R', A.legR.rotation.x); // (negative is forward)
       for (const s of skirt) {
         // (the upper bone with the thigh; the lower one, below the knee, mostly hanging down: a sitting child's áo dài lies
         // over the lap and falls from the knees instead of standing out like a board)
-        const ang = (s.n.startsWith('skirtF') ? Math.min(lx, rx, 0) : Math.max(lx, rx, 0)) * (s.n.endsWith('2') ? .25 : .95);
+        let ang = (s.n.startsWith('skirtF') ? Math.min(lx, rx, 0) : Math.max(lx, rx, 0)) * (s.n.endsWith('2') ? .25 : s.n === 'skirtF' ? .8 : .95);   // (the front a little less than the thighs about their own axis: the flared hem lies on the knees, Lumi's festival sitting)
+        // (10 Nov 2026, the auditor: Clara's áo dài running, seen from behind) the back below the knees goes with the shin of
+        // the leg kicked furthest back (thigh and knee together), or the heel came out through the back panel's hem
+        if (s.n === 'skirtB2' && A.kneeL && A.kneeR) ang = Math.max(ang, Math.max(lx + A.kneeL.rotation.x, rx + A.kneeR.rotation.x, 0) * .85);
         sq.setFromAxisAngle(X, ang).multiply(s.r);
+        const off = skirtOff[s.n], Hn = off && hipMid();
+        if (Hn) { sp.copy(off).applyAxisAngle(X, ang).add(Hn); A.rig.localToWorld(sp); s.b.parent.worldToLocal(sp); s.b.position.copy(sp); }
         s.b.parent.getWorldQuaternion(parentQ); parentQ.premultiply(inv);
         s.b.quaternion.copy(parentQ.invert().multiply(sq)); s.b.updateMatrixWorld(true);
       }

@@ -1,4 +1,4 @@
-# (Meshy production, 9 Nov 2026; owner: "phải viết công cụ để có thể làm số lượng lớn và nhanh được") One command per
+﻿# (Meshy production, 9 Nov 2026; owner: "phải viết công cụ để có thể làm số lượng lớn và nhanh được") One command per
 # character, start to end, stopping at the first failure; the auditor is the gate (docs/meshy-pipeline-20261109/PLAN.md).
 #   powershell -File tools/meshy/make_character.ps1 -Id clara -Kind friend
 #   powershell -File tools/meshy/make_character.ps1 -Batch finn,sol,clara,lumi -Kind friend [-SkipFit] [-Quick]
@@ -33,9 +33,15 @@ foreach ($i in $ids) {
 }
 node tools/build.mts | Out-Null
 Push-Location tests
-$args_ = @("..\tools\meshy\audit.mts", $Out, ($ids -join ','))
-if ($Quick) { $args_ += 'quick' }
-node @args_ 2>$null | Out-Null
+# (10 Nov 2026, owner: "chạy và sửa quá chậm") one audit process per character, side by side (one browser each), then merged
+New-Item -ItemType Directory -Force $Out | Out-Null
+$procs = foreach ($i in $ids) {
+  $a = @("..\tools\meshy\audit.mts", "$Out\part-$i", $i); if ($Quick) { $a += 'quick' }
+  Start-Process node -ArgumentList $a -NoNewWindow -PassThru -RedirectStandardOutput "$Out\part-$i.log" -RedirectStandardError "$Out\part-$i.err"
+}
+$procs | Wait-Process
+node ..\tools\meshy\audit.mts $Out merge 2>$null | Out-Null
+if ($LASTEXITCODE) { Pop-Location; throw "audit failed: see $Out\part-*.err" }
 Pop-Location
 $sum = Get-Content "$Out\summary.txt" -Encoding utf8
 $log + $sum | Out-File -Encoding utf8 "$Out\report.txt"

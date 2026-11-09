@@ -12,10 +12,27 @@
 import { createRequire } from 'node:module';
 import { open, clear } from '../../tests/harness.mts';
 const { chromium } = createRequire(new URL('../../tests/package.json', import.meta.url))('playwright');
-import { writeFileSync, mkdirSync } from 'node:fs';
+import { writeFileSync, mkdirSync, readdirSync, readFileSync, copyFileSync, existsSync } from 'node:fs';
 const [OUT, LIST = 'finn,sol,clara,lumi', QUICK = ''] = process.argv.slice(2);
 mkdirSync(OUT, { recursive: true });
 const LIMIT = { kit: 12, poke: 25, hairtone: 30, skintone: 30, eyes: 6, fold: 400, hole: 10, tear: 8 };   // (fold: the inside of a top or trousers looks like the outside, same colour and light: only a large inside-out patch shows)   // pixels in a 360 x 480 picture
+// (10 Nov 2026, owner: "chạy và sửa quá chậm") 'merge': the friends audited side by side, one process each, into
+// <out>/part-<id> (tools/meshy/make_character.ps1); this joins their cases and pictures into one summary
+function summarize(cs: any[]) { const keys = Object.keys(LIMIT), fail = cs.filter(c => keys.some(k => c[k] > LIMIT[k]));
+  const lines = [`audit ${new Date().toISOString()} cases ${cs.length} failing ${fail.length}`];
+  for (const k of keys) lines.push(`${k}: ${cs.filter(c => c[k] > LIMIT[k]).length} cases over ${LIMIT[k]} px, worst ${Math.max(0, ...cs.map(c => c[k] || 0))}`);
+  for (const id of [...new Set(cs.map(c => c.id))]) for (const kind of [...new Set(cs.map(c => c.kind))]) {
+    const f = fail.filter(c => c.id === id && c.kind === kind); if (f.length) lines.push(`${id} ${kind}: ` + f.map(c => `${c.pose}/${c.view} ` + keys.filter(k => c[k] > LIMIT[k]).map(k => `${k} ${c[k]}`).join(' ')).join('; '));
+  }
+  writeFileSync(`${OUT}/summary.txt`, lines.join('\n') + '\n'); writeFileSync(`${OUT}/cases.json`, JSON.stringify(cs)); console.log(lines.join('\n')); }
+if (LIST === 'merge') {
+  const cs: any[] = [];
+  for (const d of readdirSync(OUT).filter(d => d.startsWith('part-') && !d.includes('.'))) { const dir = `${OUT}/${d}`;
+    if (!existsSync(`${dir}/cases.json`)) throw new Error(`audit part ${d} has no cases.json: it failed`);
+    cs.push(...JSON.parse(readFileSync(`${dir}/cases.json`, 'utf8')));
+    for (const f of readdirSync(dir).filter(f => f.endsWith('.png'))) copyFileSync(`${dir}/${f}`, `${OUT}/${f}`); }
+  summarize(cs); process.exit(0);
+}
 const b = await chromium.launch({ args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'] });
 const P = await open(b, { w: 900, h: 700, fast: false }); await clear(P.page);
 const res: any = await P.page.evaluate(async ([LIST, QUICK, LIMIT]) => {
@@ -33,7 +50,7 @@ const res: any = await P.page.evaluate(async ([LIST, QUICK, LIMIT]) => {
   // ID + depth materials: R = layer code, G/B = depth from the camera in mm; the cover hiding (js/friend-model.ts) kept
   const RANK: Record<string, number> = { trousers: 0, shorts: 0, leggings: 0, 'top-short': 1, 'top-long': 1, 'tunic-long': 1, bodice: 1, skirt: 2, 'aodai-panels': 2, bib: 2, boots: 3 };
   const GCODE: Record<string, number> = {}; Object.keys(RANK).forEach((k, i) => { GCODE[k] = 20 + i; });
-  const BIAS = [.002, .018, .026, .012];   // (js/friend-model.ts LAYER_BIAS: the game's depth order for layered clothes, measured as the player sees it)
+  const BIAS = [.002, .018, .034, .012];   // (js/friend-model.ts LAYER_BIAS: the game's depth order for layered clothes, measured as the player sees it)
   const NODISC = { value: 0 };   // (1: nothing hidden, for the holes check: what the friend would show with no hiding at all)
   const idMat = (orig: any, code: number, isBody: boolean, layer = -1) => {
     const m = new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide }); m.vertexColors = !!orig.vertexColors;
@@ -91,6 +108,10 @@ gl_FragColor = vec4(code_ / 255.0, floor(dm_ / 256.0) / 255.0, mod(dm_, 256.0) /
           cam.position.copy(c).addScaledVector(dir, Hh * 2.1); cam.lookAt(c); cam.updateMatrixWorld(true);
           // the looks: light tone and dark tone, in the valley
           M.skin('#f6c7a5'); const L = read(top, cam); M.skin('#5e3a26'); const D = read(top, cam); M.skin('#f6c7a5');
+          // (10 Nov 2026: a falling leaf of the valley in front of Sol's arm counted as skin that kept its colour) the valley
+          // alone, the friend taken out: where the picture is the same with and without the friend, something hides it there
+          top.remove(av.root); const Bk = read(top, cam); top.add(av.root); av.root.updateMatrixWorld(true);
+          const hidden = (i: number) => Math.abs(L[i * 4] - Bk[i * 4]) + Math.abs(L[i * 4 + 1] - Bk[i * 4 + 1]) + Math.abs(L[i * 4 + 2] - Bk[i * 4 + 2]) < 12;
           // the layers: everything, then each worn garment alone (faces hidden: see-through pieces over the face)
           const saved = meshes.map(o => [o, o.material, o.visible]);
           const setPass = (only: string | null) => meshes.forEach((o: any) => { const n = o.material.name || '', g = n.startsWith('lit-g-') ? n.slice(6) : '';
@@ -110,7 +131,7 @@ gl_FragColor = vec4(code_ / 255.0, floor(dm_ / 256.0) / 255.0, mod(dm_, 256.0) /
           saved.forEach(([o, m, v]: any) => { o.material = m; o.visible = v; });
           others.forEach(o => { o.visible = true; }); top.add(av.root); av.root.updateMatrixWorld(true);
           // the faults
-          const N = W * H, fk = new Uint8Array(N), fp = new Uint8Array(N), fh = new Uint8Array(N), fs = new Uint8Array(N);
+          const pokeBy: Record<string, number> = {}; const N = W * H, fk = new Uint8Array(N), fp = new Uint8Array(N), fh = new Uint8Array(N), fs = new Uint8Array(N);
           const dep = (px: Uint8Array, i: number) => (px[i * 4 + 1] * 256 + px[i * 4 + 2]) / 1000;
           const rankOf = (code0: number) => { const code = code0 >= 120 ? code0 - 100 : code0; return rankOf0(code); }; const rankOf0 = (code: number) => code === 1 ? -1 : code === 2 || code === 3 || code === 5 ? -9 : RANK[Object.keys(GCODE).find(k => GCODE[k] === code)] ?? 9;
           // reference colours of this picture: skin from the skin-marked body, hair from the top of the head
@@ -130,9 +151,9 @@ gl_FragColor = vec4(code_ / 255.0, floor(dm_ / 256.0) / 255.0, mod(dm_, 256.0) /
             const rc = rankOf(code);
             const inside = (q: Uint8Array, g: string) => { const x = i % W, y = (i / W) | 0, e_ = g === 'aodai-panels' ? 8 : 4; /* (the áo dài's slits: a leg stepping out through them is the dress, not a fault) */ for (const [dx, dy] of [[e_, 0], [-e_, 0], [0, e_], [0, -e_]]) { const xx = x + dx, yy = y + dy; if (xx < 0 || yy < 0 || xx >= W || yy >= H) return false; const j = yy * W + xx; if (!q[j * 4 + 3] || q[j * 4] % 100 !== GCODE[g]) return false; } return true; };
             if (rc > -9) for (const g of worn) { if (RANK[g] <= rc || RANK[g] >= 3) continue; const q = Pg[g]; if (!q[i * 4 + 3] || q[i * 4] % 100 !== GCODE[g] || !inside(q, g)) continue;
-              if (dep(q, i) - dep(Pall, i) < .012) { fp[i] = 1; break; } }
+              if (dep(q, i) - dep(Pall, i) < .012) { fp[i] = 1; const nm_ = code === 1 || code === 5 ? 'skin' : code === 2 ? 'kit' : code === 3 ? 'hair' : (Object.keys(GCODE).find(k => GCODE[k] === code % 100) || String(code)) + (code >= 120 ? '(in)' : ''); pokeBy[nm_ + '>' + g] = (pokeBy[nm_ + '>' + g] || 0) + 1; break; } }   // (which layer shows through which garment: the case's pokeBy)
             const edge = () => { const x = i % W, y = (i / W) | 0; for (let dy = -2; dy <= 2; dy++) for (let dx = -2; dx <= 2; dx++) { const xx = x + dx, yy = y + dy; if (xx < 0 || yy < 0 || xx >= W || yy >= H) return true; const j = yy * W + xx; if (!Pall[j * 4 + 3] || Pall[j * 4] !== code) return true; } return false; };   // (colours mix along a border: not judged there)
-            if (((code >= 1 && code <= 3) || code === 5) && skR && hrR && !edge()) {
+            if (((code >= 1 && code <= 3) || code === 5) && skR && hrR && !edge() && !hidden(i)) {
               const l = [L[i * 4], L[i * 4 + 1], L[i * 4 + 2]], d = [D[i * 4], D[i * 4 + 1], D[i * 4 + 2]], ch = dist(l, d) > .12;
               const mx = Math.max(...l), sat = mx ? (mx - Math.min(...l)) / mx : 0, ds = dist(l, skR), dh = dist(l, hrR);
               const lum = (a: number[]) => a[0] * .3 + a[1] * .59 + a[2] * .11;
@@ -149,10 +170,18 @@ gl_FragColor = vec4(code_ / 255.0, floor(dm_ / 256.0) / 255.0, mod(dm_, 256.0) /
               if (!ch && ds < dh * .6 && ds < .18 && sat > .15 && code !== 3) fs[i] = 1;
             }
           }
-          const ff = new Uint8Array(N);
+          const ff = new Uint8Array(N), FOLD_SEEN = .09; let fold0 = 0;
           for (let i = 0; i < N; i++) { if (!Pall[i * 4 + 3] || Pall[i * 4] < 120) continue; const x = i % W, y = (i / W) | 0; let open_ = false;
             for (let dy = -6; dy <= 6 && !open_; dy += 2) for (let dx = -6; dx <= 6; dx += 2) { const xx = x + dx, yy = y + dy; if (xx < 0 || yy < 0 || xx >= W || yy >= H) { open_ = true; break; } const j = yy * W + xx; if (!Pall[j * 4 + 3] || Pall[j * 4] < 20) { open_ = true; break; } }
-            if (!open_) ff[i] = 1; }
+            if (open_) continue; fold0++;
+            /* (10 Nov 2026, owner: "mặt trong cùng màu thì có thể là báo động giả") the game draws a garment's inside in its own
+               colour and nearly its own light (baked, emissive .95): an inside patch that looks like the outside round it cannot
+               be seen. It counts only where its colour in the game differs from the same garment's outside nearby (the median of
+               the first outside pixel in 8 directions within 14 px); with no outside nearby it cannot be judged and counts. */
+            const g_ = Pall[i * 4] - 100, ref: number[][] = [];
+            for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [-1, -1], [1, -1], [-1, 1]]) for (let k = 1; k <= 14; k++) { const xx = x + dx * k, yy = y + dy * k; if (xx < 0 || yy < 0 || xx >= W || yy >= H) break; const j = yy * W + xx; if (Pall[j * 4 + 3] && Pall[j * 4] === g_) { ref.push([L[j * 4], L[j * 4 + 1], L[j * 4 + 2]]); break; } }
+            if (ref.length >= 2) { const m_ = med(ref); if (dist([L[i * 4], L[i * 4 + 1], L[i * 4 + 2]], m_) < FOLD_SEEN) continue; }
+            ff[i] = 1; }
           // (holes: with the swim kit not drawn, a gap with nothing behind it would show the valley through the child)
           const fo = new Uint8Array(N);
           /* (10 Nov 2026: the valley between an arm and the side, and between the legs under a skirt, was counted: a hole is
@@ -174,7 +203,7 @@ gl_FragColor = vec4(code_ / 255.0, floor(dm_ / 256.0) / 255.0, mod(dm_, 256.0) /
               if (enc && Pall[i * 4 + 3]) { const c_ = Pall[i * 4]; if (c_ === 3 || c_ === 5 || (c_ >= 20 && rankOf(c_) >= (RANK[g] ?? 9)) || dep(Pall, i) < dg - .005) enc = false; }   /* (hair, a hand or a braid tip, or the same or an outer garment in front: hidden) */   /* (hair lying over the shirt: the shirt is open under a braid) */
               if (enc) ft[i] = 1; } }
           const cnt = (a: Uint8Array) => a.reduce((s, v) => s + v, 0);
-          const r = { id, kind, pose: pn, view: vn, kit: cnt(fk), poke: cnt(fp), hairtone: cnt(fh), skintone: cnt(fs), fold: cnt(ff), hole: cnt(fo), tear: cnt(ft) };
+          const r = { id, kind, pose: pn, view: vn, kit: cnt(fk), poke: cnt(fp), hairtone: cnt(fh), skintone: cnt(fs), fold: cnt(ff), fold0, pokeBy, hole: cnt(fo), tear: cnt(ft) };
           cases.push(r);
           const bad = (Object.keys(LIMIT) as string[]).filter(k => r[k] > LIMIT[k]);
           if (bad.length || ALLPICS) { const all = new Uint8Array(N); for (let i = 0; i < N; i++) all[i] = fk[i] | fp[i] | ff[i] | fo[i] | ft[i] | ((bad.includes('hairtone') || bad.includes('skintone')) ? (fh[i] | fs[i]) : 0);
@@ -182,7 +211,7 @@ gl_FragColor = vec4(code_ / 255.0, floor(dm_ / 256.0) / 255.0, mod(dm_, 256.0) /
             const C = new Uint8Array(N * 4), PAL: Record<number, number[]> = { 1: [230, 60, 60], 2: [60, 90, 230], 3: [20, 20, 20] };   // (skin red, kit blue, hair black; garments by layer: inner green, tops yellow, outer purple)
             for (let i = 0; i < N; i++) { if (!Pall[i * 4 + 3]) { C.set([235, 235, 235, 255], i * 4); continue; } const code = Pall[i * 4], rk = rankOf(code);
               const col = PAL[code] || (rk === 0 ? [60, 190, 80] : rk === 1 ? [240, 210, 60] : rk === 2 ? [160, 80, 200] : [140, 140, 140]); C.set([...col, 255], i * 4); }
-            pics[`${id}-${kind}-${pn}-${vn}-layers`] = png(C, null); }   // (the layers as they are: the fault picture shows where)
+            pics[`${id}-${kind}-${pn}-${vn}-layers`] = png(C, null); if (ALLPICS) pics[`${id}-${kind}-${pn}-${vn}-look`] = png(L, null); }   // (the layers as they are: the fault picture shows where)
         }
       }
       FM.setMeshyTones(false); top.remove(av.root);
@@ -229,13 +258,5 @@ gl_FragColor = vec4(code_ / 255.0, floor(dm_ / 256.0) / 255.0, mod(dm_, 256.0) /
   return { cases, pics };
 }, [LIST, QUICK, LIMIT] as any);
 for (const [k, v] of Object.entries(res.pics as Record<string, string>)) writeFileSync(`${OUT}/${k}.png`, Buffer.from(v.split(',')[1], 'base64'));
-const cs: any[] = res.cases, keys = Object.keys(LIMIT);
-const fail = cs.filter(c => keys.some(k => c[k] > LIMIT[k]));
-const lines = [`audit ${new Date().toISOString()} cases ${cs.length} failing ${fail.length}`];
-for (const k of keys) lines.push(`${k}: ${cs.filter(c => c[k] > LIMIT[k]).length} cases over ${LIMIT[k]} px, worst ${Math.max(0, ...cs.map(c => c[k] || 0))}`);
-for (const id of [...new Set(cs.map(c => c.id))]) for (const kind of [...new Set(cs.map(c => c.kind))]) {
-  const f = fail.filter(c => c.id === id && c.kind === kind); if (f.length) lines.push(`${id} ${kind}: ` + f.map(c => `${c.pose}/${c.view} ` + keys.filter(k => c[k] > LIMIT[k]).map(k => `${k} ${c[k]}`).join(' ')).join('; '));
-}
-writeFileSync(`${OUT}/summary.txt`, lines.join('\n') + '\n'); writeFileSync(`${OUT}/cases.json`, JSON.stringify(cs));
-console.log(lines.join('\n'));
+summarize(res.cases);
 await b.close();
