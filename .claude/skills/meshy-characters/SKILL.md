@@ -97,6 +97,7 @@ Then the checks: `node suite.mts --only faces,friendmodel,frienditems,friendoutf
   - "Folds" of white trousers seen through the áo dài slits: same colour, hardly visible.
 - (10 Nov) Editing a long one-line Python statement: a `#` comment inserted in the middle turns the rest of the line into comment. `isarm` lost three of its conditions this way, and rounds 61 and 62 were wrong. After any sed or Edit on such a line, print the whole line.
 - (10 Nov) Logs of background runs: send everything to a file (`*> file.log`). A `ForEach-Object { $_.Substring(...) }` on PowerShell output fails on error records and fails the run.
+- (10 Nov) Two layers that lie together, such as trouser cuffs inside boot mouths, need different depth biases. With both at .002 the cuff showed as a ragged edge over the boot. Boots are now .012 (`LAYER_BIAS` in `js/friend-model.ts`, and `BIAS` in `audit.mts` must match).
 - Python for pictures: `D:\WorkSpace\meshy\tools\pyenv\Scripts\python.exe` (there is no `python` on the path).
 
 ## Friends: old head on a swim body, clothes made in code (8 Nov 2026)
