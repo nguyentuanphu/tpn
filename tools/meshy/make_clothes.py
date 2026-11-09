@@ -206,6 +206,9 @@ def _move_with_body(bm, o, name):
         for k, w in d.items():
             if w > 1e-3 and k in gi: dv[gi[k]] = w / tot
     bm.verts.ensure_lookup_table()
+    if name == 'bib':   # (owner 9 Nov 2026, Lumi's overalls: the bib's lower corners took the thighs' weights and smeared into blobs when she walked; a bib is a stiff panel on the chest: the trunk carries all of it)
+        for v in bm.verts: setw(v, {'torso': 1.})
+        return
     if LAYER.get(name) == 1 or name in ('top-short', 'top-long', 'tunic-long', 'bodice'):   # (1) the hem follows the thighs
         # (the whole trunk, sides too: the sides at the hips are wider than the shoulder joints, and a thigh sitting up came
         # through them, Sol's; sleeves hanging by the hips are told apart by the body part under them)
@@ -448,7 +451,8 @@ def cone(name, z_top, z_bot, flare, thick, panels=False, slit=.0):
     _ys = [v.co.y for v in me2.vertices]; _ry = max(max(_ys) - cy, cy - min(_ys), .02)
     for v in me2.vertices:
         t = (z_top - v.co.z) / max(z_top - z_bot, 1e-4); s = 'legL' if v.co.x >= cx else 'legR'
-        k = min(1., abs(v.co.y - cy) / _ry) ** .7; fb = 'skirtF' if v.co.y < cy else 'skirtB'   # (k: 1 at the middle of the front or back, 0 at the sides)
+        k = min(1., abs(v.co.y - cy) / _ry) ** .7; fb = 'skirtF' if v.co.y < cy else 'skirtB'
+        if v.co.y >= cy: k = min(1., k * 2.5)   # (the back follows its skirt bone, not the thighs, except right at the sides: a sitting child's thighs pulled the back of the skirt into her, and the top came through it, the auditor's Clara sitting)   # (k: 1 at the middle of the front or back, 0 at the sides)
         sw = min(1., .35 + 2.2 * t)   # (the waistband too: tops' hems follow the thighs under it)  # (fully carried by the legs and skirt bones from a third of the way down: at .8 t the thighs came through)
         lo = max(0., min(1., (KZ + .04 - v.co.z) / .08))   # (below the knee: the lower bone, blended over 8 cm)
         o.vertex_groups['torso'].add([v.index], max(1e-3, 1 - sw), 'REPLACE'); o.vertex_groups[s].add([v.index], sw * (1 - k), 'REPLACE'); o.vertex_groups[fb].add([v.index], sw * k * (1 - lo), 'REPLACE')

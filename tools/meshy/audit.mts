@@ -62,7 +62,8 @@ gl_FragColor = vec4(code_ / 255.0, floor(dm_ / 256.0) / 255.0, mod(dm_, 256.0) /
   // with a fault planted on purpose: the check for it must fire (kit: hiding and kit painting off; poke: body 4% bigger;
   // fold: a top drawn from inside; eyes: the eyes left open while counted as shut)
   const PLANT = String(QUICK).startsWith('selftest:') ? String(QUICK).slice(9) : '';
-  const poses = PLANT ? POSES.filter(p => ['rest', 'cheer'].includes(p[0])) : QUICK ? POSES.filter(p => ['rest', 'walk', 'cheer'].includes(p[0])) : POSES;
+  const ONLY = String(QUICK).startsWith('poses:') ? String(QUICK).slice(6).split(',') : null;   // ('poses:sit,jump': just those, for a quick look at one fault)
+  const poses = PLANT ? POSES.filter(p => ['rest', 'cheer'].includes(p[0])) : ONLY ? POSES.filter(p => ONLY.includes(p[0])) : QUICK ? POSES.filter(p => ['rest', 'walk', 'cheer'].includes(p[0])) : POSES;
   const LOOK: any = { finn: 'boy', sol: 'boy', clara: 'girl', lumi: 'girl' };
   const cases: any[] = [], pics: Record<string, string> = {}, HREF: Record<string, number[]> = {};
   for (const id of LIST.split(',')) {
@@ -76,7 +77,7 @@ gl_FragColor = vec4(code_ / 255.0, floor(dm_ / 256.0) / 255.0, mod(dm_, 256.0) /
       const worn = meshes.filter(o => /^lit-g-/.test(o.material.name || '') && o.visible).map(o => o.material.name.slice(6));
       if (PLANT === 'kit') meshes.forEach((o: any) => { const u = o.material.userData; if (u.coverU && !/^lit-g-/.test(o.material.name || '')) u.coverU.value = 0; if (u.kitU) u.kitU.on.value = 0; });
       if (PLANT === 'poke') meshes.forEach((o: any) => { if (/^lit-g-(trousers|shorts|leggings)/.test(o.material.name || '')) { const u = o.material.userData; if (u.coverU) u.coverU.value = 0; o.scale.set(1.12, 1.03, 1.12); } });   // (the trousers swollen through the top)
-      if (PLANT === 'fold') meshes.forEach((o: any) => { if (/^lit-g-top/.test(o.material.name || '')) { o.material.side = THREE.BackSide; o.material.needsUpdate = true; } });
+      if (PLANT === 'fold') meshes.forEach((o: any) => { if (/^lit-g-(top|trousers|shorts|leggings|bodice|tunic)/.test(o.material.name || '')) { o.material.side = THREE.BackSide; o.material.needsUpdate = true; } });   // (every top and trousers inside out: far over the 400 px limit)
       const solo = new THREE.Scene();   // (the ID pictures: the friend alone, nothing of the valley)
       for (const [pn, st, sp, frames] of poses) {
         av.life = null; for (let f = 0; f <= frames; f++) A.animate(av, st, 10 + f * .05, sp);
@@ -120,7 +121,7 @@ gl_FragColor = vec4(code_ / 255.0, floor(dm_ / 256.0) / 255.0, mod(dm_, 256.0) /
             if (!Pall[i * 4 + 3]) continue; const code = Pall[i * 4];
             if (code === 2) { const l = [L[i * 4], L[i * 4 + 1], L[i * 4 + 2]], mx = Math.max(...l); if (mx > 60 && (mx - Math.min(...l)) / mx < .18) fk[i] = 1; }   // (the kit is grey; a skin ankle under a trouser hem is not kit)
             const rc = rankOf(code);
-            const inside = (q: Uint8Array, g: string) => { const x = i % W, y = (i / W) | 0; for (const [dx, dy] of [[4, 0], [-4, 0], [0, 4], [0, -4]]) { const xx = x + dx, yy = y + dy; if (xx < 0 || yy < 0 || xx >= W || yy >= H) return false; const j = yy * W + xx; if (!q[j * 4 + 3] || q[j * 4] % 100 !== GCODE[g]) return false; } return true; };
+            const inside = (q: Uint8Array, g: string) => { const x = i % W, y = (i / W) | 0, e_ = g === 'aodai-panels' ? 8 : 4; for (const [dx, dy] of [[e_, 0], [-e_, 0], [0, e_], [0, -e_]]) {   // (the áo dài's slits: a leg stepping out through them is the dress, not a fault) const xx = x + dx, yy = y + dy; if (xx < 0 || yy < 0 || xx >= W || yy >= H) return false; const j = yy * W + xx; if (!q[j * 4 + 3] || q[j * 4] % 100 !== GCODE[g]) return false; } return true; };
             if (rc > -9) for (const g of worn) { if (RANK[g] <= rc || RANK[g] >= 3) continue; const q = Pg[g]; if (!q[i * 4 + 3] || q[i * 4] % 100 !== GCODE[g] || !inside(q, g)) continue;
               if (dep(q, i) - dep(Pall, i) < .012) { fp[i] = 1; break; } }
             const edge = () => { const x = i % W, y = (i / W) | 0; for (let dy = -2; dy <= 2; dy++) for (let dx = -2; dx <= 2; dx++) { const xx = x + dx, yy = y + dy; if (xx < 0 || yy < 0 || xx >= W || yy >= H) return true; const j = yy * W + xx; if (!Pall[j * 4 + 3] || Pall[j * 4] !== code) return true; } return false; };   // (colours mix along a border: not judged there)
@@ -154,7 +155,7 @@ gl_FragColor = vec4(code_ / 255.0, floor(dm_ / 256.0) / 255.0, mod(dm_, 256.0) /
             const C = new Uint8Array(N * 4), PAL: Record<number, number[]> = { 1: [230, 60, 60], 2: [60, 90, 230], 3: [20, 20, 20] };   // (skin red, kit blue, hair black; garments by layer: inner green, tops yellow, outer purple)
             for (let i = 0; i < N; i++) { if (!Pall[i * 4 + 3]) { C.set([235, 235, 235, 255], i * 4); continue; } const code = Pall[i * 4], rk = rankOf(code);
               const col = PAL[code] || (rk === 0 ? [60, 190, 80] : rk === 1 ? [240, 210, 60] : rk === 2 ? [160, 80, 200] : [140, 140, 140]); C.set([...col, 255], i * 4); }
-            pics[`${id}-${kind}-${pn}-${vn}-layers`] = png(C, all); }
+            pics[`${id}-${kind}-${pn}-${vn}-layers`] = png(C, null); }   // (the layers as they are: the fault picture shows where)
         }
       }
       FM.setMeshyTones(false); top.remove(av.root);
