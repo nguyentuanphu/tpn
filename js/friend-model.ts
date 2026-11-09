@@ -41,7 +41,18 @@ const BAKED_EMISSIVE = .95, BAKED_COLOR = new THREE.Color('#262524'); // (its ow
 function skinTint(m, paintHex: string) {
   m.userData.skinTint = true; m.userData.paintHex = paintHex; const lax = /^(skin|face-)/.test(m.name || ''); // (parts marked skin: blush, shine and shade follow the tone too; clothes only their skin-coloured texels)
   m.userData.tint = { value: new THREE.Color(1, 1, 1) }; m.userData.paint = { value: new THREE.Color(paintHex) };
+  const cover = !!m.userData.cover; m.userData.coverU = { value: 0 };
   m.onBeforeCompile = sh => { sh.uniforms.uTint = m.userData.tint; sh.uniforms.uPaint = m.userData.paint;
+    // (owner 9 Nov 2026: the swim kit and skin showed through the tops in spots) a body point covered by a garment being
+    // worn (its bits, from tools/meshy/make_clothes.py, in the alpha of the skin mark; the worn garments' bits in uCover) is
+    // not drawn: a triangle goes only when all three of its corners are covered, so the body round hems and cuffs stays
+    if (cover) {
+      sh.uniforms.uCover = m.userData.coverU;
+      sh.vertexShader = 'uniform float uCover;\nvarying float vCov;\n' + sh.vertexShader.replace('#include <color_vertex>', `#include <color_vertex>
+float cb_ = floor(color.a * 255.0 + .5); vCov = 0.0;
+for (int k = 0; k < 8; k++) { float p_ = exp2(float(k)); if (mod(floor(cb_ / p_), 2.0) > .5 && mod(floor(uCover / p_), 2.0) > .5) vCov = 1.0; }`);
+      sh.fragmentShader = 'varying float vCov;\n' + sh.fragmentShader.replace('void main() {', 'void main() {\nif (vCov > .999) discard;');
+    }
     sh.fragmentShader = 'uniform vec3 uTint;\nuniform vec3 uPaint;\n' + sh.fragmentShader
       .replace('#include <map_fragment>', `#include <map_fragment>
 vec3 pc_ = uPaint / (uPaint.r + uPaint.g + uPaint.b); vec3 tx_ = sampledDiffuseColor.rgb; float sm_ = tx_.r + tx_.g + tx_.b + 1e-4;
@@ -62,7 +73,7 @@ k_ = mix(k_, lim_, lb_ * vColor.r * smoothstep(.06, .16, sm_));
 diffuseColor.rgb *= k_;`)
       .replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\ntotalEmissiveRadiance *= k_;')
       .replace('#include <color_fragment>', ''); }; // (the corner colour is the skin mark, not a colour)
-  m.customProgramCacheKey = () => 'meshy-skintint' + (lax ? '-lax' : '') + (m.vertexColors ? '-mark' : ''); m.needsUpdate = true; return m;
+  m.customProgramCacheKey = () => 'meshy-skintint' + (lax ? '-lax' : '') + (m.vertexColors ? '-mark' : '') + (cover ? '-cover' : ''); m.needsUpdate = true; return m;
 }
 /** a child's own copy of a skin-tinted material (a clone loses the shader change and turns the colours into plain data) */
 function tintCopy(m) { const c = m.clone(); return skinTint(c, m.userData.paintHex); }
@@ -101,6 +112,7 @@ export function loadFriendModel(id: FriendId | `${FriendId}-hd`): Promise<boolea
         if (isBaked && m.map && !mats.has(m)) {   // (a Meshy model: see baked() above)
           const t = baked(name, m.map), ref = m.userData && m.userData.skin_ref;
           if (m.userData && m.userData.skin_mark && o.geometry.attributes.color) t.vertexColors = true; // (the skin mark from tools/meshy/fit_people.py, read by skinTint, not drawn as a colour)
+          if (t.vertexColors && m.userData && m.userData.cover_mark && o.geometry.attributes.color.itemSize === 4) t.userData.cover = true; // (which garments cover each body point: COVER_BIT)
           // (owner 8 Nov 2026, "Meshy's own face") an own-face mood piece: soft-edged and see-through round the eyes or
           // mouth over the painted face, taking the child's tone as a whole like the painted skin under it
           const own = name.startsWith('face-') && m.userData && m.userData.own_face;
@@ -135,6 +147,7 @@ export function loadFriendModel(id: FriendId | `${FriendId}-hd`): Promise<boolea
           // (v1.08e, Release 6 Nov: no picture, the clothes crisp) the light is baked into the corner colours: drawn the same way
           : name.startsWith('lit-') ? litCorners(name)
           : m.map ? new THREE.MeshToonMaterial({ name, map: m.map, gradientMap: bands }) : new THREE.MeshToonMaterial({ name, vertexColors: true, gradientMap: bands }));
+        if (name.startsWith('lit-g-') && m.userData && m.userData.cover_mark) mats.get(m).userData.cover = true; // (an inner garment's points under outer ones: GCOVER_BIT)
         if (/^(cloth-(hat|hair)|lit-g-)/.test(name)) mats.get(m).side = THREE.DoubleSide; // (and a body model's clothes: a skirt's inside shows) // (v1.08e villagers) a hat is a thin shell, and a lock of hair a thin card: both sides drawn
         if (ref && !mats.get(m).userData.skinRef) mats.get(m).userData.skinRef = ref;   // (a corner-coloured "skin-shade" painted in its own tone)
         o.material = personLook(mats.get(m));
@@ -172,12 +185,31 @@ const GARMENTS: Record<string, [string, 'main' | 'legs' | 'cream'][]> = {
   aodai: [['top-long', 'main'], ['aodai-panels', 'main'], ['trousers', 'legs']],
   hoodie: [['top-long', 'main'], ['trousers', 'legs']]
 };
-function dress(parts: Record<string, any>, look, wear: FriendModelWear) {
-  if (!Object.keys(parts).length) return;
+/** (owner 9 Nov 2026) each garment's bit in the body's cover mark (tools/meshy/make_clothes.py COVER_BIT): the body under a worn garment is not drawn */
+export const COVER_BIT: Record<string, number> = { 'top-short': 1, 'top-long': 2, 'tunic-long': 4, bodice: 8, skirt: 16, shorts: 32, trousers: 64, leggings: 128 };
+/** (owner 9 Nov 2026) each outer garment's bit in an inner garment's cover mark (make_clothes.py GCOVER_BIT) */
+export const GCOVER_BIT: Record<string, number> = { 'top-short': 1, 'top-long': 2, 'tunic-long': 4, bodice: 8, skirt: 16, 'aodai-panels': 32, bib: 64 };
+/** a garment's points under a worn outer garment are not drawn (its bits in the alpha of its corner colour) */
+function garmentCover(m) {
+  m.userData.coverU = { value: 0 };
+  m.onBeforeCompile = sh => { sh.uniforms.uCover = m.userData.coverU;
+    sh.vertexShader = 'uniform float uCover;\nvarying float vCov;\n' + sh.vertexShader.replace('#include <color_vertex>', `#include <color_vertex>
+float cb_ = floor(color.a * 255.0 + .5); vCov = 0.0;
+for (int k = 0; k < 8; k++) { float p_ = exp2(float(k)); if (mod(floor(cb_ / p_), 2.0) > .5 && mod(floor(uCover / p_), 2.0) > .5) vCov = 1.0; }`);
+    sh.fragmentShader = 'varying float vCov;\n' + sh.fragmentShader.replace('void main() {', 'void main() {\nif (vCov > .999) discard;'); };
+  m.customProgramCacheKey = () => 'meshy-garment-cover'; m.needsUpdate = true; return m;
+}
+/** shows the outfit's garments; returns the worn garments' cover bits */
+function dress(parts: Record<string, any>, look, wear: FriendModelWear): number {
+  if (!Object.keys(parts).length) return 0;
   const L = friendLook(look || {}) || {}, set = GARMENTS[L.style] || GARMENTS.shirt;
   const paint = (o, hex: string) => { const c = new THREE.Color(hex || '#9a9a9a'); o.material.emissive.copy(c).multiplyScalar(.62); o.material.emissiveIntensity = 1; o.material.color.copy(c).multiplyScalar(.55); }; // (mostly its own painted shade, some valley light: not flat)
-  for (const [part, from] of set) { const o = parts[part]; if (!o) continue; o.visible = true; paint(o, from === 'main' ? L.color : from === 'legs' ? L.legs : '#f3e6c8'); }
+  let bits = 0;
+  let gbits = 0;
+  for (const [part, from] of set) { const o = parts[part]; if (!o) continue; o.visible = true; bits |= COVER_BIT[part] || 0; gbits |= GCOVER_BIT[part] || 0; paint(o, from === 'main' ? L.color : from === 'legs' ? L.legs : '#f3e6c8'); }
   if (parts.boots) { parts.boots.visible = !wear.shoes; paint(parts.boots, L.shoe || '#8a5a3a'); }
+  for (const o of Object.values(parts)) if (o.material.userData.coverU) o.material.userData.coverU.value = gbits & ~(GCOVER_BIT[o.material.name.slice(6)] || 0); // (never hidden by itself)
+  return bits;
 }
 export function attachFriendModel(A, id: string, skinHex: string, wear: FriendModelWear = {}, hd = false): FriendModel {
   const L = ready[hd ? HD(id) : id]; if (!L) return null;
@@ -197,10 +229,11 @@ export function attachFriendModel(A, id: string, skinHex: string, wear: FriendMo
       if (n === 'skin-grip' || n === 'cloth-hands-grip') grips.push(o); // (the hands that hold handlebars: shown only when riding)
       if (n === 'cloth-item') o.visible = !!wear.item; // (v1.08d polish) the item in the hand: only once earned
       if (n === 'cloth-shoes') o.visible = !wear.shoes; // (v1.08d polish) the model's boots, unless shop shoes are worn
-      if (n.startsWith('lit-g-')) { o.material = o.material.clone(); garments[n.slice(6)] = o; o.visible = false; } // (a body model's clothes, dressed below)
+      if (n.startsWith('lit-g-')) { const src = o.material; o.material = src.clone(); if (src.userData.cover && o.geometry.attributes.color && o.geometry.attributes.color.itemSize === 4) garmentCover(o.material); garments[n.slice(6)] = o; o.visible = false; } // (a body model's clothes, dressed below)
     }
   });
-  dress(garments, A.look, wear);
+  const coverBits = dress(garments, A.look, wear);
+  obj.traverse((o: any) => { if (o.isMesh && o.material.userData.coverU && !(o.material.name || '').startsWith('lit-g-')) o.material.userData.coverU.value = coverBits; }); // (the body; garments have their own, set in dress)
   A.rig.add(obj); A.rig.updateMatrixWorld(true);
   // (v1.08e faces, part 2) the same thin ink outline as the code people, bent by the model's bones (not on the faces);
   // each follows its part's visibility (the item in the hand, the riding hands) and hides far away with the others

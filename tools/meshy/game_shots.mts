@@ -15,7 +15,7 @@ const [OUT, MODE = 'faces', LIST = 'finn,sol,clara,lumi'] = process.argv.slice(2
 mkdirSync(OUT, { recursive: true });
 const b = await chromium.launch({ args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'] });
 const P = await open(b, { w: 900, h: 700, fast: false }); await clear(P.page);
-const shots: Record<string, string> = await P.page.evaluate(async ([MODE, LIST]) => {
+const shots: Record<string, string> = await P.page.evaluate(async ([MODE, LIST, BARE]) => {
   const G = (window as any).__sv, A = await import(String('/js/avatar.js')), FM = await import(String('/js/friend-model.js')), { THREE } = await import(String('/js/gfx.js'));
   const h = G.heroes[0], R = G.renderer, out: Record<string, string> = {};
   const w = (ms: number) => { dispatchEvent(new Event('pointermove')); document.querySelectorAll('.storybook, .dialog, .modal, .reward').forEach(e => e.remove()); G.paused = false; G.world.time = .42; return new Promise(res => setTimeout(res, ms)); };
@@ -64,6 +64,40 @@ const shots: Record<string, string> = await P.page.evaluate(async ([MODE, LIST])
       top.remove(av.root);
     }
   }
+  // poses (owner 9 Nov 2026: "khi di chuyển hay đưa tay lên xuống qua lại thì có bị gì không?"): each friend in two outfits
+  // walking, running, arms up (cheer), waving, dancing, jumping, sitting and climbing, front and three-quarter, whole child
+  if (MODE === 'poses') for (const id of ids) {
+    await A.loadFriendModels(id); await A.loadFriendModels(id + '-hd');
+    for (const kind of ['everyday', 'aodai']) {
+      const av: any = A.buildAvatar({ set: LOOK[id] || 'girl', friend: id, skin: '#f6c7a5', suit: `${id}-${kind}` }, null, { hd: true }); A.showHD(av, true);
+      top.add(av.root); av.root.position.set(h.pos.x + 3, h.av.root.position.y, h.pos.z + 3); av.root.rotation.y = 0;
+      for (const [st, sp, frames] of [['walk', 3, 9], ['walk', 9, 14], ['cheer', 0, 3], ['wave', 0, 3], ['dance', 0, 5], ['air', 0, 2], ['sit', 0, 2], ['climb', 0, 4]] as [string, number, number][]) {
+        av.life = null; for (let f = 0; f <= frames; f++) A.animate(av, st, 10 + f * .05, sp);
+        av.root.updateMatrixWorld(true);
+        const box = new THREE.Box3().setFromObject(av.modelHD.obj, true), c = box.getCenter(new THREE.Vector3()), Hh = Math.max(box.max.y - box.min.y, 1);
+        for (const [s, nm] of [[.3, 'front'], [2.4, 'back']] as [number, string][]) {
+          const cam = new THREE.PerspectiveCamera(30, .75, .05, 100), dir = new THREE.Vector3(Math.sin(s), 0, Math.cos(s));
+          cam.position.copy(c).addScaledVector(dir, Hh * 2.1); cam.lookAt(c); grab(`${id}-${kind}-${st}${sp > 5 ? '-run' : ''}-${nm}`, cam, 360, 480);
+        }
+      }
+      top.remove(av.root);
+    }
+  }
+  // cover: which parts of a dressed friend hide what lies under worn garments (uCover), for checking the hiding is on
+  if (MODE === 'cover') for (const id of ids) {
+    await A.loadFriendModels(id); await A.loadFriendModels(id + '-hd');
+    const av: any = A.buildAvatar({ set: LOOK[id] || 'girl', friend: id, skin: '#f6c7a5', suit: `${id}-everyday` }, null, { hd: true }); A.showHD(av, true);
+    av.modelHD.obj.traverse((o: any) => { if (o.isMesh) out[`${id} ${o.name} ${o.material.name}`] = JSON.stringify({ vis: o.visible, cover: o.material.userData.cover, u: o.material.userData.coverU && o.material.userData.coverU.value, vc: o.material.vertexColors, item: o.geometry.attributes.color && o.geometry.attributes.color.itemSize, arr: o.geometry.attributes.color && o.geometry.attributes.color.array.constructor.name, norm: o.geometry.attributes.color && o.geometry.attributes.color.normalized, a: o.geometry.attributes.color && Array.from(new Set(Array.from({ length: Math.min(4000, o.geometry.attributes.color.count) }, (_, i) => Math.round(o.geometry.attributes.color.getW(i) * 255)))).slice(0, 12) }); });
+    // the hiding itself: every mask on, garments off: the body should show holes wherever any garment covers it
+    top.add(av.root); av.root.position.set(h.pos.x + 3, h.av.root.position.y, h.pos.z + 3); av.root.rotation.y = 0; A.animate(av, 'idle', 1); av.root.updateMatrixWorld(true);
+    av.modelHD.obj.traverse((o: any) => { if (o.isMesh && o.material.userData.coverU) o.material.userData.coverU.value = 255; if (o.isMesh && /^lit-g-/.test(o.material.name || '')) o.visible = false; });
+    const box = new THREE.Box3().setFromObject(av.modelHD.obj, true), c = box.getCenter(new THREE.Vector3()), Hh = box.max.y - box.min.y;
+    const cam = new THREE.PerspectiveCamera(30, .75, .05, 100); cam.position.copy(c).add(new THREE.Vector3(0, 0, Hh * 2.1)); cam.lookAt(c); grab(`${id}-holes`, cam, 360, 480);
+    // and the trousers under the áo dài's panels alone (their bit 32)
+    av.modelHD.obj.traverse((o: any) => { if (o.isMesh && /^lit-g-trousers/.test(o.material.name || '')) { o.visible = true; o.material.userData.coverU.value = 32; } else if (o.isMesh && /^(cloth-body|skin-)/.test(o.material.name || '')) o.visible = false; });
+    for (const [s, nm] of [[0, 'f'], [1.57, 's']] as [number, string][]) { const cm = new THREE.PerspectiveCamera(30, .75, .05, 100); cm.position.copy(c).add(new THREE.Vector3(Math.sin(s) * Hh * 2.1, 0, Math.cos(s) * Hh * 2.1)); cm.lookAt(c); grab(`${id}-trousers-under-panels-${nm}`, cm, 360, 480); }
+    top.remove(av.root);
+  }
   // nape: the back of the neck up close, level and from a little below, standing, running and looking to each side
   if (MODE === 'nape') for (const id of ids) {
     await A.loadFriendModels(id); await A.loadFriendModels(id + '-hd');
@@ -103,9 +137,20 @@ const shots: Record<string, string> = await P.page.evaluate(async ([MODE, LIST])
     for (const tone of ['#f6c7a5', '#e0a47c', '#a86c48', '#5e3a26']) {
       const av: any = A.buildAvatar({ set: LOOK[id] || 'girl', friend: id, skin: tone }, null, { hd: true }); A.showHD(av, true);
       top.add(av.root); av.root.position.set(h.pos.x + 3, h.av.root.position.y, h.pos.z + 3); av.root.rotation.y = 0; A.animate(av, 'idle', 1); av.root.updateMatrixWorld(true);
+      // (owner 9 Nov 2026: "chỉnh da trên meshy swimsuit trước") BARE=1: the swim body alone, every garment hidden, so the
+      // skin is checked on all tones before any outfit
+      if (BARE) av.modelHD.obj.traverse((o: any) => { const ms = o.material ? [].concat(o.material) : []; if (o.isMesh && ms.some((m: any) => /^lit-g-/.test(m.name || ''))) o.visible = false; });
       let head: any = null; av.modelHD.obj.traverse((o: any) => { if (o.isBone && o.name === 'head') head = o; });
       const at = head.getWorldPosition(new THREE.Vector3()); const cam = new THREE.PerspectiveCamera(30, 1, .05, 100); cam.position.copy(at).add(new THREE.Vector3(.9, -.35, 2.6)); cam.lookAt(at);
-      grab(`${id}-tone-${i++}`, cam, 360, 360); top.remove(av.root);
+      grab(`${id}-tone-${i}`, cam, 360, 360);
+      // (owner 9 Nov 2026, r59: the hands and the fronts of the legs kept their painted skin on dark tones) the whole child
+      // too, front and back, so hands, fingers and legs are checked on every tone
+      const box = new THREE.Box3().setFromObject(av.modelHD.obj, true), c = box.getCenter(new THREE.Vector3()), Hh = box.max.y - box.min.y;
+      for (const [s, nm] of [[.35, 'front'], [Math.PI, 'back']] as [number, string][]) {
+        const cf = new THREE.PerspectiveCamera(30, .75, .05, 100), dir = new THREE.Vector3(Math.sin(s), 0, Math.cos(s));
+        cf.position.copy(c).addScaledVector(dir, Hh * 2.1); cf.lookAt(c); grab(`${id}-tonefull-${nm}-${i}`, cf, 360, 480);
+      }
+      i++; top.remove(av.root);
     }
     FM.setMeshyTones(false);
   }
@@ -119,7 +164,8 @@ const shots: Record<string, string> = await P.page.evaluate(async ([MODE, LIST])
     for (const s of [Math.PI, 2.2]) headShot(`v-${id}-neck-back-${s.toFixed(1)}`, n.A.root, n.A.model, yaw, s, true);
   }
   return out;
-}, [MODE, LIST] as any);
+}, [MODE, LIST, !!process.env.BARE] as any);
+if (MODE === 'cover') for (const [k, v] of Object.entries(shots)) if (!String(v).startsWith('data:')) console.log(k, v);
 for (const [k, v] of Object.entries(shots)) { if (v) writeFileSync(`${OUT}/${k}.png`, Buffer.from(v.split(',')[1], 'base64')); else console.log('missing', k); }
 console.log('shots', Object.keys(shots).length, 'in', OUT);
 await b.close();

@@ -19,7 +19,7 @@ For a new Claude session or account taking over on the owner's PC. Read `.claude
 
 - **Friends Finn, Sol, Clara and Lumi:**
   - The owner chose the **own-head way (B)**: the whole Meshy swim model with its own face moods, and clothes made in code.
-  - Latest build (round r57) is at `D:\WorkSpace\meshy\fitted\review-B2-20261109\`.
+  - Latest build (round r59, 9 Nov evening: hair found as one piece in the skin mark, so Clara's braids, Sol's temple curls and Finn's fringe keep their colour on every tone; smoother shirt shading) is at `D:\WorkSpace\meshy\fitted\review-r59-20261109\` (same files and sheets as below). r57 is kept in `review-B2-20261109`.
   - That folder holds `<id>.glb`, `<id>-hd.glb` and the sheets `1-mat.png` (eyes), `2-mau-da.jpg` (skin tones) and `3-quan-ao.jpg` (outfits).
   - The sheets were sent to the owner and are **waiting for approval**.
 - **Checks:** all 7 pass with these models installed:
@@ -30,9 +30,11 @@ For a new Claude session or account taking over on the owner's PC. Read `.claude
 
 ## Known small issues left
 
-- When Clara's right eye is closed, a tiny light speck stays at its inner corner.
+- (r59) Seen from the side, a faint lighter patch on Sol's cheek where a face piece ends.
+- (r59) Finn's dark locks before the ear are Meshy's own sideburn hair, not a fault; ask the owner whether to remove them.
 - On the darkest skin tone, a few small flecks remain at the edge of Clara's hair beside her cheek.
-- Finn and Sol each have a small dot in the middle of the collar.
+- Finn and Sol each have a small dot in the middle of the collar (a push-out fix was tried on 9 Nov and failed: see the skill).
+- Paths in "When the owner approves" below: use `review-r59-20261109` once r59 is approved.
 - Garments are flat colour (no fabric picture).
 
 ## When the owner approves

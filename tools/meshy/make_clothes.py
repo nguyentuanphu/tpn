@@ -12,6 +12,7 @@ import bpy, bmesh, sys, os, math
 import numpy as np
 from mathutils import Vector
 from mathutils.bvhtree import BVHTree
+from mathutils.kdtree import KDTree
 a = sys.argv[sys.argv.index('--') + 1:]
 BLEND, OUT = a[0], a[1]; RDIR = a[2] if len(a) > 2 else None
 LIGHT = '-light' in os.path.basename(OUT)
@@ -202,6 +203,9 @@ def shell(name, faces, thick, smooth=6, cuts=()):
             side_ok = (c.x >= 0) == (s == 'L')
             P = np.array([c[:]])
             da = along(P, J['arm' + s], J['elbow' + s], J['hand' + s])[0][0]; dl = along(P, J['leg' + s], J['knee' + s], J['ankle' + s])[0][0]
+            if region == 'arm':   # (owner 9 Nov 2026, r62-66: the swim kit showed at the back beside the armpits, Clara's and Sol's) the cut plane across a hanging arm also crosses the trunk's side: only the arm's own surface is cut
+                hb = btree.find_nearest(c)
+                if hb[0] is not None and not isarm[hb[2]]: return False
             return side_ok and ((da < dl and da < .1) if region == 'arm' else (dl < da and dl < .15))   # (only the limb itself: the chest is closer to an arm than to a leg, and a sleeve cut sliced the shirt's belly off, Sol's and Clara's)
         fs = [f for f in bm.faces if mine(f)]
         if not fs: continue
@@ -258,11 +262,21 @@ def shell(name, faces, thick, smooth=6, cuts=()):
     bm.normal_update()
     # painted shade: the body's own colour under each corner, as brightness relative to the grey clothes / the skin
     uv = bm.loops.layers.uv.active; col = bm.loops.layers.color.new('shade')
+    bm.verts.ensure_lookup_table(); _vk = np.zeros(len(bm.verts)); _vn = np.zeros(len(bm.verts))
     for f in bm.faces:
         for l in f.loops:
             c = sample(*l[uv].uv); lum = float(max(c)); s_ = (lum - float(min(c))) / max(lum, 1e-4)
             k = lum / (GREY_LUM if s_ < .15 else SKIN_LUM); k = min(1.15, max(.55, k))
-            l[col] = (k, k, k, 1)
+            _vk[l.vert.index] += k; _vn[l.vert.index] += 1
+    # (owner 9 Nov 2026, r57: dark blocks on Sol's yellow shirt) the body's picture under a garment has hard-edged
+    # patches (the swim kit's painted folds, skin at the armholes): the shade is smoothed over the garment's own surface
+    # and kept gentle, so it reads as soft light and shadow, never as a printed patch
+    _vk = _vk / np.maximum(_vn, 1)
+    _nbv = [[e.other_vert(v).index for e in v.link_edges] for v in bm.verts]
+    for _ in range(12): _vk = np.array([(_vk[i] + np.mean(_vk[n])) / 2 if n else _vk[i] for i, n in enumerate(_nbv)])
+    _vk = np.clip(_vk, .8, 1.08)
+    for f in bm.faces:
+        for l in f.loops: k = float(_vk[l.vert.index]); l[col] = (k, k, k, 1)
     bm.to_mesh(o.data); bm.free()
     for nm in [ca.name for ca in o.data.color_attributes if ca.name and ca.name != 'shade']: o.data.color_attributes.remove(o.data.color_attributes[nm])
     o.data.color_attributes.active_color = o.data.color_attributes['shade']
@@ -382,6 +396,8 @@ if feet is not None:
     fo.data.materials.clear(); fo.data.materials.append(bpy.data.materials.new('lit-g-boots')); parts.append(fo)
 
 # (light model, far away only: the garments carry half their triangles; Clara's light model passed the 500 KB limit)
+_hg = body.vertex_groups.new(name='hair-v')   # (the hair's points, kept through the light model's body reduction)
+_hg.add(sorted({vi for p_ in me.polygons if hair[p_.index] for vi in p_.vertices} - {vi for p_ in me.polygons if not hair[p_.index] for vi in p_.vertices}), 1.0, 'REPLACE')   # (only points wholly in the hair: where a braid touches the body the remesh joined them, and lifting a shared point pulled the kit out through Clara's top)
 if LIGHT:
     for o in parts:
         if len(o.data.polygons) < 300: continue
@@ -409,6 +425,36 @@ if OWNB.any():
         v_ = me.vertices[vi]; t_ = max(0., min(1., (WAIST + .06 - v_.co.z) / .08))
         if t_ > 0: v_.co.y -= .03 * t_; _lift += 1
     print('CL braid tips lifted over the waistband', _lift)
+# (owner 9 Nov 2026, r59: "bím tóc vẫn bị dính áo" - purple patches of Clara's top on her braids at the shoulders, and the
+# dots in Finn's and Sol's collars) the braids lie on the shoulders closer than a top's thickness, so the top came out
+# through them; small bumps of the body came out through the tops the other way. No garment is moved (pushing garments
+# folded them, 9 Nov): a hair point at or inside any garment goes out to 4 mm above it, and a body point (not hair) at or
+# outside a garment, right under it, sinks to 3 mm below it. Both are hidden or lie on top, so nothing shows as a cut.
+_gtrees = []
+for o in parts:
+    bmg_ = bmesh.new(); bmg_.from_mesh(o.data); bmg_.faces.ensure_lookup_table(); bmg_.normal_update()
+    _gtrees.append((BVHTree.FromBMesh(bmg_), [f.normal.copy() for f in bmg_.faces])); bmg_.free()
+_hgi = body.vertex_groups['hair-v'].index; _hout = _bin = 0
+for v_ in me.vertices:
+    if v_.co.z > NECK + .02: continue
+    ishair = any(g.group == _hgi for g in v_.groups)
+    best = None
+    for t_, nrm in _gtrees:
+        h_ = t_.find_nearest(v_.co, .03)
+        if h_[0] is None: continue
+        n_ = nrm[h_[2]]
+        # (a garment triangle's own direction can be flipped by the cuts: it is turned to agree with the body's outward
+        # surface under it, or the body went out through Clara's top as grey patches, r62)
+        b_ = btree.find_nearest(h_[0])
+        if b_[0] is not None and n_.dot(b_[1]) < 0: n_ = -n_
+        dep = (v_.co - h_[0]).dot(n_)
+        # (only the hair moves: the body under a garment is no longer drawn in the game at all, see "covered" below)
+        if ishair and -.012 < dep < .004 and (best is None or .004 - dep > best[0]): best = (.004 - dep, n_)
+    if best is not None:
+        v_.co = v_.co + best[1] * best[0]
+        if ishair: _hout += 1
+        else: _bin += 1
+print('CL hair points lifted over the garments', _hout, 'body points sunk under them', _bin)
 _kv = set()
 for p_ in me.polygons:
     if kit[p_.index] and p_.center.z > NECKBAND - .06 and math.hypot(p_.center.x - NAX, p_.center.y - NAY) < NRAD * 3: _kv.update(p_.vertices)
@@ -429,6 +475,97 @@ for v_ in me.vertices:
     if NECKBAND - .07 < z_ < NECKBAND and math.hypot(v_.co.x - NAX, v_.co.y - NAY) < NRAD * 3:
         v_.co = v_.co - v_.normal * (.006 * min(1., (NECKBAND - z_) / .015)); _sunk += 1
 me.update(); print('CL kit sunk under the collar', _sunk)
+# (owner 9 Nov 2026: "em sửa đi" - spots of the swim kit and skin through Clara's, Sol's and Finn's tops, after two rounds of
+# moving the body or the garments) the body under a garment is not drawn while that garment is worn: each body point
+# records which garments cover it, one bit each (js/friend-model.ts COVER_BIT), in the alpha of its skin-mark corner colour.
+# A point is covered when a line along its own direction, either way (it may poke out through the garment), meets the
+# garment within 8 cm, at least 6 mm in from the garment's open edges (hems, cuffs, neckline: the body round them stays,
+# so no gap opens), on a garment surface facing the same way. Hair is never covered. Garment and body bend with the same
+# joint weights, so what is covered at rest stays covered when the child moves.
+COVER_BIT = {'top-short': 1, 'top-long': 2, 'tunic-long': 4, 'bodice': 8, 'skirt': 16, 'shorts': 32, 'trousers': 64, 'leggings': 128}
+_cbits = np.zeros(len(me.vertices), np.int32)
+_hgi2 = body.vertex_groups['hair-v'].index
+_ishair = np.array([any(g.group == _hgi2 for g in v.groups) for v in me.vertices])
+for o in parts:
+    nm = o.name[2:]
+    if nm not in COVER_BIT: continue
+    bmc = bmesh.new(); bmc.from_mesh(o.data); bmc.faces.ensure_lookup_table(); bmc.normal_update()
+    tr = BVHTree.FromBMesh(bmc); fn = [f.normal.copy() for f in bmc.faces]
+    edge_pts = []
+    for e in bmc.edges:
+        if e.is_boundary:
+            a_, b_ = e.verts[0].co, e.verts[1].co; n_s = max(1, int((a_ - b_).length / .004))
+            edge_pts += [a_.lerp(b_, k / n_s) for k in range(n_s + 1)]
+    bmc.free()
+    kd = None
+    if edge_pts:
+        kd = KDTree(len(edge_pts))
+        for i_, p_ in enumerate(edge_pts): kd.insert(p_, i_)
+        kd.balance()
+    n_cov = 0
+    for v_ in me.vertices:
+        if _ishair[v_.index] or v_.co.z > NECK + .06: continue
+        n_ = v_.normal; hit = None
+        for d_ in (n_, -n_):
+            h_ = tr.ray_cast(v_.co - d_ * .0005, d_, .08)
+            if h_[0] is not None and (hit is None or h_[3] < hit[3]): hit = h_
+        if hit is None or abs(fn[hit[2]].dot(n_)) < .3: continue
+        if kd is not None and kd.find(hit[0])[2] < .006: continue
+        _cbits[v_.index] |= COVER_BIT[nm]; n_cov += 1
+    print('CL covered by', nm, n_cov, 'body points')
+_ca = me.color_attributes.get('skinw')
+if _ca is not None and _ca.domain == 'CORNER':
+    _al = np.array([_cbits[l.vertex_index] for l in me.loops], np.float32) / 255.
+    _buf = np.zeros(len(_ca.data) * 4, np.float32); _ca.data.foreach_get('color', _buf); _buf[3::4] = _al; _ca.data.foreach_set('color', _buf)
+    for m_ in me.materials:
+        if m_ is not None: m_['cover_mark'] = True
+    print('CL cover bits written on', int((_cbits > 0).sum()), 'of', len(me.vertices), 'body points')
+# (owner 9 Nov 2026, the poses: trousers came out through tops, leggings and trousers through skirts and the áo dài's
+# panels, the bib and shorts through Lumi's top, when the children walked, waved and sat) a garment worn under another is
+# not drawn where that one covers it, the same way (bits of the outer garments, js/friend-model.ts GCOVER_BIT, in the
+# alpha of the inner garment's corner colour). Covered at rest stays covered as they bend: what pokes out is hidden.
+GCOVER_BIT = {'top-short': 1, 'top-long': 2, 'tunic-long': 4, 'bodice': 8, 'skirt': 16, 'aodai-panels': 32, 'bib': 64}
+_byname = {o.name[2:]: o for o in parts}
+_gtr = {}
+for nm in GCOVER_BIT:
+    o = _byname.get(nm)
+    if o is None: continue
+    bmc = bmesh.new(); bmc.from_mesh(o.data); bmc.faces.ensure_lookup_table(); bmc.normal_update()
+    pts = []
+    for e in bmc.edges:
+        if e.is_boundary:
+            a_, b_ = e.verts[0].co, e.verts[1].co; n_s = max(1, int((a_ - b_).length / .004))
+            pts += [a_.lerp(b_, k / n_s) for k in range(n_s + 1)]
+    kd = KDTree(max(1, len(pts)))
+    for i_, p_ in enumerate(pts): kd.insert(p_, i_)
+    print('CL outer', nm, 'open-edge points', len(pts), 'faces', len(bmc.faces))
+    kd.balance(); _gtr[nm] = (BVHTree.FromBMesh(bmc), [f.normal.copy() for f in bmc.faces], kd if pts else None); bmc.free()
+for o in parts:
+    nm = o.name[2:]; ca = o.data.color_attributes.get('shade')
+    if ca is None or ca.domain != 'CORNER': continue
+    # (only an outer layer hides an inner one: trousers, shorts, leggings < tops < skirt, áo dài panels, bib; the bib lay "under"
+    # the top as much as over it and both vanished)
+    _rank = lambda n_: 0 if n_ in ('trousers', 'shorts', 'leggings') else 2 if n_ in ('skirt', 'aodai-panels', 'bib') else 1
+    overs = [k for k in _gtr if k != nm and _rank(k) > _rank(nm)]
+    if not overs: continue
+    o.data.update(); bits = np.zeros(len(o.data.vertices), np.int32); _per = {}
+    for v_ in o.data.vertices:
+        n_ = v_.normal
+        for k in overs:
+            tr, fn, kd = _gtr[k]; hit = None
+            # (a skirt, the áo dài's panels and the bib hang well clear of the legs and chest: out to 25 cm, outward only, or a
+            # ray back through the leg met the back panel and hid a shin seen from the front)
+            far_ = _rank(k) == 2
+            for d_ in ((n_,) if far_ else (n_, -n_)):
+                h_ = tr.ray_cast(v_.co - d_ * .0005, d_, .25 if far_ else .08)
+                if h_[0] is not None and (hit is None or h_[3] < hit[3]): hit = h_
+            if hit is None or abs(fn[hit[2]].dot(n_)) < .3: continue
+            if kd is not None and kd.find(hit[0])[2] < .006: continue
+            bits[v_.index] |= GCOVER_BIT[k]; _per[k] = _per.get(k, 0) + 1
+    _buf = np.zeros(len(ca.data) * 4, np.float32); ca.data.foreach_get('color', _buf)
+    _buf[3::4] = np.array([bits[l.vertex_index] for l in o.data.loops], np.float32) / 255.; ca.data.foreach_set('color', _buf)
+    o.data.materials[0]['cover_mark'] = True
+    print('CL garment', nm, 'points under other garments', int((bits > 0).sum()), 'of', len(bits), _per)
 # every part follows the rig as the body does
 for o in parts:
     o.parent = rig

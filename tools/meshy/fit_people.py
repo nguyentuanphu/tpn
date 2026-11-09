@@ -1102,11 +1102,19 @@ if TEX and KEEP and SHIFT:
     def _segd(P, a, b):
         a = np.array(a[:]); b = np.array(b[:]); ab = b - a; t = np.clip(((P - a) @ ab) / max(float(ab @ ab), 1e-9), 0, 1); return np.linalg.norm(P - (a + t[:, None] * ab), axis=1)
     _limb = np.zeros(NP, bool)
+    # (owner 9 Nov 2026, r59 tones: "tay bị nhiều" - the hands and fingers, and the fronts of the legs, kept their painted
+    # skin on dark tones) the joints lie on the body's middle plane (y 0) while the fronts of the hands and legs stand 10-14
+    # cm in front of it, outside the 9 cm reach: the distance to a limb is measured as seen from the front (x and z only)
+    _pc3_full = _pc3; _pc3 = _pc3_full.copy(); _pc3[:, 1] = 0
+    def _segd(P, a, b, _f=_segd):
+        a = Vector((a.x, 0, a.z)); b = Vector((b.x, 0, b.z)); return _f(P, a, b)
     for sd in 'LR':
         sh, el, wr = L['shoulder' + sd], L['elbow' + sd], L['wrist' + sd]; hand = wr + (wr - el) * 1.0   # (to the fingertips: owner 9 Nov, orange fingertips on dark tones)
         _limb |= (_segd(_pc3, sh, el) < .1) | (_segd(_pc3, el, wr) < .085) | (_segd(_pc3, wr, hand) < .09)
         hp, kn, an = L['hip' + sd], L['knee' + sd], L['ankle' + sd]
         _limb |= (_segd(_pc3, hp, kn) < .09) | (_segd(_pc3, kn, an) < .075)
+        _limb |= _segd(_pc3, an, an + (an - kn) * .45) < .08   # (and the bare feet below the ankle: toes and heels stayed light on dark tones, 9 Nov)
+    _pc3 = _pc3_full
     _neck = (~_hz) & (_pc3[:, 2] > L['neck'].z - .08) & (np.abs(_pc3[:, 0] - _hcx) < _hw * .55)
     if J.get('ears_hidden'): _ear[:] = False; _face &= np.abs(_pc3[:, 0] - _hcx) < _hw * .85   # (ears under the hair, Clara's: the hair beside the cheeks is not skin)
     _where = _face | _ear | _limb | _neck
@@ -1153,6 +1161,35 @@ if TEX and KEEP and SHIFT:
     # (owner 9 Nov 2026, the skin tones: blush under Clara's eyes and her nose stayed pink, inside the eye and nose holes of the
     # mark) the whole face core is skin but its hair: the game's own test keeps the eye whites (pale) and lines (dark) as painted
     _skp |= _core & (_tot > 0) & ~_hairlike
+    # (owner 9 Nov 2026, r57 review: "tại sao cái braid tóc bị hoài vậy" - Clara's braid tops at the shoulders, Sol's hair
+    # beside his ear and Finn's fringe and the strands over his ear took the skin tone) every rule above is a place (face,
+    # neck, near the arms) with a colour test, and hair lying in those places passed it: Clara's hair is nearly her skin's
+    # colour, Finn's black hair is not "strongly coloured". The hair is now found as one piece: grown over the surface
+    # from the top of the head through triangles nearer the hair's colour than the face skin's (whole colour, brightness
+    # included), down the braids too; never the face below the brows (eyes, brows and lashes stay the face's).
+    _dh = np.linalg.norm(_mc - _hcm, axis=-1); _ds = np.linalg.norm(_mc - _sk_med, axis=-1)
+    _hairish = (_tot > 0) & (_dh < _ds * .8)
+    # (the face kept from the hair: below the brows, between the eyes' outer edges, and everything below the eyes (Clara's
+    # blush is her hair's red); the temples beside the eyes can be hair, Sol's curls and Finn's strands)
+    _brow = _core & (_pc3[:, 2] < fz1 - (fz1 - fz0) * .12)
+    if EYEBOX:
+        _ex0 = min(b[0] for b in EYEBOX) - .01; _ex1 = max(b[1] for b in EYEBOX) + .01; _ez = min(b[2] for b in EYEBOX)
+        _brow &= ((_pc3[:, 0] > _ex0) & (_pc3[:, 0] < _ex1)) | (_pc3[:, 2] < _ez)
+    # (Sol's curls at the temples and Finn's strands over the ear are loose pieces, not joined to the top of the head:
+    # any head triangle off the face core clearly of the hair's colour starts the growth too)
+    _hreg = (_top & _hairish & ~_brow) | (_hz & ~_core & (_tot > 0) & (_dh < _ds * .6)); _st = list(np.nonzero(_hreg)[0])
+    while _st:
+        a_ = _st.pop()
+        for b_ in _nb[a_]:
+            if not _hreg[b_] and _hairish[b_] and not _brow[b_] and _pc3[b_, 2] > L['hipL'].z: _hreg[b_] = True; _st.append(b_)
+    # (thin slivers between hair triangles: mostly hair round them and nearer hair's colour than skin's)
+    for _ in range(2):
+        _fr = np.array([np.mean([_hreg[j] for j in _nb[i]]) if _nb[i] else 0. for i in range(NP)])
+        _hreg |= ~_brow & (_fr >= .6) & (_tot > 0) & (_dh < _ds)
+    print('FIT hair region', int(_hreg.sum()), 'skin triangles in it unmarked', int((_skp & _hreg).sum()), 'hair colour', np.round(_hcm, 3))
+    if os.environ.get('FIT_DEBUG'):
+        np.savez(os.environ['FIT_DEBUG'], mc=_mc, pc=_pc3, pn=_pn3, skp=_skp, hreg=_hreg, tot=_tot, core=_core, face=_face, ear=_ear, hz=_hz, sk=_sk_med, hc=_hcm, hairlike=_hairlike)
+    _skp &= ~_hreg
     print('FIT skin mark evened: now', int(_skp.sum()))
     _onskin = np.where(_ok, _skp[np.clip(ids, 0, None)], False)
     _tsat = (A_.max(-1) - A_.min(-1)) / np.maximum(A_.max(-1), 1e-4)
