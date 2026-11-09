@@ -15,7 +15,7 @@ const { chromium } = createRequire(new URL('../../tests/package.json', import.me
 import { writeFileSync, mkdirSync } from 'node:fs';
 const [OUT, LIST = 'finn,sol,clara,lumi', QUICK = ''] = process.argv.slice(2);
 mkdirSync(OUT, { recursive: true });
-const LIMIT = { kit: 12, poke: 25, hairtone: 30, skintone: 30, eyes: 6, fold: 400, hole: 10 };   // (fold: the inside of a top or trousers looks like the outside, same colour and light: only a large inside-out patch shows)   // pixels in a 360 x 480 picture
+const LIMIT = { kit: 12, poke: 25, hairtone: 30, skintone: 30, eyes: 6, fold: 400, hole: 10, tear: 8 };   // (fold: the inside of a top or trousers looks like the outside, same colour and light: only a large inside-out patch shows)   // pixels in a 360 x 480 picture
 const b = await chromium.launch({ args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'] });
 const P = await open(b, { w: 900, h: 700, fast: false }); await clear(P.page);
 const res: any = await P.page.evaluate(async ([LIST, QUICK, LIMIT]) => {
@@ -154,11 +154,18 @@ gl_FragColor = vec4(code_ / 255.0, floor(dm_ / 256.0) / 255.0, mod(dm_, 256.0) /
           for (let i = 0; i < N; i++) { if (Pall[i * 4 + 3]) continue; const x = i % W, y = (i / W) | 0; let enc = true;
             for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { let hit = false; for (let k = 1; k <= 6; k++) { const xx = x + dx * k, yy = y + dy * k; if (xx < 0 || yy < 0 || xx >= W || yy >= H) break; if (Pall[(yy * W + xx) * 4 + 3]) { hit = Pall[(yy * W + xx) * 4] !== 3; if (!hit) enc = false; break; } } /* (gaps between curls of hair are hair, not holes) */ if (!hit) { enc = false; break; } }
             if (enc) fo[i] = 1; }
+          // (tears: a hole in a garment itself, seen in its picture alone: an empty pixel the garment closes round within 5 pixels
+          // on all four sides; owner circled the dark inner layer showing through such holes in Sol's shirt)
+          const ft = new Uint8Array(N);
+          for (const g of worn) { if ((RANK[g] ?? 9) > 1) continue; const q = Pg[g]; const isG = (j: number) => q[j * 4 + 3] && q[j * 4] % 100 === GCODE[g];
+            for (let i = 0; i < N; i++) { if (isG(i)) continue; const x = i % W, y = (i / W) | 0; let enc = true;
+              for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { let hit = false; for (let k = 1; k <= 5; k++) { const xx = x + dx * k, yy = y + dy * k; if (xx < 0 || yy < 0 || xx >= W || yy >= H) break; if (isG(yy * W + xx)) { hit = true; break; } } if (!hit) { enc = false; break; } }
+              if (enc) ft[i] = 1; } }
           const cnt = (a: Uint8Array) => a.reduce((s, v) => s + v, 0);
-          const r = { id, kind, pose: pn, view: vn, kit: cnt(fk), poke: cnt(fp), hairtone: cnt(fh), skintone: cnt(fs), fold: cnt(ff), hole: cnt(fo) };
+          const r = { id, kind, pose: pn, view: vn, kit: cnt(fk), poke: cnt(fp), hairtone: cnt(fh), skintone: cnt(fs), fold: cnt(ff), hole: cnt(fo), tear: cnt(ft) };
           cases.push(r);
           const bad = (Object.keys(LIMIT) as string[]).filter(k => r[k] > LIMIT[k]);
-          if (bad.length) { const all = new Uint8Array(N); for (let i = 0; i < N; i++) all[i] = fk[i] | fp[i] | ff[i] | fo[i] | ((bad.includes('hairtone') || bad.includes('skintone')) ? (fh[i] | fs[i]) : 0);
+          if (bad.length) { const all = new Uint8Array(N); for (let i = 0; i < N; i++) all[i] = fk[i] | fp[i] | ff[i] | fo[i] | ft[i] | ((bad.includes('hairtone') || bad.includes('skintone')) ? (fh[i] | fs[i]) : 0);
             pics[`${id}-${kind}-${pn}-${vn}-${bad.join('+')}`] = png(bad.some(k => k.endsWith('tone')) ? D : L, all);
             const C = new Uint8Array(N * 4), PAL: Record<number, number[]> = { 1: [230, 60, 60], 2: [60, 90, 230], 3: [20, 20, 20] };   // (skin red, kit blue, hair black; garments by layer: inner green, tops yellow, outer purple)
             for (let i = 0; i < N; i++) { if (!Pall[i * 4 + 3]) { C.set([235, 235, 235, 255], i * 4); continue; } const code = Pall[i * 4], rk = rankOf(code);

@@ -310,6 +310,21 @@ def shell(name, faces, thick, smooth=6, cuts=()):
         geom = list({v for f in fs for v in f.verts}) + list({e for f in fs for e in f.edges}) + fs
         bmesh.ops.bisect_plane(bm, geom=geom, plane_co=p, plane_no=d, clear_outer=True, dist=.0001)
     bmesh.ops.delete(bm, geom=[v for v in bm.verts if not v.link_faces], context='VERTS')
+    # (owner 9 Nov 2026, circled dark patches in Sol's shirt sides: the garment had small holes at the shoulders and armpits
+    # and one below the neck's front, left by the body triangles it was cut from; the inner layers showed through) every small
+    # open loop above the hips (16 edges or fewer: never a neckline, hem or cuff) is filled
+    _bnd = {e for e in bm.edges if e.is_boundary}; _fill = []
+    while _bnd:
+        e0 = _bnd.pop(); comp = [e0]; st = [e0]
+        while st:
+            e = st.pop()
+            for vv in e.verts:
+                for e2 in vv.link_edges:
+                    if e2 in _bnd: _bnd.remove(e2); comp.append(e2); st.append(e2)
+        zc = sum((vv.co.z for e in comp for vv in e.verts)) / (2 * len(comp))
+        if len(comp) <= 16 and zc > HIP: _fill += comp
+    if _fill: bmesh.ops.holes_fill(bm, edges=_fill, sides=0)
+    print('CL part', name, 'small holes filled, edges', len(_fill))
     # the open edges (hems, cuffs, neckline) are evened out a little along themselves
     for _it in range(10):   # (the collar's edge, not smoothed with the rest, evens out longer: Lumi's zigzag, owner 8 Nov)
         new = {}
