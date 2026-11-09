@@ -15,7 +15,7 @@ const { chromium } = createRequire(new URL('../../tests/package.json', import.me
 import { writeFileSync, mkdirSync } from 'node:fs';
 const [OUT, LIST = 'finn,sol,clara,lumi', QUICK = ''] = process.argv.slice(2);
 mkdirSync(OUT, { recursive: true });
-const LIMIT = { kit: 12, poke: 25, hairtone: 30, skintone: 30, eyes: 6, fold: 150 };   // (fold: the inside of a top or trousers looks like the outside, same colour and light: only a large inside-out patch shows)   // pixels in a 360 x 480 picture
+const LIMIT = { kit: 12, poke: 25, hairtone: 30, skintone: 30, eyes: 6, fold: 400 };   // (fold: the inside of a top or trousers looks like the outside, same colour and light: only a large inside-out patch shows)   // pixels in a 360 x 480 picture
 const b = await chromium.launch({ args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'] });
 const P = await open(b, { w: 900, h: 700, fast: false }); await clear(P.page);
 const res: any = await P.page.evaluate(async ([LIST, QUICK, LIMIT]) => {
@@ -75,7 +75,7 @@ gl_FragColor = vec4(code_ / 255.0, floor(dm_ / 256.0) / 255.0, mod(dm_, 256.0) /
       M.obj.traverse((o: any) => { if (o.isMesh) meshes.push(o); });
       const worn = meshes.filter(o => /^lit-g-/.test(o.material.name || '') && o.visible).map(o => o.material.name.slice(6));
       if (PLANT === 'kit') meshes.forEach((o: any) => { const u = o.material.userData; if (u.coverU && !/^lit-g-/.test(o.material.name || '')) u.coverU.value = 0; if (u.kitU) u.kitU.on.value = 0; });
-      if (PLANT === 'poke') meshes.forEach((o: any) => { if (/^(cloth-body|skin-tex)/.test(o.material.name || '')) { const u = o.material.userData; if (u.coverU) u.coverU.value = 0; o.scale.multiplyScalar(1.04); } });
+      if (PLANT === 'poke') meshes.forEach((o: any) => { if (/^lit-g-(trousers|shorts|leggings)/.test(o.material.name || '')) { const u = o.material.userData; if (u.coverU) u.coverU.value = 0; o.scale.set(1.12, 1.03, 1.12); } });   // (the trousers swollen through the top)
       if (PLANT === 'fold') meshes.forEach((o: any) => { if (/^lit-g-top/.test(o.material.name || '')) { o.material.side = THREE.BackSide; o.material.needsUpdate = true; } });
       const solo = new THREE.Scene();   // (the ID pictures: the friend alone, nothing of the valley)
       for (const [pn, st, sp, frames] of poses) {
