@@ -88,10 +88,9 @@ failure; `-Batch <list>` runs many overnight and writes one report.
 
 - **Tier A, the four friends (the player's own character):** body plus code-made clothes that change, every pose,
   every tone, every mood, full audit, helper bones, hand review of every sheet.
-- **Tier B, named villagers (11) and later animals companions:** whole Meshy models (clothes painted on, no
-  changing), own face moods, their own animations (idle, walk, talk, wave, sit), full audit of those; owner reviews.
-- **Tier C, regional villagers (61) and background animals:** the same pipeline in batches; the audit gate decides,
-  the owner reviews a gallery and spot-checks.
+- **Tier B, every villager (the 11 named and the 61 regional) and every animal** (owner, 9 Nov 2026: "Mức C gộp chung
+  mức B"): whole Meshy models (clothes painted on, no changing), own face moods, their own animations (idle, walk, talk,
+  wave, sit; animals by skeleton type), the full audit of all of those, and the owner's review of each, run in batches.
 
 ## Order
 
