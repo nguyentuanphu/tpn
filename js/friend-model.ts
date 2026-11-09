@@ -83,7 +83,7 @@ ${kit ? `#ifdef USE_COLOR_ALPHA
 bool inEye_ = (vKitX > uEyeA.x && vKitX < uEyeA.y && vKitY > uEyeA.z && vKitY < uEyeA.w) || (vKitX > uEyeB.x && vKitX < uEyeB.y && vKitY > uEyeB.z && vKitY < uEyeB.w);
 if (uShut > .5 && vColor.r > .5 && inEye_) k_ = uTint * uPaint / max(tx_, vec3(.02));   // (the whole painted eye, rim and lashes too, inside the eye areas: owner circled Lumi's faint rim)
 if (uShut > .5 && vColor.r > .5 && vKitY > uKitNeck && max(tx_.r, max(tx_.g, tx_.b)) > .78 && (max(tx_.r, max(tx_.g, tx_.b)) - min(tx_.r, min(tx_.g, tx_.b))) < .2 * max(tx_.r, max(tx_.g, tx_.b))) k_ = uTint * uPaint / max(tx_, vec3(.02));
-if (uKitOn > .5 && vColor.r < .5 && vColor.a * 255.0 > .5) { float kl_ = max(tx_.r, max(tx_.g, tx_.b)) / max(uKitGrey, .05); k_ = (vKitY > uKitWaist ? uKitTop : uKitBot) * clamp(kl_, .55, 1.15) / max(tx_, vec3(.02)); }
+if (uKitOn > .5 && vColor.r < .5 && vColor.a * 255.0 > .5 && vKitY > uKitWaist - .25) discard;   // (the swimsuit's own height only, trunk and thigh tops: at the ankles a non-skin point under a trouser cuff left a hole, the auditor)   // (owner 9 Nov 2026, circled dark patches in shirts' sides and the auditor's gaps at armpits and crotches: the swim kit is always under the clothes, so while dressed it is not drawn at all; a gap shows the inside of the clothes, never the swimsuit, painted or not)
 #endif` : ''}
 diffuseColor.rgb *= k_;`)
       .replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\ntotalEmissiveRadiance *= k_;')

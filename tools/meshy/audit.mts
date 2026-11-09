@@ -15,7 +15,7 @@ const { chromium } = createRequire(new URL('../../tests/package.json', import.me
 import { writeFileSync, mkdirSync } from 'node:fs';
 const [OUT, LIST = 'finn,sol,clara,lumi', QUICK = ''] = process.argv.slice(2);
 mkdirSync(OUT, { recursive: true });
-const LIMIT = { kit: 12, poke: 25, hairtone: 30, skintone: 30, eyes: 6, fold: 400 };   // (fold: the inside of a top or trousers looks like the outside, same colour and light: only a large inside-out patch shows)   // pixels in a 360 x 480 picture
+const LIMIT = { kit: 12, poke: 25, hairtone: 30, skintone: 30, eyes: 6, fold: 400, hole: 10 };   // (fold: the inside of a top or trousers looks like the outside, same colour and light: only a large inside-out patch shows)   // pixels in a 360 x 480 picture
 const b = await chromium.launch({ args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'] });
 const P = await open(b, { w: 900, h: 700, fast: false }); await clear(P.page);
 const res: any = await P.page.evaluate(async ([LIST, QUICK, LIMIT]) => {
@@ -38,17 +38,17 @@ const res: any = await P.page.evaluate(async ([LIST, QUICK, LIMIT]) => {
     const m = new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide }); m.vertexColors = !!orig.vertexColors;
     const cu = orig.userData && orig.userData.coverU ? orig.userData.coverU : { value: 0 };
     m.onBeforeCompile = (sh: any) => { sh.uniforms.uCover = cu;
-      sh.vertexShader = 'uniform float uCover;\nvarying float vCov;varying float vAny;\nvarying float vDz;\nvarying vec4 vMk;\n' + sh.vertexShader
+      sh.vertexShader = 'uniform float uCover;\nvarying float vCov;varying float vAny;\nvarying float vDz;\nvarying vec4 vMk;\nvarying float vKy;\n' + sh.vertexShader
         .replace('#include <color_vertex>', `#include <color_vertex>
-vCov = 0.0; vAny = 0.0; vMk = vec4(1.0, 0.0, 0.0, 0.0);
+vCov = 0.0; vAny = 0.0; vMk = vec4(1.0, 0.0, 0.0, 0.0); vKy = position.y;
 #ifdef USE_COLOR_ALPHA
 vMk = color; float cb_ = floor(color.a * 255.0 + .5);
 for (int k = 0; k < 8; k++) { float p_ = exp2(float(k)); if (mod(floor(cb_ / p_), 2.0) > .5 && mod(floor(uCover / p_), 2.0) > .5) vCov = 1.0; }
 vAny = vCov;
 #endif`).replace('#include <project_vertex>', '#include <project_vertex>\n' + (layer >= 0 ? `mvPosition.xyz -= normalize(mvPosition.xyz) * ${BIAS[layer].toFixed(4)}; gl_Position = projectionMatrix * mvPosition;\n` : '')
           + (isBody && orig.userData && orig.userData.kitU && orig.userData.kitU.on.value > .5 ? `#ifdef USE_COLOR_ALPHA\nif (color.r < .5 && color.a * 255.0 < .5 && position.y < ${Number(orig.userData.kitU.neck.value).toFixed(4)}) { mvPosition.xyz -= normalize(mvPosition.xyz) * .012; gl_Position = projectionMatrix * mvPosition; }\n#endif\n` : '') + 'vDz = -mvPosition.z;');
-      sh.fragmentShader = 'varying float vCov;varying float vAny;\nvarying float vDz;\nvarying vec4 vMk;\n' + sh.fragmentShader
-        .replace('void main() {', 'void main() {\nif (vCov > .999) discard;')
+      sh.fragmentShader = 'varying float vCov;varying float vAny;\nvarying float vDz;\nvarying vec4 vMk;\nvarying float vKy;\n' + sh.fragmentShader
+        .replace('void main() {', 'void main() {\nif (vCov > .999) discard;' + (isBody && orig.userData && orig.userData.kitU && orig.userData.kitU.on.value > .5 ? `\n#ifdef USE_COLOR_ALPHA\nif (vMk.r < .5 && vMk.a * 255.0 > .5 && vKy > ${(Number(orig.userData.kitU.waist.value) - .25).toFixed(4)}) discard;\n#endif` : ''))   // (dressed: the game does not draw the swim kit either)
         .replace('#include <dithering_fragment>', `#include <dithering_fragment>
 float code_ = ${code.toFixed(1)};
 ${isBody ? 'if (vMk.r < .5) code_ = vMk.a * 255.0 > .5 ? 2.0 : 3.0; else if (vAny < .01) code_ = 5.0; // (1 skin under the worn clothes, 5 skin no worn garment covers (face, hands: never a poke), 2 swim kit, 3 hair or eyes)' : ''}
@@ -149,11 +149,16 @@ gl_FragColor = vec4(code_ / 255.0, floor(dm_ / 256.0) / 255.0, mod(dm_, 256.0) /
           for (let i = 0; i < N; i++) { if (!Pall[i * 4 + 3] || Pall[i * 4] < 120) continue; const x = i % W, y = (i / W) | 0; let open_ = false;
             for (let dy = -6; dy <= 6 && !open_; dy += 2) for (let dx = -6; dx <= 6; dx += 2) { const xx = x + dx, yy = y + dy; if (xx < 0 || yy < 0 || xx >= W || yy >= H) { open_ = true; break; } const j = yy * W + xx; if (!Pall[j * 4 + 3] || Pall[j * 4] < 20) { open_ = true; break; } }
             if (!open_) ff[i] = 1; }
+          // (holes: with the swim kit not drawn, a gap with nothing behind it would show the valley through the child)
+          const fo = new Uint8Array(N);
+          for (let i = 0; i < N; i++) { if (Pall[i * 4 + 3]) continue; const x = i % W, y = (i / W) | 0; let enc = true;
+            for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { let hit = false; for (let k = 1; k <= 6; k++) { const xx = x + dx * k, yy = y + dy * k; if (xx < 0 || yy < 0 || xx >= W || yy >= H) break; if (Pall[(yy * W + xx) * 4 + 3]) { hit = Pall[(yy * W + xx) * 4] !== 3; if (!hit) enc = false; break; } } /* (gaps between curls of hair are hair, not holes) */ if (!hit) { enc = false; break; } }
+            if (enc) fo[i] = 1; }
           const cnt = (a: Uint8Array) => a.reduce((s, v) => s + v, 0);
-          const r = { id, kind, pose: pn, view: vn, kit: cnt(fk), poke: cnt(fp), hairtone: cnt(fh), skintone: cnt(fs), fold: cnt(ff) };
+          const r = { id, kind, pose: pn, view: vn, kit: cnt(fk), poke: cnt(fp), hairtone: cnt(fh), skintone: cnt(fs), fold: cnt(ff), hole: cnt(fo) };
           cases.push(r);
           const bad = (Object.keys(LIMIT) as string[]).filter(k => r[k] > LIMIT[k]);
-          if (bad.length) { const all = new Uint8Array(N); for (let i = 0; i < N; i++) all[i] = fk[i] | fp[i] | ff[i] | ((bad.includes('hairtone') || bad.includes('skintone')) ? (fh[i] | fs[i]) : 0);
+          if (bad.length) { const all = new Uint8Array(N); for (let i = 0; i < N; i++) all[i] = fk[i] | fp[i] | ff[i] | fo[i] | ((bad.includes('hairtone') || bad.includes('skintone')) ? (fh[i] | fs[i]) : 0);
             pics[`${id}-${kind}-${pn}-${vn}-${bad.join('+')}`] = png(bad.some(k => k.endsWith('tone')) ? D : L, all);
             const C = new Uint8Array(N * 4), PAL: Record<number, number[]> = { 1: [230, 60, 60], 2: [60, 90, 230], 3: [20, 20, 20] };   // (skin red, kit blue, hair black; garments by layer: inner green, tops yellow, outer purple)
             for (let i = 0; i < N; i++) { if (!Pall[i * 4 + 3]) { C.set([235, 235, 235, 255], i * 4); continue; } const code = Pall[i * 4], rk = rankOf(code);

@@ -669,7 +669,7 @@ for o in parts:
             continue
         n_ = v_.normal; hit = None
         for d_ in (n_, -n_):
-            h_ = tr.ray_cast(v_.co - d_ * .0005, d_, .08)
+            h_ = tr.ray_cast(v_.co - d_ * .0005, d_, .03)   # (3 cm: a body point lies about 1 cm under its garment; at 8 cm a ray from an ankle slanted up into the trousers and the ankle was hidden, a hole, the auditor)
             if h_[0] is not None and (hit is None or h_[3] < hit[3]): hit = h_
         if hit is None or abs(fn[hit[2]].dot(n_)) < .3: continue
         if kd is not None and kd.find(hit[0])[2] < .006: continue
