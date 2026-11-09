@@ -63,7 +63,8 @@ gl_FragColor = vec4(code_ / 255.0, floor(dm_ / 256.0) / 255.0, mod(dm_, 256.0) /
   // with a fault planted on purpose: the check for it must fire (kit: hiding and kit painting off; poke: body 4% bigger;
   // fold: a top drawn from inside; eyes: the eyes left open while counted as shut)
   const PLANT = String(QUICK).startsWith('selftest:') ? String(QUICK).slice(9) : '';
-  const ONLY = String(QUICK).startsWith('poses:') ? String(QUICK).slice(6).split(',') : null;   // ('poses:sit,jump': just those, for a quick look at one fault)
+  const ONLY = String(QUICK).startsWith('poses:') ? String(QUICK).slice(6).split(',') : null;
+  const ALLPICS = !!ONLY && ONLY.includes('pics');   // ('poses:sit,pics': the pictures and layers of every case, faults or not, to look at one by eye)   // ('poses:sit,jump': just those, for a quick look at one fault)
   const poses = PLANT ? POSES.filter(p => ['rest', 'cheer'].includes(p[0])) : ONLY ? POSES.filter(p => ONLY.includes(p[0])) : QUICK ? POSES.filter(p => ['rest', 'walk', 'cheer'].includes(p[0])) : POSES;
   const LOOK: any = { finn: 'boy', sol: 'boy', clara: 'girl', lumi: 'girl' };
   const cases: any[] = [], pics: Record<string, string> = {}, HREF: Record<string, number[]> = {};
@@ -173,7 +174,7 @@ gl_FragColor = vec4(code_ / 255.0, floor(dm_ / 256.0) / 255.0, mod(dm_, 256.0) /
           const r = { id, kind, pose: pn, view: vn, kit: cnt(fk), poke: cnt(fp), hairtone: cnt(fh), skintone: cnt(fs), fold: cnt(ff), hole: cnt(fo), tear: cnt(ft) };
           cases.push(r);
           const bad = (Object.keys(LIMIT) as string[]).filter(k => r[k] > LIMIT[k]);
-          if (bad.length) { const all = new Uint8Array(N); for (let i = 0; i < N; i++) all[i] = fk[i] | fp[i] | ff[i] | fo[i] | ft[i] | ((bad.includes('hairtone') || bad.includes('skintone')) ? (fh[i] | fs[i]) : 0);
+          if (bad.length || ALLPICS) { const all = new Uint8Array(N); for (let i = 0; i < N; i++) all[i] = fk[i] | fp[i] | ff[i] | fo[i] | ft[i] | ((bad.includes('hairtone') || bad.includes('skintone')) ? (fh[i] | fs[i]) : 0);
             pics[`${id}-${kind}-${pn}-${vn}-${bad.join('+')}`] = png(bad.some(k => k.endsWith('tone')) ? D : L, all);
             const C = new Uint8Array(N * 4), PAL: Record<number, number[]> = { 1: [230, 60, 60], 2: [60, 90, 230], 3: [20, 20, 20] };   // (skin red, kit blue, hair black; garments by layer: inner green, tops yellow, outer purple)
             for (let i = 0; i < N; i++) { if (!Pall[i * 4 + 3]) { C.set([235, 235, 235, 255], i * 4); continue; } const code = Pall[i * 4], rk = rankOf(code);
