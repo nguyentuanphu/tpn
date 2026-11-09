@@ -15,6 +15,19 @@ Owner rules first (from the owner, 7–8 Nov 2026). They override everything bel
 - Friends keep the skin Meshy painted. The skin tone choice is hidden (`SKIN_CHOICE` in `js/ui/friends-ui.ts`, `MESHY_TONES` in `js/friend-model.ts`); the tinting must still work cleanly, because the choice may come back.
 - (8 Nov 2026, owner's decision) **Friends become a Meshy body plus code-made clothes**: ChatGPT draws each friend with only body, face and hair; clothes are made in Blender from the body's own surface so they fit. Villagers have no shop and stay whole Meshy models.
 
+## Where things stand (read first; 9 Nov 2026)
+
+- Current state and the next steps: `docs/friends-own-head-20261109/HANDOFF.md`.
+- **Friends use the own-head way, B** (the owner chose it on 9 Nov). The whole Meshy swim model is used, head and braids included, with its own face moods and with clothes made in code. The old head graft (A, `graft_friend.ps1`) is kept but not used.
+  - One friend: `powershell -File tools/meshy/fit_person.ps1 -Id <id>-swim -Ref D:\WorkSpace\meshy\work-v108\<id>-game-hd.glb -Prefix <id>-` (about 2 min), then `powershell -File tools/meshy/dress_own.ps1 -Id <id>`. Output goes to `D:\WorkSpace\meshy\fitted\<id>-own\`.
+- Python with PIL, numpy and scipy for the sheets: `D:\WorkSpace\meshy\tools\pyenv\Scripts\python.exe`. Blender's own Python runs the Blender scripts.
+- Review tools:
+  - `game_shots.mts` modes `faces`, `tones`, `outfits`, `nape`.
+  - `tools/meshy/review_sheets.py` with `eyes`, `chins`, `tones` or `outfits`.
+  - `tools/meshy/render_parts.py` (which part a stray piece is).
+  - `tools/meshy/render_mark.py` (the skin mark).
+- In Windows PowerShell 5.1, never edit Python, JSON or Markdown with `Get-Content`/`Set-Content`/`ReadAllText`+`Replace`: they garble Vietnamese text and line endings. Use the Edit tool or the pyenv Python, and keep each file's own line endings (`fit_people.py` is CRLF).
+
 ## Pipeline (one person)
 
 1. **Reference sheet**: ChatGPT turnaround (front, side, back) on grey; views must agree (a braid in front in one view and behind in another makes Meshy build both).
