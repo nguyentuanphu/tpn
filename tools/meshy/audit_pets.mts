@@ -14,7 +14,10 @@
 //            in one wall that shows the inside
 //   sink     the lowest point under the ground (more than 2 cm) in any clip; float: off the ground (3 cm) in a clip that
 //            stands (idle, walk, follow, sad, sleep)
-//   eyes     the painted eye (its dark pupil, its white sparkles) still seen while the eyes are shut (sleep) or happy
+//   eyes     the painted eye (its dark pupil, its white sparkles) still seen while the eyes are shut (sleep) or happy,
+//            from the front, three-quarters and the side on both sides
+//   flicker  the lids fighting the face for the same depth: texels in the eyes that change colour when the same moment
+//            is drawn again with other near and far planes (the same picture, other depth values)
 //   hat      every hat a pet can wear (js/kidplay.ts HATS) in every clip, put on as the game does (on the head bone):
 //            its base more than 4 cm off the head, or the head more than 6 cm up through it
 //   size     the near model over 800 KB, the far one over 400 KB
@@ -32,7 +35,7 @@ const { chromium } = createRequire(new URL('../../tests/package.json', import.me
 import { writeFileSync, mkdirSync, statSync } from 'node:fs';
 const [OUT, LIST = 'puppy', MODE = ''] = process.argv.slice(2);
 mkdirSync(OUT, { recursive: true });
-const LIMIT = { stretch: 300, tear: 6, sink: 0, float: 0, eyes: 6, hat: 0 };   // (tear 6: the Meshy puppy's own 4 px gap where an ear meets the cheek, in the rest pose too)
+const LIMIT = { stretch: 300, tear: 6, sink: 0, float: 0, eyes: 6, hat: 0, flicker: 12 };   // (tear 6: the Meshy puppy's own 4 px gap where an ear meets the cheek, in the rest pose too)
 const SIZE = { near: 800, far: 400 };
 const b = await chromium.launch({ args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'] });
 const _nc = b.newContext.bind(b); b.newContext = async (o: any) => { const c = await _nc(o); c.setDefaultNavigationTimeout(240000); c.setDefaultTimeout(600000); return c; };
@@ -43,6 +46,7 @@ const res: any = await P.page.evaluate(async ([kinds, MODE, LIMIT]) => {
   const G = (window as any).__sv, MK = await import(String('/js/modelkit.js')), { THREE } = await import(String('/js/gfx.js'));
   const { clone } = await import(String('/vendor/SkeletonUtils.js')), PETS = await import(String('/js/pets.js'));
   const R = G.renderer, out: any = { cases: [], pics: {} }, S = 360;
+  const out_pics = (k: string, v: string) => { out.pics[k] = v; };
   const quick = MODE === 'quick', self = MODE === 'selftest';
   const rt = new THREE.WebGLRenderTarget(S, S);
   const scene = new THREE.Scene(); scene.add(new THREE.HemisphereLight(0xffffff, 0x888888, 2.2));
@@ -126,7 +130,7 @@ const res: any = await P.page.evaluate(async ([kinds, MODE, LIMIT]) => {
         const hidden: any[] = []; if (plant === 'eyes') obj.traverse((o: any) => { if (o.isMesh && /-(shut|joy)\d$/.test(o.material.name)) { o.visible = false; hidden.push(o); } });
         PLANT.value = plant === 'tear' ? 1 : 0; if (plant === 'tear') {   // (a torn ear: a hole through its flap where it hangs out beyond the cheek, seen from the front)
           const e = bone('ear0'); obj.updateMatrixWorld(true); e.getWorldPosition(PLANTAT.value); PLANTAT.value.x += Math.sign(PLANTAT.value.x || -1) * Hh * .07; PLANTAT.value.y -= Hh * .12; }
-        const cs: any = { kind, lod, clip, t: +f.toFixed(2), plant, stretch: 0, tear: 0, sink: 0, float: 0, eyes: 0, hat: 0, worst: '' };
+        const cs: any = { kind, lod, clip, t: +f.toFixed(2), plant, stretch: 0, tear: 0, sink: 0, float: 0, eyes: 0, hat: 0, flicker: 0, worst: '' };
         // stretch and the ground
         skinned(body, now); let minY = 1e9; const strK: number[] = [];
         for (let i = 1; i < now.length; i += 3) minY = Math.min(minY, now[i]);
@@ -156,15 +160,31 @@ const res: any = await P.page.evaluate(async ([kinds, MODE, LIMIT]) => {
         if (s0 && s1 && shutOn) {
           const e0 = s0.getWorldPosition(new THREE.Vector3()), e1 = s1.getWorldPosition(new THREE.Vector3()), mid = e0.clone().add(e1).multiplyScalar(.5), er = e0.distanceTo(e1) * .36;
           const hb = bone('head'), fwd = new THREE.Vector3(0, 0, 1).applyQuaternion(hb.getWorldQuaternion(new THREE.Quaternion())); fwd.y = 0; fwd.normalize();
-          const cam = new THREE.PerspectiveCamera(30, 1, .01, 20); cam.position.copy(mid).addScaledVector(fwd, er * 9); cam.lookAt(mid); cam.updateMatrixWorld(true);
-          const px = read(cam), flags = new Uint8Array(S * S);
-          for (const e of [e0, e1]) { const p = e.clone().project(cam), q = e.clone().add(new THREE.Vector3(er, 0, 0).applyQuaternion(cam.quaternion)).project(cam);
+          // (owner, 10 Nov 2026: "kiểm tra cho hết") from the front, three-quarters and the side on both sides (at a slant
+          // only the eye nearer the camera), and flicker: the same moment drawn again with the camera's near and far planes
+          // moved (the picture stays, the depth values change), the lids and the face fighting for the same depth show as
+          // texels in the eyes changing colour
+          const right = new THREE.Vector3().crossVectors(fwd, new THREE.Vector3(0, 1, 0)).normalize();
+          const disc = (cam: any, e: any, fn: (i: number, x: number, y: number) => void) => { const p = e.clone().project(cam), q = e.clone().add(new THREE.Vector3(er, 0, 0).applyQuaternion(cam.quaternion)).project(cam);
             const cx = (p.x + 1) / 2 * S, cy = (p.y + 1) / 2 * S, rr = Math.abs(q.x - p.x) / 2 * S;
-            for (let y = Math.max(0, Math.floor(cy - rr)); y < Math.min(S, cy + rr); y++) for (let x = Math.max(0, Math.floor(cx - rr)); x < Math.min(S, cx + rr); x++) {
-              if ((x - cx) ** 2 + (y - cy) ** 2 > rr * rr) continue; const i = (y * S + x) * 4; if (!px[i + 3]) continue;
+            for (let y = Math.max(0, Math.floor(cy - rr)); y < Math.min(S, cy + rr); y++) for (let x = Math.max(0, Math.floor(cx - rr)); x < Math.min(S, cx + rr); x++) if ((x - cx) ** 2 + (y - cy) ** 2 <= rr * rr) fn((y * S + x) * 4, x, y); };
+          for (const yaw of [0, .7, -.7, 1.2, -1.2]) {
+            const dir = fwd.clone().applyAxisAngle(new THREE.Vector3(0, 1, 0), yaw), cam = new THREE.PerspectiveCamera(30, 1, .01, 20);
+            cam.position.copy(mid).addScaledVector(dir, er * 9); cam.lookAt(mid); cam.updateMatrixWorld(true);
+            const px = read(cam), flags = new Uint8Array(S * S); let n = 0;
+            const eyes = yaw === 0 ? [e0, e1] : [e0.distanceTo(cam.position) < e1.distanceTo(cam.position) ? e0 : e1];
+            for (const e of eyes) disc(cam, e, (i, x, y) => { if (!px[i + 3]) return;
               const L = (.3 * px[i] + .59 * px[i + 1] + .11 * px[i + 2]) / 255, sat = Math.max(px[i], px[i + 1], px[i + 2]) - Math.min(px[i], px[i + 1], px[i + 2]);
-              if (L < .012 || (L > .8 && sat < 25)) { cs.eyes++; flags[y * S + x] = 1; } } }   // (linear light: .012 is the pupil's near-black)
-          if (cs.eyes > (LIMIT as any).eyes) out.pics[`${kind}-${lod}-${clip}-${cs.t}-${plant}-eyes`] = png(px, flags);
+              if (L < .012 || (L > .8 && sat < 25)) { n++; flags[y * S + x] = 1; } });   // (linear light: .012 is the pupil's near-black)
+            if (n > cs.eyes) { cs.eyes = n; cs.eyesAt = yaw; }
+            if (n > (LIMIT as any).eyes) out.pics[`${kind}-${lod}-${clip}-${cs.t}-${plant}-eyes-${yaw}`] = png(px, flags);
+            const cam2 = cam.clone(); cam2.near = .013; cam2.far = 23; cam2.updateProjectionMatrix(); cam2.updateMatrixWorld(true);   // (the same picture, the depth spread differently: only depth fights change)
+            const px2 = read(cam2), fl2 = new Uint8Array(S * S); let fk = 0;
+            for (const e of eyes) disc(cam, e, (i, x, y) => { if (!px[i + 3] || !px2[i + 3]) return; const d = Math.abs(px[i] - px2[i]) + Math.abs(px[i + 1] - px2[i + 1]) + Math.abs(px[i + 2] - px2[i + 2]);
+              if (d > 90) { fk++; fl2[y * S + x] = 1; } });
+            if (fk > (cs.flicker || 0)) cs.flicker = fk;
+            if (fk > (LIMIT as any).flicker) out.pics[`${kind}-${lod}-${clip}-${cs.t}-${plant}-flicker-${yaw}`] = png(px, fl2);
+          }
         }
         hidden.forEach(o => { o.visible = true; });
         if (plant === 'tear' && !worstPic) { const cam = new THREE.PerspectiveCamera(30, 1, .02, 50); cam.position.copy(cc).add(new THREE.Vector3(r * 1.9, 0, 0)); cam.lookAt(cc); out.pics[`${kind}-${lod}-${clip}-${cs.t}-plant-tear-none`] = png(read(cam, depthMat), null); }
@@ -183,33 +203,49 @@ const res: any = await P.page.evaluate(async ([kinds, MODE, LIMIT]) => {
         out.cases.push(cs);
       }
     }
-    // the hats (owner, 10 Nov 2026: "accessories ... thử lên chưa"): every hat a pet can wear (js/kidplay.ts HATS), put on
-    // as the game puts it (js/pets.ts putHat: on the model's head bone), in every clip: its base must sit on the head
-    // (measured along the hat's own up: floating more than 4 cm, or the head through it by more than 6 cm, is a fault)
-    if (lod === 'near' && !self) {
+    // the hats (owner, 10 Nov 2026: "accessories ... thử lên chưa", then "mũ phải nudge fit"): every hat a pet can wear
+    // (js/kidplay.ts HATS), put on as the game puts it (js/pets.ts putHat, hatFit: on the head bone, its band round the
+    // skull), in every clip, near and far. Measured against the head's height hH (its points wholly the head's):
+    //   floating: the skull under the hat's middle more than 6 % of hH below its base
+    //   loose:    more than 4 of 16 points round its band farther than 8 % of hH from the skull
+    //   poke:     a closed hat (party, nón lá, beanie, captain, wizard) with the head out through its top
+    if (!self || (kind === kinds[0] && lod === 'near')) {   // (selftest: one hat lifted off the head must be caught)
       const KP = await import(String('/js/kidplay.js')), holder = new THREE.Group(); scene.add(holder); scene.remove(obj); holder.add(obj);
       holder.userData.rig = { model: { obj } };
       PETS.putHat(holder, 'party'); await new Promise(r => setTimeout(r, 1500));   // (the hats' drawings load on first use)
-      const B = new THREE.Vector3(), U = new THREE.Vector3(), v = new THREE.Vector3();
-      for (const H of KP.HATS) {
-        let worst = 0, worstAt = '';
-        for (const clip of clips) {
+      const hb = bone('head'), hIdx = body.skeleton.bones.indexOf(hb), si = body.geometry.attributes.skinIndex, sw = body.geometry.attributes.skinWeight, skull: number[] = [];
+      for (let k = 0; k < nv; k++) for (let q = 0; q < 4; q++) if (si.getComponent(k, q) === hIdx && sw.getComponent(k, q) > .8) { skull.push(k); break; }
+      let sy0 = 1e9, sy1 = -1e9; for (const k of skull) { sy0 = Math.min(sy0, rest[k * 3 + 1]); sy1 = Math.max(sy1, rest[k * 3 + 1]); } const hH = sy1 - sy0;
+      const B = new THREE.Vector3(), U = new THREE.Vector3(), v = new THREE.Vector3(), q4 = new THREE.Quaternion();
+      const CLOSED = ['party', 'nonla', 'beanie', 'captain', 'wizard'];
+      for (const H of (self ? KP.HATS.filter((x: any) => x.id === 'beanie') : KP.HATS)) {
+        const F = PETS.HAT_FIT[H.id] || { band: .08 }; let worst = 0, worstAt = '', loose = 0, floatMax = 0, poke = 0;
+        for (const clip of (self ? ['idle'] : clips)) {
           const c = t.clips.find((x: any) => x.name === clip); mixer.stopAllAction(); mixer.clipAction(c).reset().play();
-          for (const f of quick ? [.5] : [.2, .5, .8]) {
+          for (const f of quick || self ? [.5] : [.2, .5, .8]) {
             mixer.setTime(c.duration * f); holder.updateMatrixWorld(true);
-            const hat: any = PETS.putHat(holder, H.id); if (!hat) continue; holder.updateMatrixWorld(true);
-            skinned(body, now); hat.getWorldPosition(B); U.set(0, 1, 0).applyQuaternion(hat.getWorldQuaternion(new THREE.Quaternion()));
-            const rad = .03 * hat.getWorldScale(new THREE.Vector3()).x / .95; let top = -1e9;
-            for (let k = 0; k < nv; k++) { v.set(now[k * 3], now[k * 3 + 1], now[k * 3 + 2]).sub(B); const along = v.dot(U); if (v.addScaledVector(U, -along).length() < rad) top = Math.max(top, along); }
-            const fault = top < -.04 ? Math.round(-top * 1000) : top > .06 ? Math.round(top * 1000) : 0;
-            if (fault > worst) { worst = fault; worstAt = `${clip}@${f}${top < 0 ? ' floating' : ' sunk'}`; }
-            if (f === .5 && ['idle', 'sad', 'sleep', 'roll', 'run'].includes(clip)) {
+            const hat: any = PETS.putHat(holder, H.id); if (!hat) continue; if (self) hat.position.y += hH * .4 / Math.max(1e-4, hb.getWorldScale(new THREE.Vector3()).x); holder.updateMatrixWorld(true);
+            skinned(body, now); hat.getWorldPosition(B); hat.getWorldQuaternion(q4); U.set(0, 1, 0).applyQuaternion(q4);
+            const hs = hat.getWorldScale(new THREE.Vector3()).x, band = F.band * hs, hatTop = (() => { const g = hat.children[0].geometry; g.computeBoundingBox(); return g.boundingBox.max.y * hs; })();   // (in the hat's own frame: a world box grows when the hat tips over)
+            let top = -1e9, out = 0;
+            for (const k of skull) { v.set(now[k * 3], now[k * 3 + 1], now[k * 3 + 2]).sub(B); const along = v.dot(U); const across = v.addScaledVector(U, -along).length();
+              if (across < band * .5) top = Math.max(top, along); if (across < band * .8 && along > hatTop * .92) out++; }
+            const rim = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(a => hat.localToWorld(new THREE.Vector3(Math.cos(a / 16 * Math.PI * 2) * F.band, 0, Math.sin(a / 16 * Math.PI * 2) * F.band)));
+            let far = 0; for (const p of rim) { let dmin = 1e9; for (const k of skull) dmin = Math.min(dmin, Math.hypot(now[k * 3] - p.x, now[k * 3 + 1] - p.y, now[k * 3 + 2] - p.z)); if (dmin > hH * .08) far++; }
+            const fl = top < -hH * .06 ? Math.round(-top * 1000) : 0, pk = CLOSED.includes(H.id) && out > 3 ? out : 0, ls = far > 4 ? far : 0;
+            floatMax = Math.max(floatMax, fl); poke = Math.max(poke, pk); loose = Math.max(loose, ls);
+            const fault = fl + pk + ls * 10; if (fault > worst) { worst = fault; worstAt = `${clip}@${f}` + (fl ? ` floating ${fl} mm` : '') + (pk ? ` head through ${pk} pts` : '') + (ls ? ` loose ${far}/16` : ''); }
+            if (f === .5 && lod === 'near' && ['idle', 'sad', 'sleep', 'roll', 'run'].includes(clip)) {
               const bx = new THREE.Box3().setFromObject(holder, true), cc = bx.getCenter(new THREE.Vector3()), r = bx.getSize(new THREE.Vector3()).length();
               const cam = new THREE.PerspectiveCamera(30, 1, .02, 50); cam.position.copy(cc).add(new THREE.Vector3(r * .9, r * .45, r * 1.3)); cam.lookAt(cc);
-              out.pics[`${kind}-hat-${H.id}-${clip}`] = png(read(cam), null); }
+              out_pics(`${kind}-hat-${H.id}-${clip}`, png(read(cam), null)); }
+            if (f === .5 && lod === 'near' && clip === 'idle') for (const [nm, yaw] of [['front', 0], ['side', Math.PI / 2], ['back', Math.PI]] as [string, number][]) {
+              const hc = new THREE.Box3().setFromObject(hat).getCenter(new THREE.Vector3()), cam = new THREE.PerspectiveCamera(30, 1, .01, 20);
+              cam.position.copy(hc).add(new THREE.Vector3(Math.sin(yaw) * hH * 4.2, hH * .6, Math.cos(yaw) * hH * 4.2)); cam.lookAt(hc.clone().addScaledVector(U, -hH * .3));
+              out_pics(`${kind}-hatclose-${H.id}-${nm}`, png(read(cam), null)); }
           }
         }
-        out.cases.push({ kind, lod, clip: 'hat:' + H.id, t: 0, plant: 'none', stretch: 0, tear: 0, sink: 0, float: 0, eyes: 0, hat: worst, worst: worstAt });
+        out.cases.push({ kind, lod, clip: 'hat:' + H.id, t: 0, plant: self ? 'hat' : 'none', stretch: 0, tear: 0, sink: 0, float: 0, eyes: 0, hat: worst, worst: worstAt, hatFloat: floatMax, hatPoke: poke, hatLoose: loose });
       }
       PETS.putHat(holder, null); scene.remove(holder);
     } else scene.remove(obj);
@@ -232,7 +268,7 @@ for (const kind of kinds) for (const lod of ['near', 'far']) {
 }
 if (MODE === 'selftest') {
   const caught = (p: string, k: string) => cs.some((c: any) => c.plant === p && c[k] > LIMIT[k]);
-  const r = { stretch: caught('stretch', 'stretch'), tear: caught('tear', 'tear'), eyes: caught('eyes', 'eyes'), sink: caught('sink', 'sink') };
+  const r = { stretch: caught('stretch', 'stretch'), tear: caught('tear', 'tear'), eyes: caught('eyes', 'eyes'), sink: caught('sink', 'sink'), hat: caught('hat', 'hat') };
   lines.push('selftest ' + Object.entries(r).map(([k, v]) => `${k} ${v ? 'caught' : 'MISSED'}`).join(', '));
   if (Object.values(r).some(v => !v)) process.exitCode = 3;
 }
