@@ -184,3 +184,9 @@ animal can do, that opens a place or a game the child could not reach alone:
   (732k against 667k a frame over both halves); frame times the same within noise in the software renderer. A real
   phone was not measured.
 - Still by eye only: the open mouth's edges from the side.
+
+## Owner's approval (11 Nov 2026 AEDT)
+
+- "Giữ 2 bản, duyệt": the Meshy puppy goes on the branch, both models (near `creature-puppy-hd.glb` within 16 m,
+  far `creature-puppy.glb` beyond 24 m, as the friends' two files). Pet scale 0.6 kept. The special-skill proposal
+  for the other pets agreed. Not merged into main, not deployed, no version change.
