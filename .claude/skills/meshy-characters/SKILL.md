@@ -1,6 +1,6 @@
 ---
 name: meshy-characters
-description: Make Sparkle Valley people (friends, villagers, regional villagers) from ChatGPT reference sheets with Meshy, fit them into the game, and check them in the game before they go on a branch. Use for any Meshy model, fitting, face mood, skin tone or in-game review work.
+description: Make Sparkle Valley people (friends, villagers, regional villagers) and animals (pets, companions, valley animals) from ChatGPT reference sheets with Meshy, fit them into the game, and check them in the game before they go on a branch. Use for any Meshy model, fitting, face mood, skin tone or in-game review work.
 ---
 
 # Meshy characters for Sparkle Valley
@@ -167,3 +167,49 @@ creature skeleton (the bone names of `tools/blender/world-creatures.py`) and its
     `ground()` lifts the body at every frame where anything would go under the ground.
   - The auditor's stretch marks were looked at one by one before its limit was set (neck when looking round, ankles,
     underside on the ground): see the header of `audit_pets.mts`.
+  - (11 Nov) Anything an animal wears or holds goes on a bone, never on the whole animal: a pet's hat fixed to the pet
+    stayed in the air when the head looked down, slept or rolled. Hats sit on the head bone, fitted to the skull
+    (`hatFit`, `js/pets.ts`: the band round the head's own points at each hat's depth), put on again when the model
+    arrives or changes near/far (`onModel`). The ball in the mouth rides the head bone at the jaw.
+  - (11 Nov) A face piece set into the face (a round open mouth) looks right from the front and sticks out of the
+    cheeks from below and the sides. Every face piece (lids, mouth) is laid on the surface with its own picture.
+  - (11 Nov) Weights by region need limits on every side: the tail took every point behind its root, the whole rump,
+    and the rump wagged with it. Each region is bounded (behind, above and within a width of the middle).
+  - (11 Nov) Thick legs: the code shapes' swings are made for stick legs (`damp` makes them smaller); the animal's own
+    moves (run, jump, sit, beg, roll, swim, dig) are written for its legs and checked for the ground every frame.
+  - (11 Nov) A game task that moves a pet (lead the way, fetch, rescue) must also choose its move (`rig.want`): the rescue
+    moved the puppy but left it walking in the water. And it must not go through the solid map.
+
+### Checking an animal: what to look at before the owner sees it (owner, 10-11 Nov 2026: "kiểm tra cho hết")
+
+The auditor first (`audit_pets.mts`, full, near and far), then pictures at full size (`pet_shots.mts`):
+1. `close`: every clip from the front, three-quarters, side, back, above and the face.
+2. `legs`: the legs and hips through every lively clip, six moments, from the side, behind and below.
+3. `mouth`: the open mouth from the front, three-quarters and both sides, in every clip that opens it.
+4. Every accessory in every clip (the auditor's hats; close-ups front, side, back and rolling over).
+5. `follow`, `skills`, `scenes`: in the game with the child (near, far, night, the pet yard, the same kind elsewhere
+   in the valley, water, two children), and the skill chips on phone, tablet and computer.
+6. The game checks: `worldcreatures`, `petskills`, `companionhats`, `animalhomes`, `phone`.
+
+Lessons about the checking itself (each hid a fault or showed a false one):
+- A check that measured nothing has not passed: the hats' drawings load lazily, and on a busy machine the hat check ran
+  before them and reported 0. Wait for what you measure, and fail a case that measured nothing.
+- Be suspicious of a clean 0 and of a sudden jump: look at the pictures before believing either.
+- Every check gets a planted fault in the self-test (`audit_pets.mts ... selftest`), and the plant must change the
+  picture: a hole planted inside the body, or in an ear lying on the head, showed nothing.
+- Measure in the thing's own frame: a hat's height from a world box grows when the hat tips over (false "head through").
+  Distances to a surface are to its triangles, not its corners (Meshy's muzzle has 2 cm triangles).
+- A flicker check changes only depth (the camera's near and far planes), never the camera's place: moving it 0.5 mm
+  moved the picture by two texels and every edge "flickered".
+- Before calling something a game bug, rule out the test: the village dog "never got its model" because a dialog had
+  paused the game in the shot script. A fix made for it was taken out again.
+- Look at the marks before setting or changing a limit, and write in the check's header what was seen and why.
+- Long runs on a shared machine: own server (`SV_URL`), longer page timeouts, background runs with the result in a file;
+  never two auditors on one server.
+- A `#` or `//` comment inserted in the middle of a long one-line statement turns the rest of the line into comment
+  (the shots' render call was lost this way): after such an edit, print the whole line.
+
+### Each animal's own skills
+Every pet has special skills of its own (owner, 10 Nov 2026), in `PET_SKILLS` (`js/pets.ts`), each with a chip under the
+name card (at the right edge on a phone) and a case in `tests/pet-skills.mts`. The puppy: fetch, dig for treasure, lead
+the way. The agreed proposals for the others: `docs/meshy-pets-20261110/PLAN.md`.

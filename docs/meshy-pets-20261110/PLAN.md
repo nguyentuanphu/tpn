@@ -201,3 +201,5 @@ animal can do, that opens a place or a game the child could not reach alone:
   muzzle's own surface (like the lids) with its own picture (the fur as painted, a smaller open mouth with a pink
   tongue), grown from its middle by the jaw. The auditor's new `mouth` check counts any point of it more than 1.2 cm
   off the face's own triangles (a planted oversized mouth is caught). Sheet: `puppy-mouth.jpg` (`pet_shots.mts mouth`).
+
+- (11 Nov 2026) Owner approved the Meshy puppy after the legs, hips and open-mouth checks ("Okay approved").
