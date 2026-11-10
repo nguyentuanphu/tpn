@@ -854,9 +854,10 @@ def build(kind, A, companion=False):
     print('CREATURE', kind, 'tris', n, 'face', len(F.get('eyes', [])), len(F.get('brows', [])), bool(F.get('mouth')), 'clips', ','.join(m[0] for m in moves), 'size', round(size, 3), flush=True)
     return n
 
-stats = {}
-for kind, A in SPEC['animals'].items():
-    if not ONLY or kind in ONLY: stats[kind] = build(kind, A)
-for kind, A in SPEC['companions'].items():
-    if not ONLY or kind in ONLY: stats[kind] = build(kind, A, True)
-json.dump({'tris': stats, 'happy': HAPPY}, open(os.path.join(OUT, 'creatures-built.json'), 'w'), indent=1)
+if __name__ == '__main__':   # (Meshy pets, 10 Nov 2026: tools/meshy/fit_animal.py loads this file for its moves)
+    stats = {}
+    for kind, A in SPEC['animals'].items():
+        if not ONLY or kind in ONLY: stats[kind] = build(kind, A)
+    for kind, A in SPEC['companions'].items():
+        if not ONLY or kind in ONLY: stats[kind] = build(kind, A, True)
+    json.dump({'tris': stats, 'happy': HAPPY}, open(os.path.join(OUT, 'creatures-built.json'), 'w'), indent=1)
