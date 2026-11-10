@@ -2,7 +2,7 @@
   "budget": 1000,
   "planned": 990,
   "reserve": 10,
-  "charged": 1015,
+  "charged": 1095,
   "entries": [
     {
       "assetId": "clara",
@@ -175,18 +175,18 @@
     {
       "assetId": "dragon",
       "plannedCredits": 30,
-      "reservedCredits": 0,
-      "chargedCredits": 0,
-      "taskId": null,
-      "state": "not_submitted"
+      "reservedCredits": 30,
+      "chargedCredits": 30,
+      "taskId": "01a1c6ea-cb41-7617-89a9-7887a85ea2d6",
+      "state": "SUCCEEDED_raw_downloaded"
     },
     {
       "assetId": "firefly",
       "plannedCredits": 30,
-      "reservedCredits": 0,
-      "chargedCredits": 0,
-      "taskId": null,
-      "state": "not_submitted"
+      "reservedCredits": 30,
+      "chargedCredits": 30,
+      "taskId": "01a1c6f0-66d0-7384-8003-d935ed931147",
+      "state": "SUCCEEDED_raw_downloaded"
     },
     {
       "assetId": "chicken",
@@ -720,6 +720,27 @@
       "state": "SUCCEEDED"
     },
     {
+      "kind": "remesh",
+      "source": "dragon",
+      "chargedCredits": 5,
+      "taskId": "01a1c6ec-33e9-729e-921a-66c7a3694aa6",
+      "state": "SUCCEEDED"
+    },
+    {
+      "kind": "remesh",
+      "source": "dragon@9000",
+      "chargedCredits": 5,
+      "taskId": "01a1c6ed-f6e8-76ad-86be-e9b53090be60",
+      "state": "SUCCEEDED"
+    },
+    {
+      "kind": "remesh",
+      "source": "firefly",
+      "chargedCredits": 5,
+      "taskId": "01a1c6fa-b293-7489-9722-07e7a000aaa5",
+      "state": "SUCCEEDED"
+    },
+    {
       "kind": "rigging",
       "source": "clara-r2",
       "chargedCredits": 5,
@@ -864,6 +885,13 @@
       "source": "lumi-swim",
       "chargedCredits": 5,
       "taskId": "01a1b9fc-55ff-7274-afd0-74d0ae40385f",
+      "state": "SUCCEEDED"
+    },
+    {
+      "kind": "rigging",
+      "source": "dragon",
+      "chargedCredits": 5,
+      "taskId": "01a1c6ef-ebdf-77c9-9c95-8887bacd0973",
       "state": "SUCCEEDED"
     }
   ],
