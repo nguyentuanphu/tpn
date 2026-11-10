@@ -317,8 +317,9 @@ def skin_mask(arr):   # skin by hue and saturation (light peach to the pink of c
     hue = np.where(v == r, ((g - b) / np.maximum(v - mn, 1e-4)) % 6, np.where(v == g, (b - r) / np.maximum(v - mn, 1e-4) + 2, (r - g) / np.maximum(v - mn, 1e-4) + 4)) / 6
     return ((hue < .105) | (hue > .94)) & (s_ > .05) & (s_ < SKIN_SMAX) & (v > .38)
 SKIN_SMAX = .44
-def skin_wide(arr):   # (10 Nov 2026) skin for filling closed lids: skin hues, coloured (over .14: not white-grey brows or hair) up to deep painted skin (.75)
-    _h, _s, _v = hsv_np(arr[..., :3]); return ((_h < .105) | (_h > .94)) & (_s > .14) & (_s < .75) & (_v > .38)
+def skin_wide(arr):   # (10 Nov 2026) skin for filling closed lids: skin hues, coloured (over .14: not white-grey brows or hair) up to the painted skin's own saturation (Bác Ba's deep .46)
+    _h, _s, _v = hsv_np(arr[..., :3]); _cap = (float(max(PAINT[:3]) - min(PAINT[:3])) / max(float(max(PAINT[:3])), 1e-4) + .08) if 'PAINT' in globals() else .6   # (11 Nov 2026: up to her own skin's saturation, not .75: Tí's blush flowed into her lids, a darker patch across the closed eyes)
+    return ((_h < .105) | (_h > .94)) & (_s > .14) & (_s < _cap) & (_v > .38)
 
 # ---- 3. the moods, drawn from her own eyes and mouth
 Image_save = bpy.data.images.new(ID + '-front', F.shape[1], F.shape[0], alpha=True); Image_save.pixels.foreach_set(np.concatenate([F[::-1, :, :3], np.ones(F.shape[:2] + (1,), np.float32)], -1).reshape(-1)); Image_save.filepath_raw = os.path.join(RDIR, 'face-front.png'); Image_save.file_format = 'PNG'; Image_save.save()   # (10 Nov 2026: the face picture the moods are cut from, to measure it, not face-bake.png)
@@ -540,11 +541,6 @@ def lid(img, b, top=0., bot=1.):   # (original_skin) a closed lid painted over t
     for _ in range(700):
         P = np.pad(sub, ((1, 1), (1, 1), (0, 0)), mode='edge')
         av = (P[:-2, 1:-1] + P[2:, 1:-1] + P[1:-1, :-2] + P[1:-1, 2:]) / 4; sub[hm] = av[hm]
-    if OWN and top == 0 and bot >= 1:   # (11 Nov 2026, owner: "Sửa lại hốc mắt": a closed lid was one flat patch of skin) a soft shade along the lash line, fading upwards over the lid, and a little at the inner corner: the eye's socket under the closed lid
-        _yy, _xx = np.mgrid[ya:yb, xa:xb]; _lash = cy_ + ry * .25; _up = np.clip((_lash - _yy) / max(ry * 1.1, 1), 0, 1)
-        _sh = np.where(_yy <= _lash + ry * .15, .9 + .1 * _up, 1.)   # (darkest, 10 %, just above the lash line)
-        _inner = np.exp(-(((_xx - (b[2] if cx_ < W_ / 2 else b[0])) / max(rx * .35, 1)) ** 2 + ((_yy - _lash) / max(ry * .5, 1)) ** 2)); _sh = _sh * (1 - .05 * _inner)
-        sub[hm] = sub[hm] * _sh[hm][:, None]
     _w = img[ya:yb, xa:xb, :3]; _w[hm] = sub[hm]   # (only the lid itself: the brows, lashes and hair held at skin colour above were written back too, and vanished on every blink)
     img[ya:yb, xa:xb, 3] = np.maximum(img[ya:yb, xa:xb, 3], hm.astype(np.float32))
     if PART:   # the lid's edge: a soft lash line along the curve, over the eye only

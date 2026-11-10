@@ -28,10 +28,10 @@ if ($Villager) {
   # the colour picture is kept at JPEG 95 on the way. Over 490 KB: fit again with a lower WebP quality, then a smaller face tile.
   foreach ($step in $(if ($HDOnly) { @() } else { @(@($VQ, $VTile, $VTex), @('82', $VTile, $VTex), @('75', $VTile, $VTex), @('75', '160', $VTex), @('70', '160', '896')) })) {
     $env:FIT_TILE = $step[1]; $env:FIT_JPGQ = '95'; $env:FIT_GN = $VGrid
-    $fl = Run 'tools\meshyit_people.py' @($vm, $Ref, "$o\$Id-mid-pre.glb", "$o\mid", $vt, $step[2], '1.0', '-1', $j)
-    ($fl -split "`n" | Where-Object { $_ -match '^FIT' }) | Out-File -Encoding utf8 "$oit-log.txt"   # (10 Nov 2026: the eyes and mouth found, to check without guessing)
+    $fl = Run 'tools\meshy\fit_people.py' @($vm, $Ref, "$o\$Id-mid-pre.glb", "$o\mid", $vt, $step[2], '1.0', '-1', $j)
+    ($fl -split "`n" | Where-Object { $_ -match '^FIT' }) | Out-File -Encoding utf8 "$o\fit-log.txt"   # (10 Nov 2026: the eyes and mouth found, to check without guessing)
     $env:FIT_TILE = ''; $env:FIT_JPGQ = ''; $env:FIT_GN = ''; $env:FIT_WEBP = $step[0]
-    $null = Run 'tools\meshy	ransfer_rig.py' @("$o\$Id-mid-pre.blend", "$rawigged\$Id.glb", "$o\$Id-mid.glb", $Ref)
+    $null = Run 'tools\meshy\transfer_rig.py' @("$o\$Id-mid-pre.blend", "$raw\rigged\$Id.glb", "$o\$Id-mid.glb", $Ref)
     $env:FIT_WEBP = ''
     $kb = Pack "$Id-mid" '0.24.0'; if ($kb -le 490) { break }
   }

@@ -62,7 +62,6 @@ const res: any = await P.page.evaluate(async ([LIST, QUICK, LIMIT]) => {
     h.place(n.obj.position.x + 2, n.obj.position.z + 2);
     for (let k = 0; k < 240 && n._vm !== 'worn' && n._vm !== 'code'; k++) await w(500);   // (up to 2 min: 24 s was too short on a busy machine)
     if (n._vm !== 'worn') { cases.push({ id, pose: 'wear', view: String(n._vm), worn: 1, eyes: 0 }); continue; }
-    for (let k = 0; k < 120 && !n.A.modelHD; k++) await w(500);   // (11 Nov 2026: the high-detail model worn near a child, js/avatar.ts villagersHDNear)
     const av = n.A; cur = av;
     // (10 Nov 2026: villagers stand by houses, trees and stalls; seen from the child's side these hid the face, so the eye
     // check passed on a wall, and hiding them hid the lights too) the villager is moved, as it stands, into a stage of its
@@ -70,6 +69,7 @@ const res: any = await P.page.evaluate(async ([LIST, QUICK, LIMIT]) => {
     const stage = new THREE.Scene(); stage.fog = top.fog; stage.environment = top.environment; top.updateMatrixWorld(true);
     top.traverse((o: any) => { if (!o.isLight || !o.visible) return; const c = o.clone(false); o.getWorldPosition(c.position); stage.add(c); if (o.target) { c.target = new THREE.Object3D(); o.target.getWorldPosition(c.target.position); stage.add(c.target); } });
     const home = av.root.parent; stage.attach(av.root);
+    av.life = null; A.animate(av, 'idle', 1); av.root.updateMatrixWorld(true);   // (the idle pose first: it turns the body back, and a front taken before it was three-quarters)
     const fd = new THREE.Vector3(0, 0, 1).applyQuaternion((av.rig || av.root).getWorldQuaternion(new THREE.Quaternion()));
     const faceDir = (M: any, fb: any) => { M.obj.updateMatrixWorld(true); let hb: any = null, fm: any = null; M.obj.traverse((o: any) => { if (o.isBone && o.name === 'head') hb = o; if (o.isMesh && /^face-smile/.test(o.material && o.material.name || '')) fm = o; }); if (!hb || !fm) return fb; const c = new THREE.Box3().setFromObject(fm, true).getCenter(new THREE.Vector3()), h = hb.getWorldPosition(new THREE.Vector3()), d = c.sub(h); d.y = 0; return d.lengthSq() > 1e-6 ? Math.atan2(d.x, d.z) : fb; };   // (11 Nov 2026: the face's own front, from the head to its face pieces: the body and its root turn to the child while the review waits)
     const yaw = faceDir(av.model, Math.atan2(fd.x, fd.z));

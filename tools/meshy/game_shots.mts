@@ -176,17 +176,16 @@ const shots: Record<string, string> = await P.page.evaluate(async ([MODE, LIST, 
     h.place(n.obj.position.x + 2, n.obj.position.z + 2);
     for (let k = 0; k < 80 && n._vm !== 'worn' && n._vm !== 'code'; k++) await w(200);
     if (n._vm !== 'worn') { out[id + '-notworn'] = ''; continue; }
-    for (let k = 0; k < 120 && !n.A.modelHD; k++) await w(500);   // (11 Nov 2026: the high-detail model a child sees near, js/avatar.ts villagersHDNear; up to a minute)
     // (10 Nov 2026) houses, trees and stalls round a villager hid its face from the child's side. Hiding whole groups hid the
     // lights too (black pictures), and a stage of its own with copied lights gave deep orange skin and near-black clothes:
     // the villager stays in the valley, every mesh that is not the villager's (houses, trees, the sky) is hidden for the
     // pictures, the lights stay; it is looked at from its own front, and never as the far "still" copy (the old code person)
     A.showStill(n.A, false); const hidden: any[] = []; const mine = new Set<any>(); n.A.root.traverse((o: any) => mine.add(o));
     top.traverse((o: any) => { if ((o.isMesh || o.isSprite || o.isPoints || o.isLine) && o.visible && !mine.has(o)) { hidden.push(o); o.visible = false; } }); SCN = top; const bg0 = top.background; top.background = new THREE.Color(0xbcd6ec);   // (a light ground behind: dark hats and hair on black could not be seen)
+    n.A.life = null; A.animate(n.A, 'idle', 1); n.A.root.updateMatrixWorld(true);   // (standing still first, then its front: the children who host games cheer and wave, Bông's raised arms lay beside her face; and the idle pose turns the body back, so a front taken before it was three-quarters)
     const fq = (n.A.rig || n.A.root).getWorldQuaternion(new THREE.Quaternion()), fd = new THREE.Vector3(0, 0, 1).applyQuaternion(fq);
     const faceDir = (M: any, fb: any) => { M.obj.updateMatrixWorld(true); let hb: any = null, fm: any = null; M.obj.traverse((o: any) => { if (o.isBone && o.name === 'head') hb = o; if (o.isMesh && /^face-smile/.test(o.material && o.material.name || '')) fm = o; }); if (!hb || !fm) return fb; const c = new THREE.Box3().setFromObject(fm, true).getCenter(new THREE.Vector3()), h = hb.getWorldPosition(new THREE.Vector3()), d = c.sub(h); d.y = 0; return d.lengthSq() > 1e-6 ? Math.atan2(d.x, d.z) : fb; };   // (11 Nov 2026: the face's own front, from the head to its face pieces: the body and its root turn to the child while the review waits)
     const yaw = faceDir(n.A.model, Math.atan2(fd.x, fd.z));
-    n.A.life = null; A.animate(n.A, 'idle', 1);   // (standing still: the children who host games cheer and wave in the valley, and Bông's raised arms lay beside her face)
     // (10 Nov 2026, the 11 villagers on their own Meshy faces) every mood front and three-quarter, the eye moods from both
     // sides, the back from three sides, and the whole villager front, three-quarter and back in the valley's light
     // (11 Nov 2026) the high-detail model (what a child sees near) as v-<id>-*, the light one (far) as v-<id>-light-*
