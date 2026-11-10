@@ -18,7 +18,7 @@ rồi gửi chủ ảnh trong game (bảng ảnh) kèm báo cáo ngắn.
 ## Where it stands
 
 - Last full round pushed: round 78 (commit 50e9055e6), 636 of 2576 cases failing (77: 791, 76: 856, 75: 1029). Self-test passed (7 planted faults caught).
-- Round 79 (kit paint 1.0): Sol and Finn jump armpits fixed but Clara got worse (139 to 226, her back views lighter than the dress); its Sol and Finn parts crashed. Round 80 runs with .975 into `D:WorkSpacemeshyittedudit-f80`; keep .975 only if the total beats round 78 (636), else go back to .95.
+- Round 79 (kit paint 1.0): Sol and Finn jump armpits fixed but Clara got worse (139 to 226, her back views lighter than the dress); its Sol and Finn parts crashed. Round 80 runs with .975 into `D:\WorkSpace\meshy\fitted\audit-f80`; keep .975 only if the total beats round 78 (636), else go back to .95.
 
 ## How to run
 
