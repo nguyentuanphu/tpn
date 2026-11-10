@@ -18,7 +18,7 @@ const { chromium } = createRequire(new URL('../../tests/package.json', import.me
 import { writeFileSync, mkdirSync, statSync } from 'node:fs';
 const [OUT, LIST = 'puppy', MODE = ''] = process.argv.slice(2);
 mkdirSync(OUT, { recursive: true });
-const LIMIT = { stretch: 20, tear: 2, sink: 0, float: 0, eyes: 6, hat: 0 };
+const LIMIT = { stretch: 20, tear: 6, sink: 0, float: 0, eyes: 6, hat: 0 };   // (tear 6: the Meshy puppy's own 4 px gap where an ear meets the cheek, in the rest pose too)
 const SIZE = { near: 800, far: 400 };
 const b = await chromium.launch({ args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'] });
 const _nc = b.newContext.bind(b); b.newContext = async (o: any) => { const c = await _nc(o); c.setDefaultNavigationTimeout(240000); c.setDefaultTimeout(600000); return c; };
@@ -69,18 +69,22 @@ const res: any = await P.page.evaluate(async ([kinds, MODE, LIMIT]) => {
     return { count, flags };
   };
   const _v = new THREE.Vector3(), _w = new THREE.Vector3();
-  const skinned = (m: any, outArr: Float32Array) => { const pos = m.geometry.attributes.position; m.updateMatrixWorld(true); m.skeleton.update();   // (the bone matrices are otherwise only updated when drawn)
+  const skinned = (m: any, outArr: Float32Array) => { const pos = m.geometry.attributes.position; let top = m; while (top.parent) top = top.parent; top.updateMatrixWorld(true); m.skeleton.update();   // (the bones' world matrices first, then the bone matrices: both are otherwise only updated when drawn)
     for (let i = 0; i < pos.count; i++) { _v.fromBufferAttribute(pos, i); (m.applyBoneTransform || m.boneTransform).call(m, i, _v); _v.applyMatrix4(m.matrixWorld); outArr[i * 3] = _v.x; outArr[i * 3 + 1] = _v.y; outArr[i * 3 + 2] = _v.z; } };
   for (const kind of kinds) for (const lod of ['near', 'far']) {
     const name = 'creature-' + kind + (lod === 'near' ? '-hd' : ''), t = await MK.loadWorldModel(name);
     if (!t) { out.cases.push({ kind, lod, clip: '-', missing: 1 }); continue; }
-    const obj = clone(t.scene); scene.add(obj); obj.updateMatrixWorld(true);
+    const obj = clone(t.scene); scene.add(obj); obj.updateMatrixWorld(true); obj.traverse((o: any) => { if (o.isSkinnedMesh) o.frustumCulled = false; });   // (as js/modelkit.ts: a skinned piece's box is its rest pose)
     const body = (() => { let best: any = null; obj.traverse((o: any) => { if (o.isSkinnedMesh && /^meshy-/.test(o.material.name) && !/-(shut|joy)\d$/.test(o.material.name) && (!best || o.geometry.attributes.position.count > best.geometry.attributes.position.count)) best = o; }); return best; })();
     const bone = (n: string) => obj.getObjectByName(n);
     const mixer = new THREE.AnimationMixer(obj);
     const idx = body.geometry.index.array, nv = body.geometry.attributes.position.count;
     const rest = new Float32Array(nv * 3), now = new Float32Array(nv * 3);
-    body.skeleton.pose(); skinned(body, rest);
+    // (the rest pose: the bones as loaded; skeleton.pose() rebuilds them from the inverse bind matrices, which gltfpack's
+    // quantized positions turn into whole-number units)
+    const REST = body.skeleton.bones.map((b: any) => [b.position.clone(), b.quaternion.clone(), b.scale.clone()]);
+    const toRest = () => body.skeleton.bones.forEach((b: any, i: number) => { b.position.copy(REST[i][0]); b.quaternion.copy(REST[i][1]); b.scale.copy(REST[i][2]); });
+    skinned(body, rest);
     let lo = 1e9, hi = -1e9; for (let i = 1; i < rest.length; i += 3) { lo = Math.min(lo, rest[i]); hi = Math.max(hi, rest[i]); }
     const Hh = hi - lo, c0 = new THREE.Box3().setFromBufferAttribute(new THREE.BufferAttribute(rest, 3)).getCenter(new THREE.Vector3());
     const restLen = new Float32Array(idx.length);
@@ -104,7 +108,9 @@ const res: any = await P.page.evaluate(async ([kinds, MODE, LIMIT]) => {
         skinned(body, now); let minY = 1e9;
         for (let i = 1; i < now.length; i += 3) minY = Math.min(minY, now[i]);
         for (let k = 0; k < idx.length; k += 3) { let worst = 1;
-          for (let e = 0; e < 3; e++) { const r0 = restLen[k + e]; if (r0 < 1e-5) continue; const r = elen(now, idx[k + e], idx[k + (e + 1) % 3]) / r0; worst = Math.max(worst, r, 1 / Math.max(r, 1e-3)); }
+          for (let e = 0; e < 3; e++) { const r0 = restLen[k + e]; if (r0 < 1e-5) continue; const l1 = elen(now, idx[k + e], idx[k + (e + 1) % 3]), r = l1 / r0;
+            if (Math.abs(l1 - r0) < .01) continue;   // (a sliver of fur a few mm long, stretched, cannot be seen: only 1 cm or more counts)
+            worst = Math.max(worst, r, 1 / Math.max(r, 1e-3)); }
           if (worst > 2.4) cs.stretch++; }
         const ground = minY - lo;   // (the model stands on y 0 at rest)
         if (ground < -.02) cs.sink = Math.round(-ground * 1000);
@@ -144,12 +150,13 @@ const res: any = await P.page.evaluate(async ([kinds, MODE, LIMIT]) => {
       }
     }
     // the hat: on the head, in the rest pose
-    if (lod === 'near') { mixer.stopAllAction(); body.skeleton.pose(); obj.updateMatrixWorld(true);
+    if (lod === 'near') { mixer.stopAllAction(); toRest(); obj.updateMatrixWorld(true);
       const holder = new THREE.Group(); scene.add(holder); scene.remove(obj); holder.add(obj);
       const hat = PETS.putHat(holder, 'crown') || await new Promise(r => setTimeout(() => r(PETS.putHat(holder, 'crown')), 1500));
       if (hat) { holder.updateMatrixWorld(true); const hb = new THREE.Box3().setFromObject(hat as any), hc = hb.getCenter(new THREE.Vector3());
-        const ray = new THREE.Raycaster(new THREE.Vector3(hc.x, hb.max.y + .5, hc.z), new THREE.Vector3(0, -1, 0)); const hits = ray.intersectObject(body, false);
-        const top = hits.length ? hits[0].point.y : -1e9, gap = hb.min.y - top;
+        skinned(body, rest); let top = -1e9;   // (the head's highest point under the hat's middle, within 3 cm)
+        for (let i = 0; i < nv; i++) if (Math.hypot(rest[i * 3] - hc.x, rest[i * 3 + 2] - hc.z) < .03) top = Math.max(top, rest[i * 3 + 1]);
+        const gap = hb.min.y - top;
         const cs: any = { kind, lod, clip: 'hat', t: 0, plant: 'none', stretch: 0, tear: 0, sink: 0, float: 0, eyes: 0, hat: (gap > .04 || hc.y < top) ? Math.round(gap * 1000) || 1 : 0 };
         out.cases.push(cs);
         const cam = new THREE.PerspectiveCamera(30, 1, .02, 50); const bx = new THREE.Box3().setFromObject(holder), cc = bx.getCenter(new THREE.Vector3()), r = bx.getSize(new THREE.Vector3()).length();

@@ -158,7 +158,8 @@ def weights(o, J, M):
     d2 = ((V[:, None, :2] - lx[None]) ** 2).sum(-1); near = np.argmin(d2, 1); dist = np.sqrt(d2[np.arange(n), near])
     # how thick each leg is (its points below the belly, seen from above): the belly's fur between the legs is body
     rl = np.array([np.percentile(dist[(near == i) & (V[:, 2] < belly * .6)], 85) * 1.15 for i in range(4)])
-    leg = (1 - smooth01((V[:, 2] - belly * .9) / max(.02, (hip - belly * .9)))) * smooth01((rl[near] - dist) / .025 + .5)
+    lt = FIX.get('leg_top', 1.0)   # (how high the leg's own weight reaches, as a fraction of the way from the belly to the hip)
+    leg = (1 - smooth01((V[:, 2] - belly * .9) / max(.02, (belly * .1 + (hip - belly) * lt)))) * smooth01((rl[near] - dist) / .025 + .5)
     knee_z = np.array([J['knee%d' % i][2] for i in range(4)])[near]; band = np.maximum(.02, knee_z * .35)
     lower = smooth01((knee_z + band - V[:, 2]) / (2 * band))
     rest = 1.0
@@ -171,6 +172,18 @@ def weights(o, J, M):
         if 'ear%d' % i in ix: W[:, ix['ear%d' % i]] += w_ear * (ear_side == i)
     for i in range(4):
         m = near == i; W[m, ix['leg%d' % i]] += (w_leg * (1 - lower))[m]; W[m, ix['knee%d' % i]] += (w_leg * lower)[m]
+    # round the legs' tops, smooth in space too: Meshy's fur is many loose cards, and two cards side by side with different
+    # weights pull apart when a leg turns far (the elbow's fur torn into strands while lying down)
+    sr = FIX.get('spatial_r', 0)
+    if sr:
+        from mathutils.kdtree import KDTree
+        kd = KDTree(n)
+        for i, p in enumerate(V): kd.insert(p, i)
+        kd.balance(); band = np.nonzero((V[:, 2] < hip + .04) & (V[:, 2] > belly * .5))[0]; W2 = W.copy()
+        for i in band:
+            nb_ = [j for _, j, _ in kd.find_range(V[i], sr)]
+            if len(nb_) > 1: W2[i] = W[nb_].mean(0)
+        W = W2
     # smooth over the surface a little (neighbours only: an ear lying on a cheek is not joined to it)
     adj = [[] for _ in range(n)]
     for e in o.data.edges: a, b = e.vertices; adj[a].append(b); adj[b].append(a)
@@ -220,13 +233,28 @@ def make(path, J, M, out, tex_px):
     material(o, tex_px)
     moves = wc.animal_moves(KIND, A, arm, names + FACE_BONES, F, size)
     moves = [(n_, L_, lie_down(p_, J, M) if n_ == 'sleep' else p_) for n_, L_, p_ in moves]
-    for name, L, pose in moves: wc.clip(arm, name, L, damp(pose))
+    for name, L, pose in moves: ground(o, arm, wc.clip(arm, name, L, damp(pose)))
     for pb in arm.pose.bones: pb.rotation_euler = (0, 0, 0); pb.location = (0, 0, 0); pb.scale = (1, 1, 1)
     bpy.ops.export_scene.gltf(filepath=out, export_format='GLB', export_animations=True, export_animation_mode='ACTIONS', export_lights=False,
                               export_cameras=False, export_apply=False, export_skins=True, export_morph=False, use_selection=False,
                               export_image_format='JPEG', export_jpeg_quality=88, export_force_sampling=True, export_frame_step=2)
     print('MADE', out, 'tris', sum(len(p.vertices) - 2 for p in o.data.polygons), 'bones', len(arm.data.bones), 'clips', ','.join(m[0] for m in moves), flush=True)
     return o, arm
+
+def ground(o, arm, act):
+    """no clip goes through the ground: at every frame where the model's lowest point is under it, the body is lifted just
+    enough (the code shapes' moves were made for thin legs; Meshy's thick legs and long fur hang lower)"""
+    fc = next((f for f in act.fcurves if f.data_path == 'pose.bones["body"].location' and f.array_index == 1), None)
+    if fc is None: return act
+    arm.animation_data.action = act; sc = bpy.context.scene; lifted = 0
+    n = len(o.data.vertices); co = np.empty(n * 3, dtype=np.float32)
+    for k in fc.keyframe_points:
+        sc.frame_set(int(round(k.co[0]))); dg = bpy.context.evaluated_depsgraph_get(); oe = o.evaluated_get(dg); m = oe.to_mesh()
+        m.vertices.foreach_get('co', co); z = float((np.array(o.matrix_world) @ np.c_[co.reshape(-1, 3), np.ones(n)].T)[2].min()); oe.to_mesh_clear()
+        if z < -.003: k.co[1] += -z + .002; k.handle_left[1] += -z + .002; k.handle_right[1] += -z + .002; lifted += 1
+    arm.animation_data.action = None
+    if lifted: print('GROUND', act.name, 'lifted', lifted, 'of', len(fc.keyframe_points), flush=True)
+    return act
 
 def damp(pose):
     """Meshy's legs are thick and its ears hang soft: the code shapes' swings, smaller (animal_joints: leg_amp, ear_amp)"""
@@ -248,8 +276,8 @@ def lie_down(pose, J, M):
         P['body'] = (r, (0, -M['belly'] * FIX.get('lie_drop', .92), 0), s)
         for i in range(4):
             front = J['leg%d' % i][1] < 0
-            P['leg%d' % i] = ((-1.45 / la if front else -1.3 / la, 0, 0), (0, 0, 0), (1, 1, 1))   # (divided by leg_amp: damp() scales it back)
-            P['knee%d' % i] = ((0 if front else .25 / la, 0, 0), (0, 0, 0), (1, 1, 1))
+            P['leg%d' % i] = ((FIX.get('lie_front', -1.45) / la if front else FIX.get('lie_back', -1.3) / la, 0, 0), (0, 0, 0), (1, 1, 1))   # (divided by leg_amp: damp() scales it back)
+            P['knee%d' % i] = ((FIX.get('lie_front_knee', 0) / la if front else FIX.get('lie_back_knee', .25) / la, 0, 0), (0, 0, 0), (1, 1, 1))
         return P
     return f
 
@@ -375,17 +403,24 @@ def face_pieces(o, arm, J, Fc):
             pim = bpy.data.images.new(name, TP, TP); pim.pixels[:] = np.concatenate([img, np.ones((TP, TP, 1))], 2).astype(np.float32).ravel()
             pim.pack()
             if DEBUG: pim.filepath_raw = os.path.join(OUT, name + '.png'); pim.file_format = 'PNG'; pim.save()
-            # the piece: the same triangles, a little in front, its picture laid straight on from the front
-            bm = bmesh.new(); uvL = bm.loops.layers.uv.new('UVMap'); vmap = {}
-            for t in tris:
-                vs = []
-                for vi in t.vertices:
-                    if vi not in vmap: vmap[vi] = bm.verts.new(Vector(V[vi] + N[vi] * FIX.get('lid_lift', .003)))
-                    vs.append(vmap[vi])
-                try: f = bm.faces.new(vs)
-                except ValueError: continue
-                for lp, vi in zip(f.loops, t.vertices):
-                    d = V[vi] - c; lp[uvL].uv = (float(d @ side) / (2 * R) + .5, float(d @ up) / (2 * R) + .5)
+            # the piece: a fine grid laid on the head's surface over the eye (rays along -normal), a little in front, its
+            # picture straight on; no gaps (the head's own triangles, copied, showed the eye through cracks at their edges)
+            bm = bmesh.new(); uvL = bm.loops.layers.uv.new('UVMap'); GN = FIX.get('lid_grid', 28); grid = {}
+            lift = FIX.get('lid_lift', .003)
+            for a in range(GN + 1):
+                for b in range(GN + 1):
+                    x = b / GN * 2 * R - R; y = a / GN * 2 * R - R
+                    if math.hypot(x, y) > R * 1.02: continue
+                    loc, nor, _, _ = bvh.ray_cast(Vector(c + side * x + up * y + nrm * R), Vector(-nrm))
+                    if loc is None: continue
+                    k = 1 - smooth01((math.hypot(x, y) / R - .82) / .18)   # (down to the surface at its rim)
+                    grid[a, b] = bm.verts.new(loc + Vector(nrm) * (lift * k + .0004))
+            for a in range(GN):
+                for b in range(GN):
+                    q = [(a, b), (a, b + 1), (a + 1, b + 1), (a + 1, b)]
+                    if not all(k in grid for k in q): continue
+                    f = bm.faces.new([grid[k] for k in q])
+                    for lp, (ga, gb) in zip(f.loops, q): lp[uvL].uv = (gb / GN, ga / GN)
             pm = bpy.data.meshes.new(name); bm.to_mesh(pm); bm.free()
             po = bpy.data.objects.new(name, pm); bpy.context.collection.objects.link(po)
             mat = bpy.data.materials.new(name); mat.use_nodes = True; nt = mat.node_tree; tn = nt.nodes.new('ShaderNodeTexImage'); tn.image = pim

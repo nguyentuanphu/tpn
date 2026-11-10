@@ -1,0 +1,11 @@
+{
+  "note": "Meshy puppy (8 Nov 2026 model): joints found from the shape; the values here tune the pose and the face (tools/meshy/fit_animal.py FIX). Sleep: lying like a sphinx, front legs forward, hind legs tucked forward; ground() lifts the body where anything would go under the ground. (10 Nov: upper legs back with forearms forward made it kneel upright instead.) (r9: sharing the turn between shoulder and elbow made it crouch, not lie. The elbow fur tore because Meshy's fur is many loose cards: their weights are now smoothed in space, round the legs' tops.)",
+  "lie_drop": 0.95,
+  "lie_front": -1.35,
+  "lie_front_knee": 0.1,
+  "lie_back": -1.2,
+  "lie_back_knee": 0.3,
+  "smooth": 5,
+  "leg_top": 0.8,
+  "spatial_r": 0.03
+}

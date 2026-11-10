@@ -39,7 +39,7 @@ if (MODE === 'close' || MODE === 'all') n += save(await P.page.evaluate(async ([
     const base = kind.replace(/-hd$/, ''), buddy = BUDDIES.includes(base), t = await MK.loadWorldModel('creature-' + kind);   // (puppy-hd: the near model)
     if (!t) { out[kind + '-notloaded'] = ''; continue; }
     // (its own clock: each clip shown at a set moment of its loop, not wherever the game's clock had got to)
-    const m = { obj: clone(t.scene) }, mixer = new THREE.AnimationMixer(m.obj);
+    const m = { obj: clone(t.scene) }, mixer = new THREE.AnimationMixer(m.obj); m.obj.traverse((o: any) => { if (o.isSkinnedMesh) o.frustumCulled = false; });
     const pose = (clip: string, at: number) => { const c = t.clips.find((x: any) => x.name === clip); if (!c) return false; mixer.stopAllAction(); mixer.clipAction(c).reset().play(); mixer.setTime(c.duration * at); return true; };
     m.obj.scale.multiplyScalar(buddy ? 1 : SCALE[base] || 1.3);
     const x0 = h.pos.x + 3, z0 = h.pos.z + 3, y0 = (G.world.groundAt ? G.world.groundAt(x0, z0, h.pos.y + 1) : h.pos.y) + (buddy ? 1.2 : 0);
