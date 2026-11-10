@@ -49,6 +49,7 @@ function near(g, r) {
     if (!m) return;   // (blocked or failed: the code shape stays)
     g.add(m.obj); r.root.visible = false; r.model = m; r.clip = 'idle'; r.idleT = 0; g.userData.model = m; r.hd = hd;
     r.g = g; r.headBone = m.obj.getObjectByName('head'); r.look = 0; LOOKING.add(r);
+    g.userData.onModel && g.userData.onModel();   // (a pet's hat moves onto the model's head: js/pets.ts putHat)
   });
 }
 function lod(g, r, d: number) {
@@ -58,7 +59,7 @@ function lod(g, r, d: number) {
   void worldModel(creatureModelName(r.kind) + (want ? '-hd' : ''), { clip: r.clip || 'idle' }).then(m => {
     r.swapping = false; if (!m || !g.parent) return;
     const was = r.model; g.remove(was.obj); was.stop(); g.add(m.obj); r.model = m; g.userData.model = m; r.hd = want;
-    r.headBone = m.obj.getObjectByName('head');
+    r.headBone = m.obj.getObjectByName('head'); g.userData.onModel && g.userData.onModel();
   });
 }
 // (owner, 6 Nov 2026 AEDT: "all animals need to show emotions, facial expressions, movements, eye blinks") every clip blinks;

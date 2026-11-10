@@ -25,11 +25,35 @@ const tagY = (kind: string) => Math.min(1.45, .4 + (PET_SCALE[kind] || 1.3) * .8
 // (issue #738) a pet wears a hat from the child's hats (bought with the coin goal, chosen in the Backpack's "Pets & Buddy"):
 // it sits on top of the head, at the front of the model, sized to the pet
 const _box = new THREE.Box3();
+// the top of a model's head, in the head bone's own frame (its points that are wholly the head's, highest along the bone,
+// the middle of the top tenth), and the model's height for the hat's size
+function headTop(model, head) {
+  let body = null; model.traverse(o => { if (o.isSkinnedMesh && (!body || o.geometry.attributes.position.count > body.geometry.attributes.position.count)) body = o; });
+  if (!body) return null;
+  const hi = body.skeleton.bones.indexOf(head); if (hi < 0) return null;
+  model.updateMatrixWorld(true); body.skeleton.update();
+  const pos = body.geometry.attributes.position, si = body.geometry.attributes.skinIndex, sw = body.geometry.attributes.skinWeight, v = new THREE.Vector3(), pts = [];
+  let lo = 1e9, hiY = -1e9;
+  for (let i = 0; i < pos.count; i++) {
+    v.fromBufferAttribute(pos, i); body.applyBoneTransform(i, v); v.applyMatrix4(body.matrixWorld); lo = Math.min(lo, v.y); hiY = Math.max(hiY, v.y);
+    for (let q = 0; q < 4; q++) if (si.getComponent(i, q) === hi && sw.getComponent(i, q) > .8) { pts.push(head.worldToLocal(v.clone())); break; }
+  }
+  if (pts.length < 10) return null;
+  pts.sort((a, b) => b.y - a.y); const n = Math.max(3, Math.round(pts.length * .1)), at = new THREE.Vector3();
+  for (let i = 0; i < n; i++) at.add(pts[i]); at.multiplyScalar(1 / n); at.y = pts[0].y - .01 * (pts[0].y - pts[n - 1].y);
+  return { at, size: Math.max(.25, hiY - lo) };
+}
 export function putHat(obj, id) {
   if (id && !buildHat) { import('./kidplay.js').then(m => { buildHat = m.buildHat; if (obj.userData.wantHat === id) putHat(obj, id); }); obj.userData.wantHat = id; return null; }
-  obj.userData.wantHat = id;
-  if (obj.userData.hat) { obj.remove(obj.userData.hat); obj.userData.hat = null; }
+  obj.userData.wantHat = id; obj.userData.onModel = () => putHat(obj, obj.userData.wantHat);   // (put on again when its model arrives or changes: js/creatures.ts)
+  if (obj.userData.hat) { const o = obj.userData.hat; o.parent && o.parent.remove(o); obj.userData.hat = null; }
   if (!id) return null;
+  // (Meshy pets, owner 10 Nov 2026: "accessories ... thử lên chưa") a model's hat sits on its head bone, on the top of the
+  // head as the model is shaped, so it goes with every move (looking down, lying, rolling over), not left in the air
+  const rig = obj.userData.rig, model = rig && rig.model && rig.model.obj, head = model && model.getObjectByName('head');
+  if (head) { const top = headTop(model, head); if (top) {
+    const hat = buildHat(id); hat.position.copy(top.at); hat.scale.setScalar(top.size * 1.9 / Math.max(1e-4, head.getWorldScale(new THREE.Vector3()).x));
+    head.add(hat); obj.userData.hat = hat; return hat; } }
   const at = obj.position.clone(), rot = obj.rotation.y; obj.position.set(0, 0, 0); obj.rotation.y = 0; obj.updateMatrixWorld(true);
   _box.setFromObject(obj); obj.position.copy(at); obj.rotation.y = rot;
   const s = obj.scale.x || 1, top = _box.max.y / s, front = _box.max.z / s, size = Math.max(.4, _box.max.y - _box.min.y);

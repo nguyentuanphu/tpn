@@ -15,7 +15,8 @@
 //   sink     the lowest point under the ground (more than 2 cm) in any clip; float: off the ground (3 cm) in a clip that
 //            stands (idle, walk, follow, sad, sleep)
 //   eyes     the painted eye (its dark pupil, its white sparkles) still seen while the eyes are shut (sleep) or happy
-//   hat      a pet's hat (js/pets.ts putHat) more than 4 cm above the head or its middle inside the head
+//   hat      every hat a pet can wear (js/kidplay.ts HATS) in every clip, put on as the game does (on the head bone):
+//            its base more than 4 cm off the head, or the head more than 6 cm up through it
 //   size     the near model over 800 KB, the far one over 400 KB
 // Each fault is painted magenta on that case's picture; <out>/summary.txt lists the counts, <out>/cases.json every case.
 //   cd tests; SV_URL=http://localhost:8777/ node ../tools/meshy/audit_pets.mts <out dir> [puppy,...] [quick|selftest]
@@ -182,19 +183,35 @@ const res: any = await P.page.evaluate(async ([kinds, MODE, LIMIT]) => {
         out.cases.push(cs);
       }
     }
-    // the hat: on the head, in the rest pose
-    if (lod === 'near') { mixer.stopAllAction(); toRest(); obj.updateMatrixWorld(true);
-      const holder = new THREE.Group(); scene.add(holder); scene.remove(obj); holder.add(obj);
-      const hat = PETS.putHat(holder, 'crown') || await new Promise(r => setTimeout(() => r(PETS.putHat(holder, 'crown')), 1500));
-      if (hat) { holder.updateMatrixWorld(true); const hb = new THREE.Box3().setFromObject(hat as any), hc = hb.getCenter(new THREE.Vector3());
-        skinned(body, rest); let top = -1e9;   // (the head's highest point under the hat's middle, within 3 cm)
-        for (let i = 0; i < nv; i++) if (Math.hypot(rest[i * 3] - hc.x, rest[i * 3 + 2] - hc.z) < .03) top = Math.max(top, rest[i * 3 + 1]);
-        const gap = hb.min.y - top;
-        const cs: any = { kind, lod, clip: 'hat', t: 0, plant: 'none', stretch: 0, tear: 0, sink: 0, float: 0, eyes: 0, hat: (gap > .04 || hc.y < top) ? Math.round(gap * 1000) || 1 : 0 };
-        out.cases.push(cs);
-        const cam = new THREE.PerspectiveCamera(30, 1, .02, 50); const bx = new THREE.Box3().setFromObject(holder), cc = bx.getCenter(new THREE.Vector3()), r = bx.getSize(new THREE.Vector3()).length();
-        cam.position.copy(cc).add(new THREE.Vector3(r * .9, r * .5, r * 1.4)); cam.lookAt(cc); out.pics[`${kind}-hat`] = png(read(cam), null); }
-      scene.remove(holder);
+    // the hats (owner, 10 Nov 2026: "accessories ... thử lên chưa"): every hat a pet can wear (js/kidplay.ts HATS), put on
+    // as the game puts it (js/pets.ts putHat: on the model's head bone), in every clip: its base must sit on the head
+    // (measured along the hat's own up: floating more than 4 cm, or the head through it by more than 6 cm, is a fault)
+    if (lod === 'near' && !self) {
+      const KP = await import(String('/js/kidplay.js')), holder = new THREE.Group(); scene.add(holder); scene.remove(obj); holder.add(obj);
+      holder.userData.rig = { model: { obj } };
+      PETS.putHat(holder, 'party'); await new Promise(r => setTimeout(r, 1500));   // (the hats' drawings load on first use)
+      const B = new THREE.Vector3(), U = new THREE.Vector3(), v = new THREE.Vector3();
+      for (const H of KP.HATS) {
+        let worst = 0, worstAt = '';
+        for (const clip of clips) {
+          const c = t.clips.find((x: any) => x.name === clip); mixer.stopAllAction(); mixer.clipAction(c).reset().play();
+          for (const f of quick ? [.5] : [.2, .5, .8]) {
+            mixer.setTime(c.duration * f); holder.updateMatrixWorld(true);
+            const hat: any = PETS.putHat(holder, H.id); if (!hat) continue; holder.updateMatrixWorld(true);
+            skinned(body, now); hat.getWorldPosition(B); U.set(0, 1, 0).applyQuaternion(hat.getWorldQuaternion(new THREE.Quaternion()));
+            const rad = .03 * hat.getWorldScale(new THREE.Vector3()).x / .95; let top = -1e9;
+            for (let k = 0; k < nv; k++) { v.set(now[k * 3], now[k * 3 + 1], now[k * 3 + 2]).sub(B); const along = v.dot(U); if (v.addScaledVector(U, -along).length() < rad) top = Math.max(top, along); }
+            const fault = top < -.04 ? Math.round(-top * 1000) : top > .06 ? Math.round(top * 1000) : 0;
+            if (fault > worst) { worst = fault; worstAt = `${clip}@${f}${top < 0 ? ' floating' : ' sunk'}`; }
+            if (f === .5 && ['idle', 'sad', 'sleep', 'roll', 'run'].includes(clip)) {
+              const bx = new THREE.Box3().setFromObject(holder, true), cc = bx.getCenter(new THREE.Vector3()), r = bx.getSize(new THREE.Vector3()).length();
+              const cam = new THREE.PerspectiveCamera(30, 1, .02, 50); cam.position.copy(cc).add(new THREE.Vector3(r * .9, r * .45, r * 1.3)); cam.lookAt(cc);
+              out.pics[`${kind}-hat-${H.id}-${clip}`] = png(read(cam), null); }
+          }
+        }
+        out.cases.push({ kind, lod, clip: 'hat:' + H.id, t: 0, plant: 'none', stretch: 0, tear: 0, sink: 0, float: 0, eyes: 0, hat: worst, worst: worstAt });
+      }
+      PETS.putHat(holder, null); scene.remove(holder);
     } else scene.remove(obj);
   }
   return out;

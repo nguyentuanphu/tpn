@@ -151,3 +151,18 @@ animal can do, that opens a place or a game the child could not reach alone:
   breath lights lanterns and melts ice.
 - **Sparkle the firefly, "star guide"**: it calls a swarm of fireflies to make a light bridge at night and joins the
   stars into pictures (a constellation game).
+
+## Accessories and what the auditor covers (10 Nov 2026, owner: "Audit tools kiểm tra kỹ hết chưa, ... accessories ... thử lên chưa")
+
+- Accessories: the 8 hats (party, flower crown, little nón lá, golden crown, woolly beanie, captain, wizard, lotus
+  crown; `HATS`, `js/kidplay.ts`), bought with coins and worn by the companion or a pet. The Meshy puppy also has its
+  own painted red collar (part of the model, not removable). Before this round a pet's hat was fixed to the whole pet
+  and stayed in the air when the head moved: it now sits on the model's head bone (`putHat`, `js/pets.ts`) and is put
+  on again when the model arrives or changes near/far. Sheet: [puppy-hats.jpg](puppy-hats.jpg).
+- The auditor (`audit_pets.mts`) checks, near and far: stretch, tears through to the background, sink and float,
+  shut and happy eyes, every hat in every clip, file sizes; 18 clips, 6 moments, 10 sides plus level from each side.
+  The game checks: `worldcreatures`, `petskills` (fetch, dig, lead, a hat on the head bone), `phone`.
+- **Not checked yet:** the mood pieces' edges seen from the side (looked at by eye only); flicker between frames; the
+  puppy running into walls or buildings while leading (it goes in a straight line); night light; two children with
+  pets side by side; speed on a phone with two Meshy puppies (`perf` not run); the pet yard and the farm; the water
+  rescue with the swim move; hats on the far model; the village dog, which is the same puppy model at 0.9.

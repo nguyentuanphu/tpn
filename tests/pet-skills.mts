@@ -4,7 +4,8 @@
 //      brings it back to the child's feet;
 //   2. dig for treasure: the puppy digs (the dig move when its model has it) and the child gets 2 coins, counted for the
 //      day (at most 5 a day);
-//   3. lead the way: "lead the way!" with a far goal sends the puppy on ahead towards it; it stops at the goal.
+//   3. lead the way: "lead the way!" with a far goal sends the puppy on ahead towards it; it stops at the goal;
+//   4. a hat on a pet with a model sits on the model's head bone.
 import { open } from './harness.mts';
 
 const ok = (c: unknown, msg: string) => { if (!c) throw new Error(msg); };
@@ -71,6 +72,16 @@ export async function petSkillsCheck(b) {
     const end = await P.page.evaluate(async () => { const G = (window as any).__sv, h = G.heroes[0], L = G.pets.live()[0];
       h.place(h.walkTo.x - 3, h.walkTo.z); for (let i = 0; i < 40 && L.task; i++) await new Promise(r => setTimeout(r, 100)); return { task: L.task && L.task.kind }; });
     ok(!end.task, 'the puppy kept leading at the goal');
+    // 4. a hat (owner, 10 Nov 2026: "accessories ... thử lên chưa"): on the model's head bone, so it goes with every move
+    const hat = await P.page.evaluate(async () => {
+      const G = (window as any).__sv, h = G.heroes[0]; h.profile.pets[0].hat = 'crown'; G.pets.sync();
+      let L: any = null, onHead = false, model = false;
+      for (let i = 0; i < 80; i++) { await new Promise(r => setTimeout(r, 200)); L = G.pets.live()[0]; const hh = L && L.obj.userData.hat, m = L && L.obj.userData.rig && L.obj.userData.rig.model;
+        model = !!m; if (hh && m) { let p = hh.parent; while (p && p !== L.obj) { if (p.name === 'head') onHead = true; p = p.parent; } if (onHead) break; } }
+      return { model, onHead, has: !!(L && L.obj.userData.hat) };
+    });
+    ok(hat.has, 'the puppy has no hat after putting the crown on');
+    if (hat.model) ok(hat.onHead, "the hat is not on the model's head bone (it would stay in the air when the head moves)");
     const errs = P.errors.filter(e => !/creature-|world model/.test(e));
     ok(!errs.length, errs.join('; '));
     console.log('  petskills: fetch', [...seen].join('>'), '; dig +2 coins', dclip ? '(dig move)' : '(code shape)', '; lead ahead', ahead.dx.toFixed(1), 'm');
