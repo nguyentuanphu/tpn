@@ -43,6 +43,7 @@ export const AUTO = {
 };
 // the limits: how long and how slow before the game reports by itself
 export const LIMITS = {
+  artWait: 15,        // (#855) extra seconds when the late-loading game pictures are not in yet
   openWait: 3,        // seconds before a game or story that has not opened counts
   closeWait: 2,       // seconds before a window that did not close counts
   freeze: 2,          // seconds with no frame while the game is on screen
