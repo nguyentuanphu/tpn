@@ -191,7 +191,16 @@ const shots: Record<string, string> = await P.page.evaluate(async ([MODE, LIST, 
     if (c.model) A.unwearVillagerModel(c);   // (the crowd's own gallery model, worn near the child)
     return { id, A: c, obj: c.root, host: hostRole, _vm: ok && A.wearVillagerModel(c, key) ? 'worn' : 'code' };
   };
-  if (MODE === 'village') for (const spec of ids) {
+  const headYaw = (M: any, guess: number) => {   // (10 Nov 2026: a crowd host turns its head to look at the child: the face's own direction, head bone to the smile piece's middle)
+    let hb: any = null; const c = new THREE.Vector3(); let k = 0;
+    M.obj.updateMatrixWorld(true); M.obj.traverse((o: any) => { if (o.isBone && o.name === 'head') hb = o; if (o.isMesh && (o.material && o.material.name) === 'face-smile') { c.add(new THREE.Box3().setFromObject(o, true).getCenter(new THREE.Vector3())); k++; } });
+    if (!hb || !k) return guess; c.divideScalar(k); const h = hb.getWorldPosition(new THREE.Vector3()); return Math.atan2(c.x - h.x, c.z - h.z); };
+  const faceYaw = (av: any, M: any, guess: number) => {   // (10 Nov 2026: a crowd host's rig and root both missed r045's facing by about .6: read it from the model's own shoulders, the side nearest the guess)
+    let aL: any = null, aR: any = null; M.obj.traverse((o: any) => { if (o.isBone && o.name === 'armL') aL = o; if (o.isBone && o.name === 'armR') aR = o; });
+    if (!aL || !aR) return guess; av.root.updateMatrixWorld(true); const d = aL.getWorldPosition(new THREE.Vector3()).sub(aR.getWorldPosition(new THREE.Vector3()));
+    const y1 = Math.atan2(-d.z, d.x), y2 = y1 + Math.PI, df = (a: number) => Math.abs(Math.atan2(Math.sin(a - guess), Math.cos(a - guess)));
+    return df(y1) < df(y2) ? y1 : y2; };
+    if (MODE === 'village') for (const spec of ids) {
     const [id, role] = spec.split('@');
     const n: any = role ? await regional(id, role) : G.npcs.find((x: any) => x.id === id); if (!n) { out[id + '-notfound'] = ''; continue; }
     if (!role) h.place(n.obj.position.x + 2, n.obj.position.z + 2); else { console.log(id, 'worn by a crowd person of role', n.host); G.paused = true; n.A.life = null; A.animate(n.A, 'idle', 1); }   // (a crowd host may be sitting on a bench: stood up, and the valley paused so its own update does not sit it down again)
@@ -204,13 +213,14 @@ const shots: Record<string, string> = await P.page.evaluate(async ([MODE, LIST, 
     const solo = new THREE.Scene(); solo.background = new THREE.Color(0xbcd6ec);
     top.updateMatrixWorld(true); top.traverse((o: any) => { if (!o.isLight || !o.visible) return; const c = o.clone(false); o.getWorldPosition(c.position); solo.add(c); if (o.target) { c.target = new THREE.Object3D(); o.target.getWorldPosition(c.target.position); solo.add(c.target); } });
     const par = n.A.root.parent; A.showStill(n.A, false); solo.attach(n.A.root); SCN = solo;
-    const fq = (role ? n.A.rig : n.A.root).getWorldQuaternion(new THREE.Quaternion())   /* (a crowd host turns its rig, not its root: the first regional shots were a three-quarter labelled front) */, fd = new THREE.Vector3(0, 0, 1).applyQuaternion(fq), yaw = Math.atan2(fd.x, fd.z);
+    const fq = (role ? n.A.rig : n.A.root).getWorldQuaternion(new THREE.Quaternion())   /* (a crowd host turns its rig, not its root: the first regional shots were a three-quarter labelled front) */, fd = new THREE.Vector3(0, 0, 1).applyQuaternion(fq), yaw0 = Math.atan2(fd.x, fd.z), yaw = role ? faceYaw(n.A, n.A.model, yaw0) : yaw0;
     // (10 Nov 2026, the 11 villagers on their own Meshy faces) every mood front and three-quarter, the eye moods from both
     // sides, the back from three sides, and the whole villager front, three-quarter and back in the valley's light
-    for (const m of MOODS) { mood(n.A, n.A.model, m); for (const s of [0, .7]) headShot(`v-${id}-${m}-${s ? 'tq' : 'front'}`, n.A.root, n.A.model, yaw, s, true); }
-    for (const m of ['smile', 'blink', 'lookL']) { mood(n.A, n.A.model, m); for (const s of [1.2, -1.2]) headShot(`v-${id}-${m}-side${s > 0 ? 'L' : 'R'}`, n.A.root, n.A.model, yaw, s, true); }
+    mood(n.A, n.A.model, 'smile'); const hy = role ? headYaw(n.A.model, yaw) : yaw;
+    for (const m of MOODS) { mood(n.A, n.A.model, m); for (const s of [0, .7]) headShot(`v-${id}-${m}-${s ? 'tq' : 'front'}`, n.A.root, n.A.model, hy, s, true); }
+    for (const m of ['smile', 'blink', 'lookL']) { mood(n.A, n.A.model, m); for (const s of [1.2, -1.2]) headShot(`v-${id}-${m}-side${s > 0 ? 'L' : 'R'}`, n.A.root, n.A.model, hy, s, true); }
     mood(n.A, n.A.model, 'smile');
-    for (const s of [Math.PI, 2.2, -2.2]) headShot(`v-${id}-neck-back-${s.toFixed(1)}`, n.A.root, n.A.model, yaw, s, true);
+    for (const s of [Math.PI, 2.2, -2.2]) headShot(`v-${id}-neck-back-${s.toFixed(1)}`, n.A.root, n.A.model, hy, s, true);
     { n.A.root.updateMatrixWorld(true); const box = new THREE.Box3().setFromObject(n.A.model.obj, true), c = box.getCenter(new THREE.Vector3()), Hh = box.max.y - box.min.y;
       for (const [nm, s] of [['front', 0], ['tq', .7], ['back', Math.PI]] as [string, number][]) {
         const dir = new THREE.Vector3(Math.sin(yaw), 0, Math.cos(yaw)).applyAxisAngle(new THREE.Vector3(0, 1, 0), s);

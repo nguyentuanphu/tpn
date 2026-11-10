@@ -305,10 +305,11 @@ print('FIT face picture projected from the front', _nr, 'of', _Hn * _Wn)
 activate(decal); dd = decal.modifiers.new('dec', 'DECIMATE'); dd.ratio = min(1, 1200 / max(1, len(decal.data.polygons))); bpy.ops.object.modifier_apply(modifier='dec')
 print('FIT face layer tris', len(dme.polygons))
 
+SKIN_SMAX = float(os.environ.get('FIT_SKIN_SMAX') or .44)   # (set again below, where skin_mask uses it)
 # ---- skin colour: the face's typical light skin
 def hsv(c): return colorsys.rgb_to_hsv(*[float(x) for x in c])
 flat = F[..., :3].reshape(-1, 3); hs = np.array([hsv(c) for c in flat[::7]])
-cand = flat[::7][(hs[:, 1] > .08) & (hs[:, 1] < .45) & (hs[:, 2] > .6) & ((hs[:, 0] < .11) | (hs[:, 0] > .95))]
+cand = flat[::7][(hs[:, 1] > .08) & (hs[:, 1] < max(.45, SKIN_SMAX)) & (hs[:, 2] > .6) & ((hs[:, 0] < .11) | (hs[:, 0] > .95))]
 REF = np.percentile(cand, 80, axis=0); print('FIT skin ref', np.round(REF, 3), 'from', len(cand))
 dist = lambda arr: np.linalg.norm(arr[..., :3] - REF, axis=-1)
 def skin_mask(arr):   # skin by hue and saturation (light peach to the pink of cheeks and lips), not hair (more saturated) or cream cloth
@@ -316,7 +317,7 @@ def skin_mask(arr):   # skin by hue and saturation (light peach to the pink of c
     r, g, b = rgb[..., 0], rgb[..., 1], rgb[..., 2]
     hue = np.where(v == r, ((g - b) / np.maximum(v - mn, 1e-4)) % 6, np.where(v == g, (b - r) / np.maximum(v - mn, 1e-4) + 2, (r - g) / np.maximum(v - mn, 1e-4) + 4)) / 6
     return ((hue < .105) | (hue > .94)) & (s_ > .05) & (s_ < SKIN_SMAX) & (v > .38)
-SKIN_SMAX = .44
+SKIN_SMAX = float(os.environ.get('FIT_SKIN_SMAX') or .44)   # (10 Nov 2026, regional pilot: r084's dark skin is .58 saturated; at .44 none of it was skin and his closed lids took the pale reference colour, as light squares. fit_person.ps1 -SkinSMax)
 
 # ---- 3. the moods, drawn from her own eyes and mouth
 H_, W_ = F.shape[:2]; D = dist(F); V = F[..., :3].max(-1); S_ = (F[..., :3].max(-1) - F[..., :3].min(-1)) / np.maximum(V, 1e-4)

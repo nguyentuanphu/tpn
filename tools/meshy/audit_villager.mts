@@ -75,6 +75,15 @@ const res: any = await P.page.evaluate(async ([LIST, QUICK, LIMIT]) => {
     if (c.model) A.unwearVillagerModel(c);   // (the crowd's own gallery model, worn near the child)
     return { id, A: c, obj: c.root, host: hostRole, _vm: ok && A.wearVillagerModel(c, key) ? 'worn' : 'code' };
   };
+  const headYaw = (M: any, guess: number) => {   // (10 Nov 2026: a crowd host turns its head to look at the child: the face's own direction, head bone to the smile piece's middle)
+    let hb: any = null; const c = new THREE.Vector3(); let k = 0;
+    M.obj.updateMatrixWorld(true); M.obj.traverse((o: any) => { if (o.isBone && o.name === 'head') hb = o; if (o.isMesh && (o.material && o.material.name) === 'face-smile') { c.add(new THREE.Box3().setFromObject(o, true).getCenter(new THREE.Vector3())); k++; } });
+    if (!hb || !k) return guess; c.divideScalar(k); const h = hb.getWorldPosition(new THREE.Vector3()); return Math.atan2(c.x - h.x, c.z - h.z); };
+  const faceYaw = (av: any, M: any, guess: number) => {   // (10 Nov 2026: a crowd host's rig and root both missed r045's facing by about .6: read it from the model's own shoulders, the side nearest the guess)
+    let aL: any = null, aR: any = null; M.obj.traverse((o: any) => { if (o.isBone && o.name === 'armL') aL = o; if (o.isBone && o.name === 'armR') aR = o; });
+    if (!aL || !aR) return guess; av.root.updateMatrixWorld(true); const d = aL.getWorldPosition(new THREE.Vector3()).sub(aR.getWorldPosition(new THREE.Vector3()));
+    const y1 = Math.atan2(-d.z, d.x), y2 = y1 + Math.PI, df = (a: number) => Math.abs(Math.atan2(Math.sin(a - guess), Math.cos(a - guess)));
+    return df(y1) < df(y2) ? y1 : y2; };
   for (const spec of LIST.split(',')) {
     const [id, role] = spec.split('@');
     const n: any = role ? await regional(id, role) : G.npcs.find((x: any) => x.id === id); if (!n) { cases.push({ id, pose: 'find', view: role || '-', worn: 1, eyes: 0 }); continue; }
@@ -88,20 +97,21 @@ const res: any = await P.page.evaluate(async ([LIST, QUICK, LIMIT]) => {
     const stage = new THREE.Scene(); top.updateMatrixWorld(true);
     top.traverse((o: any) => { if (!o.isLight || !o.visible) return; const c = o.clone(false); o.getWorldPosition(c.position); stage.add(c); if (o.target) { c.target = new THREE.Object3D(); o.target.getWorldPosition(c.target.position); stage.add(c.target); } });
     const home = av.root.parent; stage.attach(av.root);
-    const fd = new THREE.Vector3(0, 0, 1).applyQuaternion((role ? av.rig : av.root).getWorldQuaternion(new THREE.Quaternion())), yaw   /* (a crowd host turns its rig, not its root) */ = Math.atan2(fd.x, fd.z);
+    const fd = new THREE.Vector3(0, 0, 1).applyQuaternion((role ? av.rig : av.root).getWorldQuaternion(new THREE.Quaternion())), yaw0 = Math.atan2(fd.x, fd.z), yaw = role ? faceYaw(av, M, yaw0) : yaw0   /* (a crowd host turns its rig, not its root; and the shoulders say where the model faces) */;
     let hb: any = null; M.obj.traverse((o: any) => { if (o.isBone && o.name === 'head') hb = o; });
     G.paused = true;   // (the valley's own update would turn the villager and change its mood between pictures)
     // (and the code person's own parts must be the hidden ones: count what is drawn of each)
     let codeOn = 0; av.rig.traverse((o: any) => { if (o.isMesh && o.visible && !M.obj.getObjectById(o.id)) { let p = o, vis = true; while (p && p !== av.root) { if (!p.visible) vis = false; p = p.parent; } if (vis) codeOn++; } });
     if (codeOn) cases.push({ id, pose: 'code-parts', view: String(codeOn), worn: 1, eyes: 0 });
     const setMood = (m: string) => { if (av.life) { av.life.mood = m; av.life.blink = av.life.t + 60; av.life.glance = av.life.t + 60; av.life.feel = ''; } M.follow(m); };
+    let hyaw = yaw;
     const frame = (s: number, k: number, hd: boolean) => {   // head (k .86 of the height, close) or whole villager
       av.root.updateMatrixWorld(true); const box = new THREE.Box3().setFromObject(M.obj, true), Hh = box.max.y - box.min.y, c = box.getCenter(new THREE.Vector3());
-      const at = hd ? (hb ? hb.getWorldPosition(new THREE.Vector3()).add(new THREE.Vector3(0, .1, 0)) : new THREE.Vector3(c.x, box.min.y + Hh * k, c.z)) : c, dir = new THREE.Vector3(Math.sin(yaw), 0, Math.cos(yaw)).applyAxisAngle(new THREE.Vector3(0, 1, 0), s);
+      const at = hd ? (hb ? hb.getWorldPosition(new THREE.Vector3()).add(new THREE.Vector3(0, .1, 0)) : new THREE.Vector3(c.x, box.min.y + Hh * k, c.z)) : c, dir = new THREE.Vector3(Math.sin(hd ? hyaw : yaw), 0, Math.cos(hd ? hyaw : yaw)).applyAxisAngle(new THREE.Vector3(0, 1, 0), s);
       const cam = new THREE.PerspectiveCamera(28, W / H, .05, 200); cam.position.copy(at).addScaledVector(dir, Hh * (hd ? .75 : 2.1)); cam.lookAt(at); cam.updateMatrixWorld(true); return cam;
     };
     // eyes (audit.mts's rule): the open eye's whites are found in the smile, under the face pieces only, and must be gone shut
-    av.life = null; A.animate(av, 'idle', 1);
+    av.life = null; A.animate(av, 'idle', 1); setMood('smile'); hyaw = role ? headYaw(M, yaw) : yaw;
     for (const s of (QUICK ? [0, .7] : [0, .7, -.7, 1.2, -1.2])) {
       const cam = frame(s, .86, true), solo = new THREE.Scene(), par = stage;
       const saved: any[] = []; M.obj.traverse((o: any) => { if (o.isMesh) saved.push([o, o.material, o.visible]); });
