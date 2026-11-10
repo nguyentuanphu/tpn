@@ -1,0 +1,133 @@
+// (Meshy production, 10 Nov 2026) The villagers' auditor: the same gate as audit.mts (which is for the four friends and
+// their clothes), for the named villagers, whole Meshy models on their own painted faces with mood pieces. Each villager
+// is drawn by the game itself where it stands in the valley (js/main.ts wears models/villager-<id>.glb near a child):
+//   worn     the model must be worn (not the code person): 1 when it is not
+//   eyes     every closed mood (blink, happy) from the front, three-quarters and the sides: no eye white (pale,
+//            colourless pixels where the open eye's white was, beside its dark iris) may be left; the same rule as audit.mts
+//   unseen   the face pieces cover under 400 px of a head picture (the villager was not in the picture: it passes nothing)
+//   mouth    front view: how far the mood mouth (what changes from smile to surprised, below the eyes) lies under the eyes
+//            (what changes from smile to blink), in hundredths of the eyes' width: Bom's mouth on his collar (10 Nov)
+//   size     models/villager-<id>.glb over 500 KB
+// It also keeps pose pictures (idle, walk, wave, cheer, sit; front and back) for the review sheets.
+//   cd tests; SV_URL=http://localhost:<port>/ node ../tools/meshy/audit_villager.mts <out dir> ba,bom,... [quick]
+//   node ../tools/meshy/audit_villager.mts <out dir> merge   (joins <out>/part-<id> runs, as audit.mts merge)
+import { createRequire } from 'node:module';
+import { open, clear } from '../../tests/harness.mts';
+const { chromium } = createRequire(new URL('../../tests/package.json', import.meta.url))('playwright');
+import { writeFileSync, mkdirSync, readdirSync, readFileSync, copyFileSync, existsSync, statSync } from 'node:fs';
+const [OUT, LIST = 'ba', QUICK = ''] = process.argv.slice(2);
+mkdirSync(OUT, { recursive: true });
+const LIMIT = { worn: 0, unseen: 0, eyes: 6, mouth: 100, size: 500 };   // (unseen: the face pieces cover under 400 px of a head picture: nothing was looked at, 10 Nov)
+function summarize(cs: any[]) { const keys = Object.keys(LIMIT), fail = cs.filter(c => keys.some(k => c[k] > LIMIT[k]));
+  const lines = [`audit ${new Date().toISOString()} cases ${cs.length} failing ${fail.length}`];
+  for (const k of keys) lines.push(`${k}: ${cs.filter(c => c[k] > LIMIT[k]).length} cases over ${LIMIT[k]}, worst ${Math.max(0, ...cs.map(c => c[k] || 0))}`);
+  for (const id of [...new Set(cs.map(c => c.id))]) { const f = fail.filter(c => c.id === id); if (f.length) lines.push(`${id}: ` + f.map(c => `${c.pose}/${c.view} ` + keys.filter(k => c[k] > LIMIT[k]).map(k => `${k} ${c[k]}`).join(' ')).join('; ')); }
+  writeFileSync(`${OUT}/summary.txt`, lines.join('\n') + '\n'); writeFileSync(`${OUT}/cases.json`, JSON.stringify(cs)); console.log(lines.join('\n')); }
+if (LIST === 'merge') {
+  const cs: any[] = [];
+  for (const d of readdirSync(OUT).filter(d => d.startsWith('part-') && !d.includes('.'))) { const dir = `${OUT}/${d}`;
+    if (!existsSync(`${dir}/cases.json`)) throw new Error(`audit part ${d} has no cases.json: it failed`);
+    cs.push(...JSON.parse(readFileSync(`${dir}/cases.json`, 'utf8')));
+    for (const f of readdirSync(dir).filter(f => f.endsWith('.png'))) copyFileSync(`${dir}/${f}`, `${OUT}/${f}`); }
+  summarize(cs); process.exit(0);
+}
+const ids = LIST.split(',');
+const sizes: Record<string, number> = {}; for (const id of ids) { const f = new URL(`../../models/villager-${id}.glb`, import.meta.url); sizes[id] = existsSync(f) ? Math.round(statSync(f).size / 1024) : 99999; }
+const b = await chromium.launch({ args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'] });
+// (10 Nov 2026: on a busy machine (other chats' audits at 100% CPU) the page took over 30 s to load: 3 min limits, three tries)
+const nc = b.newContext.bind(b); b.newContext = async (o: any) => { const c = await nc(o); c.setDefaultNavigationTimeout(180000); c.setDefaultTimeout(180000); return c; };
+let P: any = null; for (let t = 0; t < 3 && !P; t++) { try { P = await open(b, { w: 900, h: 700, fast: false }); } catch (e) { console.error('open failed, try', t + 1, String(e).slice(0, 120)); if (t === 2) throw e; } }
+await clear(P.page);
+const res: any = await P.page.evaluate(async ([LIST, QUICK, LIMIT]) => {
+  const G = (window as any).__sv, A = await import(String('/js/avatar.js')), { THREE } = await import(String('/js/gfx.js'));
+  const h = G.heroes[0], R = G.renderer;
+  const w = (ms: number) => { dispatchEvent(new Event('pointermove')); document.querySelectorAll('.storybook, .dialog, .modal, .reward').forEach(e => e.remove()); G.paused = false; G.world.time = .42; return new Promise(res => setTimeout(res, ms)); };
+  let top = h.av.root; while (top.parent) top = top.parent; G.world.time = .42;
+  const W = 360, H = 480, rt = new THREE.WebGLRenderTarget(W, H), N = W * H;
+  // (10 Nov 2026: a villager standing still shows the far "still" copy, the old code person (js/main.ts showStill), even
+  // near the camera here: the first round audited that copy, not the Meshy model. Every picture shows the model.)
+  let cur: any = null; const useModel = () => { if (cur) { A.showStill(cur, false); if (cur.model) cur.model.obj.visible = true; } };
+  const read = (scene: any, cam: any) => { useModel(); cam.layers.enableAll(); R.setRenderTarget(rt);   // (a villager far from the valley's camera is on layer 1, js/main.ts: six of eleven came out blank and passed)
+  R.setClearColor(0x000000, 0); R.clear(); R.render(scene, cam); const px = new Uint8Array(N * 4); R.readRenderTargetPixels(rt, 0, 0, W, H, px); R.setRenderTarget(null); return px; };
+  const png = (px: Uint8Array, flags: Uint8Array | null) => {
+    const cv = document.createElement('canvas'); cv.width = W; cv.height = H; const x = cv.getContext('2d'), im = x.createImageData(W, H);
+    for (let y = 0; y < H; y++) for (let i = 0; i < W; i++) { const s = ((H - 1 - y) * W + i) * 4, d = (y * W + i) * 4; const f = flags && flags[(H - 1 - y) * W + i];
+      im.data[d] = f ? 255 : px[s]; im.data[d + 1] = f ? 0 : px[s + 1]; im.data[d + 2] = f ? 255 : px[s + 2]; im.data[d + 3] = 255; }
+    x.putImageData(im, 0, 0); return cv.toDataURL('image/png');
+  };
+  const flat = new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide });
+  const cases: any[] = [], pics: Record<string, string> = {};
+  for (const id of LIST.split(',')) {
+    const n = G.npcs.find((x: any) => x.id === id); if (!n) { cases.push({ id, pose: 'find', view: '-', worn: 1, eyes: 0 }); continue; }
+    h.place(n.obj.position.x + 2, n.obj.position.z + 2);
+    for (let k = 0; k < 240 && n._vm !== 'worn' && n._vm !== 'code'; k++) await w(500);   // (up to 2 min: 24 s was too short on a busy machine)
+    if (n._vm !== 'worn') { cases.push({ id, pose: 'wear', view: String(n._vm), worn: 1, eyes: 0 }); continue; }
+    const av = n.A; cur = av; const M = av.model;
+    // (10 Nov 2026: villagers stand by houses, trees and stalls; seen from the child's side these hid the face, so the eye
+    // check passed on a wall, and hiding them hid the lights too) the villager is moved, as it stands, into a stage of its
+    // own with copies of the valley's lights, and looked at from its own front
+    const stage = new THREE.Scene(); top.updateMatrixWorld(true);
+    top.traverse((o: any) => { if (!o.isLight || !o.visible) return; const c = o.clone(false); o.getWorldPosition(c.position); stage.add(c); if (o.target) { c.target = new THREE.Object3D(); o.target.getWorldPosition(c.target.position); stage.add(c.target); } });
+    const home = av.root.parent; stage.attach(av.root);
+    const fd = new THREE.Vector3(0, 0, 1).applyQuaternion(av.root.getWorldQuaternion(new THREE.Quaternion())), yaw = Math.atan2(fd.x, fd.z);
+    let hb: any = null; M.obj.traverse((o: any) => { if (o.isBone && o.name === 'head') hb = o; });
+    G.paused = true;   // (the valley's own update would turn the villager and change its mood between pictures)
+    // (and the code person's own parts must be the hidden ones: count what is drawn of each)
+    let codeOn = 0; av.rig.traverse((o: any) => { if (o.isMesh && o.visible && !M.obj.getObjectById(o.id)) { let p = o, vis = true; while (p && p !== av.root) { if (!p.visible) vis = false; p = p.parent; } if (vis) codeOn++; } });
+    if (codeOn) cases.push({ id, pose: 'code-parts', view: String(codeOn), worn: 1, eyes: 0 });
+    const setMood = (m: string) => { if (av.life) { av.life.mood = m; av.life.blink = av.life.t + 60; av.life.glance = av.life.t + 60; av.life.feel = ''; } M.follow(m); };
+    const frame = (s: number, k: number, hd: boolean) => {   // head (k .86 of the height, close) or whole villager
+      av.root.updateMatrixWorld(true); const box = new THREE.Box3().setFromObject(M.obj, true), Hh = box.max.y - box.min.y, c = box.getCenter(new THREE.Vector3());
+      const at = hd ? (hb ? hb.getWorldPosition(new THREE.Vector3()).add(new THREE.Vector3(0, .1, 0)) : new THREE.Vector3(c.x, box.min.y + Hh * k, c.z)) : c, dir = new THREE.Vector3(Math.sin(yaw), 0, Math.cos(yaw)).applyAxisAngle(new THREE.Vector3(0, 1, 0), s);
+      const cam = new THREE.PerspectiveCamera(28, W / H, .05, 200); cam.position.copy(at).addScaledVector(dir, Hh * (hd ? .75 : 2.1)); cam.lookAt(at); cam.updateMatrixWorld(true); return cam;
+    };
+    // eyes (audit.mts's rule): the open eye's whites are found in the smile, under the face pieces only, and must be gone shut
+    av.life = null; A.animate(av, 'idle', 1);
+    for (const s of (QUICK ? [0, .7] : [0, .7, -.7, 1.2, -1.2])) {
+      const cam = frame(s, .86, true), solo = new THREE.Scene(), par = stage;
+      const saved: any[] = []; M.obj.traverse((o: any) => { if (o.isMesh) saved.push([o, o.material, o.visible]); });
+      setMood('smile'); saved.forEach(([o, m, v]: any) => { o.visible = v && /^face-/.test(m.name || ''); if (o.visible) o.material = flat; });
+      solo.add(av.root); av.root.updateMatrixWorld(true); const Pf = read(solo, cam); par.add(av.root); av.root.updateMatrixWorld(true);
+      saved.forEach(([o, m, v]: any) => { o.material = m; o.visible = v; });
+      { let fp = 0; for (let i = 0; i < N; i++) if (Pf[i * 4 + 3]) fp++; if (fp < 400) cases.push({ id, pose: 'seen', view: String(s), worn: 0, eyes: 0, unseen: 1, facePx: fp }); }
+      const tags: any[] = []; av.root.traverse((o: any) => { if ((o.isSprite || o.isMesh) && o.visible && !saved.some(x => x[0] === o)) { tags.push(o); o.visible = false; } });
+      const O = read(stage, cam); par.remove(av.root); const Bk = read(stage, cam); par.add(av.root); av.root.updateMatrixWorld(true);
+      const mine = (i: number) => Math.abs(O[i * 4] - Bk[i * 4]) + Math.abs(O[i * 4 + 1] - Bk[i * 4 + 1]) + Math.abs(O[i * 4 + 2] - Bk[i * 4 + 2]) > 24;
+      const hsv = (px: Uint8Array, i: number) => { const r = px[i * 4], g = px[i * 4 + 1], b = px[i * 4 + 2], mx = Math.max(r, g, b); return [mx / 255, mx ? (mx - Math.min(r, g, b)) / mx : 0]; };
+      const dark = new Uint8Array(N); for (let i = 0; i < N; i++) { if (!Pf[i * 4 + 3]) continue; if (hsv(O, i)[0] < .35) dark[i] = 1; }
+      const nearDark = (i: number) => { const x = i % W, y = (i / W) | 0; for (let dy = -8; dy <= 8; dy += 2) for (let dx = -8; dx <= 8; dx += 2) { const xx = x + dx, yy = y + dy; if (xx >= 0 && yy >= 0 && xx < W && yy < H && dark[yy * W + xx]) return true; } return false; };
+      const white = new Uint8Array(N); for (let i = 0; i < N; i++) { if (!Pf[i * 4 + 3] || !mine(i) || i >= N - W * 10) continue; const [v, sa] = hsv(O, i); if (v > .82 && sa < .16 && nearDark(i)) white[i] = 1; }
+      const grow = new Uint8Array(N); for (let i = 0; i < N; i++) if (white[i]) { const x = i % W, y = (i / W) | 0; for (let dy = -3; dy <= 3; dy++) for (let dx = -3; dx <= 3; dx++) { const xx = x + dx, yy = y + dy; if (xx >= 0 && yy >= 0 && xx < W && yy < H) grow[yy * W + xx] = 1; } }
+      for (const m of ['blink', 'happy']) {
+        setMood(m); const C = read(stage, cam), f = new Uint8Array(N); let k = 0;
+        for (let i = 0; i < N; i++) { if (!grow[i]) continue; const [v, sa] = hsv(C, i); if (v > .8 && sa < .18) { f[i] = 1; k++; } }
+        cases.push({ id, pose: m, view: String(s), worn: 0, eyes: k });
+        if (k > LIMIT.eyes) pics[`${id}-face-${m}-${s}-eyes`] = png(C, f);
+      }
+      if (s === 0) {   // the mouth's place, front only
+        setMood('smile'); const S0 = read(stage, cam); setMood('blink'); const SB = read(stage, cam); setMood('o'); const SS = read(stage, cam); setMood('smile');
+        const df = (a: Uint8Array, b: Uint8Array, i: number) => Math.abs(a[i * 4] - b[i * 4]) + Math.abs(a[i * 4 + 1] - b[i * 4 + 1]) + Math.abs(a[i * 4 + 2] - b[i * 4 + 2]) > 40;
+        let ex0 = W, ex1 = -1, ey = 0, en = 0; for (let i = 0; i < N; i++) if (df(S0, SB, i)) { const x = i % W, y = (i / W) | 0; ex0 = Math.min(ex0, x); ex1 = Math.max(ex1, x); ey += y; en++; }
+        if (en > 20) { ey /= en; let my = 0, mn = 0; const f = new Uint8Array(N);
+          for (let i = 0; i < N; i++) { const y = (i / W) | 0; if (y < ey - 4 && df(S0, SS, i)) { my += y; mn++; f[i] = 1; } }   // (the buffer is upside down: below the eyes is a smaller y)
+          const gap = mn > 10 ? Math.round((ey - my / mn) / Math.max(1, ex1 - ex0) * 100) : 0;
+          cases.push({ id, pose: 'surprised', view: 'mouth', worn: 0, eyes: 0, mouth: gap }); if (gap > LIMIT.mouth || QUICK) pics[`${id}-face-mouth-${gap}`] = png(SS, f); }
+      }
+      tags.forEach(o => { o.visible = true; });
+    }
+    setMood('smile');
+    // poses for the sheets (no counts): the villagers' own animations, front and back
+    for (const [pn, st, sp, frames] of [['idle', 'idle', 0, 1], ['walk', 'walk', 3, 9], ['wave', 'wave', 0, 3], ['cheer', 'cheer', 0, 3], ['sit', 'sit', 0, 2]] as [string, string, number, number][]) {
+      if (QUICK && pn !== 'idle' && pn !== 'walk') continue;
+      av.life = null; for (let f = 0; f <= frames; f++) A.animate(av, st, 10 + f * .05, sp);   // (life reset: the valley's time made the first frame not fresh)
+      M.follow('smile');
+      for (const [vn, s] of [['front', 0], ['back', Math.PI]] as [string, number][]) pics[`${id}-pose-${pn}-${vn}`] = png(read(stage, frame(s, 0, false)), null);
+    }
+    home.attach(av.root); av.life = null; A.animate(av, 'idle', 1); G.paused = false;
+  }
+  return { cases, pics };
+}, [LIST, QUICK, LIMIT] as any);
+for (const id of ids) res.cases.push({ id, pose: 'file', view: 'models', worn: 0, eyes: 0, size: sizes[id] });
+for (const [k, v] of Object.entries(res.pics as Record<string, string>)) writeFileSync(`${OUT}/${k}.png`, Buffer.from(v.split(',')[1], 'base64'));
+summarize(res.cases);
+await b.close();

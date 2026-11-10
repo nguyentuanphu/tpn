@@ -27,7 +27,7 @@ ORIGINAL = bool(J.get('original_skin'))
 SHIFT = bool(J.get('skin_shift')) and ORIGINAL; SKIN_REF = J.get('skin_ref')
 # (owner 8 Nov 2026) own_face: Meshy's own painted face stays; moods are soft pieces over the eyes and mouth only
 OWN = bool(J.get('own_face', ORIGINAL and J.get('keep_meshy_uvs')))
-TILE = 512 if TEX >= 1024 else 256 if TEX >= 512 and TRIS > 20000 else 128   # (256: a villager's one model, seen close and far) the face picture: sharp lashes and eye rims up close (the light model's is smaller)
+TILE = int(os.environ['FIT_TILE']) if os.environ.get('FIT_TILE') else 512 if TEX >= 1024 else 256 if TEX >= 512 and TRIS > 20000 else 128   # (10 Nov 2026: FIT_TILE, the villagers' 500 KB budget)  # (256: a villager's one model, seen close and far) the face picture: sharp lashes and eye rims up close (the light model's is smaller)
 os.makedirs(RDIR, exist_ok=True)
 bpy.ops.wm.read_factory_settings(use_empty=True)
 sc = bpy.context.scene; VL = bpy.context.view_layer
@@ -367,7 +367,7 @@ if mouthm.any():
             if (_n == _m).all(): break
             _m = _n
         _left &= ~_m
-        if _m.sum() >= 5 and np.ptp(np.nonzero(_m)[1]) < W_ * .3:
+        if _m.sum() >= 5 and np.ptp(np.nonzero(_m)[1]) < W_ * .3 and np.nonzero(_m)[0].max() < H_ * .95:   # (10 Nov 2026: Bom's red collar comes up from the picture's foot, darker than his faint lips: the sad and excited mouths were drawn on his neck; lips never touch the edge)
             _v = float(V[_m].mean())
             if _best is None or _v < _best[0]: _best = (_v, _m)
     if _best is not None: mouthm = _best[1]
@@ -697,7 +697,7 @@ if EYEBOX and not OWN:   # (own face: Meshy's face shape stays exactly; the piec
 from mathutils.bvhtree import BVHTree
 _btree = BVHTree.FromObject(body, bpy.context.evaluated_depsgraph_get())
 _otree = BVHTree.FromObject(moods[0], bpy.context.evaluated_depsgraph_get()) if moods else None   # the old layer's outline
-GN = 44 if TEX >= 1024 else 28   # (9 moods share the size: light model small enough for phones)
+GN = int(os.environ['FIT_GN']) if os.environ.get('FIT_GN') else 44 if TEX >= 1024 else 28   # (10 Nov 2026: FIT_GN, villagers' 500 KB: nine 44-grids were more points than the 9k body)  # (9 moods share the size: light model small enough for phones)
 gx = np.linspace(fx0, fx1, GN + 1); gz = np.linspace(fz0, fz1, GN + 1); gp = {}
 EYEW = [wbox(b, 14) for b in eyes.values()]   # the eye areas: one smooth lid surface over each socket, not its folds
 ineye = lambda x_, z_: any(xa <= x_ <= xb and za <= z_ <= zb for xa, xb, za, zb in EYEW)
@@ -1276,7 +1276,7 @@ if TEX and KEEP and SHIFT:
                 _cd.foreach_set('color', _b2)
             print('FIT eye-area triangles marked skin', int(_add.sum()))
 if TEX:
-    colour.scale(TEX, TEX); colour.file_format = 'JPEG'; colour.save(filepath=jp, quality=88 if TEX >= 1024 else 72)   # (owner 8 Nov 2026: 62 left speckles on the necks)
+    colour.scale(TEX, TEX); colour.file_format = 'JPEG'; colour.save(filepath=jp, quality=int(os.environ.get('FIT_JPGQ') or (88 if TEX >= 1024 else 72)))   # (owner 8 Nov 2026: 62 left speckles on the necks)
     jimg = bpy.data.images.load(jp); jimg.name = ID + '-colour'
     for m_ in (clothm, skinm):
         for n in m_.node_tree.nodes:

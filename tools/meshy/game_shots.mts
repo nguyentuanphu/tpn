@@ -14,14 +14,17 @@ import { writeFileSync, mkdirSync } from 'node:fs';
 const [OUT, MODE = 'faces', LIST = 'finn,sol,clara,lumi'] = process.argv.slice(2);
 mkdirSync(OUT, { recursive: true });
 const b = await chromium.launch({ args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'] });
+// (10 Nov 2026: on a busy machine the page took over 30 s to load: 3 min limits)
+const nc = b.newContext.bind(b); b.newContext = async (o: any) => { const c = await nc(o); c.setDefaultNavigationTimeout(180000); c.setDefaultTimeout(180000); return c; };
 const P = await open(b, { w: 900, h: 700, fast: false }); await clear(P.page);
 const shots: Record<string, string> = await P.page.evaluate(async ([MODE, LIST, BARE, HIDE]) => {
   const G = (window as any).__sv, A = await import(String('/js/avatar.js')), FM = await import(String('/js/friend-model.js')), { THREE } = await import(String('/js/gfx.js'));
   const h = G.heroes[0], R = G.renderer, out: Record<string, string> = {};
   const w = (ms: number) => { dispatchEvent(new Event('pointermove')); document.querySelectorAll('.storybook, .dialog, .modal, .reward').forEach(e => e.remove()); G.paused = false; G.world.time = .42; return new Promise(res => setTimeout(res, ms)); };
   let top = h.av.root; while (top.parent) top = top.parent; G.world.time = .42;
+  let SCN: any = null;   // (village: the villager alone in a scene of its own with the valley's lights)
   const grab = (name: string, cam: any, W = 480, H = 480) => {
-    const rt = new THREE.WebGLRenderTarget(W, H); R.setRenderTarget(rt); R.clear(); R.render(top, cam);
+    const rt = new THREE.WebGLRenderTarget(W, H); if (SCN) cam.layers.enableAll(); R.setRenderTarget(rt); R.clear(); R.render(SCN || top, cam);   // (a villager far from the valley's camera is on layer 1, js/main.ts: six of eleven came out blank)
     const px = new Uint8Array(W * H * 4); R.readRenderTargetPixels(rt, 0, 0, W, H, px); R.setRenderTarget(null);
     const cv = document.createElement('canvas'); cv.width = W; cv.height = H; const x = cv.getContext('2d'), im = x.createImageData(W, H);
     for (let y = 0; y < H; y++) im.data.set(px.subarray((H - 1 - y) * W * 4, (H - y) * W * 4), y * W * 4); x.putImageData(im, 0, 0);
@@ -30,7 +33,7 @@ const shots: Record<string, string> = await P.page.evaluate(async ([MODE, LIST, 
   const headShot = (name: string, root: any, model: any, yaw: number, side: number, villager = false) => {
     root.updateMatrixWorld(true); let head: any = null; model.obj.traverse((o: any) => { if (o.isBone && o.name === 'head') head = o; });
     const box = new THREE.Box3().setFromObject(model.obj, true), Hh = box.max.y - box.min.y, bc = box.getCenter(new THREE.Vector3());
-    const at = head && !villager ? head.getWorldPosition(new THREE.Vector3()).add(new THREE.Vector3(0, .12, 0)) : new THREE.Vector3(bc.x, box.min.y + Hh * .86, bc.z);
+    const at = head ? head.getWorldPosition(new THREE.Vector3()).add(new THREE.Vector3(0, villager ? .1 : .12, 0)) : new THREE.Vector3(bc.x, box.min.y + Hh * .86, bc.z);   // (10 Nov 2026: villagers by their head bone too: a raised arm in the box put the head at the picture's foot)
     const fwd = new THREE.Vector3(Math.sin(yaw), 0, Math.cos(yaw)).applyAxisAngle(new THREE.Vector3(0, 1, 0), side);
     const cam = new THREE.PerspectiveCamera(28, 1, .05, 200); cam.position.copy(at).addScaledVector(fwd, Hh * .75); cam.lookAt(at);
     const hid: any[] = []; if (HIDE === 'face') model.obj.traverse((o: any) => { if (o.isMesh && o.visible && /^face-/.test(o.material && o.material.name || '')) { hid.push(o); o.visible = false; } });   // (HIDE=face: the mood pieces hidden, to tell what the body shows under them)
@@ -173,9 +176,25 @@ const shots: Record<string, string> = await P.page.evaluate(async ([MODE, LIST, 
     h.place(n.obj.position.x + 2, n.obj.position.z + 2);
     for (let k = 0; k < 80 && n._vm !== 'worn' && n._vm !== 'code'; k++) await w(200);
     if (n._vm !== 'worn') { out[id + '-notworn'] = ''; continue; }
-    const yaw = Math.atan2(h.pos.x - n.obj.position.x, h.pos.z - n.obj.position.z);
-    for (const m of ['smile', 'blink', 'happy']) { mood(n.A, n.A.model, m); for (const s of [0, .7]) headShot(`v-${id}-${m}-${s ? 'tq' : 'front'}`, n.A.root, n.A.model, yaw, s, true); }
-    for (const s of [Math.PI, 2.2]) headShot(`v-${id}-neck-back-${s.toFixed(1)}`, n.A.root, n.A.model, yaw, s, true);
+    // (10 Nov 2026) houses, trees and stalls round a villager hid the face and body from the child's side, and hiding them
+    // hid the group holding the lights too (a black picture): the villager is moved, as it stands, into a scene of its own
+    // with copies of the valley's lights, and looked at from its own front; the far "still" copy (the old code person) is
+    // never the one shown
+    const solo = new THREE.Scene(); solo.background = new THREE.Color(0xbcd6ec);
+    top.updateMatrixWorld(true); top.traverse((o: any) => { if (!o.isLight || !o.visible) return; const c = o.clone(false); o.getWorldPosition(c.position); solo.add(c); if (o.target) { c.target = new THREE.Object3D(); o.target.getWorldPosition(c.target.position); solo.add(c.target); } });
+    const par = n.A.root.parent; A.showStill(n.A, false); solo.attach(n.A.root); SCN = solo;
+    const fq = n.A.root.getWorldQuaternion(new THREE.Quaternion()), fd = new THREE.Vector3(0, 0, 1).applyQuaternion(fq), yaw = Math.atan2(fd.x, fd.z);
+    // (10 Nov 2026, the 11 villagers on their own Meshy faces) every mood front and three-quarter, the eye moods from both
+    // sides, the back from three sides, and the whole villager front, three-quarter and back in the valley's light
+    for (const m of MOODS) { mood(n.A, n.A.model, m); for (const s of [0, .7]) headShot(`v-${id}-${m}-${s ? 'tq' : 'front'}`, n.A.root, n.A.model, yaw, s, true); }
+    for (const m of ['smile', 'blink', 'lookL']) { mood(n.A, n.A.model, m); for (const s of [1.2, -1.2]) headShot(`v-${id}-${m}-side${s > 0 ? 'L' : 'R'}`, n.A.root, n.A.model, yaw, s, true); }
+    mood(n.A, n.A.model, 'smile');
+    for (const s of [Math.PI, 2.2, -2.2]) headShot(`v-${id}-neck-back-${s.toFixed(1)}`, n.A.root, n.A.model, yaw, s, true);
+    { n.A.root.updateMatrixWorld(true); const box = new THREE.Box3().setFromObject(n.A.model.obj, true), c = box.getCenter(new THREE.Vector3()), Hh = box.max.y - box.min.y;
+      for (const [nm, s] of [['front', 0], ['tq', .7], ['back', Math.PI]] as [string, number][]) {
+        const dir = new THREE.Vector3(Math.sin(yaw), 0, Math.cos(yaw)).applyAxisAngle(new THREE.Vector3(0, 1, 0), s);
+        const cf = new THREE.PerspectiveCamera(28, 360 / 480, .05, 200); cf.position.copy(c).addScaledVector(dir, Hh * 2.1); cf.lookAt(c); grab(`v-${id}-full-${nm}`, cf, 360, 480); } }
+    par.attach(n.A.root); SCN = null;
   }
   return out;
 }, [MODE, LIST, !!process.env.BARE, process.env.HIDE || ''] as any);   // (HIDE=shorts: that garment hidden in the poses, to tell which layer shows)

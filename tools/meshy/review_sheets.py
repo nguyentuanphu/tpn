@@ -15,7 +15,16 @@ def crop(path, box, size):
     im = Image.open(path).convert('RGB'); W, H = im.size
     return im.crop((int(W * box[0]), int(H * box[1]), int(W * box[2]), int(H * box[3]))).resize(size)
 
-if kind == 'eyes':
+if kind == 'village':   # (10 Nov 2026) per villager one row (village mode, v-<id>-*): moods front, blink and look from the side, back, whole front and back
+    fs = ['smile-front', 'blink-front', 'happy-front', 'sad-front', 'excited-front', 'smile-tq', 'blink-tq', 'blink-sideL', 'lookL-sideR', 'neck-back-3.1']
+    full = ['full-front', 'full-tq', 'full-back']
+    sheet = Image.new('RGB', (300 * len(fs) + 180 * len(full), 300 * len(ids)), (40, 40, 40))
+    for r, i in enumerate(ids):
+        for c, f in enumerate(fs):
+            sheet.paste(crop(rf'{d}\v-{i}-{f}.png', (.1, .1, .9, .9), (300, 300)), (c * 300, r * 300))
+        for c, f in enumerate(full):
+            sheet.paste(crop(rf'{d}\v-{i}-{f}.png', (.1, .05, .9, .95), (180, 300)), (300 * len(fs) + c * 180, r * 300))
+elif kind == 'eyes':
     fs = ['smile-front', 'blink-front', 'happy-front', 'half-front', 'happy-sideL', 'blink-sideR']
     sheet = Image.new('RGB', (400 * len(fs), 300 * len(ids)))
     for r, i in enumerate(ids):

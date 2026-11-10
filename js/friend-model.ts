@@ -278,7 +278,7 @@ export function attachFriendModel(A, id: string, skinHex: string, wear: FriendMo
   const dressed = dress(garments, A.look, wear), coverBits = dressed.bits;
   obj.traverse((o: any) => { const u = o.isMesh && o.material.userData; if (!u || !u.coverU || (o.material.name || '').startsWith('lit-g-')) return; u.coverU.value = coverBits; // (the body; garments have their own, set in dress)
     if (u.kitU && dressed.top) { u.kitU.top.value.set(dressed.top); u.kitU.bot.value.set(dressed.bot); u.kitU.on.value = 1; }
-    if (u.kitU && u.kitU.covCol) for (let k = 0; k < 8; k++) { u.kitU.covCol.value[k].set(dressed.cov[k]); u.kitU.covRank.value[k] = dressed.rank[k]; } });
+    if (u.kitU && u.kitU.covCol && dressed.cov) for (let k = 0; k < 8; k++) { u.kitU.covCol.value[k].set(dressed.cov[k]); u.kitU.covRank.value[k] = dressed.rank[k]; } }); // (10 Nov 2026, owner: "như recommended") a villager (whole Meshy model, clothes painted on) has no garments: dress() gives no cov, and this loop threw, so no Meshy villager was worn
   A.rig.add(obj); A.rig.updateMatrixWorld(true);
   // (v1.08e faces, part 2) the same thin ink outline as the code people, bent by the model's bones (not on the faces);
   // each follows its part's visibility (the item in the hand, the riding hands) and hides far away with the others

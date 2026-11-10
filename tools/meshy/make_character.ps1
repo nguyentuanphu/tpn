@@ -6,7 +6,7 @@
 #           copy only) -> audit.mts. villager: fit_person.ps1 -Villager -> models/villager-<id>.glb -> audit (moods).
 # Paid Meshy jobs are never made here: it works on raw models already downloaded (D:\WorkSpace\meshy\raw-models).
 # Nothing is committed: models go on the branch only after the owner approves the audit report and pictures.
-param([string]$Id = '', [string]$Batch = '', [ValidateSet('friend', 'villager')][string]$Kind = 'friend', [switch]$SkipFit, [switch]$Quick, [string]$Out = '')
+param([string]$Id = '', [string]$Batch = '', [ValidateSet('friend', 'villager')][string]$Kind = 'friend', [switch]$SkipFit, [switch]$Quick, [string]$Out = '', [int]$Jobs = 0)
 $ErrorActionPreference = 'Stop'
 $repo = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent; Set-Location $repo
 $ids = if ($Batch) { $Batch.Split(',') } else { @($Id) }
@@ -27,20 +27,29 @@ foreach ($i in $ids) {
     $log += "$i built in $([int]((Get-Date) - $t0).TotalSeconds) s: $r"
   } else {
     if (-not $SkipFit) { powershell -File tools/meshy/fit_person.ps1 -Id $i -Villager; if ($LASTEXITCODE) { throw "fit failed: $i" } }
-    Copy-Item "D:\WorkSpace\meshy\fitted\$i\$i-mid-packed.glb" "models\villager-$i.glb" -Force
-    $log += "$i built in $([int]((Get-Date) - $t0).TotalSeconds) s"
+    CopyRetry "D:\WorkSpace\meshy\fitted\$i\$i-mid-packed.glb" "models\villager-$i.glb"
+    $kb = [int]((Get-Item "models\villager-$i.glb").Length / 1KB); if ($kb -gt 500) { throw "villager model $i is $kb KB (limit 500)" }
+    $log += "$i built in $([int]((Get-Date) - $t0).TotalSeconds) s, $kb KB"
   }
 }
 node tools/build.mts | Out-Null
 Push-Location tests
 # (10 Nov 2026, owner: "chạy và sửa quá chậm") one audit process per character, side by side (one browser each), then merged
 New-Item -ItemType Directory -Force $Out | Out-Null
-$procs = foreach ($i in $ids) {
-  $a = @("..\tools\meshy\audit.mts", "$Out\part-$i", $i); if ($Quick) { $a += 'quick' }
-  Start-Process node -ArgumentList $a -NoNewWindow -PassThru -RedirectStandardOutput "$Out\part-$i.log" -RedirectStandardError "$Out\part-$i.err"
+# (10 Nov 2026) villagers: audit_villager.mts (audit.mts is the friends' and their clothes'); -Jobs: at most that many
+# browsers at once (0: all side by side). SV_URL picks the page server (a run of its own on another port).
+$aud = if ($Kind -eq 'villager') { '..\tools\meshy\audit_villager.mts' } else { '..\tools\meshy\audit.mts' }
+$running = @()
+# (-Jobs 1: one process for the whole batch: each process opens the game once, 3-4 min on a busy machine)
+$groups = if ($Jobs -eq 1) { @($ids -join ',') } else { $ids }
+foreach ($i in $groups) {
+  if ($Jobs -gt 0) { while (@($running | Where-Object { -not $_.HasExited }).Count -ge $Jobs) { Start-Sleep -Seconds 3 } }
+  $tag = if ($i.Contains(',')) { 'all' } else { $i }
+  $a = @($aud, "$Out\part-$tag", $i); if ($Quick) { $a += 'quick' }
+  $running += Start-Process node -ArgumentList $a -NoNewWindow -PassThru -RedirectStandardOutput "$Out\part-$tag.log" -RedirectStandardError "$Out\part-$tag.err"
 }
-$procs | Wait-Process
-node ..\tools\meshy\audit.mts $Out merge 2>$null | Out-Null
+$running | Wait-Process
+node $aud $Out merge 2>$null | Out-Null
 if ($LASTEXITCODE) { Pop-Location; throw "audit failed: see $Out\part-*.err" }
 Pop-Location
 $sum = Get-Content "$Out\summary.txt" -Encoding utf8
