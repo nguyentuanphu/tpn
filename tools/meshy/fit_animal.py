@@ -550,23 +550,52 @@ def face_pieces(o, arm, J, Fc):
             nt.links.new(tn.outputs['Color'], nt.nodes['Principled BSDF'].inputs['Base Color']); pm.materials.append(mat)
             g = po.vertex_groups.new(name=f'{kind}{i}'); g.add(list(range(len(pm.vertices))), 1.0, 'REPLACE')
             po.parent = arm; md = po.modifiers.new('rig', 'ARMATURE'); md.object = arm
-    # the open mouth: under the nose, where the painted smile is
+    # the open mouth (owner, 11 Nov 2026: "có thử khi há miệng chưa"): a piece laid on the muzzle's own surface, as the
+    # lids are, with its own picture: the fur there as painted and an open mouth (dark red, a pink tongue below) in it.
+    # Grown from its middle by the jaw bone. (A round piece set into the face stuck out of both cheeks from below.)
     nr = Fc['nose_r']
     if 'mouth' in Fc:
-        loc, nor = Vector(Fc['mouth']), Vector(Fc['mouth_n'])
-        Wm = nr * FIX.get('mouth_w', 1.1)
-        bm = bmesh.new(); bmesh.ops.create_uvsphere(bm, u_segments=14, v_segments=8, radius=1)
-        col = bm.loops.layers.color.new('Col')
-        for f in bm.faces:
-            for lp in f.loops:
-                p = lp.vert.co; lp[col] = (.95, .45, .5, 1) if (p.z < -.35 and p.y < -.2) else (.22, .05, .07, 1)
-        bmesh.ops.scale(bm, vec=(Wm, Wm * .5, Wm * .75), verts=bm.verts)
-        bmesh.ops.translate(bm, vec=loc + nor * -.002, verts=bm.verts)   # (its middle a little inside: only the front shows)
-        pm = bpy.data.meshes.new('mouth'); bm.to_mesh(pm); bm.free()
-        po = bpy.data.objects.new('mouth', pm); bpy.context.collection.objects.link(po)
-        mat = bpy.data.materials.new('felt'); mat.use_nodes = True; nt = mat.node_tree; ca = nt.nodes.new('ShaderNodeVertexColor'); ca.layer_name = 'Col'
-        nt.links.new(ca.outputs['Color'], nt.nodes['Principled BSDF'].inputs['Base Color']); pm.materials.append(mat)
-        pm.color_attributes.active_color = pm.color_attributes['Col']
+        c = np.array(Fc['mouth']); nrm = np.array(Fc['mouth_n']); nrm = nrm / np.linalg.norm(nrm)
+        side = np.cross((0, 0, 1.0), nrm); side /= np.linalg.norm(side); up = np.cross(nrm, side)
+        Wm = nr * FIX.get('mouth_w', 1.1); R = Wm * 1.5; TP = FIX.get('mouth_px', 96); GN = FIX.get('mouth_grid', 18) if not FARLOD else 12
+        img = np.zeros((TP, TP, 3)); hit = np.zeros((TP, TP), bool)
+        from mathutils.geometry import barycentric_transform
+        for a in range(TP):
+            for b in range(TP):
+                x = (b + .5) / TP * 2 * R - R; y = (a + .5) / TP * 2 * R - R
+                loc, nor_, fi, _ = bvh.ray_cast(Vector(c + side * x + up * y + nrm * R), Vector(-nrm))
+                if loc is None: continue
+                poly = me.polygons[fi]; vs = [me.vertices[k].co for k in poly.vertices[:3]]; uvs3 = [uvl[li].uv for li in poly.loop_indices[:3]]
+                u = barycentric_transform(loc, vs[0], vs[1], vs[2], Vector((*uvs3[0], 0)), Vector((*uvs3[1], 0)), Vector((*uvs3[2], 0)))
+                img[a, b] = sample(px, np.array([u.x, u.y])); hit[a, b] = True
+        if hit.any(): img[~hit] = img[hit].mean(0)
+        yy, xx = (np.mgrid[0:TP, 0:TP] + .5) / TP * 2 * R - R
+        rx, ry = Wm * .85, Wm * .55; e = (xx / rx) ** 2 + (yy / ry) ** 2
+        inside = np.clip((1 - e) / .12, 0, 1)[..., None]   # (a soft edge, two or three texels)
+        mouth = np.where(((yy < -ry * .15) & ((xx / (rx * .7)) ** 2 + ((yy + ry * .55) / (ry * .55)) ** 2 < 1))[..., None], np.array((.95, .45, .5)), np.array((.22, .05, .07)))
+        img = img * (1 - inside) + mouth * inside
+        name = f'meshy-{KIND}-mouth'
+        pim = bpy.data.images.new(name, TP, TP); pim.pixels[:] = np.concatenate([img, np.ones((TP, TP, 1))], 2).astype(np.float32).ravel(); pim.pack()
+        if DEBUG: pim.filepath_raw = os.path.join(OUT, name + '.png'); pim.file_format = 'PNG'; pim.save()
+        bm = bmesh.new(); uvL = bm.loops.layers.uv.new('UVMap'); grid = {}; lift = FIX.get('mouth_lift', .0025)
+        for a in range(GN + 1):
+            for b in range(GN + 1):
+                x = b / GN * 2 * R - R; y = a / GN * 2 * R - R
+                if math.hypot(x, y) > R * 1.02: continue
+                loc, nor_, _, _ = bvh.ray_cast(Vector(c + side * x + up * y + nrm * R), Vector(-nrm))
+                if loc is None: continue
+                k = 1 - smooth01((math.hypot(x, y) / R - .82) / .18)
+                grid[a, b] = bm.verts.new(loc + Vector(nrm) * (lift * k + .0004))
+        for a in range(GN):
+            for b in range(GN):
+                q = [(a, b), (a, b + 1), (a + 1, b + 1), (a + 1, b)]
+                if not all(k in grid for k in q): continue
+                f = bm.faces.new([grid[k] for k in q])
+                for lp, (ga, gb) in zip(f.loops, q): lp[uvL].uv = (gb / GN, ga / GN)
+        pm = bpy.data.meshes.new(name); bm.to_mesh(pm); bm.free()
+        po = bpy.data.objects.new(name, pm); bpy.context.collection.objects.link(po)
+        mat = bpy.data.materials.new(name); mat.use_nodes = True; nt = mat.node_tree; tn = nt.nodes.new('ShaderNodeTexImage'); tn.image = pim
+        nt.links.new(tn.outputs['Color'], nt.nodes['Principled BSDF'].inputs['Base Color']); pm.materials.append(mat)
         g = po.vertex_groups.new(name='jaw'); g.add(list(range(len(pm.vertices))), 1.0, 'REPLACE')
         po.parent = arm; md = po.modifiers.new('rig', 'ARMATURE'); md.object = arm
 

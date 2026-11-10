@@ -86,6 +86,45 @@ if (MODE === 'follow' || MODE === 'all') {
     }
   }
 }
+// legs and mouth (owner, 11 Nov 2026: "Tất cả chân và háng ok hết khi chạy nhảy phải không, có thử khi há miệng chưa"):
+// the legs and hips close up through running, jumping, bouncing, sitting, begging, rolling (six moments each, from the
+// side, behind, below), and the open mouth from the front, three-quarters and the side in every clip that opens it.
+// Writes legs-<clip>-<moment>-<view>.png and mouth-<clip>-<view>.png.
+if (MODE === 'legs' || MODE === 'mouth') n += save(await P.page.evaluate(async ([MODE, kinds]) => {
+  const G = (window as any).__sv, MK = await import(String('/js/modelkit.js')), { THREE } = await import(String('/js/gfx.js')), { clone } = await import(String('/vendor/SkeletonUtils.js'));
+  const h = G.heroes[0], R = G.renderer, out: Record<string, string> = {};
+  let top = h.av.root; while (top.parent) top = top.parent;
+  const SRGB = new Uint8Array(256).map((_, i) => { const v = i / 255; return Math.round(255 * (v <= .0031308 ? v * 12.92 : 1.055 * Math.pow(v, 1 / 2.4) - .055)); });
+  const grab = (name: string, cam: any, W = 360, H = 360) => { const rt = new THREE.WebGLRenderTarget(W, H); R.setRenderTarget(rt); R.clear(); R.render(top, cam);
+    const px = new Uint8Array(W * H * 4); R.readRenderTargetPixels(rt, 0, 0, W, H, px); R.setRenderTarget(null); rt.dispose();
+    for (let i = 0; i < px.length; i++) if ((i & 3) !== 3) px[i] = SRGB[px[i]];
+    const cv = document.createElement('canvas'); cv.width = W; cv.height = H; const x = cv.getContext('2d'), im = x.createImageData(W, H);
+    for (let y = 0; y < H; y++) im.data.set(px.subarray((H - 1 - y) * W * 4, (H - y) * W * 4), y * W * 4); x.putImageData(im, 0, 0); out[name] = cv.toDataURL('image/png'); };
+  for (const kind of kinds) {
+    const t = await MK.loadWorldModel('creature-' + kind); if (!t) continue;
+    const obj = clone(t.scene); obj.traverse((o: any) => { if (o.isSkinnedMesh) o.frustumCulled = false; });
+    const x0 = h.pos.x + 3, z0 = h.pos.z + 3; obj.position.set(x0, G.world.groundAt(x0, z0, h.pos.y + 1), z0); top.add(obj);
+    const mixer = new THREE.AnimationMixer(obj);
+    const pose = (clip: string, at: number) => { const c = t.clips.find((x: any) => x.name === clip); if (!c) return false; mixer.stopAllAction(); mixer.clipAction(c).reset().play(); mixer.setTime(c.duration * at); obj.updateMatrixWorld(true); return true; };
+    if (MODE === 'legs') for (const clip of ['run', 'carry', 'jump', 'bounce', 'sit', 'beg', 'roll']) for (const at of [0, .17, .33, .5, .67, .83]) {
+      if (!pose(clip, at)) continue;
+      const box = new THREE.Box3().setFromObject(obj, true), c = box.getCenter(new THREE.Vector3()), sz = box.getSize(new THREE.Vector3()), r = Math.max(sz.x, sz.y, sz.z);
+      const low = new THREE.Vector3(c.x, box.min.y + sz.y * .3, c.z);   // (the hips, belly and legs)
+      for (const [nm, dir] of [['side', new THREE.Vector3(1, .05, 0)], ['back', new THREE.Vector3(0, .15, -1)], ['below', new THREE.Vector3(.35, -.7, .2)]] as [string, any][]) {
+        const cam = new THREE.PerspectiveCamera(30, 1, .01, 50); cam.position.copy(low).addScaledVector(dir.normalize(), r * 1.9); cam.lookAt(low); grab(`legs-${clip}-${at}-${nm}`, cam); }
+    }
+    if (MODE === 'mouth') for (const clip of ['wag', 'cheer', 'surprised', 'bounce', 'jump', 'run']) {
+      const c = t.clips.find((x: any) => x.name === clip); if (!c) continue;
+      let best = .5, bs = -1; for (let k = 0; k < 20; k++) { pose(clip, k / 20); const j = obj.getObjectByName('jaw'); const sc = j ? j.getWorldScale(new THREE.Vector3()).x : 0; if (sc > bs) { bs = sc; best = k / 20; } }
+      pose(clip, best); const jaw = obj.getObjectByName('jaw'), head = obj.getObjectByName('head');
+      const at = jaw.getWorldPosition(new THREE.Vector3()), fwd = at.clone().sub(new THREE.Box3().setFromObject(obj, true).getCenter(new THREE.Vector3())); fwd.y = 0; fwd.normalize();   // (level, from the body's middle out through the mouth)
+      for (const [nm, yaw] of [['front', 0], ['tq', .7], ['side', 1.3], ['sideR', -1.3]] as [string, number][]) {
+        const cam = new THREE.PerspectiveCamera(30, 1, .005, 20); cam.position.copy(at).addScaledVector(fwd.clone().applyAxisAngle(new THREE.Vector3(0, 1, 0), yaw), .32); cam.position.y += .04; cam.lookAt(at); grab(`mouth-${clip}-${nm}`, cam); }
+    }
+    top.remove(obj);
+  }
+  return out;
+}, [MODE, kinds] as any));
 // skills (Meshy pets, 10 Nov 2026): the child's first pet's own skills in the game's camera: fetching the ball (thrown,
 // carried back), digging, leading the way. Writes skill-<name>-<n>.png.
 if (MODE === 'skills') {

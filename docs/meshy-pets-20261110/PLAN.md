@@ -190,3 +190,14 @@ animal can do, that opens a place or a game the child could not reach alone:
 - "Giữ 2 bản, duyệt": the Meshy puppy goes on the branch, both models (near `creature-puppy-hd.glb` within 16 m,
   far `creature-puppy.glb` beyond 24 m, as the friends' two files). Pet scale 0.6 kept. The special-skill proposal
   for the other pets agreed. Not merged into main, not deployed, no version change.
+
+## Legs, hips and the open mouth (11 Nov 2026, owner: "Tất cả chân và háng ok hết khi chạy nhảy phải không, có thử khi há miệng chưa")
+
+- **Legs and hips**: close-ups (`pet_shots.mts legs`) of run, carry, jump, bounce, sit, beg and roll, six moments each,
+  from the side, behind and below: no tears, no gaps at the hips or between the hind legs, the feet on the ground.
+  Sheets: `puppy-legs-side.jpg`, `puppy-legs-back.jpg`, `puppy-legs-below.jpg`.
+- **Open mouth: a fault found and fixed.** The open mouth was a round piece set into the face: from the front it looked
+  right, from below and the sides it stuck out of both cheeks as dark red bumps. It is now a piece laid on the
+  muzzle's own surface (like the lids) with its own picture (the fur as painted, a smaller open mouth with a pink
+  tongue), grown from its middle by the jaw. The auditor's new `mouth` check counts any point of it more than 1.2 cm
+  off the face's own triangles (a planted oversized mouth is caught). Sheet: `puppy-mouth.jpg` (`pet_shots.mts mouth`).

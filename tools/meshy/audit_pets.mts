@@ -16,6 +16,7 @@
 //            stands (idle, walk, follow, sad, sleep)
 //   eyes     the painted eye (its dark pupil, its white sparkles) still seen while the eyes are shut (sleep) or happy,
 //            from the front, three-quarters and the side on both sides
+//   mouth    the open mouth's piece more than 1.2 cm off the muzzle anywhere (it must lie on the face, not stick out)
 //   flicker  the lids fighting the face for the same depth: texels in the eyes that change colour when the same moment
 //            is drawn again with other near and far planes (the same picture, other depth values)
 //   hat      every hat a pet can wear (js/kidplay.ts HATS) in every clip, put on as the game does (on the head bone):
@@ -35,7 +36,7 @@ const { chromium } = createRequire(new URL('../../tests/package.json', import.me
 import { writeFileSync, mkdirSync, statSync } from 'node:fs';
 const [OUT, LIST = 'puppy', MODE = ''] = process.argv.slice(2);
 mkdirSync(OUT, { recursive: true });
-const LIMIT = { stretch: 300, tear: 6, sink: 0, float: 0, eyes: 6, hat: 0, flicker: 12 };   // (tear 6: the Meshy puppy's own 4 px gap where an ear meets the cheek, in the rest pose too)
+const LIMIT = { stretch: 300, tear: 6, sink: 0, float: 0, eyes: 6, hat: 0, flicker: 12, mouth: 0 };   // (tear 6: the Meshy puppy's own 4 px gap where an ear meets the cheek, in the rest pose too)
 const SIZE = { near: 800, far: 400 };
 const b = await chromium.launch({ args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'] });
 const _nc = b.newContext.bind(b); b.newContext = async (o: any) => { const c = await _nc(o); c.setDefaultNavigationTimeout(240000); c.setDefaultTimeout(600000); return c; };
@@ -119,18 +120,19 @@ const res: any = await P.page.evaluate(async ([kinds, MODE, LIMIT]) => {
     const views: [string, number, number][] = (quick ? [['front', 0, .1], ['side', Math.PI / 2, .1], ['back', Math.PI, .1], ['tq', .8, .3]] as [string, number, number][]
       : [...[0, 1, 2, 3, 4, 5, 6, 7].map(k => ['y' + k * 45, k * Math.PI / 4, .12] as [string, number, number]), ['above', .3, 2.5], ['below', .3, -2.5]] as [string, number, number][])
       .concat([['levelR', Math.PI / 2, 0], ['levelL', -Math.PI / 2, 0]]);   // (level from each side too: a hole right through the trunk, seen a little from above, has a rim on both of its walls, far apart in depth, and reads as a gap)
-    const plants = self ? (kind === kinds[0] && lod === 'near' ? ['stretch', 'tear', 'eyes', 'sink'] : []) : ['none'];   // (selftest: the plants only)
-    for (const plant of plants) for (const clip of (plant === 'none' ? clips : plant === 'eyes' ? ['sleep'] : ['idle'])) {
+    const plants = self ? (kind === kinds[0] && lod === 'near' ? ['stretch', 'tear', 'eyes', 'sink', 'mouth'] : []) : ['none'];   // (selftest: the plants only)
+    for (const plant of plants) for (const clip of (plant === 'none' ? clips : plant === 'eyes' ? ['sleep'] : plant === 'mouth' ? ['wag'] : ['idle'])) {
       const c = t.clips.find((x: any) => x.name === clip); mixer.stopAllAction(); const a = mixer.clipAction(c); a.reset().play();
       const moments = quick || plant !== 'none' ? [.15, .5, .85] : [0, .17, .33, .5, .67, .83];
       for (const f of moments) {
         mixer.setTime(c.duration * f); obj.position.set(0, 0, 0); obj.updateMatrixWorld(true);
         if (plant === 'stretch') { bone('knee0').scale.setScalar(2.6); obj.updateMatrixWorld(true); }
         if (plant === 'sink') { bone('body').position.y -= Hh * .08; obj.updateMatrixWorld(true); }
+        if (plant === 'mouth' && bone('jaw')) { bone('jaw').scale.multiplyScalar(2.5); bone('jaw').position.z += Hh * .02; obj.updateMatrixWorld(true); }   // (an open mouth too big for the face, standing off it)
         const hidden: any[] = []; if (plant === 'eyes') obj.traverse((o: any) => { if (o.isMesh && /-(shut|joy)\d$/.test(o.material.name)) { o.visible = false; hidden.push(o); } });
         PLANT.value = plant === 'tear' ? 1 : 0; if (plant === 'tear') {   // (a torn ear: a hole through its flap where it hangs out beyond the cheek, seen from the front)
           const e = bone('ear0'); obj.updateMatrixWorld(true); e.getWorldPosition(PLANTAT.value); PLANTAT.value.x += Math.sign(PLANTAT.value.x || -1) * Hh * .07; PLANTAT.value.y -= Hh * .12; }
-        const cs: any = { kind, lod, clip, t: +f.toFixed(2), plant, stretch: 0, tear: 0, sink: 0, float: 0, eyes: 0, hat: 0, flicker: 0, worst: '' };
+        const cs: any = { kind, lod, clip, t: +f.toFixed(2), plant, stretch: 0, tear: 0, sink: 0, float: 0, eyes: 0, hat: 0, flicker: 0, mouth: 0, worst: '' };
         // stretch and the ground
         skinned(body, now); let minY = 1e9; const strK: number[] = [];
         for (let i = 1; i < now.length; i += 3) minY = Math.min(minY, now[i]);
@@ -154,6 +156,21 @@ const res: any = await P.page.evaluate(async ([kinds, MODE, LIMIT]) => {
           if (DEBUG.on) { cs.plantAt = PLANTAT.value.toArray().map((v: number) => +v.toFixed(3)); cs.c0 = c0.toArray().map((v: number) => +v.toFixed(3)); cs.box = [new THREE.Box3().setFromObject(obj, true).min.toArray().map((v: number) => +v.toFixed(2)), new THREE.Box3().setFromObject(obj, true).max.toArray().map((v: number) => +v.toFixed(2))]; }
           if (tr.count > cs.tear) { cs.tear = tr.count; cs.worst = vn; worstPic = { cam, flags: tr.flags }; }
         }
+        // (owner, 11 Nov 2026: "có thử khi há miệng chưa") the open mouth lies on the muzzle: no point of its piece more
+        // than 1.2 cm off the face (a piece set into the face stuck out of both cheeks)
+        const jb = bone('jaw');
+        if (jb && jb.getWorldScale(_w).x > .3) { let mm: any = null; obj.traverse((o: any) => { if (o.isSkinnedMesh && /-mouth$/.test(o.material.name)) mm = o; });
+          if (mm) { const mp = new Float32Array(mm.geometry.attributes.position.count * 3); skinned(mm, mp); const jp = jb.getWorldPosition(new THREE.Vector3()), near: number[] = [];
+            for (let k = 0; k < nv; k++) if (Math.hypot(now[k * 3] - jp.x, now[k * 3 + 1] - jp.y, now[k * 3 + 2] - jp.z) < .1) near.push(k);
+            // (the distance to the face's own triangles: Meshy's muzzle has big ones, so a point lying on it can be 2 cm from
+            // every corner; only a point outside the face, above it, counts)
+            const nearSet = new Set(near), tris: number[] = [];
+            for (let k = 0; k < idx.length; k += 3) if (nearSet.has(idx[k]) && nearSet.has(idx[k + 1]) && nearSet.has(idx[k + 2])) tris.push(k);
+            const A = new THREE.Vector3(), Bv = new THREE.Vector3(), Cv = new THREE.Vector3(), Pm = new THREE.Vector3(), tri = new THREE.Triangle(), cp = new THREE.Vector3(), nn = new THREE.Vector3();
+            for (let q = 0; q < mp.length; q += 3) { Pm.set(mp[q], mp[q + 1], mp[q + 2]); let dmin = 1e9, above = 0;
+              for (const k of tris) { const a = idx[k] * 3, b = idx[k + 1] * 3, c2 = idx[k + 2] * 3; A.set(now[a], now[a + 1], now[a + 2]); Bv.set(now[b], now[b + 1], now[b + 2]); Cv.set(now[c2], now[c2 + 1], now[c2 + 2]);
+                tri.set(A, Bv, Cv); tri.closestPointToPoint(Pm, cp); const d = cp.distanceTo(Pm); if (d < dmin) { dmin = d; tri.getNormal(nn); above = Pm.clone().sub(cp).dot(nn); } }
+              if (dmin > .012 && Math.abs(above) > .012) cs.mouth++; } } }
         // the eyes, while shut or happy: dark pupils or white sparkles where the eyes are
         const s0 = bone('shut0'), s1 = bone('shut1');
         const shutOn = s0 && (s0.getWorldScale(_w).x > .5 || bone('joy0').getWorldScale(_w).x > .5);
@@ -269,7 +286,7 @@ for (const kind of kinds) for (const lod of ['near', 'far']) {
 }
 if (MODE === 'selftest') {
   const caught = (p: string, k: string) => cs.some((c: any) => c.plant === p && c[k] > LIMIT[k]);
-  const r = { stretch: caught('stretch', 'stretch'), tear: caught('tear', 'tear'), eyes: caught('eyes', 'eyes'), sink: caught('sink', 'sink'), hat: caught('hat', 'hat') };
+  const r = { stretch: caught('stretch', 'stretch'), tear: caught('tear', 'tear'), eyes: caught('eyes', 'eyes'), sink: caught('sink', 'sink'), hat: caught('hat', 'hat'), mouth: caught('mouth', 'mouth') };
   lines.push('selftest ' + Object.entries(r).map(([k, v]) => `${k} ${v ? 'caught' : 'MISSED'}`).join(', '));
   if (Object.values(r).some(v => !v)) process.exitCode = 3;
 }

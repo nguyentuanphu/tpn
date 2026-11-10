@@ -33,7 +33,7 @@ const toon = (name: string, skin = false) => {
 // little smooth valley light on top (no toon bands: they drew hard stripes across the fur), both sides
 // The shut and happy eyelids (meshy-<kind>-shut0, -joy1 ...) lie just over the painted eyes: drawn on top of the face
 // (polygon offset), as the friends' mood pieces are
-const meshyMat = (name: string, map: THREE.Texture) => { const lid = /-(shut|joy)\d$/.test(name);
+const meshyMat = (name: string, map: THREE.Texture) => { const lid = /-(shut\d|joy\d|mouth)$/.test(name);   // (the open mouth piece too, 11 Nov 2026)
   return new THREE.MeshLambertMaterial({ name, map, emissiveMap: map, emissive: '#ffffff', emissiveIntensity: .95, color: '#262524', side: lid ? THREE.FrontSide : THREE.DoubleSide, polygonOffset: lid, polygonOffsetFactor: lid ? -2 : 0, polygonOffsetUnits: lid ? -4 : 0 }); };
 /** load a model once; resolves null when it cannot load (the fallback stays) */
 export function loadWorldModel(name: string): Promise<Template | null> {

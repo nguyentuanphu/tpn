@@ -7,5 +7,6 @@
   "lie_back_knee": 0.3,
   "smooth": 5,
   "leg_top": 0.8,
-  "spatial_r": 0.03
+  "spatial_r": 0.03,
+  "mouth_w": 0.8
 }
