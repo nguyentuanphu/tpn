@@ -302,6 +302,7 @@ for r_ in range(_Hn):
             uvp = _bary(loc, a3, b3, c3, ua, ub, uc); acc += _bil(uvp.x, uvp.y); n_ += 1
         if n_: F[r_, c_, :3] = acc / n_; _nr += 1
 print('FIT face picture projected from the front', _nr, 'of', _Hn * _Wn)
+if os.environ.get('FIT_SAVE_F'): _fi = bpy.data.images.new('dbgF', F.shape[1], F.shape[0], alpha=True); _fa = F.copy(); _fa[..., 3] = 1; _fi.pixels.foreach_set(_fa[::-1].ravel()); _fi.filepath_raw = os.environ['FIT_SAVE_F']; _fi.file_format = 'PNG'; _fi.save(); print('FIT face box', fx0, fx1, fz0, fz1)   # (debug: the face picture as projected, to check it against the body)
 activate(decal); dd = decal.modifiers.new('dec', 'DECIMATE'); dd.ratio = min(1, 1200 / max(1, len(decal.data.polygons))); bpy.ops.object.modifier_apply(modifier='dec')
 print('FIT face layer tris', len(dme.polygons))
 
@@ -312,11 +313,11 @@ flat = F[..., :3].reshape(-1, 3); hs = np.array([hsv(c) for c in flat[::7]])
 cand = flat[::7][(hs[:, 1] > .08) & (hs[:, 1] < max(.45, SKIN_SMAX)) & (hs[:, 2] > .6) & ((hs[:, 0] < .11) | (hs[:, 0] > .95))]
 REF = np.percentile(cand, 80, axis=0); print('FIT skin ref', np.round(REF, 3), 'from', len(cand))
 dist = lambda arr: np.linalg.norm(arr[..., :3] - REF, axis=-1)
-def skin_mask(arr):   # skin by hue and saturation (light peach to the pink of cheeks and lips), not hair (more saturated) or cream cloth
+def skin_mask(arr, smax=None):   # skin by hue and saturation (light peach to the pink of cheeks and lips), not hair (more saturated) or cream cloth
     rgb = arr[..., :3]; v = rgb.max(-1); mn = rgb.min(-1); s_ = (v - mn) / np.maximum(v, 1e-4)
     r, g, b = rgb[..., 0], rgb[..., 1], rgb[..., 2]
     hue = np.where(v == r, ((g - b) / np.maximum(v - mn, 1e-4)) % 6, np.where(v == g, (b - r) / np.maximum(v - mn, 1e-4) + 2, (r - g) / np.maximum(v - mn, 1e-4) + 4)) / 6
-    return ((hue < .105) | (hue > .94)) & (s_ > .05) & (s_ < SKIN_SMAX) & (v > .38)
+    return ((hue < .105) | (hue > .94)) & (s_ > .05) & (s_ < (smax or SKIN_SMAX)) & (v > .38)
 SKIN_SMAX = float(os.environ.get('FIT_SKIN_SMAX') or .44)   # (10 Nov 2026, regional pilot: r084's dark skin is .58 saturated; at .44 none of it was skin and his closed lids took the pale reference colour, as light squares. fit_person.ps1 -SkinSMax)
 
 # ---- 3. the moods, drawn from her own eyes and mouth
@@ -345,7 +346,7 @@ for side, cols in (('R', xx < W_ / 2), ('L', xx >= W_ / 2)):
         ww_, wh_ = bw[2] - bw[0], bw[3] - bw[1]
         if os.environ.get('FIT_EYE_DARK'):   # (10 Nov 2026, regional pilot: r057's big hazel irises leave white only at the outer corners and below; the box held the corners and the closed lids left the irises showing; fit_person.ps1 -EyeDark) the eye grows from its whites through what is not skin next to them (the iris, the lashes)
             _reach = (xx >= bw[0] - ww_ * 1.2) & (xx < bw[2] + ww_ * 1.2) & (yy >= bw[1] - wh_ * 1.2) & (yy < bw[3] + wh_ * .3) & cols
-            _ok = _reach & ~skin_mask(F) & ((D > .2) | (V < .42)); _g = _w & _reach
+            _ok = _reach & ~skin_mask(F, .44) & ((D > .2) | (V < .42)); _g = _w & _reach   # (the strict skin test: with -SkinSMax, r074's orange-brown irises passed as skin)
             for _ in range(int(W_ * .15)):
                 _n = _g | (_ok & (np.roll(_g, 1, 0) | np.roll(_g, -1, 0) | np.roll(_g, 1, 1) | np.roll(_g, -1, 1)))
                 if (_n == _g).all(): break
@@ -499,6 +500,10 @@ def lid(img, b, top=0., bot=1.):   # (original_skin) a closed lid painted over t
         hole |= _wide & (yy >= b[1] + h_ * .24)   # (below the brows: b reaches up over them, and closed eyes lost Clara's and Lumi's brows)
     if top > 0: hole &= yy >= y0
     if PART: hole &= yy < lidline(xx)
+    if os.environ.get('FIT_LID_MATCH') and OWN:   # (10 Nov 2026, owner: "hốc mắt chưa đẹp, học xem làm mắt như thế nào từ clara finn sol lumi"; fit_person.ps1 -LidMatch) the closed area took in the whole socket and filled it with the light skin round it: a flat pale disc on every shut eye (r050: green 195 against 180 under the eye). Only the painted eye itself (whites, iris, lashes, its pale or dark rim, 3 px wider) is replaced; the socket's own painted shading stays and the fill flows in from it
+        _ep = hole & ((V < .62) | ((V > .7) & (S_ < .3)) | (D > .3)) & ~skin_mask(F, .44) & ~(HAIRISH & ~_inb)   # (what is still skin, the blush under the eye too, is never the eye)
+        for _ in range(max(4, int(round(w_ * .1)))): _ep = _ep | np.roll(_ep, 1, 0) | np.roll(_ep, -1, 0) | np.roll(_ep, 1, 1) | np.roll(_ep, -1, 1)   # (a tenth of the eye's width wider: its pale rim and soft outline go too)
+        hole &= _ep
     # her own skin flows in from all round the eye (a smooth fill, no disc edge): the eye pixels are repeatedly
     # replaced by the mean of their neighbours, the skin round them held fixed
     ya, yb = max(0, int(cy_ - ry * 1.4) - 3), min(H_, int(cy_ + ry * 1.4) + 4); xa, xb = max(0, int(cx_ - rx * 1.6) - 3), min(W_, int(cx_ + rx * 1.6) + 4)
@@ -513,6 +518,15 @@ def lid(img, b, top=0., bot=1.):   # (original_skin) a closed lid painted over t
     for _ in range(700):
         P = np.pad(sub, ((1, 1), (1, 1), (0, 0)), mode='edge')
         av = (P[:-2, 1:-1] + P[2:, 1:-1] + P[1:-1, :-2] + P[1:-1, 2:]) / 4; sub[hm] = av[hm]
+    if os.environ.get('FIT_LID_MATCH') and OWN:   # (10 Nov 2026, owner: "hốc mắt chưa đẹp"; fit_person.ps1 -LidMatch) the fill flows in from the skin right at the eye's edge, which lies in the socket's shadow (a grey-brown lid): it takes the colour of the face's skin a little further out, 4 to 12 px round the eye, keeping its smooth shape
+        _r4 = hm.copy(); _r12 = hm.copy()
+        for _k_ in range(12):
+            _r12 = _r12 | np.roll(_r12, 1, 0) | np.roll(_r12, -1, 0) | np.roll(_r12, 1, 1) | np.roll(_r12, -1, 1)
+            if _k_ == 3: _r4 = _r12.copy()
+        _of = F[ya:yb, xa:xb, :3]; _os = _r12 & ~_r4 & skin_mask(F[ya:yb, xa:xb]) & (hsv_np(_of)[2] > .3)
+        if _os.sum() > 12 and hm.sum() > 4:
+            _k = np.clip(np.median(_of[_os], axis=0) / np.maximum(np.median(sub[hm], axis=0), 1e-3), .85, 1.15); sub[hm] = np.clip(sub[hm] * _k, 0, 1)
+            print('FIT lid fill matched to the skin round the eye', np.round(_k, 3))
     _w = img[ya:yb, xa:xb, :3]; _w[hm] = sub[hm]   # (only the lid itself: the brows, lashes and hair held at skin colour above were written back too, and vanished on every blink)
     img[ya:yb, xa:xb, 3] = np.maximum(img[ya:yb, xa:xb, 3], hm.astype(np.float32))
     if PART:   # the lid's edge: a soft lash line along the curve, over the eye only
@@ -769,12 +783,16 @@ for k_, o in enumerate(moods):
     o.data.materials.clear()
     for m_ in mats_: o.data.materials.append(m_)
 print('FIT face layer rebuilt as a grid', len(gp), 'points', len(moods[0].data.polygons) if moods else 0, 'triangles')
+_SMOOTHN = bool(os.environ.get('FIT_SMOOTH_PIECES'))
 if OWN and moods:   # (owner 8 Nov 2026: closed lids paler than the skin round them) the flat pieces caught the valley's light
     # straight on while the face under them curves away: each point takes the face's own surface direction under it
     for o in moods:
         _ns = []
         for v in o.data.vertices:
             h_ = _btree.find_nearest(v.co)
+            if h_[0] is not None and _SMOOTHN:   # (10 Nov 2026, regional pilot, owner: "hốc mắt chưa đẹp"; fit_person.ps1 -SmoothPieces) the face's smooth direction there, as the body is drawn (its corners' normals, nearest weighing most), not the flat direction of the nearest triangle: on a 9k body the triangles are big and every closed lid showed as a lighter disc
+                _pv = [body.data.vertices[i_] for i_ in body.data.polygons[h_[2]].vertices]; _wt = [1 / ((h_[0] - q_.co).length + 1e-4) for q_ in _pv]
+                _sn = sum((q_.normal * w_ for q_, w_ in zip(_pv, _wt)), Vector((0, 0, 0))); _ns.append(tuple(_sn.normalized())); continue
             _ns.append(tuple(h_[1]) if h_[0] is not None else (0, -1, 0))
         o.data.normals_split_custom_set_from_vertices(_ns)
     print('FIT face pieces take the face surface directions')
