@@ -566,8 +566,17 @@ if feet is not None:
     # (Meshy's shoes, wider than the shin) then stood out through the trouser cuffs as a band of skin
     _rimv = [v for v in bm.verts if v.is_boundary and v.co.z > .06]   # (not an opening under the sole)
     if _rimv:
-        _rz = [v.co.z for v in _rimv]; BOOT_TOP = max(_rz) + .008
+        _rz = [v.co.z for v in _rimv]; BOOT_TOP = max(_rz) + .03   # (10 Nov 2026, the auditor: 3 cm, not 8 mm: running, the front of the back leg's shin showed bare just above the boot, Finn's and Clara's áo dài)
         for v in _rimv: v.co.z = BOOT_TOP
+        # (10 Nov 2026, the auditor: Clara's áo dài trousers stood out over the raised boot tops as a ragged white edge when she
+        # sat) the mouth opens 6 mm wider round each leg, so the cuff stays inside it
+        for _sd in (1, -1):
+            _sv = [v for v in _rimv if v.co.x * _sd > 0]
+            if not _sv: continue
+            _cx = sum(v.co.x for v in _sv) / len(_sv); _cy = sum(v.co.y for v in _sv) / len(_sv)
+            for v in _sv:
+                _d = Vector((v.co.x - _cx, v.co.y - _cy, 0))
+                if _d.length > 1e-4: v.co += _d.normalized() * .006
         print('CL boots mouth raised to', round(BOOT_TOP, 3), 'from a ragged edge', round(min(_rz), 3), '-', round(max(_rz), 3))
     col = bm.loops.layers.color.new('shade')
     for f in bm.faces:
@@ -761,7 +770,7 @@ for o in parts:
         for k in overs:
             tr, fn, kd = _gtr[k]; hit = None
             if 'cone_c' in _byname[k]:
-                if _in_cone(_byname[k], tr, v_.co): bits[v_.index] |= GCOVER_BIT[k]; _per[k] = _per.get(k, 0) + 1
+                if v_.co.z > HIP - .06 and _in_cone(_byname[k], tr, v_.co): bits[v_.index] |= GCOVER_BIT[k]; _per[k] = _per.get(k, 0) + 1   # (10 Nov 2026, owner circled a bite out of Lumi's calf under her skirt as she walked: below the hips a leg swings out of a skirt or the áo dài's panels, so what is under them there is never hidden)
                 continue
             # (10 Nov 2026, owner "cả 3": sitting and walking, Lumi's shorts came out through her shirt's sides and back
             # whatever the shirt's width, weights or depth order) trousers and shorts above a top's hem are never drawn
