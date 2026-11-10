@@ -215,7 +215,7 @@ def _move_with_body(bm, o, name):
     if name == 'bib':   # (owner 9 Nov 2026, Lumi's overalls: the bib's lower corners took the thighs' weights and smeared into blobs when she walked; a bib is a stiff panel on the chest: the trunk carries all of it)
         for v in bm.verts: setw(v, {'torso': 1.})
         return
-    if (LAYER.get(name) == 1 or name in ('top-short', 'top-long', 'tunic-long')) and name != 'bodice':   # (1) the hem follows the thighs   # (10 Nov 2026, the auditor: not a bodice, always worn under a skirt (Lumi's festival dress): its hem, carried forward by her thighs, came out through the skirt's waistband when she sat and walked; the trunk carries it, like the skirt's top)
+    if (LAYER.get(name) == 1 or name in ('top-short', 'top-long', 'tunic-long')):   # (1) the hem follows the thighs   # (10 Nov 2026, the auditor: not a bodice, always worn under a skirt (Lumi's festival dress): its hem, carried forward by her thighs, came out through the skirt's waistband when she sat and walked; the trunk carries it, like the skirt's top)
         # (the whole trunk, sides too: the sides at the hips are wider than the shoulder joints, and a thigh sitting up came
         # through them, Sol's; sleeves hanging by the hips are told apart by the body part under them)
         _onarm = lambda v: (lambda h_: h_[0] is not None and bool(isarm[h_[2]]))(btree.find_nearest(v.co))
@@ -225,7 +225,8 @@ def _move_with_body(bm, o, name):
             for v in bm.verts:
                 if v not in tset or v.co.z > hem + band: continue
                 t = (1 - (v.co.z - hem) / band) ** .8   # (a sitting thigh came through the shirt's sides at .65 over 8 cm, and shorts rose over the hem at .8: the hem itself lies on the thigh)
-                t *= .6 + .4 * max(0., min(1., (cyz + .03 - v.co.y) / .06))   # (the back at 60%: at 0 Lumi's shorts rose over her shirt's back when walking (owner circled); at 100% a sitting thigh pulled a bodice's back out over a skirt's waistband, Clara's)
+                t *= .6 + .4 * max(0., min(1., (cyz + .03 - v.co.y) / .06))  # (the back at 60%: at 0 Lumi's shorts rose over her shirt's back when walking (owner circled); at 100% a sitting thigh pulled a bodice's back out over a skirt's waistband, Clara's)
+                if name == 'bodice': t *= .35   # (round 76, the auditor: a bodice the trunk alone carried showed over the skirt's waistband at the back when Lumi ran, the waistband being carried 35% by the thighs (cone, sw): the bodice's hem now goes with them by the same share; fully, as for tops, it came out through the skirt) 
                 q = Vector((v.co.x, v.co.y, v.co.z - .06)); _co, j, _d = kd.find(q)
                 low = {k: w for k, w in W[j].items() if k.startswith(('leg', 'knee'))}
                 if not low: continue
@@ -481,7 +482,7 @@ def cone(name, z_top, z_bot, flare, thick, panels=False, slit=.0):
         o.vertex_groups['torso'].add([v.index], max(1e-3, 1 - sw), 'REPLACE'); o.vertex_groups[s].add([v.index], sw * (1 - k), 'REPLACE'); o.vertex_groups[fb].add([v.index], sw * k * (1 - lo), 'REPLACE')
         if lo > 0: o.vertex_groups[fb + '2'].add([v.index], sw * k * lo, 'REPLACE')
         if not panels and v.co.y < cy:   # (10 Nov 2026, the auditor: Lumi's festival skirt sitting) the middle of the front, between the knees, has no thigh under it: half of it stays with the trunk, so it sags between the knees like cloth instead of standing up in an arch through which the lap and the top's hem showed from the front
-            dr = max(0., 1 - abs(v.co.x - cx) / .07) * max(0., min(1., (t - .3) / .4)) * .55
+            dr = max(0., 1 - abs(v.co.x - cx) / .05) * max(0., min(1., (t - .3) / .4)) * .35   # (round 75: at 7 cm and .55 Clara's knees, close together, came through the sagging middle when she sat)
             if dr > 0:
                 wf = sw * k * (1 - lo) * (1 - dr); o.vertex_groups[fb].add([v.index], wf, 'REPLACE'); o.vertex_groups['torso'].add([v.index], max(1e-3, 1 - sw) + sw * k * (1 - lo) * dr, 'REPLACE')
     m = bpy.data.materials.new('lit-g-' + name); me2.materials.append(m)

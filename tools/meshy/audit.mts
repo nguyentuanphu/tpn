@@ -64,7 +64,7 @@ vMk = color; float cb_ = floor(color.a * 255.0 + .5);
 for (int k = 0; k < 8; k++) { float p_ = exp2(float(k)); if (mod(floor(cb_ / p_), 2.0) > .5 && mod(floor(uCover / p_), 2.0) > .5) vCov = 1.0; }
 vAny = vCov;
 #endif`).replace('#include <project_vertex>', '#include <project_vertex>\n' + (orig.userData && orig.userData.plantInflate ? `mvPosition.xyz += normalize(normalMatrix * objectNormal) * ${Number(orig.userData.plantInflate).toFixed(4)}; gl_Position = projectionMatrix * mvPosition;\n` : '') + (layer >= 0 ? `mvPosition.xyz -= normalize(mvPosition.xyz) * ${BIAS[layer].toFixed(4)}; gl_Position = projectionMatrix * mvPosition;\n` : '')
-          + (isBody && orig.userData && orig.userData.kitU && orig.userData.kitU.on.value > .5 ? `#ifdef USE_COLOR_ALPHA\nif (color.r < .5 && color.a * 255.0 < .5 && (uDeq * vec4(position, 1.0)).y < ${Number(orig.userData.kitU.neck.value).toFixed(4)}) { mvPosition.xyz -= normalize(mvPosition.xyz) * .012; gl_Position = projectionMatrix * mvPosition; }\n#endif\n` : '') + (PLANT === 'rag' && layer === 3 ? `mvPosition.y += sin(position.x * 3.0 + position.z * 5.0) * .018;\n` : '') + 'vDz = -mvPosition.z; vWy = (modelMatrix * vec4(transformed, 1.0)).y;');
+          + (isBody && orig.userData && orig.userData.kitU && orig.userData.kitU.on.value > .5 ? `#ifdef USE_COLOR_ALPHA\nif (color.r < .5 && color.a * 255.0 < .5 && (uDeq * vec4(position, 1.0)).y < ${Number(orig.userData.kitU.neck.value).toFixed(4)}) { float hy_ = (uDeq * vec4(position, 1.0)).y; mvPosition.xyz -= normalize(mvPosition.xyz) * mix(.012, .07, smoothstep(${(Number(orig.userData.kitU.waist.value) + .25).toFixed(4)}, ${(Number(orig.userData.kitU.waist.value) + .12).toFixed(4)}, hy_)); gl_Position = projectionMatrix * mvPosition; }\n#endif\n` : '') + (PLANT === 'rag' && layer === 0 ? `{ vec3 rp_ = (uDeq * vec4(position, 1.0)).xyz; mvPosition.y += sin(rp_.x * 260.0 + rp_.z * 180.0) * .025; gl_Position = projectionMatrix * mvPosition; }\n` : '') + 'vDz = -mvPosition.z; vWy = (modelMatrix * vec4(transformed, 1.0)).y;');
       sh.fragmentShader = 'uniform float uNoDisc;\nvarying float vCov;varying float vAny;\nvarying float vDz;\nvarying vec4 vMk;\nvarying float vKy;\nvarying float vWy;\n' + sh.fragmentShader
         .replace('void main() {', 'void main() {\nif (uNoDisc < .5 && vCov > ' + (isBody ? '9.0' : '.999') + ') discard;' + (PLANT === 'bite' && layer <= 0 ? `\nif (uNoDisc < .5 && vWy > ${(PLANT_KNEE - .05).toFixed(3)} && vWy < ${(PLANT_KNEE + .05).toFixed(3)}) discard;` : '') + (!isBody && orig.userData && orig.userData.bootU && orig.userData.bootU.value > 0 ? `\nif (uNoDisc < .5 && vKy < ${Number(orig.userData.bootU.value).toFixed(4)}) discard;` : ''))   // (trousers inside worn boots are not drawn, as in the game)
         .replace('#include <dithering_fragment>', `#include <dithering_fragment>
@@ -88,7 +88,7 @@ gl_FragColor = vec4(code_ / 255.0, floor(dm_ / 256.0) / 255.0, mod(dm_, 256.0) /
   const cases: any[] = [], pics: Record<string, string> = {}, HREF: Record<string, number[]> = {};
   for (const id of LIST.split(',')) {
     await A.loadFriendModels(id); await A.loadFriendModels(id + '-hd');
-    for (const kind of (PLANT ? ['everyday'] : ['everyday', 'aodai', 'festival', 'rain'])) {
+    for (const kind of (PLANT ? ['everyday'] : ['everyday', 'aodai', 'festival', 'rain'].filter(k => !ONLY || !ONLY.some(o => /^(everyday|aodai|festival|rain)$/.test(o)) || ONLY.includes(k)))) {   // ('poses:jump,aodai': only that outfit)
       FM.setMeshyTones(true);
       const av: any = A.buildAvatar({ set: LOOK[id] || 'girl', friend: id, skin: '#f6c7a5', suit: `${id}-${kind}` }, null, { hd: true }); A.showHD(av, true);
       top.add(av.root); av.root.position.set(h.pos.x + 3, h.av.root.position.y, h.pos.z + 3); av.root.rotation.y = 0; PLANT_KNEE = av.root.position.y + .3;   // (world height: the trousers carry no dequantization of their own)
@@ -245,7 +245,14 @@ gl_FragColor = vec4(code_ / 255.0, floor(dm_ / 256.0) / 255.0, mod(dm_, 256.0) /
           const fr = new Uint8Array(N);
           for (let i = 0; i < N; i++) { if (!Pall[i * 4 + 3]) continue; const c0 = Pall[i * 4], c_ = c0 >= 120 ? c0 - 100 : c0; if (!(c_ >= 20 || c_ === 6)) continue; const x = i % W, y = (i / W) | 0; let same = 0, near = 0, skip = false;
             for (let dy = -3; dy <= 3 && !skip; dy++) for (let dx = -3; dx <= 3; dx++) { const xx = x + dx, yy = y + dy; if (xx < 0 || yy < 0 || xx >= W || yy >= H) { skip = true; break; } const j = yy * W + xx; if (!Pall[j * 4 + 3]) continue; const cj = Pall[j * 4] >= 120 ? Pall[j * 4] - 100 : Pall[j * 4]; if (cj === 3 || cj === 5 || Pf[j * 4 + 3]) { skip = true; break; } if (cj === c_) { same++; if (Math.abs(dx) <= 1 && Math.abs(dy) <= 1) near++; } }
-            if (!skip && same <= 12 && near >= 4) fr[i] = 1; }   /* (a 1-pixel line along another layer's edge, the colours mixing there, is not a spike: Lumi's coat hem outlined by her trousers) */
+            if (!skip && same <= 12 && near >= 4) fr[i] = 1; }
+          /* (round 77: most ragged counts left were single pixels where an outline steps, a coat's edge against the valley or a
+             hem's staircase, too small to see; a spike is a few pixels together) only groups of 3 or more touching pixels count */
+          { const seen = new Uint8Array(N), st: number[] = [];
+            for (let i = 0; i < N; i++) { if (!fr[i] || seen[i]) continue; const grp: number[] = []; st.push(i); seen[i] = 1;
+              while (st.length) { const j = st.pop()!; grp.push(j); const x = j % W, y = (j / W) | 0;
+                for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) { const xx = x + dx, yy = y + dy; if (xx < 0 || yy < 0 || xx >= W || yy >= H) continue; const k = yy * W + xx; if (fr[k] && !seen[k]) { seen[k] = 1; st.push(k); } } }
+              if (grp.length < 3) for (const j of grp) fr[j] = 0; } }   /* (a 1-pixel line along another layer's edge, the colours mixing there, is not a spike: Lumi's coat hem outlined by her trousers) */
           const cnt = (a: Uint8Array) => a.reduce((s, v) => s + v, 0);
           const r = { id, kind, pose: pn, view: vn, kit: cnt(fk), poke: cnt(fp), hairtone: cnt(fh), skintone: cnt(fs), fold: cnt(ff), fold0, pokeBy, hole: cnt(fo), bite: cnt(fb), rag: cnt(fr), tear: cnt(ft) };
           cases.push(r);

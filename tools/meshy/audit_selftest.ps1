@@ -1,7 +1,7 @@
 # (Meshy production, 9 Nov 2026; owner: the auditor must be trustworthy) Plants each kind of fault on purpose and checks
 # that the auditor catches it. Run after any change to tools/meshy/audit.mts, before trusting a round's numbers.
 #   powershell -File tools/meshy/audit_selftest.ps1 [-Id sol]
-# (10 Nov 2026, owner: "tại sao lại missed") also bite (a band round the knee not drawn), rag (the boot tops made jagged)
+# (10 Nov 2026, owner: "tại sao lại missed") also bite (a band round the knee not drawn), rag (the trousers made jagged; 10 Nov: no longer the boot tops, the body inside the boots now counts as the boots and filled the teeth in)
 # and deep (trousers 5 cm through a skirt, on Clara, who wears one); the auditor's own count for each must fire.
 param([string]$Id = 'sol')
 $ErrorActionPreference = 'Stop'
