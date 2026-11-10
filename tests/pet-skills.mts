@@ -5,7 +5,8 @@
 //   2. dig for treasure: the puppy digs (the dig move when its model has it) and the child gets 2 coins, counted for the
 //      day (at most 5 a day);
 //   3. lead the way: "lead the way!" with a far goal sends the puppy on ahead towards it; it stops at the goal;
-//   4. a hat on a pet with a model sits on the model's head bone.
+//   4. a hat on a pet with a model sits on the model's head bone;
+//   3b. leading towards a goal behind a house, the puppy never stands inside the house.
 import { open } from './harness.mts';
 
 const ok = (c: unknown, msg: string) => { if (!c) throw new Error(msg); };
@@ -72,6 +73,21 @@ export async function petSkillsCheck(b) {
     const end = await P.page.evaluate(async () => { const G = (window as any).__sv, h = G.heroes[0], L = G.pets.live()[0];
       h.place(h.walkTo.x - 3, h.walkTo.z); for (let i = 0; i < 40 && L.task; i++) await new Promise(r => setTimeout(r, 100)); return { task: L.task && L.task.kind }; });
     ok(!end.task, 'the puppy kept leading at the goal');
+    // 3b. leading round a house: the goal on the far side of something solid; the puppy is never inside it
+    const round = await P.page.evaluate(async () => {
+      const G = (window as any).__sv, h = G.heroes[0], L = G.pets.live()[0], W = G.world; if (!W.solidAt) return { skip: 'no solid map' };
+      let S: any = null;
+      for (let r = 8; r < 60 && !S; r += 4) for (let k = 0; k < 24 && !S; k++) { const a = k / 24 * Math.PI * 2, x = h.pos.x + Math.cos(a) * r, z = h.pos.z + Math.sin(a) * r;
+        if (W.solidAt(x, z, W.groundAt(x, z, 50) + .3)) { const ux = Math.cos(a), uz = Math.sin(a); let ok = true;
+          for (const d of [-7, -6, -5]) if (W.solidAt(x + ux * d, z + uz * d, W.groundAt(x + ux * d, z + uz * d, 50) + .3)) ok = false; if (ok) S = { x, z, ux, uz }; } }
+      if (!S) return { skip: 'no house near' };
+      L.task = null; h.place(S.x - S.ux * 6, S.z - S.uz * 6); L.obj.position.set(h.pos.x - S.ux, h.pos.y, h.pos.z - S.uz);
+      h.walkTo = { x: S.x + S.ux * 14, z: S.z + S.uz * 14, name: 'behind the house' }; L.task = { kind: 'lead', bark: 0 };
+      let inside = 0, moved = 0;
+      for (let i = 0; i < 30; i++) { await new Promise(r => setTimeout(r, 200)); const p = L.obj.position; if (W.solidAt(p.x, p.z, p.y + .3)) inside++; moved = Math.max(moved, Math.hypot(p.x - h.pos.x, p.z - h.pos.z)); }
+      L.task = null; h.walkTo = null; return { inside, moved };
+    });
+    if (!round.skip) { ok(!round.inside, `leading round a house, the puppy was inside it ${round.inside} times of 30`); ok(round.moved > 1.5, 'leading round a house, the puppy did not go on ahead'); }
     // 4. a hat (owner, 10 Nov 2026: "accessories ... thử lên chưa"): on the model's head bone, so it goes with every move
     const hat = await P.page.evaluate(async () => {
       const G = (window as any).__sv, h = G.heroes[0]; h.profile.pets[0].hat = 'crown'; G.pets.sync();
@@ -84,6 +100,6 @@ export async function petSkillsCheck(b) {
     if (hat.model) ok(hat.onHead, "the hat is not on the model's head bone (it would stay in the air when the head moves)");
     const errs = P.errors.filter(e => !/creature-|world model/.test(e));
     ok(!errs.length, errs.join('; '));
-    console.log('  petskills: fetch', [...seen].join('>'), '; dig +2 coins', dclip ? '(dig move)' : '(code shape)', '; lead ahead', ahead.dx.toFixed(1), 'm');
+    console.log('  petskills: round a house', JSON.stringify(round), '; fetch', [...seen].join('>'), '; dig +2 coins', dclip ? '(dig move)' : '(code shape)', '; lead ahead', ahead.dx.toFixed(1), 'm');
   } finally { await P.ctx.close(); }
 }

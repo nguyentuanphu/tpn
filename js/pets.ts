@@ -213,7 +213,9 @@ export function createPets(G) {
   function throwBall(L) {
     const h = L.h; if (L.task) return;
     const ball = L.ball || (L.ball = ballMesh()); if (ball.parent) ball.parent.remove(ball); scene.add(ball); ball.scale.setScalar(1);
-    const dist = 7, tx = h.pos.x + Math.sin(h.yaw) * dist, tz = h.pos.z + Math.cos(h.yaw) * dist;
+    const solid = (x, z) => !!(world.solidAt && world.solidAt(x, z, h.pos.y + .3));
+    let dist = 7, tx = h.pos.x + Math.sin(h.yaw) * dist, tz = h.pos.z + Math.cos(h.yaw) * dist;
+    while (dist > 1.5 && solid(tx, tz)) { dist -= .5; tx = h.pos.x + Math.sin(h.yaw) * dist; tz = h.pos.z + Math.cos(h.yaw) * dist; }   // (the ball lands before a wall, not in it)
     L.task = { kind: 'fetch', stage: 'fly', t: 0, from: { x: h.pos.x, y: h.pos.y + 1.1, z: h.pos.z }, to: { x: tx, y: world.groundAt(tx, tz, h.pos.y + 1) + .1, z: tz } };
     SFX.tap && SFX.tap(); const d = PETS[L.pt.kind]; setTimeout(() => SFX[d.snd] && SFX[d.snd](), 250);
   }
@@ -223,9 +225,19 @@ export function createPets(G) {
   // each frame, before the pet follows: a task can move it instead (returns true when it did)
   function skillStep(L, dt, t) {
     const h = L.h, o = L.obj, T_ = L.task; if (!T_) return false;
+    // (owner, 10 Nov 2026: "kiểm tra cho hết") a skill's run never goes through a house or a wall: a step into the solid
+    // map slides along it (one way, then the other), or waits
+    const solid = (x, z) => !!(world.solidAt && world.solidAt(x, z, o.position.y + .3));
     const go = (x, z, speed) => { const dx = x - o.position.x, dz = z - o.position.z, d = Math.hypot(dx, dz);
-      if (d > .08) { const sp = Math.min(d * 3.2, speed); o.position.x += dx / d * Math.min(d, sp * dt); o.position.z += dz / d * Math.min(d, sp * dt); o.rotation.y = Math.atan2(dx, dz); }
+      if (d > .08) { const sp = Math.min(d * 3.2, speed), k = Math.min(d, sp * dt) / d, nx = o.position.x + dx * k, nz = o.position.z + dz * k;
+        if (!solid(nx, nz)) { o.position.x = nx; o.position.z = nz; }
+        else if (!solid(nx, o.position.z)) o.position.x = nx; else if (!solid(o.position.x, nz)) o.position.z = nz;
+        o.rotation.y = Math.atan2(dx, dz); }
       o.position.y = world.groundAt(o.position.x, o.position.z, h.pos.y + 1); return d; };
+    // a point to run to that is not inside anything: turned a little either way from the wanted line, or nearer
+    const free = (fx, fz, ux, uz, dist) => { for (const dd of [dist, dist * .7, dist * .45]) for (const a of [0, .45, -.45, .9, -.9, 1.3, -1.3]) {
+        const c = Math.cos(a), sn = Math.sin(a), vx = ux * c - uz * sn, vz = ux * sn + uz * c, x = fx + vx * dd, z = fz + vz * dd; if (!solid(x, z)) return [x, z]; }
+      return [fx, fz]; };
     if (T_.kind === 'fetch') {
       const b = L.ball;
       if (T_.stage === 'fly') { T_.t += dt / .8; const k = Math.min(1, T_.t);
@@ -244,7 +256,7 @@ export function createPets(G) {
       const dc = dist2(h.pos.x, h.pos.z, tg.x, tg.z);
       if (dc < 8) { L.task = null; L.hop = .8; wish(L, 'bounce', 1.6); const d = PETS[L.pt.kind]; SFX[d.snd] && SFX[d.snd](); say('Here we are!', 'Tới nơi rồi!'); return false; }
       const ux = (tg.x - h.pos.x) / dc, uz = (tg.z - h.pos.z) / dc, ahead = Math.min(5.5, dc - 2);
-      const wx = h.pos.x + ux * ahead, wz = h.pos.z + uz * ahead, d = go(wx, wz, 9), far = dist2(h.pos.x, h.pos.z, o.position.x, o.position.z);
+      const [wx, wz] = free(h.pos.x, h.pos.z, ux, uz, ahead), d = go(wx, wz, 9), far = dist2(h.pos.x, h.pos.z, o.position.x, o.position.z);
       if (d < .5) { o.rotation.y = Math.atan2(h.pos.x - o.position.x, h.pos.z - o.position.z);   // (waiting: it looks back at the child)
         if (far > 7) { wish(L, 'sit', .3); T_.bark -= dt; if (T_.bark <= 0) { T_.bark = 3.5; const dd = PETS[L.pt.kind]; SFX[dd.snd] && SFX[dd.snd](); } } }
       return true;
@@ -387,6 +399,7 @@ export function createPets(G) {
         if (d > .9) { const sp = Math.min(11, d * 3 + 3); o.position.x += dx / d * sp * dt; o.position.z += dz / d * sp * dt; o.rotation.y = Math.atan2(dx, dz); }
         const g = world.groundAt(o.position.x, o.position.z); o.position.y = g < WATER - .5 ? WATER - .35 : g;
         o.children[1] && (o.children[1].visible = g >= WATER - .5);
+        if (o.userData.rig) o.userData.rig.want = g < WATER - .5 ? 'swim' : 'run';   // (a model with these moves: it runs to the water and swims out)
         if (d <= .9 || R.t > 6) {
           R.stage = 'tow'; R.t = 0; SFX[pet.snd] && SFX[pet.snd]();
           say(`${name} is here! Hold on and kick your legs: tap, tap, tap!`, `${name} đến rồi! Bám chặt và đạp chân nào: chạm, chạm, chạm!`);
@@ -400,6 +413,7 @@ export function createPets(G) {
         R.x += dx / d * sp * dt; R.z += dz / d * sp * dt;
         const yaw = Math.atan2(dx, dz);
         o.position.set(R.x + Math.sin(yaw) * 1.1, WATER - .35, R.z + Math.cos(yaw) * 1.1); o.rotation.y = yaw; o.children[1] && (o.children[1].visible = false);
+        if (o.userData.rig) o.userData.rig.want = 'swim';
         L.tag.position.set(o.position.x, o.position.y + tagY(L.pt.kind), o.position.z);
         if (world.groundAt(R.x, R.z) > WATER - .6 || d < 1.5) { finish(); return null; }
         return { x: R.x, y, z: R.z, yaw, state: 'swim', speed: 2 };

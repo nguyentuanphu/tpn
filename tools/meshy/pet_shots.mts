@@ -100,5 +100,50 @@ if (MODE === 'skills') {
   await P.page.evaluate(() => { const G = (window as any).__sv, h = G.heroes[0]; h.walkTo = { x: h.pos.x + 40, z: h.pos.z + 10, name: 'goal' }; G.interactables.find((x: any) => x.id === 'lead0').act(h); });
   await P.page.waitForTimeout(2500); await shot('lead-0'); await P.page.waitForTimeout(2500); await shot('lead-1');
 }
+// scenes (owner, 10 Nov 2026: "kiểm tra cho hết"): the pet at night, in the pet yard, the village dog (the same kind),
+// the water rescue (which moves it plays) and two children side by side. Writes scene-<name>.png and prints what it found.
+if (MODE === 'scenes') {
+  const clean = () => P.page.evaluate(() => { document.querySelectorAll('.storybook, .dialog, .modal, .reward').forEach(e => e.remove()); const G = (window as any).__sv; G.paused = false; });
+  const shot = async (nm: string, pg = P.page) => { await pg.evaluate(() => document.querySelectorAll('.storybook, .dialog, .modal, .reward').forEach(e => e.remove())); await pg.screenshot({ path: `${OUT}/scene-${nm}.png` }); n++; };
+  const found: any = {};
+  await clean(); await P.page.waitForTimeout(3000);
+  // night
+  found.night = await P.page.evaluate(async () => { const G = (window as any).__sv; const go = () => { document.querySelectorAll('.storybook, .dialog, .modal, .reward').forEach(e => e.remove()); G.paused = false; }; const iv = setInterval(go, 150); go(); (window as any).__unpause = iv; G.world.time = .9; await new Promise(r => setTimeout(r, 2500)); const L = G.pets.live()[0]; return { night: G.world.isNight(), clip: L.obj.userData.rig.clip, model: !!L.obj.userData.rig.model }; });
+  await shot('night'); await P.page.evaluate(() => { (window as any).__sv.world.time = .42; });
+  // the pet yard
+  found.yard = await P.page.evaluate(async () => { const G = (window as any).__sv, S = await import(String('/js/state.js')), h = G.heroes[0];
+    S.farm.petYard = [{ kind: 'puppy', name: 'Bông' }]; G.pets.syncYard(); const it = G.interactables.find((x: any) => x.id === 'petyard'); h.place(it.x + 3, it.z + 3);
+    let m = false; for (let i = 0; i < 60 && !m; i++) { await new Promise(r => setTimeout(r, 200)); m = G.pets.yardMeshes().every((o: any) => o.userData.rig && o.userData.rig.model); }
+    const o = G.pets.yardMeshes()[0]; return { model: m, scale: o && +o.scale.x.toFixed(2), clip: o && o.userData.rig.clip }; });
+  await shot('yard');
+  // the village dog: a puppy in the valley that is nobody's pet
+  found.villageDog = await P.page.evaluate(async () => { const G = (window as any).__sv, h = G.heroes[0], mine = new Set([...G.pets.meshes(), ...G.pets.yardMeshes()]);
+    const dogs: any[] = []; G.scene.traverse((o: any) => { if (o.userData && o.userData.rig && o.userData.rig.kind === 'puppy' && !mine.has(o)) dogs.push(o); });
+    if (!dogs.length) return { none: true }; const d = dogs[0]; h.place(d.position.x + 2.5, d.position.z + 2.5);
+    for (let i = 0; i < 150 && !d.userData.rig.model; i++) await new Promise(r => setTimeout(r, 200));
+    return { asked: !!d.userData.rig.asked, near: +Math.hypot(h.pos.x - d.position.x, h.pos.z - d.position.z).toFixed(1), parent: d.parent && (d.parent.name || d.parent.type), count: dogs.length, model: !!d.userData.rig.model, hd: !!d.userData.rig.hd, scale: +d.scale.x.toFixed(2), clip: d.userData.rig.clip }; });
+  await shot('village-dog');
+  // the water rescue
+  found.rescue = await P.page.evaluate(async () => { const G = (window as any).__sv, W = await import(String('/js/world.js')), h = G.heroes[0];
+    let spot: any = null; for (let r = 6; r < 300 && !spot; r += 5) for (let k = 0; k < 48 && !spot; k++) { const a = k / 48 * Math.PI * 2, x = h.pos.x + Math.cos(a) * r, z = h.pos.z + Math.sin(a) * r;
+      if (G.world.groundAt(x, z, 50) < W.WATER - .6) { for (const back of [4, 6, 8, 12]) { const sx = x - Math.cos(a) * back, sz = z - Math.sin(a) * back; if (!spot && G.world.groundAt(sx, sz, 50) > W.WATER + .2) spot = { x, z, sx, sz }; } } }
+    if (!spot) return { none: true };
+    h.place(spot.sx, spot.sz); await new Promise(r => setTimeout(r, 1500)); if (h.lastSafe && h.lastSafe.set) h.lastSafe.set(spot.sx, h.pos.y, spot.sz); h.place(spot.x, spot.z);
+    const L = G.pets.live()[0]; if (!G.pets.rescue(h)) return { started: false };
+    const clips = new Set<string>(); for (let i = 0; i < 90 && h.carry; i++) { await new Promise(r => setTimeout(r, 200)); clips.add(L.obj.userData.rig.clip); if (i === 55) (window as any).__rescueShot = true; }
+    return { clips: [...clips], done: !h.carry }; });
+  await shot('rescue-after');
+  await P.page.evaluate(() => clearInterval((window as any).__unpause));
+  console.log(JSON.stringify(found));
+  // two children side by side (split screen)
+  const Q = await open(b, { w: 1180, h: 820, mode: 'split', fast: false });
+  await Q.page.evaluate(async () => { const G = (window as any).__sv; for (let i = 0; i < 100 && !(G.pets && G.pets.live && G.pets.live().length >= 2); i++) await new Promise(r => setTimeout(r, 100));
+    document.querySelectorAll('.storybook, .dialog, .modal, .reward').forEach(e => e.remove()); G.paused = false; });
+  await Q.page.waitForTimeout(6000);
+  const two = await Q.page.evaluate(() => { const G = (window as any).__sv; return { heroes: G.heroes.length, pets: G.pets.live().map((L: any) => ({ hero: L.h.i, model: !!L.obj.userData.rig.model, d: +Math.hypot(L.obj.position.x - L.h.pos.x, L.obj.position.z - L.h.pos.z).toFixed(1) })),
+    chips: [...document.querySelectorAll('.petrow')].map((r: any) => [...r.querySelectorAll('.chip')].filter((c: any) => !c.hidden).length) }; });
+  console.log(JSON.stringify({ two }));
+  await shot('two-children', Q.page); await Q.ctx.close();
+}
 console.log('shots', n, 'in', OUT);
 await b.close();
