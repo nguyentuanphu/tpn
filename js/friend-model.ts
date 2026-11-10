@@ -136,6 +136,7 @@ export function loadFriendModel(id: FriendId | `${FriendId}-hd`): Promise<boolea
           const t = baked(name, m.map), ref = m.userData && m.userData.skin_ref;
           if (m.userData && m.userData.skin_mark && o.geometry.attributes.color) t.vertexColors = true; // (the skin mark from tools/meshy/fit_people.py, read by skinTint, not drawn as a colour)
           if (t.vertexColors && m.userData && m.userData.cover_mark && o.geometry.attributes.color.itemSize === 4) { t.userData.cover = true; if (m.userData.kit_waist != null) { t.userData.kit_waist = m.userData.kit_waist; t.userData.kit_neck = m.userData.kit_neck; t.userData.kit_grey = m.userData.kit_grey; if (Array.isArray(m.userData.eye_boxes)) t.userData.eye_boxes = m.userData.eye_boxes; } } // (which garments cover each body point: COVER_BIT)
+          if (m.userData && Array.isArray(m.userData.eye_boxes) && !t.userData.eye_boxes) t.userData.eye_boxes = m.userData.eye_boxes; // (10 Nov 2026, owner: "Cho sửa") the eye areas of a model without garments too (the villagers): without them the shut-eye paint never ran, and the far eye stayed open in three-quarter views
           // (owner 8 Nov 2026, "Meshy's own face") an own-face mood piece: soft-edged and see-through round the eyes or
           // mouth over the painted face, taking the child's tone as a whole like the painted skin under it
           const own = name.startsWith('face-') && m.userData && m.userData.own_face;

@@ -27,7 +27,8 @@ if ($Villager) {
   # (Mit was 504 KB at JPEG 60 and a 160 px tile: last, an 896 px picture at JPEG 70)
   foreach ($step in @(@($VQ, $VTile, $VTex), @('60', $VTile, $VTex), @('60', '160', $VTex), @('70', '160', '896'))) {
     $env:FIT_TILE = $step[1]; $env:FIT_JPGQ = $step[0]; $env:FIT_GN = $VGrid
-    $null = Run 'tools\meshy\fit_people.py' @($vm, $Ref, "$o\$Id-mid-pre.glb", "$o\mid", $vt, $step[2], '1.0', '-1', $j)
+    $fl = Run 'tools\meshy\fit_people.py' @($vm, $Ref, "$o\$Id-mid-pre.glb", "$o\mid", $vt, $step[2], '1.0', '-1', $j)
+    ($fl -split "`n" | Where-Object { $_ -match '^FIT' }) | Out-File -Encoding utf8 "$o\fit-log.txt"   # (10 Nov 2026: the eyes and mouth found, to check without guessing)
     $env:FIT_TILE = ''; $env:FIT_JPGQ = ''; $env:FIT_GN = ''
     $null = Run 'tools\meshy\transfer_rig.py' @("$o\$Id-mid-pre.blend", "$raw\rigged\$Id.glb", "$o\$Id-mid.glb", $Ref)
     $kb = Pack "$Id-mid"; if ($kb -le 490) { break }

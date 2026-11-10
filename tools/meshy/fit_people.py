@@ -359,7 +359,7 @@ mouthm = (yy > H_ * .62) & (yy < H_ * .97) & (xx > W_ * .3) & (xx < W_ * .7) & (
 # eyes: the mouth is one patch of red through the middle, grown out from there (no cheek joins it). (Sol: a red chin under
 # the mouth was taken instead) of the patches through the middle, the lips are the darkest (the nose tip and chin are light)
 if mouthm.any():
-    _mid = mouthm & (np.abs(xx - W_ / 2) < W_ * .08); _left = _mid.copy(); _best = None
+    _mid = mouthm & (np.abs(xx - W_ / 2) < W_ * .08); _left = _mid.copy(); _best = None; _pats = []
     while _left.any():
         ys_, xs_ = np.nonzero(_left); _m = np.zeros_like(mouthm); _m[ys_[0], xs_[0]] = True
         for _ in range(W_):
@@ -368,9 +368,33 @@ if mouthm.any():
             _m = _n
         _left &= ~_m
         if _m.sum() >= 5 and np.ptp(np.nonzero(_m)[1]) < W_ * .3 and np.nonzero(_m)[0].max() < H_ * .95:   # (10 Nov 2026: Bom's red collar comes up from the picture's foot, darker than his faint lips: the sad and excited mouths were drawn on his neck; lips never touch the edge)
-            _v = float(V[_m].mean())
-            if _best is None or _v < _best[0]: _best = (_v, _m)
+            _pats.append((float(V[_m].mean()), _m))
+    # (10 Nov 2026: Bông's nostril, 4 x 3 px, was a shade darker than her lips: the darkest of the patches at least a quarter the size of the largest)
+    _big = max([int(p_[1].sum()) for p_ in _pats], default=0)
+    for _v, _m in _pats:
+        if _m.sum() >= max(5, _big * .25) and (_best is None or _v < _best[0]): _best = (_v, _m)
     if _best is not None: mouthm = _best[1]
+    else:   # (10 Nov 2026: Bom's and Bông's lips are barely redder than their skin, so no patch lay in the middle and every red patch, the collar too, became "the mouth": the sad and surprised mouths were drawn on the neck) the faint lips: the reddest pixels in the face's middle, below the nose and above the chin
+        _red = F[..., 0] - F[..., 1]; _band = (np.abs(xx - W_ / 2) < W_ * .12) & (yy > H_ * .6) & (yy < H_ * .86)
+        _cand = _band & (_red > np.median(_red[_band]) + .08); mouthm = np.zeros_like(mouthm)
+        if _cand.sum() >= 5:
+            ys_, xs_ = np.nonzero(_cand); _k = int(np.argmax(_red[ys_, xs_])); _m = np.zeros_like(_cand); _m[ys_[_k], xs_[_k]] = True
+            for _ in range(W_):
+                _n = _m | (_cand & (np.roll(_m, 1, 0) | np.roll(_m, -1, 0) | np.roll(_m, 1, 1) | np.roll(_m, -1, 1)))
+                if (_n == _m).all(): break
+                _m = _n
+            if _m.sum() >= 5: mouthm = _m
+        print('FIT faint lips', int(mouthm.sum()), 'pixels')
+if mouthm.any():   # (10 Nov 2026: Mai's, Ruby's, Tèo's and Tí's lips are a thin painted smile; the red mask held a piece of it (Tèo 2 x 2 px), so the moods erased half a mouth and the painted smile stayed beside it) the whole lip line: redder pixels in the same rows, through the face's middle, joined to the piece
+    _red = F[..., 0] - F[..., 1]; _ys = np.nonzero(mouthm)[0]; _r0, _r1 = _ys.min() - max(2, H_ // 60), _ys.max() + max(2, H_ // 60)
+    _mid = (np.abs(xx - W_ / 2) < W_ * .2) & (yy > H_ * .55) & (yy < H_ * .92); _base = np.median(_red[_mid])
+    _lip = _mid & (yy >= _r0) & (yy <= _r1) & ((_red > _base + .05) | (V < np.median(V[_mid]) - .12))
+    _m = mouthm.copy()
+    for _ in range(W_):
+        _n = _m | (_lip & (np.roll(_m, 1, 0) | np.roll(_m, -1, 0) | np.roll(_m, 1, 1) | np.roll(_m, -1, 1) | np.roll(_m, 2, 1) | np.roll(_m, -2, 1)))
+        if (_n == _m).all(): break
+        _m = _n
+    print('FIT lip line', int(mouthm.sum()), '->', int(_m.sum()), 'pixels'); mouthm = _m
 mouth = box_of(mouthm)
 print('FIT eyes', eyes, 'mouth', mouth)
 # (owner 8 Nov 2026) the painted skin's typical colour, for the game's texel-by-texel tone (skin_paint): the cheeks and nose
@@ -496,7 +520,7 @@ def lid(img, b, top=0., bot=1.):   # (original_skin) a closed lid painted over t
     sub = img[ya:yb, xa:xb, :3].copy(); hm = hole[ya:yb, xa:xb]
     # (owner 8 Nov 2026: dark smudges round the closed eyes in the game) only skin flows in: lashes, brows and hair round
     # the eye are held at her skin colour while the lid is filled (they themselves stay as they are outside the lid)
-    _sm = skin_mask(img[ya:yb, xa:xb]) & (hsv_np(img[ya:yb, xa:xb, :3])[2] > .45); sub[~hm & ~_sm] = sk
+    _hv = hsv_np(img[ya:yb, xa:xb, :3]); _sm = skin_mask(img[ya:yb, xa:xb]) & (_hv[2] > .45) & (_hv[1] > .14); sub[~hm & ~_sm] = sk   # (10 Nov 2026: Bác Ba's white-grey brows and lashes passed the skin test and flowed into his closed lids as grey patches: skin is coloured)
     # (owner 8 Nov 2026: the closed lid was paler than the cheek round it) the fill starts from the skin right round the
     # hole, not her lightest skin, and runs until it has settled
     _rim = ~hm & _sm & (np.roll(hm, 1, 0) | np.roll(hm, -1, 0) | np.roll(hm, 1, 1) | np.roll(hm, -1, 1) | np.roll(hm, 2, 0) | np.roll(hm, -2, 0) | np.roll(hm, 2, 1) | np.roll(hm, -2, 1))
