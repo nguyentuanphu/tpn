@@ -120,3 +120,34 @@ pilot. Farm and wild animals (cow, sheep, pig, buffalo ...) are not in this plan
 - Sizes: near 716 KB (31k triangles, 1024 px picture), far 374 KB (9k, 512 px).
 - Fixed on the way: shots read linear colours (too dark and orange, `game_shots.mts` has the same: pictures darker than
   the game); `skeleton.pose()` breaks gltfpack-quantized models (the auditor keeps the bones' loaded pose instead).
+
+## Owner's decisions after the first puppy pictures (10 Nov 2026 AEDT)
+
+- "2 con puppies to quá": pet scale 1.3 to 0.85, then "Xuống thử 0.6": **0.6** (`PET_SCALE.puppy`, `js/pets.ts`); the
+  name tag sits just over each pet (`tagY`).
+- **Every pet gets its own special skill** ("Mỗi con sẽ có một skills đặc biệt riêng"). The puppy: **fetch the ball,
+  dig for treasure, lead the way**. For the other pets the owner asked for more special ideas than the first list
+  (kitty climbs trees, bunny long jumps and finds carrots, panda shakes trees, joey jumps high and carries in its pouch,
+  calf pulls a cart, dragon flies the child over rivers and lights lanterns, firefly lights the night): a new proposal
+  comes after the puppy.
+- New moves for the puppy: **run fast, jump and bounce, sit and beg, roll over and scratch, swim** (plus dig, for
+  its treasure skill).
+
+## Proposal: each pet's special skill (for the owner, 10 Nov 2026)
+
+The puppy (decided): fetch the ball, dig for treasure, lead the way. Proposed for the others, each something only that
+animal can do, that opens a place or a game the child could not reach alone:
+- **Kitty, "night eyes and high places"**: its eyes glow at night and show hidden things (Leafies, stars, lost items)
+  that only it can see; it climbs trees and roofs to bring down kites and balls stuck up high.
+- **Bunny, "bunny burrows"**: rabbit holes round the valley join up; the bunny takes the child through them, a quick way
+  from one corner to another; and it grows a carrot patch that sprouts in a day.
+- **Panda cub, "bamboo builder"**: it lays bamboo across small streams and gaps as a bridge, and rolls down a hill as
+  a ball (a downhill race game).
+- **Joey, "magic pouch and spring jump"**: its pouch keeps three things for the child; it bounces the child up onto
+  high ledges (a spring pad).
+- **Calf, "the little herder"**: it pulls a small cart that carries crops, and herds the farm animals home at dusk
+  (a herding game).
+- **Little dragon, "sky ride and warm breath"**: the child rides it across rivers and up to the hilltops; its warm
+  breath lights lanterns and melts ice.
+- **Sparkle the firefly, "star guide"**: it calls a swarm of fireflies to make a light bridge at night and joins the
+  stars into pictures (a constellation game).

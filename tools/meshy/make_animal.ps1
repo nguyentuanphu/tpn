@@ -13,7 +13,7 @@ New-Item -ItemType Directory -Force $Out | Out-Null
 & $B -b -P "$root\tools\meshy\fit_animal.py" -- $Kind $Near $Far $Out debug *> "$Out\fit.log"
 if ($LASTEXITCODE -ne 0 -or (Select-String -Path "$Out\fit.log" -Pattern 'Traceback|EXCEPTION_' -Quiet)) { Write-Error "fit failed: $Out\fit.log" }
 foreach ($n in "creature-$Kind-hd", "creature-$Kind") {
-  & node $npx -y gltfpack@0.20.0 -i "$Out\$n.glb" -o "$Out\$n-packed.glb" -cc -kn -km -ke 2>&1 | Out-Null
+  & node $npx -y gltfpack@0.20.0 -i "$Out\$n.glb" -o "$Out\$n-packed.glb" -cc -kn -km -ke -vp 12 -vt 10 -vn 6 2>&1 | Out-Null   # (12-bit positions: 0.2 mm on a puppy; keeps the near model under 800 KB)
   if (-not (Test-Path "$Out\$n-packed.glb")) { Write-Host "pack failed: $n"; exit 1 }
   Copy-Item "$Out\$n-packed.glb" "$root\models\world\$n.glb" -Force
   "{0} {1} KB" -f $n, [int]((Get-Item "$Out\$n-packed.glb").Length / 1KB)

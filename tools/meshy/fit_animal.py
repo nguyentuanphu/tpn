@@ -236,6 +236,7 @@ def material(o, tex_px):
             if n.type == 'TEX_IMAGE' and n.image and n.image.size[0] > tex_px: n.image.scale(tex_px, tex_px)
         bsdf.inputs['Metallic'].default_value = 0; bsdf.inputs['Roughness'].default_value = 1
 
+FARLOD = False
 def make(path, J, M, out, tex_px):
     o = load(path)
     names = weights(o, J, M)
@@ -247,10 +248,13 @@ def make(path, J, M, out, tex_px):
     moves = wc.animal_moves(KIND, A, arm, names + FACE_BONES, F, size)
     moves = [(n_, L_, lie_down(p_, J, M) if n_ == 'sleep' else p_) for n_, L_, p_ in moves]
     for name, L, pose in moves: ground(o, arm, wc.clip(arm, name, L, damp(pose)))
+    extra = extra_moves(J, M, names + FACE_BONES)   # (made for Meshy's own legs: not damped)
+    for name, L, pose in extra: ground(o, arm, wc.clip(arm, name, L, pose))
+    moves = moves + extra
     for pb in arm.pose.bones: pb.rotation_euler = (0, 0, 0); pb.location = (0, 0, 0); pb.scale = (1, 1, 1)
     bpy.ops.export_scene.gltf(filepath=out, export_format='GLB', export_animations=True, export_animation_mode='ACTIONS', export_lights=False,
                               export_cameras=False, export_apply=False, export_skins=True, export_morph=False, use_selection=False,
-                              export_image_format='JPEG', export_jpeg_quality=88, export_force_sampling=True, export_frame_step=2)
+                              export_image_format='JPEG', export_jpeg_quality=FIX.get('jpeg', 80), export_force_sampling=True, export_frame_step=2)
     print('MADE', out, 'tris', sum(len(p.vertices) - 2 for p in o.data.polygons), 'bones', len(arm.data.bones), 'clips', ','.join(m[0] for m in moves), flush=True)
     return o, arm
 
@@ -293,6 +297,110 @@ def lie_down(pose, J, M):
             P['knee%d' % i] = ((FIX.get('lie_front_knee', 0) / la if front else FIX.get('lie_back_knee', .25) / la, 0, 0), (0, 0, 0), (1, 1, 1))
         return P
     return f
+
+def extra_moves(J, M, bones):
+    """the puppy's own moves (owner, 10 Nov 2026: run fast, jump and bounce, sit and beg, roll over and scratch, swim; dig
+    and carry for its skills), in three's frame as world-creatures.py's: body x turn negative = nose up, head x positive =
+    head down, a leg's x turn negative = forward, a knee's positive = the lower leg back, the tail's x negative = down;
+    the body's place (x, up, forward). Each loops; ground() keeps it out of the ground"""
+    TAU = math.pi * 2; H = M['H']; Z3 = (0, 0, 0); O3 = (1, 1, 1)
+    front = [i for i in range(4) if J['leg%d' % i][1] < 0]; back = [i for i in range(4) if i not in front]
+    ears = [b for b in bones if b.startswith('ear')]
+    def R(): return {b: (Z3, Z3, O3) for b in bones}
+    def put(P, b, rx=0., ry=0., rz=0., loc=Z3):
+        if b in P: P[b] = ((rx, ry, rz), loc, O3)
+    def legs(P, i, a, k=0.): put(P, 'leg%d' % i, a); put(P, 'knee%d' % i, k)
+    def blink(t, times): return wc.blink(t, times)
+    def run(t, carry=False):
+        L = .42; ph = TAU * t / L; P = R()
+        put(P, 'body', math.sin(ph) * .12, loc=(0, abs(math.sin(ph)) * .05 * H, 0))
+        for n, i in enumerate(front): legs(P, i, math.sin(ph + n * .35) * .95, max(0, -math.cos(ph + n * .35)) * 1.2)
+        for n, i in enumerate(back): legs(P, i, math.sin(ph + math.pi + n * .35) * .9, max(0, math.cos(ph + n * .35)) * .9)
+        put(P, 'head', -math.sin(ph) * .1 - (.18 if carry else 0))
+        for k, e in enumerate(ears): put(P, e, -.55 + math.sin(2 * ph + k) * .25)
+        put(P, 'tail', .35, math.sin(2 * ph) * .25)
+        face(P, None, eye=blink(t, (.9,)), smile=1.25, jaw=.25 if carry else .4)
+        return P
+    def jump(t):
+        L = 1.2; u = t / L; P = R()
+        if u < .22: k = math.sin(u / .22 * math.pi / 2); up = -.07 * H * k; pitch = .1 * k; fl = .2 * k; bl = -.3 * k; kn = .9 * k
+        elif u < .72: a = (u - .22) / .5; up = .45 * H * math.sin(a * math.pi); pitch = -.3 + .5 * a; fl = -.8; bl = .75; kn = .2
+        elif u < .88: k = 1 - (u - .72) / .16; up = -.05 * H * k; pitch = .12 * k; fl = .15 * k; bl = -.2 * k; kn = .7 * k
+        else: up = pitch = fl = bl = kn = 0
+        put(P, 'body', pitch, loc=(0, up, .08 * H * min(1, max(0, (u - .22) / .5))))
+        for i in front: legs(P, i, fl, kn)
+        for i in back: legs(P, i, bl, kn)
+        put(P, 'head', -pitch * .6); put(P, 'tail', .4, math.sin(TAU * t * 3) * .3)
+        for e in ears: put(P, e, .3 if .22 < u < .72 else -.2)
+        face(P, None, big=1.1 if .22 < u < .72 else 1., smile=1.3, jaw=.6 if .22 < u < .72 else .15)   # (eyes wide in the air: a lid growing mid-leap showed the eye under it)
+        return P
+    def bounce(t):
+        L = 1.6; hop = abs(math.sin(TAU * t / L * 2)); P = R()
+        put(P, 'body', -.08 * hop, loc=(0, hop * .12 * H, 0))
+        for i in front: legs(P, i, -.35 * hop, .5 * hop)
+        for i in back: legs(P, i, .15 * hop, .25 * hop)
+        put(P, 'head', -.1 * hop, 0, math.sin(TAU * t / L) * .15)
+        for e in ears: put(P, e, -.4 + .5 * hop)
+        put(P, 'tail', .3, math.sin(TAU * t / L * 6) * .55)
+        face(P, None, joy=True, smile=1.35, jaw=.5 + .3 * hop)
+        return P
+    def sitting(P, pitch=-.55):
+        put(P, 'body', pitch, loc=(0, 0, -.06 * H))
+        for i in back: legs(P, i, -1.1, 1.25)
+        for i in front: legs(P, i, -pitch, 0)
+        put(P, 'tail', -.45)
+    def sit(t):
+        L = 6.; w = TAU / L; P = R(); sitting(P)
+        put(P, 'head', .5 + math.sin(2 * w * t) * .03, math.sin(w * t) * .4)
+        P['tail'] = ((-.45, math.sin(3 * w * t) * .25, 0), Z3, O3)
+        for k, e in enumerate(ears): put(P, e, math.sin(2 * w * t + k) * .05)
+        face(P, None, eye=blink(t, (1.4, 4.1)), smile=1.05, look=math.sin(w * t) * .15)
+        return P
+    def beg(t):
+        L = 2.4; w = TAU / L; P = R(); sitting(P, -1.0)
+        for n, i in enumerate(front): legs(P, i, .1 + math.sin(2 * w * t + n * math.pi) * .18, 1.35)
+        put(P, 'head', .6 + math.sin(w * t) * .05, 0, math.sin(w * t) * .18)
+        P['tail'] = ((-.4, math.sin(4 * w * t) * .4, 0), Z3, O3)
+        for e in ears: put(P, e, .15)
+        face(P, None, eye=blink(t, (1.6,)), big=1.08, smile=1.2, jaw=.15)
+        return P
+    def roll(t):
+        L = 3.; w = TAU / L; P = R(); wig = math.sin(2 * w * t)
+        put(P, 'body', 0, 0, math.pi * .68 + wig * .12, loc=(0, -.1 * H, 0))   # (on its side and back, not upside down)
+        for n, i in enumerate(front + back): legs(P, i, -.5 + math.sin(3 * w * t + n) * .2, .8 + math.sin(3 * w * t + n) * .2)
+        put(P, 'head', -.15, 0, -1.0 + wig * .1); put(P, 'tail', 0, math.sin(4 * w * t) * .5)   # (the face turned up to the child)
+        for e in ears: put(P, e, .4)
+        face(P, None, joy=True, smile=1.4, jaw=.55)
+        return P
+    def scratch(t):
+        L = 2.; w = TAU / L; P = R(); sitting(P, -.5)
+        sc = back[0] if back else 2
+        legs(P, sc, -1.75 + math.sin(TAU * t * 6) * .3, .9)
+        put(P, 'head', .55, -.25, .35)
+        face(P, None, eye=.35, smile=1.15, jaw=.1)
+        return P
+    def swim(t):
+        L = 1.1; ph = TAU * t / L; P = R()
+        put(P, 'body', math.sin(ph * 2) * .03)
+        for n, i in enumerate(front): legs(P, i, -.45 + math.sin(ph + n * math.pi) * .55, max(0, math.cos(ph + n * math.pi)) * 1.0)
+        for n, i in enumerate(back): legs(P, i, .2 + math.sin(ph + n * math.pi + 1) * .35, .3)
+        put(P, 'head', -.3 + math.sin(ph * 2) * .04)
+        for e in ears: put(P, e, -.35)
+        put(P, 'tail', .05, math.sin(ph) * .2)
+        face(P, None, eye=blink(t, (.6,)), smile=1.1)
+        return P
+    def dig(t):
+        L = 1.2; ph = TAU * t / L * 2; P = R()
+        put(P, 'body', .22, loc=(0, -.02 * H, .03 * H))
+        for n, i in enumerate(front): legs(P, i, -.2 + math.sin(ph + n * math.pi) * .6, .4 + max(0, math.sin(ph + n * math.pi)) * .6)
+        for i in back: legs(P, i, -.15, .1)
+        put(P, 'head', .35 + math.sin(ph) * .05)
+        for e in ears: put(P, e, -.25)
+        put(P, 'tail', .5, math.sin(ph * 1.5) * .5)
+        face(P, None, eye=blink(t, (.5,)) * .8, smile=1.2, jaw=.2)
+        return P
+    return [('run', 1.26, run), ('carry', 1.26, lambda t: run(t, True)), ('jump', 1.2, jump), ('bounce', 1.6, bounce), ('sit', 6., sit),
+            ('beg', 2.4, beg), ('roll', 3., roll), ('scratch', 2., scratch), ('swim', 1.1, swim), ('dig', 1.2, dig)]
 
 # ---------- the face ----------
 FACE_BONES = ['shut0', 'shut1', 'joy0', 'joy1', 'jaw']
@@ -418,7 +526,7 @@ def face_pieces(o, arm, J, Fc):
             if DEBUG: pim.filepath_raw = os.path.join(OUT, name + '.png'); pim.file_format = 'PNG'; pim.save()
             # the piece: a fine grid laid on the head's surface over the eye (rays along -normal), a little in front, its
             # picture straight on; no gaps (the head's own triangles, copied, showed the eye through cracks at their edges)
-            bm = bmesh.new(); uvL = bm.loops.layers.uv.new('UVMap'); GN = FIX.get('lid_grid', 28); grid = {}
+            bm = bmesh.new(); uvL = bm.loops.layers.uv.new('UVMap'); GN = FIX.get('lid_grid', 28) if not FARLOD else FIX.get('lid_grid_far', 14); grid = {}
             lift = FIX.get('lid_lift', .003)
             for a in range(GN + 1):
                 for b in range(GN + 1):
@@ -472,4 +580,5 @@ print('JOINTS', json.dumps({k: [round(x, 3) for x in v] for k, v in J.items()}),
 if DEBUG: debug_picture(o, J, os.path.join(OUT, KIND + '-joints.png'))
 make(NEAR, J, M, os.path.join(OUT, f'creature-{KIND}-hd.glb'), FIX.get('tex_near', 1024))
 if DEBUG: bpy.ops.wm.save_as_mainfile(filepath=os.path.join(OUT, KIND + '-hd.blend'))
+FARLOD = True   # (the far model: coarser lid pieces)
 make(FAR, J, M, os.path.join(OUT, f'creature-{KIND}.glb'), FIX.get('tex_far', 512))

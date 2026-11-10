@@ -33,7 +33,7 @@ if (MODE === 'close' || MODE === 'all') n += save(await P.page.evaluate(async ([
     for (let y = 0; y < H; y++) im.data.set(px.subarray((H - 1 - y) * W * 4, (H - y) * W * 4), y * W * 4); x.putImageData(im, 0, 0);
     out[name] = cv.toDataURL('image/png');
   };
-  const SCALE: any = { puppy: .85, kitty: 1.45, bunny: 1.55, panda: 1.35, joey: 1.4, calf: 1.25 };
+  const SCALE: any = { puppy: .6, kitty: 1.45, bunny: 1.55, panda: 1.35, joey: 1.4, calf: 1.25 };
   const HAPPY: any = { puppy: 'wag', kitty: 'hop', bunny: 'hop', panda: 'hop', joey: 'hop', calf: 'wag' };
   for (const kind of kinds) {
     const base = kind.replace(/-hd$/, ''), buddy = BUDDIES.includes(base), t = await MK.loadWorldModel('creature-' + kind);   // (puppy-hd: the near model)
@@ -44,7 +44,7 @@ if (MODE === 'close' || MODE === 'all') n += save(await P.page.evaluate(async ([
     m.obj.scale.multiplyScalar(buddy ? 1 : SCALE[base] || 1.3);
     const x0 = h.pos.x + 3, z0 = h.pos.z + 3, y0 = (G.world.groundAt ? G.world.groundAt(x0, z0, h.pos.y + 1) : h.pos.y) + (buddy ? 1.2 : 0);
     m.obj.position.set(x0, y0, z0); m.obj.rotation.y = 0; top.add(m.obj);
-    const clips = buddy ? ['idle', 'fly', 'follow', 'flap', 'cheer', 'sad', 'surprised', 'sleep'] : ['idle', 'walk', HAPPY[base] || 'hop', 'cheer', 'sad', 'surprised', 'sleep'];
+    const clips = buddy ? ['idle', 'fly', 'follow', 'flap', 'cheer', 'sad', 'surprised', 'sleep'] : ['idle', 'walk', HAPPY[base] || 'hop', 'cheer', 'sad', 'surprised', 'sleep', ...['run', 'carry', 'jump', 'bounce', 'sit', 'beg', 'roll', 'scratch', 'swim', 'dig'].filter(c => t.clips.some((x: any) => x.name === c))];   // (a Meshy pet's own moves)
     for (const clip of clips) {
       if (!pose(clip, clip === 'sleep' || clip === 'sad' ? .5 : .3)) continue; await w(60); m.obj.updateMatrixWorld(true);
       const box = new THREE.Box3().setFromObject(m.obj, true), c = box.getCenter(new THREE.Vector3()), size = box.getSize(new THREE.Vector3()), r = Math.max(size.x, size.y, size.z);
@@ -85,6 +85,20 @@ if (MODE === 'follow' || MODE === 'all') {
       await P.page.screenshot({ path: `${OUT}/follow-${tag}-${k++}.png` }); n++;
     }
   }
+}
+// skills (Meshy pets, 10 Nov 2026): the child's first pet's own skills in the game's camera: fetching the ball (thrown,
+// carried back), digging, leading the way. Writes skill-<name>-<n>.png.
+if (MODE === 'skills') {
+  const shot = async (nm: string) => { await P.page.evaluate(() => document.querySelectorAll('.storybook, .dialog, .modal, .reward').forEach(e => e.remove())); await P.page.screenshot({ path: `${OUT}/skill-${nm}.png` }); n++; };
+  await P.page.evaluate(() => { const G = (window as any).__sv; G.paused = false; G.world.time = .42; });
+  await P.page.waitForTimeout(4000);
+  await P.page.evaluate(() => { const G = (window as any).__sv, h = G.heroes[0]; G.interactables.find((x: any) => x.id === 'fetch0').act(h); });
+  for (const [k, ms] of [[0, 500], [1, 900], [2, 1200], [3, 1500]] as [number, number][]) { await P.page.waitForTimeout(ms); await shot('fetch-' + k); }
+  await P.page.waitForTimeout(4000);
+  await P.page.evaluate(() => { const G = (window as any).__sv, L = G.pets.live()[0]; L.task = { kind: 'dig', t: 0 }; });
+  await P.page.waitForTimeout(800); await shot('dig-0'); await P.page.waitForTimeout(1500); await shot('dig-1'); await P.page.waitForTimeout(2000); await shot('dig-2');
+  await P.page.evaluate(() => { const G = (window as any).__sv, h = G.heroes[0]; h.walkTo = { x: h.pos.x + 40, z: h.pos.z + 10, name: 'goal' }; G.interactables.find((x: any) => x.id === 'lead0').act(h); });
+  await P.page.waitForTimeout(2500); await shot('lead-0'); await P.page.waitForTimeout(2500); await shot('lead-1');
 }
 console.log('shots', n, 'in', OUT);
 await b.close();

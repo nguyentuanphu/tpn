@@ -12,7 +12,7 @@
 import { THREE, WORLD_TAGS, outline } from './gfx.js';
 
 type Template = { scene: THREE.Object3D, clips: THREE.AnimationClip[] };
-export type WorldModel = { obj: THREE.Object3D, play: (clip: string, fade?: number) => void, stop: () => void };
+export type WorldModel = { obj: THREE.Object3D, play: (clip: string, fade?: number) => void, stop: () => void, has?: (clip: string) => boolean };
 type Wait = { fallback: THREE.Object3D, name: string, opts: ModelOpts, done?: (m: WorldModel | null) => void };
 export type ModelOpts = { scale?: number, y?: number, turn?: number, keep?: boolean, clip?: string, shadow?: boolean };
 
@@ -66,7 +66,8 @@ async function make(name: string, opts: ModelOpts = {}): Promise<WorldModel | nu
     if (!mixer) { mixer = new THREE.AnimationMixer(obj); mixers.push(mixer); }
     const a = mixer.clipAction(c); if (a === cur) return; a.reset().fadeIn(fade).play(); if (cur) cur.fadeOut(fade); cur = a; };
   const stop = () => { if (cur) cur.fadeOut(.2); cur = null; };
-  const m = { obj, play, stop }; if (opts.clip) play(opts.clip); return m;
+  const has = (clip: string) => !!THREE.AnimationClip.findByName(t.clips, clip);   // (Meshy pets: the moves only some models have)
+  const m = { obj, play, stop, has }; if (opts.clip) play(opts.clip); return m;
 }
 /** a model on its own, now (a shop picture, a film): null when it cannot load */
 export const worldModel = (name: string, opts: ModelOpts = {}) => make(name, opts);

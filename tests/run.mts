@@ -105,6 +105,9 @@ await check('worldvehicles', async () => (await import('./world-vehicles.mts')).
 // (v1.08e creatures) the animals, pets and companions made in Blender: they load, stand at the code shape's size on the
 // ground, play their clips, swap in near the child, and the code shapes stay when the models are blocked
 await check('worldcreatures', async () => (await import('./world-creatures.mts')).worldCreaturesCheck(b));
+// (Meshy pets, owner 10 Nov 2026) each pet's own skills: the puppy fetches the ball, digs for treasure and leads the way
+// (tests/pet-skills.mts)
+await check('petskills', async () => (await import('./pet-skills.mts')).petSkillsCheck(b));
 
 // (v1.08e faces) the friends' and villagers' soft eyes with lids: they blink (half, closed, half), the lids close fully,
 // happy, surprised and sad show, and the eyes turn to a child to one side (tests/faces.mts)

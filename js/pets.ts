@@ -17,8 +17,8 @@ let buildHat = null;
 
 export const MAX_PETS = 2;
 // little pets were easy to lose in the grass: they are shown a bit bigger (the smallest the most)
-// (owner, 10 Nov 2026 AEDT, the Meshy puppy: "2 con puppies to quá, phải scale xuống cho hợp lý hơn") the puppy 0.85 (was 1.3)
-const PET_SCALE = { puppy: .85, kitty: 1.45, bunny: 1.55, panda: 1.35, joey: 1.4, calf: 1.25 };
+// (owner, 10 Nov 2026 AEDT, the Meshy puppy: "2 con puppies to quá, phải scale xuống cho hợp lý hơn") the puppy 0.85 (was 1.3); then "Xuống thử 0.6": 0.6
+const PET_SCALE = { puppy: .6, kitty: 1.45, bunny: 1.55, panda: 1.35, joey: 1.4, calf: 1.25 };
 // the name tag just over the pet (a smaller pet's tag lower, never higher than before)
 const tagY = (kind: string) => Math.min(1.45, .4 + (PET_SCALE[kind] || 1.3) * .8);
 // (issue #738) a pet wears a hat from the child's hats (bought with the coin goal, chosen in the Backpack's "Pets & Buddy"):
@@ -35,6 +35,11 @@ export function putHat(obj, id) {
   const hat = buildHat(id); hat.position.set(0, top - .04, front * .55); hat.scale.setScalar(size * 1.9 / s);
   obj.add(hat); obj.userData.hat = hat; return hat;
 }
+// (owner, 10 Nov 2026 AEDT: "Mỗi con sẽ có một skills đặc biệt riêng") each pet's own skills; the puppy: fetch the ball,
+// dig for treasure, lead the way. The others get theirs as they are remade with Meshy (docs/meshy-pets-20261110/PLAN.md).
+export const PET_SKILLS: Record<string, string[]> = { puppy: ['fetch', 'dig', 'lead'] };
+const hasSkill = (pt, s: string) => (PET_SKILLS[pt.kind] || []).includes(s);
+const DIGS_A_DAY = 5;
 const NAME_IDEAS = ['Lucky', 'Mochi', 'Bông', 'Milo', 'Xoài', 'Coco', 'Bơ', 'Pepper', 'Mít', 'Biscuit', 'Kiwi', 'Tofu'];
 export const petName = pt => pt.name || PETS[pt.kind].name();
 
@@ -79,6 +84,7 @@ export function createPets(G) {
     });
   };
   P.forHero = h => live.filter(L => L.h === h);
+  P.live = () => live;   // (the checks: tests/pet-skills.mts)
   P.nameOf = petName; P.max = MAX_PETS;
 
   // ---------- the pet yard on the farm ----------
@@ -118,10 +124,89 @@ export function createPets(G) {
       const it = { id: 'pat' + k, get x() { return L.obj.position.x; }, get z() { return L.obj.position.z; }, r: 1.8, icon: '💕',
         visible: h => h === L.h && !h.carry, label: () => T('Pat ', 'Vuốt ve ') + petName(L.pt),
         act: h => { const d = PETS[L.pt.kind]; SFX[d.snd] && SFX[d.snd](); L.hop = .8; G.fx(L.obj.position.x, L.obj.position.y + 1, L.obj.position.z, '💕'); G.job && G.job('pet');
+          L.pats = (L.pats || 0) + 1; wish(L, ['roll', 'beg', 'bounce'][(L.pats - 1) % 3], 3);   // (a model with these moves: rolls over for a tummy rub, begs, bounces)
           if (!L.pt.name) { setTimeout(() => P.openName(L.h, L.pt), 400); } else say(`${petName(L.pt)} loves you!`, `${petName(L.pt)} thương con lắm!`); } };
       patIts.push(it); G.interactables.push(it);
+      // the pet's own skills: throwing the ball (fetch), being led the way (lead)
+      if (hasSkill(L.pt, 'fetch')) { const f = { id: 'fetch' + k, get x() { return L.obj.position.x; }, get z() { return L.obj.position.z; }, r: 2.6, icon: '⚽',
+        visible: h => h === L.h && !h.carry && !L.task, label: () => T('Throw the ball for ', 'Ném bóng cho ') + petName(L.pt), act: h => throwBall(L) };
+        patIts.push(f); G.interactables.push(f); }
+      if (hasSkill(L.pt, 'lead')) { const f = { id: 'lead' + k, get x() { return L.obj.position.x; }, get z() { return L.obj.position.z; }, r: 2.6, icon: '🧭',
+        visible: h => { if (h !== L.h || h.carry || L.task) return false; const tg = leadTarget(h); return !!tg && dist2(h.pos.x, h.pos.z, tg.x, tg.z) > 14; },
+        label: () => T(`${petName(L.pt)}, lead the way!`, `${petName(L.pt)} ơi, dẫn đường nào!`),
+        act: h => { const tg = leadTarget(h); if (!tg) return; L.task = { kind: 'lead', bark: 0 }; const d = PETS[L.pt.kind]; SFX[d.snd] && SFX[d.snd]();
+          say(`${petName(L.pt)} knows the way! Follow ${petName(L.pt)}.`, `${petName(L.pt)} biết đường! Đi theo ${petName(L.pt)} nhé.`); } };
+        patIts.push(f); G.interactables.push(f); }
     });
   };
+  // ---------- the pet's own skills (owner, 10 Nov 2026) ----------
+  const wish = (L, move: string, secs: number) => { L.want = move; L.wantT = secs; };
+  const leadTarget = h => h.walkTo || (G.questTarget ? G.questTarget(h) : null);
+  const mouthOf = L => {   // (where a carried thing sits: the model's mouth, on its head bone; the code shape's head)
+    const rig = L.obj.userData.rig, m = rig && rig.model;
+    if (m) { const head = m.obj.getObjectByName('head'), jaw = m.obj.getObjectByName('jaw');
+      if (head && jaw) { L.obj.updateMatrixWorld(true); const at = head.worldToLocal(jaw.getWorldPosition(new THREE.Vector3())); return { bone: head, at }; } }
+    return rig && rig.head ? { bone: rig.head, at: new THREE.Vector3(0, -.02, .2) } : null;
+  };
+  const ballMesh = () => { const b = new THREE.Mesh(new THREE.SphereGeometry(.1, 14, 10), new THREE.MeshToonMaterial({ color: '#ff5a5f' }));
+    const band = new THREE.Mesh(new THREE.TorusGeometry(.1, .018, 6, 16), new THREE.MeshToonMaterial({ color: '#ffd23f' })); band.rotation.x = Math.PI / 2; b.add(band); b.castShadow = true; return b; };
+  function throwBall(L) {
+    const h = L.h; if (L.task) return;
+    const ball = L.ball || (L.ball = ballMesh()); if (ball.parent) ball.parent.remove(ball); scene.add(ball); ball.scale.setScalar(1);
+    const dist = 7, tx = h.pos.x + Math.sin(h.yaw) * dist, tz = h.pos.z + Math.cos(h.yaw) * dist;
+    L.task = { kind: 'fetch', stage: 'fly', t: 0, from: { x: h.pos.x, y: h.pos.y + 1.1, z: h.pos.z }, to: { x: tx, y: world.groundAt(tx, tz, h.pos.y + 1) + .1, z: tz } };
+    SFX.tap && SFX.tap(); const d = PETS[L.pt.kind]; setTimeout(() => SFX[d.snd] && SFX[d.snd](), 250);
+  }
+  function dropBall(L) { const b = L.ball; if (!b) return; const o = L.obj; b.parent && b.parent.remove(b); scene.add(b);
+    b.position.set(o.position.x + Math.sin(o.rotation.y) * .5, world.groundAt(o.position.x, o.position.z, o.position.y + 1) + .1, o.position.z + Math.cos(o.rotation.y) * .5);
+    b.scale.setScalar(1); setTimeout(() => { if (!L.task && b.parent === scene) scene.remove(b); }, 6000); }
+  // each frame, before the pet follows: a task can move it instead (returns true when it did)
+  function skillStep(L, dt, t) {
+    const h = L.h, o = L.obj, T_ = L.task; if (!T_) return false;
+    const go = (x, z, speed) => { const dx = x - o.position.x, dz = z - o.position.z, d = Math.hypot(dx, dz);
+      if (d > .08) { const sp = Math.min(d * 3.2, speed); o.position.x += dx / d * Math.min(d, sp * dt); o.position.z += dz / d * Math.min(d, sp * dt); o.rotation.y = Math.atan2(dx, dz); }
+      o.position.y = world.groundAt(o.position.x, o.position.z, h.pos.y + 1); return d; };
+    if (T_.kind === 'fetch') {
+      const b = L.ball;
+      if (T_.stage === 'fly') { T_.t += dt / .8; const k = Math.min(1, T_.t);
+        b.position.set(T_.from.x + (T_.to.x - T_.from.x) * k, T_.from.y + (T_.to.y - T_.from.y) * k + Math.sin(k * Math.PI) * 2.2, T_.from.z + (T_.to.z - T_.from.z) * k);
+        if (k >= 1) T_.stage = 'go'; go(T_.to.x, T_.to.z, 10); return true; }
+      if (T_.stage === 'go') { if (go(T_.to.x, T_.to.z, 11) < .45) { const mo = mouthOf(L); scene.remove(b);
+          if (mo) { mo.bone.add(b); b.position.copy(mo.at); b.scale.setScalar(1 / Math.max(.01, mo.bone.getWorldScale(new THREE.Vector3()).x) * .8); }
+          T_.stage = 'back'; } return true; }
+      if (T_.stage === 'back') { const fx = h.pos.x + Math.sin(h.yaw) * 1.1, fz = h.pos.z + Math.cos(h.yaw) * 1.1; L.want = 'carry'; L.wantT = .2;
+        if (go(fx, fz, 9) < .7) { dropBall(L); L.task = null; L.hop = .8; wish(L, 'bounce', 1.6); const d = PETS[L.pt.kind]; SFX[d.snd] && SFX[d.snd]();
+          L.fetches = (L.fetches || 0) + 1; if (L.fetches === 1 || L.fetches % 4 === 0) say(`${petName(L.pt)} brought the ball back! Throw it again?`, `${petName(L.pt)} mang bóng về rồi! Ném nữa không con?`); }
+        return true; }
+    }
+    if (T_.kind === 'lead') {
+      const tg = leadTarget(h); if (!tg) { L.task = null; return false; }
+      const dc = dist2(h.pos.x, h.pos.z, tg.x, tg.z);
+      if (dc < 8) { L.task = null; L.hop = .8; wish(L, 'bounce', 1.6); const d = PETS[L.pt.kind]; SFX[d.snd] && SFX[d.snd](); say('Here we are!', 'Tới nơi rồi!'); return false; }
+      const ux = (tg.x - h.pos.x) / dc, uz = (tg.z - h.pos.z) / dc, ahead = Math.min(5.5, dc - 2);
+      const wx = h.pos.x + ux * ahead, wz = h.pos.z + uz * ahead, d = go(wx, wz, 9), far = dist2(h.pos.x, h.pos.z, o.position.x, o.position.z);
+      if (d < .5) { o.rotation.y = Math.atan2(h.pos.x - o.position.x, h.pos.z - o.position.z);   // (waiting: it looks back at the child)
+        if (far > 7) { wish(L, 'sit', .3); T_.bark -= dt; if (T_.bark <= 0) { T_.bark = 3.5; const dd = PETS[L.pt.kind]; SFX[dd.snd] && SFX[dd.snd](); } } }
+      return true;
+    }
+    if (T_.kind === 'dig') {
+      T_.t += dt; wish(L, T_.t < 1.2 ? 'idle' : 'dig', .2); L.sniff.visible = T_.t < 1.2; L.sniff.position.set(o.position.x, o.position.y + 1.4, o.position.z);
+      if (T_.t > 1.2 && (T_.fx = (T_.fx || 0) - dt) <= 0) { T_.fx = .35; G.fx(o.position.x + Math.sin(o.rotation.y) * .4, o.position.y + .2, o.position.z + Math.cos(o.rotation.y) * .4, '🌰'); }
+      if (T_.t > 3.8) { L.task = null; const coins = 2; G.addCoins && G.addCoins(coins); G.fx(o.position.x, o.position.y + 1, o.position.z, '🌟'); L.hop = .8; wish(L, 'bounce', 1.4);
+        const day = new Date().toDateString(); if (L.pt.digDay !== day) { L.pt.digDay = day; L.pt.digs = 0; } L.pt.digs++; saveProfiles();
+        G.toast(h, '🪏 ' + T(`${petName(L.pt)} dug up ${coins} coins!`, `${petName(L.pt)} đào được ${coins} xu!`)); const d = PETS[L.pt.kind]; SFX[d.snd] && SFX[d.snd](); }
+      return true;
+    }
+    return false;
+  }
+  // digging for treasure: now and then, while the child stands still near it on dry land (a few times a day)
+  function maybeDig(L, dt, swim) {
+    const h = L.h; if (L.task || swim || !hasSkill(L.pt, 'dig')) return;
+    const day = new Date().toDateString(); if (L.pt.digDay === day && (L.pt.digs || 0) >= DIGS_A_DAY) return;
+    const moved = L.lastX == null || Math.hypot(h.pos.x - L.lastX, h.pos.z - L.lastZ) > .01; L.lastX = h.pos.x; L.lastZ = h.pos.z;
+    L.stillT = moved ? 0 : (L.stillT || 0) + dt; L.digT = (L.digT == null ? 40 + Math.random() * 40 : L.digT) - dt;
+    if (L.digT <= 0 && L.stillT > 2.5 && dist2(h.pos.x, h.pos.z, L.obj.position.x, L.obj.position.z) < 4) { L.digT = 60 + Math.random() * 60; L.task = { kind: 'dig', t: 0 }; }
+  }
   P.react = obj => { const L = live.find(L => L.obj === obj || L.obj.getObjectById(obj.id)); if (!L) return false; const d = PETS[L.pt.kind]; SFX[d.snd] && SFX[d.snd](); L.hop = .8; G.fx(L.obj.position.x, L.obj.position.y + 1, L.obj.position.z, '💕'); return true; };
   P.meshes = () => live.map(L => L.obj);
 
@@ -131,6 +216,10 @@ export function createPets(G) {
     live.forEach(L => {
       const h = L.h, o = L.obj;
       if (L.rescue) return; // the rescue moves this pet
+      const rig = o.userData.rig;
+      L.wantT = Math.max(0, (L.wantT || 0) - dt);
+      if (h.vy > 2 && !h.onGround && !L.task && dist2(h.pos.x, h.pos.z, o.position.x, o.position.z) < 5) wish(L, 'jump', 1.1);   // (it jumps when the child jumps)
+      if (skillStep(L, dt, t)) { if (rig) rig.want = L.wantT > 0 ? L.want : null; L.tag.position.set(o.position.x, o.position.y + tagY(L.pt.kind), o.position.z); return; }
       const back = 1.7, side = L.j ? 1 : -1;
       const tx = h.pos.x - Math.sin(h.yaw) * back + Math.cos(h.yaw) * side * .9, tz = h.pos.z - Math.cos(h.yaw) * back - Math.sin(h.yaw) * side * .9;
       const dx = tx - o.position.x, dz = tz - o.position.z, d = Math.hypot(dx, dz);
@@ -141,6 +230,8 @@ export function createPets(G) {
       if (L.hop > 0) animalCheer(o, .3);
       L.hop = Math.max(0, L.hop - dt);
       o.children[1] && (o.children[1].visible = !swim);
+      maybeDig(L, dt, swim);
+      if (rig) rig.want = swim ? 'swim' : L.wantT > 0 ? L.want : null;   // (js/creatures.ts plays it when the model has that move)
       L.tag.position.set(o.position.x, o.position.y + tagY(L.pt.kind), o.position.z);
       L.tag.visible = dist2(h.pos.x, h.pos.z, o.position.x, o.position.z) < 18;
       // a hidden Leafy nearby: the pet sniffs and barks to help

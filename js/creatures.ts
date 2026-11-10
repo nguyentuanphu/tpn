@@ -75,8 +75,14 @@ function tick(g, r, dt: number) {
   if (r.mood === 'surprised' && r.moodT <= 0 && r.greet) { r.mood = 'happy'; r.moodT = r.greet; r.greet = 0; }
   const happy = CREATURE_HAPPY[r.kind] || 'hop', idleFor = 9 + (r.seed % 5);
   const mood = r.moodT > 0 ? (r.mood === 'happy' ? happy : r.mood) : null;
-  const clip = r.cheerT > 0 ? 'cheer' : mood && (r.sp < 2.4 || mood === 'surprised') ? mood : r.sp > 2.4 ? 'follow' : r.sp > .5 ? 'walk'
-    : night && d > 4 ? 'sleep' : r.idleT % idleFor > idleFor - 2.4 ? happy : 'idle';
+  // (Meshy pets, 10 Nov 2026) a model with its own moves: a pet's wish first (r.want, js/pets.ts: swim, jump, sit, beg,
+  // roll, scratch, dig, carry, bounce, sleep), running when it goes fast; and while still for a while it sits down
+  const can = (c: string) => !!(r.model.has && r.model.has(c));
+  const want = r.want && can(r.want) ? r.want : null;
+  const fast = r.sp > 4.5 && can('run') ? 'run' : 'follow';
+  const still = can('sit') && r.idleT > idleFor * 1.5 ? (r.idleT % 14 > 12 && can('scratch') ? 'scratch' : 'sit') : null;
+  const clip = want || (r.cheerT > 0 ? (can('bounce') ? 'bounce' : 'cheer') : mood && (r.sp < 2.4 || mood === 'surprised') ? mood : r.sp > 2.4 ? fast : r.sp > .5 ? 'walk'
+    : night && d > 4 ? 'sleep' : still || (r.idleT % idleFor > idleFor - 2.4 ? happy : 'idle'));
   if (clip !== r.clip) { r.clip = clip; r.model.play(clip, clip === 'surprised' ? .1 : .3); }
 }
 function ask(c, still: () => boolean) {
