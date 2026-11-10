@@ -122,6 +122,32 @@ Whole Meshy models (clothes are part of the model, painted on; no code clothes, 
 - (10 Nov) Villagers stand by houses, trees and stalls: from the child's side these hid the face, and a hidden face passes the eye check. The villager shots and the auditor hide everything but the lights and the villager's own branch.
 - (10 Nov) A new worktree has no `tests/node_modules`: link it to another worktree's (`New-Item -ItemType Junction`). Python's `http.server` reset connections when the game loaded its many files; a small Node static server works. On a busy machine (other chats' audits at 100% CPU) the page took 3-4 min to open, so `audit_villager.mts` and `game_shots.mts` raise Playwright's limits to 3 min and the auditor tries the page three times.
 
+## Regional villagers (pilot of 6 in a Linux cloud session, 10 Nov 2026)
+
+Record: `docs/meshy-regional-40-100/PILOT-1.md`. Ids `r<nnn>` (sheet number), job specifications in
+`docs/meshy-regional-40-100/job-specifications/`, paid steps one at a time with `tools/meshy/regional_pilot.py` (270-credit cap).
+- The tools run on Linux: `SV_MESHY_ROOT`, `SV_BLENDER`, `SV_NPX`, `SV_PY` (defaults are the owner's PC paths); `pwsh` runs the
+  `.ps1` tools; paths are joined with `Join-Path` (a `\` path reaches Blender as a literal backslash on Linux). Blender's renders
+  need `libegl1`. Playwright under `tests/` needs its own Chromium (`npx playwright install chromium`).
+- GitHub refuses releases from a cloud session (403). The owner chose: the journal and raw files are sent in the chat after each
+  paid step; nothing raw is committed.
+- `lumi.py villager role=<role>` names its file by the role's size: `villager-<role>-game-hd.glb` for children,
+  `-adult-hd` and `-elder-hd` for grown-ups. Pass `-Ref` to `fit_person.ps1` with that exact name.
+- A regional person is no NPC: `audit_villager.mts` and `game_shots.mts village` take `<id>@<role>` and put the model on a crowd
+  person the game would give that role (`crowdRole`); the crowd's looks are random per load, so when no one has that role the
+  next best is the same age. A crowd host may be sitting on a bench and turns its rig, not its root: stand it up
+  (`A.animate(av, 'idle', 1)`, valley paused) and read the facing from `av.rig`. The first r045 shots were a seated girl, and
+  "front" was a three-quarter view.
+- **`game_shots.mts` pictures were linear, not what the screen shows.** A three.js render target is linear unless
+  `rt.texture.colorSpace = SRGBColorSpace`; the game's screen is sRGB. Every earlier sheet was darker and redder than the game
+  (pink jacket brown-red, skin orange). Fixed in `grab` (`LINEAR=1` gives the old pictures). The auditors still read linear
+  pixels; their limits were set on those.
+- **The skin mark's limb flag (green above blue) paints texels in the skin's colour, also with no tone.** On r045 the pink
+  sleeves and shoulders near the arms came out beige. A villager is never toned, so regional villagers are fitted with
+  `fit_person.ps1 -NoLimbTint` (`FIT_NO_LIMB_TINT` in `fit_people.py`: no limb flag; the face mark and closed-eye rules stay).
+  Before trusting a villager's colours, compare the full views with the ChatGPT front at full size.
+- Fits on 4 CPU cores take about 9 min per pass (up to 4 passes for the 500 KB budget); two run side by side.
+
 ## Friends: old head on a swim body, clothes made in code (8 Nov 2026)
 
 One friend end to end: `GF_SKIP_REFIT=1 powershell -File tools/meshy/graft_friend.ps1 -Id <id>` (refits are slow; skip them once the fitted old head and swim body exist). `graft_head.py` puts the approved old head on the swim body, and `make_clothes.py` makes the garments (`lit-g-<part>`). Review with `game_shots.mts` `faces` (with the side views), `outfits` and `nape`, and crop the chins and collars at full size.

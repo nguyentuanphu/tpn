@@ -1208,7 +1208,8 @@ if TEX and KEEP and SHIFT:
     # with its own per-texel test, which keeps eyes, brows, freckles and lines on skin triangles as painted.
     _cw = body.data.color_attributes.get('skinw') or body.data.color_attributes.new('skinw', 'BYTE_COLOR', 'CORNER')
     _cd = _cw.data; _wl = np.repeat(_skp.astype(np.float32), [len(p.loop_indices) for p in me.polygons])
-    _lw = np.repeat((_skp & (_limb | _neck) & ~_hz).astype(np.float32), [len(p.loop_indices) for p in me.polygons])   # (an arm, leg or neck triangle; the game tints its texels more fully, owner 9 Nov: Sol's streaky arms on dark tones)
+    _lw = np.repeat((_skp & (_limb | _neck) & ~_hz).astype(np.float32), [len(p.loop_indices) for p in me.polygons])
+    if os.environ.get('FIT_NO_LIMB_TINT'): _lw[:] = 0   # (10 Nov 2026, regional pilot: a villager never takes a tone, and the limb rule painted r045's pink sleeves and shoulders in the skin's colour; fit_person.ps1 -NoLimbTint)   # (an arm, leg or neck triangle; the game tints its texels more fully, owner 9 Nov: Sol's streaky arms on dark tones)
     _buf = np.zeros(len(_cd) * 4, np.float32); _buf[0::4] = _wl; _buf[1::4] = _wl; _buf[2::4] = _wl * (1 - _lw); _buf[3::4] = 1   # (an arm or leg: green above blue; older models have them equal)
     _cd.foreach_set('color', _buf); body.data.color_attributes.active_color = _cw
     # (9 Nov 2026) the skin mark must be the body's only corner colour: Meshy's own all-white 'Color' went out first as COLOR_0,

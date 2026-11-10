@@ -18,14 +18,16 @@ const b = await chromium.launch({ args: ['--use-angle=swiftshader', '--enable-un
 // (10 Nov 2026: on a busy machine the page took over 30 s to load: 3 min limits)
 const nc = b.newContext.bind(b); b.newContext = async (o: any) => { const c = await nc(o); c.setDefaultNavigationTimeout(180000); c.setDefaultTimeout(180000); return c; };
 const P = await open(b, { w: 900, h: 700, fast: false }); await clear(P.page);
-const shots: Record<string, string> = await P.page.evaluate(async ([MODE, LIST, BARE, HIDE]) => {
+const shots: Record<string, string> = await P.page.evaluate(async ([MODE, LIST, BARE, HIDE, process_linear]) => {
   const G = (window as any).__sv, A = await import(String('/js/avatar.js')), FM = await import(String('/js/friend-model.js')), { THREE } = await import(String('/js/gfx.js'));
   const h = G.heroes[0], R = G.renderer, out: Record<string, string> = {};
   const w = (ms: number) => { dispatchEvent(new Event('pointermove')); document.querySelectorAll('.storybook, .dialog, .modal, .reward').forEach(e => e.remove()); G.paused = false; G.world.time = .42; return new Promise(res => setTimeout(res, ms)); };
   let top = h.av.root; while (top.parent) top = top.parent; G.world.time = .42;
   let SCN: any = null;   // (village: the villager alone in a scene of its own with the valley's lights)
   const grab = (name: string, cam: any, W = 480, H = 480) => {
-    const rt = new THREE.WebGLRenderTarget(W, H); if (SCN) cam.layers.enableAll(); R.setRenderTarget(rt); R.clear(); R.render(SCN || top, cam);   // (a villager far from the valley's camera is on layer 1, js/main.ts: six of eleven came out blank)
+    // (10 Nov 2026, regional pilot: the pictures were darker and redder than the game) a render target is linear unless told
+    // otherwise; the screen is sRGB (js/main.ts outputColorSpace), so the picture is drawn as the player sees it
+    const rt = new THREE.WebGLRenderTarget(W, H); if (!process_linear) rt.texture.colorSpace = THREE.SRGBColorSpace; if (SCN) cam.layers.enableAll(); R.setRenderTarget(rt); R.clear(); R.render(SCN || top, cam);   // (a villager far from the valley's camera is on layer 1, js/main.ts: six of eleven came out blank)
     const px = new Uint8Array(W * H * 4); R.readRenderTargetPixels(rt, 0, 0, W, H, px); R.setRenderTarget(null);
     const cv = document.createElement('canvas'); cv.width = W; cv.height = H; const x = cv.getContext('2d'), im = x.createImageData(W, H);
     for (let y = 0; y < H; y++) im.data.set(px.subarray((H - 1 - y) * W * 4, (H - y) * W * 4), y * W * 4); x.putImageData(im, 0, 0);
@@ -192,7 +194,7 @@ const shots: Record<string, string> = await P.page.evaluate(async ([MODE, LIST, 
   if (MODE === 'village') for (const spec of ids) {
     const [id, role] = spec.split('@');
     const n: any = role ? await regional(id, role) : G.npcs.find((x: any) => x.id === id); if (!n) { out[id + '-notfound'] = ''; continue; }
-    if (!role) h.place(n.obj.position.x + 2, n.obj.position.z + 2); else console.log(id, 'worn by a crowd person of role', n.host);
+    if (!role) h.place(n.obj.position.x + 2, n.obj.position.z + 2); else { console.log(id, 'worn by a crowd person of role', n.host); G.paused = true; n.A.life = null; A.animate(n.A, 'idle', 1); }   // (a crowd host may be sitting on a bench: stood up, and the valley paused so its own update does not sit it down again)
     for (let k = 0; k < 80 && n._vm !== 'worn' && n._vm !== 'code'; k++) await w(200);
     if (n._vm !== 'worn') { out[id + '-notworn'] = ''; continue; }
     // (10 Nov 2026) houses, trees and stalls round a villager hid the face and body from the child's side, and hiding them
@@ -202,7 +204,7 @@ const shots: Record<string, string> = await P.page.evaluate(async ([MODE, LIST, 
     const solo = new THREE.Scene(); solo.background = new THREE.Color(0xbcd6ec);
     top.updateMatrixWorld(true); top.traverse((o: any) => { if (!o.isLight || !o.visible) return; const c = o.clone(false); o.getWorldPosition(c.position); solo.add(c); if (o.target) { c.target = new THREE.Object3D(); o.target.getWorldPosition(c.target.position); solo.add(c.target); } });
     const par = n.A.root.parent; A.showStill(n.A, false); solo.attach(n.A.root); SCN = solo;
-    const fq = n.A.root.getWorldQuaternion(new THREE.Quaternion()), fd = new THREE.Vector3(0, 0, 1).applyQuaternion(fq), yaw = Math.atan2(fd.x, fd.z);
+    const fq = (role ? n.A.rig : n.A.root).getWorldQuaternion(new THREE.Quaternion())   /* (a crowd host turns its rig, not its root: the first regional shots were a three-quarter labelled front) */, fd = new THREE.Vector3(0, 0, 1).applyQuaternion(fq), yaw = Math.atan2(fd.x, fd.z);
     // (10 Nov 2026, the 11 villagers on their own Meshy faces) every mood front and three-quarter, the eye moods from both
     // sides, the back from three sides, and the whole villager front, three-quarter and back in the valley's light
     for (const m of MOODS) { mood(n.A, n.A.model, m); for (const s of [0, .7]) headShot(`v-${id}-${m}-${s ? 'tq' : 'front'}`, n.A.root, n.A.model, yaw, s, true); }
@@ -213,10 +215,10 @@ const shots: Record<string, string> = await P.page.evaluate(async ([MODE, LIST, 
       for (const [nm, s] of [['front', 0], ['tq', .7], ['back', Math.PI]] as [string, number][]) {
         const dir = new THREE.Vector3(Math.sin(yaw), 0, Math.cos(yaw)).applyAxisAngle(new THREE.Vector3(0, 1, 0), s);
         const cf = new THREE.PerspectiveCamera(28, 360 / 480, .05, 200); cf.position.copy(c).addScaledVector(dir, Hh * 2.1); cf.lookAt(c); grab(`v-${id}-full-${nm}`, cf, 360, 480); } }
-    par.attach(n.A.root); SCN = null;
+    par.attach(n.A.root); SCN = null; G.paused = false;
   }
   return out;
-}, [MODE, LIST, !!process.env.BARE, process.env.HIDE || ''] as any);   // (HIDE=shorts: that garment hidden in the poses, to tell which layer shows)
+}, [MODE, LIST, !!process.env.BARE, process.env.HIDE || '', !!process.env.LINEAR] as any);   // (LINEAR=1: the old linear pictures)   // (HIDE=shorts: that garment hidden in the poses, to tell which layer shows)
 if (MODE === 'cover' || MODE === 'skirt') for (const [k, v] of Object.entries(shots)) if (!String(v).startsWith('data:')) console.log(k, v);
 for (const [k, v] of Object.entries(shots)) { if (v) writeFileSync(`${OUT}/${k}.png`, Buffer.from(v.split(',')[1], 'base64')); else console.log('missing', k); }
 console.log('shots', Object.keys(shots).length, 'in', OUT);

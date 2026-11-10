@@ -78,7 +78,7 @@ const res: any = await P.page.evaluate(async ([LIST, QUICK, LIMIT]) => {
   for (const spec of LIST.split(',')) {
     const [id, role] = spec.split('@');
     const n: any = role ? await regional(id, role) : G.npcs.find((x: any) => x.id === id); if (!n) { cases.push({ id, pose: 'find', view: role || '-', worn: 1, eyes: 0 }); continue; }
-    if (!role) h.place(n.obj.position.x + 2, n.obj.position.z + 2); else cases.push({ id, pose: 'host', view: n.host, worn: 0, eyes: 0 });
+    if (!role) h.place(n.obj.position.x + 2, n.obj.position.z + 2); else { cases.push({ id, pose: 'host', view: n.host, worn: 0, eyes: 0 }); n.A.life = null; A.animate(n.A, 'idle', 1); }   // (a crowd host may be sitting: stood up before its facing is read)
     for (let k = 0; k < 240 && n._vm !== 'worn' && n._vm !== 'code'; k++) await w(500);   // (up to 2 min: 24 s was too short on a busy machine)
     if (n._vm !== 'worn') { cases.push({ id, pose: 'wear', view: String(n._vm), worn: 1, eyes: 0 }); continue; }
     const av = n.A; cur = av; const M = av.model;
@@ -88,7 +88,7 @@ const res: any = await P.page.evaluate(async ([LIST, QUICK, LIMIT]) => {
     const stage = new THREE.Scene(); top.updateMatrixWorld(true);
     top.traverse((o: any) => { if (!o.isLight || !o.visible) return; const c = o.clone(false); o.getWorldPosition(c.position); stage.add(c); if (o.target) { c.target = new THREE.Object3D(); o.target.getWorldPosition(c.target.position); stage.add(c.target); } });
     const home = av.root.parent; stage.attach(av.root);
-    const fd = new THREE.Vector3(0, 0, 1).applyQuaternion(av.root.getWorldQuaternion(new THREE.Quaternion())), yaw = Math.atan2(fd.x, fd.z);
+    const fd = new THREE.Vector3(0, 0, 1).applyQuaternion((role ? av.rig : av.root).getWorldQuaternion(new THREE.Quaternion())), yaw   /* (a crowd host turns its rig, not its root) */ = Math.atan2(fd.x, fd.z);
     let hb: any = null; M.obj.traverse((o: any) => { if (o.isBone && o.name === 'head') hb = o; });
     G.paused = true;   // (the valley's own update would turn the villager and change its mood between pictures)
     // (and the code person's own parts must be the hidden ones: count what is drawn of each)
