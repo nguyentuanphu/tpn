@@ -16,7 +16,7 @@ import { T, nm } from './i18n.js';
 import { settings, profiles, farm, heldByOtherTab } from './state.js';
 import { BUILD, SHOWN } from './build.js';
 import { el, esc } from './util.js';
-import { pic } from './art.js';
+import { pic, moreArtReady } from './art.js';
 import { modal, holdButton } from './popups.js';
 import { say, voiceMisses } from './voice.js';
 import { listen, canListen } from './listen.js';
@@ -272,9 +272,12 @@ function watch() {
       const [i, id] = args;
       const requested = String(id || ''); lastGame = requested; lastMode = String(args[2] || ''); note('game', requested);
       // The game rejects a second launch while another activity is open: not a failed open.
-      const cancel = document.querySelector('.gl:not(.out)') ? null : observeGameOpen(requested, () => { if (live) autoReport('noopen', requested); }, {wait:C.LIMITS.openWait * 1000});
+      // (#855) a game waits for the late-loading v1.08 pictures before it opens (js/games/frame.ts openGame), which on a slow
+      // phone takes longer than the usual wait: that is a slow start, not a game that did not open
+      const waitMs = (C.LIMITS.openWait + (moreArtReady() ? 0 : C.LIMITS.artWait)) * 1000;
+      const cancel = document.querySelector('.gl:not(.out)') ? null : observeGameOpen(requested, () => { if (live) autoReport('noopen', requested); }, {wait:waitMs});
       if (cancel) pending.add(cancel);
-      const timer = setTimeout(() => { if (cancel) pending.delete(cancel); }, C.LIMITS.openWait * 1000 + 10);
+      const timer = setTimeout(() => { if (cancel) pending.delete(cancel); }, waitMs + 10);
       try { return pg.apply(this, args); } catch (error) { cancel?.(); pending.delete(cancel); clearTimeout(timer); throw error; }
     }, { __tester:true });
     offs.push(() => { pending.forEach(cancel => cancel()); pending.clear(); G.playGame = pg; });
