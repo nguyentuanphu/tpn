@@ -251,7 +251,7 @@ export async function autoReport(kind: string, detail: string, where?: Where, mo
 function watch() {
   const on = (t: EventTarget, k: string, f: EventListener, o: boolean | AddEventListenerOptions = false) => { t.addEventListener(k, f, o); offs.push(() => t.removeEventListener(k, f, o)); };
   // errors in the game's own code
-  const err = (msg: string, file = '', line: number | string = 0) => { if (resizeDeliveryNotice(String(msg || ''))) return; const f = String(file || '').split('/').pop().split('?')[0]; if (f && !/\.m?js$/.test(f)) return; const s = `${String(msg || 'error').slice(0, 120)} @ ${f || '?'}:${line || 0}`; errors.push(s); if (errors.length > C.LIMITS.errors) errors.shift(); note('error', s); autoReport('error', s); };
+  const err = (msg: string, file = '', line: number | string = 0) => { if (resizeDeliveryNotice(String(msg || ''))) return; const f = String(file || '').split('/').pop().split('?')[0]; if (f && !/\.m?js$/.test(f)) return; const s = `${String(msg || 'error').slice(0, 120)} @ ${f || '?'}:${line || 0}`; errors.push(s); if (errors.length > C.LIMITS.errors) errors.shift(); note('error', s); if (/import.*module|module.*fetch|module script/i.test(String(msg || ''))) return; /* (bug #866) a part of the game gone after a deploy: the game already offers the update (svModuleGone), so it is not filed as a bug */ autoReport('error', s); };
   on(window, 'error', (e: ErrorEvent) => err(e.message, e.filename, e.lineno));
   on(window, 'unhandledrejection', (e: PromiseRejectionEvent) => { const r = e.reason, m = /\/([\w.-]+\.m?js):(\d+)/.exec(String(r && r.stack || '')); err(r && r.message || String(r), m ? m[1] : 'promise.js', m ? m[2] : 0); });
   // taps, and windows that do not close
