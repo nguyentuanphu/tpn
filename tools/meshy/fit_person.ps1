@@ -5,7 +5,7 @@
 # (8 Nov 2026) -Villager: a villager has one model, seen close and far (js/main.ts wears models/villager-<id>.glb):
 # one fit of the 30k remesh with a 1024 px picture (8 Nov: Meshy's own face is seen, 512 px blurred the eyes); the 288 px light picture showed
 # specks and broken hair up close. The reference is lumi.py's villager role=<id> build; its parts are named villager-.
-param([string]$Id, [string]$Ref = '', [string]$Prefix = '', [switch]$Villager, [string]$VMesh = '9000', [string]$VTex = '1024', [string]$VTile = '192', [string]$VQ = '70', [string]$VGrid = '26', [switch]$NoLimbTint, [string]$SkinSMax = '')   # -Prefix: the reference's part names, default <id>-
+param([string]$Id, [string]$Ref = '', [string]$Prefix = '', [switch]$Villager, [string]$VMesh = '9000', [string]$VTex = '1024', [string]$VTile = '192', [string]$VQ = '70', [string]$VGrid = '26', [switch]$NoLimbTint, [string]$SkinSMax = '', [switch]$EyeDark)   # -Prefix: the reference's part names, default <id>-
 # (10 Nov 2026, cloud pilot) the tools also run on Linux: SV_MESHY_ROOT (default D:\WorkSpace\meshy), SV_BLENDER, SV_NPX
 $root = if ($env:SV_MESHY_ROOT) { $env:SV_MESHY_ROOT } else { 'D:\WorkSpace\meshy' }
 if (-not $Ref) { $Ref = Join-Path $root "work-v108/$Id-game-hd.glb" }
@@ -18,6 +18,8 @@ $ErrorActionPreference = 'Stop'
 if ($NoLimbTint) { $env:FIT_NO_LIMB_TINT = '1' } else { $env:FIT_NO_LIMB_TINT = '' }
 # (10 Nov 2026) -SkinSMax .65: dark, strongly coloured skin (r084) still counts as skin in the face picture (fit_people.py SKIN_SMAX, default .44)
 $env:FIT_SKIN_SMAX = $SkinSMax
+# (10 Nov 2026) -EyeDark: the eye box also takes the dark iris and lashes above the whites (r057: whites lit only below the iris)
+if ($EyeDark) { $env:FIT_EYE_DARK = '1' } else { $env:FIT_EYE_DARK = '' }
 $B = if ($env:SV_BLENDER) { $env:SV_BLENDER } else { 'C:\Users\nguye\tools\blender-4.2.23-windows-x64\blender.exe' }
 $npx = if ($env:SV_NPX) { $env:SV_NPX } elseif ($IsLinux -or $IsMacOS) { Join-Path (Split-Path (Split-Path (Get-Command node).Source)) 'lib/node_modules/npm/bin/npx-cli.js' } else { 'C:\Program Files\nodejs\node_modules\npm\bin\npx-cli.js' }
 $repo = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent; Set-Location $repo

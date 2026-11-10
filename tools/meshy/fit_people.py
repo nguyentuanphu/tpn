@@ -343,6 +343,14 @@ for side, cols in (('R', xx < W_ / 2), ('L', xx >= W_ / 2)):
     bw = box_of(_w) if _w.sum() > 40 else None
     if bw:
         ww_, wh_ = bw[2] - bw[0], bw[3] - bw[1]
+        if os.environ.get('FIT_EYE_DARK'):   # (10 Nov 2026, regional pilot: r057's big hazel irises leave white only at the outer corners and below; the box held the corners and the closed lids left the irises showing; fit_person.ps1 -EyeDark) the eye grows from its whites through what is not skin next to them (the iris, the lashes)
+            _reach = (xx >= bw[0] - ww_ * 1.2) & (xx < bw[2] + ww_ * 1.2) & (yy >= bw[1] - wh_ * 1.2) & (yy < bw[3] + wh_ * .3) & cols
+            _ok = _reach & ~skin_mask(F) & ((D > .2) | (V < .42)); _g = _w & _reach
+            for _ in range(int(W_ * .15)):
+                _n = _g | (_ok & (np.roll(_g, 1, 0) | np.roll(_g, -1, 0) | np.roll(_g, 1, 1) | np.roll(_g, -1, 1)))
+                if (_n == _g).all(): break
+                _g = _n
+            _bd = box_of(_g) or bw; print('FIT eye', side, 'whites', bw, 'grown', _bd); bw = _bd; ww_, wh_ = bw[2] - bw[0], bw[3] - bw[1]
         eyes[side] = [max(0, int(bw[0] - ww_ * .15)), max(0, int(bw[1] - wh_ * .45)), min(W_, int(bw[2] + ww_ * .15)), min(H_, int(bw[3] + wh_ * .25))]; continue
     b = box_of(dark & cols)
     if not b: continue
