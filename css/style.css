@@ -2323,6 +2323,10 @@ body:has(.gl) .handpad { display: none; }
 .hud .kidrow .chip { height: 44px; min-width: 0; border: 0; border-radius: 999px; background: rgba(255, 255, 255, .92); box-shadow: var(--shadow); font: inherit; font-size: 14px; color: inherit; padding: 0 12px 0 6px; gap: 4px; display: inline-flex; align-items: center; cursor: pointer; }
 .hud .kidrow .chip .art { width: 28px; height: 28px; }
 .hud.small .kidrow .chip { height: 44px; font-size: 12px; } .hud.small .kidrow .chip .art { width: 22px; height: 22px; }
+/* (Meshy pets, 10 Nov 2026) the pet's skill chips (js/pets.ts): on a phone at the right edge, above the View button, pictures only */
+.hud.small > .petrow { position: absolute; right: var(--pad); top: 30%; flex-direction: column; margin: 0; gap: 8px; }
+.hud.small > .petrow .chip { width: 56px; height: 56px; padding: 0; justify-content: center; } .hud.small > .petrow .chip small { display: none; }
+.hud.small > .petrow .chip .art { width: 34px; height: 34px; }
 .hud .kidrow .chip.ready { border-color: #ffd23f; background: rgba(255, 210, 63, .25); animation: chipPulse 1.6s ease-in-out infinite; }
 @keyframes chipPulse { 50% { transform: scale(1.06); } }
 @media (prefers-reduced-motion: reduce) { .hud .kidrow .chip.ready { animation: none; } }

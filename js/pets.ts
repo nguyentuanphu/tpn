@@ -12,6 +12,7 @@ import { animalCheer } from './animals.js';   // (v1.08e creatures) a happy jump
 import { fmt, spoken } from './money.js';
 import { el, esc, dist2, wait } from './util.js';
 import { modal, toast } from './ui.js';
+import { pic } from './art.js';
 // (PERF-001) the hats' drawings (js/kidplay.js) load when a pet first wears one, not with the game's start
 let buildHat = null;
 
@@ -139,6 +140,29 @@ export function createPets(G) {
         patIts.push(f); G.interactables.push(f); }
     });
   };
+  // the skills' buttons: a row of chips under the child's name card (as the companion's Feed chip, js/kidplay.ts), shown
+  // while the pet is near: the action button near a pet is "Pat", so the skills need buttons of their own
+  const skillChips = new Map();
+  function chipRow(h) {
+    const hud = G.huds && G.huds[h.i]; if (!hud || !hud.root) return null;
+    let c = skillChips.get(hud); if (c && c.row.isConnected) return c;
+    const tl = hud.root.querySelector('.hud-tl'); if (!tl) return null;
+    const row = document.createElement('div'); row.className = 'kidrow petrow'; tl.appendChild(row);
+    const mk = (cls, art, en, vi, go) => { const b = document.createElement('button'); b.className = 'chip ' + cls; b.hidden = true;
+      b.innerHTML = pic(art) + `<small data-l="${en}|${vi}">${T(en, vi)}</small>`; b.setAttribute('aria-label', T(en, vi));
+      b.onclick = e => { e.stopPropagation(); const L = live.find(x => x.h === h && hasSkill(x.pt, cls.slice(2)) && !x.task); if (L) go(L); }; row.appendChild(b); return b; };
+    c = { row, fetch: mk('c-fetch', '⚽', 'Throw ball', 'Ném bóng', L => throwBall(L)),
+      lead: mk('c-lead', '🧭', 'Lead the way', 'Dẫn đường', L => { const it = G.interactables.find(x => x.id === 'lead' + live.indexOf(L)); it && it.act(h); }) };
+    skillChips.set(hud, c); return c;
+  }
+  setInterval(() => { for (const h of G.heroes) { const c = chipRow(h); if (!c) continue;
+    // (a phone: the top row has no room beside the mini-map, so the chips stand at the right edge above the View button, pictures only)
+    const hud = G.huds[h.i], narrow = hud.root.classList.contains('small'), tl = hud.root.querySelector('.hud-tl');
+    if (narrow && c.row.parentElement !== hud.root) hud.root.appendChild(c.row); else if (!narrow && tl && c.row.parentElement !== tl) tl.appendChild(c.row);
+    const mine = live.filter(L => L.h === h && !L.task && dist2(h.pos.x, h.pos.z, L.obj.position.x, L.obj.position.z) < 8);
+    c.fetch.hidden = !mine.some(L => hasSkill(L.pt, 'fetch')) || !!h.carry;
+    const tg = leadTarget(h); c.lead.hidden = !mine.some(L => hasSkill(L.pt, 'lead')) || !tg || dist2(h.pos.x, h.pos.z, tg.x, tg.z) <= 14;
+    c.row.querySelectorAll('small[data-l]').forEach((el: any) => { const [en, vi] = el.dataset.l.split('|'); el.textContent = T(en, vi); }); } }, 400);
   // ---------- the pet's own skills (owner, 10 Nov 2026) ----------
   const wish = (L, move: string, secs: number) => { L.want = move; L.wantT = secs; };
   const leadTarget = h => h.walkTo || (G.questTarget ? G.questTarget(h) : null);

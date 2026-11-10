@@ -154,7 +154,9 @@ def weights(o, J, M):
     # the tail: behind its root, above the hips
     tail = np.zeros(n)
     if 'tail' in J:
-        tx, ty, tz = J['tail']; tail = smooth01((V[:, 1] - ty + .01) / .03) * smooth01((V[:, 2] - (tz - .07)) / .03)
+        # (behind its root, above it and near the middle: not the whole rump, which wagged with it)
+        tx, ty, tz = J['tail']; tw = FIX.get('tail_w', .06)
+        tail = smooth01((V[:, 1] - ty + .01) / .03) * smooth01((V[:, 2] - (tz - .02)) / .03) * smooth01((tw - np.abs(V[:, 0])) / .02)
     # the legs: below the belly fully, blended into the body up to the hips; each point to its nearest leg (seen from above)
     lx = np.array([[J['leg%d' % i][0], J['leg%d' % i][1]] for i in range(4)])
     d2 = ((V[:, None, :2] - lx[None]) ** 2).sum(-1); near = np.argmin(d2, 1); dist = np.sqrt(d2[np.arange(n), near])

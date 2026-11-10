@@ -8,8 +8,10 @@
 //            Asleep (lying like a sphinx) the belly's sides and the folded hind legs stretch more: limit 800 for sleep,
 //            after looking at its marked pictures (r11, final): no visible fault. The folded poses (sit, beg, scratch,
 //            roll, sleep: hips, knees and the neck under a head held up) 900, after looking at r14's marked pictures
-//   tear     background seen through the body (an enclosed hole in the silhouette, from 8 sides, above and below) whose
-//            rim lies close together in depth (a gap between a leg and the belly is far apart in depth: not a tear)
+//   tear     background seen through the body (an enclosed hole in the silhouette, from 8 sides, above and below, and
+//            level from each side) whose rim lies close together in depth (a gap between a leg and the belly is far
+//            apart in depth: not a tear). Limit of this check: it sees holes right through to the background, not a tear
+//            in one wall that shows the inside
 //   sink     the lowest point under the ground (more than 2 cm) in any clip; float: off the ground (3 cm) in a clip that
 //            stands (idle, walk, follow, sad, sleep)
 //   eyes     the painted eye (its dark pupil, its white sparkles) still seen while the eyes are shut (sleep) or happy
@@ -19,6 +21,10 @@
 //   cd tests; SV_URL=http://localhost:8777/ node ../tools/meshy/audit_pets.mts <out dir> [puppy,...] [quick|selftest]
 // quick: three moments per clip and four sides. selftest: plants one fault of each kind on the first animal and fails
 // unless every check catches its own plant (run it after any change to this file).
+// (10 Nov 2026) On the Meshy puppy the tear plant is not caught: every thin part (ears, tail) lies against the body, so a
+// hole cut in one shows the body behind it, not the background, and a tunnel through the trunk seen from any side has
+// its rim on both walls (a gap, by the rule above). The tear check itself caught the real seams opening in sleep (r10,
+// 22-59 px a case) before the weights were welded. Stretch, eyes and sink plants are caught.
 import { createRequire } from 'node:module';
 import { open, clear } from '../../tests/harness.mts';
 const { chromium } = createRequire(new URL('../../tests/package.json', import.meta.url))('playwright');
@@ -53,8 +59,9 @@ const res: any = await P.page.evaluate(async ([kinds, MODE, LIMIT]) => {
   depthMat.onBeforeCompile = (sh: any) => {
     sh.uniforms.uPlant = PLANT; sh.uniforms.uPlantAt = PLANTAT;
     sh.vertexShader = 'varying float vDz;\nvarying vec3 vW;\n' + sh.vertexShader.replace('#include <project_vertex>', '#include <project_vertex>\nvDz = -mvPosition.z;\nvW = (modelMatrix * vec4(transformed, 1.0)).xyz;');
-    sh.fragmentShader = 'varying float vDz;\nvarying vec3 vW;\nuniform float uPlant;\nuniform vec3 uPlantAt;\n' + sh.fragmentShader.replace('#include <dithering_fragment>', '#include <dithering_fragment>\nif (uPlant > .5 && length((vW - uPlantAt).yz) < .04) discard;   // (a tunnel across the body: a hole from either side)\nfloat mm = clamp(vDz * 1000.0, 0.0, 65000.0);\ngl_FragColor = vec4(floor(mm / 256.0) / 255.0, mod(mm, 256.0) / 255.0, 1.0, 1.0);');
+    sh.fragmentShader = 'varying float vDz;\nvarying vec3 vW;\nuniform float uPlant;\nuniform vec3 uPlantAt;\n' + sh.fragmentShader.replace('#include <dithering_fragment>', '#include <dithering_fragment>\nif (uPlant > .5 && distance(vW, uPlantAt) < .03) discard;   // (a torn tail: a hole through a thin part)\nfloat mm = clamp(vDz * 1000.0, 0.0, 65000.0);\ngl_FragColor = vec4(floor(mm / 256.0) / 255.0, mod(mm, 256.0) / 255.0, 1.0, 1.0);');
   };
+  const DEBUG = { on: false, holes: [] as any[] };
   const depthAt = (px: Uint8Array, i: number) => (px[i * 4] * 256 + px[i * 4 + 1]) / 1000;
   // enclosed background in the silhouette, its rim close in depth
   const tears = (px: Uint8Array) => {
@@ -64,13 +71,19 @@ const res: any = await P.page.evaluate(async ([kinds, MODE, LIMIT]) => {
     for (let i = 0; i < S; i++) for (const j of [i, (S - 1) * S + i, i * S, i * S + S - 1]) if (bg[j] && !seen[j]) { seen[j] = 1; st.push(j); }
     while (st.length) { const j = st.pop()!, x = j % S, y = (j / S) | 0; for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { const u = x + dx, v = y + dy; if (u < 0 || v < 0 || u >= S || v >= S) continue; const k = v * S + u; if (bg[k] && !seen[k]) { seen[k] = 1; st.push(k); } } }
     for (let i = 0; i < n; i++) if (bg[i] && !seen[i]) {   // (a hole: its pixels and the depths round it)
-      const cells: number[] = [], rim: number[] = []; seen[i] = 1; st.push(i);
+      const cells: number[] = [], rim: number[] = [], rimAt: number[] = []; seen[i] = 1; st.push(i);
       while (st.length) { const j = st.pop()!; cells.push(j); const x = j % S, y = (j / S) | 0;
         for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { const u = x + dx, v = y + dy; if (u < 0 || v < 0 || u >= S || v >= S) continue; const k = v * S + u;
-          if (bg[k]) { if (!seen[k]) { seen[k] = 1; st.push(k); } } else rim.push(depthAt(px, k)); } }
+          if (bg[k]) { if (!seen[k]) { seen[k] = 1; st.push(k); } } else { rim.push(depthAt(px, k)); rimAt.push(k); } } }
       if (cells.length < 4 || !rim.length) continue;
       rim.sort((a, b) => a - b); const spread = rim[Math.floor(rim.length * .9)] - rim[Math.floor(rim.length * .1)];
-      if (spread > .03) continue;   // (the gap between two parts: a leg in front of the belly, an ear beside the cheek)
+      if (DEBUG.on) DEBUG.holes.push([cells.length, +spread.toFixed(3), +rim[0].toFixed(3), +rim[rim.length - 1].toFixed(3)]);
+      // (the gap between two parts, a leg in front of the belly or an ear beside the cheek, has its near rim on one side
+      // only; a hole in a surface, even right through the trunk to the far wall, has its near rim nearly all round)
+      if (spread > .03) { let cx = 0, cy = 0; for (const c of cells) { cx += c % S; cy += (c / S) | 0; } cx /= cells.length; cy /= cells.length;
+        const near = rim[0] + .03, bins = new Set<number>();
+        for (let q = 0; q < rimAt.length; q++) { const k = rimAt[q]; if (depthAt(px, k) > near) continue; bins.add(Math.floor(((Math.atan2(((k / S) | 0) - cy, k % S - cx) + Math.PI) / (Math.PI * 2)) * 12) % 12); }
+        if (bins.size < 10) continue; }
       count += cells.length; for (const c of cells) flags[c] = 1;
     }
     return { count, flags };
@@ -98,9 +111,10 @@ const res: any = await P.page.evaluate(async ([kinds, MODE, LIMIT]) => {
     const elen = (a: Float32Array, i: number, j: number) => Math.hypot(a[i * 3] - a[j * 3], a[i * 3 + 1] - a[j * 3 + 1], a[i * 3 + 2] - a[j * 3 + 2]);
     for (let k = 0; k < idx.length; k += 3) for (let e = 0; e < 3; e++) restLen[k + e] = elen(rest, idx[k + e], idx[k + (e + 1) % 3]);
     const clips = t.clips.map((c: any) => c.name);
-    const views: [string, number, number][] = quick ? [['front', 0, .1], ['side', Math.PI / 2, .1], ['back', Math.PI, .1], ['tq', .8, .3]]
-      : [...[0, 1, 2, 3, 4, 5, 6, 7].map(k => ['y' + k * 45, k * Math.PI / 4, .12] as [string, number, number]), ['above', .3, 2.5], ['below', .3, -2.5]];
-    const plants = self && kind === kinds[0] && lod === 'near' ? ['none', 'stretch', 'tear', 'eyes', 'sink'] : ['none'];
+    const views: [string, number, number][] = (quick ? [['front', 0, .1], ['side', Math.PI / 2, .1], ['back', Math.PI, .1], ['tq', .8, .3]] as [string, number, number][]
+      : [...[0, 1, 2, 3, 4, 5, 6, 7].map(k => ['y' + k * 45, k * Math.PI / 4, .12] as [string, number, number]), ['above', .3, 2.5], ['below', .3, -2.5]] as [string, number, number][])
+      .concat([['levelR', Math.PI / 2, 0], ['levelL', -Math.PI / 2, 0]]);   // (level from each side too: a hole right through the trunk, seen a little from above, has a rim on both of its walls, far apart in depth, and reads as a gap)
+    const plants = self ? (kind === kinds[0] && lod === 'near' ? ['stretch', 'tear', 'eyes', 'sink'] : []) : ['none'];   // (selftest: the plants only)
     for (const plant of plants) for (const clip of (plant === 'none' ? clips : plant === 'eyes' ? ['sleep'] : ['idle'])) {
       const c = t.clips.find((x: any) => x.name === clip); mixer.stopAllAction(); const a = mixer.clipAction(c); a.reset().play();
       const moments = quick || plant !== 'none' ? [.15, .5, .85] : [0, .17, .33, .5, .67, .83];
@@ -109,7 +123,8 @@ const res: any = await P.page.evaluate(async ([kinds, MODE, LIMIT]) => {
         if (plant === 'stretch') { bone('knee0').scale.setScalar(2.6); obj.updateMatrixWorld(true); }
         if (plant === 'sink') { bone('body').position.y -= Hh * .08; obj.updateMatrixWorld(true); }
         const hidden: any[] = []; if (plant === 'eyes') obj.traverse((o: any) => { if (o.isMesh && /-(shut|joy)\d$/.test(o.material.name)) { o.visible = false; hidden.push(o); } });
-        PLANT.value = plant === 'tear' ? 1 : 0; PLANTAT.value.set(c0.x, lo + Hh * .36, c0.z);   // (through the trunk, between the belly and the back)
+        PLANT.value = plant === 'tear' ? 1 : 0; if (plant === 'tear') {   // (a torn ear: a hole through its flap where it hangs out beyond the cheek, seen from the front)
+          const e = bone('ear0'); obj.updateMatrixWorld(true); e.getWorldPosition(PLANTAT.value); PLANTAT.value.x += Math.sign(PLANTAT.value.x || -1) * Hh * .07; PLANTAT.value.y -= Hh * .12; }
         const cs: any = { kind, lod, clip, t: +f.toFixed(2), plant, stretch: 0, tear: 0, sink: 0, float: 0, eyes: 0, hat: 0, worst: '' };
         // stretch and the ground
         skinned(body, now); let minY = 1e9; const strK: number[] = [];
@@ -128,7 +143,10 @@ const res: any = await P.page.evaluate(async ([kinds, MODE, LIMIT]) => {
         for (const [vn, yaw, up] of views) {
           const cam = new THREE.PerspectiveCamera(30, 1, .02, 50), dir = new THREE.Vector3(Math.sin(yaw), up, Math.cos(yaw)).normalize();
           cam.position.copy(cc).addScaledVector(dir, r * 1.9); cam.lookAt(cc);
+          DEBUG.on = plant === 'tear'; DEBUG.holes = [];
           const d = read(cam, depthMat), tr = tears(d);
+          if (DEBUG.on) (cs.holes = cs.holes || {})[vn] = DEBUG.holes.slice(0, 4);
+          if (DEBUG.on) { cs.plantAt = PLANTAT.value.toArray().map((v: number) => +v.toFixed(3)); cs.c0 = c0.toArray().map((v: number) => +v.toFixed(3)); cs.box = [new THREE.Box3().setFromObject(obj, true).min.toArray().map((v: number) => +v.toFixed(2)), new THREE.Box3().setFromObject(obj, true).max.toArray().map((v: number) => +v.toFixed(2))]; }
           if (tr.count > cs.tear) { cs.tear = tr.count; cs.worst = vn; worstPic = { cam, flags: tr.flags }; }
         }
         // the eyes, while shut or happy: dark pupils or white sparkles where the eyes are
@@ -148,7 +166,8 @@ const res: any = await P.page.evaluate(async ([kinds, MODE, LIMIT]) => {
           if (cs.eyes > (LIMIT as any).eyes) out.pics[`${kind}-${lod}-${clip}-${cs.t}-${plant}-eyes`] = png(px, flags);
         }
         hidden.forEach(o => { o.visible = true; });
-        if (worstPic && cs.tear > (LIMIT as any).tear) { const px = read(worstPic.cam); out.pics[`${kind}-${lod}-${clip}-${cs.t}-${plant}-tear-${cs.worst}`] = png(px, worstPic.flags); }
+        if (plant === 'tear' && !worstPic) { const cam = new THREE.PerspectiveCamera(30, 1, .02, 50); cam.position.copy(cc).add(new THREE.Vector3(r * 1.9, 0, 0)); cam.lookAt(cc); out.pics[`${kind}-${lod}-${clip}-${cs.t}-plant-tear-none`] = png(read(cam, depthMat), null); }
+        if (worstPic && (cs.tear > (LIMIT as any).tear || plant === 'tear')) { const px = read(worstPic.cam); out.pics[`${kind}-${lod}-${clip}-${cs.t}-${plant}-tear-${cs.worst}`] = png(px, worstPic.flags); }
         if (cs.stretch > (LIMIT as any).stretch && !out.pics[`${kind}-${lod}-${clip}-stretch`]) {
           // (the stretched triangles' middles painted magenta, from the side they face most, so each one can be looked at)
           const flags = new Uint8Array(S * S), cam = new THREE.PerspectiveCamera(30, 1, .02, 50);
