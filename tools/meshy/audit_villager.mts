@@ -66,7 +66,7 @@ const res: any = await P.page.evaluate(async ([LIST, QUICK, LIMIT]) => {
     // (10 Nov 2026: villagers stand by houses, trees and stalls; seen from the child's side these hid the face, so the eye
     // check passed on a wall, and hiding them hid the lights too) the villager is moved, as it stands, into a stage of its
     // own with copies of the valley's lights, and looked at from its own front
-    const stage = new THREE.Scene(); top.updateMatrixWorld(true);
+    const stage = new THREE.Scene(); stage.fog = top.fog; stage.environment = top.environment; top.updateMatrixWorld(true);
     top.traverse((o: any) => { if (!o.isLight || !o.visible) return; const c = o.clone(false); o.getWorldPosition(c.position); stage.add(c); if (o.target) { c.target = new THREE.Object3D(); o.target.getWorldPosition(c.target.position); stage.add(c.target); } });
     const home = av.root.parent; stage.attach(av.root);
     const fd = new THREE.Vector3(0, 0, 1).applyQuaternion(av.root.getWorldQuaternion(new THREE.Quaternion())), yaw = Math.atan2(fd.x, fd.z);

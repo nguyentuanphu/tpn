@@ -25,7 +25,7 @@ if ($Villager) {
   if ($VMesh -eq '9000') { $vm = "$raw\remesh\$Id-9000.glb"; $vt = '12000' } else { $vm = "$raw\remesh\$Id.glb"; $vt = '40000' }
   # (10 Nov 2026) over 490 KB (Bom 517): fit again with a lighter picture (JPEG 60, then a 160 px face tile), never fewer triangles
   # (Mit was 504 KB at JPEG 60 and a 160 px tile: last, an 896 px picture at JPEG 70)
-  foreach ($step in @(@($VQ, $VTile, $VTex), @('60', $VTile, $VTex), @('60', '160', $VTex), @('70', '160', '896'))) {
+  foreach ($step in @(@($VQ, $VTile, $VTex), @('60', $VTile, $VTex), @('60', '160', $VTex), @('70', '160', '896'), @('60', '160', '896'), @('50', '160', '896'))) {   # (Mit 502 KB once the lids took his real skin colour: last, JPEG 60 at 896 px)
     $env:FIT_TILE = $step[1]; $env:FIT_JPGQ = $step[0]; $env:FIT_GN = $VGrid
     $fl = Run 'tools\meshy\fit_people.py' @($vm, $Ref, "$o\$Id-mid-pre.glb", "$o\mid", $vt, $step[2], '1.0', '-1', $j)
     ($fl -split "`n" | Where-Object { $_ -match '^FIT' }) | Out-File -Encoding utf8 "$o\fit-log.txt"   # (10 Nov 2026: the eyes and mouth found, to check without guessing)

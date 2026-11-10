@@ -176,14 +176,14 @@ const shots: Record<string, string> = await P.page.evaluate(async ([MODE, LIST, 
     h.place(n.obj.position.x + 2, n.obj.position.z + 2);
     for (let k = 0; k < 80 && n._vm !== 'worn' && n._vm !== 'code'; k++) await w(200);
     if (n._vm !== 'worn') { out[id + '-notworn'] = ''; continue; }
-    // (10 Nov 2026) houses, trees and stalls round a villager hid the face and body from the child's side, and hiding them
-    // hid the group holding the lights too (a black picture): the villager is moved, as it stands, into a scene of its own
-    // with copies of the valley's lights, and looked at from its own front; the far "still" copy (the old code person) is
-    // never the one shown
-    const solo = new THREE.Scene(); solo.background = new THREE.Color(0xbcd6ec);
-    top.updateMatrixWorld(true); top.traverse((o: any) => { if (!o.isLight || !o.visible) return; const c = o.clone(false); o.getWorldPosition(c.position); solo.add(c); if (o.target) { c.target = new THREE.Object3D(); o.target.getWorldPosition(c.target.position); solo.add(c.target); } });
-    const par = n.A.root.parent; A.showStill(n.A, false); solo.attach(n.A.root); SCN = solo;
+    // (10 Nov 2026) houses, trees and stalls round a villager hid its face from the child's side. Hiding whole groups hid the
+    // lights too (black pictures), and a stage of its own with copied lights gave deep orange skin and near-black clothes:
+    // the villager stays in the valley, every mesh that is not the villager's (houses, trees, the sky) is hidden for the
+    // pictures, the lights stay; it is looked at from its own front, and never as the far "still" copy (the old code person)
+    A.showStill(n.A, false); const hidden: any[] = []; const mine = new Set<any>(); n.A.root.traverse((o: any) => mine.add(o));
+    top.traverse((o: any) => { if ((o.isMesh || o.isSprite || o.isPoints || o.isLine) && o.visible && !mine.has(o)) { hidden.push(o); o.visible = false; } }); SCN = top; const bg0 = top.background; top.background = new THREE.Color(0xbcd6ec);   // (a light ground behind: dark hats and hair on black could not be seen)
     const fq = n.A.root.getWorldQuaternion(new THREE.Quaternion()), fd = new THREE.Vector3(0, 0, 1).applyQuaternion(fq), yaw = Math.atan2(fd.x, fd.z);
+    n.A.life = null; A.animate(n.A, 'idle', 1);   // (standing still: the children who host games cheer and wave in the valley, and Bông's raised arms lay beside her face)
     // (10 Nov 2026, the 11 villagers on their own Meshy faces) every mood front and three-quarter, the eye moods from both
     // sides, the back from three sides, and the whole villager front, three-quarter and back in the valley's light
     for (const m of MOODS) { mood(n.A, n.A.model, m); for (const s of [0, .7]) headShot(`v-${id}-${m}-${s ? 'tq' : 'front'}`, n.A.root, n.A.model, yaw, s, true); }
@@ -194,7 +194,7 @@ const shots: Record<string, string> = await P.page.evaluate(async ([MODE, LIST, 
       for (const [nm, s] of [['front', 0], ['tq', .7], ['back', Math.PI]] as [string, number][]) {
         const dir = new THREE.Vector3(Math.sin(yaw), 0, Math.cos(yaw)).applyAxisAngle(new THREE.Vector3(0, 1, 0), s);
         const cf = new THREE.PerspectiveCamera(28, 360 / 480, .05, 200); cf.position.copy(c).addScaledVector(dir, Hh * 2.1); cf.lookAt(c); grab(`v-${id}-full-${nm}`, cf, 360, 480); } }
-    par.attach(n.A.root); SCN = null;
+    hidden.forEach((o: any) => { o.visible = true; }); top.background = bg0; SCN = null;
   }
   return out;
 }, [MODE, LIST, !!process.env.BARE, process.env.HIDE || ''] as any);   // (HIDE=shorts: that garment hidden in the poses, to tell which layer shows)

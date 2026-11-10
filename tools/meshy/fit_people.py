@@ -308,8 +308,8 @@ print('FIT face layer tris', len(dme.polygons))
 # ---- skin colour: the face's typical light skin
 def hsv(c): return colorsys.rgb_to_hsv(*[float(x) for x in c])
 flat = F[..., :3].reshape(-1, 3); hs = np.array([hsv(c) for c in flat[::7]])
-cand = flat[::7][(hs[:, 1] > .08) & (hs[:, 1] < .45) & (hs[:, 2] > .6) & ((hs[:, 0] < .11) | (hs[:, 0] > .95))]
-REF = np.percentile(cand, 80, axis=0); print('FIT skin ref', np.round(REF, 3), 'from', len(cand))
+cand = flat[::7][(hs[:, 1] > .15) & (hs[:, 1] < .45) & (hs[:, 2] > .6) & ((hs[:, 0] < .11) | (hs[:, 0] > .95))]
+REF = np.percentile(cand, 80, axis=0); print('FIT skin ref', np.round(REF, 3), 'from', len(cand))   # (10 Nov 2026: saturation over .15, was .08: Bác Ba's white-grey hair and moustache passed as skin, his skin ref came out greyish pink and his closed lids were grey patches)
 dist = lambda arr: np.linalg.norm(arr[..., :3] - REF, axis=-1)
 def skin_mask(arr):   # skin by hue and saturation (light peach to the pink of cheeks and lips), not hair (more saturated) or cream cloth
     rgb = arr[..., :3]; v = rgb.max(-1); mn = rgb.min(-1); s_ = (v - mn) / np.maximum(v, 1e-4)
@@ -317,8 +317,11 @@ def skin_mask(arr):   # skin by hue and saturation (light peach to the pink of c
     hue = np.where(v == r, ((g - b) / np.maximum(v - mn, 1e-4)) % 6, np.where(v == g, (b - r) / np.maximum(v - mn, 1e-4) + 2, (r - g) / np.maximum(v - mn, 1e-4) + 4)) / 6
     return ((hue < .105) | (hue > .94)) & (s_ > .05) & (s_ < SKIN_SMAX) & (v > .38)
 SKIN_SMAX = .44
+def skin_wide(arr):   # (10 Nov 2026) skin for filling closed lids: skin hues, coloured (over .14: not white-grey brows or hair) up to deep painted skin (.75)
+    _h, _s, _v = hsv_np(arr[..., :3]); return ((_h < .105) | (_h > .94)) & (_s > .14) & (_s < .75) & (_v > .38)
 
 # ---- 3. the moods, drawn from her own eyes and mouth
+Image_save = bpy.data.images.new(ID + '-front', F.shape[1], F.shape[0], alpha=True); Image_save.pixels.foreach_set(np.concatenate([F[::-1, :, :3], np.ones(F.shape[:2] + (1,), np.float32)], -1).reshape(-1)); Image_save.filepath_raw = os.path.join(RDIR, 'face-front.png'); Image_save.file_format = 'PNG'; Image_save.save()   # (10 Nov 2026: the face picture the moods are cut from, to measure it, not face-bake.png)
 H_, W_ = F.shape[:2]; D = dist(F); V = F[..., :3].max(-1); S_ = (F[..., :3].max(-1) - F[..., :3].min(-1)) / np.maximum(V, 1e-4)
 yy, xx = np.mgrid[0:H_, 0:W_]
 def box_of(mask):
@@ -340,7 +343,14 @@ for side, cols in (('R', xx < W_ / 2), ('L', xx >= W_ / 2)):
         _rows = _w.sum(1).astype(np.float32); _rows = np.convolve(_rows, np.ones(9) / 9, 'same'); _r0 = int(np.argmax(_rows))
         _w &= np.abs(yy - _r0) < H_ * .18   # (Lumi's big eyes are .28 of the face tall)
     bw = box_of(_w) if _w.sum() > 40 else None
-    if bw:
+    if bw:   # (10 Nov 2026: Tí looks inwards, her whites are only on the outer side, and the box round them was 19 px of a 40 px eye: the closed eyes kept her dark irises) the dark iris joined to the whites, towards the face's middle only (never the hair at the face's edge), in the same rows
+        _toc = (xx >= bw[0]) & (xx < W_ / 2) if side == 'R' else (xx >= W_ / 2) & (xx < bw[2])
+        _ir = (V < .6) & _toc & (yy >= bw[1]) & (yy < bw[3]); _g = _w.copy()
+        for _ in range(W_ // 2):
+            _n = _g | (_ir & (np.roll(_g, 1, 0) | np.roll(_g, -1, 0) | np.roll(_g, 1, 1) | np.roll(_g, -1, 1)))
+            if (_n == _g).all(): break
+            _g = _n
+        bw = box_of(_g) or bw
         ww_, wh_ = bw[2] - bw[0], bw[3] - bw[1]
         eyes[side] = [max(0, int(bw[0] - ww_ * .15)), max(0, int(bw[1] - wh_ * .45)), min(W_, int(bw[2] + ww_ * .15)), min(H_, int(bw[3] + wh_ * .25))]; continue
     b = box_of(dark & cols)
@@ -467,7 +477,7 @@ def lid(img, b, top=0., bot=1.):   # (original_skin) a closed lid painted over t
     PART = OWN and top == 0 and bot < 1
     if PART: lidline = lambda x: b[1] + h_ * bot + h_ * .14 * (1 - np.clip((x - (b[0] + b[2]) / 2) / (w_ / 2), -1, 1) ** 2); y1 = b[3]
     ring = (xx > b[0] - w_ * .3) & (xx < b[2] + w_ * .3) & (yy > b[1] - h_ * .2) & (yy < b[3] + h_ * .5) & ~((xx > b[0]) & (xx < b[2]) & (yy > b[1]) & (yy < b[3]))
-    ring &= skin_mask(F) & (V > .55) & (S_ > .14)   # (not grey brows or hair: Bác Ba's lids came out grey)
+    ring &= skin_wide(F) & (V > .55)   # (not grey brows or hair: Bác Ba's lids came out grey)   # (10 Nov 2026: and not skin_mask, whose saturation limit .44 threw out Bác Ba's own deep skin (.46), so only pale grey edges were left to fill his lids)
     sk = np.median(F[ring][:, :3], axis=0) if ring.any() else REF
     cx_, cy_ = (b[0] + b[2]) / 2, (y0 + y1) / 2; rx, ry = w_ / 2 * 1.3, max(2, (y1 - y0) / 2 * 1.3)   # (8 Nov: wide enough for the eye's own outline)
     d = np.hypot((xx - cx_) / rx, (yy - cy_) / ry); _inb = (xx >= b[0]) & (xx < b[2]) & (yy >= b[1]) & (yy < b[3]); hole = (d < 1) & ~(HAIRISH & ~_inb)   # (hair beside the eye stays hair; inside the eye's box the lid always closes: an iris can be hair-coloured, Sol's)
@@ -512,6 +522,7 @@ def lid(img, b, top=0., bot=1.):   # (original_skin) a closed lid painted over t
         # over the top stay hair)
         _wide = (np.hypot((xx - cx_) / (w_ * .76), (yy - (b[1] + b[3]) / 2) / (h_ * .64)) < 1) & ~(HAIRISH & (yy < b[1] + h_ * .15)) & ~(HAIRISH & ~_inb & (S_ > .3) & (V > .45) & ~((V > .7) & (S_ < .22)))   # (dark lash flicks close even when hair-coloured, Lumi's; only bright, strongly coloured hair beside the eye stays: the faint grey edge of Lumi's outline closes, 9 Nov)   # (an eye's white is never hair: Clara's inner corner; Lumi's outer arc, 9 Nov; a strand of hair beside the eye stays hair: Clara's)
         hole |= _wide & (yy >= b[1] + h_ * .24)   # (below the brows: b reaches up over them, and closed eyes lost Clara's and Lumi's brows)
+        hole &= ~((yy < b[1] + h_ * .16) & (xx > b[0] + w_ * .2) & (xx < b[2] - w_ * .2) & ((V < .6) | HAIRISH))   # (over the eye's middle only: at the corners the lashes flick up past the box, and Mit's far eye kept them)   # (11 Nov 2026: Cô Mai's brows lie just over her eyes and her closed lids wiped half of them: dark pixels above the eye's own box (b is grown by .25 of it upwards) are brows or hair, and stay)
     if top > 0: hole &= yy >= y0
     if PART: hole &= yy < lidline(xx)
     # her own skin flows in from all round the eye (a smooth fill, no disc edge): the eye pixels are repeatedly
@@ -520,11 +531,12 @@ def lid(img, b, top=0., bot=1.):   # (original_skin) a closed lid painted over t
     sub = img[ya:yb, xa:xb, :3].copy(); hm = hole[ya:yb, xa:xb]
     # (owner 8 Nov 2026: dark smudges round the closed eyes in the game) only skin flows in: lashes, brows and hair round
     # the eye are held at her skin colour while the lid is filled (they themselves stay as they are outside the lid)
-    _hv = hsv_np(img[ya:yb, xa:xb, :3]); _sm = skin_mask(img[ya:yb, xa:xb]) & (_hv[2] > .45) & (_hv[1] > .14); sub[~hm & ~_sm] = sk   # (10 Nov 2026: Bác Ba's white-grey brows and lashes passed the skin test and flowed into his closed lids as grey patches: skin is coloured)
+    _sm = skin_wide(img[ya:yb, xa:xb]) & (hsv_np(img[ya:yb, xa:xb, :3])[2] > .45); sub[~hm & ~_sm] = sk   # (10 Nov 2026: Bác Ba's white-grey brows and lashes passed the skin test and flowed into his closed lids as grey patches: skin is coloured)
     # (owner 8 Nov 2026: the closed lid was paler than the cheek round it) the fill starts from the skin right round the
     # hole, not her lightest skin, and runs until it has settled
     _rim = ~hm & _sm & (np.roll(hm, 1, 0) | np.roll(hm, -1, 0) | np.roll(hm, 1, 1) | np.roll(hm, -1, 1) | np.roll(hm, 2, 0) | np.roll(hm, -2, 0) | np.roll(hm, 2, 1) | np.roll(hm, -2, 1))
     sub[hm] = np.median(sub[_rim], axis=0) if _rim.sum() > 8 else sk
+    print('FIT lid fill', 'sk', np.round(sk, 2), 'rim', int(_rim.sum()), np.round(np.median(sub[_rim], axis=0), 2) if _rim.any() else None, 'skin px', int(_sm.sum()), 'of', _sm.size)
     for _ in range(700):
         P = np.pad(sub, ((1, 1), (1, 1), (0, 0)), mode='edge')
         av = (P[:-2, 1:-1] + P[2:, 1:-1] + P[1:-1, :-2] + P[1:-1, 2:]) / 4; sub[hm] = av[hm]

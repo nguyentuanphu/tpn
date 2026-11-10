@@ -116,7 +116,8 @@ git checkout -- models content/management-catalogue.json tests/check-times.json
 ## Next work (after the friends are approved)
 
 - **The 11 villagers:** rebuild with the same own-face method and review them the same way. They have no shop, so they stay whole Meshy models.
-  - (10 Nov 2026) Rebuilt on branch `meshy-villagers` (worktree `D:\WorkSpace\sv-meshy-villagers`), all under 500 KB, audited with `audit_villager.mts`, sheets sent to the owner. See the skill's "Villagers" section. The `js/friend-model.ts` guard for models without garments is on that branch too.
+  - (11 Nov 2026) Rebuilt on branch `meshy-villagers` (worktree `D:\WorkSpace\sv-meshy-villagers`), round 11: all 11 between 466 and 489 KB, `audit_villager.mts` 132 of 132 cases pass (worn, unseen, eyes, mouth, size), checks villagermodels, friendmodel, faces, frienditems, friendoutfits, wearfit and friendswap pass. Review sheets `villagers-r11-1.jpg` and `-2.jpg` here (ChatGPT front, in-game whole body, moods, three-quarter, side, back); sent to the owner, waiting for approval. See the skill's "Villagers" section. Two lines in `js/friend-model.ts` (owner approved): no garment-colour loop without garments, and eye areas for models without garments.
+  - Small things left: Mit's and Tí's sad brows have a faint dark smudge; Bác Ba's excited face has a small leftover lash curve by one eye; Tí is fitted at JPEG 50 (896 px) to stay under 500 KB.
 - **Regional villagers (61):** no budget approved yet.
 - **Animals, pets and companions:** plan a dog pilot with a four-legged rig. Ask the owner before any spending.
 - **More chats or accounts:** once a method is approved, the work can be split. One chat per group, never two chats on the same files, and paid Meshy jobs on one journal per group.
