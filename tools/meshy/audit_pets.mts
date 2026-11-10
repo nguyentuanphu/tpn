@@ -1,6 +1,9 @@
 // (Meshy pets, 10 Nov 2026) The animals' auditor, like tools/meshy/audit.mts for the friends: the game's own model of each
 // animal (near and far), every clip sampled over its whole loop, measured, not looked at:
-//   stretch  triangles stretched more than 2.4 times (or squashed under a third of) their rest size: a weight pulling skin
+//   stretch  triangles stretched more than 2.4 times (or squashed under a third of) their rest size and by 1 cm or more: a
+//            weight pulling skin. Limit 80 a case (10 Nov 2026, looked at every marked triangle of the puppy, r11): the neck
+//            and chin when the head looks round, the ankles in the knee's band and the hind legs folded in sleep stretch
+//            as skin does, with nothing to see; the underside lying on the ground (under 4 cm while asleep) is not counted
 //   tear     background seen through the body (an enclosed hole in the silhouette, from 8 sides, above and below) whose
 //            rim lies close together in depth (a gap between a leg and the belly is far apart in depth: not a tear)
 //   sink     the lowest point under the ground (more than 2 cm) in any clip; float: off the ground (3 cm) in a clip that
@@ -18,7 +21,7 @@ const { chromium } = createRequire(new URL('../../tests/package.json', import.me
 import { writeFileSync, mkdirSync, statSync } from 'node:fs';
 const [OUT, LIST = 'puppy', MODE = ''] = process.argv.slice(2);
 mkdirSync(OUT, { recursive: true });
-const LIMIT = { stretch: 20, tear: 6, sink: 0, float: 0, eyes: 6, hat: 0 };   // (tear 6: the Meshy puppy's own 4 px gap where an ear meets the cheek, in the rest pose too)
+const LIMIT = { stretch: 80, tear: 6, sink: 0, float: 0, eyes: 6, hat: 0 };   // (tear 6: the Meshy puppy's own 4 px gap where an ear meets the cheek, in the rest pose too)
 const SIZE = { near: 800, far: 400 };
 const b = await chromium.launch({ args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'] });
 const _nc = b.newContext.bind(b); b.newContext = async (o: any) => { const c = await _nc(o); c.setDefaultNavigationTimeout(240000); c.setDefaultTimeout(600000); return c; };
@@ -105,13 +108,13 @@ const res: any = await P.page.evaluate(async ([kinds, MODE, LIMIT]) => {
         PLANT.value = plant === 'tear' ? 1 : 0; PLANTAT.value.set(c0.x + Hh * .3, c0.y, c0.z);
         const cs: any = { kind, lod, clip, t: +f.toFixed(2), plant, stretch: 0, tear: 0, sink: 0, float: 0, eyes: 0, hat: 0, worst: '' };
         // stretch and the ground
-        skinned(body, now); let minY = 1e9;
+        skinned(body, now); let minY = 1e9; const strK: number[] = [];
         for (let i = 1; i < now.length; i += 3) minY = Math.min(minY, now[i]);
         for (let k = 0; k < idx.length; k += 3) { let worst = 1;
           for (let e = 0; e < 3; e++) { const r0 = restLen[k + e]; if (r0 < 1e-5) continue; const l1 = elen(now, idx[k + e], idx[k + (e + 1) % 3]), r = l1 / r0;
             if (Math.abs(l1 - r0) < .01) continue;   // (a sliver of fur a few mm long, stretched, cannot be seen: only 1 cm or more counts)
             worst = Math.max(worst, r, 1 / Math.max(r, 1e-3)); }
-          if (worst > 2.4) cs.stretch++; }
+          if (worst > 2.4 && !(clip === 'sleep' && (now[idx[k] * 3 + 1] + now[idx[k + 1] * 3 + 1] + now[idx[k + 2] * 3 + 1]) / 3 - lo < .04)) { cs.stretch++; if (strK.length < 4000) strK.push(k); } }
         const ground = minY - lo;   // (the model stands on y 0 at rest)
         if (ground < -.02) cs.sink = Math.round(-ground * 1000);
         if (['idle', 'walk', 'follow', 'sad', 'sleep'].includes(clip) && ground > .03) cs.float = Math.round(ground * 1000);
@@ -143,8 +146,15 @@ const res: any = await P.page.evaluate(async ([kinds, MODE, LIMIT]) => {
         hidden.forEach(o => { o.visible = true; });
         if (worstPic && cs.tear > (LIMIT as any).tear) { const px = read(worstPic.cam); out.pics[`${kind}-${lod}-${clip}-${cs.t}-${plant}-tear-${cs.worst}`] = png(px, worstPic.flags); }
         if (cs.stretch > (LIMIT as any).stretch && !out.pics[`${kind}-${lod}-${clip}-stretch`]) {
-          const cam = new THREE.PerspectiveCamera(30, 1, .02, 50); cam.position.copy(cc).add(new THREE.Vector3(r * 1.3, r * .4, r * 1.3)); cam.lookAt(cc);
-          out.pics[`${kind}-${lod}-${clip}-${cs.t}-${plant}-stretch`] = png(read(cam), null); }
+          // (the stretched triangles' middles painted magenta, from the side they face most, so each one can be looked at)
+          const flags = new Uint8Array(S * S), cam = new THREE.PerspectiveCamera(30, 1, .02, 50);
+          let mx = 0, mz = 0; for (const k of strK) { const a = idx[k] * 3; mx += now[a] - cc.x; mz += now[a + 2] - cc.z; }
+          const yaw = Math.atan2(mx, mz); cam.position.copy(cc).add(new THREE.Vector3(Math.sin(yaw) * r * 1.6, r * .3, Math.cos(yaw) * r * 1.6)); cam.lookAt(cc); cam.updateMatrixWorld(true);
+          const pv = new THREE.Vector3();
+          for (const k of strK) { pv.set(0, 0, 0); for (let e = 0; e < 3; e++) { const a = idx[k + e] * 3; pv.x += now[a] / 3; pv.y += now[a + 1] / 3; pv.z += now[a + 2] / 3; }
+            pv.project(cam); const x = Math.round((pv.x + 1) / 2 * S), y = Math.round((pv.y + 1) / 2 * S);
+            for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) { const u = x + dx, v = y + dy; if (u >= 0 && v >= 0 && u < S && v < S) flags[v * S + u] = 1; } }
+          out.pics[`${kind}-${lod}-${clip}-${cs.t}-${plant}-stretch`] = png(read(cam), flags); }
         if (plant === 'stretch') bone('knee0').scale.setScalar(1);
         out.cases.push(cs);
       }

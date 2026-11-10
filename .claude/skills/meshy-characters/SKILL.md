@@ -143,3 +143,27 @@ One friend end to end: `GF_SKIP_REFIT=1 powershell -File tools/meshy/graft_frien
 ## Scaling up
 
 When a method is proven on one person (owner-approved), the rest can be split across chats or accounts: one chat per group (e.g. friends, VN-north villagers, VN-central, VN-south, Australia, animals by skeleton type), each using this skill, the same tools and its own review sheets, never two chats writing the same files. Paid Meshy jobs stay on one account's journal per group; each group syncs its ledger.
+
+## Animals (pets and companions) with Meshy (10 Nov 2026, dog pilot)
+
+Plan and progress: `docs/meshy-pets-20261110/PLAN.md`. Meshy's auto-rig is humanoid only: animals get the game's own
+creature skeleton (the bone names of `tools/blender/world-creatures.py`) and its clips.
+- One command: `powershell -File tools/meshy/make_animal.ps1 -Kind puppy [-Quick]` (fit, pack, install in the working
+  copy, `pet_shots.mts` close-ups, `audit_pets.mts`; exit 2 when the audit fails). Run a server of your own
+  (`SV_URL=http://localhost:<port>/`), never the friends' auditor's.
+- Tuning per animal: `tools/meshy/animal_joints/<kind>.json` (joints, leg/ear swing, sleep pose, eye and lid sizes).
+- Lessons (each cost a round):
+  - The glTF import splits Meshy's surface at every picture seam (6430 pieces on the puppy). Weights must be computed on
+    points welded by place, or the seams open as torn strands when a leg turns far (the elbow fur in sleep).
+  - `skeleton.pose()` on a gltfpack-quantized model gives whole-number units: keep the bones' loaded pose as the rest.
+  - Pictures read from a render target are linear: turn them to sRGB (`game_shots.mts` still does not: its pictures are
+    darker and more orange than the game).
+  - A skinned piece needs `frustumCulled = false` outside `js/modelkit.ts`, or a lid at rest scale is culled.
+  - Do not rely on the game's clock for shots on a busy machine: set each clip's time with your own mixer.
+  - Shut and happy lids: a fine grid laid on the face over the whole painted eye (white and outline too, found by
+    flood from the iris through texels unlike the fur), its own small picture seen straight on; copies of the head's
+    own triangles showed the eye through cracks at their edges.
+  - Sleep: a sphinx (front legs forward at the shoulder) looks right; sharing the turn with the elbow made it crouch.
+    `ground()` lifts the body at every frame where anything would go under the ground.
+  - The auditor's stretch marks were looked at one by one before its limit was set (neck when looking round, ankles,
+    underside on the ground): see the header of `audit_pets.mts`.

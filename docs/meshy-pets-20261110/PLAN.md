@@ -100,3 +100,23 @@ pilot. Farm and wild animals (cow, sheep, pig, buffalo ...) are not in this plan
   (name in `PETS`, `js/farm.ts`: "Buffalo calf / Nghé con" to "Calf / Bê con", and its sound), not a buffalo calf.
 - **Dragon: keep the existing sheet** (standing, small wings); it flies on its small wings.
 - **Firefly: Meshy body, wings and glow stay the game's code**; the body a lighter navy so it reads from far away.
+
+## Dog pilot: progress (10 Nov 2026 AEDT, no credits spent)
+
+- `tools/meshy/fit_animal.py` (Blender): turns the Meshy puppy to face the game's front at the game animal's height;
+  finds the joints from the shape (the belly from below, the four leg columns, the back over the back half, the neck,
+  the tail's root, the ears; `animal_joints/<kind>.json` corrects or tunes); weights part by part (legs only inside each
+  leg's own thickness, the head over a tilted neck plane, ears, tail), smoothed over the surface and, round the legs'
+  tops, in space (Meshy's fur is loose cards); the game's creature bones and world-creatures.py's own clips (leg and
+  ear swings made smaller for thick legs and soft ears); sleep lies like a sphinx; every clip is lifted where anything
+  would go under the ground.
+- Face: Meshy's painted eyes and nose found from the front (dark patches); for each eye a "shut" lid and a "happy"
+  lid, each a fine grid laid on the face over the whole painted eye (white, outline, iris) with its own picture: the fur
+  round the eye filled in and a lash line; an open mouth under the nose. Clips show them (blinks, sleep, happy moves).
+- Game: `js/modelkit.ts` draws a "meshy-" material by its own painted light (like the Meshy friends); `js/creatures.ts`
+  uses `creature-<kind>-hd` within 16 m of a child and `creature-<kind>` beyond 24 m (falls back to the far one).
+- `tools/meshy/audit_pets.mts`: stretch, tear, sink/float, eyes, hat, size, with a self-test of planted faults.
+  `tools/meshy/make_animal.ps1 -Kind puppy` runs fit, pack, install (working copy), shots and the audit.
+- Sizes: near 716 KB (31k triangles, 1024 px picture), far 374 KB (9k, 512 px).
+- Fixed on the way: shots read linear colours (too dark and orange, `game_shots.mts` has the same: pictures darker than
+  the game); `skeleton.pose()` breaks gltfpack-quantized models (the auditor keeps the bones' loaded pose instead).

@@ -185,11 +185,22 @@ def weights(o, J, M):
             if len(nb_) > 1: W2[i] = W[nb_].mean(0)
         W = W2
     # smooth over the surface a little (neighbours only: an ear lying on a cheek is not joined to it)
-    adj = [[] for _ in range(n)]
-    for e in o.data.edges: a, b = e.vertices; adj[a].append(b); adj[b].append(a)
-    nb = [np.array(a) for a in adj]
+    # (the glTF import splits the surface at every seam of Meshy's picture, 6430 pieces on the puppy: points at the same
+    # place are one point here, so a seam never opens when a leg or the head turns)
+    _, grp = np.unique(np.round(V / .0003).astype(np.int64), axis=0, return_inverse=True); grp = grp.ravel(); ng = grp.max() + 1
+    def weld(Wv):
+        S = np.zeros((ng, Wv.shape[1])); np.add.at(S, grp, Wv); c = np.bincount(grp, minlength=ng)[:, None]
+        return (S / np.maximum(1, c))[grp]
+    W = weld(W)
+    adj = [set() for _ in range(ng)]
+    for e in o.data.edges:
+        a, b = grp[e.vertices[0]], grp[e.vertices[1]]
+        if a != b: adj[a].add(b); adj[b].add(a)
+    nb = [np.array(sorted(a), dtype=int) for a in adj]
+    Wg = weld(W)[np.unique(grp, return_index=True)[1]]   # (one row per welded point)
     for _ in range(FIX.get('smooth', 3)):
-        W = np.array([(W[i] + W[nb[i]].mean(0)) / 2 if len(nb[i]) else W[i] for i in range(n)])
+        Wg = np.array([(Wg[i] + Wg[nb[i]].mean(0)) / 2 if len(nb[i]) else Wg[i] for i in range(ng)])
+    W = Wg[grp]
     W /= np.maximum(1e-6, W.sum(1, keepdims=True))
     for b in names:
         g = o.vertex_groups.new(name=b); col = W[:, ix[b]]
