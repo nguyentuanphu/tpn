@@ -176,24 +176,31 @@ const shots: Record<string, string> = await P.page.evaluate(async ([MODE, LIST, 
     h.place(n.obj.position.x + 2, n.obj.position.z + 2);
     for (let k = 0; k < 80 && n._vm !== 'worn' && n._vm !== 'code'; k++) await w(200);
     if (n._vm !== 'worn') { out[id + '-notworn'] = ''; continue; }
+    for (let k = 0; k < 120 && !n.A.modelHD; k++) await w(500);   // (11 Nov 2026: the high-detail model a child sees near, js/avatar.ts villagersHDNear; up to a minute)
     // (10 Nov 2026) houses, trees and stalls round a villager hid its face from the child's side. Hiding whole groups hid the
     // lights too (black pictures), and a stage of its own with copied lights gave deep orange skin and near-black clothes:
     // the villager stays in the valley, every mesh that is not the villager's (houses, trees, the sky) is hidden for the
     // pictures, the lights stay; it is looked at from its own front, and never as the far "still" copy (the old code person)
     A.showStill(n.A, false); const hidden: any[] = []; const mine = new Set<any>(); n.A.root.traverse((o: any) => mine.add(o));
     top.traverse((o: any) => { if ((o.isMesh || o.isSprite || o.isPoints || o.isLine) && o.visible && !mine.has(o)) { hidden.push(o); o.visible = false; } }); SCN = top; const bg0 = top.background; top.background = new THREE.Color(0xbcd6ec);   // (a light ground behind: dark hats and hair on black could not be seen)
-    const fq = n.A.root.getWorldQuaternion(new THREE.Quaternion()), fd = new THREE.Vector3(0, 0, 1).applyQuaternion(fq), yaw = Math.atan2(fd.x, fd.z);
+    const fq = (n.A.rig || n.A.root).getWorldQuaternion(new THREE.Quaternion()), fd = new THREE.Vector3(0, 0, 1).applyQuaternion(fq);
+    const faceDir = (M: any, fb: any) => { M.obj.updateMatrixWorld(true); let hb: any = null, fm: any = null; M.obj.traverse((o: any) => { if (o.isBone && o.name === 'head') hb = o; if (o.isMesh && /^face-smile/.test(o.material && o.material.name || '')) fm = o; }); if (!hb || !fm) return fb; const c = new THREE.Box3().setFromObject(fm, true).getCenter(new THREE.Vector3()), h = hb.getWorldPosition(new THREE.Vector3()), d = c.sub(h); d.y = 0; return d.lengthSq() > 1e-6 ? Math.atan2(d.x, d.z) : fb; };   // (11 Nov 2026: the face's own front, from the head to its face pieces: the body and its root turn to the child while the review waits)
+    const yaw = faceDir(n.A.model, Math.atan2(fd.x, fd.z));
     n.A.life = null; A.animate(n.A, 'idle', 1);   // (standing still: the children who host games cheer and wave in the valley, and Bông's raised arms lay beside her face)
     // (10 Nov 2026, the 11 villagers on their own Meshy faces) every mood front and three-quarter, the eye moods from both
     // sides, the back from three sides, and the whole villager front, three-quarter and back in the valley's light
-    for (const m of MOODS) { mood(n.A, n.A.model, m); for (const s of [0, .7]) headShot(`v-${id}-${m}-${s ? 'tq' : 'front'}`, n.A.root, n.A.model, yaw, s, true); }
-    for (const m of ['smile', 'blink', 'lookL']) { mood(n.A, n.A.model, m); for (const s of [1.2, -1.2]) headShot(`v-${id}-${m}-side${s > 0 ? 'L' : 'R'}`, n.A.root, n.A.model, yaw, s, true); }
-    mood(n.A, n.A.model, 'smile');
-    for (const s of [Math.PI, 2.2, -2.2]) headShot(`v-${id}-neck-back-${s.toFixed(1)}`, n.A.root, n.A.model, yaw, s, true);
-    { n.A.root.updateMatrixWorld(true); const box = new THREE.Box3().setFromObject(n.A.model.obj, true), c = box.getCenter(new THREE.Vector3()), Hh = box.max.y - box.min.y;
-      for (const [nm, s] of [['front', 0], ['tq', .7], ['back', Math.PI]] as [string, number][]) {
-        const dir = new THREE.Vector3(Math.sin(yaw), 0, Math.cos(yaw)).applyAxisAngle(new THREE.Vector3(0, 1, 0), s);
-        const cf = new THREE.PerspectiveCamera(28, 360 / 480, .05, 200); cf.position.copy(c).addScaledVector(dir, Hh * 2.1); cf.lookAt(c); grab(`v-${id}-full-${nm}`, cf, 360, 480); } }
+    // (11 Nov 2026) the high-detail model (what a child sees near) as v-<id>-*, the light one (far) as v-<id>-light-*
+    for (const [tg, VM] of ([['', n.A.modelHD || n.A.model], ['-light', n.A.modelHD ? n.A.model : null]] as [string, any][])) { if (!VM) continue; A.showHD(n.A, VM === n.A.modelHD);
+      for (const m of MOODS) { mood(n.A, VM, m); for (const s of [0, .7]) headShot(`v-${id}${tg}-${m}-${s ? 'tq' : 'front'}`, n.A.root, VM, yaw, s, true); }
+      for (const m of ['smile', 'blink', 'lookL']) { mood(n.A, VM, m); for (const s of [1.2, -1.2]) headShot(`v-${id}${tg}-${m}-side${s > 0 ? 'L' : 'R'}`, n.A.root, VM, yaw, s, true); }
+      mood(n.A, VM, 'smile');
+      for (const s of [Math.PI, 2.2, -2.2]) headShot(`v-${id}${tg}-neck-back-${s.toFixed(1)}`, n.A.root, VM, yaw, s, true);
+      { n.A.root.updateMatrixWorld(true); const box = new THREE.Box3().setFromObject(VM.obj, true), c = box.getCenter(new THREE.Vector3()), Hh = box.max.y - box.min.y;
+        for (const [nm, s] of [['front', 0], ['tq', .7], ['back', Math.PI]] as [string, number][]) {
+          const dir = new THREE.Vector3(Math.sin(yaw), 0, Math.cos(yaw)).applyAxisAngle(new THREE.Vector3(0, 1, 0), s);
+          const cf = new THREE.PerspectiveCamera(28, 360 / 480, .05, 200); cf.position.copy(c).addScaledVector(dir, Hh * 2.1); cf.lookAt(c); grab(`v-${id}${tg}-full-${nm}`, cf, 360, 480); } }
+    }
+    A.showHD(n.A, false);
     hidden.forEach((o: any) => { o.visible = true; }); top.background = bg0; SCN = null;
   }
   return out;

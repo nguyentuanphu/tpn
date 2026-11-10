@@ -151,6 +151,7 @@ for o in [marm, mmesh] + [o for o in sc.objects if o.type == 'EMPTY']:
 bpy.ops.object.select_all(action='DESELECT')
 for o in [rig, body] + moods + extra: o.select_set(True)
 bpy.ops.export_scene.gltf(filepath=OUT, export_format='GLB', use_selection=True, export_animations=False, export_skins=True, export_morph=False,
-                          export_yup=True, export_image_format='AUTO', export_vertex_color='ACTIVE', export_extras=True)
+                          export_yup=True, export_vertex_color='ACTIVE', export_extras=True,
+                          **({'export_image_format': 'WEBP', 'export_image_quality': int(os.environ['FIT_WEBP'])} if os.environ.get('FIT_WEBP') else {'export_image_format': 'AUTO'}))   # (11 Nov 2026: FIT_WEBP=<quality>, pictures as WebP (js GLTFLoader reads EXT_texture_webp): sharper than JPEG at the villagers' 500 KB)
 bpy.ops.wm.save_as_mainfile(filepath=os.path.splitext(OUT)[0] + '.blend')
 print('RIGT exported', OUT, os.path.getsize(OUT))

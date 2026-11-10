@@ -540,6 +540,11 @@ def lid(img, b, top=0., bot=1.):   # (original_skin) a closed lid painted over t
     for _ in range(700):
         P = np.pad(sub, ((1, 1), (1, 1), (0, 0)), mode='edge')
         av = (P[:-2, 1:-1] + P[2:, 1:-1] + P[1:-1, :-2] + P[1:-1, 2:]) / 4; sub[hm] = av[hm]
+    if OWN and top == 0 and bot >= 1:   # (11 Nov 2026, owner: "Sửa lại hốc mắt": a closed lid was one flat patch of skin) a soft shade along the lash line, fading upwards over the lid, and a little at the inner corner: the eye's socket under the closed lid
+        _yy, _xx = np.mgrid[ya:yb, xa:xb]; _lash = cy_ + ry * .25; _up = np.clip((_lash - _yy) / max(ry * 1.1, 1), 0, 1)
+        _sh = np.where(_yy <= _lash + ry * .15, .9 + .1 * _up, 1.)   # (darkest, 10 %, just above the lash line)
+        _inner = np.exp(-(((_xx - (b[2] if cx_ < W_ / 2 else b[0])) / max(rx * .35, 1)) ** 2 + ((_yy - _lash) / max(ry * .5, 1)) ** 2)); _sh = _sh * (1 - .05 * _inner)
+        sub[hm] = sub[hm] * _sh[hm][:, None]
     _w = img[ya:yb, xa:xb, :3]; _w[hm] = sub[hm]   # (only the lid itself: the brows, lashes and hair held at skin colour above were written back too, and vanished on every blink)
     img[ya:yb, xa:xb, 3] = np.maximum(img[ya:yb, xa:xb, 3], hm.astype(np.float32))
     if PART:   # the lid's edge: a soft lash line along the curve, over the eye only
@@ -1289,7 +1294,8 @@ if TEX and KEEP and SHIFT:
     if eyes:
         _eb = []
         for b in list(eyes.values())[:2]:   # (wider at the sides and below, a little above (Lumi's rim, 10 Nov); the brows stay)
-            _eb += [fx0 + (b[0] - 18) / W_ * (fx1 - fx0), fx0 + (b[2] + 18) / W_ * (fx1 - fx0), fz1 - (b[3] + 10) / H_ * (fz1 - fz0), fz1 - (b[1] - 10) / H_ * (fz1 - fz0)]
+            _px, _pz = W_ * .035, H_ * .02   # (11 Nov 2026: 18 and 10 px were set on the friends' 512 px face picture; on a villager's 160 px one they were three times wider, and the shut-eye paint showed as a dark band across Tí's eyes)
+            _eb += [fx0 + (b[0] - _px) / W_ * (fx1 - fx0), fx0 + (b[2] + _px) / W_ * (fx1 - fx0), fz1 - (b[3] + _pz) / H_ * (fz1 - fz0), fz1 - (b[1] - _pz) / H_ * (fz1 - fz0)]
         while len(_eb) < 8: _eb += _eb[:4]
         # (auditor 10 Nov 2026: Clara's far eye, three-quarters: its inner corner, past the nose, lay between the two areas)
         # each area reaches the face's middle on its inner side
