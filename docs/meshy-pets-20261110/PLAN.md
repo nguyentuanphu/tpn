@@ -166,3 +166,21 @@ animal can do, that opens a place or a game the child could not reach alone:
   puppy running into walls or buildings while leading (it goes in a straight line); night light; two children with
   pets side by side; speed on a phone with two Meshy puppies (`perf` not run); the pet yard and the farm; the water
   rescue with the swim move; hats on the far model; the village dog, which is the same puppy model at 0.9.
+
+## Everything checked (10 Nov 2026 evening, owner: "Kiểm tra cho hết nhé, mũ phải nudge fit")
+
+- **Hats fitted**: each hat's band goes round the skull at its own depth (`HAT_FIT`, `hatFit` in `js/pets.ts`):
+  a beanie pulled down, a captain's hat a little, crowns and rings on top. The auditor measures every hat in every
+  clip, near and far: floating (over 6 % of the head's height), loose band (over 4 of 16 points 8 % off the skull),
+  head through a closed hat; a planted lifted hat is caught. Close-ups: `puppy-hatfit.jpg`.
+- **Shut eyes** from five sides (front, three-quarters, side); **flicker** of the lids (the same moment drawn with
+  other near and far planes: only depth fights change); far model lids finer (20 cells).
+- **Lead the way and fetch** never go through houses (steps slide along the solid map; `petskills` leads round a
+  house). **Rescue**: the puppy runs to the water and swims (it stood still in the follow move before).
+- **Scenes** (`pet_shots.mts scenes`): night, the pet yard (Meshy model at 0.6), the village dog (the same puppy,
+  near model), the water rescue (run, swim), two children side by side (a pet each, chips in each half).
+- **Speed**: `perf` cannot run here (it needs esbuild, not installed in this checkout or the production one). Measured
+  instead on a phone-sized split screen: two Meshy puppies draw about 10 % more triangles than the code shapes
+  (732k against 667k a frame over both halves); frame times the same within noise in the software renderer. A real
+  phone was not measured.
+- Still by eye only: the open mouth's edges from the side.

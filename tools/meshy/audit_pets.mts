@@ -212,20 +212,20 @@ const res: any = await P.page.evaluate(async ([kinds, MODE, LIMIT]) => {
     if (!self || (kind === kinds[0] && lod === 'near')) {   // (selftest: one hat lifted off the head must be caught)
       const KP = await import(String('/js/kidplay.js')), holder = new THREE.Group(); scene.add(holder); scene.remove(obj); holder.add(obj);
       holder.userData.rig = { model: { obj } };
-      PETS.putHat(holder, 'party'); await new Promise(r => setTimeout(r, 1500));   // (the hats' drawings load on first use)
+      for (let i = 0; i < 100 && !PETS.putHat(holder, 'party'); i++) await new Promise(r => setTimeout(r, 200));   // (the hats' drawings load on first use: wait for them)
       const hb = bone('head'), hIdx = body.skeleton.bones.indexOf(hb), si = body.geometry.attributes.skinIndex, sw = body.geometry.attributes.skinWeight, skull: number[] = [];
       for (let k = 0; k < nv; k++) for (let q = 0; q < 4; q++) if (si.getComponent(k, q) === hIdx && sw.getComponent(k, q) > .8) { skull.push(k); break; }
       let sy0 = 1e9, sy1 = -1e9; for (const k of skull) { sy0 = Math.min(sy0, rest[k * 3 + 1]); sy1 = Math.max(sy1, rest[k * 3 + 1]); } const hH = sy1 - sy0;
       const B = new THREE.Vector3(), U = new THREE.Vector3(), v = new THREE.Vector3(), q4 = new THREE.Quaternion();
       const CLOSED = ['party', 'nonla', 'beanie', 'captain', 'wizard'];
       for (const H of (self ? KP.HATS.filter((x: any) => x.id === 'beanie') : KP.HATS)) {
-        const F = PETS.HAT_FIT[H.id] || { band: .08 }; let worst = 0, worstAt = '', loose = 0, floatMax = 0, poke = 0;
+        const F = PETS.HAT_FIT[H.id] || { band: .08 }; let worst = 0, worstAt = '', loose = 0, floatMax = 0, poke = 0, measured = 0;
         for (const clip of (self ? ['idle'] : clips)) {
           const c = t.clips.find((x: any) => x.name === clip); mixer.stopAllAction(); mixer.clipAction(c).reset().play();
           for (const f of quick || self ? [.5] : [.2, .5, .8]) {
             mixer.setTime(c.duration * f); holder.updateMatrixWorld(true);
             const hat: any = PETS.putHat(holder, H.id); if (!hat) continue; if (self) hat.position.y += hH * .4 / Math.max(1e-4, hb.getWorldScale(new THREE.Vector3()).x); holder.updateMatrixWorld(true);
-            skinned(body, now); hat.getWorldPosition(B); hat.getWorldQuaternion(q4); U.set(0, 1, 0).applyQuaternion(q4);
+            measured++; skinned(body, now); hat.getWorldPosition(B); hat.getWorldQuaternion(q4); U.set(0, 1, 0).applyQuaternion(q4);
             const hs = hat.getWorldScale(new THREE.Vector3()).x, band = F.band * hs, hatTop = (() => { const g = hat.children[0].geometry; g.computeBoundingBox(); return g.boundingBox.max.y * hs; })();   // (in the hat's own frame: a world box grows when the hat tips over)
             let top = -1e9, out = 0;
             for (const k of skull) { v.set(now[k * 3], now[k * 3 + 1], now[k * 3 + 2]).sub(B); const along = v.dot(U); const across = v.addScaledVector(U, -along).length();
@@ -245,6 +245,7 @@ const res: any = await P.page.evaluate(async ([kinds, MODE, LIMIT]) => {
               out_pics(`${kind}-hatclose-${H.id}-${nm}`, png(read(cam), null)); }
           }
         }
+        if (!measured) { worst = 9999; worstAt = 'the hat was never put on: nothing measured'; }   // (a check that measured nothing has not passed)
         out.cases.push({ kind, lod, clip: 'hat:' + H.id, t: 0, plant: self ? 'hat' : 'none', stretch: 0, tear: 0, sink: 0, float: 0, eyes: 0, hat: worst, worst: worstAt, hatFloat: floatMax, hatPoke: poke, hatLoose: loose });
       }
       PETS.putHat(holder, null); scene.remove(holder);
