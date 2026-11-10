@@ -1,0 +1,37 @@
+{
+  "assetId": "r045",
+  "regionalOf": "regional-045-northern-girl",
+  "name": "Northern girl",
+  "group": "B",
+  "endpoint": "https://api.meshy.ai/openapi/v1/multi-image-to-3d",
+  "method": "POST",
+  "parameters": {
+    "ai_model": "meshy-7.1",
+    "geometry_resolution": "standard",
+    "should_texture": true,
+    "texture_resolution": "2k",
+    "enable_pbr": false,
+    "pose_mode": "",
+    "target_formats": [
+      "glb"
+    ],
+    "image_enhancement": false
+  },
+  "inputImages": [
+    {
+      "view": "front",
+      "localPath": "reference-images/045-northern-girl/front.png",
+      "sha256": "dfe5278177e56ea722ef3491416e4656b5f5f069051a7d26bb369bc3956614e6"
+    },
+    {
+      "view": "left-side",
+      "localPath": "reference-images/045-northern-girl/left-side.png",
+      "sha256": "03780aa3e0b578c5dccb2f19e909aa7d185fcb2b7cd5bcee8dce0f78eb1cac9b"
+    }
+  ],
+  "plannedCredits": 30,
+  "pilot": "meshy-regional-pilot-1 (owner, 10 Nov 2026 AEDT: 6 people, at most 270 credits)",
+  "rawDownloadDestination": "raw-models/B/r045.glb",
+  "runtimeDestinationAfterFittingAndValidation": "models/villager-r045.glb",
+  "viewsReason": "Owner, 10 Nov 2026 AEDT (pop-up): front and left side only. The back view lays the two braids on the jacket's back while the front and side views put them in front of the shoulders (as clara-r2: Meshy built both pairs); Meshy infers the back."
+}

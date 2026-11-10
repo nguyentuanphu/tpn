@@ -65,7 +65,31 @@ def body_spec(spec):
         raise ValueError('Body job parameters, budget or reason differ from the reviewed plan')
     return spec
 
+REGIONAL = ROOT/'docs/meshy-regional-40-100'
+REGIONAL_PILOT = ('r045', 'r050', 'r057', 'r064', 'r074', 'r084')   # (owner, 10 Nov 2026 AEDT: pilot of 6, at most 270 credits)
+
+def regional_spec(spec):
+    """(10 Nov 2026, owner: regional villagers, pilot of 6) a regional job (assetId 'r<nnn>', docs/meshy-regional-40-100/
+    job-specifications/r<nnn>.json) sends views of that person's reviewed sheet (ASSET-MANIFEST viewCrops, hashes checked):
+    an ordered subset starting with the front (045: front and side only, owner's choice), meshy-7.1, 30 credits."""
+    man = json.loads((REGIONAL/'ASSET-MANIFEST.json').read_text(encoding='utf-8'))
+    a = next((x for x in man['assets'] if x['id'] == spec['regionalOf']), None)
+    if a is None or spec['assetId'] not in REGIONAL_PILOT or spec['assetId'] != 'r%03d' % a['number'] or a.get('kind') != 'humanoid':
+        raise ValueError('A regional job must be r<nnn> for a person in the pilot')
+    reviewed = [(c['path'], c['sha256']) for c in a.get('viewCrops', [])]
+    inputs = [(i['localPath'], i['sha256']) for i in spec['inputImages']]
+    if a.get('reviewStatus') != 'technical_pass' or len(inputs) < 2 or inputs != [r for r in reviewed if r in inputs] or inputs[0] != reviewed[0]:
+        raise ValueError('Regional job inputs differ from the reviewed sheet views')
+    if spec['parameters'] != BODY_PARAMETERS or spec['plannedCredits'] != 30 or spec.get('group') != 'B':
+        raise ValueError('Regional job parameters, budget or group differ from the pilot plan')
+    return spec
+
 def spec_for(asset):
+    if re.fullmatch(r'r\d{3}', asset or ''):   # (regional pilot: its own folder of job specifications)
+        path = REGIONAL/'job-specifications'/(asset+'.json')
+        if not path.is_file():
+            raise ValueError('Unknown regional asset')
+        return regional_spec(json.loads(path.read_text(encoding='utf-8')))
     paths = list((OUT/'job-specifications').glob(f'*-{asset}.json'))
     if len(paths) != 1:
         raise ValueError('Unknown or ambiguous asset')
@@ -101,9 +125,9 @@ def spec_for(asset):
 def payload_for(spec):
     payload = dict(spec['parameters'])
     urls = []
-    base = (ROOT/spec.get('bodyPack', 'docs/friends-body-sheets-20261108')) if spec.get('bodyOf') else OUT   # (a body job's views are repository paths in its pack)
+    base = (ROOT/spec.get('bodyPack', 'docs/friends-body-sheets-20261108')) if spec.get('bodyOf') else REGIONAL if spec.get('regionalOf') else OUT   # (a body job's views are repository paths in its pack; a regional job's are in docs/meshy-regional-40-100)
     for image in spec['inputImages']:
-        path = ((ROOT if spec.get('bodyOf') else OUT)/image['localPath']).resolve()
+        path = ((ROOT if spec.get('bodyOf') else REGIONAL if spec.get('regionalOf') else OUT)/image['localPath']).resolve()
         if not path.is_relative_to(base) or not path.is_file():
             raise ValueError('Invalid local image')
         data = path.read_bytes()
@@ -157,6 +181,8 @@ def check_account(account, spec):
         raise ValueError('The owner has not approved this revision in the account record')
     if spec.get('bodyOf') and spec['assetId'] not in (account.get('approvedBodies') or []):
         raise ValueError('The owner has not approved this body job in the account record')
+    if spec.get('regionalOf') and spec['assetId'] not in (account.get('approvedRegional') or []):
+        raise ValueError('The owner has not approved this regional job in the account record')
     if spec['assetId'] != 'clara' and spec.get('revisionOf') != 'clara' and account.get('claraPilotAccepted') is not True:
         raise ValueError('Inspect the Clara pilot before continuing A to G')
 

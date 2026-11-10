@@ -1,0 +1,41 @@
+{
+  "assetId": "r074",
+  "regionalOf": "regional-074-coastal-grandma",
+  "name": "Coastal grandma",
+  "group": "B",
+  "endpoint": "https://api.meshy.ai/openapi/v1/multi-image-to-3d",
+  "method": "POST",
+  "parameters": {
+    "ai_model": "meshy-7.1",
+    "geometry_resolution": "standard",
+    "should_texture": true,
+    "texture_resolution": "2k",
+    "enable_pbr": false,
+    "pose_mode": "",
+    "target_formats": [
+      "glb"
+    ],
+    "image_enhancement": false
+  },
+  "inputImages": [
+    {
+      "view": "front",
+      "localPath": "reference-images/074-coastal-grandma/front.png",
+      "sha256": "76f82aa11a29daf39c3e54b68558c7e073dbd49f49c68ae3f9137dae8be0c5a7"
+    },
+    {
+      "view": "left-side",
+      "localPath": "reference-images/074-coastal-grandma/left-side.png",
+      "sha256": "892bdfb16dec9b4085845846ad685716d5366285ceb57fea4ef399669ca7d4a2"
+    },
+    {
+      "view": "back",
+      "localPath": "reference-images/074-coastal-grandma/back.png",
+      "sha256": "777748d6e103ad4e3f7c0070e38ae5666b128e177ee9909d65164947862003e4"
+    }
+  ],
+  "plannedCredits": 30,
+  "pilot": "meshy-regional-pilot-1 (owner, 10 Nov 2026 AEDT: 6 people, at most 270 credits)",
+  "rawDownloadDestination": "raw-models/B/r074.glb",
+  "runtimeDestinationAfterFittingAndValidation": "models/villager-r074.glb"
+}

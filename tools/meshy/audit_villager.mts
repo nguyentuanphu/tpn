@@ -10,6 +10,7 @@
 //   size     models/villager-<id>.glb over 500 KB
 // It also keeps pose pictures (idle, walk, wave, cheer, sit; front and back) for the review sheets.
 //   cd tests; SV_URL=http://localhost:<port>/ node ../tools/meshy/audit_villager.mts <out dir> ba,bom,... [quick]
+//   ... audit_villager.mts <out dir> r045@vn-schoolgirl,r050@vn-grandma   (regional people by their file, worn by a crowd person of that role)
 //   node ../tools/meshy/audit_villager.mts <out dir> merge   (joins <out>/part-<id> runs, as audit.mts merge)
 import { createRequire } from 'node:module';
 import { open, clear } from '../../tests/harness.mts';
@@ -31,7 +32,7 @@ if (LIST === 'merge') {
     for (const f of readdirSync(dir).filter(f => f.endsWith('.png'))) copyFileSync(`${dir}/${f}`, `${OUT}/${f}`); }
   summarize(cs); process.exit(0);
 }
-const ids = LIST.split(',');
+const ids = LIST.split(',').map(s => s.split('@')[0]);
 const sizes: Record<string, number> = {}; for (const id of ids) { const f = new URL(`../../models/villager-${id}.glb`, import.meta.url); sizes[id] = existsSync(f) ? Math.round(statSync(f).size / 1024) : 99999; }
 const b = await chromium.launch({ args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'] });
 // (10 Nov 2026: on a busy machine (other chats' audits at 100% CPU) the page took over 30 s to load: 3 min limits, three tries)
@@ -57,9 +58,27 @@ const res: any = await P.page.evaluate(async ([LIST, QUICK, LIMIT]) => {
   };
   const flat = new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide });
   const cases: any[] = [], pics: Record<string, string> = {};
-  for (const id of LIST.split(',')) {
-    const n = G.npcs.find((x: any) => x.id === id); if (!n) { cases.push({ id, pose: 'find', view: '-', worn: 1, eyes: 0 }); continue; }
-    h.place(n.obj.position.x + 2, n.obj.position.z + 2);
+  // (10 Nov 2026, regional pilot) <id>@<role>: a regional villager that is no NPC yet (models/villager-<id>.glb) is worn
+  // by a crowd person whom the game would give that role's model (js/crowd-models.ts crowdRole), as the game will do once
+  // the owner picks the role it replaces: the same height, light and code person under it as in play
+  const regional = async (id: string, role: string) => {
+    const CM = await import(String('/js/crowd-models.js')), p = new THREE.Vector3(); A.buildAllLate();
+    const named = new Set(G.npcs.map((x: any) => x.obj)), mine = new Set(G.heroes.map((x: any) => x.av && x.av.root));
+    // (the crowd's looks are drawn at random each load: some loads have no Australian boy, so the next best host is a crowd
+    // person of the same age, the same height in play)
+    const age = (r: string) => /grand/.test(r) ? 'elder' : /boy|girl/.test(r) ? 'kid' : 'adult';
+    const free = (A.OUTLINED as any[]).filter(X => X.root.parent && X.painted && !X.late && !named.has(X.root) && !mine.has(X.root) && !X.root.userData.own && (!X.model || X.root.userData.villagerModel))
+      .map(X => { X.root.getWorldPosition(p); return [X, CM.crowdRole(X.look || {}, X.height || 1, p.x, p.z)]; });
+    const [c, hostRole] = free.find(([, r]) => r === role) || free.find(([, r]) => age(r) === age(role)) || [null, ''];
+    if (!c) return null;
+    c.root.getWorldPosition(p); h.place(p.x + 2, p.z + 2); const key = 'villager-' + id, ok = await A.loadFriendModels(key); await w(500);
+    if (c.model) A.unwearVillagerModel(c);   // (the crowd's own gallery model, worn near the child)
+    return { id, A: c, obj: c.root, host: hostRole, _vm: ok && A.wearVillagerModel(c, key) ? 'worn' : 'code' };
+  };
+  for (const spec of LIST.split(',')) {
+    const [id, role] = spec.split('@');
+    const n: any = role ? await regional(id, role) : G.npcs.find((x: any) => x.id === id); if (!n) { cases.push({ id, pose: 'find', view: role || '-', worn: 1, eyes: 0 }); continue; }
+    if (!role) h.place(n.obj.position.x + 2, n.obj.position.z + 2); else cases.push({ id, pose: 'host', view: n.host, worn: 0, eyes: 0 });
     for (let k = 0; k < 240 && n._vm !== 'worn' && n._vm !== 'code'; k++) await w(500);   // (up to 2 min: 24 s was too short on a busy machine)
     if (n._vm !== 'worn') { cases.push({ id, pose: 'wear', view: String(n._vm), worn: 1, eyes: 0 }); continue; }
     const av = n.A; cur = av; const M = av.model;

@@ -2,6 +2,7 @@
 // Every person must pass these before going on the branch (owner, 8 Nov 2026: Blender renders hid problems the game showed).
 //   cd tests; node ../tools/meshy/game_shots.mts <out dir> faces  finn,sol,clara,lumi   (friends, high detail and light)
 //   cd tests; node ../tools/meshy/game_shots.mts <out dir> village mai,ba               (named villagers in the valley)
+//   cd tests; node ../tools/meshy/game_shots.mts <out dir> village r045@vn-schoolgirl   (a regional villager by its file, worn by a crowd person of that role)
 //   cd tests; node ../tools/meshy/game_shots.mts <out dir> tones  lumi                  (one friend in four skin tones)
 // faces: every mood (smile blink half happy o sad lookL lookR excited) front and three-quarter, plus the back of the
 // head and neck from three sides. Writes <id>[-hd]-<mood>-front|tq.png and <id>[-hd]-neck-back-<angle>.png, and a
@@ -171,9 +172,27 @@ const shots: Record<string, string> = await P.page.evaluate(async ([MODE, LIST, 
     }
     FM.setMeshyTones(false);
   }
-  if (MODE === 'village') for (const id of ids) {
-    const n = G.npcs.find((x: any) => x.id === id); if (!n) continue;
-    h.place(n.obj.position.x + 2, n.obj.position.z + 2);
+  // (10 Nov 2026, regional pilot) <id>@<role>: a regional villager that is no NPC yet (models/villager-<id>.glb) is worn
+  // by a crowd person whom the game would give that role's model (js/crowd-models.ts crowdRole), as the game will do once
+  // the owner picks the role it replaces: the same height, light and code person under it as in play
+  const regional = async (id: string, role: string) => {
+    const CM = await import(String('/js/crowd-models.js')), p = new THREE.Vector3(); A.buildAllLate();
+    const named = new Set(G.npcs.map((x: any) => x.obj)), mine = new Set(G.heroes.map((x: any) => x.av && x.av.root));
+    // (the crowd's looks are drawn at random each load: some loads have no Australian boy, so the next best host is a crowd
+    // person of the same age, the same height in play)
+    const age = (r: string) => /grand/.test(r) ? 'elder' : /boy|girl/.test(r) ? 'kid' : 'adult';
+    const free = (A.OUTLINED as any[]).filter(X => X.root.parent && X.painted && !X.late && !named.has(X.root) && !mine.has(X.root) && !X.root.userData.own && (!X.model || X.root.userData.villagerModel))
+      .map(X => { X.root.getWorldPosition(p); return [X, CM.crowdRole(X.look || {}, X.height || 1, p.x, p.z)]; });
+    const [c, hostRole] = free.find(([, r]) => r === role) || free.find(([, r]) => age(r) === age(role)) || [null, ''];
+    if (!c) return null;
+    c.root.getWorldPosition(p); h.place(p.x + 2, p.z + 2); const key = 'villager-' + id, ok = await A.loadFriendModels(key); await w(500);
+    if (c.model) A.unwearVillagerModel(c);   // (the crowd's own gallery model, worn near the child)
+    return { id, A: c, obj: c.root, host: hostRole, _vm: ok && A.wearVillagerModel(c, key) ? 'worn' : 'code' };
+  };
+  if (MODE === 'village') for (const spec of ids) {
+    const [id, role] = spec.split('@');
+    const n: any = role ? await regional(id, role) : G.npcs.find((x: any) => x.id === id); if (!n) { out[id + '-notfound'] = ''; continue; }
+    if (!role) h.place(n.obj.position.x + 2, n.obj.position.z + 2); else console.log(id, 'worn by a crowd person of role', n.host);
     for (let k = 0; k < 80 && n._vm !== 'worn' && n._vm !== 'code'; k++) await w(200);
     if (n._vm !== 'worn') { out[id + '-notworn'] = ''; continue; }
     // (10 Nov 2026) houses, trees and stalls round a villager hid the face and body from the child's side, and hiding them

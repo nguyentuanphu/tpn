@@ -1,0 +1,41 @@
+{
+  "assetId": "r064",
+  "regionalOf": "regional-064-city-mum",
+  "name": "City mum",
+  "group": "B",
+  "endpoint": "https://api.meshy.ai/openapi/v1/multi-image-to-3d",
+  "method": "POST",
+  "parameters": {
+    "ai_model": "meshy-7.1",
+    "geometry_resolution": "standard",
+    "should_texture": true,
+    "texture_resolution": "2k",
+    "enable_pbr": false,
+    "pose_mode": "",
+    "target_formats": [
+      "glb"
+    ],
+    "image_enhancement": false
+  },
+  "inputImages": [
+    {
+      "view": "front",
+      "localPath": "reference-images/064-city-mum/front.png",
+      "sha256": "a284bd6a3fe2ad15edf19a6802b5528749d079bf1060f5c3dbaa3397af2a3be5"
+    },
+    {
+      "view": "left-side",
+      "localPath": "reference-images/064-city-mum/left-side.png",
+      "sha256": "77f3fb26f99a989f93f8686fc131bdec0cb9447c4a86896b75fe4aabc1f0f3fc"
+    },
+    {
+      "view": "back",
+      "localPath": "reference-images/064-city-mum/back.png",
+      "sha256": "1bf75fc0760f19a7d75dde5f62beaeb6d55b856de85e0e174db6a75dcdc06bf8"
+    }
+  ],
+  "plannedCredits": 30,
+  "pilot": "meshy-regional-pilot-1 (owner, 10 Nov 2026 AEDT: 6 people, at most 270 credits)",
+  "rawDownloadDestination": "raw-models/B/r064.glb",
+  "runtimeDestinationAfterFittingAndValidation": "models/villager-r064.glb"
+}

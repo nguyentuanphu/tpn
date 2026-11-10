@@ -1,0 +1,41 @@
+{
+  "assetId": "r084",
+  "regionalOf": "regional-084-outback-boy",
+  "name": "Outback boy",
+  "group": "B",
+  "endpoint": "https://api.meshy.ai/openapi/v1/multi-image-to-3d",
+  "method": "POST",
+  "parameters": {
+    "ai_model": "meshy-7.1",
+    "geometry_resolution": "standard",
+    "should_texture": true,
+    "texture_resolution": "2k",
+    "enable_pbr": false,
+    "pose_mode": "",
+    "target_formats": [
+      "glb"
+    ],
+    "image_enhancement": false
+  },
+  "inputImages": [
+    {
+      "view": "front",
+      "localPath": "reference-images/084-outback-boy/front.png",
+      "sha256": "b645060bb3e6926b52c5d96c98fddae0feb374aa930b4659d063eaba7e5cca8a"
+    },
+    {
+      "view": "left-side",
+      "localPath": "reference-images/084-outback-boy/left-side.png",
+      "sha256": "4085c8dbace11079d76d793701ea13852050d12d66479590cae4a0ac7f49ed37"
+    },
+    {
+      "view": "back",
+      "localPath": "reference-images/084-outback-boy/back.png",
+      "sha256": "d900101ef83e280c902ffd7921c5408e554423cd5e2cdd7cdd50f0931d29f5af"
+    }
+  ],
+  "plannedCredits": 30,
+  "pilot": "meshy-regional-pilot-1 (owner, 10 Nov 2026 AEDT: 6 people, at most 270 credits)",
+  "rawDownloadDestination": "raw-models/B/r084.glb",
+  "runtimeDestinationAfterFittingAndValidation": "models/villager-r084.glb"
+}

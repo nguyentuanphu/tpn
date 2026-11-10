@@ -1,0 +1,41 @@
+{
+  "assetId": "r050",
+  "regionalOf": "regional-050-hue-grandma",
+  "name": "Huế grandma",
+  "group": "B",
+  "endpoint": "https://api.meshy.ai/openapi/v1/multi-image-to-3d",
+  "method": "POST",
+  "parameters": {
+    "ai_model": "meshy-7.1",
+    "geometry_resolution": "standard",
+    "should_texture": true,
+    "texture_resolution": "2k",
+    "enable_pbr": false,
+    "pose_mode": "",
+    "target_formats": [
+      "glb"
+    ],
+    "image_enhancement": false
+  },
+  "inputImages": [
+    {
+      "view": "front",
+      "localPath": "reference-images/050-hue-grandma/front.png",
+      "sha256": "541e04d3ab60f00a88d8d4be9181df9e2dcf97235903851d3ca8518c7ee391b2"
+    },
+    {
+      "view": "left-side",
+      "localPath": "reference-images/050-hue-grandma/left-side.png",
+      "sha256": "46302944faa6859e419a22061841fd7ef2acf106a78c7949c12690a16368a5a4"
+    },
+    {
+      "view": "back",
+      "localPath": "reference-images/050-hue-grandma/back.png",
+      "sha256": "566d7cbe2ff77800fce8359a2d486fd122c6f868ab3588b7e9ab97c06f34775d"
+    }
+  ],
+  "plannedCredits": 30,
+  "pilot": "meshy-regional-pilot-1 (owner, 10 Nov 2026 AEDT: 6 people, at most 270 credits)",
+  "rawDownloadDestination": "raw-models/B/r050.glb",
+  "runtimeDestinationAfterFittingAndValidation": "models/villager-r050.glb"
+}
