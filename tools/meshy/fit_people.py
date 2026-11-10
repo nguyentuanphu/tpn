@@ -636,10 +636,10 @@ if mouth: erase(im, mouth); mb = [mouth[0] + (mouth[2] - mouth[0]) * .15, mouth[
 for b in eyes.values(): erase(im, b, 0, .18)
 M['sad'] = im
 im = base.copy()
-for b in eyes.values(): im = shift_iris(im, b, .16)
+for b in eyes.values(): im = shift_iris(im, b, .11)   # (11 Nov 2026: .11, was .16: the moved iris reached the curve of the eye, odd from the side)
 M['lookL'] = im
 im = base.copy()
-for b in eyes.values(): im = shift_iris(im, b, -.16)
+for b in eyes.values(): im = shift_iris(im, b, -.11)
 M['lookR'] = im
 im = M['happy'].copy(); M['excited'] = mouth_o(im, True)
 ORDER = ['smile', 'blink', 'half', 'happy', 'surprised', 'sad', 'lookL', 'lookR', 'excited']
@@ -1290,8 +1290,11 @@ if TEX and KEEP and SHIFT:
     if eyes:
         _eb = []
         for b in list(eyes.values())[:2]:   # (wider at the sides and below, a little above (Lumi's rim, 10 Nov); the brows stay)
-            _px, _pz = W_ * .035, H_ * .02   # (11 Nov 2026: 18 and 10 px were set on the friends' 512 px face picture; on a villager's 160 px one they were three times wider, and the shut-eye paint showed as a dark band across Tí's eyes)
-            _eb += [fx0 + (b[0] - _px) / W_ * (fx1 - fx0), fx0 + (b[2] + _px) / W_ * (fx1 - fx0), fz1 - (b[3] + _pz) / H_ * (fz1 - fz0), fz1 - (b[1] - _pz) / H_ * (fz1 - fz0)]
+            # (11 Nov 2026) 18 and 10 px on the friends' 512 px face picture; a villager's is 160-192 px, and the owner circled
+            # the far eye's outer corner still open from three-quarters: out towards the temple a quarter more there. (The dark
+            # band across Tí's eyes, first blamed on these, was a lid shade, removed.)
+            _po = 18 + (W_ * .04 if W_ < 400 else 0); _left = (b[0] + b[2]) / 2 < W_ / 2
+            _eb += [fx0 + (b[0] - (_po if _left else 18)) / W_ * (fx1 - fx0), fx0 + (b[2] + (18 if _left else _po)) / W_ * (fx1 - fx0), fz1 - (b[3] + 10) / H_ * (fz1 - fz0), fz1 - (b[1] - 10) / H_ * (fz1 - fz0)]
         while len(_eb) < 8: _eb += _eb[:4]
         # (auditor 10 Nov 2026: Clara's far eye, three-quarters: its inner corner, past the nose, lay between the two areas)
         # each area reaches the face's middle on its inner side
