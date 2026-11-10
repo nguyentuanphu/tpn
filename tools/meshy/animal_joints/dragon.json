@@ -1,0 +1,51 @@
+{
+  "note": "Meshy little dragon (11 Nov 2026): standing on its back legs, small wings folded at the back of the shoulders, a tail with a leaf tip. Boxes are fractions of the model's own box (x right, y back, z up). (owner, 11 Nov 2026: a companion is small when the child gets it and grows as it is fed: 0.45 m at level 1, 1.56 times at level 5.)",
+  "height": 0.45,
+  "head_at": [
+    0.5,
+    0.45,
+    0.56
+  ],
+  "head_box": [
+    [
+      0,
+      0,
+      0.56
+    ],
+    [
+      1,
+      0.62,
+      1
+    ]
+  ],
+  "wing_box": [
+    [
+      0.76,
+      0.44,
+      0.32
+    ],
+    [
+      0.97,
+      0.68,
+      0.67
+    ]
+  ],
+  "tail_at": [
+    0.5,
+    0.62,
+    0.24
+  ],
+  "tail_box": [
+    [
+      0.2,
+      0.66,
+      0
+    ],
+    [
+      0.8,
+      1,
+      0.48
+    ]
+  ],
+  "smooth": 3
+}

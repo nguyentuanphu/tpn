@@ -89,7 +89,10 @@ export function createCompanions(G) {
       // (Studio switch companionGrow, js/kidplay.js) it grows as it is fed, wears the hat the child saved for, and does tricks
       const L = h.profile.lanterns || {}, pet = L.pet || {}, grow = G.petLevel ? G.petLevel(h) : 1;
       const sc = 1 + (grow - 1) * .14; o.scale.setScalar(sc);
-      if (pet.hat !== c.hatId) { if (c.hat) u.body.remove(c.hat); c.hat = pet.hat && G.buildHat ? G.buildHat(pet.hat) : null; if (c.hat) u.body.add(c.hat); c.hatId = pet.hat; }
+      if (pet.hat !== c.hatId) { if (c.hat && c.hat.parent) c.hat.parent.remove(c.hat); c.hat = pet.hat && G.buildHat ? G.buildHat(pet.hat) : null; c.hatId = pet.hat;
+        // (11 Nov 2026) on a model with a head bone the hat is fitted to the head and goes with it (js/pets.ts hatFit)
+        const head = c.hat && c.model && c.model.obj.getObjectByName('head'), fit = head && G.hatFit ? G.hatFit(c.model.obj, head, pet.hat) : null;
+        if (fit) { c.hat.position.copy(fit.at); c.hat.scale.setScalar(fit.scale); head.add(c.hat); } else if (c.hat) u.body.add(c.hat); }
       if (c.trick && c.trick.start == null) c.trick.start = t;
       if (c.trick && t - c.trick.start > c.trick.len) c.trick = null;
       if (c.trick) { const k = (t - c.trick.start) / c.trick.len;

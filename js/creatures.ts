@@ -36,7 +36,7 @@ const _look = (dt: number) => {
 // (Meshy pets, 10 Nov 2026) kinds made with Meshy (tools/meshy/fit_animal.py) have two models: creature-<kind>-hd near a
 // child (within 16 m), creature-<kind> (lighter: fewer triangles, a smaller picture) farther than 24 m; between, the one
 // it has stays (no flicker back and forth). The way the Meshy friends switch (friendsHDNear, js/main.ts).
-export const MESHY_CREATURES = new Set(['puppy']);
+export const MESHY_CREATURES = new Set(['puppy', 'dragon', 'firefly']);
 const HD_NEAR = 16, HD_FAR = 24;
 function near(g, r) {
   const now = performance.now(); if (now - since > 100) { since = now; asked = 0; }
@@ -86,9 +86,20 @@ function tick(g, r, dt: number) {
     : night && d > 4 ? 'sleep' : still || (r.idleT % idleFor > idleFor - 2.4 ? happy : 'idle'));
   if (clip !== r.clip) { r.clip = clip; r.model.play(clip, clip === 'surprised' ? .1 : .3); }
 }
+// (11 Nov 2026) a companion made with Meshy: its near model (it is always beside the child), the far one when that is
+// missing; Sparkle keeps the game's own see-through wings and glow, so only the code shape's body is hidden
 function ask(c, still: () => boolean) {
-  void worldModel(creatureModelName(c.kind), { clip: 'idle' }).then(m => {
-    if (!m || !still()) return; const u = c.o.userData; u.look.visible = false; u.body.add(m.obj); c.model = m; c.clip = 'idle';
+  const name = creatureModelName(c.kind), meshy = MESHY_CREATURES.has(c.kind);
+  void (meshy ? worldModel(name + '-hd', { clip: 'idle' }).then(m => m || worldModel(name, { clip: 'idle' })) : worldModel(name, { clip: 'idle' })).then(m => {
+    if (!m || !still()) return; const u = c.o.userData;
+    let painted = false; m.obj.traverse((o: any) => { if (o.isMesh && /^meshy-/.test((o.material && o.material.name) || '')) painted = true; });
+    if (painted && c.kind === 'firefly') {   // (the code wings move to the Meshy body's back; the code glow ball, which covered it, gives way to the halo at its own tail)
+      u.look.children.forEach((k: any) => { if (k.isMesh) k.visible = false; });
+      u.wings.forEach((w: any, i: number) => { w.position.set((i ? 1 : -1) * .07, .02, -.08); w.scale.setScalar(.85); });
+      if (u.glow) u.glow.visible = false;
+      u.body.children.forEach((k: any) => { if (k.isSprite) { k.position.set(0, -.17, -.02); k.scale.setScalar(.55); } });
+    } else u.look.visible = false;
+    u.body.add(m.obj); c.model = m; c.clip = 'idle'; c.hatId = undefined;   // (its hat goes on again, on the model's head)
   });
 }
 // a trick: its happy flap; lighting the way: surprised to have spotted it, then follow; flying after the child: fly;

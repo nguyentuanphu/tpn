@@ -102,6 +102,7 @@ const res: any = await P.page.evaluate(async ([kinds, MODE, LIMIT]) => {
     if (!t) { out.cases.push({ kind, lod, clip: '-', missing: 1 }); continue; }
     const obj = clone(t.scene); scene.add(obj); obj.updateMatrixWorld(true); obj.traverse((o: any) => { if (o.isSkinnedMesh) o.frustumCulled = false; });   // (as js/modelkit.ts: a skinned piece's box is its rest pose)
     const body = (() => { let best: any = null; obj.traverse((o: any) => { if (o.isSkinnedMesh && /^meshy-/.test(o.material.name) && !/-(shut|joy)\d$/.test(o.material.name) && (!best || o.geometry.attributes.position.count > best.geometry.attributes.position.count)) best = o; }); return best; })();
+    if (!body) { out.cases.push({ kind, lod, clip: '-', plant: 'none', notMeshy: 1 }); scene.remove(obj); continue; }   // (not a Meshy model: Sparkle's far one is still the Blender one)
     const bone = (n: string) => obj.getObjectByName(n);
     const mixer = new THREE.AnimationMixer(obj);
     const idx = body.geometry.index.array, nv = body.geometry.attributes.position.count;
@@ -142,8 +143,9 @@ const res: any = await P.page.evaluate(async ([kinds, MODE, LIMIT]) => {
             worst = Math.max(worst, r, 1 / Math.max(r, 1e-3)); }
           if (worst > 2.4 && !(clip === 'sleep' && (now[idx[k] * 3 + 1] + now[idx[k + 1] * 3 + 1] + now[idx[k + 2] * 3 + 1]) / 3 - lo < .04)) { cs.stretch++; if (strK.length < 4000) strK.push(k); } }
         const ground = minY - lo;   // (the model stands on y 0 at rest)
-        if (ground < -.02) cs.sink = Math.round(-ground * 1000);
-        if (['idle', 'walk', 'follow', 'sad', 'sleep'].includes(clip) && ground > .03) cs.float = Math.round(ground * 1000);
+        const flies = ['dragon', 'firefly'].includes(kind);   // (a companion flies: no ground to stand on)
+        if (!flies && ground < -.02) cs.sink = Math.round(-ground * 1000);
+        if (!flies && ['idle', 'walk', 'follow', 'sad', 'sleep'].includes(clip) && ground > .03) cs.float = Math.round(ground * 1000);
         // tears from every side (the silhouette in depth colours)
         const box = new THREE.Box3().setFromObject(obj, true), cc = box.getCenter(new THREE.Vector3()), r = box.getSize(new THREE.Vector3()).length();
         let worstPic: any = null;

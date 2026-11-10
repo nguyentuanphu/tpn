@@ -19,7 +19,7 @@ const COMPANIONS = ['firefly', 'dragon'];
 // 800 KB, 16,000 triangles with the eyelid pieces), and a painted face whose eyes shut with lid pieces (bones shut0/1,
 // joy0/1) instead of the Blender face's eye, lid and upper-lid bones. Everything else is checked the same way.
 // (a kind is checked as Meshy when its near model is installed: until the owner approves, the branch keeps the Blender one)
-const MESHY = ['puppy'].filter(k => fs.existsSync(path.join(ROOT, 'models/world', `creature-${k}-hd.glb`)));
+const MESHY = ['puppy', 'dragon', 'firefly'].filter(k => fs.existsSync(path.join(ROOT, 'models/world', `creature-${k}-hd.glb`)));
 
 export async function worldCreaturesCheck(b) {
   for (const k of [...ANIMALS, ...COMPANIONS]) {

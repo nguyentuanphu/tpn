@@ -1,0 +1,46 @@
+{
+  "note": "Meshy Sparkle the firefly (11 Nov 2026): upright, a round head with antennae, a scaly navy body with six little legs, a pale glowing tail below; Meshy's wings are solid, so they are cut off (faces farther out than cut_x of the half width) and the game keeps its own see-through wings and glow. Boxes are fractions of the model's own box after the cut.",
+  "cut_x": 0.34,
+  "height": 0.5,
+  "head_at": [
+    0.5,
+    0.5,
+    0.58
+  ],
+  "head_box": [
+    [
+      0,
+      0,
+      0.58
+    ],
+    [
+      1,
+      1,
+      1
+    ]
+  ],
+  "tail_at": [
+    0.5,
+    0.5,
+    0.3
+  ],
+  "tail_box": [
+    [
+      0.2,
+      0,
+      0
+    ],
+    [
+      0.8,
+      1,
+      0.28
+    ]
+  ],
+  "smooth": 3,
+  "flip": true,
+  "eye_dark": 0.08,
+  "cut_pale": [
+    0.22,
+    0.3
+  ]
+}

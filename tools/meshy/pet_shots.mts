@@ -125,6 +125,40 @@ if (MODE === 'legs' || MODE === 'mouth') n += save(await P.page.evaluate(async (
   }
   return out;
 }, [MODE, kinds] as any));
+// companion (owner, 11 Nov 2026: "companions là khi nhận thì bé và nuôi dần thì sẽ lớn lên"): the child's companion in the
+// game, as it is when just met (level 1) and when fed up to level 5, with a hat; close (its own group: Meshy body, the
+// game's glow, wings and hat) and the game's camera following the child. Writes comp-<kind>-<level>-<view>.png.
+if (MODE === 'companion') for (const kind of kinds.filter(k => BUDDIES.includes(k))) {
+  const r = await P.page.evaluate(async ([kind]) => {
+    const G = (window as any).__sv, h = G.heroes[0], { THREE } = await import(String('/js/gfx.js')), C = await import(String('/js/custom.js'));
+    const go = () => { document.querySelectorAll('.storybook, .dialog, .modal, .reward').forEach(e => e.remove()); G.paused = false; }; go();
+    C.CUSTOM.features = { ...(C.CUSTOM.features || {}), companionGrow: true };
+    const L = h.profile.lanterns = h.profile.lanterns || {}; L.companion = kind; L.pet = L.pet || {}; L.pet.feeds = 0; L.pet.hats = ['crown']; L.pet.hat = 'crown';
+    const comps = G.lanterns && G.lanterns.companions; comps.sync();
+    let c: any = null; for (let i = 0; i < 150; i++) { go(); await new Promise(r => setTimeout(r, 200)); c = comps.of(h); if (c && c.model && c.hat && c.hat.parent && c.hat.parent.name === 'head') break; }
+    const R = G.renderer, out: Record<string, string> = {}, info: any = { model: !!(c && c.model), hat: !!(c && c.hat), hatOnHead: !!(c && c.hat && c.hat.parent && c.hat.parent.name === 'head'), head: !!(c && c.model && c.model.obj.getObjectByName('head')), fitFn: !!G.hatFit,
+      fit: (() => { try { const hd = c.model.obj.getObjectByName('head'); const f = G.hatFit(c.model.obj, hd, 'crown'); return f ? [f.at.toArray().map((v: number) => +v.toFixed(3)), +f.scale.toFixed(3)] : null; } catch (e) { return 'error ' + e.message; } })() };
+    let top = h.av.root; while (top.parent) top = top.parent;
+    const SRGB = new Uint8Array(256).map((_, i) => { const v = i / 255; return Math.round(255 * (v <= .0031308 ? v * 12.92 : 1.055 * Math.pow(v, 1 / 2.4) - .055)); });
+    const grab = (name: string, cam: any) => { const W = 360, H = 360, rt = new THREE.WebGLRenderTarget(W, H); R.setRenderTarget(rt); R.clear(); R.render(top, cam);
+      const px = new Uint8Array(W * H * 4); R.readRenderTargetPixels(rt, 0, 0, W, H, px); R.setRenderTarget(null); rt.dispose();
+      for (let i = 0; i < px.length; i++) if ((i & 3) !== 3) px[i] = SRGB[px[i]];
+      const cv = document.createElement('canvas'); cv.width = W; cv.height = H; const x = cv.getContext('2d'), im = x.createImageData(W, H);
+      for (let y = 0; y < H; y++) im.data.set(px.subarray((H - 1 - y) * W * 4, (H - y) * W * 4), y * W * 4); x.putImageData(im, 0, 0); out[name] = cv.toDataURL('image/png'); };
+    for (const feeds of [0, 8]) {
+      L.pet.feeds = feeds; for (let i = 0; i < 8; i++) { go(); await new Promise(r => setTimeout(r, 150)); }
+      const lvl = G.petLevel(h); info['scale' + lvl] = +c.o.scale.x.toFixed(2);
+      const box = new THREE.Box3().setFromObject(c.model.obj, true); if (c.hat) box.expandByObject(c.hat); const cc = box.getCenter(new THREE.Vector3()), rr = box.getSize(new THREE.Vector3()).length();   // (the model and its hat: not the glow's wide sprites)
+      for (const [nm, yaw] of [['front', 0], ['tq', .8], ['side', Math.PI / 2], ['back', Math.PI]] as [string, number][]) {
+        const fwd = new THREE.Vector3(Math.sin(c.o.rotation.y + yaw), .15, Math.cos(c.o.rotation.y + yaw)).normalize(), cam = new THREE.PerspectiveCamera(30, 1, .02, 50);
+        cam.position.copy(cc).addScaledVector(fwd, rr * 1.7); cam.lookAt(cc); grab(`comp-${kind}-${lvl}-${nm}`, cam); }
+      // the same moment from beside the child, to see its size against the child
+      const mid = cc.clone().add(new THREE.Vector3(h.pos.x, h.pos.y + 1, h.pos.z)).multiplyScalar(.5), cam = new THREE.PerspectiveCamera(40, 1, .05, 80); cam.position.copy(mid).add(new THREE.Vector3(Math.sin(h.yaw + 1.2) * 3.2, .6, Math.cos(h.yaw + 1.2) * 3.2)); cam.lookAt(mid); grab(`comp-${kind}-${lvl}-withchild`, cam);
+    }
+    return { out, info };
+  }, [kind] as any);
+  console.log(kind, JSON.stringify(r.info)); n += save(r.out);
+}
 // skills (Meshy pets, 10 Nov 2026): the child's first pet's own skills in the game's camera: fetching the ball (thrown,
 // carried back), digging, leading the way. Writes skill-<name>-<n>.png.
 if (MODE === 'skills') {

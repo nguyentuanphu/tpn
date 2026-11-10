@@ -27,7 +27,11 @@ _argv = sys.argv; sys.argv = [sys.argv[0], '--', os.path.join(OUT, '_wc')]
 spec = importlib.util.spec_from_file_location('wc', os.path.join(ROOT, 'tools', 'blender', 'world-creatures.py'))
 wc = importlib.util.module_from_spec(spec); spec.loader.exec_module(wc); sys.argv = _argv
 SPEC = json.load(open(os.path.join(ROOT, 'tools', 'blender', 'creatures-spec.json')))
-A = SPEC['animals'][KIND]; A = dict(A, legs=[dict(l) for l in A['legs']])
+# (11 Nov 2026) the companions (the little dragon, Sparkle the firefly) fly: centred in the air on the code shape's
+# middle, a body, a head (for the hat), two wings and a tail, and world-creatures.py's companion moves (fly, flap ...)
+COMP = KIND in SPEC['companions']
+A = SPEC['companions'][KIND] if COMP else SPEC['animals'][KIND]
+if not COMP: A = dict(A, legs=[dict(l) for l in A['legs']])
 JOINTS = os.path.join(HERE, 'animal_joints', KIND + '.json')
 FIX = json.load(open(JOINTS)) if os.path.exists(JOINTS) else {}
 
@@ -50,12 +54,29 @@ def load(path):
     # the head is the top: it faces -y
     top = V[V[:, 2] > V[:, 2].min() + H * .75]
     if top[:, 1].mean() > (V[:, 1].min() + V[:, 1].max()) / 2: o.data.transform(Matrix.Rotation(math.pi, 4, 'Z'))
+    if FIX.get('flip'): o.data.transform(Matrix.Rotation(math.pi, 4, 'Z'))   # (the guess is wrong when the top leans back: Sparkle's antennae)
+    if FIX.get('cut_x'):   # (Sparkle's wings: Meshy makes them solid; the game keeps its own see-through wings)
+        import bmesh as _bm
+        bm = _bm.new(); bm.from_mesh(o.data); cx = FIX['cut_x']; zx = FIX.get('cut_keep_below', -1e9)
+        V0 = np.array([v.co[:] for v in bm.verts]); wx = (V0[:, 0].max() - V0[:, 0].min()) / 2; mx = (V0[:, 0].max() + V0[:, 0].min()) / 2
+        z0, z1 = V0[:, 2].min(), V0[:, 2].max()
+        gone = [f for f in bm.faces if abs(f.calc_center_median().x - mx) > wx * cx and f.calc_center_median().z > z0 + (z1 - z0) * zx]
+        if FIX.get('cut_pale'):   # (and the wings' roots by their colour: pale and grey-white, beside the body, above the tail)
+            im, px = tex_of(o); uvl = bm.loops.layers.uv.active; px0, px1 = FIX['cut_pale']
+            for f in bm.faces:
+                cm = f.calc_center_median(); fx = abs(cm.x - mx) / wx; fz = (cm.z - z0) / (z1 - z0)
+                if fx < px0 or not (px1 < fz < .8): continue
+                uv = np.mean([l[uvl].uv[:] for l in f.loops], 0); c = sample(px, uv); L = c @ np.array([.3, .59, .11]); sat = c.max() - c.min()
+                if L > .55 and sat < .14: gone.append(f)
+        _bm.ops.delete(bm, geom=list(set(gone)), context='FACES'); bm.to_mesh(o.data); bm.free()
     V = np.array([v.co[:] for v in o.data.vertices])
-    want = FIX.get('height', A['box']['max'][1])
+    want = FIX.get('height', A['box']['max'][1] - (A['box']['min'][1] if COMP else 0))
     k = want / (V[:, 2].max() - V[:, 2].min())
     c = Vector(((V[:, 0].min() + V[:, 0].max()) / 2, (V[:, 1].min() + V[:, 1].max()) / 2, V[:, 2].min()))
     # (where the game's animal stands: the middle of the code shape's box, three's z is blender's -y)
     bx = A['box']; at = Vector(((bx['min'][0] + bx['max'][0]) / 2, -(bx['min'][2] + bx['max'][2]) / 2, 0))
+    if COMP:   # (a companion flies: its middle on the code shape's middle)
+        c.z = (V[:, 2].min() + V[:, 2].max()) / 2; at.z = (bx['min'][1] + bx['max'][1]) / 2 + FIX.get('lift', 0)
     o.data.transform(Matrix.Translation(at) @ Matrix.Scale(k, 4) @ Matrix.Translation(-c))
     o.name = 'creature-' + KIND
     return o
@@ -110,6 +131,64 @@ def joints(o):
     J.update({k: tuple(v) for k, v in FIX.get('joints', {}).items()})
     return J, dict(belly=belly, back=back, hip=hip, H=H, fy=fy, by=by)
 
+def comp_joints(o):
+    """a companion's joints (blender frame): the body at the middle, the head (the top or the front, as the animal is
+    made), the wings and the tail from boxes in animal_joints/<kind>.json (fractions of the model's own box)"""
+    V = np.array([v.co[:] for v in o.data.vertices]); lo, hi = V.min(0), V.max(0); sz = hi - lo
+    at = lambda f: tuple(lo + sz * np.array(f))
+    J = {'body': (0, 0, (lo[2] + hi[2]) / 2 * 0)}
+    J['body'] = (0, 0, 0)
+    J['head'] = at(FIX.get('head_at', (.5, .3, .62)))
+    for i, k in enumerate(('wing0', 'wing1')):
+        if 'wing_box' in FIX: b = FIX['wing_box']; x = (b[0][0] + b[1][0]) / 2; J[k] = at((x if i else 1 - x, (b[0][1] + b[1][1]) / 2, (b[0][2] + b[1][2]) / 2)); J[k] = (J[k][0] * .6, J[k][1], J[k][2])
+    if 'tail_at' in FIX: J['tail'] = at(FIX['tail_at'])
+    M = dict(H=sz[2], belly=lo[2], hip=lo[2], back=hi[2], fy=lo[1], by=hi[1], lo=lo, hi=hi)
+    return J, M
+
+def comp_weights(o, J, M):
+    """the head (above or in front of the neck), the wings and the tail (boxes, softly), the body the rest; welded at the
+    picture's seams and smoothed as the animals' are"""
+    V = np.array([v.co[:] for v in o.data.vertices]); n = len(V); lo, hi = M['lo'], M['hi']; sz = hi - lo
+    U = (V - lo) / sz
+    names = [b for b in ('body', 'head', 'wing0', 'wing1', 'tail') if b in J]; ix = {b: i for i, b in enumerate(names)}
+    W = np.zeros((n, len(names)))
+    def soft_box(b, w=.04):
+        (x0, y0, z0), (x1, y1, z1) = b
+        return smooth01((U[:, 0] - x0) / w + .5) * smooth01((x1 - U[:, 0]) / w + .5) * smooth01((U[:, 1] - y0) / w + .5) * smooth01((y1 - U[:, 1]) / w + .5) * smooth01((U[:, 2] - z0) / w + .5) * smooth01((z1 - U[:, 2]) / w + .5)
+    head = soft_box(FIX.get('head_box', ((0, 0, .55), (1, .7, 1))))
+    wing = np.zeros(n); side = np.zeros(n, int)
+    if 'wing_box' in FIX:
+        (x0, y0, z0), (x1, y1, z1) = FIX['wing_box']
+        wr = soft_box(((x0, y0, z0), (x1, y1, z1))); wl = soft_box(((1 - x1, y0, z0), (1 - x0, y1, z1))); wing = np.maximum(wr, wl); side[wr >= wl] = 1   # (wing1 on +x)
+    tail = soft_box(FIX['tail_box']) if 'tail_box' in FIX else np.zeros(n)
+    w_wing = wing * (1 - head); w_tail = tail * (1 - head) * (1 - w_wing)
+    W[:, ix['head']] = head; W[:, ix['body']] = np.clip(1 - head - w_wing - w_tail, 0, 1)
+    for i, k in enumerate(('wing0', 'wing1')):
+        if k in ix: W[:, ix[k]] = w_wing * (side == i)
+    if 'tail' in ix: W[:, ix['tail']] = w_tail
+    _, grp = np.unique(np.round(V / .0003).astype(np.int64), axis=0, return_inverse=True); grp = grp.ravel(); ng = grp.max() + 1
+    S = np.zeros((ng, W.shape[1])); np.add.at(S, grp, W); cnt = np.bincount(grp, minlength=ng)[:, None]; Wg = S / np.maximum(1, cnt)
+    adj = [set() for _ in range(ng)]
+    for e in o.data.edges:
+        a, b = grp[e.vertices[0]], grp[e.vertices[1]]
+        if a != b: adj[a].add(b); adj[b].add(a)
+    nb = [np.array(sorted(a), dtype=int) for a in adj]
+    for _ in range(FIX.get('smooth', 3)): Wg = np.array([(Wg[i] + Wg[nb[i]].mean(0)) / 2 if len(nb[i]) else Wg[i] for i in range(ng)])
+    W = Wg[grp]; W /= np.maximum(1e-6, W.sum(1, keepdims=True))
+    for b in names:
+        g = o.vertex_groups.new(name=b); col = W[:, ix[b]]
+        for i in np.nonzero(col > .002)[0]: g.add([int(i)], float(col[i]), 'REPLACE')
+    return names
+
+def tail_sway(pose, name):
+    """the companion's tail swings as it flies (world-creatures.py's companion moves have no tail)"""
+    amp = {'fly': .35, 'follow': .45, 'flap': .6, 'cheer': .5, 'idle': .2, 'sad': .1, 'surprised': .3, 'sleep': .08}.get(name, .2)
+    def f(t):
+        P = pose(t)
+        if 'tail' in P: P['tail'] = ((-.1, math.sin(t * math.pi * 2 / .9) * amp, 0), (0, 0, 0), (1, 1, 1))
+        return P
+    return f
+
 def debug_picture(o, J, path):
     sc = bpy.context.scene
     for k, p in J.items():
@@ -127,7 +206,7 @@ def debug_picture(o, J, path):
     for s in [x for x in sc.objects if x.name.startswith('j-')]: bpy.data.objects.remove(s)
     print('DEBUG', shots)
 
-PARENT = {'body': None, 'head': 'body', 'ear0': 'head', 'ear1': 'head', 'tail': 'body', 'leg0': 'body', 'leg1': 'body', 'leg2': 'body', 'leg3': 'body',
+PARENT = {'body': None, 'head': 'body', 'wing0': 'body', 'wing1': 'body', 'ear0': 'head', 'ear1': 'head', 'tail': 'body', 'leg0': 'body', 'leg1': 'body', 'leg2': 'body', 'leg3': 'body',
           'knee0': 'leg0', 'knee1': 'leg1', 'knee2': 'leg2', 'knee3': 'leg3'}
 
 def smooth01(x): x = np.clip(x, 0, 1); return x * x * (3 - 2 * x)
@@ -241,6 +320,7 @@ def material(o, tex_px):
 FARLOD = False
 def make(path, J, M, out, tex_px):
     o = load(path)
+    if COMP: return make_comp(o, J, M, out, tex_px)
     names = weights(o, J, M)
     arm, size = rig(o, J, M, names)
     A['hip'] = M['hip']
@@ -253,6 +333,20 @@ def make(path, J, M, out, tex_px):
     extra = extra_moves(J, M, names + FACE_BONES)   # (made for Meshy's own legs: not damped)
     for name, L, pose in extra: ground(o, arm, wc.clip(arm, name, L, pose))
     moves = moves + extra
+    for pb in arm.pose.bones: pb.rotation_euler = (0, 0, 0); pb.location = (0, 0, 0); pb.scale = (1, 1, 1)
+    bpy.ops.export_scene.gltf(filepath=out, export_format='GLB', export_animations=True, export_animation_mode='ACTIONS', export_lights=False,
+                              export_cameras=False, export_apply=False, export_skins=True, export_morph=False, use_selection=False,
+                              export_image_format='JPEG', export_jpeg_quality=FIX.get('jpeg', 80), export_force_sampling=True, export_frame_step=2)
+    print('MADE', out, 'tris', sum(len(p.vertices) - 2 for p in o.data.polygons), 'bones', len(arm.data.bones), 'clips', ','.join(m[0] for m in moves), flush=True)
+    return o, arm
+
+def make_comp(o, J, M, out, tex_px):
+    names = comp_weights(o, J, M)
+    arm, size = rig(o, J, M, names)
+    face_pieces(o, arm, J, Fc)
+    material(o, tex_px)
+    moves = wc.companion_moves(KIND, A, arm, names + FACE_BONES, F, size)
+    for name, L, pose in moves: wc.clip(arm, name, L, tail_sway(pose, name))
     for pb in arm.pose.bones: pb.rotation_euler = (0, 0, 0); pb.location = (0, 0, 0); pb.scale = (1, 1, 1)
     bpy.ops.export_scene.gltf(filepath=out, export_format='GLB', export_animations=True, export_animation_mode='ACTIONS', export_lights=False,
                               export_cameras=False, export_apply=False, export_skins=True, export_morph=False, use_selection=False,
@@ -459,9 +553,15 @@ def find_face(o, J, M):
                         if 0 <= u < dark.shape[0] and 0 <= v < dark.shape[1] and dark[u, v] and not lab[u, v]: lab[u, v] = k; st.append((u, v))
                 pts = np.array([P3[p, q] for p, q in cells]); comps.append(dict(n=len(cells), c=pts.mean(0), pts=pts))
     comps = [c for c in comps if c['n'] >= 6]
-    nose = min((c for c in comps if abs(c['c'][0]) < .03), key=lambda c: c['c'][1])   # (the middle one farthest forward)
-    eyes = sorted((c for c in comps if abs(c['c'][0]) >= .03 and c['c'][2] > nose['c'][2]), key=lambda c: -c['n'])[:2]
+    mids = [c for c in comps if abs(c['c'][0]) < .03]
+    nose = min(mids, key=lambda c: c['c'][1]) if mids else None   # (the middle one farthest forward; the dragon has none)
+    eyes = sorted((c for c in comps if abs(c['c'][0]) >= .03 and (nose is None or c['c'][2] > nose['c'][2])), key=lambda c: -c['n'])[:2]
     eyes.sort(key=lambda c: c['c'][0])
+    if nose is None:   # (no dark nose: a point on the face's middle below the eyes, a nose-sized one)
+        ed = float(np.linalg.norm(eyes[0]['c'] - eyes[1]['c'])); mid = (eyes[0]['c'] + eyes[1]['c']) / 2
+        loc, _, _, _ = bvh.ray_cast(Vector((mid[0], -2, mid[2] - ed * FIX.get('nose_drop', .45))), Vector((0, 1, 0)))
+        nc = np.array(loc[:]) if loc is not None else mid - np.array((0, 0, ed * .45))
+        nose = dict(c=nc, pts=np.array([nc + np.array((ed * .12, 0, 0)), nc - np.array((ed * .12, 0, 0))]))
     out = {'nose': nose['c'], 'nose_r': float(np.linalg.norm(nose['pts'] - nose['c'], axis=1).max())}
     for i, e in enumerate(eyes):
         out['eye%d' % i] = e['c']; out['eye%d_r' % i] = float(np.percentile(np.linalg.norm(e['pts'] - e['c'], axis=1), 95)) * FIX.get('eye_grow', 1.3)
@@ -601,13 +701,13 @@ def face_pieces(o, arm, J, Fc):
 
 F = {}
 o = load(NEAR)
-J, M = joints(o)
+J, M = comp_joints(o) if COMP else joints(o)
 Fc = find_face(o, J, M)
 print('FACE', json.dumps({k: (np.round(v, 3).tolist() if hasattr(v, '__len__') else round(v, 4)) for k, v in Fc.items()}), flush=True)
 for i in (0, 1):
     J['shut%d' % i] = J['joy%d' % i] = tuple(Fc['eye%d' % i])
 if 'mouth' in Fc: J['jaw'] = tuple(Fc['mouth'])
-print('JOINTS', json.dumps({k: [round(x, 3) for x in v] for k, v in J.items()}), json.dumps({k: round(v, 3) for k, v in M.items()}), flush=True)
+print('JOINTS', json.dumps({k: [round(x, 3) for x in v] for k, v in J.items()}), json.dumps({k: (np.round(v, 3).tolist() if hasattr(v, '__len__') else round(float(v), 3)) for k, v in M.items()}), flush=True)
 if DEBUG: debug_picture(o, J, os.path.join(OUT, KIND + '-joints.png'))
 make(NEAR, J, M, os.path.join(OUT, f'creature-{KIND}-hd.glb'), FIX.get('tex_near', 1024))
 if DEBUG: bpy.ops.wm.save_as_mainfile(filepath=os.path.join(OUT, KIND + '-hd.blend'))

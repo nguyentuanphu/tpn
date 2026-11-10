@@ -44,7 +44,12 @@ function headPoints(model, head) {
     v.fromBufferAttribute(pos, i); body.applyBoneTransform(i, v); v.applyMatrix4(body.matrixWorld); pts.push(head.worldToLocal(v.clone())); break; }
   if (pts.length < 30) return null;
   let top = -1e9, bot = 1e9; for (const p of pts) { top = Math.max(top, p.y); bot = Math.min(bot, p.y); }
-  const r = { pts, top, h: top - bot }; _heads.set(model, r); return r;
+  // (the skull's top, not the tips of thin things on it: Sparkle's antennae, the dragon's horns) the highest height where
+  // the head is still at least 45 % as wide as at its widest
+  const width = (y: number) => { let x0 = 1e9, x1 = -1e9; for (const p of pts) if (Math.abs(p.y - y) < (top - bot) * .02) { x0 = Math.min(x0, p.x); x1 = Math.max(x1, p.x); } return x1 - x0; };
+  let widest = 0; for (let k = 0; k <= 20; k++) widest = Math.max(widest, width(bot + (top - bot) * k / 20));
+  let skull = top; for (let k = 0; k <= 50; k++) { const y = top - (top - bot) * k / 50; if (width(y) >= widest * .45) { skull = y; break; } }
+  const r = { pts, top: skull, h: skull - bot }; _heads.set(model, r); return r;
 }
 // where a hat goes and how big, in the head bone's frame: the skull's middle and width at the hat's depth
 export function hatFit(model, head, id) {
@@ -90,6 +95,7 @@ function tag(textFn) {
 }
 
 export function createPets(G) {
+  G.hatFit = hatFit;   // (the companion's hat too: js/companion.ts)
   const { scene, world } = G;
   // move older saves (one shared list of pets) onto the children: each child starts with a puppy
   // pets that are not following a child live in the pet yard on the farm (farm.petYard), so none are ever lost
