@@ -8,7 +8,7 @@
 // - The child's companion (js/companion.ts) gets its model as soon as the child has one.
 // - The clips: idle, walk (companions: fly), the happy move (wag, hop or flap), follow, cheer, and the moods sad,
 //   surprised and sleep; every clip blinks, and the face (eyes, brows, mouth) shows the mood.
-import { worldModel } from './modelkit.js';
+import { worldModel, worldModelFailed } from './modelkit.js';
 import { useCreatureModels } from './animals.js';
 import { useCompanionModels } from './companion.js';
 
@@ -33,14 +33,32 @@ const _look = (dt: number) => {
     if (Math.abs(r.look) > .002) r.headBone.rotateY(r.look);
   }
 };
+// (Meshy pets, 10 Nov 2026) kinds made with Meshy (tools/meshy/fit_animal.py) have two models: creature-<kind>-hd near a
+// child (within 16 m), creature-<kind> (lighter: fewer triangles, a smaller picture) farther than 24 m; between, the one
+// it has stays (no flicker back and forth). The way the Meshy friends switch (friendsHDNear, js/main.ts).
+export const MESHY_CREATURES = new Set(['puppy']);
+const HD_NEAR = 16, HD_FAR = 24;
 function near(g, r) {
   const now = performance.now(); if (now - since > 100) { since = now; asked = 0; }
   if (asked >= 3) return;   // (at most 3 new models a moment, so a frame never stalls)
   asked++; r.asked = true;
-  void worldModel(creatureModelName(r.kind), { clip: 'idle' }).then(m => {
+  let hd = MESHY_CREATURES.has(r.kind) && nearest(g) < HD_NEAR;
+  void worldModel(creatureModelName(r.kind) + (hd ? '-hd' : ''), { clip: 'idle' })
+    .then(m => m || !hd ? m : (hd = false, worldModel(creatureModelName(r.kind), { clip: 'idle' })))   // (no near model: the far one)
+    .then(m => {
     if (!m) return;   // (blocked or failed: the code shape stays)
-    g.add(m.obj); r.root.visible = false; r.model = m; r.clip = 'idle'; r.idleT = 0; g.userData.model = m;
+    g.add(m.obj); r.root.visible = false; r.model = m; r.clip = 'idle'; r.idleT = 0; g.userData.model = m; r.hd = hd;
     r.g = g; r.headBone = m.obj.getObjectByName('head'); r.look = 0; LOOKING.add(r);
+  });
+}
+function lod(g, r, d: number) {
+  if (r.swapping || !MESHY_CREATURES.has(r.kind) || worldModelFailed(creatureModelName(r.kind) + '-hd')) return;
+  const want = d < HD_NEAR ? true : d > HD_FAR ? false : r.hd; if (want === r.hd) return;
+  r.swapping = true;
+  void worldModel(creatureModelName(r.kind) + (want ? '-hd' : ''), { clip: r.clip || 'idle' }).then(m => {
+    r.swapping = false; if (!m || !g.parent) return;
+    const was = r.model; g.remove(was.obj); was.stop(); g.add(m.obj); r.model = m; g.userData.model = m; r.hd = want;
+    r.headBone = m.obj.getObjectByName('head');
   });
 }
 // (owner, 6 Nov 2026 AEDT: "all animals need to show emotions, facial expressions, movements, eye blinks") every clip blinks;
@@ -50,6 +68,7 @@ let G: any = null;
 const nearest = (g) => { let d = 1e9; if (G) for (const h of G.heroes) d = Math.min(d, Math.hypot(h.pos.x - g.position.x, h.pos.z - g.position.z)); return d; };
 function tick(g, r, dt: number) {
   const d = nearest(g), night = !!(G && G.world && G.world.isNight && G.world.isNight());
+  lod(g, r, d);
   r.cheerT = Math.max(0, (r.cheerT || 0) - dt); r.moodT = Math.max(0, (r.moodT || 0) - dt); r.idleT = r.sp < .5 ? (r.idleT || 0) + dt : 0;
   if (d > 5) { if (r.metAt != null && d > 7 && r.moodT <= 0 && !r.byeDone) { r.mood = 'sad'; r.moodT = 3; r.byeDone = true; } r.far = true; }
   else if (d < 2.8 && r.far !== false) { r.far = false; r.byeDone = false; r.metAt = 0; r.mood = 'surprised'; r.moodT = 1.1; r.greet = 2.4; }

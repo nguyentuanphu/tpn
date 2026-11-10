@@ -17,7 +17,10 @@ let buildHat = null;
 
 export const MAX_PETS = 2;
 // little pets were easy to lose in the grass: they are shown a bit bigger (the smallest the most)
-const PET_SCALE = { puppy: 1.3, kitty: 1.45, bunny: 1.55, panda: 1.35, joey: 1.4, calf: 1.25 };
+// (owner, 10 Nov 2026 AEDT, the Meshy puppy: "2 con puppies to quá, phải scale xuống cho hợp lý hơn") the puppy 0.85 (was 1.3)
+const PET_SCALE = { puppy: .85, kitty: 1.45, bunny: 1.55, panda: 1.35, joey: 1.4, calf: 1.25 };
+// the name tag just over the pet (a smaller pet's tag lower, never higher than before)
+const tagY = (kind: string) => Math.min(1.45, .4 + (PET_SCALE[kind] || 1.3) * .8);
 // (issue #738) a pet wears a hat from the child's hats (bought with the coin goal, chosen in the Backpack's "Pets & Buddy"):
 // it sits on top of the head, at the front of the model, sized to the pet
 const _box = new THREE.Box3();
@@ -102,7 +105,7 @@ export function createPets(G) {
     if (d < .2) { if (Math.random() < dt * .4) { const a = Math.random() * 6.28, r = Math.random() * 3.2; Y.tx = yardC.x + Math.cos(a) * r; Y.tz = yardC.z + Math.sin(a) * r; } }
     else { o.rotation.y = Math.atan2(dx, dz); o.position.x += dx / d * dt * 1.2; o.position.z += dz / d * dt * 1.2; }
     o.position.y = heightAt(o.position.x, o.position.z) + (Y.hop > 0 ? Math.abs(Math.sin(Y.hop * 9)) * .5 : d > .2 ? Math.abs(Math.sin(t * 10)) * .08 : 0); if (Y.hop > 0) animalCheer(o, .3); Y.hop = Math.max(0, Y.hop - dt);
-    Y.tag.position.set(o.position.x, o.position.y + 1.4, o.position.z);
+    Y.tag.position.set(o.position.x, o.position.y + Math.min(1.4, tagY(Y.pt.kind)), o.position.z);
   }));
   G.interactables.push({ id: 'petyard', x: yardC.x, z: yardC.z, r: 5, icon: '🐾', bubble: '🐾', label: () => T('Pet yard: play with your pets', 'Sân thú cưng: chơi với thú cưng'), act: h => P.openAdopt(h) });
 
@@ -138,7 +141,7 @@ export function createPets(G) {
       if (L.hop > 0) animalCheer(o, .3);
       L.hop = Math.max(0, L.hop - dt);
       o.children[1] && (o.children[1].visible = !swim);
-      L.tag.position.set(o.position.x, o.position.y + 1.45, o.position.z);
+      L.tag.position.set(o.position.x, o.position.y + tagY(L.pt.kind), o.position.z);
       L.tag.visible = dist2(h.pos.x, h.pos.z, o.position.x, o.position.z) < 18;
       // a hidden Leafy nearby: the pet sniffs and barks to help
       const near = LEAFIES.some(lf => !h.profile.leafies[lf.id] && dist2(lf.x, lf.z, o.position.x, o.position.z) < 12);
@@ -246,11 +249,11 @@ export function createPets(G) {
         R.x += dx / d * sp * dt; R.z += dz / d * sp * dt;
         const yaw = Math.atan2(dx, dz);
         o.position.set(R.x + Math.sin(yaw) * 1.1, WATER - .35, R.z + Math.cos(yaw) * 1.1); o.rotation.y = yaw; o.children[1] && (o.children[1].visible = false);
-        L.tag.position.set(o.position.x, o.position.y + 1.45, o.position.z);
+        L.tag.position.set(o.position.x, o.position.y + tagY(L.pt.kind), o.position.z);
         if (world.groundAt(R.x, R.z) > WATER - .6 || d < 1.5) { finish(); return null; }
         return { x: R.x, y, z: R.z, yaw, state: 'swim', speed: 2 };
       }
-      L.tag.position.set(o.position.x, o.position.y + 1.45, o.position.z);
+      L.tag.position.set(o.position.x, o.position.y + tagY(L.pt.kind), o.position.z);
       return { x: R.x, y, z: R.z, state: 'swim', speed: 0 };
     };
     const finish = async () => {

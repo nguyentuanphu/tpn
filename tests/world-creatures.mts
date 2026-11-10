@@ -14,17 +14,25 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const ok = (c: unknown, msg: string) => { if (!c) throw new Error(msg); };
 const ANIMALS = ['puppy', 'kitty', 'bunny', 'panda', 'joey', 'calf', 'cow', 'sheep', 'pig', 'unicorn', 'chicken', 'bear', 'koala', 'platypus', 'penguin', 'emu', 'turtle', 'elephant', 'crane', 'bull', 'buffalo', 'peacock'];
 const COMPANIONS = ['firefly', 'dragon'];
+// (Meshy pets, 10 Nov 2026) kinds made with Meshy (js/creatures.ts MESHY_CREATURES, tools/meshy/fit_animal.py): a far model
+// and a near one (-hd), bigger than the Blender ones (Meshy's painted picture and its 9k-triangle shape: up to 400 and
+// 800 KB, 16,000 triangles with the eyelid pieces), and a painted face whose eyes shut with lid pieces (bones shut0/1,
+// joy0/1) instead of the Blender face's eye, lid and upper-lid bones. Everything else is checked the same way.
+// (a kind is checked as Meshy when its near model is installed: until the owner approves, the branch keeps the Blender one)
+const MESHY = ['puppy'].filter(k => fs.existsSync(path.join(ROOT, 'models/world', `creature-${k}-hd.glb`)));
 
 export async function worldCreaturesCheck(b) {
   for (const k of [...ANIMALS, ...COMPANIONS]) {
     const f = path.join(ROOT, 'models/world', `creature-${k}.glb`);
     ok(fs.existsSync(f), `${k}: models/world/creature-${k}.glb is missing (node tools/make-creatures.mts)`);
-    const kb = fs.statSync(f).size / 1024; ok(kb >= 8 && kb <= 200, `${k}: ${Math.round(kb)} KB, outside 8-200 KB`);
+    const kb = fs.statSync(f).size / 1024, hi = MESHY.includes(k) ? 400 : 200; ok(kb >= 8 && kb <= hi, `${k}: ${Math.round(kb)} KB, outside 8-${hi} KB`);
+    if (MESHY.includes(k)) { const h = path.join(ROOT, 'models/world', `creature-${k}-hd.glb`); ok(fs.existsSync(h), `${k}: the near model creature-${k}-hd.glb is missing`);
+      const hk = fs.statSync(h).size / 1024; ok(hk >= 8 && hk <= 800, `${k}: near model ${Math.round(hk)} KB, outside 8-800 KB`); }
   }
   // 1-3: each model beside its code shape
   const P = await open(b, { w: 1180, h: 820 });
   try {
-    const res = await P.page.evaluate(async ({ ANIMALS, COMPANIONS }) => {
+    const res = await P.page.evaluate(async ({ ANIMALS, COMPANIONS, MESHY }) => {
       const { THREE } = await import(String('/js/gfx.js')), A = await import(String('/js/animals.js')), C = await import(String('/js/companion.js')), K = await import(String('/js/modelkit.js')), CR = await import(String('/js/creatures.js'));
       const bad: string[] = [], info: Record<string, unknown> = {};
       const box = (o: any) => { o.updateMatrixWorld(true); const bx = new THREE.Box3(); o.traverse((m: any) => { if (m.isMesh && m.visible !== false) { if (m.isSkinnedMesh) { m.computeBoundingBox(); bx.union(m.boundingBox.clone().applyMatrix4(m.matrixWorld)); } else bx.expandByObject(m); } }); return bx; };
@@ -36,7 +44,7 @@ export async function worldCreaturesCheck(b) {
         const size = Math.max(cs.x, cs.y, cs.z);
         let tris = 0; m.obj.traverse((o: any) => { if (o.isMesh) tris += (o.geometry.index ? o.geometry.index.count : o.geometry.attributes.position.count) / 3; });
         info[k] = { tris: Math.round(tris), h: [+cs.y.toFixed(2), +ms.y.toFixed(2)], foot: [+cb.min.y.toFixed(3), +mb.min.y.toFixed(3)] };
-        if (tris < 1500 || tris > 9500) bad.push(`${k}: ${Math.round(tris)} triangles (1,500-9,500)`);
+        const maxT = MESHY.includes(k) ? 16000 : 9500; if (tris < 1500 || tris > maxT) bad.push(`${k}: ${Math.round(tris)} triangles (1,500-${maxT})`);
         // the same size (each side within 12 %), the same place, standing on the ground like the code shape
         // (owner, 6 Nov 2026 AEDT, "cuter proportions": bigger heads, chubbier bodies, shorter legs, "the sizes the game uses for
         // touching them adjusted") the height stays the code shape's (within 12 %); width and length may change by up to 30 %
@@ -54,7 +62,12 @@ export async function worldCreaturesCheck(b) {
         for (const w of want.slice(1)) { m.play(w, 0); K.tickWorldModels(.01); const p0 = pose(); K.tickWorldModels(.23); if (pose() === p0) bad.push(`${k}: clip ${w} does not move`); }
         // the face: two eyes that blink in idle (shut a moment at 1.2 s), and shut asleep
         const bone = (n: string) => skinned.skeleton.bones.find((bn: any) => bn.name === n);
-        if (!bone('eye0') || !bone('eye1') || !bone('lid0')) bad.push(`${k}: no face (eyes ${!!bone('eye0')},${!!bone('eye1')})`);
+        if (MESHY.includes(k)) {   // (the painted face: the shut lids grow over the eyes for a blink in idle and stay asleep)
+          if (!bone('shut0') || !bone('shut1') || !bone('joy0')) bad.push(`${k}: no eyelid pieces`);
+          else { m.play('idle', 0); K.tickWorldModels(.01); const open = bone('shut0').scale.y; K.tickWorldModels(1.05); let shut = 0; for (let i = 0; i < 12; i++) { K.tickWorldModels(1 / 60); shut = Math.max(shut, bone('shut0').scale.y); }
+            if (!(open < .05 && shut > .8)) bad.push(`${k}: does not blink (lid ${open.toFixed(2)} then ${shut.toFixed(2)})`);
+            m.play('sleep', 0); K.tickWorldModels(.01); K.tickWorldModels(.3); if (!(bone('shut0').scale.y > .8 && bone('shut1').scale.y > .8)) bad.push(`${k}: eyes not shut asleep`); }
+        } else if (!bone('eye0') || !bone('eye1') || !bone('lid0')) bad.push(`${k}: no face (eyes ${!!bone('eye0')},${!!bone('eye1')})`);
         else {
           m.play('idle', 0); K.tickWorldModels(.01); const open = bone('eye0').scale.y; K.tickWorldModels(1.05); let shut = 1; for (let i = 0; i < 12; i++) { K.tickWorldModels(1 / 60); shut = Math.min(shut, bone('eye0').scale.y); }
           if (!(open > .8 && shut < .3)) bad.push(`${k}: does not blink (eye ${open.toFixed(2)} then ${shut.toFixed(2)})`);
@@ -66,7 +79,7 @@ export async function worldCreaturesCheck(b) {
         m.stop();
       }
       return { bad, info };
-    }, { ANIMALS, COMPANIONS });
+    }, { ANIMALS, COMPANIONS, MESHY });
     ok(!res.bad.length, res.bad.join('; '));
     // 4: in the valley, an animal near the child, and the child's companion
     const live = await P.page.evaluate(async () => {

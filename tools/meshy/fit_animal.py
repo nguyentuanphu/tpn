@@ -54,7 +54,9 @@ def load(path):
     want = FIX.get('height', A['box']['max'][1])
     k = want / (V[:, 2].max() - V[:, 2].min())
     c = Vector(((V[:, 0].min() + V[:, 0].max()) / 2, (V[:, 1].min() + V[:, 1].max()) / 2, V[:, 2].min()))
-    o.data.transform(Matrix.Scale(k, 4) @ Matrix.Translation(-c))
+    # (where the game's animal stands: the middle of the code shape's box, three's z is blender's -y)
+    bx = A['box']; at = Vector(((bx['min'][0] + bx['max'][0]) / 2, -(bx['min'][2] + bx['max'][2]) / 2, 0))
+    o.data.transform(Matrix.Translation(at) @ Matrix.Scale(k, 4) @ Matrix.Translation(-c))
     o.name = 'creature-' + KIND
     return o
 

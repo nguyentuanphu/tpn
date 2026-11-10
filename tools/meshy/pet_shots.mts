@@ -33,7 +33,7 @@ if (MODE === 'close' || MODE === 'all') n += save(await P.page.evaluate(async ([
     for (let y = 0; y < H; y++) im.data.set(px.subarray((H - 1 - y) * W * 4, (H - y) * W * 4), y * W * 4); x.putImageData(im, 0, 0);
     out[name] = cv.toDataURL('image/png');
   };
-  const SCALE: any = { puppy: 1.3, kitty: 1.45, bunny: 1.55, panda: 1.35, joey: 1.4, calf: 1.25 };
+  const SCALE: any = { puppy: .85, kitty: 1.45, bunny: 1.55, panda: 1.35, joey: 1.4, calf: 1.25 };
   const HAPPY: any = { puppy: 'wag', kitty: 'hop', bunny: 'hop', panda: 'hop', joey: 'hop', calf: 'wag' };
   for (const kind of kinds) {
     const base = kind.replace(/-hd$/, ''), buddy = BUDDIES.includes(base), t = await MK.loadWorldModel('creature-' + kind);   // (puppy-hd: the near model)
