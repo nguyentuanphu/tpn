@@ -91,3 +91,12 @@ A self-test with planted faults (a leg weight broken, a lid left open) must be c
 
 Each later step starts only after the one before passes the auditor and the owner's look. The owner can stop after the
 pilot. Farm and wild animals (cow, sheep, pig, buffalo ...) are not in this plan.
+
+## Owner's decisions (10 Nov 2026 AEDT, pop-up answers)
+
+- **Dog pilot first, 0 new credits**, on the existing Meshy puppy: rig, clips, face moods, game switch, pet auditor,
+  in-game pictures for the owner. Credits for the other 7 are asked again after the owner has seen the puppy.
+- **Calf: use the existing sheet (brown cow calf with a bell)**; the pet becomes a calf ("bê", cow calf) in the game
+  (name in `PETS`, `js/farm.ts`: "Buffalo calf / Nghé con" to "Calf / Bê con", and its sound), not a buffalo calf.
+- **Dragon: keep the existing sheet** (standing, small wings); it flies on its small wings.
+- **Firefly: Meshy body, wings and glow stay the game's code**; the body a lighter navy so it reads from far away.
