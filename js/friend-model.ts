@@ -42,7 +42,7 @@ function skinTint(m, paintHex: string) {
   m.userData.skinTint = true; m.userData.paintHex = paintHex; const lax = /^(skin|face-)/.test(m.name || ''); // (parts marked skin: blush, shine and shade follow the tone too; clothes only their skin-coloured texels)
   m.userData.tint = { value: new THREE.Color(1, 1, 1) }; m.userData.paint = { value: new THREE.Color(paintHex) };
   const cover = !!m.userData.cover; m.userData.coverU = { value: 0 };
-  const kit = cover && m.userData.kit_waist != null; m.userData.kitU = { top: { value: new THREE.Color(1, 1, 1) }, bot: { value: new THREE.Color(1, 1, 1) }, on: { value: 0 }, waist: { value: m.userData.kit_waist || 0 }, neck: { value: m.userData.kit_neck || 0 }, grey: { value: m.userData.kit_grey || .7 }, shut: { value: 0 }, eyeA: { value: new THREE.Vector4(...((m.userData.eye_boxes || [0, 0, 0, 0]).slice(0, 4))) }, eyeB: { value: new THREE.Vector4(...((m.userData.eye_boxes || [0, 0, 0, 0, 0, 0, 0, 0]).slice(4, 8))) }, deq: { value: new THREE.Matrix4().fromArray(m.userData.deq || [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]) }, covCol: { value: Array.from({ length: 8 }, () => new THREE.Color(1, 1, 1)) }, covRank: { value: new Array(8).fill(99) } };
+  const kit = cover && m.userData.kit_waist != null; m.userData.kitU = { top: { value: new THREE.Color(1, 1, 1) }, bot: { value: new THREE.Color(1, 1, 1) }, on: { value: 0 }, waist: { value: m.userData.kit_waist || 0 }, neck: { value: m.userData.kit_neck || 0 }, grey: { value: m.userData.kit_grey || .7 }, shut: { value: 0 }, eyeA: { value: new THREE.Vector4(...((m.userData.eye_boxes || [0, 0, 0, 0]).slice(0, 4))) }, eyeB: { value: new THREE.Vector4(...((m.userData.eye_boxes || [0, 0, 0, 0, 0, 0, 0, 0]).slice(4, 8))) }, deq: { value: new THREE.Matrix4().fromArray(m.userData.deq || [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]) }, covCol: { value: Array.from({ length: 8 }, () => new THREE.Color(1, 1, 1)) }, covRank: { value: new Array(8).fill(-99) }, bootTop: { value: 0 }, bootCol: { value: new THREE.Color(1, 1, 1) } };
   m.onBeforeCompile = sh => { sh.uniforms.uTint = m.userData.tint; sh.uniforms.uPaint = m.userData.paint;
     // (owner 9 Nov 2026: the swim kit and skin showed through the tops in spots) a body point covered by a garment being
     // worn (its bits, from tools/meshy/make_clothes.py, in the alpha of the skin mark; the worn garments' bits in uCover) is
@@ -50,13 +50,13 @@ function skinTint(m, paintHex: string) {
     if (cover) {
       sh.uniforms.uCover = m.userData.coverU;
       sh.vertexShader = 'uniform float uCover;\nvarying float vCov;\nuniform vec3 uCovCol[8];\nuniform float uCovRank[8];\nvarying vec3 vCovCol;\n' + sh.vertexShader.replace('#include <color_vertex>', `#include <color_vertex>
-float cb_ = floor(color.a * 255.0 + .5); vCov = 0.0; float best_ = 99.0; vCovCol = vec3(1.0);
-for (int k = 0; k < 8; k++) { float p_ = exp2(float(k)); if (mod(floor(cb_ / p_), 2.0) > .5 && mod(floor(uCover / p_), 2.0) > .5) { vCov = 1.0; if (uCovRank[k] < best_) { best_ = uCovRank[k]; vCovCol = uCovCol[k]; } } }
+float cb_ = floor(color.a * 255.0 + .5); vCov = 0.0; float best_ = -99.0; vCovCol = vec3(1.0);
+for (int k = 0; k < 8; k++) { float p_ = exp2(float(k)); if (mod(floor(cb_ / p_), 2.0) > .5 && mod(floor(uCover / p_), 2.0) > .5) { vCov = 1.0; if (uCovRank[k] > best_) { best_ = uCovRank[k]; vCovCol = uCovCol[k]; } } }
 vec3 kp_ = (uDeq * vec4(position, 1.0)).xyz; vKitY = kp_.y; vKitX = kp_.x; // (10 Nov 2026: in metres; gltfpack stores positions as whole numbers, 0 to 16383, so the eye areas, waist and neck never matched)
 `).replace('void main() {', 'varying float vKitY;\nvarying float vKitX;\nuniform float uKitOn;\nuniform float uKitNeck;\nuniform mat4 uDeq;\nvoid main() {').replace('#include <project_vertex>', `#include <project_vertex>
 if (uKitOn > .5 && color.r < .5 && color.a * 255.0 < .5 && vKitY < uKitNeck) { mvPosition.xyz -= normalize(mvPosition.xyz) * .012; gl_Position = projectionMatrix * mvPosition; }`); // (dressed: hair hanging below the neck, Clara's braids, drawn in front of the clothes it lies on)
-      sh.fragmentShader = 'varying float vCov;\nvarying vec3 vCovCol;\nvarying float vKitY;\nuniform vec3 uKitTop;\nuniform vec3 uKitBot;\nuniform float uKitOn;\nuniform float uKitWaist;\nuniform float uKitGrey;\nuniform float uKitNeck;\nuniform float uShut;\nuniform vec4 uEyeA;\nuniform vec4 uEyeB;\nvarying float vKitX;\n' + sh.fragmentShader;
-      Object.assign(sh.uniforms, { uKitTop: m.userData.kitU.top, uKitBot: m.userData.kitU.bot, uKitOn: m.userData.kitU.on, uKitWaist: m.userData.kitU.waist, uKitNeck: m.userData.kitU.neck, uKitGrey: m.userData.kitU.grey, uShut: m.userData.kitU.shut, uEyeA: m.userData.kitU.eyeA, uEyeB: m.userData.kitU.eyeB, uDeq: m.userData.kitU.deq, uCovCol: m.userData.kitU.covCol, uCovRank: m.userData.kitU.covRank });
+      sh.fragmentShader = 'varying float vCov;\nvarying vec3 vCovCol;\nuniform float uBootTop;\nuniform vec3 uBootCol;\nvarying float vKitY;\nuniform vec3 uKitTop;\nuniform vec3 uKitBot;\nuniform float uKitOn;\nuniform float uKitWaist;\nuniform float uKitGrey;\nuniform float uKitNeck;\nuniform float uShut;\nuniform vec4 uEyeA;\nuniform vec4 uEyeB;\nvarying float vKitX;\n' + sh.fragmentShader;
+      Object.assign(sh.uniforms, { uKitTop: m.userData.kitU.top, uKitBot: m.userData.kitU.bot, uKitOn: m.userData.kitU.on, uKitWaist: m.userData.kitU.waist, uKitNeck: m.userData.kitU.neck, uKitGrey: m.userData.kitU.grey, uShut: m.userData.kitU.shut, uEyeA: m.userData.kitU.eyeA, uEyeB: m.userData.kitU.eyeB, uDeq: m.userData.kitU.deq, uCovCol: m.userData.kitU.covCol, uCovRank: m.userData.kitU.covRank, uBootTop: m.userData.kitU.bootTop, uBootCol: m.userData.kitU.bootCol });
     }
     sh.fragmentShader = 'uniform vec3 uTint;\nuniform vec3 uPaint;\n' + sh.fragmentShader
       .replace('#include <map_fragment>', `#include <map_fragment>
@@ -89,9 +89,10 @@ if (uKitOn > .5 && vColor.r < .5 && vColor.a * 255.0 > .5 && vKitY > uKitWaist -
 #endif` : ''}
 ${cover ? `// (10 Nov 2026, owner circled bites out of the legs: the back of a bent knee, a calf under Lumi's skirt) the body under worn
 // clothes is no longer hidden: where it bulged past them as a joint bent it was a see-through bite. It is painted in the
-// colour of the innermost worn garment over it, keeping the painted light and shade, so it looks like that cloth
+// colour of the outermost worn garment over it (where it shows, it shows past all of them: the innermost, Lumi's green leggings, showed at her waist between bodice and skirt), keeping the painted light and shade, so it looks like that cloth
+if (uBootTop > 0.0 && vKitY < uBootTop - .01) k_ = uBootCol * .95 / max(tx_, vec3(.02));   // (10 Nov 2026, the auditor's leg close-ups: the shins inside the boots came out through them as spikes of skin or trouser colour round the boot tops; inside the boots' height the body takes their colour)
 #ifdef USE_COLOR
-if (vCov > ${BODY_CUT} && vColor.r > .5) k_ = vCovCol * clamp(sm_ / (uPaint.r + uPaint.g + uPaint.b + 1e-4), .85, 1.05) / max(tx_, vec3(.02));   // (skin only: the swim kit has its own flat paint above)
+if (vCov > ${BODY_CUT} && vColor.r > .5 && !(uBootTop > 0.0 && vKitY < uBootTop - .01)) k_ = vCovCol * clamp(sm_ / (uPaint.r + uPaint.g + uPaint.b + 1e-4), .85, 1.05) / max(tx_, vec3(.02));   // (skin only: the swim kit has its own flat paint above)
 #endif` : ''}
 diffuseColor.rgb *= k_;`)
       .replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\ntotalEmissiveRadiance *= k_;')
@@ -171,7 +172,7 @@ export function loadFriendModel(id: FriendId | `${FriendId}-hd`): Promise<boolea
           // (v1.08e, Release 6 Nov: no picture, the clothes crisp) the light is baked into the corner colours: drawn the same way
           : name.startsWith('lit-') ? litCorners(name)
           : m.map ? new THREE.MeshToonMaterial({ name, map: m.map, gradientMap: bands }) : new THREE.MeshToonMaterial({ name, vertexColors: true, gradientMap: bands }));
-        if (name.startsWith('lit-g-') && m.userData) { const u = mats.get(m).userData; if (m.userData.cover_mark) u.cover = true; for (const k of ['cover_bit', 'gcover_bit', 'layer']) if (k in m.userData) u[k] = m.userData[k]; } // (an inner garment's points under outer ones; each garment's own bits, from tools/meshy/make_clothes.py)
+        if (name.startsWith('lit-g-') && m.userData) { const u = mats.get(m).userData; if (m.userData.cover_mark) u.cover = true; for (const k of ['cover_bit', 'gcover_bit', 'layer', 'boot_top']) if (k in m.userData) u[k] = m.userData[k]; } // (an inner garment's points under outer ones; each garment's own bits, from tools/meshy/make_clothes.py)
         if (/^(cloth-(hat|hair)|lit-g-)/.test(name)) mats.get(m).side = THREE.DoubleSide; // (and a body model's clothes: a skirt's inside shows) // (v1.08e villagers) a hat is a thin shell, and a lock of hair a thin card: both sides drawn
         if (ref && !mats.get(m).userData.skinRef) mats.get(m).userData.skinRef = ref;   // (a corner-coloured "skin-shade" painted in its own tone)
         o.material = personLook(mats.get(m));
@@ -215,13 +216,16 @@ export const COVER_BIT: Record<string, number> = { 'top-short': 1, 'top-long': 2
 export const GCOVER_BIT: Record<string, number> = { 'top-short': 1, 'top-long': 2, 'tunic-long': 4, bodice: 8, skirt: 16, 'aodai-panels': 32, bib: 64 };
 /** a garment's points under a worn outer garment are not drawn (its bits in the alpha of its corner colour) */
 function garmentCover(m) {
-  m.userData.coverU = { value: 0 };
-  m.onBeforeCompile = sh => { sh.uniforms.uCover = m.userData.coverU;
-    sh.vertexShader = 'uniform float uCover;\nvarying float vCov;\n' + sh.vertexShader.replace('#include <color_vertex>', `#include <color_vertex>
+  m.userData.coverU = { value: 0 }; m.userData.bootU = { value: 0 }; m.userData.deqU = m.userData.deqU || { value: new THREE.Matrix4() };
+  m.onBeforeCompile = sh => { sh.uniforms.uCover = m.userData.coverU; sh.uniforms.uBootCut = m.userData.bootU; sh.uniforms.uDeq = m.userData.deqU;
+    sh.vertexShader = 'uniform float uCover;\nuniform mat4 uDeq;\nvarying float vCov;\nvarying float vGy;\n' + sh.vertexShader.replace('#include <color_vertex>', `#include <color_vertex>
+vGy = (uDeq * vec4(position, 1.0)).y;
 float cb_ = floor(color.a * 255.0 + .5); vCov = 0.0;
 for (int k = 0; k < 8; k++) { float p_ = exp2(float(k)); if (mod(floor(cb_ / p_), 2.0) > .5 && mod(floor(uCover / p_), 2.0) > .5) vCov = 1.0; }`);
-    sh.fragmentShader = 'varying float vCov;\n' + sh.fragmentShader.replace('void main() {', 'void main() {\nif (vCov > .999) discard;'); };
-  m.customProgramCacheKey = () => 'meshy-garment-cover'; m.needsUpdate = true; return m;
+    // (10 Nov 2026, the auditor's leg close-ups: trouser cuffs stood out through the boot tops, ragged) trousers inside worn
+    // boots are not drawn
+    sh.fragmentShader = 'varying float vCov;\nvarying float vGy;\nuniform float uBootCut;\n' + sh.fragmentShader.replace('void main() {', 'void main() {\nif (vCov > .999) discard;\nif (uBootCut > 0.0 && vGy < uBootCut) discard;'); };
+  m.customProgramCacheKey = () => 'meshy-garment-cover-boot'; m.needsUpdate = true; return m;
 }
 /** (owner 9 Nov 2026, the poses: layers came through each other by a few millimetres when the children sat, ran and jumped)
  * each garment is drawn a little nearer the camera along its own line of sight, more for outer layers (trousers 2 mm,
@@ -247,7 +251,7 @@ function dress(parts: Record<string, any>, look, wear: FriendModelWear): { bits:
   const L = friendLook(look || {}) || {}, set = GARMENTS[L.style] || GARMENTS.shirt;
   const paint = (o, hex: string) => { const c = new THREE.Color(hex || '#9a9a9a'); o.material.emissive.copy(c).multiplyScalar(.62); o.material.emissiveIntensity = 1; o.material.color.copy(c).multiplyScalar(.55); }; // (mostly its own painted shade, some valley light: not flat)
   let bits = 0;
-  let gbits = 0, top = '', bot = ''; const cov: string[] = new Array(8).fill('#ffffff'), rank: number[] = new Array(8).fill(99);
+  let gbits = 0, top = '', bot = ''; const cov: string[] = new Array(8).fill('#ffffff'), rank: number[] = new Array(8).fill(-99);
   const bitOf = (o, k: string, table: Record<string, number>, part: string) => (o.material.userData[k] ?? table[part]) || 0; // (the model's own bits; the tables only for models made before 9 Nov)
   for (const [part, from] of set) { const o = parts[part]; if (!o) continue; o.visible = true; bits |= bitOf(o, 'cover_bit', COVER_BIT, part); gbits |= bitOf(o, 'gcover_bit', GCOVER_BIT, part); const hex = from === 'main' ? L.color : from === 'legs' ? L.legs : '#f3e6c8'; paint(o, hex); const ly = o.material.userData.layer ?? (/^(trousers|shorts|leggings)$/.test(part) ? 0 : 1); if (ly === 1 && !top) top = hex; if (ly === 0 && !bot) bot = hex; const cb = bitOf(o, 'cover_bit', COVER_BIT, part); for (let k = 0; k < 8; k++) if (cb & (1 << k)) { cov[k] = hex; rank[k] = ly; } }
   if (parts.boots) { parts.boots.visible = !wear.shoes; paint(parts.boots, L.shoe || '#8a5a3a'); }
@@ -272,13 +276,17 @@ export function attachFriendModel(A, id: string, skinHex: string, wear: FriendMo
       if (n === 'skin-grip' || n === 'cloth-hands-grip') grips.push(o); // (the hands that hold handlebars: shown only when riding)
       if (n === 'cloth-item') o.visible = !!wear.item; // (v1.08d polish) the item in the hand: only once earned
       if (n === 'cloth-shoes') o.visible = !wear.shoes; // (v1.08d polish) the model's boots, unless shop shoes are worn
-      if (n.startsWith('lit-g-')) { const src = o.material; o.material = src.clone(); if (src.userData.cover && o.geometry.attributes.color && o.geometry.attributes.color.itemSize === 4) garmentCover(o.material); if (src.userData.layer != null) layerBias(o.material, src.userData.layer); garments[n.slice(6)] = o; o.visible = false; } // (a body model's clothes, dressed below)
+      if (n.startsWith('lit-g-')) { const src = o.material; o.material = src.clone(); obj.updateMatrixWorld(true); o.material.userData.deqU = { value: new THREE.Matrix4().copy(obj.matrixWorld).invert().multiply(o.matrixWorld) }; if (src.userData.cover && o.geometry.attributes.color && o.geometry.attributes.color.itemSize === 4) garmentCover(o.material); if (src.userData.layer != null) layerBias(o.material, src.userData.layer); garments[n.slice(6)] = o; o.visible = false; } // (a body model's clothes, dressed below)
     }
   });
   const dressed = dress(garments, A.look, wear), coverBits = dressed.bits;
+  // (10 Nov 2026) the boots' mouth height in the model's metres (tools/meshy/make_clothes.py boot_top), while they are worn
+  const bootTop = garments.boots && garments.boots.visible ? Number(garments.boots.material.userData.boot_top || 0) : 0, bootHex = (A.look && A.look.shoe) || '#8a5a3a';
   obj.traverse((o: any) => { const u = o.isMesh && o.material.userData; if (!u || !u.coverU || (o.material.name || '').startsWith('lit-g-')) return; u.coverU.value = coverBits; // (the body; garments have their own, set in dress)
     if (u.kitU && dressed.top) { u.kitU.top.value.set(dressed.top); u.kitU.bot.value.set(dressed.bot); u.kitU.on.value = 1; }
-    if (u.kitU && u.kitU.covCol) for (let k = 0; k < 8; k++) { u.kitU.covCol.value[k].set(dressed.cov[k]); u.kitU.covRank.value[k] = dressed.rank[k]; } });
+    if (u.kitU && u.kitU.covCol) for (let k = 0; k < 8; k++) { u.kitU.covCol.value[k].set(dressed.cov[k]); u.kitU.covRank.value[k] = dressed.rank[k]; }
+    if (u.kitU && u.kitU.bootTop) { u.kitU.bootTop.value = bootTop; u.kitU.bootCol.value.set(bootHex); } });
+  for (const [g, o] of Object.entries(garments)) if (o.material.userData.bootU) o.material.userData.bootU.value = bootTop && /^(trousers|shorts|leggings)$/.test(g) ? bootTop - .02 : 0;
   A.rig.add(obj); A.rig.updateMatrixWorld(true);
   // (v1.08e faces, part 2) the same thin ink outline as the code people, bent by the model's bones (not on the faces);
   // each follows its part's visibility (the item in the hand, the riding hands) and hides far away with the others
@@ -343,7 +351,7 @@ export function attachFriendModel(A, id: string, skinHex: string, wear: FriendMo
         let ang = (s.n.startsWith('skirtF') ? Math.min(lx, rx, 0) : Math.max(lx, rx, 0)) * (s.n.endsWith('2') ? .25 : s.n === 'skirtF' ? .8 : .95);   // (the front a little less than the thighs about their own axis: the flared hem lies on the knees, Lumi's festival sitting)
         // (10 Nov 2026, the auditor: Clara's áo dài running, seen from behind) the back below the knees goes with the shin of
         // the leg kicked furthest back (thigh and knee together), or the heel came out through the back panel's hem
-        if (s.n === 'skirtB2' && A.kneeL && A.kneeR) ang = Math.max(ang, Math.max(lx + A.kneeL.rotation.x, rx + A.kneeR.rotation.x, 0) * .85);
+        if (s.n === 'skirtB2' && A.kneeL && A.kneeR) ang = Math.max(ang, (Math.max(lx + A.kneeL.rotation.x, rx + A.kneeR.rotation.x, 0) * 1.05 + (Math.max(lx + A.kneeL.rotation.x, rx + A.kneeR.rotation.x) > .3 ? .1 : 0)));   // (10 Nov 2026: at .85 the shin kicked back in a jump still came through the hem, Clara's and Finn's; a little past the shin)
         sq.setFromAxisAngle(X, ang).multiply(s.r);
         const off = skirtOff[s.n], Hn = off && hipMid();
         if (Hn) { sp.copy(off).applyAxisAngle(X, ang).add(Hn); A.rig.localToWorld(sp); s.b.parent.worldToLocal(sp); s.b.position.copy(sp); }

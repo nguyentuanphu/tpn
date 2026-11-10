@@ -38,6 +38,7 @@ New-Item -ItemType Directory -Force $Out | Out-Null
 $procs = foreach ($i in $ids) {
   $a = @("..\tools\meshy\audit.mts", "$Out\part-$i", $i); if ($Quick) { $a += 'quick' }
   Start-Process node -ArgumentList $a -NoNewWindow -PassThru -RedirectStandardOutput "$Out\part-$i.log" -RedirectStandardError "$Out\part-$i.err"
+  Start-Sleep -Seconds 40   # (10 Nov 2026: four browsers loading the game at once timed out waiting for it, three of four parts lost)
 }
 $procs | Wait-Process
 node ..\tools\meshy\audit.mts $Out merge 2>$null | Out-Null

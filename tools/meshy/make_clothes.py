@@ -585,6 +585,7 @@ if feet is not None:
     for nm in [ca.name for ca in fo.data.color_attributes if ca.name and ca.name != 'shade']: fo.data.color_attributes.remove(fo.data.color_attributes[nm])
     fo.data.color_attributes.active_color = fo.data.color_attributes['shade']
     fo.data.materials.clear(); fo.data.materials.append(bpy.data.materials.new('lit-g-boots')); parts.append(fo)
+    if _rimv: fo.data.materials[0]['boot_top'] = float(BOOT_TOP)   # (10 Nov 2026: the game paints the body inside the boots in their colour and does not draw the trousers there, js/friend-model.ts)
 
 # (light model, far away only: the garments carry half their triangles; Clara's light model passed the 500 KB limit)
 _hg = body.vertex_groups.new(name='hair-v')   # (the hair's points, kept through the light model's body reduction)

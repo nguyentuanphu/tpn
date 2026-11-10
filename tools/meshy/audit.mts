@@ -55,7 +55,7 @@ const res: any = await P.page.evaluate(async ([LIST, QUICK, LIMIT]) => {
   const idMat = (orig: any, code: number, isBody: boolean, layer = -1) => {
     const m = new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide }); m.vertexColors = !!orig.vertexColors;
     const cu = orig.userData && orig.userData.coverU ? orig.userData.coverU : { value: 0 };
-    m.onBeforeCompile = (sh: any) => { sh.uniforms.uCover = cu; sh.uniforms.uNoDisc = NODISC; sh.uniforms.uDeq = (orig.userData && orig.userData.kitU && orig.userData.kitU.deq) || { value: new THREE.Matrix4() };
+    m.onBeforeCompile = (sh: any) => { sh.uniforms.uCover = cu; sh.uniforms.uNoDisc = NODISC; sh.uniforms.uDeq = (orig.userData && orig.userData.kitU && orig.userData.kitU.deq) || (orig.userData && orig.userData.deqU) || { value: new THREE.Matrix4() };
       sh.vertexShader = 'uniform mat4 uDeq;\nuniform float uCover;\nvarying float vCov;varying float vAny;\nvarying float vDz;\nvarying vec4 vMk;\nvarying float vKy;\nvarying float vWy;\n' + sh.vertexShader
         .replace('#include <color_vertex>', `#include <color_vertex>
 vCov = 0.0; vAny = 0.0; vMk = vec4(1.0, 0.0, 0.0, 0.0); vKy = (uDeq * vec4(position, 1.0)).y;
@@ -66,16 +66,16 @@ vAny = vCov;
 #endif`).replace('#include <project_vertex>', '#include <project_vertex>\n' + (orig.userData && orig.userData.plantInflate ? `mvPosition.xyz += normalize(normalMatrix * objectNormal) * ${Number(orig.userData.plantInflate).toFixed(4)}; gl_Position = projectionMatrix * mvPosition;\n` : '') + (layer >= 0 ? `mvPosition.xyz -= normalize(mvPosition.xyz) * ${BIAS[layer].toFixed(4)}; gl_Position = projectionMatrix * mvPosition;\n` : '')
           + (isBody && orig.userData && orig.userData.kitU && orig.userData.kitU.on.value > .5 ? `#ifdef USE_COLOR_ALPHA\nif (color.r < .5 && color.a * 255.0 < .5 && (uDeq * vec4(position, 1.0)).y < ${Number(orig.userData.kitU.neck.value).toFixed(4)}) { mvPosition.xyz -= normalize(mvPosition.xyz) * .012; gl_Position = projectionMatrix * mvPosition; }\n#endif\n` : '') + (PLANT === 'rag' && layer === 3 ? `mvPosition.y += sin(position.x * 3.0 + position.z * 5.0) * .018;\n` : '') + 'vDz = -mvPosition.z; vWy = (modelMatrix * vec4(transformed, 1.0)).y;');
       sh.fragmentShader = 'uniform float uNoDisc;\nvarying float vCov;varying float vAny;\nvarying float vDz;\nvarying vec4 vMk;\nvarying float vKy;\nvarying float vWy;\n' + sh.fragmentShader
-        .replace('void main() {', 'void main() {\nif (uNoDisc < .5 && vCov > ' + (isBody ? '9.0' : '.999') + ') discard;' + (PLANT === 'bite' && layer <= 0 ? `\nif (uNoDisc < .5 && vWy > ${(PLANT_KNEE - .05).toFixed(3)} && vWy < ${(PLANT_KNEE + .05).toFixed(3)}) discard;` : '') +'')   // (dressed: the game does not draw the swim kit either)
+        .replace('void main() {', 'void main() {\nif (uNoDisc < .5 && vCov > ' + (isBody ? '9.0' : '.999') + ') discard;' + (PLANT === 'bite' && layer <= 0 ? `\nif (uNoDisc < .5 && vWy > ${(PLANT_KNEE - .05).toFixed(3)} && vWy < ${(PLANT_KNEE + .05).toFixed(3)}) discard;` : '') + (!isBody && orig.userData && orig.userData.bootU && orig.userData.bootU.value > 0 ? `\nif (uNoDisc < .5 && vKy < ${Number(orig.userData.bootU.value).toFixed(4)}) discard;` : ''))   // (trousers inside worn boots are not drawn, as in the game)
         .replace('#include <dithering_fragment>', `#include <dithering_fragment>
 float code_ = ${code.toFixed(1)};
-${isBody ? 'if (vMk.r < .5) code_ = vMk.a * 255.0 > .5 ? 2.0 : 3.0; else if (vAny < .01) code_ = 5.0; else if (vCov > .5) code_ = 6.0; // (6: the body under worn clothes the game paints in their colour, js/friend-model.ts BODY_CUT) // (1 skin under the worn clothes, 5 skin no worn garment covers (face, hands: never a poke), 2 swim kit, 3 hair or eyes)' : ''}
+${isBody ? 'if (vMk.r < .5) code_ = vMk.a * 255.0 > .5 ? 2.0 : 3.0; else if (vAny < .01) code_ = 5.0; else if (vCov > .5) code_ = 6.0; // (6: the body under worn clothes the game paints in their colour, js/friend-model.ts BODY_CUT)' + (orig.userData && orig.userData.kitU && orig.userData.kitU.bootTop && orig.userData.kitU.bootTop.value > 0 ? `\nif (vKy < ${(Number(orig.userData.kitU.bootTop.value) - .01).toFixed(4)}) code_ = ${GCODE.boots.toFixed(1)}; // (inside the boots the game paints the body in their colour: it counts as the boots)` : '') + ' // (1 skin under the worn clothes, 5 skin no worn garment covers (face, hands: never a poke), 2 swim kit, 3 hair or eyes)' : ''}
 ${!isBody && code >= 20 && layer >= 0 && layer <= 2 ? 'if (!gl_FrontFacing) code_ += 100.0; // (a garment seen from inside: folded inside out, unless at an opening)' : ''}
 float dm_ = clamp(vDz * 1000.0, 0.0, 65535.0);
 gl_FragColor = vec4(code_ / 255.0, floor(dm_ / 256.0) / 255.0, mod(dm_, 256.0) / 255.0, 1.0);`); };
-    m.customProgramCacheKey = () => 'audit-id-' + PLANT +  (orig.userData && orig.userData.plantInflate ? 'inf' : '') + code + (isBody ? 'b' : '') + (m.vertexColors ? 'v' : '') + '-l' + layer + (isBody && orig.userData && orig.userData.kitU ? '-k' + orig.userData.kitU.on.value + '-' + orig.userData.kitU.neck.value : ''); return m;
+    m.customProgramCacheKey = () => 'audit-id-' + PLANT + '-bt' + (orig.userData && orig.userData.kitU && orig.userData.kitU.bootTop ? orig.userData.kitU.bootTop.value : 0) + '-bc' + (orig.userData && orig.userData.bootU ? orig.userData.bootU.value : 0) + (orig.userData && orig.userData.plantInflate ? 'inf' : '') + code + (isBody ? 'b' : '') + (m.vertexColors ? 'v' : '') + '-l' + layer + (isBody && orig.userData && orig.userData.kitU ? '-k' + orig.userData.kitU.on.value + '-' + orig.userData.kitU.neck.value : ''); return m;
   };
-  const POSES: [string, string, number, number][] = [['rest', 'idle', 0, 1], ['walk', 'walk', 3, 9], ['run', 'walk', 9, 14], ['cheer', 'cheer', 0, 3], ['wave', 'wave', 0, 3], ['dance', 'dance', 0, 5], ['jump', 'air', 0, 2], ['sit', 'sit', 0, 2], ['climb', 'climb', 0, 4], ['walk2', 'walk', 3, 14], ['run2', 'walk', 9, 18], ['dance2', 'dance', 0, 12], ['jump2', 'air', 0, 6], ['climb2', 'climb', 0, 10]];   // (10 Nov 2026: a second moment of each moving pose: one frame each hid what the next showed)
+  const POSES: [string, string, number, number][] = [['rest', 'idle', 0, 1], ['walk', 'walk', 3, 9], ['run', 'walk', 9, 14], ['cheer', 'cheer', 0, 3], ['wave', 'wave', 0, 3], ['dance', 'dance', 0, 5], ['jump', 'air', 0, 2], ['sit', 'sit', 0, 2], ['climb', 'climb', 0, 4], ['walk2', 'walk', 3, 14], ['run2', 'walk', 9, 18], ['dance2', 'dance', 0, 12], ['climb2', 'climb', 0, 10]];   // (10 Nov 2026: a second moment of each moving pose: one frame each hid what the next showed)
   // (owner 9 Nov 2026: the auditor must be trustworthy) QUICK = 'selftest:<fault>': one friend, everyday, rest and cheer,
   // with a fault planted on purpose: the check for it must fire (kit: hiding and kit painting off; poke: body 4% bigger;
   // fold: a top drawn from inside; eyes: the eyes left open while counted as shut)
@@ -152,7 +152,7 @@ gl_FragColor = vec4(code_ / 255.0, floor(dm_ / 256.0) / 255.0, mod(dm_, 256.0) /
           const gcols: Record<number, number[] | null> = {}; const gcol = (gc: number) => { if (!(gc in gcols)) { const a: number[][] = []; for (let j = 0; j < N; j++) if (Pall[j * 4 + 3] && Pall[j * 4] === gc) a.push([L[j * 4], L[j * 4 + 1], L[j * 4 + 2]]); gcols[gc] = a.length > 30 ? [0, 1, 2].map(k => a.map(v => v[k]).sort((p, q) => p - q)[a.length >> 1]) : null; } return gcols[gc]; }; const N = W * H, fk = new Uint8Array(N), fp = new Uint8Array(N), fh = new Uint8Array(N), fs = new Uint8Array(N);
           /* (10 Nov 2026) the game paints the swim kit under worn clothes in their colours (js/friend-model.ts): a kit pixel is a
              fault only where it does not look like one of the worn garments */
-          const kitAsCloth = (i: number) => worn.some(g => { const c_ = gcol(GCODE[g]); return !!c_ && Math.hypot(L[i * 4] - c_[0], L[i * 4 + 1] - c_[1], L[i * 4 + 2] - c_[2]) / 255 < .13; });
+          const kitAsCloth = (i: number) => worn.some(g => !seenAs(i, GCODE[g]));   // (like the garment beside it, or like it over the whole picture: a strip of shirt colour at the hem looked like the shirt)
           const dep = (px: Uint8Array, i: number) => (px[i * 4 + 1] * 256 + px[i * 4 + 2]) / 1000;
           const rankOf = (code0: number) => { const code = code0 >= 120 ? code0 - 100 : code0; return rankOf0(code); }; const rankOf0 = (code: number) => code === 1 || code === 6 ? -1 : code === 2 || code === 3 || code === 5 ? -9 : RANK[Object.keys(GCODE).find(k => GCODE[k] === code)] ?? 9;
           // reference colours of this picture: skin from the skin-marked body, hair from the top of the head
@@ -221,6 +221,11 @@ gl_FragColor = vec4(code_ / 255.0, floor(dm_ / 256.0) / 255.0, mod(dm_, 256.0) /
           for (let i = 0; i < N; i++) { if (Pall[i * 4 + 3] || !Pnd[i * 4 + 3] || Pnd[i * 4] === 3) continue; const x = i % W, y = (i / W) | 0; let inner = true;
             for (let dy = -2; dy <= 2 && inner; dy++) for (let dx = -2; dx <= 2; dx++) { const xx = x + dx, yy = y + dy; if (xx < 0 || yy < 0 || xx >= W || yy >= H || !Pnd[(yy * W + xx) * 4 + 3]) { inner = false; break; } }
             if (inner && !fo[i]) fb[i] = 1; }
+          /* (10 Nov 2026: a sitting child's seat, 1 cm smaller than the hidden trousers round it, counted 443 px of "bite" though
+             it only makes the outline a little smaller) a bite counts where it is at least about 2.5 cm across, from the drawn
+             friend to the valley (8 pixels; 14 in the leg close-ups, drawn twice as large) */
+          const BW = feet ? 14 : 8, near_ = (i: number, want: (j: number) => boolean) => { const x = i % W, y = (i / W) | 0; for (let r_ = 1; r_ <= BW; r_++) for (let d_ = -r_; d_ <= r_; d_++) for (const [xx, yy] of [[x + d_, y - r_], [x + d_, y + r_], [x - r_, y + d_], [x + r_, y + d_]]) { if (xx < 0 || yy < 0 || xx >= W || yy >= H) continue; if (want(yy * W + xx)) return r_; } return BW + 1; };
+          for (let i = 0; i < N; i++) if (fb[i] && near_(i, j => !!Pall[j * 4 + 3]) + near_(i, j => !Pnd[j * 4 + 3]) < BW) fb[i] = 0;
           // (tears: a hole in a garment itself, seen in its picture alone: an empty pixel the garment closes round within 5 pixels
           // on all four sides; owner circled the dark inner layer showing through such holes in Sol's shirt)
           const ft = new Uint8Array(N);
@@ -238,9 +243,9 @@ gl_FragColor = vec4(code_ / 255.0, floor(dm_ / 256.0) / 255.0, mod(dm_, 256.0) /
              the painted body with at most 12 of its own in the 7 x 7 round it (a straight edge has 21 or more, a corner about
              16) is a spike; hair, hands and the face (their own fine detail) are not judged, nor anything next to them */
           const fr = new Uint8Array(N);
-          for (let i = 0; i < N; i++) { if (!Pall[i * 4 + 3]) continue; const c0 = Pall[i * 4], c_ = c0 >= 120 ? c0 - 100 : c0; if (!(c_ >= 20 || c_ === 6)) continue; const x = i % W, y = (i / W) | 0; let same = 0, skip = false;
-            for (let dy = -3; dy <= 3 && !skip; dy++) for (let dx = -3; dx <= 3; dx++) { const xx = x + dx, yy = y + dy; if (xx < 0 || yy < 0 || xx >= W || yy >= H) { skip = true; break; } const j = yy * W + xx; if (!Pall[j * 4 + 3]) continue; const cj = Pall[j * 4] >= 120 ? Pall[j * 4] - 100 : Pall[j * 4]; if (cj === 3 || cj === 5 || Pf[j * 4 + 3]) { skip = true; break; } if (cj === c_) same++; }
-            if (!skip && same <= 12) fr[i] = 1; }
+          for (let i = 0; i < N; i++) { if (!Pall[i * 4 + 3]) continue; const c0 = Pall[i * 4], c_ = c0 >= 120 ? c0 - 100 : c0; if (!(c_ >= 20 || c_ === 6)) continue; const x = i % W, y = (i / W) | 0; let same = 0, near = 0, skip = false;
+            for (let dy = -3; dy <= 3 && !skip; dy++) for (let dx = -3; dx <= 3; dx++) { const xx = x + dx, yy = y + dy; if (xx < 0 || yy < 0 || xx >= W || yy >= H) { skip = true; break; } const j = yy * W + xx; if (!Pall[j * 4 + 3]) continue; const cj = Pall[j * 4] >= 120 ? Pall[j * 4] - 100 : Pall[j * 4]; if (cj === 3 || cj === 5 || Pf[j * 4 + 3]) { skip = true; break; } if (cj === c_) { same++; if (Math.abs(dx) <= 1 && Math.abs(dy) <= 1) near++; } }
+            if (!skip && same <= 12 && near >= 4) fr[i] = 1; }   /* (a 1-pixel line along another layer's edge, the colours mixing there, is not a spike: Lumi's coat hem outlined by her trousers) */
           const cnt = (a: Uint8Array) => a.reduce((s, v) => s + v, 0);
           const r = { id, kind, pose: pn, view: vn, kit: cnt(fk), poke: cnt(fp), hairtone: cnt(fh), skintone: cnt(fs), fold: cnt(ff), fold0, pokeBy, hole: cnt(fo), bite: cnt(fb), rag: cnt(fr), tear: cnt(ft) };
           cases.push(r);
