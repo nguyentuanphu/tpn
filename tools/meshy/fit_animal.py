@@ -620,6 +620,9 @@ def face_pieces(o, arm, J, Fc):
         if FIX.get('lid_out') and abs(gx) > 1e-6: gx += math.copysign(r * FIX['lid_out'], gx)   # (moved further out, over lashes that flick outwards: the painted eye's middle lies outwards of the eye found)
         if FIX.get('lash_dark'):   # (painted lashes apart from the eye, under the lid: anything darker than this is filled as fur too)
             Lm = img0 @ np.array([.3, .59, .11]); dark = (Lm < FIX['lash_dark']) & hit & ((((xx - gx) / Rx) ** 2 + ((yy - gy) / R) ** 2) < 1.15)
+            if FIX.get('lash_spot'):   # (lash tips: small warm specks a little darker than the face round them (a 7x7 mean), not the navy hair (bluer), not a smooth blush; they run along the hair's edge where the picture is squeezed to a texel or two)
+                mL = sum(np.roll(Lm, (d0, d1), (0, 1)) for d0 in range(-3, 4) for d1 in range(-3, 4)) / 49
+                dark |= (Lm < mL - FIX['lash_spot']) & (img0[..., 2] - img0[..., 0] < .02) & hit & ((((xx - gx) / Rx) ** 2 + ((yy - gy) / R) ** 2) < 1.15)
             for _ in range(2): dark = dark | np.roll(dark, 1, 0) | np.roll(dark, -1, 0) | np.roll(dark, 1, 1) | np.roll(dark, -1, 1)
             inside = inside | dark; known = ~inside & hit
         fill = img0.copy(); fill[~known] = img0[known].mean(0) if known.any() else .5
@@ -656,7 +659,8 @@ def face_pieces(o, arm, J, Fc):
                     loc, nor, _, _ = bvh.ray_cast(Vector(c + side * x + up * y + nrm * R), Vector(-nrm))
                     if loc is None: continue
                     k = 1 - smooth01((math.hypot((x - gx) / Rx, (y - gy) / R) - .82) / .18)   # (down to the surface at its rim)
-                    grid[a, b] = bm.verts.new(loc + Vector(nrm) * (lift * k + .0004))
+                    off = (Vector(nrm) * (lift * k + .0004)) if not FIX.get("lid_rim") else (Vector(nrm) * lift * k + nor.normalized() * FIX["lid_rim"])   # (lid_rim: the rim held off the surface along the surface's own normal: where the head turns away the lid's flat squares dipped under it and its painted lashes showed through)
+                    grid[a, b] = bm.verts.new(loc + off)
             for a in range(GN):
                 for b in range(GN):
                     q = [(a, b), (a, b + 1), (a + 1, b + 1), (a + 1, b)]
