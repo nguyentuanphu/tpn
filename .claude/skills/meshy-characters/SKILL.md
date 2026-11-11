@@ -189,7 +189,17 @@ Record: `docs/meshy-regional-40-100/PILOT-1.md`. Ids `r<nnn>` (sheet number), jo
     in the strip along the top, baked from the untouched model. Measure it: look at `mid/colour.jpg` (the face is the island at
     the top) and the `FIT face front` line (`FIT_LOG=<file>` keeps Blender's output; `fit_person.ps1` dropped it).
   - *Streaked looking eyes.* The look pieces drew only the changed pixels with soft edges, so the painted iris showed through
-    as rings. `-LookSolid` covers the whole eye opening. The 11 named villagers have the same fault (Mit's look-left).
+    as rings; the slide also moved only the white and the iris core, so the iris's outer ring stayed behind, and a big iris
+    that touches both lids was cut in half by white bands; r057's found eye box missed the inner third of his eye. `-LookSolid`
+    draws the eye afresh: the eye is what inside a wider box is not skin, joined to its whites, holes filled, less its rim;
+    the old iris (as tall as the eye) turns eye white and is laid on again to the side; the piece covers it solidly. Test it
+    without a fit: copy `shift_iris` and `skin_mask` out of `fit_people.py` and run them on `mid/face-bake.png` with the eye
+    boxes of the `FIT eyes` line (a 20-minute fit per try is too slow). The 11 named villagers have the same fault.
+  - *Mouth fixes that only worked on the test pair.* After the fixes passed on r050 and r084, the run of all six failed
+    `oldmouth` on three: r057's collar edge against the black round the face was darker than his lips (patches touching
+    the black are skipped now), and r045's and r074's pink lips passed as hair (nearer the hair's colour mix than the skin's),
+    so the mouth piece was see-through inside and only its rim showed (the found mouth is never hair now). Lesson: test a
+    fix on every person it is meant for, and read the piece's alpha (composite the atlas tile on green), not only its colours.
   - *Why the auditor passed it.* Its mouth check only measured how far the "o" lies below the eyes. `audit_villager.mts` now has
     `oldmouth`: front and both three-quarters, pixels round the "o"/sad mouth (on the face, not its outline) as dark as a mouth
     line that did not change from the smile face. It failed this morning's models (138-659) before any fix.

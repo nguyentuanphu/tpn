@@ -20,7 +20,8 @@ State (11 Nov 2026 AEDT):
 - Game references: `blender -b -P tools/blender/lumi.py -- $SV_MESHY_ROOT/work-v108 villager role=<role> game glb hd`
   for vn-schoolgirl, vn-grandma, vn-dad, au-mum, au-grandma, au-boy (files are `-game-hd`, `-adult-hd`, `-elder-hd`).
 - Fit each person (about 10 to 40 min; two at a time):
-  `pwsh -File tools/meshy/fit_person.ps1 -Id <id> -Villager -NoLimbTint -LidMatch <flags> -Ref $SV_MESHY_ROOT/work-v108/villager-<ref>-hd.glb`
+  `pwsh -File tools/meshy/fit_person.ps1 -Id <id> -Villager -NoLimbTint -LidMatch -FaceUV 2 -PieceSnap .001 -MouthFind -LookSolid -VTile 256 <flags> -Ref $SV_MESHY_ROOT/work-v108/villager-<ref>-hd.glb`
+  (the face flags since 11 Nov 2026, after the owner's "eyes, nose and mouth all have problems": see the skill's "Eyes, nose and mouth")
   | id | ref | flags |
   |----|-----|-------|
   | r045 | vn-schoolgirl-game | |
@@ -36,6 +37,15 @@ State (11 Nov 2026 AEDT):
   `python3 tools/meshy/regional_sheet.py <shots> <id> docs/meshy-regional-40-100/reference-images/<nnn-name>/front.png <out.jpg> "<title>"`.
 - Look at every sheet at full size. Owner said on 10 Nov: "hốc mắt chưa đẹp, học xem làm mắt như thế nào từ clara finn sol
   lumi". Fixed by `-LidMatch` (see the skill); check closed eyes again in the game.
+- 11 Nov 2026 AEDT, owner: "Tất cả con mắt, mũi và miệng của các nhân vật đều có vấn đề". Found and fixed: the face was
+  about 120 px wide in the picture (blurry eyes and nose: `-FaceUV 2` makes it one 360 px island); the mouth box was a
+  fixed band of the picture (r057's strap and collar, r084's whole lower face: `-MouthFind`); the smile stayed under the
+  "o" and sad mouths (lid fill kept the pink lips, and the lips passed as hair so the piece was see-through there:
+  `-MouthFind` erases the mouth on its own and the mouth is never hair); mood pieces floated over hollows (`-PieceSnap`);
+  the looking eyes were streaked with the old iris (`-LookSolid` draws the eye afresh). The audit now has an `oldmouth`
+  check (a dark painted mouth left under the "o" and sad mouths), which caught three of the six on the first run.
+- The 11 named villagers (other chat) were fitted before these flags: they share the mouth and look faults; refit them
+  with the same flags and audit them.
 - Known left: in three-quarter views the far eye can show past the nose (needs the game's shut-eye paint, which only
   friends with cover marks get: `js/friend-model.ts`, owned by another chat: put it on the board); r045's hair lock over the
   eye breaks up on a blink; small rim glints at r057's inner corners and a lash flick at r064's outer corner.
