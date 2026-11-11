@@ -32,6 +32,14 @@ Read first: `.claude/skills/meshy-characters/SKILL.md` (section "Animals"), `doc
     normal), `lid_spike` (lid points on something sticking out are left out), `lid_px` 160 (size limit);
   - debug fit writes `<kind>-lidsrc<i>.png` (eye found red, filled blue, lid edge green).
   Dragon: 09:23 models, close shots looked at, fine; audited again with the firefly.
+- 11 Nov evening, owner: "Đom đóm thiếu cánh ... tại sao lại ko so sánh với model". True: the game kept only the code
+  shape's two small pale ovals, nearly invisible, and the `close` shots (bare model) can never show the game's wings,
+  so nobody compared with the sheet. Now `sparkleWings` (`js/companion.ts`): four see-through wings drawn as the sheet
+  has them (big pair from the top of the chest tipped up, small pair below tipped down, pale sheen, cream rim, veins),
+  on the model's body bone, beating back and forth. Fit: `cut_pale` 0.14, `cut_light`, `cut_sat` cut the white wing-root
+  strands left beside the chest. **Lesson: compare every companion with its reference sheet in the `companion` shots
+  (the game's own group), not only the bare-model `close` shots.**
+  Dragon rebuilt with `lash_dark`, `lash_spot`, `lid_lift` 0.004 (the far model's lid showed painted lash marks).
 
 ## Next steps
 1. Rebuild both companions (`blender -b -P tools/meshy/fit_animal.py -- <kind> <near remesh> <far remesh> <out>`;

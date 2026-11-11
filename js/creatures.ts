@@ -10,7 +10,7 @@
 //   surprised and sleep; every clip blinks, and the face (eyes, brows, mouth) shows the mood.
 import { worldModel, worldModelFailed } from './modelkit.js';
 import { useCreatureModels } from './animals.js';
-import { useCompanionModels } from './companion.js';
+import { useCompanionModels, sparkleWings } from './companion.js';
 
 export const creatureModelName = (kind: string) => 'creature-' + kind;
 /** each animal's happy move (tools/blender/creatures-built.json "happy") */
@@ -87,7 +87,8 @@ function tick(g, r, dt: number) {
   if (clip !== r.clip) { r.clip = clip; r.model.play(clip, clip === 'surprised' ? .1 : .3); }
 }
 // (11 Nov 2026) a companion made with Meshy: its near model (it is always beside the child), the far one when that is
-// missing; Sparkle keeps the game's own see-through wings and glow, so only the code shape's body is hidden
+// missing; Sparkle keeps the game's own see-through wings (four, drawn as the sheet has them) and glow, so only the code
+// shape's body is hidden
 function ask(c, still: () => boolean) {
   const name = creatureModelName(c.kind), meshy = MESHY_CREATURES.has(c.kind);
   void (meshy ? worldModel(name + '-hd', { clip: 'idle' }).then(m => m || worldModel(name, { clip: 'idle' })) : worldModel(name, { clip: 'idle' })).then(m => {
@@ -95,7 +96,7 @@ function ask(c, still: () => boolean) {
     let painted = false; m.obj.traverse((o: any) => { if (o.isMesh && /^meshy-/.test((o.material && o.material.name) || '')) painted = true; });
     if (painted && c.kind === 'firefly') {   // (the code wings move to the Meshy body's back; the code glow ball, which covered it, gives way to the halo at its own tail)
       u.look.children.forEach((k: any) => { if (k.isMesh) k.visible = false; });
-      u.wings.forEach((w: any, i: number) => { w.position.set((i ? 1 : -1) * .07, .02, -.08); w.scale.setScalar(.85); });
+      sparkleWings(c, m);   // (11 Nov 2026, owner: "thiếu cánh": the code's two small pale ovals hardly showed; four wings as the sheet draws them, on the body bone)
       if (u.glow) u.glow.visible = false;
       u.body.children.forEach((k: any) => { if (k.isSprite) { k.position.set(0, -.17, -.02); k.scale.setScalar(.55); } });
     } else u.look.visible = false;

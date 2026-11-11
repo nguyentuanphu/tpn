@@ -67,7 +67,7 @@ def load(path):
                 cm = f.calc_center_median(); fx = abs(cm.x - mx) / wx; fz = (cm.z - z0) / (z1 - z0)
                 if fx < px0 or not (px1 < fz < .8): continue
                 uv = np.mean([l[uvl].uv[:] for l in f.loops], 0); c = sample(px, uv); L = c @ np.array([.3, .59, .11]); sat = c.max() - c.min()
-                if L > .55 and sat < .14: gone.append(f)
+                if L > FIX.get('cut_light', .55) and sat < FIX.get('cut_sat', .14): gone.append(f)   # (cut_light, cut_sat: the pale strands of the wings' roots)
         _bm.ops.delete(bm, geom=list(set(gone)), context='FACES'); bm.to_mesh(o.data); bm.free()
     V = np.array([v.co[:] for v in o.data.vertices])
     want = FIX.get('height', A['box']['max'][1] - (A['box']['min'][1] if COMP else 0))

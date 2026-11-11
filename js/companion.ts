@@ -37,6 +37,45 @@ function dragon() {
   g.userData = { body, look, wings, glow: null, flap: 9 };
   return g;
 }
+// (11 Nov 2026, owner: "Đom đóm thiếu cánh") Sparkle's wings on the Meshy model, as the reference sheet draws them
+// (docs/meshy-production-20261107/reference-images/23-firefly): four see-through wings, a big pair above and a smaller
+// pair below, pale with a pink and blue sheen, a cream rim and fine veins. Our own drawing on a canvas. They ride the
+// model's body bone (anything a companion wears goes on a bone), so they stay on its back through loops and sleep.
+let _wing = null;
+function wingTex() {
+  if (_wing) return _wing;
+  const W = 512, Hh = 256, c = document.createElement('canvas'); c.width = W; c.height = Hh; const x = c.getContext('2d');
+  const outline = () => { x.beginPath(); x.moveTo(10, Hh / 2); x.bezierCurveTo(90, 40, 300, 6, 420, 16); x.bezierCurveTo(500, 24, 510, 120, 490, 170);
+    x.bezierCurveTo(462, 236, 300, 236, 180, 200); x.bezierCurveTo(100, 176, 40, 150, 10, Hh / 2); x.closePath(); };
+  const gr = x.createLinearGradient(0, 0, W, Hh);
+  gr.addColorStop(0, 'rgba(255,246,232,0.50)'); gr.addColorStop(.35, 'rgba(228,218,255,0.40)'); gr.addColorStop(.65, 'rgba(255,224,242,0.44)'); gr.addColorStop(1, 'rgba(214,236,255,0.48)');
+  outline(); x.fillStyle = gr; x.fill();
+  x.save(); outline(); x.clip();   // (the veins inside the wing only)
+  x.strokeStyle = 'rgba(226,178,112,0.85)'; x.lineWidth = 4; x.lineCap = 'round';
+  for (const [ex, ey, bx, by] of [[470, 40, 300, 30], [500, 110, 330, 90], [470, 190, 320, 160], [330, 214, 200, 170], [200, 190, 120, 150]]) {
+    x.beginPath(); x.moveTo(10, Hh / 2); x.quadraticCurveTo(bx, by, ex, ey); x.stroke();
+    x.lineWidth = 3; x.beginPath(); x.moveTo(bx + (ex - bx) * .45, by + (ey - by) * .45); x.lineTo(bx + (ex - bx) * .75, by + (ey - by) * .75 + 26); x.stroke(); x.lineWidth = 4;
+  }
+  x.restore();
+  outline(); x.strokeStyle = 'rgba(244,204,138,1)'; x.lineWidth = 11; x.stroke();
+  return (_wing = new THREE.CanvasTexture(c));
+}
+/** the four wings on Sparkle's Meshy model (m: the loaded model, before it is added to the companion) */
+export function sparkleWings(c, m) {
+  const obj = m.obj, bone = obj.getObjectByName('body'); if (!bone) return;
+  obj.updateMatrixWorld(true); const box = new THREE.Box3().setFromObject(obj), sz = box.getSize(new THREE.Vector3()), h = sz.y;
+  const mat = new THREE.MeshBasicMaterial({ map: wingTex(), transparent: true, depthWrite: false, side: THREE.DoubleSide });
+  const zBack = (box.min.z + box.max.z) / 2 - sz.z * .18, made = [];
+  // (from the sheet: the big wing 0.64 of the height long, from the top of the chest, tipped up; the small one 0.44, lower, tipped down)
+  for (const [len, tall, at, tilt, ph] of [[.64, .34, .47, .42, 0], [.44, .24, .39, -.42, .5]]) for (const s of [-1, 1]) {
+    const g = new THREE.PlaneGeometry(len * h, tall * h); g.translate(len * h / 2, 0, 0);
+    const w = new THREE.Mesh(g, mat); w.renderOrder = 2; w.rotation.z = tilt;
+    const flap = new THREE.Group(); flap.add(w); flap.userData = { axis: 'y', amp: .45, side: s, ph };
+    const root = new THREE.Group(); root.scale.x = s; root.position.set(s * sz.x * .06, box.min.y + h * at, zBack); root.add(flap);
+    obj.add(root); bone.attach(root); made.push(flap);
+  }
+  const u = c.o.userData; u.wings.forEach((w: any) => { w.visible = false; }); u.wings = made;
+}
 let _halo = null;
 function haloTex() {
   if (_halo) return _halo;
@@ -84,7 +123,8 @@ export function createCompanions(G) {
       o.position.lerp(_t, Math.min(1, dt * 3.2));
       if (c.model) MODELS.tick(c, was, dt);   // (v1.08e) the model's clip
       o.rotation.y += ((((yaw - o.rotation.y) % (Math.PI * 2)) + Math.PI * 3) % (Math.PI * 2) - Math.PI) * Math.min(1, dt * 4);
-      u.wings.forEach((w, i) => { w.rotation.z = (i ? -1 : 1) * Math.sin(t * u.flap) * .6; });
+      u.wings.forEach((w, i) => { const d = w.userData, a = Math.sin(t * u.flap + (d.ph || 0)) * (d.amp || .6);
+        if (d.axis === 'y') w.rotation.y = a; else w.rotation.z = (i ? -1 : 1) * a; });   // (Sparkle's Meshy wings beat back and forth, sparkleWings)
       u.body.rotation.x = Math.sin(t * 1.7) * .08;
       // (Studio switch companionGrow, js/kidplay.js) it grows as it is fed, wears the hat the child saved for, and does tricks
       const L = h.profile.lanterns || {}, pet = L.pet || {}, grow = G.petLevel ? G.petLevel(h) : 1;

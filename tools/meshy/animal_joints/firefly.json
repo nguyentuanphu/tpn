@@ -40,7 +40,7 @@
   "flip": true,
   "eye_dark": 0.08,
   "cut_pale": [
-    0.22,
+    0.14,
     0.3
   ],
   "eye_grow": 2.0,
@@ -61,5 +61,7 @@
   "lash_spot": 0.06,
   "lid_rim": 0.0015,
   "lid_lift": 0.006,
-  "lid_spike": 0.008
+  "lid_spike": 0.008,
+  "cut_sat": 0.22,
+  "cut_light": 0.5
 }
