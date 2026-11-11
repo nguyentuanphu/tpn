@@ -672,7 +672,10 @@ if OWN:
     _g = max(2, int(W_ * .012))
     for k in M:
         ch = (np.abs(M[k][..., :3] - F[..., :3]).max(-1) > .025).astype(np.float32)
-        M[k][..., 3] = np.minimum(soften(ch, max(1, _g // 2), _g) * 1.6, 1) * PARTS[k] * NOHAIR   # (a narrow soft edge: less of the cheek redrawn)
+        if k in ('lookL', 'lookR'):   # (11 Nov 2026, owner circled the glancing eye from the side on every villager) the glance piece stops a few pixels inside the eye's opening and does not grow: the eye's rim and the white along it stay the body's own; a piece reaching the rim lay a little in front of the face and showed a second rim beside the painted one (white rings) when seen from the side
+            for _ in range(max(2, int(W_ * .025))): ch = np.minimum.reduce([ch, np.roll(ch, 1, 0), np.roll(ch, -1, 0), np.roll(ch, 1, 1), np.roll(ch, -1, 1)])
+            M[k][..., 3] = np.minimum(soften(ch, 0, _g) * 1.6, 1) * PARTS[k] * NOHAIR
+        else: M[k][..., 3] = np.minimum(soften(ch, max(1, _g // 2), _g) * 1.6, 1) * PARTS[k] * NOHAIR   # (a narrow soft edge: less of the cheek redrawn)
         # (where see-through it keeps the painted face's own colour in a narrow band round each piece: black there blended
         # into a dark fringe; beyond the band one flat colour, so the picture stays small)
         _band = M[k][..., 3] >= .01
@@ -1293,7 +1296,7 @@ if TEX and KEEP and SHIFT:
             # (11 Nov 2026) 18 and 10 px on the friends' 512 px face picture; a villager's is 160-192 px, and the owner circled
             # the far eye's outer corner still open from three-quarters: out towards the temple a quarter more there. (The dark
             # band across Tí's eyes, first blamed on these, was a lid shade, removed.)
-            _po = 18 + (W_ * .04 if W_ < 400 else 0); _left = (b[0] + b[2]) / 2 < W_ / 2
+            _po = 18 + (W_ * .08 if W_ < 400 else 0); _left = (b[0] + b[2]) / 2 < W_ / 2
             _eb += [fx0 + (b[0] - (_po if _left else 18)) / W_ * (fx1 - fx0), fx0 + (b[2] + (18 if _left else _po)) / W_ * (fx1 - fx0), fz1 - (b[3] + 10) / H_ * (fz1 - fz0), fz1 - (b[1] - 10) / H_ * (fz1 - fz0)]
         while len(_eb) < 8: _eb += _eb[:4]
         # (auditor 10 Nov 2026: Clara's far eye, three-quarters: its inner corner, past the nose, lay between the two areas)
@@ -1305,9 +1308,10 @@ if TEX and KEEP and SHIFT:
         # (auditor 10 Nov 2026: Clara's far eye, three-quarters, kept its open lashes while shut) the eye's own triangles,
         # dark lashes and iris, were not marked skin, so the game never painted them over: every non-hair head triangle in
         # an eye area is marked skin now (open eyes keep their paint: the game's per-texel test keeps dark lines)
-        if 'swim' in ID and '_pc3' in dir():
+        if ('swim' in ID or REFP == 'villager-') and '_pc3' in dir():   # (11 Nov 2026: and the villagers: with 'swim' only, their far eye's pupils and lashes were never marked skin, so the shut-eye paint left them showing from three-quarters, circled by the owner)
             _fcx = np.array([p.center.x for p in me.polygons]); _fcz = np.array([p.center.z for p in me.polygons]); _fcy = np.array([p.center.y for p in me.polygons])
             _ine = np.zeros(len(me.polygons), bool)
+            if '_ear_y' not in dir(): _ear_y = float(np.median(_pc3[_ear & _skp, 1])) if '_ear' in dir() and (_ear & _skp).any() else _hcy   # (villagers: the swim bodies' lock trim, which sets it, does not run for them)
             for _k in range(0, 8, 4): _ine |= (_fcx > _eb[_k]) & (_fcx < _eb[_k + 1]) & (_fcz > _eb[_k + 2]) & (_fcz < _eb[_k + 3])
             _add = _ine & ~_skp & _hz & (~_hreg | ~_hairlike | ((_mc.max(-1) < .35) & (_mc.max(-1) > 0))) & (_fcy < _ear_y)   # (and dark: Lumi's green irises are coloured like her hair)   # (the face side only: the back of the head has the same x and height, Finn's black hair there was marked)   # (Lumi's far eye, three-quarters, lay in her hair region: a triangle there not coloured like hair is the eye)
             if _add.any():
