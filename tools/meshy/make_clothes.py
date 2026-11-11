@@ -277,6 +277,25 @@ def _move_with_body(bm, o, name):
             for t_ in trunk_:
                 if t_ in new: new[t_] = new[t_] * (1 - m_ / max(wt, 1e-6))
             new[hb] = new.get(hb, 0) + 2 * m_; setw(v, new)
+    # (3b) (12 Nov 2026, owner: "áo đứt", every short sleeve's hem ragged with the arm's skin coming through it as teeth)
+    # the shoulder smoothing reaches 15 cm, past a short sleeve's hem, so the hem lagged behind the arm under it as the
+    # arms came down from Meshy's pose: down the arm, from 4 cm past the shoulder joint, fully by 9 cm, a sleeve moves on
+    # the arm's own weights (the armpit side keeps the smoothing, where shirts had folded inside out)
+    if LAYER.get(name) == 1:
+        kd, W = _body_weights(); _ns = 0
+        for v in bm.verts:
+            h_ = btree.find_nearest(v.co)
+            if h_[0] is None or not bool(isarm[h_[2]]): continue
+            jp = J['armL'] if (v.co.x > 0) == (J['armL'].x > 0) else J['armR']
+            t = max(0., min(1., ((v.co - jp).length - .02) / .03))   # (from 2 cm, fully by 5 cm: at 4 to 9 cm a short sleeve's hem, 6 to 7 cm out, still lagged in the game)
+            if t <= 0: continue
+            _co, j, _d = kd.find(v.co)
+            if _d is None or _d > .05: continue
+            own = getw(v); new = {k: w * (1 - t) for k, w in own.items()}
+            for k, w in W[j].items():
+                if k != 'hair-v': new[k] = new.get(k, 0) + t * w
+            setw(v, new); _ns += 1
+        print('CL move', name, 'sleeve points on the arm\'s weights', _ns)
     # (4) (11 Nov 2026, round 82: specks of neck skin, kit and nape hair through Finn's collar with his arms up) round the
     # neck a top moves exactly as the body under it: smoothed and split onto the helper bones the collar rose by half while
     # the body's shoulder tops rose fully, through it. Over 3 cm up to 7 cm below the neckband the body's own weights take over

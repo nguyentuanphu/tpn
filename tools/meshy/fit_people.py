@@ -27,7 +27,7 @@ ORIGINAL = bool(J.get('original_skin'))
 SHIFT = bool(J.get('skin_shift')) and ORIGINAL; SKIN_REF = J.get('skin_ref')
 # (owner 8 Nov 2026) own_face: Meshy's own painted face stays; moods are soft pieces over the eyes and mouth only
 OWN = bool(J.get('own_face', ORIGINAL and J.get('keep_meshy_uvs')))
-TILE = 512 if TEX >= 1024 else 256 if TEX >= 512 and TRIS > 20000 else 128   # (256: a villager's one model, seen close and far) the face picture: sharp lashes and eye rims up close (the light model's is smaller)
+TILE = 512 if TEX >= 1024 else 256 if TEX >= 512 else 128   # (12 Nov 2026, owner: Lumi's eyes from far away smeared; the light model's mood pieces were 128 px)   # (256: a villager's one model, seen close and far) the face picture: sharp lashes and eye rims up close (the light model's is smaller)
 os.makedirs(RDIR, exist_ok=True)
 bpy.ops.wm.read_factory_settings(use_empty=True)
 sc = bpy.context.scene; VL = bpy.context.view_layer
@@ -175,9 +175,9 @@ if not KEEP:
     bm = bmesh.new(); bm.from_mesh(body.data); bm.faces.ensure_lookup_table(); uvl = bm.loops.layers.uv.active; nface = nhead = 0
     for isl in bmesh_linked_uv_islands(bm, uvl):
         c3 = sum((f.calc_center_median() for f in isl), Vector()) / len(isl)
-        k = 3.5 if (fx0 - .02 < c3.x < fx1 + .02 and fz0 - .04 < c3.z < fz1 + .02 and c3.y < 0) else 1.6 if c3.z > L['neck'].z - .02 else 1.0
+        k = (5.0 if TEX <= 512 else 3.5) if (fx0 - .02 < c3.x < fx1 + .02 and fz0 - .04 < c3.z < fz1 + .02 and c3.y < 0) else 1.6 if c3.z > L['neck'].z - .02 else 1.0
         if k == 1.0: continue
-        nface += k == 3.5; nhead += k == 1.6
+        nface += k >= 3.5; nhead += k == 1.6
         cu = sum((l[uvl].uv for f in isl for l in f.loops), Vector((0, 0))) / sum(len(f.loops) for f in isl)
         for f in isl:
             for l in f.loops: l[uvl].uv = cu + (l[uvl].uv - cu) * k
@@ -565,17 +565,17 @@ def shift_iris(img, b, frac):
         nxt = wjoin | (eyewhite & (np.roll(wjoin, 1, 0) | np.roll(wjoin, -1, 0) | np.roll(wjoin, 1, 1) | np.roll(wjoin, -1, 1)))
         if (nxt == wjoin).all(): break
         wjoin = nxt
-    opening = wjoin
+    opening = wjoin | ((d0 < ir * 1.6) & inside & ~skin_mask(sub) & (ey > hh_ * .15))   # (12 Nov 2026, owner: the glances; the old iris's dark rim, between its core and the white, was in neither and stayed as curved streaks)
     sx = ex - dx; ok = (sx >= 0) & (sx < ww_); sxc = np.clip(sx, 0, ww_ - 1)
     take = opening & ok & opening[ey, sxc]
     o = out[y0:y1, b[0]:b[2]]
-    o[opening, :3] = np.array(EW); o[take, :3] = sub[ey[take], sxc[take], :3]
+    o[opening, :3] = np.array(EW); o[take, :3] = sub[ey[take], sxc[take], :3]   # (12 Nov 2026: keeping the painted white's own shade there left the old iris's rim as dark streaks; one even white)
     # (the iris leaves bits along the eye's edge uncovered; white there showed as a crescent under the eye: they take the
     # colour of the lid just outside instead)
     def _dil(a, n):
         for _ in range(n): a = a | np.roll(a, 1, 0) | np.roll(a, -1, 0) | np.roll(a, 1, 1) | np.roll(a, -1, 1)
         return a
-    vac = opening & ~take & _dil(~opening, max(2, int(ir * .35)))
+    vac = opening & ~take & _dil(~opening, max(2, int(ir * .35))) & (ey > icy + ir * .6)   # (12 Nov 2026, owner: "các bạn liếc mắt": only the bits under the iris take the lid's colour; at the side the whole strip the iris left became one flat grey or brown block, the median of the lid rim and its lashes)
     rim = _dil(opening, 2) & ~opening
     if vac.any() and rim.any():
         for half in (ey < icy, ey >= icy):
@@ -627,7 +627,7 @@ if OWN:
     _ineyes = np.zeros((H_, W_), bool)
     # (8 Nov 2026: a light patch over Finn's fringe on every blink) only the lower part of the eye area counts as "eye":
     # fringe strands hanging into its top stay hair (the iris, even a hair-coloured one, is lower)
-    for b in eyes.values(): g_ = grow(b); _ineyes |= (xx >= g_[0]) & (xx < g_[2]) & (yy >= b[1] - (b[3] - b[1]) * .05) & (yy < g_[3])
+    for b in eyes.values(): g_ = grow(b); _ineyes |= (np.hypot((xx - (g_[0] + g_[2]) / 2) / ((g_[2] - g_[0]) / 2), (yy - (g_[1] + g_[3]) / 2) / ((g_[3] - g_[1]) / 2)) < 1) & (yy >= b[1] - (b[3] - b[1]) * .05)   # (12 Nov 2026, owner circled straight lines down both sides of Lumi's face and a patch in Finn's fringe on closed eyes: the eye's box reached the hair at the temples and the fringe, and the piece drew skin over it to a straight edge; an oval inside the box)
     _ie = _ineyes.astype(np.float32)
     for _ in range(6): _ie = (_ie + np.roll(_ie, 1, 0) + np.roll(_ie, -1, 0) + np.roll(_ie, 1, 1) + np.roll(_ie, -1, 1)) / 5   # (soft: its box edge showed as straight lines on Clara)
     NOHAIR = 1 - np.clip(HAIRISH.astype(np.float32) * 1.5, 0, 1) * (1 - _ie)
@@ -1275,7 +1275,11 @@ if TEX and KEEP and SHIFT:
             _fcx = np.array([p.center.x for p in me.polygons]); _fcz = np.array([p.center.z for p in me.polygons]); _fcy = np.array([p.center.y for p in me.polygons])
             _ine = np.zeros(len(me.polygons), bool)
             for _k in range(0, 8, 4): _ine |= (_fcx > _eb[_k]) & (_fcx < _eb[_k + 1]) & (_fcz > _eb[_k + 2]) & (_fcz < _eb[_k + 3])
-            _add = _ine & ~_skp & _hz & (~_hreg | ~_hairlike | ((_mc.max(-1) < .35) & (_mc.max(-1) > 0))) & (_fcy < _ear_y)   # (and dark: Lumi's green irises are coloured like her hair)   # (the face side only: the back of the head has the same x and height, Finn's black hair there was marked)   # (Lumi's far eye, three-quarters, lay in her hair region: a triangle there not coloured like hair is the eye)
+            _core = np.zeros(len(me.polygons), bool)
+            for _k in range(0, 8, 4):   # (12 Nov 2026, owner circled Clara's far eye open at three-quarters: her iris is coloured like her hair and was left unmarked; the eye's own lower core, below the fringe, is always eye)
+                _cx_, _cz_, _rx_, _rz_ = (_eb[_k] + _eb[_k + 1]) / 2, (_eb[_k + 2] + _eb[_k + 3]) / 2, (_eb[_k + 1] - _eb[_k]) / 2, (_eb[_k + 3] - _eb[_k + 2]) / 2
+                _core |= (np.hypot((_fcx - _cx_) / (_rx_ * .7), (_fcz - _cz_) / (_rz_ * .6)) < 1) & (_fcz < _cz_ + _rz_ * .1)
+            _add = _ine & ~_skp & _hz & (~_hreg | ~_hairlike | ((_mc.max(-1) < .35) & (_mc.max(-1) > 0)) | _core) & (_fcy < _ear_y)   # (and dark: Lumi's green irises are coloured like her hair)   # (the face side only: the back of the head has the same x and height, Finn's black hair there was marked)   # (Lumi's far eye, three-quarters, lay in her hair region: a triangle there not coloured like hair is the eye)
             if _add.any():
                 _cd = body.data.color_attributes['skinw'].data; _b2 = np.zeros(len(_cd) * 4, np.float32); _cd.foreach_get('color', _b2)
                 _li = np.concatenate([list(me.polygons[int(i)].loop_indices) for i in np.nonzero(_add)[0]]).astype(int)
