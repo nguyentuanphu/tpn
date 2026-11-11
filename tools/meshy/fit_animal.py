@@ -617,19 +617,24 @@ def face_pieces(o, arm, J, Fc):
         print('EYE', i, 'width', round(float(ew), 4), 'centre off', round(float(ecx), 4), round(float(ecy), 4), flush=True)
         gx, gy = (float(ecx), float(ecy)) if FIX.get('lid_on_eye') else (0., 0.)   # (the lid's middle)
         gy += r * FIX.get('lid_up', 0)   # (raised over lashes that flick upwards)
+        if FIX.get('lid_out') and abs(gx) > 1e-6: gx += math.copysign(r * FIX['lid_out'], gx)   # (moved further out, over lashes that flick outwards: the painted eye's middle lies outwards of the eye found)
         if FIX.get('lash_dark'):   # (painted lashes apart from the eye, under the lid: anything darker than this is filled as fur too)
             Lm = img0 @ np.array([.3, .59, .11]); dark = (Lm < FIX['lash_dark']) & hit & ((((xx - gx) / Rx) ** 2 + ((yy - gy) / R) ** 2) < 1.15)
             for _ in range(2): dark = dark | np.roll(dark, 1, 0) | np.roll(dark, -1, 0) | np.roll(dark, 1, 1) | np.roll(dark, -1, 1)
             inside = inside | dark; known = ~inside & hit
         fill = img0.copy(); fill[~known] = img0[known].mean(0) if known.any() else .5
+        if DEBUG:   # (what the lid covers: the painted face, the eye found (red) and the lid's own edge (green))
+            dbg = img0.copy(); dbg[eye] = dbg[eye] * .5 + np.array((.5, 0, 0)); el = np.abs(np.hypot((xx - gx) / Rx, (yy - gy) / R) - 1) < 2 * P / TP / R; dbg[el] = (0, 1, 0)
+            dim = bpy.data.images.new(f'src{i}', TP, TP); dim.pixels[:] = np.concatenate([dbg, np.ones((TP, TP, 1))], 2).astype(np.float32).ravel(); dim.filepath_raw = os.path.join(OUT, f'{KIND}-lidsrc{i}.png'); dim.file_format = 'PNG'; dim.save()
         for _ in range(TP * 2):   # (fill the eye from the fur round it: neighbours' average, the fur kept)
             avg = (np.roll(fill, 1, 0) + np.roll(fill, -1, 0) + np.roll(fill, 1, 1) + np.roll(fill, -1, 1)) / 4
             fill = np.where(known[..., None], img0, avg)
         lash = np.array(FIX.get('lash', (.22, .14, .1)))
         for kind, curve in (('shut', lambda u: -.1 * r + .3 * r * (u / ew) ** 2), ('joy', lambda u: .1 * r - .45 * r * (u / ew) ** 2)):
             img = fill.copy()
-            line = (np.abs((yy - ecy) - curve(xx - ecx)) < r * .09) & (np.abs(xx - ecx) < ew * .85)   # (across the whole eye, at its middle)
-            img[line] = lash
+            px_ = 2 * P / TP; dl = np.abs((yy - ecy) - curve(xx - ecx)); de = np.abs(xx - ecx) - ew * .85
+            a_ = np.clip((r * .09 - dl) / px_ + .5, 0, 1) * np.clip(-de / px_ + .5, 0, 1)   # (across the whole eye, at its middle; soft edges a texel wide, not stair steps)
+            img = img * (1 - a_[..., None]) + lash * a_[..., None]
             name = f'meshy-{KIND}-{kind}{i}'
             pim = bpy.data.images.new(name, TP, TP); pim.pixels[:] = np.concatenate([img, np.ones((TP, TP, 1))], 2).astype(np.float32).ravel()
             pim.pack()
@@ -665,7 +670,7 @@ def face_pieces(o, arm, J, Fc):
     if 'mouth' in Fc:
         c = np.array(Fc['mouth']); nrm = np.array(Fc['mouth_n']); nrm = nrm / np.linalg.norm(nrm)
         side = np.cross((0, 0, 1.0), nrm); side /= np.linalg.norm(side); up = np.cross(nrm, side)
-        Wm = nr * FIX.get('mouth_w', 1.1); R = Wm * FIX.get('mouth_patch', 1.2);   # (a small piece: a wide one reached where the face turns away and showed as a pale square) TP = FIX.get('mouth_px', 96); GN = FIX.get('mouth_grid', 18) if not FARLOD else 12
+        Wm = nr * FIX.get('mouth_w', 1.1); R = Wm * FIX.get('mouth_patch', 1.2); TP = FIX.get('mouth_px', 96); GN = FIX.get('mouth_grid', 18) if not FARLOD else 12   # (a small piece: a wide one reached where the face turns away and showed as a pale square; its own picture size and grid, not the lids')
         img = np.zeros((TP, TP, 3)); hit = np.zeros((TP, TP), bool)
         from mathutils.geometry import barycentric_transform
         for a in range(TP):

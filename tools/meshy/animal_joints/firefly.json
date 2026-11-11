@@ -49,11 +49,11 @@
     "tear": 120,
     "why": "11 Nov 2026, looked at the marked pictures (flap, follow): the background seen between a thin leg and the belly, both at the same depth, round the leg joints; not a hole in the skin."
   },
-  "lid_wide": 1.1,
-  "lid_pic": 1.9,
+  "lid_wide": 1.2,
+  "lid_pic": 1.8,
   "lid_on_eye": true,
-  "lid_px": 192,
-  "lid_up": 0.6,
+  "lid_px": 176,
+  "lid_up": 0.7,
   "lash_dark": 0.13,
-  "lid_grid": 44
-}
+  "lid_grid": 44,
+  "lid_out": 0.5

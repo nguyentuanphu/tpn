@@ -1,6 +1,6 @@
 # Handoff: pets and companions with Meshy (kept current every hour)
 
-Last update: 11 Nov 2026 AEDT (afternoon). Branch `meshy-pets`, worktree `D:\WorkSpace\sv-meshy-pets` (owner's PC). Never merge
+Last update: 11 Nov 2026 AEDT, 14:10 (new pets chat after the earlier one stopped at 12:48). Branch `meshy-pets`, worktree `D:\WorkSpace\sv-meshy-pets` (owner's PC). Never merge
 main, deploy or bump the version. Reply to the owner in Vietnamese, short; ask with pop-up questions. Ask before every
 Meshy use (paid), through the journal `D:\WorkSpace\meshy\private\meshy-jobs.sqlite3`, never retry a paid POST, never
 print the key; after a paid run `python tools/meshy/ledger_sync.py`. Back up (commit + push) every hour.
@@ -18,6 +18,12 @@ Read first: `.claude/skills/meshy-characters/SKILL.md` (section "Animals"), `doc
   0.45 m at level 1). Sparkle keeps the game's own see-through wings and glow (Meshy's solid wings are cut).
 - Last fixes: firefly lid colour from the ring just round the eye (peach mask on a navy head), `lid_size` 2.6; dragon `audit.hatLoose` 6 (egg-shaped head, gap hidden under the band). Earlier: hat skull top by point count (not width: antennae, horns), auditor loose/poke rules, firefly lids bigger
   (`lid_size` 3.2), mouth piece smaller (`mouth_patch` 1.2), firefly leg gaps allowed (`audit.tear` 120, reason in json).
+
+- 11 Nov afternoon (this chat): the mouth piece had silently used the lids' picture size and grid (a `TP = ...` hidden
+  behind a `#` comment in the middle of its line): fixed, the mouth has its own 96 px picture again (the firefly was
+  822 KB, over 800). The lash line on the lids is drawn with soft edges (was stair steps). Firefly lids: `lid_out`
+  (moved outwards over lashes that flick out), `lid_wide` 1.2, `lid_px` 176. Debug fit writes `<kind>-lidsrc<i>.png`
+  (the painted face, the eye found in red, the lid's edge in green). Dragon close shots (09:23 models) looked at: fine.
 
 ## Next steps
 1. Rebuild both companions (`blender -b -P tools/meshy/fit_animal.py -- <kind> <near remesh> <far remesh> <out>`;
