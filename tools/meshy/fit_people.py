@@ -584,6 +584,9 @@ def lid(img, b, top=0., bot=1.):   # (original_skin) a closed lid painted over t
     # replaced by the mean of their neighbours, the skin round them held fixed
     ya, yb = max(0, int(cy_ - ry * 1.4) - 3), min(H_, int(cy_ + ry * 1.4) + 4); xa, xb = max(0, int(cx_ - rx * 1.6) - 3), min(W_, int(cx_ + rx * 1.6) + 4)
     sub = img[ya:yb, xa:xb, :3].copy(); hm = hole[ya:yb, xa:xb]
+    if os.environ.get('FIT_LID_SOFT') and OWN:   # (12 Nov 2026, close-up: -LidMatch scaled the fill to the skin 4-12 px out, lighter than the socket's shade: a pale oval under every closed eye) the lid takes a few px of the skin round it and fills from there, by itself matching the skin at its edge
+        _sk3 = skin_mask(img[ya:yb, xa:xb]) & (hsv_np(sub)[2] > .45); hm = hm.copy()
+        for _ in range(max(2, int(round(w_ * .06)))): hm = hm | (_sk3 & (np.roll(hm, 1, 0) | np.roll(hm, -1, 0) | np.roll(hm, 1, 1) | np.roll(hm, -1, 1)))
     # (owner 8 Nov 2026: dark smudges round the closed eyes in the game) only skin flows in: lashes, brows and hair round
     # the eye are held at her skin colour while the lid is filled (they themselves stay as they are outside the lid)
     _sm = skin_mask(img[ya:yb, xa:xb]) & (hsv_np(img[ya:yb, xa:xb, :3])[2] > .45); sub[~hm & ~_sm] = sk
@@ -594,7 +597,7 @@ def lid(img, b, top=0., bot=1.):   # (original_skin) a closed lid painted over t
     for _ in range(700):
         P = np.pad(sub, ((1, 1), (1, 1), (0, 0)), mode='edge')
         av = (P[:-2, 1:-1] + P[2:, 1:-1] + P[1:-1, :-2] + P[1:-1, 2:]) / 4; sub[hm] = av[hm]
-    if os.environ.get('FIT_LID_MATCH') and OWN:   # (10 Nov 2026, owner: "hốc mắt chưa đẹp"; fit_person.ps1 -LidMatch) the fill flows in from the skin right at the eye's edge, which lies in the socket's shadow (a grey-brown lid): it takes the colour of the face's skin a little further out, 4 to 12 px round the eye, keeping its smooth shape
+    if os.environ.get('FIT_LID_MATCH') and OWN and not os.environ.get('FIT_LID_SOFT'):   # (10 Nov 2026, owner: "hốc mắt chưa đẹp"; fit_person.ps1 -LidMatch) the fill flows in from the skin right at the eye's edge, which lies in the socket's shadow (a grey-brown lid): it takes the colour of the face's skin a little further out, 4 to 12 px round the eye, keeping its smooth shape
         _r4 = hm.copy(); _r12 = hm.copy()
         for _k_ in range(12):
             _r12 = _r12 | np.roll(_r12, 1, 0) | np.roll(_r12, -1, 0) | np.roll(_r12, 1, 1) | np.roll(_r12, -1, 1)
@@ -689,38 +692,31 @@ def shift_iris(img, b, frac):
         wjoin = nxt
     opening = wjoin
     if os.environ.get('FIT_LOOK_SOLID'):
-        # (owner 11 Nov 2026: "mắt nặng nhất"; the looking eyes were streaked, then white patches spilled past the eye onto
-        # the skin in the close-up) an eye's opening is a convex oval: it is the convex hull of the whites and the iris
-        # core (1 px in), so nothing outside the painted eye ever changes. Inside it the old iris (as wide as its densest
-        # columns, as tall as the opening) turns eye white and is laid on again dx to the side, clipped to the opening;
-        # the lashes and outline round it stay as painted
-        _pts = np.argwhere(wjoin | core)
-        if len(_pts) < 8: return out
-        _pts = sorted(set(map(tuple, _pts.tolist())), key=lambda q: (q[1], q[0]))
-        def _cr(o_, a_, b_): return (a_[1] - o_[1]) * (b_[0] - o_[0]) - (a_[0] - o_[0]) * (b_[1] - o_[1])
-        _lo, _up = [], []
-        for q in _pts:
-            while len(_lo) >= 2 and _cr(_lo[-2], _lo[-1], q) <= 0: _lo.pop()
-            _lo.append(q)
-        for q in reversed(_pts):
-            while len(_up) >= 2 and _cr(_up[-2], _up[-1], q) <= 0: _up.pop()
-            _up.append(q)
-        _hull = _lo[:-1] + _up[:-1]; opening = np.ones((hh_, ww_), bool)
-        for k_ in range(len(_hull)):
-            (ay, ax), (by_, bx_) = _hull[k_], _hull[(k_ + 1) % len(_hull)]
-            opening &= ((bx_ - ax) * (ey - ay) - (by_ - ay) * (ex - ax)) * (1 if _cr(_hull[0], _hull[1], _hull[2]) > 0 else -1) <= .5 * math.hypot(bx_ - ax, by_ - ay)
-        opening &= ~((np.roll(~opening, 1, 0) | np.roll(~opening, -1, 0) | np.roll(~opening, 1, 1) | np.roll(~opening, -1, 1)))
-        _ir = opening & ~eyewhite & ((v < .78) | (sat > .25))
-        if _ir.sum() > 6:
-            _cc = _ir.sum(0).astype(np.float32); _cols = np.nonzero(_cc >= _cc.max() * .4)[0]
-            icx = (_cols.min() + _cols.max()) / 2; icy = float(np.average(np.arange(hh_), weights=_ir[:, _cols].sum(1) + 1e-6)); ir = (np.ptp(_cols) + 1) * .5 + 1
-        _col = np.nonzero(opening[:, int(np.clip(round(icx), 0, ww_ - 1))])[0]
-        if len(_col): ir = max(ir, (np.ptp(_col) + 1) * .5 + 1)
-        disc = (np.hypot(ex - icx, ey - icy) < ir) & opening
-        o = out[y0:y1, b[0]:b[2]]; o[disc, :3] = np.array(EW)
-        sx = ex - dx; ok = (sx >= 0) & (sx < ww_); sxc = np.clip(sx, 0, ww_ - 1)
-        put = opening & ok & disc[ey, sxc]; o[put, :3] = sub[ey[put], sxc[put], :3]
-        LOOK_A[y0:y1, b[0]:b[2]] |= opening
+        # (owner 11-12 Nov 2026: "mắt nặng nhất". Drawing the eye afresh (old iris to white, iris laid on again) left rings,
+        # white bands and straight cuts wherever the found opening missed a part of the painted eye, and spilled white onto
+        # the skin wherever it took too much.) A look is a smooth sideways warp inside the eye: every pixel takes the one
+        # dx * w beside it, w being 1 over the middle of the eye (its whites and iris core) and falling smoothly to 0 at an
+        # oval just past them, so the iris and the whites slide together (the white squeezed on one side, stretched on the
+        # other), the outline and lashes barely move, and nothing is cut or filled
+        _ys, _xs = np.nonzero(wjoin | core)
+        if len(_xs) < 8: return out
+        cx_, cy_ = (_xs.min() + _xs.max()) / 2, (_ys.min() + _ys.max()) / 2
+        rx_, ry_ = (np.ptp(_xs) + 1) / 2, (np.ptp(_ys) + 1) / 2
+        # the iris moves whole (weight 1 over its disc: a falloff across it bent irises into crescents); the weight falls
+        # only through the white, from the iris's edge to the oval, and the shift is kept under the white left on that side
+        _iy, _ix = np.nonzero(core); icx_, icy_ = _ix.mean(), _iy.mean(); ir_ = math.sqrt(len(_ix) / math.pi) * 1.18   # (with its dark outer ring: at 1.08 the ring trailed as a thin arc)
+        r_ = np.hypot(ex - icx_, ey - icy_); ang = np.arctan2(ey - icy_, ex - icx_)
+        # the oval's edge along each ray from the iris centre (the oval is centred on the eye, the iris may sit off it)
+        _ca, _sa = np.cos(ang), np.sin(ang); _px, _py = (icx_ - cx_) / rx_, (icy_ - cy_) / ry_; _ax, _ay = _ca / rx_, _sa / ry_
+        _A = _ax * _ax + _ay * _ay; _B = 2 * (_px * _ax + _py * _ay); _C = _px * _px + _py * _py - 1
+        R_ov = (-_B + np.sqrt(np.maximum(_B * _B - 4 * _A * _C, 0))) / (2 * _A)
+        u_ = np.clip((r_ - ir_) / np.maximum(R_ov - ir_, 1), 0, 1); wgt = 1 - u_ * u_ * (3 - 2 * u_); wgt[r_ > R_ov] = 0
+        _gap = float(np.min(R_ov[(np.abs(ey - icy_) < 1.5) & (np.sign(ex - icx_) == np.sign(dx))]) - ir_) if dx else 0
+        dx = int(np.sign(dx) * min(abs(dx), max(0, _gap * .7)))
+        sxf = np.clip(ex - dx * wgt, 0, ww_ - 1.001); x0_ = np.floor(sxf).astype(int); fx_ = (sxf - x0_)[..., None]
+        warped = sub[ey, x0_, :3] * (1 - fx_) + sub[ey, x0_ + 1, :3] * fx_
+        o = out[y0:y1, b[0]:b[2]]; _m = wgt > .01; o[_m, :3] = warped[_m]
+        LOOK_A[y0:y1, b[0]:b[2]] |= _m
         return out
     sx = ex - dx; ok = (sx >= 0) & (sx < ww_); sxc = np.clip(sx, 0, ww_ - 1)
     take = opening & ok & opening[ey, sxc]
