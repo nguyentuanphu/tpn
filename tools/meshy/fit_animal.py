@@ -641,6 +641,7 @@ def face_pieces(o, arm, J, Fc):
         lash = np.array(FIX.get('lash', (.22, .14, .1)))
         for kind, curve in (('shut', lambda u: -.1 * r + .3 * r * (u / ew) ** 2), ('joy', lambda u: .1 * r - .45 * r * (u / ew) ** 2)):
             img = fill.copy()
+            if os.environ.get("LID_DEBUG"): img[:] = (1, 0, 1)   # (debug: the lid painted magenta, to see what it covers in the game)
             px_ = 2 * P / TP; dl = np.abs((yy - ecy) - curve(xx - ecx)); de = np.abs(xx - ecx) - ew * .85
             a_ = np.clip((r * .09 - dl) / px_ + .5, 0, 1) * np.clip(-de / px_ + .5, 0, 1)   # (across the whole eye, at its middle; soft edges a texel wide, not stair steps)
             img = img * (1 - a_[..., None]) + lash * a_[..., None]
@@ -651,13 +652,19 @@ def face_pieces(o, arm, J, Fc):
             # the piece: a fine grid laid on the head's surface over the eye (rays along -normal), a little in front, its
             # picture straight on; no gaps (the head's own triangles, copied, showed the eye through cracks at their edges)
             bm = bmesh.new(); uvL = bm.loops.layers.uv.new('UVMap'); GN = FIX.get('lid_grid', 28) if not FARLOD else FIX.get('lid_grid_far', 20); grid = {}
-            lift = FIX.get('lid_lift', .003)
+            lift = FIX.get('lid_lift', .003); hits = {}
             for a in range(GN + 1):
                 for b in range(GN + 1):
                     x = gx + (b / GN * 2 - 1) * Rx; y = gy + (a / GN * 2 - 1) * R
                     if math.hypot((x - gx) / Rx, (y - gy) / R) > 1.02: continue
-                    loc, nor, _, _ = bvh.ray_cast(Vector(c + side * x + up * y + nrm * R), Vector(-nrm))
-                    if loc is None: continue
+                    loc, nor, _, dist = bvh.ray_cast(Vector(c + side * x + up * y + nrm * R), Vector(-nrm))
+                    if loc is not None: hits[a, b] = (x, y, loc, nor, dist)
+            if FIX.get('lid_spike'):   # (a point much nearer than the face round it lies on something sticking out (an antenna): left out, so the lid does not ride on it)
+                for (a, b), h in list(hits.items()):
+                    nb = [hits[a + i, b + j][4] for i in range(-3, 4) for j in range(-3, 4) if (a + i, b + j) in hits]
+                    if h[4] < float(np.median(nb)) - FIX['lid_spike']: del hits[a, b]
+            for (a, b), (x, y, loc, nor, _) in hits.items():
+                if True:
                     k = 1 - smooth01((math.hypot((x - gx) / Rx, (y - gy) / R) - .82) / .18)   # (down to the surface at its rim)
                     off = (Vector(nrm) * (lift * k + .0004)) if not FIX.get("lid_rim") else (Vector(nrm) * lift * k + nor.normalized() * FIX["lid_rim"])   # (lid_rim: the rim held off the surface along the surface's own normal: where the head turns away the lid's flat squares dipped under it and its painted lashes showed through)
                     grid[a, b] = bm.verts.new(loc + off)
