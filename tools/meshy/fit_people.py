@@ -285,7 +285,7 @@ F = px(fimg)[::-1].copy()   # top-down rows
 from mathutils.bvhtree import BVHTree as _BVH
 from mathutils.geometry import barycentric_transform as _bary
 _ht = _BVH.FromObject(high, bpy.context.evaluated_depsgraph_get()); _hm = high.data; _huv = _hm.uv_layers.active.data
-_HI = px(base_img); _hh, _hw = _HI.shape[:2]; _Hn, _Wn = F.shape[:2]; _nr = 0
+_HI = px(base_img); _hh, _hw = _HI.shape[:2]; _Hn, _Wn = F.shape[:2]; _nr = 0; NF = np.full(F.shape[:2], -1., np.float32)   # (NF: how much the face looks forward at each pixel, the surface normal's y; -1 straight at the front camera)
 def _bil(u, v):   # bilinear sample of the original picture (smooth lash and iris edges)
     x = u % 1 * _hw - .5; y = v % 1 * _hh - .5; x0 = int(math.floor(x)); y0 = int(math.floor(y)); fx_ = x - x0; fy_ = y - y0
     x0c, x1c = min(_hw - 1, max(0, x0)), min(_hw - 1, max(0, x0 + 1)); y0c, y1c = min(_hh - 1, max(0, y0)), min(_hh - 1, max(0, y0 + 1))
@@ -299,8 +299,8 @@ for r_ in range(_Hn):
             if loc is None: continue
             p = _hm.polygons[fi]; li = list(p.loop_indices)[:3]; vi = [_hm.loops[l].vertex_index for l in li]
             a3, b3, c3 = (_hm.vertices[v].co for v in vi); ua, ub, uc = (Vector((*_huv[l].uv, 0)) for l in li)
-            uvp = _bary(loc, a3, b3, c3, ua, ub, uc); acc += _bil(uvp.x, uvp.y); n_ += 1
-        if n_: F[r_, c_, :3] = acc / n_; _nr += 1
+            uvp = _bary(loc, a3, b3, c3, ua, ub, uc); acc += _bil(uvp.x, uvp.y); n_ += 1; _ny = (_ny if n_ > 1 else 0.) + p.normal.y
+        if n_: F[r_, c_, :3] = acc / n_; _nr += 1; NF[r_, c_] = _ny / n_
 print('FIT face picture projected from the front', _nr, 'of', _Hn * _Wn)
 activate(decal); dd = decal.modifiers.new('dec', 'DECIMATE'); dd.ratio = min(1, 1200 / max(1, len(decal.data.polygons))); bpy.ops.object.modifier_apply(modifier='dec')
 print('FIT face layer tris', len(dme.polygons))
@@ -682,6 +682,11 @@ if OWN:
                 _op = np.logical_or.reduce(GLOPEN).astype(np.float32)
                 for _ in range(max(2, int(W_ * .02))): _op = np.minimum.reduce([_op, np.roll(_op, 1, 0), np.roll(_op, -1, 0), np.roll(_op, 1, 1), np.roll(_op, -1, 1)])
                 M[k][..., 3] = np.minimum(soften(_op, 0, _g) * 1.6, 1) * NOHAIR
+                # (the far eye from three-quarters and the side: its moved iris on the socket's steep inner side showed as a big dark blob by the nose) where the face turns from the front the piece fades out softly and the body's own eye shows
+                _nf = np.clip((-NF - float(os.environ.get('FIT_GLNF', '.55'))) / .25, 0, 1)
+                for _ in range(_g): _nf = (_nf + np.roll(_nf, 1, 0) + np.roll(_nf, -1, 0) + np.roll(_nf, 1, 1) + np.roll(_nf, -1, 1)) / 5
+                M[k][..., 3] *= _nf
+                if k == 'lookL': print('FIT glance faded where the face turns away, eye facing:', ', '.join('%s %.2f..%.2f' % (n_, float(np.percentile(NF[b_[1]:b_[3], b_[0]:b_[2]], 5)), float(np.percentile(NF[b_[1]:b_[3], b_[0]:b_[2]], 95))) for n_, b_ in eyes.items()))
         else: M[k][..., 3] = np.minimum(soften(ch, max(1, _g // 2), _g) * 1.6, 1) * PARTS[k] * NOHAIR   # (a narrow soft edge: less of the cheek redrawn)
         # (where see-through it keeps the painted face's own colour in a narrow band round each piece: black there blended
         # into a dark fringe; beyond the band one flat colour, so the picture stays small)
@@ -1323,7 +1328,7 @@ if TEX and KEEP and SHIFT:
             _cor = np.zeros(len(me.polygons), bool)   # (11 Nov 2026, round 14: Su, Tí, Lan, Tèo, Bom shut their eyes with skin-coloured patches over the black hair at the temples) the area's reach towards the temple (villagers) took dark hair as "eye", and the game painted it skin: the dark and not-hair-coloured rules hold only in the eye's own box (villagers 4 px round it, friends 18 and 10: unchanged for them); beyond it, only triangles outside the hair region
             _cm = (4, 4) if REFP == 'villager-' else (18, 10)   # (villagers 4 px: with the friends' 18 px Su's temple hair still took skin colour at the box's edge; the friends keep theirs, Lumi's far eye lay in her hair region)
             for b in list(eyes.values())[:2]: _cor |= (_fcx > fx0 + (b[0] - _cm[0]) / W_ * (fx1 - fx0)) & (_fcx < fx0 + (b[2] + _cm[0]) / W_ * (fx1 - fx0)) & (_fcz > fz1 - (b[3] + _cm[1]) / H_ * (fz1 - fz0)) & (_fcz < fz1 - (b[1] - _cm[1]) / H_ * (fz1 - fz0))
-            _add = _ine & ~_skp & _hz & (~_hreg | (_cor & (~_hairlike | ((_mc.max(-1) < .35) & (_mc.max(-1) > 0))))) & (_fcy < _ear_y)   # (and dark: Lumi's green irises are coloured like her hair)   # (the face side only: the back of the head has the same x and height, Finn's black hair there was marked)   # (Lumi's far eye, three-quarters, lay in her hair region: a triangle there not coloured like hair is the eye)
+            _add = _ine & ~_skp & _hz & ((~_hreg & (_cor | (REFP != 'villager-') | (_mc.max(-1) >= .35))) | (_cor & (~_hairlike | ((_mc.max(-1) < .35) & (_mc.max(-1) > 0))))) & (_fcy < _ear_y)   # (round 15: Bông's black temple hair lay outside her hair region and still took skin colour: beyond a villager's eye box only triangles that are not dark)   # (and dark: Lumi's green irises are coloured like her hair)   # (the face side only: the back of the head has the same x and height, Finn's black hair there was marked)   # (Lumi's far eye, three-quarters, lay in her hair region: a triangle there not coloured like hair is the eye)
             if _add.any():
                 _cd = body.data.color_attributes['skinw'].data; _b2 = np.zeros(len(_cd) * 4, np.float32); _cd.foreach_get('color', _b2)
                 _li = np.concatenate([list(me.polygons[int(i)].loop_indices) for i in np.nonzero(_add)[0]]).astype(int)
