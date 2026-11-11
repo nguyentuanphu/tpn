@@ -196,7 +196,53 @@ def bake(target, img, ext=.012, dist=.035):
     bpy.ops.object.select_all(action='DESELECT'); high.select_set(True); target.select_set(True); VL.objects.active = target
     bpy.ops.object.bake(type='DIFFUSE', pass_filter={'COLOR'}, use_selected_to_active=True, cage_extrusion=ext, max_ray_distance=dist, use_clear=True)
     return m
-if KEEP:   # Meshy's own picture, on Meshy's own UVs (the body still has them)
+FACE_UV = float(os.environ.get('FIT_FACE_UV') or 0)
+if KEEP and FACE_UV > 1:
+    # (owner 11 Nov 2026, regional pilot: "con mắt, mũi và miệng đều có vấn đề") Meshy's layout gives the face a few percent
+    # of the picture, and the villagers' 1024 px picture halved it again: eyes 35 px wide in the picture, soft lashes and a
+    # smudged nose up close. the face's islands get more room (below)
+    # and the picture is baked from the untouched model (same surface, so the rays are a hair long)
+    # (11 Nov 2026: repacking all of Meshy's hundreds of small islands wasted the space between them and the face did not
+    # grow) Meshy's layout stays as it is, shrunk to SHR of the picture's width at its corner; the face's islands are moved
+    # into the two strips that frees, as big as fits (up to FACE_UV times their old size), on shelves
+    from bpy_extras.bmesh_utils import bmesh_linked_uv_islands
+    SHR = float(os.environ.get('FIT_FACE_SHRINK') or .8); MG = .004
+    bm = bmesh.new(); bm.from_mesh(body.data); bm.faces.ensure_lookup_table(); uvl = bm.loops.layers.uv.active
+    for f in bm.faces:
+        for l in f.loops: l[uvl].uv = l[uvl].uv * SHR
+    isls = []
+    for isl in bmesh_linked_uv_islands(bm, uvl):
+        c3 = sum((f.calc_center_median() for f in isl), Vector()) / len(isl)
+        if not (fx0 - .02 < c3.x < fx1 + .02 and fz0 - .04 < c3.z < fz1 + .02 and c3.y < 0): continue
+        us = [l[uvl].uv.copy() for f in isl for l in f.loops]
+        isls.append((isl, min(u.x for u in us), min(u.y for u in us), max(u.x for u in us), max(u.y for u in us)))
+    def shelves(k):   # k: the scale from the shrunk layout; regions: the right strip, then the top strip
+        regs = [[SHR, 0, 1, 1], [0, SHR, SHR, 1]]; out = []; ri = 0; x = regs[0][0] + MG; y = regs[0][1] + MG; rowh = 0
+        for it in sorted(isls, key=lambda t: -(t[4] - t[2])):
+            w, h = (it[3] - it[1]) * k, (it[4] - it[2]) * k
+            while True:
+                R = regs[ri]
+                if x + w + MG > R[2]: x = R[0] + MG; y += rowh + MG; rowh = 0
+                if y + h + MG <= R[3] and x + w + MG <= R[2]: break
+                ri += 1
+                if ri >= len(regs): return None
+                x = regs[ri][0] + MG; y = regs[ri][1] + MG; rowh = 0
+            out.append((it, x, y)); x += w + MG; rowh = max(rowh, h)
+        return out
+    k = FACE_UV / SHR; place = None
+    while k > 1.0 and place is None:
+        place = shelves(k)
+        if place is None: k -= .05
+    if place:
+        for (isl, u0, v0, u1, v1), x, y in place:
+            for f in isl:
+                for l in f.loops: l[uvl].uv = Vector((x + (l[uvl].uv.x - u0) * k, y + (l[uvl].uv.y - v0) * k))
+    nface = len(place or [])
+    bm.to_mesh(body.data); bm.free()
+    print('FIT face islands moved', nface, 'scale against the old layout', round(k * SHR, 2), 'layout shrunk to', SHR)
+    colour = bpy.data.images.new(ID + '-colour', base_img.size[0], base_img.size[1], alpha=True); bake(body, colour, ext=.002, dist=.006); fill_missing(colour)
+    body.data.materials.clear(); print('FIT face islands baked', base_img.size[0], 'tris', len(body.data.polygons))
+elif KEEP:   # Meshy's own picture, on Meshy's own UVs (the body still has them)
     colour = bpy.data.images.new(ID + '-colour', base_img.size[0], base_img.size[1], alpha=True)
     colour.pixels.foreach_set(px(base_img).ravel()); colour.update()
     body.data.materials.clear(); print('FIT kept Meshy UVs and picture', base_img.size[0], 'x', base_img.size[1], 'tris', len(body.data.polygons))
@@ -382,6 +428,40 @@ if mouthm.any():
             if _best is None or _v < _best[0]: _best = (_v, _m)
     if _best is not None: mouthm = _best[1]
 mouth = box_of(mouthm)
+MOUTH_FIND = bool(os.environ.get('FIT_MOUTH_FIND')) and len(eyes) == 2
+if MOUTH_FIND:
+    # (owner 11 Nov 2026: "con mắt, mũi và miệng đều có vấn đề") the box above was a fixed band of the picture (.62 to .97 of
+    # its height) and a colour far from the lightest skin: r057's mouth lies at .56 (his helmet strap was taken), r084's
+    # darker skin was all "mouth" (the whole lower face). Now: below the eyes, between the pupils, the darkest wide flat
+    # patch crossing the middle, against the skin right there; a fainter step is tried when none is found (r084's lips)
+    def find_mouth(step):
+        Lm = F[..., 0] * .3 + F[..., 1] * .59 + F[..., 2] * .11; RD = F[..., 0] - F[..., 1]
+        eb = list(eyes.values()); eh = np.mean([b[3] - b[1] for b in eb]); ebot = max(b[3] for b in eb)
+        cx = np.mean([(b[0] + b[2]) / 2 for b in eb]); gap = abs((eb[0][0] + eb[0][2]) / 2 - (eb[1][0] + eb[1][2]) / 2)
+        reg = (yy > ebot + eh * .35) & (yy < min(H_ - 1, ebot + eh * 3.4)) & (np.abs(xx - cx) < gap * .55)
+        if reg.sum() < 20: return None
+        sk = reg & (S_ < .6) & (Lm > np.percentile(Lm[reg], 30)); SK = np.median(F[sk][:, :3], axis=0)
+        SKL = SK[0] * .3 + SK[1] * .59 + SK[2] * .11; SKR = SK[0] - SK[1]
+        cand = reg & ((Lm < SKL - step) | (RD > SKR + step * 1.4))
+        ybot = np.nonzero(reg.any(1))[0].max(); best = None; left = cand & (np.abs(xx - cx) < gap * .12)
+        while left.any():
+            ys_, xs_ = np.nonzero(left); m = np.zeros_like(cand); m[ys_[0], xs_[0]] = True
+            for _ in range(W_):
+                n = m | (cand & (np.roll(m, 1, 0) | np.roll(m, -1, 0) | np.roll(m, 1, 1) | np.roll(m, -1, 1)))
+                if (n == m).all(): break
+                m = n
+            left &= ~m; ys, xs = np.nonzero(m)
+            if m.sum() < 5 or ys.max() >= ybot - 1: continue
+            wd, ht = np.ptp(xs) + 1, np.ptp(ys) + 1
+            if wd < gap * .2 or ht > wd * .6: continue   # (a mouth is wide and flat: the nose tip is round, a strap reaches the edge)
+            sc = float(SKL - Lm[m].mean())
+            if best is None or sc > best[0]: best = (sc, m)
+        return None if best is None else best[1]
+    for _st in (.07, .05, .035, .025):
+        _mm = find_mouth(_st)
+        if _mm is not None: break
+    if _mm is not None: mouthm = _mm; mouth = box_of(mouthm) or [int(np.nonzero(_mm)[1].min()), int(np.nonzero(_mm)[0].min()), int(np.nonzero(_mm)[1].max()) + 1, int(np.nonzero(_mm)[0].max()) + 1]; print('FIT mouth found below the eyes, step', _st)
+    else: print('FIT mouth not found below the eyes: the old box is kept')
 print('FIT eyes', eyes, 'mouth', mouth)
 # (owner 8 Nov 2026) the painted skin's typical colour, for the game's texel-by-texel tone (skin_paint): the cheeks and nose
 # between the eyes and the mouth (REF is her lightest skin: Lumi's #ffce9c missed her tan skin, which then kept its tone)
@@ -548,6 +628,21 @@ def erase(img, b, top=0., bot=1.):
     if ORIGINAL: return lid(img, b, top, bot)   # (opaque face layer: remove a painted feature by painting her skin over it)
     y0 = int(b[1] + (b[3] - b[1]) * top); y1 = int(b[1] + (b[3] - b[1]) * bot)
     img[y0:y1, b[0]:b[2], 3] = 0
+def erase_mouth(img, b):
+    # (owner 11 Nov 2026: the sad and "o" mouths were drawn under a smile that still showed) the mouth went through lid(),
+    # the eye's closing, and with -LidMatch that keeps whatever is near the skin's colour: pink lips are, so the painted
+    # smile stayed. The painted mouth itself (the found patch, a little wider) is filled from the skin round it
+    if not (MOUTH_FIND and ORIGINAL): return erase(img, b)
+    hm_ = mouthm.copy()
+    for _ in range(max(2, int(round((b[3] - b[1]) * .5)))): hm_ = hm_ | np.roll(hm_, 1, 0) | np.roll(hm_, -1, 0) | np.roll(hm_, 1, 1) | np.roll(hm_, -1, 1)
+    _pad = 6; ya, yb = max(0, b[1] - _pad * 3), min(H_, b[3] + _pad * 3); xa, xb = max(0, b[0] - _pad * 3), min(W_, b[2] + _pad * 3)
+    sub = img[ya:yb, xa:xb, :3].copy(); hm = hm_[ya:yb, xa:xb]
+    _rim = ~hm & (np.roll(hm, 2, 0) | np.roll(hm, -2, 0) | np.roll(hm, 2, 1) | np.roll(hm, -2, 1))
+    sub[hm] = np.median(sub[_rim], axis=0) if _rim.sum() > 8 else REF[:3]
+    for _ in range(500):
+        P = np.pad(sub, ((1, 1), (1, 1), (0, 0)), mode='edge')
+        av = (P[:-2, 1:-1] + P[2:, 1:-1] + P[1:-1, :-2] + P[1:-1, 2:]) / 4; sub[hm] = av[hm]
+    _w = img[ya:yb, xa:xb, :3]; _w[hm] = sub[hm]; img[ya:yb, xa:xb, 3] = np.maximum(img[ya:yb, xa:xb, 3], hm.astype(np.float32))
 def stroke(img, pts, col, r):
     pts = np.array(pts, np.float32)
     x0, y0 = np.floor(pts.min(0) - r - 2).astype(int); x1, y1 = np.ceil(pts.max(0) + r + 2).astype(int)
@@ -622,11 +717,11 @@ for b in eyes.values(): shut(im, grow(b)); stroke(im, arc(b, .7, -.32), lash, lw
 M['happy'] = im
 def mouth_o(im, big):
     if not mouth: return im
-    erase(im, mouth); cx, cy = (mouth[0] + mouth[2]) / 2, (mouth[1] + mouth[3]) / 2; mw = mouth[2] - mouth[0]
+    erase_mouth(im, mouth); cx, cy = (mouth[0] + mouth[2]) / 2, (mouth[1] + mouth[3]) / 2; mw = mouth[2] - mouth[0]
     ellipse(im, cx, cy + (mouth[3] - mouth[1]) * .2, mw * (.17 if not big else .24), mw * (.15 if not big else .19), np.array([.80, .42, .45]), np.clip(lip * .95, 0, 1)); return im   # (owner: no black lips) a soft rose mouth, like the game's own faces
 M['surprised'] = mouth_o(base.copy(), False)
 im = base.copy()
-if mouth: erase(im, mouth); mb = [mouth[0] + (mouth[2] - mouth[0]) * .15, mouth[1], mouth[2] - (mouth[2] - mouth[0]) * .15, mouth[3]]; stroke(im, arc(mb, .75, -.45), lip * .8, lw * 1.1)
+if mouth: erase_mouth(im, mouth); mb = [mouth[0] + (mouth[2] - mouth[0]) * .15, mouth[1], mouth[2] - (mouth[2] - mouth[0]) * .15, mouth[3]]; stroke(im, arc(mb, .75, -.45), lip * .8, lw * 1.1)
 for b in eyes.values(): erase(im, b, 0, .18)
 M['sad'] = im
 im = base.copy()
@@ -768,6 +863,10 @@ if OWN:   # (own face) after the smoothing, every point is again just in front o
         for j_, z_ in enumerate(gz):
             h_ = _btree.ray_cast(Vector((x_, -2, z_)), Vector((0, 1, 0)))
             if h_[0] is not None and not np.isnan(Yg[i_, j_]): Yg[i_, j_] = min(Yg[i_, j_], h_[0].y + .001)
+            # (owner 11 Nov 2026: the sad and "o" mouths were drawn under a smile that still showed, the far eye showed past
+            # the nose) never far in front either: the smoothing lifted the pieces off hollows (the mouth, the eye sockets)
+            # by up to a centimetre, and the game's camera, a little above, saw them slide down off the painted features
+            if h_[0] is not None and not np.isnan(Yg[i_, j_]) and os.environ.get('FIT_PIECE_SNAP'): Yg[i_, j_] = max(Yg[i_, j_], h_[0].y - float(os.environ['FIT_PIECE_SNAP']))
 for i_ in range(GN + 1):
     for j_ in range(GN + 1):
         if want[i_, j_] and not np.isnan(Yg[i_, j_]): gp[(i_, j_)] = (Vector((gx[i_], Yg[i_, j_] - .003, gz[j_])), None)

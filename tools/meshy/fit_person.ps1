@@ -5,7 +5,7 @@
 # (8 Nov 2026) -Villager: a villager has one model, seen close and far (js/main.ts wears models/villager-<id>.glb):
 # one fit of the 30k remesh with a 1024 px picture (8 Nov: Meshy's own face is seen, 512 px blurred the eyes); the 288 px light picture showed
 # specks and broken hair up close. The reference is lumi.py's villager role=<id> build; its parts are named villager-.
-param([string]$Id, [string]$Ref = '', [string]$Prefix = '', [switch]$Villager, [string]$VMesh = '9000', [string]$VTex = '1024', [string]$VTile = '192', [string]$VQ = '70', [string]$VGrid = '26', [switch]$NoLimbTint, [string]$SkinSMax = '', [switch]$EyeDark, [switch]$SmoothPieces, [switch]$LidMatch)   # -Prefix: the reference's part names, default <id>-
+param([string]$Id, [string]$Ref = '', [string]$Prefix = '', [switch]$Villager, [string]$VMesh = '9000', [string]$VTex = '1024', [string]$VTile = '192', [string]$VQ = '70', [string]$VGrid = '26', [switch]$NoLimbTint, [string]$SkinSMax = '', [switch]$EyeDark, [switch]$SmoothPieces, [switch]$LidMatch, [string]$FaceUV = '', [string]$PieceSnap = '', [switch]$MouthFind)   # -Prefix: the reference's part names, default <id>-
 # (10 Nov 2026, cloud pilot) the tools also run on Linux: SV_MESHY_ROOT (default D:\WorkSpace\meshy), SV_BLENDER, SV_NPX
 $root = if ($env:SV_MESHY_ROOT) { $env:SV_MESHY_ROOT } else { 'D:\WorkSpace\meshy' }
 if (-not $Ref) { $Ref = Join-Path $root "work-v108/$Id-game-hd.glb" }
@@ -24,13 +24,19 @@ if ($EyeDark) { $env:FIT_EYE_DARK = '1' } else { $env:FIT_EYE_DARK = '' }
 if ($SmoothPieces) { $env:FIT_SMOOTH_PIECES = '1' } else { $env:FIT_SMOOTH_PIECES = '' }
 # (10 Nov 2026) -LidMatch: a closed lid's fill takes the brightness of the face's own skin inside the lid area (no pale disc round shut eyes)
 if ($LidMatch) { $env:FIT_LID_MATCH = '1' } else { $env:FIT_LID_MATCH = '' }
+# (owner 11 Nov 2026: "con mắt, mũi và miệng đều có vấn đề") -FaceUV 2: the face's islands of Meshy's layout twice as big in the picture
+# (sharper eyes, nose, mouth); -PieceSnap .001: mood pieces at most 1 mm (+3) in front of the face, never floating over the mouth
+$env:FIT_FACE_UV = $FaceUV; $env:FIT_PIECE_SNAP = $PieceSnap
+# (owner 11 Nov 2026) -MouthFind: the mouth found below the eyes against the skin there, and erased on its own (not as an eye)
+if ($MouthFind) { $env:FIT_MOUTH_FIND = '1' } else { $env:FIT_MOUTH_FIND = '' }
 $B = if ($env:SV_BLENDER) { $env:SV_BLENDER } else { 'C:\Users\nguye\tools\blender-4.2.23-windows-x64\blender.exe' }
 $npx = if ($env:SV_NPX) { $env:SV_NPX } elseif ($IsLinux -or $IsMacOS) { Join-Path (Split-Path (Split-Path (Get-Command node).Source)) 'lib/node_modules/npm/bin/npx-cli.js' } else { 'C:\Program Files\nodejs\node_modules\npm\bin\npx-cli.js' }
 $repo = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent; Set-Location $repo
 $raw = Join-Path $root 'raw-models'; $o = Join-Path $root "fitted/$Id"; New-Item -ItemType Directory -Force $o | Out-Null
 $j = Join-Path $repo "docs/meshy-production-20261107/joints/$Id.json"
 function P($dir, $name) { Join-Path $dir $name }
-function Run($script, $argList) { $ErrorActionPreference = 'Continue'; $out = & $B -b -P $script -- @argList 2>&1 | Out-String; if ($LASTEXITCODE -ne 0 -or $out -match 'Traceback|rror: |EXCEPTION_') { throw "$script failed: $($out.Substring([Math]::Max(0,$out.Length-800)))" }; return $out }
+# (11 Nov 2026) FIT_LOG=<file>: Blender's own output of every step is added to that file (the FIT lines: eyes, mouth, sizes)
+function Run($script, $argList) { $ErrorActionPreference = 'Continue'; $out = & $B -b -P $script -- @argList 2>&1 | Out-String; if ($env:FIT_LOG) { Add-Content -Path $env:FIT_LOG -Value $out -Encoding UTF8 }; if ($LASTEXITCODE -ne 0 -or $out -match 'Traceback|rror: |EXCEPTION_') { throw "$script failed: $($out.Substring([Math]::Max(0,$out.Length-800)))" }; return $out }
 # (-ke keeps the materials' skin_ref / own_face tags: without it the game never saw them)
 function Pack($n) { & node $npx -y gltfpack@0.20.0 -i (P $o "$n.glb") -o (P $o "$n-packed.glb") -cc -kn -km -ke 2>&1 | Out-Null; return [int]((Get-Item (P $o "$n-packed.glb")).Length / 1KB) }
 $null = Run (P 'tools/meshy' 'auto_joints.py') (@((P $raw "remesh/$Id.glb"), (P $raw "rigged/$Id.glb"), $Id, $j, (P $o 'joints-check.png')) + @(if ($Prefix) { $Prefix } else { @() }))

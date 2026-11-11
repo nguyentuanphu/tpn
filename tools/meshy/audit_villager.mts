@@ -7,6 +7,9 @@
 //   unseen   the face pieces cover under 400 px of a head picture (the villager was not in the picture: it passes nothing)
 //   mouth    front view: how far the mood mouth (what changes from smile to surprised, below the eyes) lies under the eyes
 //            (what changes from smile to blink), in hundredths of the eyes' width: Bom's mouth on his collar (10 Nov)
+//   oldmouth front and both three-quarters (owner 11 Nov 2026: "con mắt, mũi và miệng đều có vấn đề", the sad and "o"
+//            faces showed a second mouth: the painted smile stayed under the new one): pixels round the mood mouth that
+//            are as dark as a mouth line and did not change from the smile face (the old mouth still showing)
 //   size     models/villager-<id>.glb over 500 KB
 // It also keeps pose pictures (idle, walk, wave, cheer, sit; front and back) for the review sheets.
 //   cd tests; SV_URL=http://localhost:<port>/ node ../tools/meshy/audit_villager.mts <out dir> ba,bom,... [quick]
@@ -18,7 +21,7 @@ const { chromium } = createRequire(new URL('../../tests/package.json', import.me
 import { writeFileSync, mkdirSync, readdirSync, readFileSync, copyFileSync, existsSync, statSync } from 'node:fs';
 const [OUT, LIST = 'ba', QUICK = ''] = process.argv.slice(2);
 mkdirSync(OUT, { recursive: true });
-const LIMIT = { worn: 0, unseen: 0, eyes: 6, mouth: 100, size: 500 };   // (unseen: the face pieces cover under 400 px of a head picture: nothing was looked at, 10 Nov)
+const LIMIT = { worn: 0, unseen: 0, eyes: 6, mouth: 100, oldmouth: 20, size: 500 };   // (unseen: the face pieces cover under 400 px of a head picture: nothing was looked at, 10 Nov)
 function summarize(cs: any[]) { const keys = Object.keys(LIMIT), fail = cs.filter(c => keys.some(k => c[k] > LIMIT[k]));
   const lines = [`audit ${new Date().toISOString()} cases ${cs.length} failing ${fail.length}`];
   for (const k of keys) lines.push(`${k}: ${cs.filter(c => c[k] > LIMIT[k]).length} cases over ${LIMIT[k]}, worst ${Math.max(0, ...cs.map(c => c[k] || 0))}`);
@@ -141,6 +144,24 @@ const res: any = await P.page.evaluate(async ([LIST, QUICK, LIMIT]) => {
           for (let i = 0; i < N; i++) { const y = (i / W) | 0; if (y < ey - 4 && df(S0, SS, i)) { my += y; mn++; f[i] = 1; } }   // (the buffer is upside down: below the eyes is a smaller y)
           const gap = mn > 10 ? Math.round((ey - my / mn) / Math.max(1, ex1 - ex0) * 100) : 0;
           cases.push({ id, pose: 'surprised', view: 'mouth', worn: 0, eyes: 0, mouth: gap }); if (gap > LIMIT.mouth || QUICK) pics[`${id}-face-mouth-${gap}`] = png(SS, f); }
+      }
+      if (s === 0 || Math.abs(s) === .7) {   // (11 Nov 2026) the old painted mouth must be gone under the "o" and sad mouths
+        const lum = (P: Uint8Array, i: number) => P[i * 4] * .3 + P[i * 4 + 1] * .59 + P[i * 4 + 2] * .11;
+        setMood('smile'); const S0 = read(stage, cam); setMood('blink'); const SB = read(stage, cam);
+        const df = (a: Uint8Array, b: Uint8Array, i: number) => Math.abs(a[i * 4] - b[i * 4]) + Math.abs(a[i * 4 + 1] - b[i * 4 + 1]) + Math.abs(a[i * 4 + 2] - b[i * 4 + 2]) > 30;
+        let ey = 0, en = 0; for (let i = 0; i < N; i++) if (df(S0, SB, i)) { ey += (i / W) | 0; en++; }
+        for (const m of ['o', 'sad']) {
+          setMood(m); const SM = read(stage, cam); if (en < 20) break; const eyy = ey / en;
+          let x0 = W, x1 = -1, y0 = H, y1 = -1; for (let i = 0; i < N; i++) { const y = (i / W) | 0; if (y < eyy - 6 && df(S0, SM, i)) { const x = i % W; x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); } }
+          if (x1 < 0) { cases.push({ id, pose: m, view: String(s), worn: 0, eyes: 0, oldmouth: 99 }); continue; }   // (no mouth change at all)
+          const mx = Math.round((x1 - x0) * .3), my = Math.max(6, Math.round((y1 - y0) * .4)), L: number[] = [];
+          for (let y = Math.max(0, y0 - my); y <= Math.min(H - 1, y1 + my); y++) for (let x = Math.max(0, x0 - mx); x <= Math.min(W - 1, x1 + mx); x++) L.push(lum(S0, y * W + x));
+          L.sort((a, b) => a - b); const skin = L[Math.floor(L.length * .7)] || 0, f = new Uint8Array(N); let k = 0;
+          for (let y = Math.max(0, y0 - my); y <= Math.min(H - 1, y1 + my); y++) for (let x = Math.max(0, x0 - mx); x <= Math.min(W - 1, x1 + mx); x++) {
+            const i = y * W + x; if (!df(S0, SM, i) && lum(SM, i) < skin - 22 && lum(S0, i) < skin - 22 && Math.abs(S0[i * 4] - SM[i * 4]) < 12) { f[i] = 1; k++; } }
+          cases.push({ id, pose: m, view: String(s), worn: 0, eyes: 0, oldmouth: k }); if (k > LIMIT.oldmouth || QUICK) pics[`${id}-face-oldmouth-${m}-${s}`] = png(SM, f);
+        }
+        setMood('smile');
       }
       tags.forEach(o => { o.visible = true; });
     }
