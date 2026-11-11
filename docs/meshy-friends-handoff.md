@@ -52,6 +52,12 @@ Không đổi file models/*.glb (chỉ máy của chủ dựng lại được).
 - Quick look: `cd tests; node ../tools/meshy/audit.mts <out> sol poses:jump,everyday,pics`.
 - Build the game after editing `js/*.ts`: `node tools/build.mts`.
 
+## Found by the auditor's new checks (branch meshy-audit-coverage, 11 Nov 2026 AEDT; not fixed there)
+
+- **Every light model (`models/<id>.glb`, drawn more than 15 m from a child's camera) has lost its arms.** The new `far` check (light model's outline against the high-detail model's, same pose and view) counts 1165 to 5310 px per front view, rest pose, everyday: Sol 2903, Clara 3429, Finn 1388, Lumi 5310. The arms below the sleeves are missing on all four (Finn: only the hands, his sleeves are long); Lumi also loses her knees between shorts and boots (feet view 19867 px), Finn part of one shin. It is in the files, not the drawing: Sol's light body is 0.57 m wide in the rest pose against 0.76 m for the high-detail one (x -0.25 to 0.32, lopsided). Pictures: `D:\WorkSpace\meshy\fitted\acov-far` (`*-light-rest-*-far.png`, missing parts magenta). Likely the light model's body reduction (`CL_BODY_REDUCE`, `tex_max.py`, `GH_TEX_MAX`) or its cover mark cut the arms. Rerun: `node ../tools/meshy/audit.mts <out> <id> poses:rest,everyday,light`.
+- **At night the skin, face and hair keep their day brightness while the clothes darken** (new `glow` check, night pass, Sol everyday: 7392 px in the front view, every view over the limit). The clothes darken to about .74 of their day light (the garment paint is mostly emissive, `paint()` in js/friend-model.ts), the skin-tinted body, face pieces and hair not at all, so in the dark valley the child's face, arms and hair look lit from inside. Pictures: `D:\WorkSpace\meshy\fitted\acov-b2\sol-everyday@night-rest-front-glow.png` and `-look.png`. Whether the whole friend should darken more (the valley and Grandpa Owl darken far more) is for the owner; at least the skin and hair should darken with the clothes. Rerun: `poses:rest,everyday,night,pics`.
+- Items in the hand: Sol's item follows the hand (grip 0 to 2 cm); no fault found.
+
 ## Still to look at
 
 - `rag`: mostly 1 to 2 px outline specks.

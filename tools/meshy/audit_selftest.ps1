@@ -15,7 +15,7 @@ $repo = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent; Set-Location "$re
 $ok = $true
 # name = check, friend ('' = -Id), extra pass
 $plants = [ordered]@{ kit = @('kit', ''); poke = @('poke', ''); fold = @('fold', ''); eyes = @('eyes', ''); bite = @('bite', ''); rag = @('rag', ''); deep = @('poke', 'clara');
-  lightpoke = @('poke', 'clara', 'light', 'poke'); far = @('far', 'clara', 'light'); glow = @('glow', '', 'night'); grip = @('grip', '', 'item') }
+  lightpoke = @('poke', 'finn', 'light', 'poke'); far = @('far', '', 'light'); glow = @('glow', '', 'night'); grip = @('grip', '', 'item'); face = @('face', '') }
 foreach ($f in $plants.Keys) {
   if ($Only -and -not ($Only.Split(',') -contains $f)) { continue }
   $p = $plants[$f]; $check = $p[0]; $who = if ($p[1]) { $p[1] } else { $Id }
