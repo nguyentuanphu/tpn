@@ -276,6 +276,20 @@ def _move_with_body(bm, o, name):
             for t_ in trunk_:
                 if t_ in new: new[t_] = new[t_] * (1 - m_ / max(wt, 1e-6))
             new[hb] = new.get(hb, 0) + 2 * m_; setw(v, new)
+    # (4) (11 Nov 2026, round 82: specks of neck skin, kit and nape hair through Finn's collar with his arms up) round the
+    # neck a top moves exactly as the body under it: smoothed and split onto the helper bones the collar rose by half while
+    # the body's shoulder tops rose fully, through it. Over 3 cm up to 7 cm below the neckband the body's own weights take over
+    if LAYER.get(name) != 0 and name != 'bib':
+        kd, W = _body_weights(); z0 = NECKBAND - .07; _nc = 0
+        for v in bm.verts:
+            if v.co.z < z0 or abs(v.co.x) > SH_X * .7: continue
+            _co, j, _d = kd.find(v.co)
+            if _d is None or _d > .05: continue
+            t = min(1., (v.co.z - z0) / .03); own = getw(v); new = {k: w * (1 - t) for k, w in own.items()}
+            for k, w in W[j].items():
+                if k != 'hair-v': new[k] = new.get(k, 0) + t * w
+            setw(v, new); _nc += 1
+        print('CL move', name, 'collar points on body weights', _nc)
 def _helper_bones():
     if 'helpArmL' in rig.data.bones: return
     VL.objects.active = rig; rig.select_set(True); bpy.ops.object.mode_set(mode='EDIT')
