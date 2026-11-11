@@ -11,8 +11,11 @@ T = 240
 def pic(n, box=(.08, .05, .92, .89), size=(T, T)):
     im = Image.open(f'{d}/v-{i}-{n}.png').convert('RGB'); W, H = im.size
     return im.crop((int(W * box[0]), int(H * box[1]), int(W * box[2]), int(H * box[3]))).resize(size)
-try: font = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf', 20)
-except OSError: font = ImageFont.load_default()
+font = None
+for f in ('/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf', 'C:/Windows/Fonts/arial.ttf'):   # (11 Nov 2026) Linux cloud, owner's PC
+    try: font = ImageFont.truetype(f, 20); break
+    except OSError: pass
+if font is None: font = ImageFont.load_default()
 r = Image.open(ref).convert('RGB'); r = r.resize((int(r.width * 480 / r.height), 480))
 cols = 9; S = Image.new('RGB', (cols * T, 40 + 480 + 3 * (T + 26)), (236, 236, 232)); g = ImageDraw.Draw(S)
 g.text((8, 8), title, fill=(20, 20, 20), font=font)
