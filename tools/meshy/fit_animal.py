@@ -600,7 +600,8 @@ def face_pieces(o, arm, J, Fc):
         yy, xx = (np.mgrid[0:TP, 0:TP] + .5) / TP * 2 * R - R
         # the whole painted eye (white, outline, iris, lashes): joined to its middle through texels unlike the fur round it
         rr = np.hypot(xx, yy); hit = ~np.isnan(Pp[..., 0])
-        fur = np.median(img0[(rr > R * .8) & (rr < R) & hit], 0)
+        ring = (rr > r * 1.5) & (rr < r * 2.1) & hit   # (the colour just round the eye: Sparkle's face is a peach mask on a navy head)
+        fur = np.median(img0[ring if ring.sum() > 20 else ((rr > R * .8) & (rr < R) & hit)], 0)
         odd = (np.linalg.norm(img0 - fur, axis=2) > FIX.get('eye_odd', .16)) & hit & (rr < R * .9)
         eye = np.zeros((TP, TP), bool); st = [(a, b) for a in range(TP) for b in range(TP) if rr[a, b] < r * .5 and hit[a, b]]
         for a, b in st: eye[a, b] = True

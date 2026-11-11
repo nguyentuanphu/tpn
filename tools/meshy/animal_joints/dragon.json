@@ -48,5 +48,9 @@
     ]
   ],
   "smooth": 3,
-  "lid_size": 2.8
+  "lid_size": 2.8,
+  "audit": {
+    "hatLoose": 6,
+    "why": "11 Nov 2026, measured every band point and looked at the hats from behind and the side: the head is egg-shaped, so a round band is 2-9 mm off it in front and 2-3 cm off it at the back, under the band itself, not seen."
+  }
 }

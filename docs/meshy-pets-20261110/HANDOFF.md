@@ -1,6 +1,6 @@
 # Handoff: pets and companions with Meshy (kept current every hour)
 
-Last update: 11 Nov 2026 AEDT. Branch `meshy-pets`, worktree `D:\WorkSpace\sv-meshy-pets` (owner's PC). Never merge
+Last update: 11 Nov 2026 AEDT (afternoon). Branch `meshy-pets`, worktree `D:WorkSpacesv-meshy-pets` (owner's PC). Never merge
 main, deploy or bump the version. Reply to the owner in Vietnamese, short; ask with pop-up questions. Ask before every
 Meshy use (paid), through the journal `D:\WorkSpace\meshy\private\meshy-jobs.sqlite3`, never retry a paid POST, never
 print the key; after a paid run `python tools/meshy/ledger_sync.py`. Back up (commit + push) every hour.
@@ -16,7 +16,7 @@ Read first: `.claude/skills/meshy-characters/SKILL.md` (section "Animals"), `doc
   Blender one). Fit files: `tools/meshy/animal_joints/dragon.json`, `firefly.json`. Raw: `D:\WorkSpace\meshy\raw-models`.
 - Owner: a companion is small when first met and grows as it is fed (`js/companion.ts`, scale 1 + 0.14 a level; dragon
   0.45 m at level 1). Sparkle keeps the game's own see-through wings and glow (Meshy's solid wings are cut).
-- Last fixes: hat skull top by point count (not width: antennae, horns), auditor loose/poke rules, firefly lids bigger
+- Last fixes: firefly lid colour from the ring just round the eye (peach mask on a navy head), `lid_size` 2.6; dragon `audit.hatLoose` 6 (egg-shaped head, gap hidden under the band). Earlier: hat skull top by point count (not width: antennae, horns), auditor loose/poke rules, firefly lids bigger
   (`lid_size` 3.2), mouth piece smaller (`mouth_patch` 1.2), firefly leg gaps allowed (`audit.tear` 120, reason in json).
 
 ## Next steps

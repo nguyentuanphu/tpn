@@ -288,15 +288,18 @@ const FOLDED = ['sleep', 'sit', 'beg', 'scratch', 'roll'];
 // its marked pictures; e.g. Sparkle's thin legs show the background between them and the body, which is not a tear)
 const OWN: Record<string, any> = {};
 for (const k of kinds) { try { OWN[k] = JSON.parse(readFileSync(new URL(`./animal_joints/${k}.json`, import.meta.url), 'utf8')).audit || {}; } catch { OWN[k] = {}; } }
+// (a hat only loose within the animal's own allowance, neither floating nor through the head, passes: the dragon's head is
+// egg-shaped, so a round band sits close in front and a little off it at the back, hidden under the band)
+const val = (c: any, k: string) => k === 'hat' && OWN[c.kind] && OWN[c.kind].hatLoose != null && !c.hatFloat && !c.hatPoke && (c.hatLoose || 0) <= OWN[c.kind].hatLoose ? 0 : c[k];
 const lim = (c: any, k: string) => (OWN[c.kind] && OWN[c.kind][k] != null) ? OWN[c.kind][k] : k === 'stretch' && FOLDED.includes(c.clip) ? 900 : LIMIT[k];
-const fail = real.filter((c: any) => keys.some(k => c[k] > lim(c, k)) || c.missing);
+const fail = real.filter((c: any) => keys.some(k => val(c, k) > lim(c, k)) || c.missing);
 const lines = [`pets audit ${new Date().toISOString()} cases ${real.length} failing ${fail.length}`];
-for (const k of keys) lines.push(`${k}: ${real.filter((c: any) => c[k] > lim(c, k)).length} cases over ${LIMIT[k]}${k === 'stretch' ? ' (folded poses 900)' : ''}, worst ${Math.max(0, ...real.map((c: any) => c[k] || 0))}`);
+for (const k of keys) lines.push(`${k}: ${real.filter((c: any) => val(c, k) > lim(c, k)).length} cases over ${LIMIT[k]}${k === 'stretch' ? ' (folded poses 900)' : ''}, worst ${Math.max(0, ...real.map((c: any) => c[k] || 0))}`);
 for (const kind of kinds) for (const lod of ['near', 'far']) {
   const f = `../models/world/creature-${kind}${lod === 'near' ? '-hd' : ''}.glb`; let kb = 0; try { kb = Math.round(statSync(f).size / 1024); } catch { }
   lines.push(`size ${kind} ${lod}: ${kb} KB (limit ${SIZE[lod]})${kb > SIZE[lod] || !kb ? '  OVER' : ''}`);
   const ff = fail.filter((c: any) => c.kind === kind && c.lod === lod);
-  if (ff.length) lines.push(`${kind} ${lod}: ` + ff.map((c: any) => `${c.clip}@${c.t} ` + keys.filter(k => c[k] > lim(c, k)).map(k => `${k} ${c[k]}`).join(' ')).join('; '));
+  if (ff.length) lines.push(`${kind} ${lod}: ` + ff.map((c: any) => `${c.clip}@${c.t} ` + keys.filter(k => val(c, k) > lim(c, k)).map(k => `${k} ${c[k]}`).join(' ')).join('; '));
 }
 if (MODE === 'selftest') {
   const caught = (p: string, k: string) => cs.some((c: any) => c.plant === p && c[k] > LIMIT[k]);
