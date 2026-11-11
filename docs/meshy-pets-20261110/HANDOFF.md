@@ -61,6 +61,12 @@ Read first: `.claude/skills/meshy-characters/SKILL.md` (section "Animals"), `doc
   lids cover the lashes): `creature-firefly.glb` 386 KB. Audit 112 cases, 0 failing with the limits in firefly.json
   (reasons there). Film `film/firefly-far.mp4`. Approved by the owner (12 Nov 2026 AEDT, "Duyệt") and committed.
 
+- 12 Nov, small tasks (owner: "Việc nhỏ 1-4"): `worldcreatures` passes with a Meshy-companion rule (the owner's height
+  from the fit json, the middle on the companion box in `tools/blender/creatures-spec.json`, 21,000 triangles for a light
+  model; reasons in the check). A 7k firefly body to fit the old 16,000 broke her shut-eye line, so it was not used.
+  Dragon light lids `lid_grid_far` 28: the happy face's lash marks gone; owner approved, committed. Audit firefly+dragon
+  224 cases 0 failing. Board: "ready for Release".
+
 ## Next steps
 1. Rebuild both companions (`blender -b -P tools/meshy/fit_animal.py -- <kind> <near remesh> <far remesh> <out>`;
    firefly: near for both), pack with gltfpack `-cc -kn -km -ke -vp 12 -vt 10 -vn 6`, install `-hd` (and dragon far).
