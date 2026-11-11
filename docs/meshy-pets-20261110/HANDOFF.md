@@ -41,6 +41,13 @@ Read first: `.claude/skills/meshy-characters/SKILL.md` (section "Animals"), `doc
   (the game's own group), not only the bare-model `close` shots.**
   Dragon rebuilt with `lash_dark`, `lash_spot`, `lid_lift` 0.004 (the far model's lid showed painted lash marks).
 
+- 11 Nov evening, end: audit firefly+dragon full 169 cases, 0 failing (per-animal limits with reasons in the json).
+  Checks with `SV_URL=8777`: companionhats, companiongoal, animalhomes, petskills, phone pass; `worldcreatures` fails on
+  two things older than today: it checks the firefly's far file (still the Blender one, no Meshy far was made) for
+  lids, and compares the dragon's size with the old code dragon (flat, 0.8 m wings) although the owner chose a small
+  standing dragon. The check needs a Meshy-companion rule (near model, owner's size); not changed yet.
+  Sheets for the owner: `companions/firefly-sheet.png`, `companions/dragon-sheet.png` (reference beside the game).
+
 ## Next steps
 1. Rebuild both companions (`blender -b -P tools/meshy/fit_animal.py -- <kind> <near remesh> <far remesh> <out>`;
    firefly: near for both), pack with gltfpack `-cc -kn -km -ke -vp 12 -vt 10 -vn 6`, install `-hd` (and dragon far).
@@ -48,7 +55,7 @@ Read first: `.claude/skills/meshy-characters/SKILL.md` (section "Animals"), `doc
    look at every marked picture before changing a limit. Also re-audit `puppy` (the hat skull rule changed).
 3. Pictures: `node ../tools/meshy/pet_shots.mts <out> companion dragon,firefly` (level 1 and 5, hat, with the child),
    `close dragon-hd,firefly-hd`, `mouth`, `legs` as needed.
-4. Checks: `node suite.mts --only worldcreatures,petskills,companionhats,companiongoal,animalhomes,phone --jobs 1`.
+4. Checks: `SV_URL=http://localhost:8777/ node suite.mts --only worldcreatures,petskills,companionhats,companiongoal,animalhomes,phone --jobs 1` (without `SV_URL` the suite opens port 8765, another session's server and checkout: "no eyelid pieces", "G.pets.live is not a function").
 5. Send the owner the sheets and ask approval (pop-up); then commit the companion models.
 6. Afterwards: the other pets (kitty, bunny, panda, joey, calf) need Meshy credits (ask first) and their own skills
    (agreed proposal in PLAN.md).
