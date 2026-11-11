@@ -931,13 +931,15 @@ if OWN:   # (own face) after the smoothing, every point is again just in front o
                 # (12 Nov 2026, close-up: lash arcs over r045's shut eyes, lash flicks at r074's outer corners, in the game
                 # though the picture was clean) a grid cell is 1.3 cm: snapped at its corners only, it cut under the bulge
                 # of the lid and brow between them, and the painted eye showed there. Each point is placed by the highest
-                # face at it and at the eight half-cell points round it
+                # face at it and at the points round it given below
                 _dx_, _dz_ = (gx[1] - gx[0]) * .5, (gz[1] - gz[0]) * .5; _ys_ = [h_[0].y]
-                for _ox in (-_dx_, 0, _dx_):
-                    for _oz in (-_dz_, 0, _dz_):
-                        if _ox or _oz:
-                            _hh = _btree.ray_cast(Vector((x_ + _ox, -2, z_ + _oz)), Vector((0, 1, 0)))
-                            if _hh[0] is not None: _ys_.append(_hh[0].y)
+                # (beside it only a quarter cell away: lifted by the half-cell points beside it, the piece stood off the
+                # temple's slope and the painted eye white showed past it from the side, r050 34 px; lifted from below too,
+                # r050's profile showed the painted eye's outline under the shut lid; above it, the half-cell points straight
+                # up and up to either side, or lash bits stayed over r045's shut eyes)
+                for _ox, _oz in ((-_dx_ * .5, 0), (_dx_ * .5, 0), (0, _dz_), (-_dx_, _dz_), (_dx_, _dz_)):
+                    _hh = _btree.ray_cast(Vector((x_ + _ox, -2, z_ + _oz)), Vector((0, 1, 0)))
+                    if _hh[0] is not None: _ys_.append(_hh[0].y)
                 h_ = (Vector((x_, min(_ys_), z_)),) + tuple(h_[1:])
             if h_[0] is not None and not np.isnan(Yg[i_, j_]): Yg[i_, j_] = min(Yg[i_, j_], h_[0].y + .001)
             # (owner 11 Nov 2026: the sad and "o" mouths were drawn under a smile that still showed, the far eye showed past
