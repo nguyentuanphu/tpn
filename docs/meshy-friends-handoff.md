@@ -39,6 +39,7 @@ Không đổi file models/*.glb (chỉ máy của chủ dựng lại được).
 
 ## Where it stands
 
+- (12 Nov, 7 am AEDT) All four refitted with the final closed-eye rule (blush and freckles kept, no flat patch; faint rings remain on one eye of Sol and Lumi). Quick audit, rest pose: eyes 0, skin tone 0. Round 85 (561) was before the refits; next full round 86.
 - (11 Nov, night) Owner: Lumi's face worse. Fixed: closed/smiling eyes keep blush and freckles; no dark slits through shirts; Lumi light model 512 px. All four refitted and redressed; round 85 (`audit-f85`) running. Open: sleeve hems ragged (skin teeth), Lumi's light face cracked close up. The half-turn helper is no longer on sleeve points (make_clothes.py step 3): it did not fix the sleeves; keep or drop by round 85.
 - **Round 84 (11 Nov 2026, 7 pm AEDT): 575 of 2576 failing** (`audit-f84`; Clara 181, Sol 98, Finn 101, Lumi 195). New: the áo dài back panel no longer folds at the knee when jumping (js/friend-model.ts, `skirtB` takes half the shin), the light models have their limbs again. Most other changes from 83 are 1-pixel rag flicker. Next in the list below: Clara's rain coat hem at the back, the braid-tip blotch, the knee through leggings (now seen under a lifted skirt).
 - (11 Nov, evening) Light models (far away) fixed: they had lost their forearms (and Lumi's knees, part of Finn's shin) in the body reduction; only the trunk is thinned now (make_clothes.py, `CL_BODY_REDUCE`). All four rebuilt and installed; widths match the -hd models. Not audited again yet (round 84).
