@@ -15,10 +15,32 @@ Việc: chạy vòng soi, xem ảnh lỗi cỡ thật, sửa lỗi nhìn thấy 
 rồi gửi chủ ảnh trong game (bảng ảnh) kèm báo cáo ngắn.
 ```
 
+## Cloud prompt (a chat on claude.ai/code, not on the owner's PC)
+
+The cloud has only the GitHub branch: no `D:\WorkSpace\meshy` (Meshy sources, Blender work files, old audit pictures) and no Blender, so it cannot rebuild clothes (`make_clothes.py`, `make_character.ps1`). It can fix the game side (`js/friend-model.ts`: skinning, skirt bones, shader paint) and audit the committed models.
+
+```
+Repo tpn, nhánh meshy-production-20261107 (game Sparkle Valley). Trả lời tiếng Việt, ngắn.
+Đọc trước: CLAUDE.md, .claude/skills/meshy-characters/SKILL.md, docs/meshy-friends-handoff.md.
+Đây là máy cloud: không có D:\WorkSpace\meshy, không có Blender, nên không dựng lại quần áo;
+chỉ sửa phía game (js/friend-model.ts) và soi các mô hình đã có trong nhánh.
+Chuẩn bị: cd tests && npm ci && npx playwright install chromium;
+chạy server: node tools/meshy/serve.mjs "$PWD" 8765 (để chạy nền); build: node tools/build.mts.
+Soi nhanh: cd tests && node ../tools/meshy/audit.mts ../out-q clara poses:sit,everyday,pics
+Soi đủ 4 bạn: node ../tools/meshy/audit.mts ../out-full clara,sol,finn,lumi (so với vòng 80: 577 lỗi trên 2576).
+Bảng ảnh: python3 tools/meshy/review_sheet.py <thư mục có clara/ sol/ ...> <thư mục ra> (cần Pillow).
+Việc: váy ngồi nhìn từ sau rủ thẳng như cái thùng (Clara, Lumi đồ lễ hội, áo dài Finn), áo dài khi nhảy
+lộ quần trắng có vệt sẫm ở vạt sau; rồi các lỗi khác trong "Still to look at". Xem ảnh lỗi cỡ thật.
+Luật: không gọi Meshy, không tiêu credit; không merge main, không deploy, không tăng version;
+hỏi chủ bằng pop-up; commit và push lên nhánh này mỗi giờ (pull --no-rebase trước), không force-push;
+không commit content/management-catalogue.json (build tự sửa); ghi bài học vào SKILL.md và cập nhật file handoff.
+Không đổi file models/*.glb (chỉ máy của chủ dựng lại được).
+```
+
 ## Where it stands
 
 - Last full round pushed: round 78 (commit 50e9055e6), 636 of 2576 cases failing (77: 791, 76: 856, 75: 1029). Self-test passed (7 planted faults caught).
-- Round 80 (commit 3790fe93e, kit paint .975): 577 of 2576 failing (78: 636). Clara still worse than round 78 (184, was 139: back views lighter than her dress); Sol 98, Finn 103, Lumi 192. A shade from the blurred body picture was tried and dropped (see SKILL.md). Next: review pictures and sheets for the owner.
+- Round 80 (kit paint .975): 577 of 2576 failing (78: 636). Clara 184 (78: 139, back views lighter than her dress), Sol 98, Finn 103, Lumi 192. A shade from the blurred body picture was tried and dropped (see SKILL.md). Review pictures of round 80: `D:\WorkSpace\meshy\fitted\review-f80\gui` (on the PC only). Seen in them: seated skirts hang straight down like a bucket from behind; the áo dài back panel lifted in a jump shows white trousers with a dark stripe. Next: a deeper seat tuck (js/friend-model.ts, `sit_ * .35` and `.6`).
 
 ## How to run
 
