@@ -47,5 +47,6 @@
       0.48
     ]
   ],
-  "smooth": 3
+  "smooth": 3,
+  "lid_size": 2.8
 }

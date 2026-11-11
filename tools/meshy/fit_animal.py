@@ -657,7 +657,7 @@ def face_pieces(o, arm, J, Fc):
     if 'mouth' in Fc:
         c = np.array(Fc['mouth']); nrm = np.array(Fc['mouth_n']); nrm = nrm / np.linalg.norm(nrm)
         side = np.cross((0, 0, 1.0), nrm); side /= np.linalg.norm(side); up = np.cross(nrm, side)
-        Wm = nr * FIX.get('mouth_w', 1.1); R = Wm * 1.5; TP = FIX.get('mouth_px', 96); GN = FIX.get('mouth_grid', 18) if not FARLOD else 12
+        Wm = nr * FIX.get('mouth_w', 1.1); R = Wm * FIX.get('mouth_patch', 1.2);   # (a small piece: a wide one reached where the face turns away and showed as a pale square) TP = FIX.get('mouth_px', 96); GN = FIX.get('mouth_grid', 18) if not FARLOD else 12
         img = np.zeros((TP, TP, 3)); hit = np.zeros((TP, TP), bool)
         from mathutils.geometry import barycentric_transform
         for a in range(TP):

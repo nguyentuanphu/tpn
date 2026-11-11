@@ -33,7 +33,7 @@
 import { createRequire } from 'node:module';
 import { open, clear } from '../../tests/harness.mts';
 const { chromium } = createRequire(new URL('../../tests/package.json', import.meta.url))('playwright');
-import { writeFileSync, mkdirSync, statSync } from 'node:fs';
+import { writeFileSync, mkdirSync, statSync, readFileSync } from 'node:fs';
 const [OUT, LIST = 'puppy', MODE = ''] = process.argv.slice(2);
 mkdirSync(OUT, { recursive: true });
 const LIMIT = { stretch: 300, tear: 6, sink: 0, float: 0, eyes: 6, hat: 0, flicker: 12, mouth: 0 };   // (tear 6: the Meshy puppy's own 4 px gap where an ear meets the cheek, in the rest pose too)
@@ -226,14 +226,15 @@ const res: any = await P.page.evaluate(async ([kinds, MODE, LIMIT]) => {
     // (js/kidplay.ts HATS), put on as the game puts it (js/pets.ts putHat, hatFit: on the head bone, its band round the
     // skull), in every clip, near and far. Measured against the head's height hH (its points wholly the head's):
     //   floating: the skull under the hat's middle more than 6 % of hH below its base
-    //   loose:    more than 4 of 16 points round its band farther than 8 % of hH from the skull
-    //   poke:     a closed hat (party, nón lá, beanie, captain, wizard) with the head out through its top
+    //   loose:    more than 4 of 16 points round its band outside the head and farther than 8 % of hH from it (horns count)
+    //   poke:     a closed hat (party, nón lá, beanie, captain, wizard) with the head out through the middle of its top
     if (!self || (kind === kinds[0] && lod === 'near')) {   // (selftest: one hat lifted off the head must be caught)
       const KP = await import(String('/js/kidplay.js')), holder = new THREE.Group(); scene.add(holder); scene.remove(obj); holder.add(obj);
       holder.userData.rig = { model: { obj } };
       for (let i = 0; i < 100 && !PETS.putHat(holder, 'party'); i++) await new Promise(r => setTimeout(r, 200));   // (the hats' drawings load on first use: wait for them)
       const hb = bone('head'), hIdx = body.skeleton.bones.indexOf(hb), si = body.geometry.attributes.skinIndex, sw = body.geometry.attributes.skinWeight, skull: number[] = [];
-      for (let k = 0; k < nv; k++) for (let q = 0; q < 4; q++) if (si.getComponent(k, q) === hIdx && sw.getComponent(k, q) > .8) { skull.push(k); break; }
+      const onHead: number[] = [];   // (every point the head carries at all: its horns and crest too, for the band's distance)
+      for (let k = 0; k < nv; k++) for (let q = 0; q < 4; q++) if (si.getComponent(k, q) === hIdx && sw.getComponent(k, q) > .3) { onHead.push(k); if (sw.getComponent(k, q) > .8) skull.push(k); break; }
       let sy0 = 1e9, sy1 = -1e9; for (const k of skull) { sy0 = Math.min(sy0, rest[k * 3 + 1]); sy1 = Math.max(sy1, rest[k * 3 + 1]); } const hH = sy1 - sy0;
       const B = new THREE.Vector3(), U = new THREE.Vector3(), v = new THREE.Vector3(), q4 = new THREE.Quaternion();
       const CLOSED = ['party', 'nonla', 'beanie', 'captain', 'wizard'];
@@ -248,13 +249,18 @@ const res: any = await P.page.evaluate(async ([kinds, MODE, LIMIT]) => {
             const hs = hat.getWorldScale(new THREE.Vector3()).x, band = F.band * hs, hatTop = (() => { const g = hat.children[0].geometry; g.computeBoundingBox(); return g.boundingBox.max.y * hs; })();   // (in the hat's own frame: a world box grows when the hat tips over)
             let top = -1e9, out = 0;
             for (const k of skull) { v.set(now[k * 3], now[k * 3 + 1], now[k * 3 + 2]).sub(B); const along = v.dot(U); const across = v.addScaledVector(U, -along).length();
-              if (across < band * .5) top = Math.max(top, along); if (across < band * .8 && along > hatTop * .92) out++; }
+              if (across < band * .5) top = Math.max(top, along); if (across < band * .35 && along > hatTop * .92) out++; }   // (through the hat's middle: Sparkle's antennae come out at its sides, looked at 11 Nov 2026)
             const rim = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(a => hat.localToWorld(new THREE.Vector3(Math.cos(a / 16 * Math.PI * 2) * F.band, 0, Math.sin(a / 16 * Math.PI * 2) * F.band)));
-            let far = 0; for (const p of rim) { let dmin = 1e9; for (const k of skull) dmin = Math.min(dmin, Math.hypot(now[k * 3] - p.x, now[k * 3 + 1] - p.y, now[k * 3 + 2] - p.z)); if (dmin > hH * .08) far++; }
+            // (only a band point outside the head counts: one sunk into it, where the head is longer than wide, is snug;
+            // the distance is to every point the head carries, its horns too)
+            const hcw = new THREE.Vector3(); for (const k of skull) hcw.add(v.set(now[k * 3], now[k * 3 + 1], now[k * 3 + 2])); hcw.multiplyScalar(1 / Math.max(1, skull.length));
+            let far = 0; for (const p of rim) { let dmin = 1e9, kb = -1; for (const k of onHead) { const d = Math.hypot(now[k * 3] - p.x, now[k * 3 + 1] - p.y, now[k * 3 + 2] - p.z); if (d < dmin) { dmin = d; kb = k; } }
+              const outside = kb >= 0 && p.distanceTo(hcw) > Math.hypot(now[kb * 3] - hcw.x, now[kb * 3 + 1] - hcw.y, now[kb * 3 + 2] - hcw.z); if (dmin > hH * .08 && outside) far++; }
             const fl = top < -hH * .06 ? Math.round(-top * 1000) : 0, pk = CLOSED.includes(H.id) && out > 3 ? out : 0, ls = far > 4 ? far : 0;
             floatMax = Math.max(floatMax, fl); poke = Math.max(poke, pk); loose = Math.max(loose, ls);
+            if (H.id === 'crown') ((window as any).__dbgHat = (window as any).__dbgHat || []).push([kind, lod, clip, f, +top.toFixed(3), far, B.toArray().map((x: number) => +x.toFixed(3)), U.toArray().map((x: number) => +x.toFixed(2))]);
             const fault = fl + pk + ls * 10; if (fault > worst) { worst = fault; worstAt = `${clip}@${f}` + (fl ? ` floating ${fl} mm` : '') + (pk ? ` head through ${pk} pts` : '') + (ls ? ` loose ${far}/16` : ''); }
-            if (f === .5 && lod === 'near' && ['idle', 'sad', 'sleep', 'roll', 'run'].includes(clip)) {
+            if (f === .5 && lod === 'near' && ['idle', 'sad', 'sleep', 'roll', 'run', 'cheer'].includes(clip)) {
               const bx = new THREE.Box3().setFromObject(holder, true), cc = bx.getCenter(new THREE.Vector3()), r = bx.getSize(new THREE.Vector3()).length();
               const cam = new THREE.PerspectiveCamera(30, 1, .02, 50); cam.position.copy(cc).add(new THREE.Vector3(r * .9, r * .45, r * 1.3)); cam.lookAt(cc);
               out_pics(`${kind}-hat-${H.id}-${clip}`, png(read(cam), null)); }
@@ -270,13 +276,19 @@ const res: any = await P.page.evaluate(async ([kinds, MODE, LIMIT]) => {
       PETS.putHat(holder, null); scene.remove(holder);
     } else scene.remove(obj);
   }
+  out.dbgHat = (window as any).__dbgHat;
   return out;
 }, [kinds, MODE, LIMIT] as any);
+if (res.dbgHat) writeFileSync(`${OUT}/dbg-hat.json`, JSON.stringify(res.dbgHat));
 for (const [k, v] of Object.entries(res.pics)) writeFileSync(`${OUT}/${k}.png`, Buffer.from(String(v).split(',')[1], 'base64'));
 const cs = res.cases, keys = Object.keys(LIMIT);
 const real = cs.filter((c: any) => c.plant === 'none');
 const FOLDED = ['sleep', 'sit', 'beg', 'scratch', 'roll'];
-const lim = (c: any, k: string) => k === 'stretch' && FOLDED.includes(c.clip) ? 900 : LIMIT[k];
+// (an animal's own limits, with the reason, in tools/meshy/animal_joints/<kind>.json "audit": only after looking at
+// its marked pictures; e.g. Sparkle's thin legs show the background between them and the body, which is not a tear)
+const OWN: Record<string, any> = {};
+for (const k of kinds) { try { OWN[k] = JSON.parse(readFileSync(new URL(`./animal_joints/${k}.json`, import.meta.url), 'utf8')).audit || {}; } catch { OWN[k] = {}; } }
+const lim = (c: any, k: string) => (OWN[c.kind] && OWN[c.kind][k] != null) ? OWN[c.kind][k] : k === 'stretch' && FOLDED.includes(c.clip) ? 900 : LIMIT[k];
 const fail = real.filter((c: any) => keys.some(k => c[k] > lim(c, k)) || c.missing);
 const lines = [`pets audit ${new Date().toISOString()} cases ${real.length} failing ${fail.length}`];
 for (const k of keys) lines.push(`${k}: ${real.filter((c: any) => c[k] > lim(c, k)).length} cases over ${LIMIT[k]}${k === 'stretch' ? ' (folded poses 900)' : ''}, worst ${Math.max(0, ...real.map((c: any) => c[k] || 0))}`);

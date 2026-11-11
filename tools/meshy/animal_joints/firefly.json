@@ -42,5 +42,11 @@
   "cut_pale": [
     0.22,
     0.3
-  ]
+  ],
+  "eye_grow": 2.0,
+  "lid_size": 3.2,
+  "audit": {
+    "tear": 120,
+    "why": "11 Nov 2026, looked at the marked pictures (flap, follow): the background seen between a thin leg and the belly, both at the same depth, round the leg joints; not a hole in the skin."
+  }
 }

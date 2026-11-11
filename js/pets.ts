@@ -44,11 +44,12 @@ function headPoints(model, head) {
     v.fromBufferAttribute(pos, i); body.applyBoneTransform(i, v); v.applyMatrix4(body.matrixWorld); pts.push(head.worldToLocal(v.clone())); break; }
   if (pts.length < 30) return null;
   let top = -1e9, bot = 1e9; for (const p of pts) { top = Math.max(top, p.y); bot = Math.min(bot, p.y); }
-  // (the skull's top, not the tips of thin things on it: Sparkle's antennae, the dragon's horns) the highest height where
-  // the head is still at least 45 % as wide as at its widest
-  const width = (y: number) => { let x0 = 1e9, x1 = -1e9; for (const p of pts) if (Math.abs(p.y - y) < (top - bot) * .02) { x0 = Math.min(x0, p.x); x1 = Math.max(x1, p.x); } return x1 - x0; };
-  let widest = 0; for (let k = 0; k <= 20; k++) widest = Math.max(widest, width(bot + (top - bot) * k / 20));
-  let skull = top; for (let k = 0; k <= 50; k++) { const y = top - (top - bot) * k / 50; if (width(y) >= widest * .45) { skull = y; break; } }
+  // (the skull's top, not the tips of thin things on it: Sparkle's antennae, the dragon's horns and crest) the highest
+  // height where a slice of the head holds at least a third as many points as its fullest slice (two antennae far
+  // apart are wide but hold few points)
+  const count = (y: number) => { let n = 0; for (const p of pts) if (Math.abs(p.y - y) < (top - bot) * .02) n++; return n; };
+  let fullest = 0; for (let k = 0; k <= 25; k++) fullest = Math.max(fullest, count(bot + (top - bot) * k / 25));
+  let skull = top; for (let k = 0; k <= 50; k++) { const y = top - (top - bot) * k / 50; if (count(y) >= fullest * .33) { skull = y; break; } }
   const r = { pts, top: skull, h: skull - bot }; _heads.set(model, r); return r;
 }
 // where a hat goes and how big, in the head bone's frame: the skull's middle and width at the hat's depth
