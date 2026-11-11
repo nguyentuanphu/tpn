@@ -262,7 +262,7 @@ if J.get('trim_back_hair'):
 activate(body); bm = bmesh.new(); bm.from_mesh(body.data); bm.faces.ensure_lookup_table()
 def infb(p): return fx0 <= p.x <= fx1 and fz0 <= p.z <= fz1
 def _eyeband(c, n):   # (12 Nov 2026, villagers: the far eye shut from three-quarters kept its dark pupil by the nose, on the socket's slope the front-drawn lid did not reach, and the game's shut-eye paint does not lift it) in the band of the eyes the lid pieces reach the slopes too
-    return REFP == 'villager-' and n.y < -.1 and fz0 + (fz1 - fz0) * .4 < c.z < fz0 + (fz1 - fz0) * .85 and abs(c.x - (fx0 + fx1) / 2) < (fx1 - fx0) * .4
+    return REFP == 'villager-' and n.y < float(os.environ.get('FIT_EYEBAND', '-.1')) and fz0 + (fz1 - fz0) * .4 < c.z < fz0 + (fz1 - fz0) * .85 and abs(c.x - (fx0 + fx1) / 2) < (fx1 - fx0) * .4
 front = [f for f in bm.faces if infb(f.calc_center_median()) and (f.normal.y < -.45 or _eyeband(f.calc_center_median(), f.normal)) and f.calc_center_median().y < 0]   # (10 Nov 2026: -.45, was -.15: a front-drawn mood piece on the cheek's sides stretched the lash ends into dark streaks before Finn's ears; the body's own eye areas cover the rest while shut)
 FACEF = {f.index for f in front}
 dbm = bmesh.new(); vmap = {}
