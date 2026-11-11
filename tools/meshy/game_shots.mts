@@ -197,7 +197,12 @@ const shots: Record<string, string> = await P.page.evaluate(async ([MODE, LIST, 
       { n.A.root.updateMatrixWorld(true); const box = new THREE.Box3().setFromObject(VM.obj, true), c = box.getCenter(new THREE.Vector3()), Hh = box.max.y - box.min.y;
         for (const [nm, s] of [['front', 0], ['tq', .7], ['back', Math.PI]] as [string, number][]) {
           const dir = new THREE.Vector3(Math.sin(yaw), 0, Math.cos(yaw)).applyAxisAngle(new THREE.Vector3(0, 1, 0), s);
-          const cf = new THREE.PerspectiveCamera(28, 360 / 480, .05, 200); cf.position.copy(c).addScaledVector(dir, Hh * 2.1); cf.lookAt(c); grab(`v-${id}${tg}-full-${nm}`, cf, 360, 480); } }
+          const cf = new THREE.PerspectiveCamera(28, 360 / 480, .05, 200); cf.position.copy(c).addScaledVector(dir, Hh * 2.1); cf.lookAt(c); grab(`v-${id}${tg}-full-${nm}`, cf, 360, 480); }
+        // (11 Nov 2026, owner: "cho xem hình chân, và giày dép") the feet and shoes up close, from four sides, a little from above
+        const fc = new THREE.Vector3(c.x, box.min.y + Hh * .1, c.z);
+        for (const [nm, s] of [['front', 0], ['tq', .7], ['side', 1.57], ['back', Math.PI]] as [string, number][]) {
+          const dir = new THREE.Vector3(Math.sin(yaw), 0, Math.cos(yaw)).applyAxisAngle(new THREE.Vector3(0, 1, 0), s);
+          const cf = new THREE.PerspectiveCamera(28, 1, .05, 200); cf.position.copy(fc).addScaledVector(dir, Hh * .95); cf.position.y += Hh * .25; cf.lookAt(fc); grab(`v-${id}${tg}-feet-${nm}`, cf, 480, 480); } }
     }
     A.showHD(n.A, false);
     hidden.forEach((o: any) => { o.visible = true; }); top.background = bg0; SCN = null;
