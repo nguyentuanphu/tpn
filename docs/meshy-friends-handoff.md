@@ -39,6 +39,7 @@ Không đổi file models/*.glb (chỉ máy của chủ dựng lại được).
 
 ## Where it stands
 
+- **Round 84 (11 Nov 2026, 7 pm AEDT): 575 of 2576 failing** (`audit-f84`; Clara 181, Sol 98, Finn 101, Lumi 195). New: the áo dài back panel no longer folds at the knee when jumping (js/friend-model.ts, `skirtB` takes half the shin), the light models have their limbs again. Most other changes from 83 are 1-pixel rag flicker. Next in the list below: Clara's rain coat hem at the back, the braid-tip blotch, the knee through leggings (now seen under a lifted skirt).
 - (11 Nov, evening) Light models (far away) fixed: they had lost their forearms (and Lumi's knees, part of Finn's shin) in the body reduction; only the trunk is thinned now (make_clothes.py, `CL_BODY_REDUCE`). All four rebuilt and installed; widths match the -hd models. Not audited again yet (round 84).
 - **Round 83 (11 Nov 2026, 5 pm AEDT): 576 of 2576 failing** (82: 578, 80: 577), `D:\WorkSpace\meshyittedudit-f83` (every case has its `-look` picture). Clara 186, Sol 96, Finn 102, Lumi 192. All four models rebuilt with: a top round the neck on the body's own weights, and a skirt's waistband top on the trunk. Review sheets sent to the owner: `D:\WorkSpace\meshyittedeview-f83` (made with the scratchpad `sheet.py`: `part-<id>/<id>-<kind>-<pose>-<view>-look.png`, 5 poses x tq/back, and feet/feetback).
 - Seen in the round 83 sheets, worst first: (1) every friend's áo dài jumping, from behind: the back panel lifts and shows the white trousers with a dark stripe and a wedge (still the first thing to fix); (2) Clara's rain coat hem ragged at the back with the trousers showing through (jump, cheer back), and faint light streaks on the backs of tops (Clara's áo dài and coat); (3) a pale blotch at Clara's braid tips where they lie on the skirt or panel (walk, run, jump, cheer, three-quarter view); (4) Clara's festival leggings' knee through the skirt sitting; (5) seated skirts and áo dài backs hang to the ground behind the seat like a board (two tries failed: deeper tuck, shortening).
@@ -61,7 +62,7 @@ Không đổi file models/*.glb (chỉ máy của chủ dựng lại được).
 - `rag`: mostly 1 to 2 px outline specks.
 - Finn's collar specks.
 - Clara's trouser crotch gap when walking (áo dài walk2 feetright).
-- The áo dài back panel lifted in a jump shows a white stripe.
+- (fixed in round 84) The áo dài back panel lifted in a jump shows a white stripe.
 - Seated skirts still look box-like from behind.
 - Review pictures and sheets for the owner (`poses:walk,run,sit,jump,cheer,pics`, sheets by the scratchpad `sheet.py`) have not been sent since round 76.
 
