@@ -29,7 +29,7 @@ chạy server: node tools/meshy/serve.mjs "$PWD" 8765 (để chạy nền); buil
 Soi nhanh: cd tests && node ../tools/meshy/audit.mts ../out-q clara poses:sit,everyday,pics
 Soi đủ 4 bạn: node ../tools/meshy/audit.mts ../out-full clara,sol,finn,lumi (so với vòng 80: 577 lỗi trên 2576).
 Bảng ảnh: python3 tools/meshy/review_sheet.py <thư mục có clara/ sol/ ...> <thư mục ra> (cần Pillow).
-Việc: váy ngồi nhìn từ sau rủ thẳng như cái thùng (Clara, Lumi đồ lễ hội, áo dài Finn), áo dài khi nhảy
+Việc: (chat trên máy của chủ làm váy ngồi; đừng sửa các dòng sit_ trong js/friend-model.ts) áo dài khi nhảy
 lộ quần trắng có vệt sẫm ở vạt sau; rồi các lỗi khác trong "Still to look at". Xem ảnh lỗi cỡ thật.
 Luật: không gọi Meshy, không tiêu credit; không merge main, không deploy, không tăng version;
 hỏi chủ bằng pop-up; commit và push lên nhánh này mỗi giờ (pull --no-rebase trước), không force-push;
