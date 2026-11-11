@@ -615,7 +615,11 @@ if LIGHT:
     # below the neck only; the head stays exact under its face pieces
     if os.environ.get('CL_BODY_REDUCE'):
         vg = body.vertex_groups.new(name='reduce-me')
-        vg.add([v.index for v in me.vertices if v.co.z < NECK - .04], 1.0, 'REPLACE')
+        # (11 Nov 2026, the auditor's new far check: all four light models had lost their forearms below the sleeves, Lumi
+        # her knees, Finn part of a shin; Sol's light body 0.57 m wide against 0.76: collapsing the thin limbs by 40% folded
+        # them away) only the trunk is thinned; arms and legs keep every point, and so does the trunk's edge with them
+        _limbv = {vi for p_ in me.polygons if isarm[p_.index] or isleg[p_.index] for vi in p_.vertices}
+        vg.add([v.index for v in me.vertices if v.co.z < NECK - .04 and v.index not in _limbv], 1.0, 'REPLACE')
         bpy.context.view_layer.objects.active = body; dm = body.modifiers.new('reduce', 'DECIMATE'); dm.ratio = float(os.environ['CL_BODY_REDUCE']); dm.vertex_group = 'reduce-me'; dm.vertex_group_factor = 1.0
         n0 = len(me.polygons); bpy.ops.object.modifier_apply(modifier='reduce'); body.vertex_groups.remove(body.vertex_groups['reduce-me'])
         print('CL light body reduced', n0, '->', len(body.data.polygons))
