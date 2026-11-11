@@ -54,6 +54,10 @@
   "lid_lift": 0.004,
   "audit": {
     "hatLoose": 6,
+    "tear": 15,
+    "eyes": 70,
+    "whyEyes": "11 Nov 2026 evening, looked at the marked pictures: only in the cheer loop seen from below (head upside down), on the far model (shown beyond 24 m): 35-68 px at the outer ends of the lids seen edge-on; the near model passes. lid_rim made it worse (207) and was taken out.",
+    "whyTear": "11 Nov 2026 evening, looked at the marked pictures (cheer from above, follow from behind, far): 8-12 px of background seen between an arm or a small wing and the body, at the same depth, not a hole in the skin.",
     "why": "11 Nov 2026, measured every band point and looked at the hats from behind and the side: the head is egg-shaped, so a round band is 2-9 mm off it in front and 2-3 cm off it at the back, under the band itself, not seen."
   }
 }
