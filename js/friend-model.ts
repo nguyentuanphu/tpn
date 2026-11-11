@@ -98,8 +98,7 @@ if (vCov > ${BODY_CUT} && vColor.r > .5 && !(uBootTop > 0.0 && vKitY < uBootTop 
 #endif` : ''}
 diffuseColor.rgb *= k_;
 if (kf_ > .5) diffuseColor.rgb = k_ * tx_ * (.55 * .95);   // (11 Nov 2026, round 80 review: painted in a garment's colour, it is lit like that garment too, mostly its own light and some of the valley's (paint() in dress: .62 and .55, its corner shade about .95), not like the baked body picture: or it was darker than the cloth on the lit side and lighter in shadow, Clara's back)`)
-      .replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\ntotalEmissiveRadiance *= k_;
-if (kf_ > .5) totalEmissiveRadiance = k_ * sampledDiffuseColor.rgb * .62;')
+      .replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\ntotalEmissiveRadiance *= k_;\nif (kf_ > .5) totalEmissiveRadiance = k_ * tx_ * .62;')
       .replace('#include <color_fragment>', ''); }; // (the corner colour is the skin mark, not a colour)
   m.customProgramCacheKey = () => 'meshy-skintint' + (lax ? '-lax' : '') + (m.vertexColors ? '-mark' : '') + (cover ? '-cover' : '') + (kit ? '-kit' : ''); m.needsUpdate = true; return m;
 }
@@ -360,7 +359,6 @@ export function attachFriendModel(A, id: string, skinHex: string, wear: FriendMo
         // a box) with both thighs forward the back tucks in under the seat, below the knees most, as cloth lies over a seat
         const sit_ = Math.max(0, Math.min(1.2, -Math.max(lx, rx) - .5));
         if (sit_ > 0 && s.n === 'skirtB') ang -= sit_ * .35; else if (sit_ > 0 && s.n === 'skirtB2') ang -= sit_ * .6;
-        if (s.n === 'skirtB' || s.n === 'skirtB2') s.b.scale.set(1, 1 - Math.min(sit_, 1) * .4, 1);   // (11 Nov 2026, round 80 review: turning it further only hung it lower; sat on, the back below the seat is mostly folded under, so it is shorter)
         sq.setFromAxisAngle(X, ang).multiply(s.r);
         const off = skirtOff[s.n], Hn = off && hipMid();
         if (Hn) { sp.copy(off).applyAxisAngle(X, ang).add(Hn); A.rig.localToWorld(sp); s.b.parent.worldToLocal(sp); s.b.position.copy(sp); }
