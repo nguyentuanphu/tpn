@@ -1,6 +1,6 @@
 # Handoff: pets and companions with Meshy (kept current every hour)
 
-Last update: 11 Nov 2026 AEDT, 14:10 (new pets chat after the earlier one stopped at 12:48). Branch `meshy-pets`, worktree `D:\WorkSpace\sv-meshy-pets` (owner's PC). Never merge
+Last update: 12 Nov 2026 AEDT, early morning. Branch `meshy-pets`, worktree `D:\WorkSpace\sv-meshy-pets` (owner's PC). Never merge
 main, deploy or bump the version. Reply to the owner in Vietnamese, short; ask with pop-up questions. Ask before every
 Meshy use (paid), through the journal `D:\WorkSpace\meshy\private\meshy-jobs.sqlite3`, never retry a paid POST, never
 print the key; after a paid run `python tools/meshy/ledger_sync.py`. Back up (commit + push) every hour.
@@ -47,6 +47,14 @@ Read first: `.claude/skills/meshy-characters/SKILL.md` (section "Animals"), `doc
   lids, and compares the dragon's size with the old code dragon (flat, 0.8 m wings) although the owner chose a small
   standing dragon. The check needs a Meshy-companion rule (near model, owner's size); not changed yet.
   Sheets for the owner: `companions/firefly-sheet.png`, `companions/dragon-sheet.png` (reference beside the game).
+
+- 12 Nov, owner asked to see both flying, flying fast, tricks, near and far, all angles, HD or normal:
+  `tools/meshy/companion_film.mts` films (held page clock, the world stepped by the tool; six views; hover, walk, run,
+  loop, spin; `far` swaps in the light model). Films: `D:\WorkSpace\meshy\petsilm\{firefly,dragon,dragon-far}.mp4`.
+  Fast flight looked like hovering: companions now lean into the flight and beat their wings faster with speed
+  (`js/companion.ts`). Companions always use the HD (near) model in the game; the dragon also has a light one (fallback),
+  the firefly's fallback is still the Blender model. Build note: on this loaded machine `node tools/build.mts` can fail in
+  its catalogue step (1.5 s timeout); `node tools/build.mts d:/workspace/sv-meshy-pets` (lower case) compiles only.
 
 ## Next steps
 1. Rebuild both companions (`blender -b -P tools/meshy/fit_animal.py -- <kind> <near remesh> <far remesh> <out>`;
