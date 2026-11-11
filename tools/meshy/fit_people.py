@@ -573,6 +573,7 @@ def ellipse(img, cx, cy, rx, ry, col, edge):
     d = np.hypot((xx - cx) / max(rx, 1), (yy - cy) / max(ry, 1)); al = np.clip((1 - d) * max(rx, ry), 0, 1)[..., None]
     img[..., :3] = img[..., :3] * (1 - al) + np.array(col) * al; img[..., 3:] = np.maximum(img[..., 3:], al)
     ring = np.clip(1 - abs(d - 1) * max(rx, ry) / 1.2, 0, 1)[..., None]; img[..., :3] = img[..., :3] * (1 - ring) + np.array(edge) * ring
+GLOPEN = []
 def shift_iris(img, b, frac):
     out = img.copy(); w_ = b[2] - b[0]; dx = int(round(w_ * frac)); y0 = int(b[1] + (b[3] - b[1]) * .3); y1 = b[3]
     sub = img[y0:y1, b[0]:b[2]]; v = sub[..., :3].max(-1); sat = (v - sub[..., :3].min(-1)) / np.maximum(v, 1e-4)
@@ -598,6 +599,7 @@ def shift_iris(img, b, frac):
     opening = wjoin
     sx = ex - dx; ok = (sx >= 0) & (sx < ww_); sxc = np.clip(sx, 0, ww_ - 1)
     take = opening & ok & opening[ey, sxc]
+    _om = np.zeros(img.shape[:2], bool); _om[y0:y1, b[0]:b[2]] = opening; GLOPEN.append(_om)   # (the eye's opening, for the glance piece's own mask)
     o = out[y0:y1, b[0]:b[2]]
     o[opening, :3] = np.array(EW); o[take, :3] = sub[ey[take], sxc[take], :3]
     # (the iris leaves bits along the eye's edge uncovered; white there showed as a crescent under the eye: they take the
@@ -676,6 +678,10 @@ if OWN:
         if k in ('lookL', 'lookR'):   # (11 Nov 2026, owner circled the glancing eye from the side on every villager) the glance piece stops a few pixels inside the eye's opening and does not grow: the eye's rim and the white along it stay the body's own; a piece reaching the rim lay a little in front of the face and showed a second rim beside the painted one (white rings) when seen from the side
             for _ in range(max(2, int(W_ * .025))): ch = np.minimum.reduce([ch, np.roll(ch, 1, 0), np.roll(ch, -1, 0), np.roll(ch, 1, 1), np.roll(ch, -1, 1)])
             M[k][..., 3] = np.minimum(soften(ch, 0, _g) * 1.6, 1) * PARTS[k] * NOHAIR
+            if REFP == 'villager-' and GLOPEN:   # (11 Nov 2026, round 14: the eroded changes left only scattered arcs and dots of the moved iris, specks from the side, and the iris hardly moved from the front) the piece is the whole inside of the eye's opening, a few pixels in from its rim, softened
+                _op = np.logical_or.reduce(GLOPEN).astype(np.float32)
+                for _ in range(max(2, int(W_ * .02))): _op = np.minimum.reduce([_op, np.roll(_op, 1, 0), np.roll(_op, -1, 0), np.roll(_op, 1, 1), np.roll(_op, -1, 1)])
+                M[k][..., 3] = np.minimum(soften(_op, 0, _g) * 1.6, 1) * NOHAIR
         else: M[k][..., 3] = np.minimum(soften(ch, max(1, _g // 2), _g) * 1.6, 1) * PARTS[k] * NOHAIR   # (a narrow soft edge: less of the cheek redrawn)
         # (where see-through it keeps the painted face's own colour in a narrow band round each piece: black there blended
         # into a dark fringe; beyond the band one flat colour, so the picture stays small)
