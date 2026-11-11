@@ -1335,6 +1335,16 @@ if TEX and KEEP and SHIFT:
                 for _c in range(3): _b2[_li * 4 + _c] = 1.
                 _cd.foreach_set('color', _b2)
             print('FIT eye-area triangles marked skin', int(_add.sum()))
+            if REFP == 'villager-':   # (round 16: Mai's, Bông's, Lan's and Su's temple hair is painted on triangles Meshy's skin test took as skin; out there, 10 px and more beyond the eye box, the shut-eye paint turned it red-brown) dark skin-marked triangles there lose the mark: hair, not eyelid
+                _nr_ = np.zeros(len(me.polygons), bool)
+                for b in list(eyes.values())[:2]: _nr_ |= (_fcx > fx0 + (b[0] - 10) / W_ * (fx1 - fx0)) & (_fcx < fx0 + (b[2] + 10) / W_ * (fx1 - fx0)) & (_fcz > fz1 - (b[3] + 10) / H_ * (fz1 - fz0)) & (_fcz < fz1 - (b[1] - 10) / H_ * (fz1 - fz0))
+                _unm = _ine & ~_nr_ & _skp & _hz & (_mc.max(-1) < .35) & (_fcy < _ear_y)
+                if _unm.any():
+                    _cd = body.data.color_attributes['skinw'].data; _b2 = np.zeros(len(_cd) * 4, np.float32); _cd.foreach_get('color', _b2)
+                    _li = np.concatenate([list(me.polygons[int(i)].loop_indices) for i in np.nonzero(_unm)[0]]).astype(int)
+                    for _c in range(3): _b2[_li * 4 + _c] = 0.
+                    _cd.foreach_set('color', _b2)
+                print('FIT dark temple triangles unmarked', int(_unm.sum()))
 if TEX:
     colour.scale(TEX, TEX); colour.file_format = 'JPEG'; colour.save(filepath=jp, quality=int(os.environ.get('FIT_JPGQ') or (88 if TEX >= 1024 else 72)))   # (owner 8 Nov 2026: 62 left speckles on the necks)
     jimg = bpy.data.images.load(jp); jimg.name = ID + '-colour'
