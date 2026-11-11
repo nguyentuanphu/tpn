@@ -461,7 +461,7 @@ def lid(img, b, top=0., bot=1.):   # (original_skin) a closed lid painted over t
         # the eye's own outline (grey or dark, not skin) reaches a little further out: it closes too, so only skin is
         # round the lid and the fill takes the true colours there (blush below, shading above), not one pale skin colour
         _far = np.hypot((xx - cx_) / (rx * 1.5), (yy - cy_) / (ry * 1.3)) < 1
-        _ol = _far & ((V < .6) | ((V > .7) & (S_ < .22)) | (D > .3)) & ~(HAIRISH & ~_inb)   # (grey, dark or not her skin colour: the eye's outline)   # (grey or dark outline only: Clara's saturated cheeks are not outline)
+        _ol = _far & ((V < .6) | ((V > .7) & (S_ < .22))) & ~(HAIRISH & ~_inb)   # (11 Nov 2026, owner: Lumi's closed and smiling eyes looked flat and patchy: her blush is far from her skin colour, counted as outline, and the lid was filled flat down over the cheeks; only grey or dark is outline)   # (grey, dark or not her skin colour: the eye's outline)   # (grey or dark outline only: Clara's saturated cheeks are not outline)
         _h2 = _h & _near
         for _ in range(int(max(rx, ry))):
             _n = _h2 | (_ol & (np.roll(_h2, 1, 0) | np.roll(_h2, -1, 0) | np.roll(_h2, 1, 1) | np.roll(_h2, -1, 1)))
@@ -488,6 +488,11 @@ def lid(img, b, top=0., bot=1.):   # (original_skin) a closed lid painted over t
         # over the top stay hair)
         _wide = (np.hypot((xx - cx_) / (w_ * .76), (yy - (b[1] + b[3]) / 2) / (h_ * .64)) < 1) & ~(HAIRISH & (yy < b[1] + h_ * .15)) & ~(HAIRISH & ~_inb & (S_ > .3) & (V > .45) & ~((V > .7) & (S_ < .22)))   # (dark lash flicks close even when hair-coloured, Lumi's; only bright, strongly coloured hair beside the eye stays: the faint grey edge of Lumi's outline closes, 9 Nov)   # (an eye's white is never hair: Clara's inner corner; Lumi's outer arc, 9 Nov; a strand of hair beside the eye stays hair: Clara's)
         hole |= _wide & (yy >= b[1] + h_ * .24)   # (below the brows: b reaches up over them, and closed eyes lost Clara's and Lumi's brows)
+    if OWN:   # (11 Nov 2026, owner: Lumi's closed and smiling eyes, a flat patch over the face with no blush) the cheek under
+        # the eye stays as painted: below the eye's middle, a red-pink pixel (not dark, not white, red above green and blue)
+        # is blush, never lid, whatever the outline tracing above reached
+        _R, _G, _B = F[..., 0], F[..., 1], F[..., 2]
+        hole &= ~((yy > cy_) & (V > .6) & (S_ > .3) & (_R > _G * 1.2) & (_R > _B * 1.3))   # (inside the eye's box too: Lumi's box reaches down over her blush)
     if top > 0: hole &= yy >= y0
     if PART: hole &= yy < lidline(xx)
     # her own skin flows in from all round the eye (a smooth fill, no disc edge): the eye pixels are repeatedly

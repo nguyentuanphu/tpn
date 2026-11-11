@@ -269,6 +269,7 @@ def _move_with_body(bm, o, name):
         jp = J[limb]
         for v in bm.verts:
             if (v.co - jp).length > .16: continue
+            if hb.startswith('helpArm') and (lambda h_: h_[0] is not None and bool(isarm[h_[2]]))(btree.find_nearest(v.co)): continue   # (11 Nov 2026, owner: "áo đứt", Lumi's sleeves ragged with skin through them: a sleeve on the half-turning helper lagged behind the arm under it as the arms came down; only the trunk's side, the armpit, bends by half)
             w = getw(v); wl = w.get(limb, 0.); wt = sum(w.get(t_, 0.) for t_ in trunk_)
             m_ = min(wl, wt)
             if m_ < .02: continue
@@ -742,7 +743,15 @@ for o in parts:
 _ca = me.color_attributes.get('skinw')
 if _ca is not None and _ca.domain == 'CORNER':
     _al = np.array([_cbits[l.vertex_index] for l in me.loops], np.float32) / 255.
-    _buf = np.zeros(len(_ca.data) * 4, np.float32); _ca.data.foreach_get('color', _buf); _buf[3::4] = _al; _ca.data.foreach_set('color', _buf)
+    _buf = np.zeros(len(_ca.data) * 4, np.float32); _ca.data.foreach_get('color', _buf); _buf[3::4] = _al
+    # (11 Nov 2026, owner: "áo đứt", dark slits down both sides of Lumi's shirt front) the game took every point that is
+    # not skin and under no garment for hair below the neck and drew it 1.2 cm in front of the clothes (js/friend-model.ts,
+    # the hair's bias): body points the shirt's cut left uncovered came through it as dark slits. A body point that is not
+    # hair now carries blue 1 (blue only counts on skin, as green minus blue), and only blue 0 is taken for hair
+    _hgb = body.vertex_groups.get('hair-v'); _hgbi = _hgb.index if _hgb else -1
+    _nothair = np.array([0. if any(g.group == _hgbi for g in me.vertices[l.vertex_index].groups) else 1. for l in me.loops], np.float32)
+    _nb = (_buf[0::4] < .5) & (_nothair > .5); _buf[2::4] = np.where(_nb, 1., _buf[2::4]); _ca.data.foreach_set('color', _buf)
+    print('CL body points marked not hair', int(_nb.sum()), 'corners')
     for m_ in me.materials:
         if m_ is not None: m_['cover_mark'] = True; m_['kit_waist'] = float(WAIST); m_['kit_neck'] = float(NECK); m_['kit_grey'] = float(GREY_LUM)   # (the game paints the swim kit in the worn clothes' colours: above the waist the top's, below the trousers')
     print('CL cover bits written on', int((_cbits > 0).sum()), 'of', len(me.vertices), 'body points')
