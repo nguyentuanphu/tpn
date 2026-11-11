@@ -18,7 +18,7 @@ const b = await chromium.launch({ args: ['--use-angle=swiftshader', '--enable-un
 // (10 Nov 2026: on a busy machine the page took over 30 s to load: 3 min limits)
 const nc = b.newContext.bind(b); b.newContext = async (o: any) => { const c = await nc(o); c.setDefaultNavigationTimeout(180000); c.setDefaultTimeout(180000); return c; };
 const P = await open(b, { w: 900, h: 700, fast: false }); await clear(P.page);
-const shots: Record<string, string> = await P.page.evaluate(async ([MODE, LIST, BARE, HIDE, process_linear]) => {
+const shots: Record<string, string> = await P.page.evaluate(async ([MODE, LIST, BARE, HIDE, process_linear, SZ, DIST, UP]) => {
   const G = (window as any).__sv, A = await import(String('/js/avatar.js')), FM = await import(String('/js/friend-model.js')), { THREE } = await import(String('/js/gfx.js'));
   const h = G.heroes[0], R = G.renderer, out: Record<string, string> = {};
   const w = (ms: number) => { dispatchEvent(new Event('pointermove')); document.querySelectorAll('.storybook, .dialog, .modal, .reward').forEach(e => e.remove()); G.paused = false; G.world.time = .42; return new Promise(res => setTimeout(res, ms)); };
@@ -38,9 +38,9 @@ const shots: Record<string, string> = await P.page.evaluate(async ([MODE, LIST, 
     const box = new THREE.Box3().setFromObject(model.obj, true), Hh = box.max.y - box.min.y, bc = box.getCenter(new THREE.Vector3());
     const at = head ? head.getWorldPosition(new THREE.Vector3()).add(new THREE.Vector3(0, villager ? .1 : .12, 0)) : new THREE.Vector3(bc.x, box.min.y + Hh * .86, bc.z);   // (10 Nov 2026: villagers by their head bone too: a raised arm in the box put the head at the picture's foot)
     const fwd = new THREE.Vector3(Math.sin(yaw), 0, Math.cos(yaw)).applyAxisAngle(new THREE.Vector3(0, 1, 0), side);
-    const cam = new THREE.PerspectiveCamera(28, 1, .05, 200); cam.position.copy(at).addScaledVector(fwd, Hh * .75); cam.lookAt(at);
+    const cam = new THREE.PerspectiveCamera(28, 1, .05, 200); at.y += Hh * UP; cam.position.copy(at).addScaledVector(fwd, Hh * DIST); cam.lookAt(at);
     const hid: any[] = []; if (HIDE === 'face') model.obj.traverse((o: any) => { if (o.isMesh && o.visible && /^face-/.test(o.material && o.material.name || '')) { hid.push(o); o.visible = false; } });   // (HIDE=face: the mood pieces hidden, to tell what the body shows under them)
-    grab(name, cam); hid.forEach(o => { o.visible = true; });
+    grab(name, cam, SZ, SZ); hid.forEach(o => { o.visible = true; });
   };
   const mood = (av: any, M: any, m: string) => { if (av.life) { av.life.mood = m; av.life.blink = av.life.t + 60; av.life.glance = av.life.t + 60; av.life.feel = ''; } M.follow(m); };
   const MOODS = ['smile', 'blink', 'half', 'happy', 'o', 'sad', 'lookL', 'lookR', 'excited'];
@@ -228,7 +228,7 @@ const shots: Record<string, string> = await P.page.evaluate(async ([MODE, LIST, 
     par.attach(n.A.root); SCN = null; G.paused = false;
   }
   return out;
-}, [MODE, LIST, !!process.env.BARE, process.env.HIDE || '', !!process.env.LINEAR] as any);   // (LINEAR=1: the old linear pictures)   // (HIDE=shorts: that garment hidden in the poses, to tell which layer shows)
+}, [MODE, LIST, !!process.env.BARE, process.env.HIDE || '', !!process.env.LINEAR, Number(process.env.SHOT_SIZE || 480), Number(process.env.SHOT_DIST || .75), Number(process.env.SHOT_UP || 0)] as any);   // (11 Nov 2026: SHOT_SIZE=1024 SHOT_DIST=.45 SHOT_UP=.06 for the face at full size: the owner's eyes and mouth review)   // (LINEAR=1: the old linear pictures)   // (HIDE=shorts: that garment hidden in the poses, to tell which layer shows)
 if (MODE === 'cover' || MODE === 'skirt') for (const [k, v] of Object.entries(shots)) if (!String(v).startsWith('data:')) console.log(k, v);
 for (const [k, v] of Object.entries(shots)) { if (v) writeFileSync(`${OUT}/${k}.png`, Buffer.from(v.split(',')[1], 'base64')); else console.log('missing', k); }
 console.log('shots', Object.keys(shots).length, 'in', OUT);

@@ -5,7 +5,7 @@
 # (8 Nov 2026) -Villager: a villager has one model, seen close and far (js/main.ts wears models/villager-<id>.glb):
 # one fit of the 30k remesh with a 1024 px picture (8 Nov: Meshy's own face is seen, 512 px blurred the eyes); the 288 px light picture showed
 # specks and broken hair up close. The reference is lumi.py's villager role=<id> build; its parts are named villager-.
-param([string]$Id, [string]$Ref = '', [string]$Prefix = '', [switch]$Villager, [string]$VMesh = '9000', [string]$VTex = '1024', [string]$VTile = '192', [string]$VQ = '70', [string]$VGrid = '26', [switch]$NoLimbTint, [string]$SkinSMax = '', [switch]$EyeDark, [switch]$SmoothPieces, [switch]$LidMatch, [string]$FaceUV = '', [string]$PieceSnap = '', [switch]$MouthFind, [switch]$LookSolid)   # -Prefix: the reference's part names, default <id>-
+param([string]$Id, [string]$Ref = '', [string]$Prefix = '', [switch]$Villager, [string]$VMesh = '9000', [string]$VTex = '1024', [string]$VTile = '192', [string]$VQ = '70', [string]$VGrid = '26', [switch]$NoLimbTint, [string]$SkinSMax = '', [switch]$EyeDark, [switch]$SmoothPieces, [switch]$LidMatch, [string]$FaceUV = '', [string]$PieceSnap = '', [switch]$MouthFind, [switch]$LookSolid, [switch]$LidSoft)   # -Prefix: the reference's part names, default <id>-
 # (10 Nov 2026, cloud pilot) the tools also run on Linux: SV_MESHY_ROOT (default D:\WorkSpace\meshy), SV_BLENDER, SV_NPX
 $root = if ($env:SV_MESHY_ROOT) { $env:SV_MESHY_ROOT } else { 'D:\WorkSpace\meshy' }
 if (-not $Ref) { $Ref = Join-Path $root "work-v108/$Id-game-hd.glb" }
@@ -31,6 +31,8 @@ $env:FIT_FACE_UV = $FaceUV; $env:FIT_PIECE_SNAP = $PieceSnap
 if ($MouthFind) { $env:FIT_MOUTH_FIND = '1' } else { $env:FIT_MOUTH_FIND = '' }
 # (owner 11 Nov 2026) -LookSolid: the looking eyes' pieces cover the whole eye opening (no ring of the painted iris)
 if ($LookSolid) { $env:FIT_LOOK_SOLID = '1' } else { $env:FIT_LOOK_SOLID = '' }
+# (owner 11 Nov 2026, close-up) -LidSoft: a closed lid ends in a soft band of blurred skin (no disc edge, no ring of the painted eye's outline)
+if ($LidSoft) { $env:FIT_LID_SOFT = '1' } else { $env:FIT_LID_SOFT = '' }
 $B = if ($env:SV_BLENDER) { $env:SV_BLENDER } else { 'C:\Users\nguye\tools\blender-4.2.23-windows-x64\blender.exe' }
 $npx = if ($env:SV_NPX) { $env:SV_NPX } elseif ($IsLinux -or $IsMacOS) { Join-Path (Split-Path (Split-Path (Get-Command node).Source)) 'lib/node_modules/npm/bin/npx-cli.js' } else { 'C:\Program Files\nodejs\node_modules\npm\bin\npx-cli.js' }
 $repo = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent; Set-Location $repo
