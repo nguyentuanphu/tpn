@@ -19,11 +19,19 @@ Read first: `.claude/skills/meshy-characters/SKILL.md` (section "Animals"), `doc
 - Last fixes: firefly lid colour from the ring just round the eye (peach mask on a navy head), `lid_size` 2.6; dragon `audit.hatLoose` 6 (egg-shaped head, gap hidden under the band). Earlier: hat skull top by point count (not width: antennae, horns), auditor loose/poke rules, firefly lids bigger
   (`lid_size` 3.2), mouth piece smaller (`mouth_patch` 1.2), firefly leg gaps allowed (`audit.tear` 120, reason in json).
 
-- 11 Nov afternoon (this chat): the mouth piece had silently used the lids' picture size and grid (a `TP = ...` hidden
-  behind a `#` comment in the middle of its line): fixed, the mouth has its own 96 px picture again (the firefly was
-  822 KB, over 800). The lash line on the lids is drawn with soft edges (was stair steps). Firefly lids: `lid_out`
-  (moved outwards over lashes that flick out), `lid_wide` 1.2, `lid_px` 176. Debug fit writes `<kind>-lidsrc<i>.png`
-  (the painted face, the eye found in red, the lid's edge in green). Dragon close shots (09:23 models) looked at: fine.
+- 11 Nov afternoon/evening (this chat). Firefly shut and happy lids fixed, auditor eyes 0 failing (was 9):
+  - the mouth piece had silently used the lids' picture size and grid (a `TP = ...` hidden behind a `#` comment in
+    the middle of its line): fixed, its own 96 px picture again;
+  - lash line drawn with soft edges (was stair steps);
+  - `fill_near`: the shut lid filled only from the face colour round the eye (was grey, mixed with the navy hair);
+  - `lash_dark` 0.2 (the lash arc over the eye is 0.16) and `lash_spot` (small warm specks darker than the face round
+    them) filled under the lid;
+  - the specks that stayed were not in the picture: a debug build with the lids painted magenta (`LID_DEBUG=1` env)
+    showed (1) the lid (size 2.9, `lid_out` 0.8) covering the whole head and riding on the antennae, (2) small bumps
+    in Meshy's mesh poking through it. Now `lid_size` 2.2, `lid_lift` 0.006, `lid_rim` (rim off along the surface
+    normal), `lid_spike` (lid points on something sticking out are left out), `lid_px` 160 (size limit);
+  - debug fit writes `<kind>-lidsrc<i>.png` (eye found red, filled blue, lid edge green).
+  Dragon: 09:23 models, close shots looked at, fine; audited again with the firefly.
 
 ## Next steps
 1. Rebuild both companions (`blender -b -P tools/meshy/fit_animal.py -- <kind> <near remesh> <far remesh> <out>`;
