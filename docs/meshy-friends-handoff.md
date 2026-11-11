@@ -39,6 +39,9 @@ Không đổi file models/*.glb (chỉ máy của chủ dựng lại được).
 
 ## Where it stands
 
+- **Round 83 (11 Nov 2026, 5 pm AEDT): 576 of 2576 failing** (82: 578, 80: 577), `D:\WorkSpace\meshyittedudit-f83` (every case has its `-look` picture). Clara 186, Sol 96, Finn 102, Lumi 192. All four models rebuilt with: a top round the neck on the body's own weights, and a skirt's waistband top on the trunk. Review sheets sent to the owner: `D:\WorkSpace\meshyittedeview-f83` (made with the scratchpad `sheet.py`: `part-<id>/<id>-<kind>-<pose>-<view>-look.png`, 5 poses x tq/back, and feet/feetback).
+- Seen in the round 83 sheets, worst first: (1) every friend's áo dài jumping, from behind: the back panel lifts and shows the white trousers with a dark stripe and a wedge (still the first thing to fix); (2) Clara's rain coat hem ragged at the back with the trousers showing through (jump, cheer back), and faint light streaks on the backs of tops (Clara's áo dài and coat); (3) a pale blotch at Clara's braid tips where they lie on the skirt or panel (walk, run, jump, cheer, three-quarter view); (4) Clara's festival leggings' knee through the skirt sitting; (5) seated skirts and áo dài backs hang to the ground behind the seat like a board (two tries failed: deeper tuck, shortening).
+
 - Round 82 (11 Nov 2026 AEDT, `D:\WorkSpace\meshyittedudit-f82`): the round 80 code again (the kit lit-like-a-garment WIP and the seated skirt shortening are both dropped, see SKILL.md), plus Finn's collar on the body's own weights (make_clothes.py step 4, only Finn rebuilt so far). Clara 185 (81: 189), Sol 97 (96), Lumi 194 (195); Finn: see the round 82 note below.
 - The kit lit like a garment (kf_) was tried and dropped: the body under the clothes is in the garment's shadow, so it showed darker patches (Clara quick test kit 11 -> 47 failing of 116).
 - Round 81 (seated skirt back shortened): 594, dropped. Round 80 (kit paint .975): 577 of 2576.
