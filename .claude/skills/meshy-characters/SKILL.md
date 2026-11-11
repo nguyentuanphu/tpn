@@ -172,7 +172,7 @@ Record: `docs/meshy-regional-40-100/PILOT-1.md`. Ids `r<nnn>` (sheet number), jo
 - **Eyes, nose and mouth (owner 11 Nov 2026: "Đã làm rất nhiều rồi sao vẫn còn nhiều lỗi vậy, các skill đâu dao không kiểm
   tra? Tất cả con mắt, mũi và miệng của các nhân vật đều có vấn đề").** A round passed the auditor and was sent with a second
   mouth on every "o", excited and sad face, soft eyes, smudged noses and streaked looking eyes. Causes and fixes (all in
-  `fit_person.ps1`, regional villagers fit with `-NoLimbTint -LidMatch -FaceUV 2 -PieceSnap .003 -MouthFind -LookSolid -VTile 256`):
+  `fit_person.ps1`, regional villagers fit with `-NoLimbTint -LidMatch -FaceUV 2 -PieceSnap .001 -MouthFind -LookSolid -VTile 256`):
   - *Two mouths.* The mood mouth erased the painted one through `lid()`, the eye's closing, and `-LidMatch` keeps whatever is
     near the skin's colour: pink lips are, so the smile stayed under the new mouth. The mouth box was also a fixed band of the
     face picture (.62 to .97 of its height): r057's mouth lies at .56 (his helmet strap was taken) and r084's darker skin made
@@ -180,7 +180,7 @@ Record: `docs/meshy-regional-40-100/PILOT-1.md`. Ids `r<nnn>` (sheet number), jo
     against the skin right there (a fainter step when none is found), erased on its own (`erase_mouth`).
   - *Pieces floating off the face.* The mood grid was smoothed and only kept from going behind the face, never from floating
     in front: over hollows (the mouth, the eye sockets) it stood up to a centimetre off, and from three-quarters the "o" sat on
-    the chin and the far eye showed past the nose. `-PieceSnap .003`: at most 1 mm (+3) in front. The closed-eye count fell
+    the chin and the far eye showed past the nose. `-PieceSnap .001`: at most 1 mm (+3) in front. The closed-eye count fell
     from 27-66 to 0 on r050 and r084 with this alone.
   - *Soft eyes, smudged nose.* `keep_meshy_uvs` keeps Meshy's layout, where the face is a few percent of the picture, cut into
     330-580 small islands; the 500 KB budget halves the 2048 picture to 1024, so the eyes were 35 px wide (Meshy's own: 75).
@@ -209,8 +209,10 @@ Record: `docs/meshy-regional-40-100/PILOT-1.md`. Ids `r<nnn>` (sheet number), jo
   - *Clean in the picture, broken in the game (12 Nov 2026).* The preview (`face_moods_preview.py`) was clean while the game
     showed lash arcs over r045's shut eyes and lash flicks at r074's corners: the mood pieces are a grid of 1.3 cm cells,
     snapped 1 mm in front of the face at their corners only, so between corners they cut under the bulge of the lid and the
-    brow, and the painted eye showed through. Each grid point is now placed by the highest face at it and at the eight
-    half-cell points round it, with `-PieceSnap .003`. Also: looking eyes were empty in the game for a whole round (a sign
+    brow, and the painted eye showed through. Each grid point is now placed by the highest face at it, a quarter cell to
+    either side and half a cell up and up to either side, with `-PieceSnap .001` (tried and dropped: the eight half-cell
+    points, and 3 mm, made the piece stand off so the painted eye showed past it from the side, r050's profile 34 px;
+    up and down only left lash bits over r045's shut eyes). Judge it with the audit's side views and the front close-up. Also: looking eyes were empty in the game for a whole round (a sign
     error in the eye's hull) and no check said so: `audit_villager.mts` now has `lookstill`. Lesson: a fix is judged in the
     game at 1024 px, the preview only says the picture is right.
   - *Mouth fixes that only worked on the test pair.* After the fixes passed on r050 and r084, the run of all six failed

@@ -20,7 +20,7 @@ State (11 Nov 2026 AEDT):
 - Game references: `blender -b -P tools/blender/lumi.py -- $SV_MESHY_ROOT/work-v108 villager role=<role> game glb hd`
   for vn-schoolgirl, vn-grandma, vn-dad, au-mum, au-grandma, au-boy (files are `-game-hd`, `-adult-hd`, `-elder-hd`).
 - Fit each person (about 10 to 40 min; two at a time):
-  `pwsh -File tools/meshy/fit_person.ps1 -Id <id> -Villager -NoLimbTint -LidMatch -FaceUV 2 -PieceSnap .003 -MouthFind -LookSolid -LidSoft -VTile 256 <flags> -Ref $SV_MESHY_ROOT/work-v108/villager-<ref>-hd.glb`
+  `pwsh -File tools/meshy/fit_person.ps1 -Id <id> -Villager -NoLimbTint -LidMatch -FaceUV 2 -PieceSnap .001 -MouthFind -LookSolid -LidSoft -VTile 256 <flags> -Ref $SV_MESHY_ROOT/work-v108/villager-<ref>-hd.glb`
   (the face flags since 11 Nov 2026, after the owner's "eyes, nose and mouth all have problems": see the skill's "Eyes, nose and mouth")
   | id | ref | flags |
   |----|-----|-------|
