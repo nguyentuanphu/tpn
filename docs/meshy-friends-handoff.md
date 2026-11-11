@@ -39,10 +39,10 @@ Không đổi file models/*.glb (chỉ máy của chủ dựng lại được).
 
 ## Where it stands
 
-- Last full round pushed: round 78 (commit 50e9055e6), 636 of 2576 cases failing (77: 791, 76: 856, 75: 1029). Self-test passed (7 planted faults caught).
-- Untested, not built yet (11 Nov): js/friend-model.ts paints the kit and covered body lit like a garment (kf_: emissive .62, diffuse .55 x .95), because garments brighten in light and darken in shadow while the baked body barely changes; build and quick-test after round 81, then round 82.
-- Round 81 running (seated skirt back shortened, 40% of its length folded under the seat: js/friend-model.ts after the `sit_` line), output `D:\WorkSpace\meshy\fitted\audit-f81`.
-- Round 80 (kit paint .975): 577 of 2576 failing (78: 636). Clara 184 (78: 139, back views lighter than her dress), Sol 98, Finn 103, Lumi 192. A shade from the blurred body picture was tried and dropped (see SKILL.md). Review pictures of round 80: `D:\WorkSpace\meshy\fitted\review-f80\gui` (on the PC only). Seen in them: seated skirts hang straight down like a bucket from behind; the áo dài back panel lifted in a jump shows white trousers with a dark stripe. Next: a deeper seat tuck (js/friend-model.ts, `sit_ * .35` and `.6`).
+- Round 82 (11 Nov 2026 AEDT, `D:\WorkSpace\meshyittedudit-f82`): the round 80 code again (the kit lit-like-a-garment WIP and the seated skirt shortening are both dropped, see SKILL.md), plus Finn's collar on the body's own weights (make_clothes.py step 4, only Finn rebuilt so far). Clara 185 (81: 189), Sol 97 (96), Lumi 194 (195); Finn: see the round 82 note below.
+- The kit lit like a garment (kf_) was tried and dropped: the body under the clothes is in the garment's shadow, so it showed darker patches (Clara quick test kit 11 -> 47 failing of 116).
+- Round 81 (seated skirt back shortened): 594, dropped. Round 80 (kit paint .975): 577 of 2576.
+- Clara's largest faults now: `bodice>skirt` when running (run2: 190 to 265 px, everyday and festival): the bodice shows over the skirt's top. Likely cause: the skirt's waistband takes 35% of the skirtF/skirtB bones (make_clothes.py, cone(), `sw = .35 + 2.2 t`), which turn round the hips' axis, so a forward thigh pulls the waistband's front backwards into the bodice. Try a smaller share at the very top (and the bodice's hem share to match), then audit Clara.
 
 ## How to run
 
