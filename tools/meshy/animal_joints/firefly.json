@@ -54,7 +54,8 @@
   "lid_on_eye": true,
   "lid_px": 176,
   "lid_up": 0.7,
-  "lash_dark": 0.13,
+  "lash_dark": 0.2,
   "lid_grid": 44,
-  "lid_out": 0.5
+  "lid_out": 0.3,
+  "fill_near": 0.25
 }

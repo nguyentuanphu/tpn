@@ -626,9 +626,15 @@ def face_pieces(o, arm, J, Fc):
         if DEBUG:   # (what the lid covers: the painted face, the eye found (red) and the lid's own edge (green))
             dbg = img0.copy(); dbg[eye] = dbg[eye] * .5 + np.array((.5, 0, 0)); el = np.abs(np.hypot((xx - gx) / Rx, (yy - gy) / R) - 1) < 2 * P / TP / R; dbg[el] = (0, 1, 0)
             dim = bpy.data.images.new(f'src{i}', TP, TP); dim.pixels[:] = np.concatenate([dbg, np.ones((TP, TP, 1))], 2).astype(np.float32).ravel(); dim.filepath_raw = os.path.join(OUT, f'{KIND}-lidsrc{i}.png'); dim.file_format = 'PNG'; dim.save()
+        # (fill_near: only the fur like the colour round the eye feeds the fill, so a peach face under navy hair shuts
+        # with a peach lid, not a grey one mixed from both; the hair itself is kept as painted)
+        src = known & (np.linalg.norm(img0 - fur, axis=2) < FIX['fill_near']) if FIX.get('fill_near') else known
+        if FIX.get('fill_near'): fill[~src] = fur
+        if DEBUG: dbg[inside & hit] = dbg[inside & hit] * .6 + np.array((0, 0, .4)); dim.pixels[:] = np.concatenate([dbg, np.ones((TP, TP, 1))], 2).astype(np.float32).ravel(); dim.save()   # (blue: what is filled)
         for _ in range(TP * 2):   # (fill the eye from the fur round it: neighbours' average, the fur kept)
             avg = (np.roll(fill, 1, 0) + np.roll(fill, -1, 0) + np.roll(fill, 1, 1) + np.roll(fill, -1, 1)) / 4
-            fill = np.where(known[..., None], img0, avg)
+            fill = np.where(src[..., None], img0, avg)
+        fill = np.where(known[..., None], img0, fill)
         lash = np.array(FIX.get('lash', (.22, .14, .1)))
         for kind, curve in (('shut', lambda u: -.1 * r + .3 * r * (u / ew) ** 2), ('joy', lambda u: .1 * r - .45 * r * (u / ew) ** 2)):
             img = fill.copy()
