@@ -492,7 +492,9 @@ def lid(img, b, top=0., bot=1.):   # (original_skin) a closed lid painted over t
         # the eye stays as painted: below the eye's middle, a red-pink pixel (not dark, not white, red above green and blue)
         # is blush, never lid, whatever the outline tracing above reached
         _R, _G, _B = F[..., 0], F[..., 1], F[..., 2]
-        hole &= ~((yy > cy_) & (V > .6) & (S_ > .3) & (_R > _G * 1.2) & (_R > _B * 1.3))   # (inside the eye's box too: Lumi's box reaches down over her blush)
+        _esh = ((V < .55) | ((V > .78) & (S_ < .22))) & (np.hypot((xx - cx_) / (rx * 1.2), (yy - cy_) / (ry * 1.1)) < 1)   # (the eye's own dark and white pixels, and 4 px round them: their soft edge, half white and half skin, passed as blush and showed as a pale ring round every closed eye)
+        for _ in range(4): _esh = _esh | np.roll(_esh, 1, 0) | np.roll(_esh, -1, 0) | np.roll(_esh, 1, 1) | np.roll(_esh, -1, 1)
+        hole &= ~(~_esh & (yy > cy_) & (V > .82) & (S_ > .3) & (_R > _G * 1.2) & (_R > _B * 1.3))   # (bright: Sol's amber iris, red but darker, passed at .6 and showed through his closed lids; a blue-near-green test instead broke Lumi's orange-red blush into specks)   # (inside the eye's box too: Lumi's box reaches down over her blush)
     if top > 0: hole &= yy >= y0
     if PART: hole &= yy < lidline(xx)
     # her own skin flows in from all round the eye (a smooth fill, no disc edge): the eye pixels are repeatedly
