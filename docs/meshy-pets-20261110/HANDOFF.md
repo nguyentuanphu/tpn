@@ -56,6 +56,11 @@ Read first: `.claude/skills/meshy-characters/SKILL.md` (section "Animals"), `doc
   the firefly's fallback is still the Blender model. Build note: on this loaded machine `node tools/build.mts` can fail in
   its catalogue step (1.5 s timeout); `node tools/build.mts d:/workspace/sv-meshy-pets` (lower case) compiles only.
 
+- 12 Nov, owner: a light Meshy firefly in place of the Blender fallback ("Có"). `tools/meshy/decimate.py` made
+  `raw-models/remesh/firefly-9000.glb` (31k to 9k triangles, no credits); fit as usual (`lid_grid_far` 44 so the light
+  lids cover the lashes): `creature-firefly.glb` 386 KB. Audit 112 cases, 0 failing with the limits in firefly.json
+  (reasons there). Film `film/firefly-far.mp4`. Installed in the working copy, waiting for the owner's approval.
+
 ## Next steps
 1. Rebuild both companions (`blender -b -P tools/meshy/fit_animal.py -- <kind> <near remesh> <far remesh> <out>`;
    firefly: near for both), pack with gltfpack `-cc -kn -km -ke -vp 12 -vt 10 -vn 6`, install `-hd` (and dragon far).
