@@ -579,17 +579,18 @@ def face_pieces(o, arm, J, Fc):
     V = np.array([v.co[:] for v in me.vertices]); N = np.array([v.normal[:] for v in me.vertices])
     bvh = bvh_of(o); TP = FIX.get('lid_px', 128)
     for i in (0, 1):
-        c = np.array(Fc['eye%d' % i]); r = Fc['eye%d_r' % i]; R = r * FIX.get('lid_size', 2.4)
+        c = np.array(Fc['eye%d' % i]); r = Fc['eye%d_r' % i]; R = r * FIX.get('lid_size', 2.4); Rx = R * FIX.get('lid_wide', 1.0)   # (lid_wide: an oval lid, wider than tall, over lashes that flick outwards)
+        P = R * FIX.get('lid_pic', 1.0)   # (the picture's half size: bigger when the lid goes on the painted eye's own middle, lid_on_eye)
         tris = [t for t in me.loop_triangles if np.linalg.norm(V[list(t.vertices)].mean(0) - c) < R]
         if not tris: continue
         # the eye's own frame: out of the face (the patch's mean normal), sideways and up
         vi_all = sorted({vi for t in tris for vi in t.vertices}); nrm = N[vi_all].mean(0); nrm /= np.linalg.norm(nrm)
         side = np.cross((0, 0, 1.0), nrm); side /= np.linalg.norm(side); up = np.cross(nrm, side)
-        # the picture: the face seen straight on over the eye (rays along -normal), TP x TP texels over 2R x 2R
+        # the picture: the face seen straight on over the eye (rays along -normal), TP x TP texels over 2P x 2P
         img0 = np.zeros((TP, TP, 3)); Pp = np.full((TP, TP, 3), np.nan)
         for a in range(TP):
             for b in range(TP):
-                x = (b + .5) / TP * 2 * R - R; y = (a + .5) / TP * 2 * R - R
+                x = (b + .5) / TP * 2 * P - P; y = (a + .5) / TP * 2 * P - P
                 frm = c + side * x + up * y + nrm * R
                 loc, nor, fi, _ = bvh.ray_cast(Vector(frm), Vector(-nrm))
                 if loc is None: continue
@@ -597,12 +598,12 @@ def face_pieces(o, arm, J, Fc):
                 from mathutils.geometry import barycentric_transform
                 u = barycentric_transform(loc, vs[0], vs[1], vs[2], Vector((*uvs3[0], 0)), Vector((*uvs3[1], 0)), Vector((*uvs3[2], 0)))
                 img0[a, b] = sample(px, np.array([u.x, u.y])); Pp[a, b] = loc[:]
-        yy, xx = (np.mgrid[0:TP, 0:TP] + .5) / TP * 2 * R - R
+        yy, xx = (np.mgrid[0:TP, 0:TP] + .5) / TP * 2 * P - P
         # the whole painted eye (white, outline, iris, lashes): joined to its middle through texels unlike the fur round it
         rr = np.hypot(xx, yy); hit = ~np.isnan(Pp[..., 0])
         ring = (rr > r * 1.5) & (rr < r * 2.1) & hit   # (the colour just round the eye: Sparkle's face is a peach mask on a navy head)
-        fur = np.median(img0[ring if ring.sum() > 20 else ((rr > R * .8) & (rr < R) & hit)], 0)
-        odd = (np.linalg.norm(img0 - fur, axis=2) > FIX.get('eye_odd', .16)) & hit & (rr < R * .9)
+        fur = np.median(img0[ring if ring.sum() > 20 else ((rr > P * .8) & (rr < P) & hit)], 0)
+        odd = (np.linalg.norm(img0 - fur, axis=2) > FIX.get('eye_odd', .16)) & hit & (rr < R * FIX.get('eye_reach', .9))   # (the painted eye is looked for this far from its found middle)
         eye = np.zeros((TP, TP), bool); st = [(a, b) for a in range(TP) for b in range(TP) if rr[a, b] < r * .5 and hit[a, b]]
         for a, b in st: eye[a, b] = True
         while st:
@@ -614,6 +615,12 @@ def face_pieces(o, arm, J, Fc):
         inside = eye | (rr < r * 1.05); known = ~inside & hit
         ys, xs = np.nonzero(eye); ew = (xx[eye].max() - xx[eye].min()) / 2 if eye.any() else r; ecx = xx[eye].mean() if eye.any() else 0; ecy = yy[eye].mean() if eye.any() else 0
         print('EYE', i, 'width', round(float(ew), 4), 'centre off', round(float(ecx), 4), round(float(ecy), 4), flush=True)
+        gx, gy = (float(ecx), float(ecy)) if FIX.get('lid_on_eye') else (0., 0.)   # (the lid's middle)
+        gy += r * FIX.get('lid_up', 0)   # (raised over lashes that flick upwards)
+        if FIX.get('lash_dark'):   # (painted lashes apart from the eye, under the lid: anything darker than this is filled as fur too)
+            Lm = img0 @ np.array([.3, .59, .11]); dark = (Lm < FIX['lash_dark']) & hit & ((((xx - gx) / Rx) ** 2 + ((yy - gy) / R) ** 2) < 1.15)
+            for _ in range(2): dark = dark | np.roll(dark, 1, 0) | np.roll(dark, -1, 0) | np.roll(dark, 1, 1) | np.roll(dark, -1, 1)
+            inside = inside | dark; known = ~inside & hit
         fill = img0.copy(); fill[~known] = img0[known].mean(0) if known.any() else .5
         for _ in range(TP * 2):   # (fill the eye from the fur round it: neighbours' average, the fur kept)
             avg = (np.roll(fill, 1, 0) + np.roll(fill, -1, 0) + np.roll(fill, 1, 1) + np.roll(fill, -1, 1)) / 4
@@ -633,18 +640,18 @@ def face_pieces(o, arm, J, Fc):
             lift = FIX.get('lid_lift', .003)
             for a in range(GN + 1):
                 for b in range(GN + 1):
-                    x = b / GN * 2 * R - R; y = a / GN * 2 * R - R
-                    if math.hypot(x, y) > R * 1.02: continue
+                    x = gx + (b / GN * 2 - 1) * Rx; y = gy + (a / GN * 2 - 1) * R
+                    if math.hypot((x - gx) / Rx, (y - gy) / R) > 1.02: continue
                     loc, nor, _, _ = bvh.ray_cast(Vector(c + side * x + up * y + nrm * R), Vector(-nrm))
                     if loc is None: continue
-                    k = 1 - smooth01((math.hypot(x, y) / R - .82) / .18)   # (down to the surface at its rim)
+                    k = 1 - smooth01((math.hypot((x - gx) / Rx, (y - gy) / R) - .82) / .18)   # (down to the surface at its rim)
                     grid[a, b] = bm.verts.new(loc + Vector(nrm) * (lift * k + .0004))
             for a in range(GN):
                 for b in range(GN):
                     q = [(a, b), (a, b + 1), (a + 1, b + 1), (a + 1, b)]
                     if not all(k in grid for k in q): continue
                     f = bm.faces.new([grid[k] for k in q])
-                    for lp, (ga, gb) in zip(f.loops, q): lp[uvL].uv = (gb / GN, ga / GN)
+                    for lp, (ga, gb) in zip(f.loops, q): lp[uvL].uv = ((gx + (gb / GN * 2 - 1) * Rx + P) / (2 * P), (gy + (ga / GN * 2 - 1) * R + P) / (2 * P))
             pm = bpy.data.meshes.new(name); bm.to_mesh(pm); bm.free()
             po = bpy.data.objects.new(name, pm); bpy.context.collection.objects.link(po)
             mat = bpy.data.materials.new(name); mat.use_nodes = True; nt = mat.node_tree; tn = nt.nodes.new('ShaderNodeTexImage'); tn.image = pim
