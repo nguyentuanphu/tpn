@@ -195,6 +195,17 @@ Record: `docs/meshy-regional-40-100/PILOT-1.md`. Ids `r<nnn>` (sheet number), jo
     the old iris (as tall as the eye) turns eye white and is laid on again to the side; the piece covers it solidly. Test it
     without a fit: copy `shift_iris` and `skin_mask` out of `fit_people.py` and run them on `mid/face-bake.png` with the eye
     boxes of the `FIT eyes` line (a 20-minute fit per try is too slow). The 11 named villagers have the same fault.
+  - *Judged at the wrong size (owner 11 Nov 2026, second refusal: "Mắt và miệng, nặng nhất là mắt, không soi kỹ hay sao mà
+    đã hỏi?").* The round was sent after looking at 480 px shots and 240 px sheet cells, where a face is about 150 px: every
+    fault below was invisible there and plain at 1024 px. Closed lids were flat discs with a ring (the painted eye's pale
+    outline) and a straight edge where the eye piece's oval (1.3 wide) cut the fill: `-LidSoft` ends the lid in a band of
+    blurred skin and widens the oval to 1.6. Looking eyes spilled white past the outline onto the skin (the shaded skin under
+    the eye was not "skin"): `-LookSolid` now takes the opening as the convex hull of the whites and the iris core, so nothing
+    outside the painted eye changes. **Before any report, shoot the faces at 1024 px**
+    (`SHOT_SIZE=1024 SHOT_DIST=.45 SHOT_UP=.06 node ../tools/meshy/game_shots.mts <out> village <list>`) and look at every mood
+    of every person at that size, eye by eye. **Try a face fix in seconds, not a 20-minute fit:**
+    `tools/meshy/face_moods_preview.py` runs the mood code on the face picture a fit saved with `FIT_SAVE_F` and composites
+    every piece (with `ALPHA=<mood>`: the piece's alpha, its change and the masks, where cut edges show at once).
   - *Mouth fixes that only worked on the test pair.* After the fixes passed on r050 and r084, the run of all six failed
     `oldmouth` on three: r057's collar edge against the black round the face was darker than his lips (patches touching
     the black are skipped now), and r045's and r074's pink lips passed as hair (nearer the hair's colour mix than the skin's),
