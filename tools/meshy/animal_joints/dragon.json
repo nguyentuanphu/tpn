@@ -49,6 +49,7 @@
   ],
   "smooth": 3,
   "lid_size": 2.8,
+  "lid_grid_far": 28,
   "lash_dark": 0.2,
   "lash_spot": 0.06,
   "lid_lift": 0.004,
