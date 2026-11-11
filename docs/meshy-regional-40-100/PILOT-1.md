@@ -41,7 +41,7 @@ Remesh 9k (`source@9000`) 5, Auto-Rigging humanoid (height 1.25) 5. Balance befo
 - Paid steps: `python tools/meshy/regional_pilot.py submit r<nnn> make|remesh30k|remesh9k|rig`, then `wait` (poll and
   download); `status` prints the journal and the credits left under the 270 cap.
 - Game references: `blender -b -P tools/blender/lumi.py -- $SV_MESHY_ROOT/work-v108 villager role=<role> game glb hd`.
-- Fit: `pwsh -File tools/meshy/fit_person.ps1 -Id r<nnn> -Villager -NoLimbTint -LidMatch -FaceUV 2 -PieceSnap .001 -MouthFind -LookSolid -LidSoft -VTile 256 -Ref $SV_MESHY_ROOT/work-v108/villager-<role>-game-hd.glb` (face flags since 11 Nov 2026; per-person flags in HANDOFF-PILOT-1.md).
+- Fit: `pwsh -File tools/meshy/fit_person.ps1 -Id r<nnn> -Villager -NoLimbTint -LidMatch -FaceUV 2 -PieceSnap .003 -MouthFind -LookSolid -LidSoft -VTile 256 -Ref $SV_MESHY_ROOT/work-v108/villager-<role>-game-hd.glb` (face flags since 11 Nov 2026; per-person flags in HANDOFF-PILOT-1.md).
 - Audit: `cd tests; node ../tools/meshy/audit_villager.mts <out> r045@vn-schoolgirl,...` (a regional person is worn by a
   crowd person the game would give that role, or one of the same age when the valley has none of that role this load).
 - Shots: `node ../tools/meshy/game_shots.mts <out> village r045@vn-schoolgirl,...`, sheet `review_sheets.py village`.
