@@ -10,6 +10,9 @@
 //   oldmouth front and both three-quarters (owner 11 Nov 2026: "con mắt, mũi và miệng đều có vấn đề", the sad and "o"
 //            faces showed a second mouth: the painted smile stayed under the new one): pixels round the mood mouth that
 //            are as dark as a mouth line and did not change from the smile face (the old mouth still showing)
+//   lookstill front view (12 Nov 2026: every look piece was empty for a whole round and nothing said so; the eyes never
+//            moved): the look-left and look-right moods that change under 5% as many pixels as the blink does (an empty
+//            piece changes none; a sound look on r050's wide eyes changes about a tenth: 15%, the first guess, failed it)
 //   size     models/villager-<id>.glb over 500 KB
 // It also keeps pose pictures (idle, walk, wave, cheer, sit; front and back) for the review sheets.
 //   cd tests; SV_URL=http://localhost:<port>/ node ../tools/meshy/audit_villager.mts <out dir> ba,bom,... [quick]
@@ -21,7 +24,7 @@ const { chromium } = createRequire(new URL('../../tests/package.json', import.me
 import { writeFileSync, mkdirSync, readdirSync, readFileSync, copyFileSync, existsSync, statSync } from 'node:fs';
 const [OUT, LIST = 'ba', QUICK = ''] = process.argv.slice(2);
 mkdirSync(OUT, { recursive: true });
-const LIMIT = { worn: 0, unseen: 0, eyes: 6, mouth: 100, oldmouth: 20, size: 500 };   // (unseen: the face pieces cover under 400 px of a head picture: nothing was looked at, 10 Nov)
+const LIMIT = { worn: 0, unseen: 0, eyes: 6, mouth: 100, oldmouth: 20, lookstill: 0, size: 500 };   // (unseen: the face pieces cover under 400 px of a head picture: nothing was looked at, 10 Nov)
 function summarize(cs: any[]) { const keys = Object.keys(LIMIT), fail = cs.filter(c => keys.some(k => c[k] > LIMIT[k]));
   const lines = [`audit ${new Date().toISOString()} cases ${cs.length} failing ${fail.length}`];
   for (const k of keys) lines.push(`${k}: ${cs.filter(c => c[k] > LIMIT[k]).length} cases over ${LIMIT[k]}, worst ${Math.max(0, ...cs.map(c => c[k] || 0))}`);
@@ -164,6 +167,10 @@ const res: any = await P.page.evaluate(async ([LIST, QUICK, LIMIT]) => {
           cases.push({ id, pose: m, view: String(s), worn: 0, eyes: 0, oldmouth: k }); if (k > LIMIT.oldmouth || QUICK) pics[`${id}-face-oldmouth-${m}-${s}`] = png(SM, f);
         }
         setMood('smile');
+        if (s === 0 && en >= 20) {   // (12 Nov 2026) the look moods must move the eyes
+          let still = 0; for (const m of ['lookL', 'lookR']) { setMood(m); const SL = read(stage, cam); let n = 0; for (let i = 0; i < N; i++) if (df(S0, SL, i)) n++; if (n < en * .05) still++; }
+          cases.push({ id, pose: 'look', view: '0', worn: 0, eyes: 0, lookstill: still }); setMood('smile');
+        }
       }
       tags.forEach(o => { o.visible = true; });
     }

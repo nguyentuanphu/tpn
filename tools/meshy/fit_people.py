@@ -586,6 +586,11 @@ def lid(img, b, top=0., bot=1.):   # (original_skin) a closed lid painted over t
     sub = img[ya:yb, xa:xb, :3].copy(); hm = hole[ya:yb, xa:xb]
     if os.environ.get('FIT_LID_SOFT') and OWN:   # (12 Nov 2026, close-up: -LidMatch scaled the fill to the skin 4-12 px out, lighter than the socket's shade: a pale oval under every closed eye) the lid takes a few px of the skin round it and fills from there, by itself matching the skin at its edge
         _sk3 = skin_mask(img[ya:yb, xa:xb]) & (hsv_np(sub)[2] > .45); hm = hm.copy()
+        # (close-up, 12 Nov: broken lash and fringe bits round r045's closed eyes, a dark tick at r050's inner corners) every
+        # dark mark round the eye, below the brows, closes with it
+        _ext = (np.hypot((xx - cx_) / (w_ * .76 * 1.15), (yy - (b[1] + b[3]) / 2) / (h_ * .64 * 1.15)) < 1) & (yy >= b[1] + h_ * .24) & ((V < .5) | ((D > .3) & ~skin_mask(F))) & ~(HAIRISH & ((yy < cy_) | (xx < b[0]) | (xx >= b[2])))   # (hair above the eye's middle or beside its box stays: r045's painted fringe was cut square)
+        if top <= 0 and bot >= 1 and not PART: hm |= _ext[ya:yb, xa:xb]   # (a fully shut eye only: the half and sad lids keep the iris)
+        _out_box = ((xx < b[0]) | (xx >= b[2]) | (yy < b[1]) | (yy >= b[3])) & (V < .4); hm &= ~_out_box[ya:yb, xa:xb]   # (dark hair beside the eye is never lid: r045's hair colour was read from her pink hat, her dark fringe was not "hair" and was cut square)
         for _ in range(max(2, int(round(w_ * .06)))): hm = hm | (_sk3 & (np.roll(hm, 1, 0) | np.roll(hm, -1, 0) | np.roll(hm, 1, 1) | np.roll(hm, -1, 1)))
     # (owner 8 Nov 2026: dark smudges round the closed eyes in the game) only skin flows in: lashes, brows and hair round
     # the eye are held at her skin colour while the lid is filled (they themselves stay as they are outside the lid)
@@ -712,7 +717,7 @@ def shift_iris(img, b, frac):
         R_ov = (-_B + np.sqrt(np.maximum(_B * _B - 4 * _A * _C, 0))) / (2 * _A)
         u_ = np.clip((r_ - ir_) / np.maximum(R_ov - ir_, 1), 0, 1); wgt = 1 - u_ * u_ * (3 - 2 * u_); wgt[r_ > R_ov] = 0
         _gap = float(np.min(R_ov[(np.abs(ey - icy_) < 1.5) & (np.sign(ex - icx_) == np.sign(dx))]) - ir_) if dx else 0
-        dx = int(np.sign(dx) * min(abs(dx), max(0, _gap * .7)))
+        dx = int(np.sign(dx) * min(abs(dx), max(0, _gap - 1)))   # (at .7 of the white left, r050's eyes barely moved: audit lookstill)
         sxf = np.clip(ex - dx * wgt, 0, ww_ - 1.001); x0_ = np.floor(sxf).astype(int); fx_ = (sxf - x0_)[..., None]
         warped = sub[ey, x0_, :3] * (1 - fx_) + sub[ey, x0_ + 1, :3] * fx_
         o = out[y0:y1, b[0]:b[2]]; _m = wgt > .01; o[_m, :3] = warped[_m]
