@@ -569,6 +569,11 @@ def arc(b, yf, bend, n=24):   # across a box at height yf, bend > 0 sags down, <
     for i in range(n + 1):
         t = i / n; x = b[0] + w_ * (.08 + .84 * t); y = b[1] + h_ * yf + bend * h_ * (1 - (2 * t - 1) ** 2); out.append((x, y))
     return out
+def lash_arc(b, yf, bend):   # (12 Nov 2026, owner circled the far eye's shut lash by the nose from three-quarters: a dark '<') a villager's shut lash line stops short of the eye's inner corner, by the nose
+    pts = arc(b, yf, bend)
+    if REFP != 'villager-': return pts
+    left = (b[0] + b[2]) / 2 < W_ / 2; w_ = b[2] - b[0]
+    return [q for q in pts if (q[0] < b[2] - w_ * .2 if left else q[0] > b[0] + w_ * .2)]
 def ellipse(img, cx, cy, rx, ry, col, edge):
     d = np.hypot((xx - cx) / max(rx, 1), (yy - cy) / max(ry, 1)); al = np.clip((1 - d) * max(rx, ry), 0, 1)[..., None]
     img[..., :3] = img[..., :3] * (1 - al) + np.array(col) * al; img[..., 3:] = np.maximum(img[..., 3:], al)
@@ -618,7 +623,7 @@ lw = max(1.6, H_ * .012)
 M = {}
 M['smile'] = base.copy()
 im = base.copy()
-for b in eyes.values(): shut(im, grow(b)); stroke(im, arc(b, .62, .16), lash, lw)
+for b in eyes.values(): shut(im, grow(b)); stroke(im, lash_arc(b, .62, .16), lash, lw)
 M['blink'] = im
 im = base.copy()
 for b in eyes.values():
@@ -626,7 +631,7 @@ for b in eyes.values():
     if not OWN: stroke(im, arc(b, .5, -.06), lash, lw)   # (own face: the lid draws its own lash line along its curve)
 M['half'] = im
 im = base.copy()
-for b in eyes.values(): shut(im, grow(b)); stroke(im, arc(b, .7, -.32), lash, lw)
+for b in eyes.values(): shut(im, grow(b)); stroke(im, lash_arc(b, .7, -.32), lash, lw)
 M['happy'] = im
 def mouth_o(im, big):
     if not mouth: return im
@@ -639,10 +644,12 @@ for b in eyes.values(): erase(im, b, 0, .18)
 M['sad'] = im
 im = base.copy()
 def _gl(b, f): return f if REFP != 'villager-' or ((b[0] + b[2]) / 2 < W_ / 2) == (f < 0) else f * .45   # (11 Nov 2026, round 14: from the side the far eye's iris, moved to its corner by the nose, showed past the nose as a white ring and dark specks: towards the nose an iris moves under half as far)
-for b in eyes.values(): im = shift_iris(im, b, _gl(b, .11))   # (11 Nov 2026: .11, was .16: the moved iris reached the curve of the eye, odd from the side)
+if REFP != 'villager-':   # (12 Nov 2026, owner's choice left to us after seeing the friends glance the same way: a front-drawn moved iris is always bent from the side) villagers keep their eyes still when they glance
+    for b in eyes.values(): im = shift_iris(im, b, _gl(b, .11))   # (11 Nov 2026: .11, was .16: the moved iris reached the curve of the eye, odd from the side)
 M['lookL'] = im
 im = base.copy()
-for b in eyes.values(): im = shift_iris(im, b, _gl(b, -.11))
+if REFP != 'villager-':
+    for b in eyes.values(): im = shift_iris(im, b, _gl(b, -.11))
 M['lookR'] = im
 im = M['happy'].copy(); M['excited'] = mouth_o(im, True)
 ORDER = ['smile', 'blink', 'half', 'happy', 'surprised', 'sad', 'lookL', 'lookR', 'excited']
