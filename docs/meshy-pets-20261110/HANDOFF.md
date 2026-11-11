@@ -10,7 +10,7 @@ Read first: `.claude/skills/meshy-characters/SKILL.md` (section "Animals"), `doc
 ## Where things stand
 - **Puppy: done and approved** (owner 11 Nov "Okay approved"): models on the branch, pet scale 0.6, 18 moves,
   skills fetch / dig / lead the way, hats fitted, open mouth on the muzzle. Pets audit 232 cases, 0 failing.
-- **Companions (dragon, firefly): in progress, models NOT committed** (working copy `models/world/creature-dragon*.glb`,
+- **Companions (dragon, firefly): approved by the owner (12 Nov 2026 AEDT, after the films: "Duyệt cả hai"), models committed** (working copy `models/world/creature-dragon*.glb`,
   `creature-firefly-hd.glb`; owner's approval needed before committing). Meshy spent 80 credits as approved (dragon 45
   incl. an unneeded rig, firefly 35; the firefly has no 9k remesh: companions use the near model, the far file stays the
   Blender one). Fit files: `tools/meshy/animal_joints/dragon.json`, `firefly.json`. Raw: `D:\WorkSpace\meshy\raw-models`.
