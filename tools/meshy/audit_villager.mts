@@ -158,7 +158,9 @@ const res: any = await P.page.evaluate(async ([LIST, QUICK, LIMIT]) => {
         let x0 = W, x1 = -1, y0 = H, y1 = -1;   // (the mouth's place: what the "o" face changes, on the face, below the eyes; sad changes the eyes too)
         for (const m of ['o', 'sad']) {
           setMood(m); const SM = read(stage, cam); if (en < 20) break; const eyy = ey / en;
-          if (m === 'o') for (let i = 0; i < N; i++) { const y = (i / W) | 0; if (Pf[i * 4 + 3] && y < eyy - 6 && df(S0, SM, i)) { const x = i % W; x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); } }
+          if (m === 'o') { const XS: number[] = [], YS: number[] = []; for (let i = 0; i < N; i++) { const y = (i / W) | 0; if (Pf[i * 4 + 3] && y < eyy - 6 && df(S0, SM, i)) { XS.push(i % W); YS.push(y); } }
+            if (XS.length) { XS.sort((a, b) => a - b); YS.sort((a, b) => a - b); const q = (A: number[], f: number) => A[Math.min(A.length - 1, Math.floor(A.length * f))];   // (12 Nov 2026: the 5th to 95th percentile, not the extremes: a few stray changed pixels on r045's three-quarter view stretched the box over her blushed cheek, counted 628 with a clean mouth)
+              x0 = q(XS, .05); x1 = q(XS, .95); y0 = q(YS, .05); y1 = q(YS, .95); } }
           if (x1 < 0) { cases.push({ id, pose: m, view: String(s), worn: 0, eyes: 0, oldmouth: 99 }); continue; }   // (no mouth change at all)
           const mx = Math.round((x1 - x0) * .3), my = Math.max(6, Math.round((y1 - y0) * .4)), L: number[] = [];
           for (let y = Math.max(0, y0 - my); y <= Math.min(H - 1, y1 + my); y++) for (let x = Math.max(0, x0 - mx); x <= Math.min(W - 1, x1 + mx); x++) if (Pf[(y * W + x) * 4 + 3]) L.push(lum(S0, y * W + x));
