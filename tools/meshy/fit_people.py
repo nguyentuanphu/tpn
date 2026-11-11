@@ -427,6 +427,10 @@ if MOUTH_FIND:
         sk = reg & (S_ < .6) & (Lm > np.percentile(Lm[reg], 30)); SK = np.median(F[sk][:, :3], axis=0)
         SKL = SK[0] * .3 + SK[1] * .59 + SK[2] * .11; SKR = SK[0] - SK[1]
         cand = reg & ((Lm < SKL - step) | (RD > SKR + step * 1.4))
+        # (11 Nov 2026, final pilot run: r057's collar edge against the black outside the face was darker than his lips and
+        # was taken; the "o" and sad mouths were drawn on his chin) nothing next to the empty black round the face is a mouth
+        _bg = Lm < .1
+        for _ in range(3): _bg = _bg | np.roll(_bg, 1, 0) | np.roll(_bg, -1, 0) | np.roll(_bg, 1, 1) | np.roll(_bg, -1, 1)
         ybot = np.nonzero(reg.any(1))[0].max(); best = None; left = cand & (np.abs(xx - cx) < gap * .12)
         while left.any():
             ys_, xs_ = np.nonzero(left); m = np.zeros_like(cand); m[ys_[0], xs_[0]] = True
@@ -435,7 +439,7 @@ if MOUTH_FIND:
                 if (n == m).all(): break
                 m = n
             left &= ~m; ys, xs = np.nonzero(m)
-            if m.sum() < 5 or ys.max() >= ybot - 1: continue
+            if m.sum() < 5 or ys.max() >= ybot - 1 or (m & _bg).any(): continue
             wd, ht = np.ptp(xs) + 1, np.ptp(ys) + 1
             if wd < gap * .2 or ht > wd * .6: continue   # (a mouth is wide and flat: the nose tip is round, a strap reaches the edge)
             sc = float(SKL - Lm[m].mean())
@@ -670,6 +674,19 @@ def shift_iris(img, b, frac):
         if (nxt == wjoin).all(): break
         wjoin = nxt
     opening = wjoin
+    if os.environ.get('FIT_LOOK_SOLID'):
+        # (owner 11 Nov 2026: the looking eyes were streaked: brown arcs of the old iris round the moved one) the iris's outer
+        # ring and the soft shading inside the eye were neither white nor the iris core, stayed where they were and showed
+        # as arcs: the opening is closed by 2 px and its holes filled, so everything inside the painted eye slides together
+        _o = opening.copy()
+        for _ in range(2): _o = _o | np.roll(_o, 1, 0) | np.roll(_o, -1, 0) | np.roll(_o, 1, 1) | np.roll(_o, -1, 1)
+        for _ in range(2): _o = _o & np.roll(_o, 1, 0) & np.roll(_o, -1, 0) & np.roll(_o, 1, 1) & np.roll(_o, -1, 1)
+        _out = np.zeros_like(_o); _out[0, :] = _out[-1, :] = True; _out[:, 0] = _out[:, -1] = True; _out &= ~_o
+        for _ in range(ww_ + hh_):
+            _n = _out | (~_o & (np.roll(_out, 1, 0) | np.roll(_out, -1, 0) | np.roll(_out, 1, 1) | np.roll(_out, -1, 1)))
+            if (_n == _out).all(): break
+            _out = _n
+        opening = (~_out & inside) | wjoin
     sx = ex - dx; ok = (sx >= 0) & (sx < ww_); sxc = np.clip(sx, 0, ww_ - 1)
     take = opening & ok & opening[ey, sxc]
     o = out[y0:y1, b[0]:b[2]]
@@ -736,6 +753,10 @@ if OWN:
     _ie = _ineyes.astype(np.float32)
     for _ in range(6): _ie = (_ie + np.roll(_ie, 1, 0) + np.roll(_ie, -1, 0) + np.roll(_ie, 1, 1) + np.roll(_ie, -1, 1)) / 5   # (soft: its box edge showed as straight lines on Clara)
     NOHAIR = 1 - np.clip(HAIRISH.astype(np.float32) * 1.5, 0, 1) * (1 - _ie)
+    if MOUTH_FIND and mouth:   # (11 Nov 2026, final pilot run: r045's and r074's pink lips passed as hair, nearer the hair's colour mix than the skin's; the mouth pieces were see-through inside and the painted smile showed under the "o" and sad mouths) the found mouth, as wide as erase_mouth fills it, is never hair
+        _im = mouthm.copy()
+        for _ in range(max(2, int(round((mouth[3] - mouth[1]) * .5))) + 2): _im = _im | np.roll(_im, 1, 0) | np.roll(_im, -1, 0) | np.roll(_im, 1, 1) | np.roll(_im, -1, 1)
+        NOHAIR = np.maximum(NOHAIR, _im.astype(np.float32))
     PARTS = {'smile': 0 * EYE_A, 'blink': EYE_A, 'half': EYE_A, 'happy': EYE_A, 'lookL': EYE_A, 'lookR': EYE_A,
              'surprised': MOUTH_A, 'sad': np.maximum(EYE_A, MOUTH_A), 'excited': np.maximum(EYE_A, MOUTH_A)}
     # only what the mood changes (the lids, lash lines, moved irises, the mouth), a little wider and softened: the rest of
