@@ -590,7 +590,24 @@ def lid(img, b, top=0., bot=1.):   # (original_skin) a closed lid painted over t
         # dark mark round the eye, below the brows, closes with it
         _ext = (np.hypot((xx - cx_) / (w_ * .76 * 1.15), (yy - (b[1] + b[3]) / 2) / (h_ * .64 * 1.15)) < 1) & (yy >= b[1] + h_ * .24) & ((V < .5) | ((D > .3) & ~skin_mask(F))) & ~(HAIRISH & ((yy < cy_) | (xx < b[0]) | (xx >= b[2])))   # (hair above the eye's middle or beside its box stays: r045's painted fringe was cut square)
         if top <= 0 and bot >= 1 and not PART: hm |= _ext[ya:yb, xa:xb]   # (a fully shut eye only: the half and sad lids keep the iris)
-        _out_box = ((xx < b[0]) | (xx >= b[2]) | (yy < b[1]) | (yy >= b[3])) & (V < .4); hm &= ~_out_box[ya:yb, xa:xb]   # (dark hair beside the eye is never lid: r045's hair colour was read from her pink hat, her dark fringe was not "hair" and was cut square)
+        # (dark hair beside the eye is never lid: r045's hair colour was read from her pink hat and her dark fringe was cut
+        # square; but r064's and r074's small lash flicks at the outer corners, just outside the box, stayed on every shut
+        # eye) the dark patches round the eye: big ones, or ones reaching the window's edge, are hair and stay; small
+        # ones near the eye are lash flicks and close with it
+        if top <= 0 and bot >= 1 and not PART:
+            _dk = (V < .4)[ya:yb, xa:xb].copy(); _ob = ((xx < b[0]) | (xx >= b[2]) | (yy < b[1]) | (yy >= b[3]))[ya:yb, xa:xb]
+            _near = (np.hypot((xx - cx_) / (w_ * .76 * 1.35), (yy - (b[1] + b[3]) / 2) / (h_ * .64 * 1.35)) < 1)[ya:yb, xa:xb] & (yy >= b[1] + h_ * .24)[ya:yb, xa:xb]
+            _left = _dk & _ob
+            while _left.any():
+                _ys0, _xs0 = np.nonzero(_left); _cp = np.zeros_like(_dk); _cp[_ys0[0], _xs0[0]] = True
+                for _ in range(_dk.shape[0] + _dk.shape[1]):
+                    _n = _cp | (_dk & (np.roll(_cp, 1, 0) | np.roll(_cp, -1, 0) | np.roll(_cp, 1, 1) | np.roll(_cp, -1, 1)))
+                    if (_n == _cp).all(): break
+                    _cp = _n
+                _left &= ~_cp
+                _edge = _cp[0].any() or _cp[-1].any() or _cp[:, 0].any() or _cp[:, -1].any()
+                if _edge or _cp.sum() > w_ * h_ * .12: hm &= ~(_cp & _ob)
+                elif (_cp & _near).sum() * 2 >= _cp.sum(): hm |= _cp
         for _ in range(max(2, int(round(w_ * .06)))): hm = hm | (_sk3 & (np.roll(hm, 1, 0) | np.roll(hm, -1, 0) | np.roll(hm, 1, 1) | np.roll(hm, -1, 1)))
     # (owner 8 Nov 2026: dark smudges round the closed eyes in the game) only skin flows in: lashes, brows and hair round
     # the eye are held at her skin colour while the lid is filled (they themselves stay as they are outside the lid)

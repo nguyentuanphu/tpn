@@ -9,7 +9,8 @@
 //            (what changes from smile to blink), in hundredths of the eyes' width: Bom's mouth on his collar (10 Nov)
 //   oldmouth front and both three-quarters (owner 11 Nov 2026: "con mắt, mũi và miệng đều có vấn đề", the sad and "o"
 //            faces showed a second mouth: the painted smile stayed under the new one): pixels round the mood mouth that
-//            are as dark as a mouth line and did not change from the smile face (the old mouth still showing)
+//            are as dark as a mouth line, lip-coloured (red over green), and did not change from the smile face (the old
+//            mouth still showing)
 //   lookstill front view (12 Nov 2026: every look piece was empty for a whole round and nothing said so; the eyes never
 //            moved): the look-left and look-right moods that change under 5% as many pixels as the blink does (an empty
 //            piece changes none; a sound look on r050's wide eyes changes about a tenth: 15%, the first guess, failed it)
@@ -163,7 +164,7 @@ const res: any = await P.page.evaluate(async ([LIST, QUICK, LIMIT]) => {
           for (let y = Math.max(0, y0 - my); y <= Math.min(H - 1, y1 + my); y++) for (let x = Math.max(0, x0 - mx); x <= Math.min(W - 1, x1 + mx); x++) if (Pf[(y * W + x) * 4 + 3]) L.push(lum(S0, y * W + x));
           L.sort((a, b) => a - b); const skin = L[Math.floor(L.length * .7)] || 0, f = new Uint8Array(N); let k = 0;
           for (let y = Math.max(0, y0 - my); y <= Math.min(H - 1, y1 + my); y++) for (let x = Math.max(0, x0 - mx); x <= Math.min(W - 1, x1 + mx); x++) {
-            const i = y * W + x; if (inner(i) && !df(S0, SM, i) && lum(SM, i) < skin - 22 && lum(S0, i) < skin - 22 && Math.abs(S0[i * 4] - SM[i * 4]) < 12) { f[i] = 1; k++; } }
+            const i = y * W + x; if (inner(i) && !df(S0, SM, i) && lum(SM, i) < skin - 22 && lum(S0, i) < skin - 22 && Math.abs(S0[i * 4] - SM[i * 4]) < 12 && S0[i * 4] - S0[i * 4 + 1] > 30) { f[i] = 1; k++; } }   // (12 Nov 2026: and lip-coloured, red over green: dark hair at the face's edge (r045) and a helmet strap by the chin (r057) were counted, 40-242, with clean mouths)
           cases.push({ id, pose: m, view: String(s), worn: 0, eyes: 0, oldmouth: k }); if (k > LIMIT.oldmouth || QUICK) pics[`${id}-face-oldmouth-${m}-${s}`] = png(SM, f);
         }
         setMood('smile');
