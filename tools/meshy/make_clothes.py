@@ -276,6 +276,20 @@ def _move_with_body(bm, o, name):
             for t_ in trunk_:
                 if t_ in new: new[t_] = new[t_] * (1 - m_ / max(wt, 1e-6))
             new[hb] = new.get(hb, 0) + 2 * m_; setw(v, new)
+    # (4) (11 Nov 2026, round 82: specks of neck skin, kit and nape hair through Finn's collar with his arms up) round the
+    # neck a top moves exactly as the body under it: smoothed and split onto the helper bones the collar rose by half while
+    # the body's shoulder tops rose fully, through it. Over 3 cm up to 7 cm below the neckband the body's own weights take over
+    if LAYER.get(name) != 0 and name != 'bib':
+        kd, W = _body_weights(); z0 = NECKBAND - .07; _nc = 0
+        for v in bm.verts:
+            if v.co.z < z0 or abs(v.co.x) > SH_X * .7: continue
+            _co, j, _d = kd.find(v.co)
+            if _d is None or _d > .05: continue
+            t = min(1., (v.co.z - z0) / .03); own = getw(v); new = {k: w * (1 - t) for k, w in own.items()}
+            for k, w in W[j].items():
+                if k != 'hair-v': new[k] = new.get(k, 0) + t * w
+            setw(v, new); _nc += 1
+        print('CL move', name, 'collar points on body weights', _nc)
 def _helper_bones():
     if 'helpArmL' in rig.data.bones: return
     VL.objects.active = rig; rig.select_set(True); bpy.ops.object.mode_set(mode='EDIT')
@@ -477,7 +491,7 @@ def cone(name, z_top, z_bot, flare, thick, panels=False, slit=.0):
         t = (z_top - v.co.z) / max(z_top - z_bot, 1e-4); s = 'legL' if v.co.x >= cx else 'legR'
         k = min(1., abs(v.co.y - cy) / _ry) ** .7; fb = 'skirtF' if v.co.y < cy else 'skirtB'
         if v.co.y >= cy: k = min(1., k * 2.5)   # (the back follows its skirt bone, not the thighs, except right at the sides: a sitting child's thighs pulled the back of the skirt into her, and the top came through it, the auditor's Clara sitting)   # (k: 1 at the middle of the front or back, 0 at the sides)
-        sw = min(1., .35 + 2.2 * t)   # (the waistband too: tops' hems follow the thighs under it)  # (fully carried by the legs and skirt bones from a third of the way down: at .8 t the thighs came through)
+        sw = min(1., (.35 if panels else min(.35, .35 * t / .08)) + 2.2 * t)   # (11 Nov 2026, round 82: Clara running, her bodice showed over the skirt's top front and back: the skirt bones turn round the hips' axis, so a share of them pulled the waistband's top backwards (front) or forwards (back) into the bodice; a skirt's very top is the trunk's, the share grows over the first 8% of the length; not the áo dài's panels: their top on the trunk opened a gap under the top's hem, which follows the thighs, and the kit showed at the waist running)   # (the waistband too: tops' hems follow the thighs under it)  # (fully carried by the legs and skirt bones from a third of the way down: at .8 t the thighs came through)
         lo = max(0., min(1., (KZ + .04 - v.co.z) / .08))   # (below the knee: the lower bone, blended over 8 cm)
         o.vertex_groups['torso'].add([v.index], max(1e-3, 1 - sw), 'REPLACE'); o.vertex_groups[s].add([v.index], sw * (1 - k), 'REPLACE'); o.vertex_groups[fb].add([v.index], sw * k * (1 - lo), 'REPLACE')
         if lo > 0: o.vertex_groups[fb + '2'].add([v.index], sw * k * lo, 'REPLACE')
@@ -601,7 +615,11 @@ if LIGHT:
     # below the neck only; the head stays exact under its face pieces
     if os.environ.get('CL_BODY_REDUCE'):
         vg = body.vertex_groups.new(name='reduce-me')
-        vg.add([v.index for v in me.vertices if v.co.z < NECK - .04], 1.0, 'REPLACE')
+        # (11 Nov 2026, the auditor's new far check: all four light models had lost their forearms below the sleeves, Lumi
+        # her knees, Finn part of a shin; Sol's light body 0.57 m wide against 0.76: collapsing the thin limbs by 40% folded
+        # them away) only the trunk is thinned; arms and legs keep every point, and so does the trunk's edge with them
+        _limbv = {vi for p_ in me.polygons if isarm[p_.index] or isleg[p_.index] for vi in p_.vertices}
+        vg.add([v.index for v in me.vertices if v.co.z < NECK - .04 and v.index not in _limbv], 1.0, 'REPLACE')
         bpy.context.view_layer.objects.active = body; dm = body.modifiers.new('reduce', 'DECIMATE'); dm.ratio = float(os.environ['CL_BODY_REDUCE']); dm.vertex_group = 'reduce-me'; dm.vertex_group_factor = 1.0
         n0 = len(me.polygons); bpy.ops.object.modifier_apply(modifier='reduce'); body.vertex_groups.remove(body.vertex_groups['reduce-me'])
         print('CL light body reduced', n0, '->', len(body.data.polygons))
