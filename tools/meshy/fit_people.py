@@ -661,6 +661,7 @@ if OWN:
     # (8 Nov 2026: a light patch over Finn's fringe on every blink) only the lower part of the eye area counts as "eye":
     # fringe strands hanging into its top stay hair (the iris, even a hair-coloured one, is lower)
     for b in eyes.values(): g_ = grow(b); _ineyes |= (xx >= g_[0]) & (xx < g_[2]) & (yy >= b[1] - (b[3] - b[1]) * .05) & (yy < g_[3])
+    if REFP == 'villager-' and mouth: _ineyes |= MOUTH_A > .02   # (11 Nov 2026, owner: "miệng vẫn còn bị lỗi") deep red lips passed the hair test (more saturated than the skin, nearer the hair's colour mix): the mouth pieces had a hole where the lips are, so the sad and round mouths were never drawn and the painted smile showed through. The mouth is never hair
     _ie = _ineyes.astype(np.float32)
     for _ in range(6): _ie = (_ie + np.roll(_ie, 1, 0) + np.roll(_ie, -1, 0) + np.roll(_ie, 1, 1) + np.roll(_ie, -1, 1)) / 5   # (soft: its box edge showed as straight lines on Clara)
     NOHAIR = 1 - np.clip(HAIRISH.astype(np.float32) * 1.5, 0, 1) * (1 - _ie)
@@ -673,6 +674,15 @@ if OWN:
         for _ in range(blur): a = (a + np.roll(a, 1, 0) + np.roll(a, -1, 0) + np.roll(a, 1, 1) + np.roll(a, -1, 1)) / 5
         return a
     _g = max(2, int(W_ * .012))
+    # (11 Nov 2026, owner: "mắt và hốc mắt vẫn còn bị lỗi") the open eyes on the 9k body had straight cuts along triangle
+    # edges round the socket (the colour baked from the high model onto the low one); the face picture, cast from the front
+    # on the high model, is clean. Villagers: every mood lays the clean eyes over the body's, fading out where the face
+    # turns from the front (there the front picture no longer lies on the body)
+    _EYEV = None
+    if REFP == 'villager-' and os.environ.get('FIT_EYECOVER'):   # (round 19: tried and left off: from three-quarters the far eye showed two irises and the glance a doubled iris; only the open eyes from the front were better)
+        _nfv = np.clip((-NF - .72) / .1, 0, 1)   # (round 18: fading from .55 blended the front picture with the body's own eye on the far eye's slope, two irises side by side from three-quarters: only where the face looks straight ahead, a short soft edge)
+        for _ in range(max(1, _g // 2)): _nfv = (_nfv + np.roll(_nfv, 1, 0) + np.roll(_nfv, -1, 0) + np.roll(_nfv, 1, 1) + np.roll(_nfv, -1, 1)) / 5
+        _EYEV = EYE_A * _nfv * NOHAIR
     for k in M:
         ch = (np.abs(M[k][..., :3] - F[..., :3]).max(-1) > .025).astype(np.float32)
         if k in ('lookL', 'lookR'):   # (11 Nov 2026, owner circled the glancing eye from the side on every villager) the glance piece stops a few pixels inside the eye's opening and does not grow: the eye's rim and the white along it stay the body's own; a piece reaching the rim lay a little in front of the face and showed a second rim beside the painted one (white rings) when seen from the side
@@ -690,6 +700,7 @@ if OWN:
         else: M[k][..., 3] = np.minimum(soften(ch, max(1, _g // 2), _g) * 1.6, 1) * PARTS[k] * NOHAIR   # (a narrow soft edge: less of the cheek redrawn)
         # (where see-through it keeps the painted face's own colour in a narrow band round each piece: black there blended
         # into a dark fringe; beyond the band one flat colour, so the picture stays small)
+        if _EYEV is not None: M[k][..., 3] = np.maximum(M[k][..., 3], _EYEV)
         _band = M[k][..., 3] >= .01
         for _ in range(4): _band = _band | np.roll(_band, 1, 0) | np.roll(_band, -1, 0) | np.roll(_band, 1, 1) | np.roll(_band, -1, 1)
         M[k][~_band, :3] = REF[:3]
