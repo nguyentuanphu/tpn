@@ -354,6 +354,7 @@ export function attachFriendModel(A, id: string, skinHex: string, wear: FriendMo
         // (10 Nov 2026, the auditor: Clara's áo dài running, seen from behind) the back below the knees goes with the shin of
         // the leg kicked furthest back (thigh and knee together), or the heel came out through the back panel's hem
         if (s.n === 'skirtB2' && A.kneeL && A.kneeR) ang = Math.max(ang, (Math.max(lx + A.kneeL.rotation.x, rx + A.kneeR.rotation.x, 0) * 1.05 + (Math.max(lx + A.kneeL.rotation.x, rx + A.kneeR.rotation.x) > .3 ? .35 : 0)));   // (10 Nov 2026: at .85 the shin kicked back in a jump still came through the hem, Clara's and Finn's; a little past the shin; at +.1 and +.22 the calf still showed through the panel just below the knee, round 75)
+        if (s.n === 'skirtB' && A.kneeL && A.kneeR) ang = Math.max(ang, Math.max(lx + A.kneeL.rotation.x, rx + A.kneeR.rotation.x, 0) * .5);   // (11 Nov 2026, round 83 sheets: every áo dài jumping, from behind, the back panel folded sharply at the knee, the lower part far up with the shin and the upper part down with the thigh, and the calf and white trousers came through at the fold: the upper part takes half the shin's turn, so the panel bends in a wider curve)
         // (10 Nov 2026, round 75: seen from behind, a sitting child's skirt and áo dài back hung straight down to the ground like
         // a box) with both thighs forward the back tucks in under the seat, below the knees most, as cloth lies over a seat
         const sit_ = Math.max(0, Math.min(1.2, -Math.max(lx, rx) - .5));
