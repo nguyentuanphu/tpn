@@ -1,6 +1,6 @@
 # Handoff: pets and companions with Meshy (kept current every hour)
 
-Last update: 11 Nov 2026 AEDT (afternoon). Branch `meshy-pets`, worktree `D:WorkSpacesv-meshy-pets` (owner's PC). Never merge
+Last update: 11 Nov 2026 AEDT (afternoon). Branch `meshy-pets`, worktree `D:\WorkSpace\sv-meshy-pets` (owner's PC). Never merge
 main, deploy or bump the version. Reply to the owner in Vietnamese, short; ask with pop-up questions. Ask before every
 Meshy use (paid), through the journal `D:\WorkSpace\meshy\private\meshy-jobs.sqlite3`, never retry a paid POST, never
 print the key; after a paid run `python tools/meshy/ledger_sync.py`. Back up (commit + push) every hour.
