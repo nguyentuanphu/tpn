@@ -40,6 +40,7 @@ Không đổi file models/*.glb (chỉ máy của chủ dựng lại được).
 ## Where it stands
 
 - Last full round pushed: round 78 (commit 50e9055e6), 636 of 2576 cases failing (77: 791, 76: 856, 75: 1029). Self-test passed (7 planted faults caught).
+- Round 81 running (seated skirt back shortened, 40% of its length folded under the seat: js/friend-model.ts after the `sit_` line), output `D:\WorkSpace\meshy\fitted\audit-f81`.
 - Round 80 (kit paint .975): 577 of 2576 failing (78: 636). Clara 184 (78: 139, back views lighter than her dress), Sol 98, Finn 103, Lumi 192. A shade from the blurred body picture was tried and dropped (see SKILL.md). Review pictures of round 80: `D:\WorkSpace\meshy\fitted\review-f80\gui` (on the PC only). Seen in them: seated skirts hang straight down like a bucket from behind; the áo dài back panel lifted in a jump shows white trousers with a dark stripe. Next: a deeper seat tuck (js/friend-model.ts, `sit_ * .35` and `.6`).
 
 ## How to run
