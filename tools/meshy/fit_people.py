@@ -636,10 +636,11 @@ if mouth: erase(im, mouth); mb = [mouth[0] + (mouth[2] - mouth[0]) * .15, mouth[
 for b in eyes.values(): erase(im, b, 0, .18)
 M['sad'] = im
 im = base.copy()
-for b in eyes.values(): im = shift_iris(im, b, .11)   # (11 Nov 2026: .11, was .16: the moved iris reached the curve of the eye, odd from the side)
+def _gl(b, f): return f if REFP != 'villager-' or ((b[0] + b[2]) / 2 < W_ / 2) == (f < 0) else f * .45   # (11 Nov 2026, round 14: from the side the far eye's iris, moved to its corner by the nose, showed past the nose as a white ring and dark specks: towards the nose an iris moves under half as far)
+for b in eyes.values(): im = shift_iris(im, b, _gl(b, .11))   # (11 Nov 2026: .11, was .16: the moved iris reached the curve of the eye, odd from the side)
 M['lookL'] = im
 im = base.copy()
-for b in eyes.values(): im = shift_iris(im, b, -.11)
+for b in eyes.values(): im = shift_iris(im, b, _gl(b, -.11))
 M['lookR'] = im
 im = M['happy'].copy(); M['excited'] = mouth_o(im, True)
 ORDER = ['smile', 'blink', 'half', 'happy', 'surprised', 'sad', 'lookL', 'lookR', 'excited']
