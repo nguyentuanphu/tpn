@@ -119,13 +119,17 @@ export function createCompanions(G) {
       c.beam.visible = !!c.lead; if (c.lead) { c.beam.scale.setScalar(2 + Math.sin(t * 4) * .3); c.beam.material.opacity = .65 + Math.sin(t * 4) * .2; }
       o.position.y -= c.off || 0; c.off = 0; // (a trick's lift is taken off first, so it never builds up)
       if (o.position.distanceTo(_t) > 25) o.position.copy(_t); // after a jump across the map
-      const was = c.model ? o.position.clone() : null;
+      const was = o.position.clone();
       o.position.lerp(_t, Math.min(1, dt * 3.2));
       if (c.model) MODELS.tick(c, was, dt);   // (v1.08e) the model's clip
       o.rotation.y += ((((yaw - o.rotation.y) % (Math.PI * 2)) + Math.PI * 3) % (Math.PI * 2) - Math.PI) * Math.min(1, dt * 4);
-      u.wings.forEach((w, i) => { const d = w.userData, a = Math.sin(t * u.flap + (d.ph || 0)) * (d.amp || .6);
+      // (11 Nov 2026, owner: "bay nhanh như thế nào") flying fast after a running child it leans into the flight and its
+      // wings beat faster; hovering it stays upright (speed smoothed, so a step does not jolt it)
+      const sp = Math.hypot(o.position.x - was.x, o.position.z - was.z) / Math.max(dt, 1e-3); c.sp = (c.sp || 0) + (sp - (c.sp || 0)) * Math.min(1, dt * 4);
+      const fast = Math.min(1, c.sp / 6); u.beat = (u.beat || 0) + dt * u.flap * (1 + fast * .8);
+      u.wings.forEach((w, i) => { const d = w.userData, a = Math.sin(u.beat + (d.ph || 0)) * (d.amp || .6);
         if (d.axis === 'y') w.rotation.y = a; else w.rotation.z = (i ? -1 : 1) * a; });   // (Sparkle's Meshy wings beat back and forth, sparkleWings)
-      u.body.rotation.x = Math.sin(t * 1.7) * .08;
+      u.body.rotation.x = Math.sin(t * 1.7) * .08 + fast * .38;
       // (Studio switch companionGrow, js/kidplay.js) it grows as it is fed, wears the hat the child saved for, and does tricks
       const L = h.profile.lanterns || {}, pet = L.pet || {}, grow = G.petLevel ? G.petLevel(h) : 1;
       const sc = 1 + (grow - 1) * .14; o.scale.setScalar(sc);

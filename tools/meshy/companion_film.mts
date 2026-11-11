@@ -34,7 +34,7 @@ const setup = await P.page.evaluate(async ([kind, lod]) => {
   return { ok: true, tris: Math.round(tris), meshy: (() => { let p = false; c.model.obj.traverse((o: any) => { if (o.isMesh && /^meshy-/.test(o.material?.name || '')) p = true; }); return p; })() };
 }, [KIND, LOD] as any);
 console.log(name, JSON.stringify(setup)); if (!(setup as any).ok) process.exit(1);
-await P.page.clock.install(); await P.page.clock.pauseAt(Date.now() + 2000);
+await P.page.clock.install(); await P.page.clock.pauseAt(Date.now() + 2000);   // (holds the page's own loop: the frames below step the world)
 const FPS = 15, STEP = 1000 / FPS;
 // parts: [title, seconds, child's speed (m/s), trick]
 const PARTS: [string, number, number, string][] = [['hover', 2, 0, ''], ['walk', 3, 2.5, ''], ['run', 3, 7, ''], ['loop', 2.2, 0, 'loop'], ['spin', 2.2, 0, 'spin']];
@@ -43,11 +43,12 @@ for (const [title, secs, speed, trick] of PARTS) {
   await P.page.evaluate(([trick]) => { const F = (window as any).__film, G = (window as any).__sv; F.h.pos.set(F.start.x, F.start.y, F.start.z); F.h.yaw = F.start.yaw;
     if (trick) G.lanterns.companions.trick(F.h, trick); }, [trick] as any);
   for (let f = 0; f < secs * FPS; f++) {
-    await P.page.clock.runFor(STEP);
     const url = await P.page.evaluate(async ([speed, title, dt]) => {
       const G = (window as any).__sv, F = (window as any).__film, { THREE } = await import(String('/js/gfx.js')), { c, h } = F;
       document.querySelectorAll('.storybook, .dialog, .modal, .reward').forEach(e => e.remove()); G.paused = false;
-      if (speed) { h.pos.x += Math.sin(h.yaw) * speed * dt; h.pos.z += Math.cos(h.yaw) * speed * dt; h.state = speed > 4 ? 'run' : 'walk'; }
+      // (the page's own loop is held with its clock: the world is stepped here, in even steps, the way the loop does it)
+      for (let k = 0; k < 4; k++) { const d = dt / 4; if (speed) { h.pos.x += Math.sin(h.yaw) * speed * d; h.pos.z += Math.cos(h.yaw) * speed * d; }
+        F.t = (F.t || 100) + d; G.world.update(d, F.t); }
       const R = G.renderer; let top = h.av.root; while (top.parent) top = top.parent;
       const o = c.o; o.updateMatrixWorld(true); const box = new THREE.Box3().setFromObject(c.model.obj, true), cc = box.getCenter(new THREE.Vector3()), rr = Math.max(.5, box.getSize(new THREE.Vector3()).length());
       const W = 300, cv = document.createElement('canvas'); cv.width = W * 3; cv.height = W * 2 + 28; const x = cv.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, cv.width, cv.height);
@@ -59,7 +60,7 @@ for (const [title, secs, speed, trick] of PARTS) {
       const near = (yaw: number) => { const fwd = new THREE.Vector3(Math.sin(o.rotation.y + yaw), .15, Math.cos(o.rotation.y + yaw)).normalize(), cam = new THREE.PerspectiveCamera(30, 1, .02, 200); cam.position.copy(cc).addScaledVector(fwd, rr * 1.9); cam.lookAt(cc); return cam; };
       shot(near(0), 0, 0, 'gần: trước'); shot(near(.8), 1, 0, 'gần: nghiêng'); shot(near(Math.PI / 2), 2, 0, 'gần: cạnh');
       shot(near(Math.PI), 0, 1, 'gần: sau');
-      const gc = h.cam.clone(); gc.aspect = 1; gc.updateProjectionMatrix(); shot(gc, 1, 1, 'camera của bé');
+      const gc = new THREE.PerspectiveCamera(50, 1, .1, 400); gc.position.set(h.pos.x - Math.sin(h.yaw) * 6, h.pos.y + 3.2, h.pos.z - Math.cos(h.yaw) * 6); gc.lookAt(h.pos.x, h.pos.y + 1.4, h.pos.z); shot(gc, 1, 1, 'sau bé 6 m (như game)');
       const far = new THREE.PerspectiveCamera(30, 1, .1, 400); far.position.set(h.pos.x + Math.cos(h.yaw) * 12, h.pos.y + 3, h.pos.z - Math.sin(h.yaw) * 12); far.lookAt(cc.x, cc.y - .6, cc.z); shot(far, 2, 1, 'xa 12 m');
       x.fillStyle = '#222'; x.font = 'bold 18px sans-serif'; x.fillText(`${c.kind}: ${title}  (clip ${c.clip || '?'})`, 8, 20);
       return cv.toDataURL('image/jpeg', .85);
