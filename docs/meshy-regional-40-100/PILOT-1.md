@@ -24,6 +24,8 @@ Job specifications: `job-specifications/r<nnn>.json` (checked by `tools/meshy/ru
   for this session type"), so the draft release `meshy-regional-pilot-1` could not be made. Owner's choice: the journal
   (`meshy-jobs-cloud.sqlite3`) and the raw files are sent to the owner in the chat after each paid step, to keep in
   `D:\WorkSpace\meshy`. Nothing raw is committed. A later session starts from the journal the owner attaches.
+- Game roles (pop-up, asked before the review): r045, r050, r057 and r064 are **not put in the game yet**; the files are only
+  kept. Nothing in `js/crowd-models.ts` changes.
 
 ## Spending (from the journal)
 

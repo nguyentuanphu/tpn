@@ -501,7 +501,15 @@ def lid(img, b, top=0., bot=1.):   # (original_skin) a closed lid painted over t
     if top > 0: hole &= yy >= y0
     if PART: hole &= yy < lidline(xx)
     if os.environ.get('FIT_LID_MATCH') and OWN:   # (10 Nov 2026, owner: "hốc mắt chưa đẹp, học xem làm mắt như thế nào từ clara finn sol lumi"; fit_person.ps1 -LidMatch) the closed area took in the whole socket and filled it with the light skin round it: a flat pale disc on every shut eye (r050: green 195 against 180 under the eye). Only the painted eye itself (whites, iris, lashes, its pale or dark rim, 3 px wider) is replaced; the socket's own painted shading stays and the fill flows in from it
-        _ep = hole & ((V < .62) | ((V > .7) & (S_ < .3)) | (D > .3)) & ~skin_mask(F, .44) & ~(HAIRISH & ~_inb)   # (what is still skin, the blush under the eye too, is never the eye)
+        _ep = hole & ((V < .62) | ((V > .7) & (S_ < .3)) | (D > .3)) & ~(skin_mask(F) & (D < .3)) & ~(HAIRISH & ~_inb)   # (what is still skin near the skin's colour, the blush under the eye too, is never the eye; a brown iris on dark skin is far from it and closes)
+        _core = _ep & _inb & (((V > .7) & (S_ < .3)) | (D > .3))   # (only what joins the eye itself: the brows above lie across a band of skin and stay, r084's were wiped)
+        for _ in range(int(max(w_, h_))):
+            _n = _core | (_ep & (np.roll(_core, 1, 0) | np.roll(_core, -1, 0) | np.roll(_core, 1, 1) | np.roll(_core, -1, 1)))
+            if (_n == _core).all(): break
+            _core = _n
+        if _core.sum() > 8: _ep = _core
+        _wy = np.nonzero((_inb & (V > .7) & (S_ < .3)).any(1))[0]   # (and nothing above the lashes over the whites: on r084's dark skin every pixel is far from the light reference skin, and his brows went with the eye)
+        if len(_wy) > 2: _ep &= yy >= _wy.min() - max(3, (_wy.max() - _wy.min()) * .45)
         for _ in range(max(4, int(round(w_ * .1)))): _ep = _ep | np.roll(_ep, 1, 0) | np.roll(_ep, -1, 0) | np.roll(_ep, 1, 1) | np.roll(_ep, -1, 1)   # (a tenth of the eye's width wider: its pale rim and soft outline go too)
         hole &= _ep
     # her own skin flows in from all round the eye (a smooth fill, no disc edge): the eye pixels are repeatedly

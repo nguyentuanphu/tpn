@@ -146,6 +146,28 @@ Record: `docs/meshy-regional-40-100/PILOT-1.md`. Ids `r<nnn>` (sheet number), jo
   sleeves and shoulders near the arms came out beige. A villager is never toned, so regional villagers are fitted with
   `fit_person.ps1 -NoLimbTint` (`FIT_NO_LIMB_TINT` in `fit_people.py`: no limb flag; the face mark and closed-eye rules stay).
   Before trusting a villager's colours, compare the full views with the ChatGPT front at full size.
+- A crowd host turns its head to look at the child: head shots and the eye audit face the model's own face (head bone to the
+  middle of the `face-smile` piece), the whole-body shots its shoulders (`armL` to `armR`). Before this, "front" rows were
+  three-quarter views and the eye audit looked from the wrong sides.
+- Dark or strongly coloured skin (r084, saturation .58; r074's flushed cheeks): at `SKIN_SMAX` .44 none of it was skin in the
+  face picture, the lids and the mouth pieces were filled with the pale reference colour, and showed as light squares and
+  patches. `fit_person.ps1 -SkinSMax .65` fixes it (the eye growth below still uses the strict .44: r074's orange-brown irises
+  passed as skin at .65).
+- Big irises with white only at the corners (r057's hazel eyes): the eye box held only the whites, and the closed lids left the
+  irises showing. `fit_person.ps1 -EyeDark` grows the box from the whites through what is not skin next to them. Use it only
+  where the irises show through: on r064 it made the side view worse (108 against 32 eye-white pixels), so r064 keeps the fit
+  without it. Look at each person's closed eyes front and from both sides after the change.
+- (10 Nov) A `#` comment inserted in the middle of a one-line Python statement again swallowed the rest of the line
+  (`; _g = ...`), and a fit failed with a NameError. After every scripted edit of `fit_people.py`, print the edited line.
+- **Closed eyes ("hốc mắt chưa đẹp", owner 10 Nov).** The lid area (`lid()` in `fit_people.py`) took in the whole socket, a wide
+  oval reaching below the eye, and filled it with the light skin round it: every blink showed a flat pale disc with the blush
+  and the shading under the eye wiped out. It is in the picture data itself, not the game's drawing: render the fitted
+  `.blend` from the front with each picture as pure emission (no light), body alone and body with the `face-blink` piece, and
+  compare. `fit_person.ps1 -LidMatch` replaces only the painted eye (dark, white-grey or far from the skin's colour, and never
+  what is still skin, blush included), a tenth of the eye's width wider for its rim; the fill flows in from the socket's own
+  skin. Tried and not the cause (no change): smooth instead of flat piece normals (`-SmoothPieces`), a 2048 px body picture,
+  no mipmaps, unlit materials; matching the fill's brightness to the skin inside the wide oval (the fill already matched it).
+  A hole cut off straight at the eye's lowest row left a hard line; a mask that counted blush as eye left another.
 - Fits on 4 CPU cores take about 9 min per pass (up to 4 passes for the 500 KB budget); two run side by side.
 
 ## Friends: old head on a swim body, clothes made in code (8 Nov 2026)
