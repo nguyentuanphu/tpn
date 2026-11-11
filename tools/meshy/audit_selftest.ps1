@@ -13,6 +13,7 @@ param([string]$Id = 'sol', [string]$Out = 'D:\WorkSpace\meshy\fitted', [string]$
 $ErrorActionPreference = 'Stop'
 $repo = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent; Set-Location "$repo\tests"
 $ok = $true
+New-Item -ItemType Directory -Force $Out | Out-Null
 # name = check, friend ('' = -Id), extra pass
 $plants = [ordered]@{ kit = @('kit', ''); poke = @('poke', ''); fold = @('fold', ''); eyes = @('eyes', ''); bite = @('bite', ''); rag = @('rag', ''); deep = @('poke', 'clara');
   lightpoke = @('poke', 'finn', 'light', 'poke'); far = @('far', '', 'light'); glow = @('glow', '', 'night'); grip = @('grip', '', 'item'); face = @('face', '') }
