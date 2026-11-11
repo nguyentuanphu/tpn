@@ -261,7 +261,9 @@ if J.get('trim_back_hair'):
 # ---- 2. the face layer: the face's front surface, lifted a little, its own front-facing picture
 activate(body); bm = bmesh.new(); bm.from_mesh(body.data); bm.faces.ensure_lookup_table()
 def infb(p): return fx0 <= p.x <= fx1 and fz0 <= p.z <= fz1
-front = [f for f in bm.faces if infb(f.calc_center_median()) and f.normal.y < -.45 and f.calc_center_median().y < 0]   # (10 Nov 2026: -.45, was -.15: a front-drawn mood piece on the cheek's sides stretched the lash ends into dark streaks before Finn's ears; the body's own eye areas cover the rest while shut)
+def _eyeband(c, n):   # (12 Nov 2026, villagers: the far eye shut from three-quarters kept its dark pupil by the nose, on the socket's slope the front-drawn lid did not reach, and the game's shut-eye paint does not lift it) in the band of the eyes the lid pieces reach the slopes too
+    return REFP == 'villager-' and n.y < -.1 and fz0 + (fz1 - fz0) * .4 < c.z < fz0 + (fz1 - fz0) * .85 and abs(c.x - (fx0 + fx1) / 2) < (fx1 - fx0) * .4
+front = [f for f in bm.faces if infb(f.calc_center_median()) and (f.normal.y < -.45 or _eyeband(f.calc_center_median(), f.normal)) and f.calc_center_median().y < 0]   # (10 Nov 2026: -.45, was -.15: a front-drawn mood piece on the cheek's sides stretched the lash ends into dark streaks before Finn's ears; the body's own eye areas cover the rest while shut)
 FACEF = {f.index for f in front}
 dbm = bmesh.new(); vmap = {}
 for f in front:
@@ -523,7 +525,7 @@ def lid(img, b, top=0., bot=1.):   # (original_skin) a closed lid painted over t
         # over the top stay hair)
         _wide = (np.hypot((xx - cx_) / (w_ * .76), (yy - (b[1] + b[3]) / 2) / (h_ * .64)) < 1) & ~(HAIRISH & (yy < b[1] + h_ * .15)) & ~(HAIRISH & ~_inb & (S_ > .3) & (V > .45) & ~((V > .7) & (S_ < .22)))   # (dark lash flicks close even when hair-coloured, Lumi's; only bright, strongly coloured hair beside the eye stays: the faint grey edge of Lumi's outline closes, 9 Nov)   # (an eye's white is never hair: Clara's inner corner; Lumi's outer arc, 9 Nov; a strand of hair beside the eye stays hair: Clara's)
         hole |= _wide & (yy >= b[1] + h_ * .24)   # (below the brows: b reaches up over them, and closed eyes lost Clara's and Lumi's brows)
-        hole &= ~((yy < b[1] + h_ * .16) & (xx > b[0] + w_ * .2) & (xx < b[2] - w_ * .2) & ((V < .6) | HAIRISH))   # (over the eye's middle only: at the corners the lashes flick up past the box, and Mit's far eye kept them)   # (11 Nov 2026: Cô Mai's brows lie just over her eyes and her closed lids wiped half of them: dark pixels above the eye's own box (b is grown by .25 of it upwards) are brows or hair, and stay)
+        hole &= ~((yy < b[1] + h_ * (0 if PART and REFP == 'villager-' else .16)) & (xx > b[0] + w_ * .2) & (xx < b[2] - w_ * .2) & ((V < .6) | HAIRISH))   # (12 Nov 2026, owner circled grey marks over the sad lids: a part lid is drawn on the eye's own box, not one grown up to the brows, so this keep held the eye's own upper lash line inside the lid)   # (over the eye's middle only: at the corners the lashes flick up past the box, and Mit's far eye kept them)   # (11 Nov 2026: Cô Mai's brows lie just over her eyes and her closed lids wiped half of them: dark pixels above the eye's own box (b is grown by .25 of it upwards) are brows or hair, and stay)
     if top > 0: hole &= yy >= y0
     if PART: hole &= yy < lidline(xx)
     # her own skin flows in from all round the eye (a smooth fill, no disc edge): the eye pixels are repeatedly
@@ -633,13 +635,16 @@ M['half'] = im
 im = base.copy()
 for b in eyes.values(): shut(im, grow(b)); stroke(im, lash_arc(b, .7, -.32), lash, lw)
 M['happy'] = im
+def gmouth():   # (12 Nov 2026, owner circled the old smile's corners beside the sad and round mouths) a villager's old mouth is erased a little past its box
+    if REFP != 'villager-': return mouth
+    mw_, mh_ = mouth[2] - mouth[0], mouth[3] - mouth[1]; return [max(0, int(mouth[0] - mw_ * .18)), max(0, int(mouth[1] - mh_ * .3)), min(W_, int(mouth[2] + mw_ * .18)), min(H_, int(mouth[3] + mh_ * .4))]
 def mouth_o(im, big):
     if not mouth: return im
-    erase(im, mouth); cx, cy = (mouth[0] + mouth[2]) / 2, (mouth[1] + mouth[3]) / 2; mw = mouth[2] - mouth[0]
+    erase(im, gmouth()); cx, cy = (mouth[0] + mouth[2]) / 2, (mouth[1] + mouth[3]) / 2; mw = mouth[2] - mouth[0]
     ellipse(im, cx, cy + (mouth[3] - mouth[1]) * .2, mw * (.17 if not big else .24), mw * (.15 if not big else .19), np.array([.80, .42, .45]), np.clip(lip * .95, 0, 1)); return im   # (owner: no black lips) a soft rose mouth, like the game's own faces
 M['surprised'] = mouth_o(base.copy(), False)
 im = base.copy()
-if mouth: erase(im, mouth); mb = [mouth[0] + (mouth[2] - mouth[0]) * .15, mouth[1], mouth[2] - (mouth[2] - mouth[0]) * .15, mouth[3]]; stroke(im, arc(mb, .75, -.45), lip * .8, lw * 1.1)
+if mouth: erase(im, gmouth()); mb = [mouth[0] + (mouth[2] - mouth[0]) * .15, mouth[1], mouth[2] - (mouth[2] - mouth[0]) * .15, mouth[3]]; stroke(im, arc(mb, .75, -.45), lip * .8, lw * 1.1)
 for b in eyes.values(): erase(im, b, 0, .18)
 M['sad'] = im
 im = base.copy()
@@ -1346,13 +1351,23 @@ if TEX and KEEP and SHIFT:
             _cor = np.zeros(len(me.polygons), bool)   # (11 Nov 2026, round 14: Su, Tí, Lan, Tèo, Bom shut their eyes with skin-coloured patches over the black hair at the temples) the area's reach towards the temple (villagers) took dark hair as "eye", and the game painted it skin: the dark and not-hair-coloured rules hold only in the eye's own box (villagers 4 px round it, friends 18 and 10: unchanged for them); beyond it, only triangles outside the hair region
             _cm = (4, 4) if REFP == 'villager-' else (18, 10)   # (villagers 4 px: with the friends' 18 px Su's temple hair still took skin colour at the box's edge; the friends keep theirs, Lumi's far eye lay in her hair region)
             for b in list(eyes.values())[:2]: _cor |= (_fcx > fx0 + (b[0] - _cm[0]) / W_ * (fx1 - fx0)) & (_fcx < fx0 + (b[2] + _cm[0]) / W_ * (fx1 - fx0)) & (_fcz > fz1 - (b[3] + _cm[1]) / H_ * (fz1 - fz0)) & (_fcz < fz1 - (b[1] - _cm[1]) / H_ * (fz1 - fz0))
-            _add = _ine & ~_skp & _hz & ((~_hreg & (_cor | (REFP != 'villager-') | (_mc.max(-1) >= .35))) | (_cor & (~_hairlike | ((_mc.max(-1) < .35) & (_mc.max(-1) > 0))))) & (_fcy < _ear_y)   # (round 15: Bông's black temple hair lay outside her hair region and still took skin colour: beyond a villager's eye box only triangles that are not dark)   # (and dark: Lumi's green irises are coloured like her hair)   # (the face side only: the back of the head has the same x and height, Finn's black hair there was marked)   # (Lumi's far eye, three-quarters, lay in her hair region: a triangle there not coloured like hair is the eye)
+            _all = np.zeros(len(me.polygons), bool)   # (12 Nov 2026: Mít's brown irises passed as hair-coloured, were never marked, and stayed open on the far eye from three-quarters, by the nose, seen with the face pieces hidden) inside a villager's own eye box, below its top sixth (where a fringe may hang), every triangle is eye
+            if REFP == 'villager-':   # (any corner inside, not only the centre: in the game half the eye area's front corners were still unmarked, and the pupils stayed dark on shut eyes)
+                _vco = np.zeros(len(me.vertices) * 3, np.float32); me.vertices.foreach_get('co', _vco); _vco = _vco.reshape(-1, 3)
+                _vin = np.zeros(len(me.vertices), bool)
+                for b in list(eyes.values())[:2]: _vin |= (_vco[:, 0] > fx0 + (b[0] - 2) / W_ * (fx1 - fx0)) & (_vco[:, 0] < fx0 + (b[2] + 2) / W_ * (fx1 - fx0)) & (_vco[:, 2] > fz1 - (b[3] + 2) / H_ * (fz1 - fz0)) & (_vco[:, 2] < fz1 - (b[1] + (b[3] - b[1]) * .17) / H_ * (fz1 - fz0))
+                _all = np.array([bool(_vin[list(p.vertices)].any()) for p in me.polygons])
+            _add = (_all & (_fcy < _ear_y)) | _ine & ~_skp & _hz & ((~_hreg & (_cor | (REFP != 'villager-') | (_mc.max(-1) >= .35))) | (_cor & (~_hairlike | ((_mc.max(-1) < .35) & (_mc.max(-1) > 0))))) & (_fcy < _ear_y)   # (round 15: Bông's black temple hair lay outside her hair region and still took skin colour: beyond a villager's eye box only triangles that are not dark)   # (and dark: Lumi's green irises are coloured like her hair)   # (the face side only: the back of the head has the same x and height, Finn's black hair there was marked)   # (Lumi's far eye, three-quarters, lay in her hair region: a triangle there not coloured like hair is the eye)
             if _add.any():
                 _cd = body.data.color_attributes['skinw'].data; _b2 = np.zeros(len(_cd) * 4, np.float32); _cd.foreach_get('color', _b2)
                 _li = np.concatenate([list(me.polygons[int(i)].loop_indices) for i in np.nonzero(_add)[0]]).astype(int)
                 for _c in range(3): _b2[_li * 4 + _c] = 1.
                 _cd.foreach_set('color', _b2)
-            print('FIT eye-area triangles marked skin', int(_add.sum()))
+            print('FIT eye-area triangles marked skin', int(_add.sum()), 'in eye boxes', int(_all.sum()), 'of them skin already', int((_all & _skp).sum()), 'behind the ears', int((_all & (_fcy >= _ear_y)).sum()), 'ear y', round(float(_ear_y), 3), 'eye y', round(float(np.median(_fcy[_all])), 3) if _all.any() else None)
+            if REFP == 'villager-' and 'colour' in dir():   # (12 Nov 2026, the far eye shut from three-quarters, owner circled: its pupil stayed black by the nose) the game paints a shut eye's texels skin by multiplying the picture (js/friend-model.ts: paint / max(texel, .02)), so a texel blacker than .02 can never turn skin: in the eye areas no texel is darker than .05 (the open eye looks the same)
+                _A = px(colour); _tm = uv_texels([me.polygons[int(i)] for i in np.nonzero(_ine & _hz & (_fcy < _ear_y))[0]], _A.shape[:2])
+                _dk = _tm & (_A[..., :3].min(-1) < .05); _A[_dk, :3] = np.maximum(_A[_dk, :3], .05); colour.pixels.foreach_set(_A.ravel()); colour.update()
+                print('FIT eye-area texels lifted from black', int(_dk.sum()))
             if REFP == 'villager-':   # (round 16: Mai's, Bông's, Lan's and Su's temple hair is painted on triangles Meshy's skin test took as skin; out there, 10 px and more beyond the eye box, the shut-eye paint turned it red-brown) dark skin-marked triangles there lose the mark: hair, not eyelid
                 _nr_ = np.zeros(len(me.polygons), bool)
                 for b in list(eyes.values())[:2]: _nr_ |= (_fcx > fx0 + (b[0] - 10) / W_ * (fx1 - fx0)) & (_fcx < fx0 + (b[2] + 10) / W_ * (fx1 - fx0)) & (_fcz > fz1 - (b[3] + 10) / H_ * (fz1 - fz0)) & (_fcz < fz1 - (b[1] - 10) / H_ * (fz1 - fz0))
