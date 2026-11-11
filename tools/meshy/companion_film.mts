@@ -28,7 +28,8 @@ const setup = await P.page.evaluate(async ([kind, lod]) => {
   let c: any = null; for (let i = 0; i < 200; i++) { go(); await new Promise(r => setTimeout(r, 200)); c = comps.of(h); if (c && c.model) break; }
   if (!c || !c.model) return { error: 'no model' };
   if (lod === 'far') { const m = await K.worldModel('creature-' + kind, { clip: 'idle' }); if (!m) return { error: 'no far model' };
-    c.model.obj.parent.remove(c.model.obj); c.o.userData.body.add(m.obj); c.model = m; c.clip = ''; }
+    c.model.obj.parent.remove(c.model.obj); if (kind === 'firefly') (await import(String('/js/companion.js'))).sparkleWings(c, m);   // (as js/creatures.ts ask() does when a model arrives)
+    c.o.userData.body.add(m.obj); c.model = m; c.clip = ''; }
   (window as any).__film = { c, h, start: { x: h.pos.x, y: h.pos.y, z: h.pos.z, yaw: h.yaw } };
   let tris = 0; c.model.obj.traverse((o: any) => { if (o.isMesh) tris += (o.geometry.index ? o.geometry.index.count : o.geometry.attributes.position.count) / 3; });
   return { ok: true, tris: Math.round(tris), meshy: (() => { let p = false; c.model.obj.traverse((o: any) => { if (o.isMesh && /^meshy-/.test(o.material?.name || '')) p = true; }); return p; })() };
