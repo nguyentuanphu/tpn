@@ -653,6 +653,8 @@ def ellipse(img, cx, cy, rx, ry, col, edge):
 LOOK_A = np.zeros((H_, W_), bool)
 def shift_iris(img, b, frac):
     out = img.copy(); w_ = b[2] - b[0]; dx = int(round(w_ * frac)); y0 = int(b[1] + (b[3] - b[1]) * .3); y1 = b[3]
+    if os.environ.get('FIT_LOOK_SOLID'):   # (final pilot run: r057's eye box missed the inner part of his eye, which never moved: a crescent of the old iris) a wider area; only the eye joined to its whites and iris is changed (see below)
+        b = [max(0, int(b[0] - w_ * .25)), b[1], min(W_, int(b[2] + w_ * .25)), b[3]]; y0 = int(b[1] + (b[3] - b[1]) * .15)
     sub = img[y0:y1, b[0]:b[2]]; v = sub[..., :3].max(-1); sat = (v - sub[..., :3].min(-1)) / np.maximum(v, 1e-4)
     hh_, ww_ = sub.shape[:2]; ey, ex = np.mgrid[0:hh_, 0:ww_]
     inside = (((ex - ww_ / 2) / (ww_ * .42)) ** 2 + ((ey - hh_ * .45) / (hh_ * .55)) ** 2) < 1   # within the eye opening only
@@ -687,6 +689,42 @@ def shift_iris(img, b, frac):
             if (_n == _out).all(): break
             _out = _n
         opening = (~_out & inside) | wjoin
+        # (final pilot run: big irises touch both lids, so the holes were not closed and half the old iris stayed beside the
+        # moved one, cut by white bands) the eye is drawn afresh: the opening and the old iris disc become eye white, and the
+        # iris disc (its ring, shading and highlights, everything within its radius) is laid on again dx to the side, only
+        # inside the opening; the lids and lashes round it stay as painted
+        # the eye is everything inside the outline that is not skin (the skin under the eye is never turned white), holes
+        # filled (r057's hazel iris is near his skin's colour, but lies inside the white and the lashes); the iris is what in
+        # it is not eye white, its centre and size measured from that
+        _skin = (np.linalg.norm(sub[..., :3] - np.array(REF[:3]), axis=-1) < .14) | (skin_mask(sub) & (v > .75))
+        _e = (inside & ~_skin) | opening
+        _out = np.zeros_like(_e); _out[0, :] = _out[-1, :] = True; _out[:, 0] = _out[:, -1] = True; _out &= ~_e
+        for _ in range(ww_ + hh_):
+            _n = _out | (~_e & (np.roll(_out, 1, 0) | np.roll(_out, -1, 0) | np.roll(_out, 1, 1) | np.roll(_out, -1, 1)))
+            if (_n == _out).all(): break
+            _out = _n
+        opening = ~_out & inside
+        _c = opening & (wjoin | core)   # (only what joins the whites and the iris: hair beside the eye is not skin either)
+        for _ in range(ww_ + hh_):
+            _n = _c | (opening & (np.roll(_c, 1, 0) | np.roll(_c, -1, 0) | np.roll(_c, 1, 1) | np.roll(_c, -1, 1)))
+            if (_n == _c).all(): break
+            _c = _n
+        if _c.sum() > 8: opening = _c
+        _er = opening.copy()   # (the iris is measured inside the opening less its rim: the lashes and pale outline are not iris)
+        for _ in range(max(2, int(round(ww_ * .05)))): _er = _er & np.roll(_er, 1, 0) & np.roll(_er, -1, 0) & np.roll(_er, 1, 1) & np.roll(_er, -1, 1)
+        _ir = _er & ~eyewhite & ((v < .78) | (sat > .25))
+        if _ir.sum() > 6:
+            _cc = _ir.sum(0).astype(np.float32); _cols = np.nonzero(_cc >= _cc.max() * .4)[0]; _ys = np.nonzero(_ir[:, _cols].any(1))[0]
+            icx = (_cols.min() + _cols.max()) / 2; icy = float(np.average(np.arange(hh_), weights=_ir[:, _cols].sum(1) + 1e-6)); ir = (np.ptp(_cols) + 1) * .5 + 1
+        _col = np.nonzero(opening[:, int(np.clip(round(icx), 0, ww_ - 1))])[0]
+        if len(_col): ir = max(ir, (np.ptp(_col) + 1) * .5 + 1)   # (an iris is about as tall as the eye: a disc from its densest columns alone left crescents of the old iris)
+        _in = _er | np.roll(_er, 1, 0) | np.roll(_er, -1, 0) | np.roll(_er, 1, 1) | np.roll(_er, -1, 1)
+        disc = (np.hypot(ex - icx, ey - icy) < ir) & opening
+        o = out[y0:y1, b[0]:b[2]]; o[disc & _er, :3] = np.array(EW)   # (only where the old iris was: the eye's pale rim beyond the lashes keeps its colour, it showed as white arcs)
+        sx = ex - dx; ok = (sx >= 0) & (sx < ww_); sxc = np.clip(sx, 0, ww_ - 1)
+        put = _er & ok & disc[ey, sxc]; o[put, :3] = sub[ey[put], sxc[put], :3]   # (the eye's rim beyond the lashes keeps its own colour: white arcs showed there)
+        LOOK_A[y0:y1, b[0]:b[2]] |= opening
+        return out
     sx = ex - dx; ok = (sx >= 0) & (sx < ww_); sxc = np.clip(sx, 0, ww_ - 1)
     take = opening & ok & opening[ey, sxc]
     o = out[y0:y1, b[0]:b[2]]
