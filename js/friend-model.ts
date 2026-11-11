@@ -358,6 +358,7 @@ export function attachFriendModel(A, id: string, skinHex: string, wear: FriendMo
         // a box) with both thighs forward the back tucks in under the seat, below the knees most, as cloth lies over a seat
         const sit_ = Math.max(0, Math.min(1.2, -Math.max(lx, rx) - .5));
         if (sit_ > 0 && s.n === 'skirtB') ang -= sit_ * .35; else if (sit_ > 0 && s.n === 'skirtB2') ang -= sit_ * .6;
+        if (s.n === 'skirtB' || s.n === 'skirtB2') s.b.scale.set(1, 1 - Math.min(sit_, 1) * .4, 1);   // (11 Nov 2026, round 80 review: turning it further only hung it lower; sat on, the back below the seat is mostly folded under, so it is shorter)
         sq.setFromAxisAngle(X, ang).multiply(s.r);
         const off = skirtOff[s.n], Hn = off && hipMid();
         if (Hn) { sp.copy(off).applyAxisAngle(X, ang).add(Hn); A.rig.localToWorld(sp); s.b.parent.worldToLocal(sp); s.b.position.copy(sp); }
