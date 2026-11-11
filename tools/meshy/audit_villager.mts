@@ -147,18 +147,20 @@ const res: any = await P.page.evaluate(async ([LIST, QUICK, LIMIT]) => {
       }
       if (s === 0 || Math.abs(s) === .7) {   // (11 Nov 2026) the old painted mouth must be gone under the "o" and sad mouths
         const lum = (P: Uint8Array, i: number) => P[i * 4] * .3 + P[i * 4 + 1] * .59 + P[i * 4 + 2] * .11;
+        const inner = (i: number) => { const x = i % W, y = (i / W) | 0; for (let dy = -3; dy <= 3; dy += 3) for (let dx = -3; dx <= 3; dx += 3) { const xx = x + dx, yy = y + dy; if (xx < 0 || yy < 0 || xx >= W || yy >= H || !Pf[(yy * W + xx) * 4 + 3]) return false; } return true; };   // (not the face's outline: its edge pixels against the dark background)
         setMood('smile'); const S0 = read(stage, cam); setMood('blink'); const SB = read(stage, cam);
         const df = (a: Uint8Array, b: Uint8Array, i: number) => Math.abs(a[i * 4] - b[i * 4]) + Math.abs(a[i * 4 + 1] - b[i * 4 + 1]) + Math.abs(a[i * 4 + 2] - b[i * 4 + 2]) > 30;
         let ey = 0, en = 0; for (let i = 0; i < N; i++) if (df(S0, SB, i)) { ey += (i / W) | 0; en++; }
+        let x0 = W, x1 = -1, y0 = H, y1 = -1;   // (the mouth's place: what the "o" face changes, on the face, below the eyes; sad changes the eyes too)
         for (const m of ['o', 'sad']) {
           setMood(m); const SM = read(stage, cam); if (en < 20) break; const eyy = ey / en;
-          let x0 = W, x1 = -1, y0 = H, y1 = -1; for (let i = 0; i < N; i++) { const y = (i / W) | 0; if (y < eyy - 6 && df(S0, SM, i)) { const x = i % W; x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); } }
+          if (m === 'o') for (let i = 0; i < N; i++) { const y = (i / W) | 0; if (Pf[i * 4 + 3] && y < eyy - 6 && df(S0, SM, i)) { const x = i % W; x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); } }
           if (x1 < 0) { cases.push({ id, pose: m, view: String(s), worn: 0, eyes: 0, oldmouth: 99 }); continue; }   // (no mouth change at all)
           const mx = Math.round((x1 - x0) * .3), my = Math.max(6, Math.round((y1 - y0) * .4)), L: number[] = [];
-          for (let y = Math.max(0, y0 - my); y <= Math.min(H - 1, y1 + my); y++) for (let x = Math.max(0, x0 - mx); x <= Math.min(W - 1, x1 + mx); x++) L.push(lum(S0, y * W + x));
+          for (let y = Math.max(0, y0 - my); y <= Math.min(H - 1, y1 + my); y++) for (let x = Math.max(0, x0 - mx); x <= Math.min(W - 1, x1 + mx); x++) if (Pf[(y * W + x) * 4 + 3]) L.push(lum(S0, y * W + x));
           L.sort((a, b) => a - b); const skin = L[Math.floor(L.length * .7)] || 0, f = new Uint8Array(N); let k = 0;
           for (let y = Math.max(0, y0 - my); y <= Math.min(H - 1, y1 + my); y++) for (let x = Math.max(0, x0 - mx); x <= Math.min(W - 1, x1 + mx); x++) {
-            const i = y * W + x; if (!df(S0, SM, i) && lum(SM, i) < skin - 22 && lum(S0, i) < skin - 22 && Math.abs(S0[i * 4] - SM[i * 4]) < 12) { f[i] = 1; k++; } }
+            const i = y * W + x; if (inner(i) && !df(S0, SM, i) && lum(SM, i) < skin - 22 && lum(S0, i) < skin - 22 && Math.abs(S0[i * 4] - SM[i * 4]) < 12) { f[i] = 1; k++; } }
           cases.push({ id, pose: m, view: String(s), worn: 0, eyes: 0, oldmouth: k }); if (k > LIMIT.oldmouth || QUICK) pics[`${id}-face-oldmouth-${m}-${s}`] = png(SM, f);
         }
         setMood('smile');

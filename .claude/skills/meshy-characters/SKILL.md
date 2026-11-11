@@ -169,6 +169,33 @@ Record: `docs/meshy-regional-40-100/PILOT-1.md`. Ids `r<nnn>` (sheet number), jo
   no mipmaps, unlit materials; matching the fill's brightness to the skin inside the wide oval (the fill already matched it).
   A hole cut off straight at the eye's lowest row left a hard line; a mask that counted blush as eye left another.
 - Fits on 4 CPU cores take about 9 min per pass (up to 4 passes for the 500 KB budget); two run side by side.
+- **Eyes, nose and mouth (owner 11 Nov 2026: "Đã làm rất nhiều rồi sao vẫn còn nhiều lỗi vậy, các skill đâu dao không kiểm
+  tra? Tất cả con mắt, mũi và miệng của các nhân vật đều có vấn đề").** A round passed the auditor and was sent with a second
+  mouth on every "o", excited and sad face, soft eyes, smudged noses and streaked looking eyes. Causes and fixes (all in
+  `fit_person.ps1`, regional villagers fit with `-NoLimbTint -LidMatch -FaceUV 2 -PieceSnap .001 -MouthFind -LookSolid -VTile 256`):
+  - *Two mouths.* The mood mouth erased the painted one through `lid()`, the eye's closing, and `-LidMatch` keeps whatever is
+    near the skin's colour: pink lips are, so the smile stayed under the new mouth. The mouth box was also a fixed band of the
+    face picture (.62 to .97 of its height): r057's mouth lies at .56 (his helmet strap was taken) and r084's darker skin made
+    the whole lower face "mouth". `-MouthFind`: the mouth is the darkest wide flat patch below the eyes, between the pupils,
+    against the skin right there (a fainter step when none is found), erased on its own (`erase_mouth`).
+  - *Pieces floating off the face.* The mood grid was smoothed and only kept from going behind the face, never from floating
+    in front: over hollows (the mouth, the eye sockets) it stood up to a centimetre off, and from three-quarters the "o" sat on
+    the chin and the far eye showed past the nose. `-PieceSnap .001`: at most 1 mm (+3) in front. The closed-eye count fell
+    from 27-66 to 0 on r050 and r084 with this alone.
+  - *Soft eyes, smudged nose.* `keep_meshy_uvs` keeps Meshy's layout, where the face is a few percent of the picture, cut into
+    330-580 small islands; the 500 KB budget halves the 2048 picture to 1024, so the eyes were 35 px wide (Meshy's own: 75).
+    Repacking Meshy's islands, or shelving the face's, wasted the gaps (1.12-1.16 times). `-FaceUV 2`: Meshy's layout is
+    squeezed to .7 of the height and the face's front (what a camera in front sees) becomes one island projected from the front
+    in the strip along the top, baked from the untouched model. Measure it: look at `mid/colour.jpg` (the face is the island at
+    the top) and the `FIT face front` line (`FIT_LOG=<file>` keeps Blender's output; `fit_person.ps1` dropped it).
+  - *Streaked looking eyes.* The look pieces drew only the changed pixels with soft edges, so the painted iris showed through
+    as rings. `-LookSolid` covers the whole eye opening. The 11 named villagers have the same fault (Mit's look-left).
+  - *Why the auditor passed it.* Its mouth check only measured how far the "o" lies below the eyes. `audit_villager.mts` now has
+    `oldmouth`: front and both three-quarters, pixels round the "o"/sad mouth (on the face, not its outline) as dark as a mouth
+    line that did not change from the smile face. It failed this morning's models (138-659) before any fix.
+  - Before sending a round: look at one mood picture of each person at full size (not only the sheet), front and
+    three-quarter, against the ChatGPT front, and ask "is there anything here a child would see as wrong?" The sheet's small
+    tiles hid the second mouth from the reviewing chat; the owner saw it at once.
 
 ## Friends: old head on a swim body, clothes made in code (8 Nov 2026)
 

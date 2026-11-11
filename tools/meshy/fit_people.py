@@ -202,44 +202,28 @@ if KEEP and FACE_UV > 1:
     # of the picture, and the villagers' 1024 px picture halved it again: eyes 35 px wide in the picture, soft lashes and a
     # smudged nose up close. the face's islands get more room (below)
     # and the picture is baked from the untouched model (same surface, so the rays are a hair long)
-    # (11 Nov 2026: repacking all of Meshy's hundreds of small islands wasted the space between them and the face did not
-    # grow) Meshy's layout stays as it is, shrunk to SHR of the picture's width at its corner; the face's islands are moved
-    # into the two strips that frees, as big as fits (up to FACE_UV times their old size), on shelves
-    from bpy_extras.bmesh_utils import bmesh_linked_uv_islands
-    SHR = float(os.environ.get('FIT_FACE_SHRINK') or .8); MG = .004
-    bm = bmesh.new(); bm.from_mesh(body.data); bm.faces.ensure_lookup_table(); uvl = bm.loops.layers.uv.active
+    # (11 Nov 2026: Meshy cuts the face into hundreds of small islands, 330 on r050 and 580 on r084; packing them again, or
+    # on shelves beside the layout, wasted the space between them: the face grew 1.12 to 1.16 times) Meshy's layout stays,
+    # squeezed to SHR of the picture's height (its full width kept: a corner square left 40% of the picture empty), and the
+    # face's front, what a camera straight in front sees, becomes one island of its own, projected from the front into the
+    # strip along the top (r050 at SHR .7: eyes 65 px wide, were 35; Meshy's own 2048 picture has 75). Triangles hidden
+    # from the front (under the fringe, under the nose) keep Meshy's layout
+    from mathutils.bvhtree import BVHTree as _BVH2
+    SHR = float(os.environ.get('FIT_FACE_SHRINK') or .7); MG = .006
+    bm = bmesh.new(); bm.from_mesh(body.data); bm.faces.ensure_lookup_table(); bm.normal_update(); uvl = bm.loops.layers.uv.active
     for f in bm.faces:
-        for l in f.loops: l[uvl].uv = l[uvl].uv * SHR
-    isls = []
-    for isl in bmesh_linked_uv_islands(bm, uvl):
-        c3 = sum((f.calc_center_median() for f in isl), Vector()) / len(isl)
-        if not (fx0 - .02 < c3.x < fx1 + .02 and fz0 - .04 < c3.z < fz1 + .02 and c3.y < 0): continue
-        us = [l[uvl].uv.copy() for f in isl for l in f.loops]
-        isls.append((isl, min(u.x for u in us), min(u.y for u in us), max(u.x for u in us), max(u.y for u in us)))
-    def shelves(k):   # k: the scale from the shrunk layout; regions: the right strip, then the top strip
-        regs = [[SHR, 0, 1, 1], [0, SHR, SHR, 1]]; out = []; ri = 0; x = regs[0][0] + MG; y = regs[0][1] + MG; rowh = 0
-        for it in sorted(isls, key=lambda t: -(t[4] - t[2])):
-            w, h = (it[3] - it[1]) * k, (it[4] - it[2]) * k
-            while True:
-                R = regs[ri]
-                if x + w + MG > R[2]: x = R[0] + MG; y += rowh + MG; rowh = 0
-                if y + h + MG <= R[3] and x + w + MG <= R[2]: break
-                ri += 1
-                if ri >= len(regs): return None
-                x = regs[ri][0] + MG; y = regs[ri][1] + MG; rowh = 0
-            out.append((it, x, y)); x += w + MG; rowh = max(rowh, h)
-        return out
-    k = FACE_UV / SHR; place = None
-    while k > 1.0 and place is None:
-        place = shelves(k)
-        if place is None: k -= .05
-    if place:
-        for (isl, u0, v0, u1, v1), x, y in place:
-            for f in isl:
-                for l in f.loops: l[uvl].uv = Vector((x + (l[uvl].uv.x - u0) * k, y + (l[uvl].uv.y - v0) * k))
-    nface = len(place or [])
+        for l in f.loops: l[uvl].uv = Vector((l[uvl].uv.x, l[uvl].uv.y * SHR))
+    _t2 = _BVH2.FromBMesh(bm); bw_, bh_ = fx1 - fx0, fz1 - fz0; side = min((1 - SHR - 2 * MG) / bh_, (1 - 2 * MG) / bw_); nface = 0
+    for f in bm.faces:
+        c = f.calc_center_median()
+        if not (fx0 < c.x < fx1 and fz0 < c.z < fz1 and c.y < 0 and f.normal.y < -.3): continue
+        hit = _t2.ray_cast(Vector((c.x, -2, c.z)), Vector((0, 1, 0)))
+        if hit[0] is None or hit[2] != f.index: continue
+        if any(not (fx0 <= l.vert.co.x <= fx1 and fz0 <= l.vert.co.z <= fz1) for l in f.loops): continue
+        nface += 1
+        for l in f.loops: l[uvl].uv = Vector((MG + (l.vert.co.x - fx0) * side, SHR + MG + (l.vert.co.z - fz0) * side))
     bm.to_mesh(body.data); bm.free()
-    print('FIT face islands moved', nface, 'scale against the old layout', round(k * SHR, 2), 'layout shrunk to', SHR)
+    print('FIT face front as one island', nface, 'triangles, face box', round(bw_, 3), 'x', round(bh_, 3), 'm,', round(side * bw_ * 1024), 'px wide at 1024; layout', SHR, 'of the height')
     colour = bpy.data.images.new(ID + '-colour', base_img.size[0], base_img.size[1], alpha=True); bake(body, colour, ext=.002, dist=.006); fill_missing(colour)
     body.data.materials.clear(); print('FIT face islands baked', base_img.size[0], 'tris', len(body.data.polygons))
 elif KEEP:   # Meshy's own picture, on Meshy's own UVs (the body still has them)
@@ -662,6 +646,7 @@ def ellipse(img, cx, cy, rx, ry, col, edge):
     d = np.hypot((xx - cx) / max(rx, 1), (yy - cy) / max(ry, 1)); al = np.clip((1 - d) * max(rx, ry), 0, 1)[..., None]
     img[..., :3] = img[..., :3] * (1 - al) + np.array(col) * al; img[..., 3:] = np.maximum(img[..., 3:], al)
     ring = np.clip(1 - abs(d - 1) * max(rx, ry) / 1.2, 0, 1)[..., None]; img[..., :3] = img[..., :3] * (1 - ring) + np.array(edge) * ring
+LOOK_A = np.zeros((H_, W_), bool)
 def shift_iris(img, b, frac):
     out = img.copy(); w_ = b[2] - b[0]; dx = int(round(w_ * frac)); y0 = int(b[1] + (b[3] - b[1]) * .3); y1 = b[3]
     sub = img[y0:y1, b[0]:b[2]]; v = sub[..., :3].max(-1); sat = (v - sub[..., :3].min(-1)) / np.maximum(v, 1e-4)
@@ -689,6 +674,7 @@ def shift_iris(img, b, frac):
     take = opening & ok & opening[ey, sxc]
     o = out[y0:y1, b[0]:b[2]]
     o[opening, :3] = np.array(EW); o[take, :3] = sub[ey[take], sxc[take], :3]
+    LOOK_A[y0:y1, b[0]:b[2]] |= opening   # (11 Nov 2026: the whole opening, for -LookSolid)
     # (the iris leaves bits along the eye's edge uncovered; white there showed as a crescent under the eye: they take the
     # colour of the lid just outside instead)
     def _dil(a, n):
@@ -762,6 +748,11 @@ if OWN:
     for k in M:
         ch = (np.abs(M[k][..., :3] - F[..., :3]).max(-1) > .025).astype(np.float32)
         M[k][..., 3] = np.minimum(soften(ch, max(1, _g // 2), _g) * 1.6, 1) * PARTS[k] * NOHAIR   # (a narrow soft edge: less of the cheek redrawn)
+        if k in ('lookL', 'lookR') and os.environ.get('FIT_LOOK_SOLID') and LOOK_A.any():
+            # (owner 11 Nov 2026: the looking eyes were streaked, rings of the old iris round the moved one) the piece drew
+            # only the pixels that changed, with soft edges, so the painted iris under it showed through: it now covers the
+            # whole eye opening, solid, with a one-pixel soft edge
+            _la = soften(LOOK_A.astype(np.float32), 1, 1); M[k][..., 3] = np.maximum(M[k][..., 3], np.clip(_la * 1.5, 0, 1))
         # (where see-through it keeps the painted face's own colour in a narrow band round each piece: black there blended
         # into a dark fringe; beyond the band one flat colour, so the picture stays small)
         _band = M[k][..., 3] >= .01
