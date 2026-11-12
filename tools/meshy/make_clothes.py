@@ -269,6 +269,7 @@ def _move_with_body(bm, o, name):
         jp = J[limb]
         for v in bm.verts:
             if (v.co - jp).length > .16: continue
+            if False and hb.startswith('helpArm') and (lambda h_: h_[0] is not None and bool(isarm[h_[2]]))(btree.find_nearest(v.co)): continue   # (11 Nov 2026, owner: "áo đứt", Lumi's sleeves ragged with skin through them: a sleeve on the half-turning helper lagged behind the arm under it as the arms came down; only the trunk's side, the armpit, bends by half)
             w = getw(v); wl = w.get(limb, 0.); wt = sum(w.get(t_, 0.) for t_ in trunk_)
             m_ = min(wl, wt)
             if m_ < .02: continue
@@ -276,6 +277,25 @@ def _move_with_body(bm, o, name):
             for t_ in trunk_:
                 if t_ in new: new[t_] = new[t_] * (1 - m_ / max(wt, 1e-6))
             new[hb] = new.get(hb, 0) + 2 * m_; setw(v, new)
+    # (3b) (12 Nov 2026, owner: "áo đứt", every short sleeve's hem ragged with the arm's skin coming through it as teeth)
+    # the shoulder smoothing reaches 15 cm, past a short sleeve's hem, so the hem lagged behind the arm under it as the
+    # arms came down from Meshy's pose: down the arm, from 4 cm past the shoulder joint, fully by 9 cm, a sleeve moves on
+    # the arm's own weights (the armpit side keeps the smoothing, where shirts had folded inside out)
+    if False and LAYER.get(name) == 1:   # (12 Nov 2026: tried, no change to the ragged sleeves, and the hem's points each took their own nearest body point's weights, uneven; off)
+        kd, W = _body_weights(); _ns = 0
+        for v in bm.verts:
+            h_ = btree.find_nearest(v.co)
+            if h_[0] is None or not bool(isarm[h_[2]]): continue
+            jp = J['armL'] if (v.co.x > 0) == (J['armL'].x > 0) else J['armR']
+            t = max(0., min(1., ((v.co - jp).length - .02) / .03))   # (from 2 cm, fully by 5 cm: at 4 to 9 cm a short sleeve's hem, 6 to 7 cm out, still lagged in the game)
+            if t <= 0: continue
+            _co, j, _d = kd.find(v.co)
+            if _d is None or _d > .05: continue
+            own = getw(v); new = {k: w * (1 - t) for k, w in own.items()}
+            for k, w in W[j].items():
+                if k != 'hair-v': new[k] = new.get(k, 0) + t * w
+            setw(v, new); _ns += 1
+        print('CL move', name, 'sleeve points on the arm\'s weights', _ns)
     # (4) (11 Nov 2026, round 82: specks of neck skin, kit and nape hair through Finn's collar with his arms up) round the
     # neck a top moves exactly as the body under it: smoothed and split onto the helper bones the collar rose by half while
     # the body's shoulder tops rose fully, through it. Over 3 cm up to 7 cm below the neckband the body's own weights take over
@@ -290,6 +310,32 @@ def _move_with_body(bm, o, name):
                 if k != 'hair-v': new[k] = new.get(k, 0) + t * w
             setw(v, new); _nc += 1
         print('CL move', name, 'collar points on body weights', _nc)
+    # (5) (12 Nov 2026, owner: "tay áo lởm chởm", ragged hems in the game, clean in Blender) the smoothing above spread a top's
+    # points over up to 8 bones; glTF keeps 4, so the exporter dropped a different bone at each point and every hem became a
+    # row of teeth. Each point keeps only its own side's limb bones and its 4 largest weights, and the weights are smoothed a
+    # little over the garment again within that set, so the game moves the cloth exactly as Blender does
+    def _side_ok(k, x):
+        if k[-1:] in 'LR' and k.rstrip('LR') in ('arm', 'elbow', 'leg', 'knee', 'helpArm', 'helpLeg', 'hand', 'ankle'):
+            return (k[-1] == 'L') == ((x > 0) == (J['armL'].x > 0)) or abs(x) < .02
+        return True
+    _n4 = 0
+    for _pass in range(3):
+        cur = {}
+        for v in bm.verts:
+            w = {k: x for k, x in getw(v).items() if _side_ok(k, v.co.x)}
+            top = dict(sorted(w.items(), key=lambda kv: -kv[1])[:4])
+            if len(w) > 4: _n4 += 1
+            cur[v] = top
+        if _pass == 2:
+            for v, w in cur.items(): setw(v, w)
+            break
+        for v in bm.verts:   # (a gentle pass over neighbours, kept within each point's own four)
+            acc = dict(cur[v])
+            for e in v.link_edges:
+                for k, x in cur[e.other_vert(v)].items():
+                    if k in acc: acc[k] += x * .5
+            setw(v, acc)
+    print('CL move', name, 'points over 4 bones trimmed', _n4)
 def _helper_bones():
     if 'helpArmL' in rig.data.bones: return
     VL.objects.active = rig; rig.select_set(True); bpy.ops.object.mode_set(mode='EDIT')
@@ -403,6 +449,17 @@ def shell(name, faces, thick, smooth=6, cuts=()):
         if h_[0] is not None and f.normal.dot(h_[1]) < 0: _flip.append(f)
     if _flip: bmesh.ops.reverse_faces(bm, faces=_flip)
     bm.normal_update()
+    # (12 Nov 2026, owner: "tay áo lởm chởm", the hems of sleeves and shorts a row of skin-coloured teeth in the game, though
+    # clean in Blender: as the child moves, the body under a hem pushes a few mm through it) the open edge and the ring of
+    # points next to it stand 6 mm (the edge) and 3 mm (the next ring) further off the body, along the body's own surface
+    _hem = {v for e in bm.edges if e.is_boundary for v in e.verts}
+    _ring = {u for v in _hem for e in v.link_edges for u in [e.other_vert(v)] if u not in _hem}
+    for _set, _dd in ((_hem, .006), (_ring, .003)):
+        for v in _set:
+            if v.co.z > NECKBAND - .03: continue   # (never the neckline: it lies on the neck)
+            hb = btree.find_nearest(v.co)
+            if hb[0] is None: continue
+            v.co = v.co + hb[1].normalized() * _dd
     _move_with_body(bm, o, name)
     # painted shade: the body's own colour under each corner, as brightness relative to the grey clothes / the skin
     uv = bm.loops.layers.uv.active; col = bm.loops.layers.color.new('shade')
@@ -726,8 +783,24 @@ for o in parts:
         for i_, p_ in enumerate(edge_pts): kd.insert(p_, i_)
         kd.balance()
     n_cov = 0
+    # (12 Nov 2026, owner: "tay áo lởm chởm", every short sleeve's hem a row of teeth: the body is painted in the colour of
+    # the garment over it, and at the shoulder's curve a body point's 3 cm ray slanted up into the sleeve, so the arm well
+    # below the hem counted as covered, painted shirt-coloured to a jagged edge along the body's triangles, past the
+    # sleeve's own straight hem) on an arm, a point past the garment's own sleeve cut is never under it
+    _acut = None
+    for _sh in SHAPES:
+        if _sh['name'] == nm:
+            for _c in _sh.get('cuts', []):
+                if _c.startswith('arm:'): _acut = _num(_c[4:])
+    _ncut = 0
     for v_ in me.vertices:
         if _ishair[v_.index] or v_.co.z > NECK + .06: continue
+        if _acut is not None:
+            _hb = btree.find_nearest(v_.co)
+            if _hb[0] is not None and bool(isarm[_hb[2]]):
+                _s = 'L' if (v_.co.x > 0) == (J['armL'].x > 0) else 'R'
+                _P = np.array([v_.co[:]]); _d, _t = along(_P, J['arm' + _s], J['elbow' + _s], J['hand' + _s])
+                if float(_t[0]) > _acut - .03: _ncut += 1; continue
         if 'cone_c' in o:
             if _in_cone(o, tr, v_.co): _cbits[v_.index] |= COVER_BIT[nm]; n_cov += 1
             continue
@@ -736,13 +809,22 @@ for o in parts:
             h_ = tr.ray_cast(v_.co - d_ * .0005, d_, .03)   # (3 cm: a body point lies about 1 cm under its garment; at 8 cm a ray from an ankle slanted up into the trousers and the ankle was hidden, a hole, the auditor)
             if h_[0] is not None and (hit is None or h_[3] < hit[3]): hit = h_
         if hit is None or abs(fn[hit[2]].dot(n_)) < .3: continue
-        if kd is not None and kd.find(hit[0])[2] < .006: continue
+        # (12 Nov 2026: no longer 6 mm short of an open edge: that rule was for when the covered body was hidden, a gap at hems;
+        # it is painted in the garment's colour now, and the skin left at every hem came through it as teeth)
         _cbits[v_.index] |= COVER_BIT[nm]; n_cov += 1
-    print('CL covered by', nm, n_cov, 'body points')
+    print('CL covered by', nm, n_cov, 'body points', 'past the sleeve cut', _ncut)
 _ca = me.color_attributes.get('skinw')
 if _ca is not None and _ca.domain == 'CORNER':
     _al = np.array([_cbits[l.vertex_index] for l in me.loops], np.float32) / 255.
-    _buf = np.zeros(len(_ca.data) * 4, np.float32); _ca.data.foreach_get('color', _buf); _buf[3::4] = _al; _ca.data.foreach_set('color', _buf)
+    _buf = np.zeros(len(_ca.data) * 4, np.float32); _ca.data.foreach_get('color', _buf); _buf[3::4] = _al
+    # (11 Nov 2026, owner: "áo đứt", dark slits down both sides of Lumi's shirt front) the game took every point that is
+    # not skin and under no garment for hair below the neck and drew it 1.2 cm in front of the clothes (js/friend-model.ts,
+    # the hair's bias): body points the shirt's cut left uncovered came through it as dark slits. A body point that is not
+    # hair now carries blue 1 (blue only counts on skin, as green minus blue), and only blue 0 is taken for hair
+    _hgb = body.vertex_groups.get('hair-v'); _hgbi = _hgb.index if _hgb else -1
+    _nothair = np.array([0. if any(g.group == _hgbi for g in me.vertices[l.vertex_index].groups) else 1. for l in me.loops], np.float32)
+    _nb = (_buf[0::4] < .5) & (_nothair > .5); _buf[2::4] = np.where(_nb, 1., _buf[2::4]); _ca.data.foreach_set('color', _buf)
+    print('CL body points marked not hair', int(_nb.sum()), 'corners')
     for m_ in me.materials:
         if m_ is not None: m_['cover_mark'] = True; m_['kit_waist'] = float(WAIST); m_['kit_neck'] = float(NECK); m_['kit_grey'] = float(GREY_LUM)   # (the game paints the swim kit in the worn clothes' colours: above the waist the top's, below the trousers')
     print('CL cover bits written on', int((_cbits > 0).sum()), 'of', len(me.vertices), 'body points')
