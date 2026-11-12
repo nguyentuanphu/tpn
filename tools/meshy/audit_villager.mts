@@ -25,7 +25,7 @@ const { chromium } = createRequire(new URL('../../tests/package.json', import.me
 import { writeFileSync, mkdirSync, readdirSync, readFileSync, copyFileSync, existsSync, statSync } from 'node:fs';
 const [OUT, LIST = 'ba', QUICK = ''] = process.argv.slice(2);
 mkdirSync(OUT, { recursive: true });
-const LIMIT = { worn: 0, unseen: 0, eyes: 6, mouth: 100, oldmouth: 20, lookstill: 0, size: 500 };   // (unseen: the face pieces cover under 400 px of a head picture: nothing was looked at, 10 Nov)
+const LIMIT = { worn: 0, unseen: 0, eyes: 6, mouth: 100, oldmouth: 20, lookstill: 0, lid: 8, mshape: 12, size: 500 };   // (13 Nov 2026, from audit.mts's face pass, meshy-audit-coverage 6f0f226ee: 'lid' a shut eye paler than the skin round it; 'mshape' each mood's mouth shape)   // (unseen: the face pieces cover under 400 px of a head picture: nothing was looked at, 10 Nov)
 function summarize(cs: any[]) { const keys = Object.keys(LIMIT), fail = cs.filter(c => keys.some(k => c[k] > LIMIT[k]));
   const lines = [`audit ${new Date().toISOString()} cases ${cs.length} failing ${fail.length}`];
   for (const k of keys) lines.push(`${k}: ${cs.filter(c => c[k] > LIMIT[k]).length} cases over ${LIMIT[k]}, worst ${Math.max(0, ...cs.map(c => c[k] || 0))}`);
@@ -134,11 +134,77 @@ const res: any = await P.page.evaluate(async ([LIST, QUICK, LIMIT]) => {
       const nearDark = (i: number) => { const x = i % W, y = (i / W) | 0; for (let dy = -8; dy <= 8; dy += 2) for (let dx = -8; dx <= 8; dx += 2) { const xx = x + dx, yy = y + dy; if (xx >= 0 && yy >= 0 && xx < W && yy < H && dark[yy * W + xx]) return true; } return false; };
       const white = new Uint8Array(N); for (let i = 0; i < N; i++) { if (!Pf[i * 4 + 3] || !mine(i) || i >= N - W * 10) continue; const [v, sa] = hsv(O, i); if (v > .82 && sa < .16 && nearDark(i)) white[i] = 1; }
       const grow = new Uint8Array(N); for (let i = 0; i < N; i++) if (white[i]) { const x = i % W, y = (i / W) | 0; for (let dy = -3; dy <= 3; dy++) for (let dx = -3; dx <= 3; dx++) { const xx = x + dx, yy = y + dy; if (xx >= 0 && yy >= 0 && xx < W && yy < H) grow[yy * W + xx] = 1; } }
+      // (13 Nov 2026, audit.mts's 'lid', seen by eye on Sol at three-quarters) a shut eye must be the skin round it, its lash
+      // line apart: a pixel in the eye area (the smile's eye whites grown 8 px) about as bright as the skin (not more than .1
+      // darker) but .12 less saturated than the skin's median in a ring 8 to 16 px round it is a pale rim or a flat lid patch
+      // (first run on the regional six: r064's earrings, the white patch at her ear and r045's hat lay under the face grid
+      // as "eye whites" and counted, 61-128 px) only the whites the shut eye really covers: changed from smile to blink
+      setMood('blink'); const CB = read(stage, cam); setMood('smile');
+      const eye8 = new Uint8Array(N), ring16 = new Uint8Array(N);
+      for (let i = 0; i < N; i++) if (white[i] && Math.abs(O[i * 4] - CB[i * 4]) + Math.abs(O[i * 4 + 1] - CB[i * 4 + 1]) + Math.abs(O[i * 4 + 2] - CB[i * 4 + 2]) > 60) { const x = i % W, y = (i / W) | 0; for (let dy = -16; dy <= 16; dy++) for (let dx = -16; dx <= 16; dx++) { const xx = x + dx, yy = y + dy; if (xx < 0 || yy < 0 || xx >= W || yy >= H) continue; const d = Math.max(Math.abs(dx), Math.abs(dy)); if (d <= 8) eye8[yy * W + xx] = 1; else ring16[yy * W + xx] = 1; } }
       for (const m of ['blink', 'happy']) {
         setMood(m); const C = read(stage, cam), f = new Uint8Array(N); let k = 0;
         for (let i = 0; i < N; i++) { if (!grow[i]) continue; const [v, sa] = hsv(C, i); if (v > .8 && sa < .18) { f[i] = 1; k++; } }
-        cases.push({ id, pose: m, view: String(s), worn: 0, eyes: k });
+        const fl = new Uint8Array(N); let kl = 0; { const sv: number[] = [], ss: number[] = [];
+          for (let i = 0; i < N; i++) if (ring16[i] && !eye8[i] && mine(i)) { const [v, sa] = hsv(C, i); if (v > .35) { sv.push(v); ss.push(sa); } }
+          sv.sort((a, b) => a - b); ss.sort((a, b) => a - b); const skv = sv[sv.length >> 1] || 1, sks = ss[ss.length >> 1] || 0;
+          for (let i = 0; i < N; i++) { if (!eye8[i] || !mine(i) || i >= N - W * 10) continue; const [v, sa] = hsv(C, i); if (v > skv - .1 && sa < sks - .12) { fl[i] = 1; kl++; } }
+          const seen = new Uint8Array(N), st: number[] = [];   // (specks under 4 touching pixels are the lash's soft edge)
+          for (let i = 0; i < N; i++) { if (!fl[i] || seen[i]) continue; const grp: number[] = []; st.push(i); seen[i] = 1;
+            while (st.length) { const j = st.pop()!; grp.push(j); const x = j % W, y = (j / W) | 0; for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) { const xx = x + dx, yy = y + dy; if (xx < 0 || yy < 0 || xx >= W || yy >= H) continue; const q = yy * W + xx; if (fl[q] && !seen[q]) { seen[q] = 1; st.push(q); } } }
+            if (grp.length < 4) for (const j of grp) { fl[j] = 0; kl--; } } }
+        cases.push({ id, pose: m, view: String(s), worn: 0, eyes: k, lid: kl });
         if (k > LIMIT.eyes) pics[`${id}-face-${m}-${s}-eyes`] = png(C, f);
+        if (kl > LIMIT.lid || QUICK) pics[`${id}-face-${m}-${s}-lid`] = png(C, fl);
+      }
+      if (Math.abs(s) < 1) {
+        /* (13 Nov 2026, audit.mts's 'mouth' as 'mshape') the lips are the pixels in a box below the smile's eye whites (between
+           the nose tip, .22 of the eyes' span below them, and the chin, .62; within .27 of the span either side of the middle)
+           pinker, redder or clearly darker than the skin's median there. Moods that keep the painted mouth must show the smile's
+           lips; 'o' and 'excited' a roundish oval (height .55 to 1.6 of its width, filling .6 of its ellipse) that is not the
+           smile's mouth, with no second patch, 'excited' larger than 'o'; 'sad' corners lower than its middle */
+        let mx0 = W, mx1 = -1, my1 = -1; for (let i = 0; i < N; i++) if (white[i]) { const x = i % W, y = (i / W) | 0; mx0 = Math.min(mx0, x); mx1 = Math.max(mx1, x); my1 = my1 < 0 ? y : Math.min(my1, y); }
+        const ew = mx1 - mx0, mcx = (mx0 + mx1) / 2; let mbox = (i: number) => { const x = i % W, y = (i / W) | 0; return ew > 8 && Math.abs(x - mcx) <= ew * .27 && y < my1 - ew * .22 && y > my1 - ew * .62; };
+        const pk = (px: Uint8Array, i: number) => (px[i * 4 + 2] - px[i * 4 + 1]) / Math.max(1, px[i * 4]), vv = (px: Uint8Array, i: number) => Math.max(px[i * 4], px[i * 4 + 1], px[i * 4 + 2]) / 255, rd = (px: Uint8Array, i: number) => (px[i * 4] - px[i * 4 + 1]) / Math.max(1, px[i * 4]);
+        let skPk = 0, skV = 0, skRd = 0;
+        const lips = (px: Uint8Array) => { const L = new Uint8Array(N); let n = 0; if (ew <= 8) return { L, n }; for (let i = 0; i < N; i++) { if (!mbox(i) || !mine(i)) continue; if (pk(px, i) > skPk + .09 || vv(px, i) < skV - .2 || rd(px, i) > skRd + .08) { L[i] = 1; n++; } } return { L, n }; };
+        const near = (L: Uint8Array, i: number, d: number) => { const x = i % W, y = (i / W) | 0; for (let dy = -d; dy <= d; dy++) for (let dx = -d; dx <= d; dx++) { const xx = x + dx, yy = y + dy; if (xx >= 0 && yy >= 0 && xx < W && yy < H && L[yy * W + xx]) return true; } return false; };
+        const groups = (L: Uint8Array) => { const seen = new Uint8Array(N), out: number[][] = [], st: number[] = [];
+          for (let i = 0; i < N; i++) { if (!L[i] || seen[i]) continue; const g: number[] = []; st.push(i); seen[i] = 1;
+            while (st.length) { const j = st.pop()!; g.push(j); const x = j % W, y = (j / W) | 0; for (let dy = -2; dy <= 2; dy++) for (let dx = -2; dx <= 2; dx++) { const xx = x + dx, yy = y + dy; if (xx < 0 || yy < 0 || xx >= W || yy >= H) continue; const q = yy * W + xx; if (L[q] && !seen[q]) { seen[q] = 1; st.push(q); } } }
+            out.push(g); } return out.sort((a, b) => b.length - a.length); };
+        setMood('smile'); const C0 = read(stage, cam);
+        { const ps: number[] = [], vs: number[] = [], rs: number[] = []; for (let i = 0; i < N; i++) if (mbox(i) && mine(i)) { ps.push(pk(C0, i)); vs.push(vv(C0, i)); rs.push(rd(C0, i)); } const md = (a: number[]) => a.sort((x, y) => x - y)[a.length >> 1] || 0; skPk = md(ps); skV = md(vs); skRd = md(rs); }
+        // (first run on the regional six: the grown-ups' pink noses (r057, r074) and r045's blush lay in the friends' box and
+        // counted as a second mouth, 88-1273 px, round clean "o" mouths) the box's top is moved down to just above the smile's
+        // lips: the lowest patch on screen of 10 px or more, its top plus .08 of the eyes' span
+        const bestL = new Uint8Array(N); let mtop = 1e9, mbot = -1e9, mxl = 1e9, mxr = -1e9; { const gs = groups(lips(C0).L).filter(g => g.length >= 10); let best: number[] | null = null, by = 1e9;
+          for (const g of gs) { let sy = 0; for (const j of g) sy += (j / W) | 0; if (sy / g.length < by) { by = sy / g.length; best = g; } }
+          if (best) { for (const j of best) bestL[j] = 1; let t = 0, u = 1e9; for (const j of best) { t = Math.max(t, (j / W) | 0); u = Math.min(u, (j / W) | 0); mxl = Math.min(mxl, j % W); mxr = Math.max(mxr, j % W); } mtop = t + ew * .08; mbot = u - ew * .3; } }
+        // (second run: the box's foot, the friends' chin at .62, cut the grown-ups' large excited and "o" mouths in half (r057,
+        // r074) and took the chin's shadow and r064's hair below it) the foot is .3 of the span under the smile's lips, and
+        // only the face grid's own pixels count
+        const mbox0 = mbox; mbox = (i: number) => { if (mtop > 1e8) return mbox0(i); const y = (i / W) | 0; const x = i % W; return ew > 8 && x >= mxl - ew * .15 && x <= mxr + ew * .15 && y < mtop && y > mbot && !!Pf[i * 4 + 3]; };   // (third run: at three-quarters the mouth is not half way between the eyes' outer edges: the box cut the "o" in half; it is the smile's lips, .15 of the span wider either side)   // (the buffer's rows run upwards: above on screen is a larger row)
+        const SM = lips(C0), mArea: Record<string, number> = {}, mCase: Record<string, any> = {};
+        if (SM.n) for (const m of ['blink', 'half', 'happy', 'lookL', 'lookR', 'o', 'excited', 'sad']) {
+          setMood(m); const C = read(stage, cam), ML = lips(C), fm = new Uint8Array(N); let km = 0;
+          // (fourth run: blush, the nose's highlight and the hair's edge by the chin, the same in the smile, counted as a second mouth) a pixel the mood does not change counts only when it is the smile's own lips
+          const chg = (i: number) => Math.abs(C[i * 4] - C0[i * 4]) + Math.abs(C[i * 4 + 1] - C0[i * 4 + 1]) + Math.abs(C[i * 4 + 2] - C0[i * 4 + 2]) > 30 || near(bestL, i, 1);
+          if (!['o', 'excited', 'sad'].includes(m)) { for (let i = 0; i < N; i++) if (((ML.L[i] && !near(SM.L, i, 1)) || (SM.L[i] && !near(ML.L, i, 1))) && chg(i)) { fm[i] = 1; km++; } }
+          else { const gs = groups(ML.L), g0 = gs[0] || []; let bad = !g0.length;
+            for (const g of gs.slice(1)) for (const j of g) if (chg(j)) { fm[j] = 1; km++; }
+            let same = 0; for (const j of g0) if (near(SM.L, j, 1)) same++; let gx0 = W, gx1 = 0, gy0 = H, gy1 = 0; for (const j of g0) { const x = j % W, y = (j / W) | 0; gx0 = Math.min(gx0, x); gx1 = Math.max(gx1, x); gy0 = Math.min(gy0, y); gy1 = Math.max(gy1, y); }
+            const w = gx1 - gx0 + 1, hh = gy1 - gy0 + 1;
+            if (g0.length && same > g0.length * .85 && Math.abs(g0.length - SM.n) < SM.n * .2) bad = true;
+            if (m === 'o' || m === 'excited') { if (hh / w < .55 || hh / w > 1.6 || g0.length < Math.PI / 4 * w * hh * .6) bad = true; mArea[m] = g0.length; }
+            if (m === 'sad' && g0.length) { const col = (a: number, b2: number) => { let sy = 0, c = 0; for (const j of g0) { const x = j % W; if (x >= gx0 + w * a && x <= gx0 + w * b2) { sy += (j / W) | 0; c++; } } return c ? sy / c : 0; };
+              if ((col(0, .2) + col(.8, 1)) / 2 >= col(.4, .6)) bad = true; }   // (the buffer's rows run upwards: a corner lower on screen has the smaller row)
+            if (bad) for (const j of g0) { if (!fm[j]) { fm[j] = 1; km++; } } }
+          const r: any = { id, pose: m, view: String(s), worn: 0, eyes: 0, mshape: km }; cases.push(r); mCase[m] = [r, C, fm, ML.L];
+          if (km > LIMIT.mshape || QUICK) pics[`${id}-face-mshape-${m}-${s}`] = png(C, fm);
+        }
+        if (mArea.o && mArea.excited && mArea.excited < mArea.o * 1.15 && mCase.excited) { const [r, C, fm, EL] = mCase.excited; for (let i = 0; i < N; i++) if (EL[i] && !fm[i]) { fm[i] = 1; r.mshape++; } pics[`${id}-face-mshape-excited-${s}`] = png(C, fm); }   // (excited: as open as 'o' or less)
+        setMood('smile');
       }
       if (s === 0) {   // the mouth's place, front only
         setMood('smile'); const S0 = read(stage, cam); setMood('blink'); const SB = read(stage, cam); setMood('o'); const SS = read(stage, cam); setMood('smile');

@@ -243,6 +243,10 @@ Record: `docs/meshy-regional-40-100/PILOT-1.md`. Ids `r<nnn>` (sheet number), jo
   - *Mouth piece edges (13 Nov 2026).* The "o" and sad pieces hugged the erased smile; the game cuts at alpha .5, and the
     cut fell on the smile's soft blur (sharper in the body's picture than in the face tile): a thin pale line along r050's
     old smile corner. `-MouthSoft` lets the mouth pieces reach a few px further.
+  - *Thin grey and white lines round the ears and on the neck (13 Nov 2026, left).* Not in Meshy's own model at the same
+    view; not the bake's ray length either (`FIT_BAKE_EXT=.0005 FIT_BAKE_DIST=.0015` gave the same picture as .002/.006).
+    Likely the 2048 px picture squeezed into 1024 at .7 of the height (island edges). The white patch at r064's ear and the
+    straight edge of her hair under it are Meshy's own (render the raw `-9000.glb` from the same side to tell).
   - *Mouth fixes that only worked on the test pair.* After the fixes passed on r050 and r084, the run of all six failed
     `oldmouth` on three: r057's collar edge against the black round the face was darker than his lips (patches touching
     the black are skipped now), and r045's and r074's pink lips passed as hair (nearer the hair's colour mix than the skin's),
