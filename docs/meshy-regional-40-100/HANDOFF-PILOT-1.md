@@ -1,59 +1,80 @@
-# Handoff: regional villagers pilot 1 (short prompt for the next chat)
+# Handoff: regional villagers pilot 1
 
-Paste this into a new cloud session on `nguyentuanphu/tpn`, branch `meshy-regional-cloud`:
+Branch `meshy-regional-cloud` (never `main`, no deploy, no version bump, draft pull requests only). Written 12 Nov 2026,
+about 16:30 AEDT, when the owner stopped this chat so that another Claude account takes over.
 
----
+## Where it stands (12 Nov 2026 AEDT)
 
-You are a helper chat for Sparkle Valley (repository TPN). Continue the regional villagers pilot on branch
-`meshy-regional-cloud` (never `main`, no deploy, no version bump, draft pull requests only). Reply in Vietnamese, short
-and plain; every question as a pop-up (2 to 4 choices, the recommended one first). Commit and push the branch every hour.
+- **Meshy spending is finished:** 24 paid steps, 270 credits, the whole budget (journal `meshy-jobs-cloud.sqlite3`, tables
+  jobs, remesh and rigging). **No more paid calls.** The raw files are on the owner's PC in
+  `D:\WorkSpace\meshy\raw-models\{B,remesh,rigged}` (also sent to the owner as `raw-r045.tar` ... `raw-r084.tar`).
+- **The six models are committed** in `models/villager-r045.glb` ... `villager-r084.glb` (the owner asked on 12 Nov to
+  upload everything). They are the round fitted 12 Nov at about 16:00 AEDT with every face fix up to commit 77c841356.
+  Audit of that round: 120 cases, **0 failing** (eyes worst 2, mouth worst 53, oldmouth worst 16, lookstill 0, size
+  worst 486 KB). The 1024 px face pictures of that round are in `review-20261112/moods-<id>.jpg` (each: smile, blink,
+  half / happy, o, sad / look left, look right, excited) with `review-20261112/audit.log`.
+- **Owner's approval is still open.** Third approval pop-up (12 Nov): "Sửa lại 3 lỗi và kiểm tra lại mắt và mí của r45":
+  r084's half lid (bare white crescent), r064's hair notch by the left eye, r045's eye corners and lids. Fixed in the
+  code and seen fixed at 1024 px in the committed round, except two small things still visible: a small dark fleck over
+  r045's right eye on shut eyes (the end of a painted hair strand), and a faint light fleck at the hair's edge by r064's
+  left eye on shut eyes. Commit 751e6d0a4 (a small dark mark already half under a shut lid closes whole) targets r045's
+  fleck but **was never seen in the game**: its refit was stopped when the owner stopped work. The committed models do
+  not have it.
+- **Game roles:** the owner chose "not in the game yet" for all six (r045, r050, r057, r064 on 10 Nov; r074, r084 on
+  12 Nov). Nothing in `js/crowd-models.ts` changes.
+- Nothing is running. The test server on port 8794 and every Blender fit of this chat were stopped.
 
-Read first: `CLAUDE.md`, `.claude/skills/meshy-characters/SKILL.md` (sections "Villagers" and "Regional villagers"),
-`docs/meshy-regional-40-100/PILOT-1.md` (owner's decisions, how it was run on Linux) and this file.
+## Next steps
 
-State (11 Nov 2026 AEDT):
-- All 24 paid Meshy steps are done: 270 credits, the whole budget. **No more paid calls.** The journal and the raw files
-  (`raw-r045.tar` ... `raw-r084.tar`: `B/`, `remesh/` (30k and `-9000`), `rigged/`) were sent to the owner in the chat;
-  ask the owner to attach them (GitHub refuses releases from cloud sessions). Unpack into `$SV_MESHY_ROOT/raw-models`.
-- Set up as in PILOT-1.md: Blender 4.2 Linux, `pwsh`, `libegl1`, scipy, `cd tests; npm ci; npx playwright install chromium`,
-  a Node static server on port 8793, `SV_URL=http://127.0.0.1:8793/`, `SV_MESHY_ROOT=/work/meshy`, `SV_BLENDER`.
-- Game references: `blender -b -P tools/blender/lumi.py -- $SV_MESHY_ROOT/work-v108 villager role=<role> game glb hd`
-  for vn-schoolgirl, vn-grandma, vn-dad, au-mum, au-grandma, au-boy (files are `-game-hd`, `-adult-hd`, `-elder-hd`).
-- Fit each person (about 10 to 40 min; two at a time):
-  `pwsh -File tools/meshy/fit_person.ps1 -Id <id> -Villager -NoLimbTint -LidMatch -FaceUV 2 -PieceSnap .001 -MouthFind -LookSolid -LidSoft -VTile 256 <flags> -Ref $SV_MESHY_ROOT/work-v108/villager-<ref>-hd.glb`
-  (the face flags since 11 Nov 2026, after the owner's "eyes, nose and mouth all have problems": see the skill's "Eyes, nose and mouth")
-  | id | ref | flags |
-  |----|-----|-------|
-  | r045 | vn-schoolgirl-game | |
-  | r050 | vn-grandma-elder | |
-  | r057 | vn-dad-adult | -EyeDark |
-  | r064 | au-mum-adult | |
-  | r074 | au-grandma-elder | -EyeDark -SkinSMax .65 |
-  | r084 | au-boy-game | -SkinSMax .65 |
-- Install in the working copy only (`models/villager-<id>.glb`, from `$SV_MESHY_ROOT/fitted/<id>/<id>-mid-packed.glb`;
-  not committed until the owner approves), then
-  `cd tests; node ../tools/meshy/audit_villager.mts <out> r045@vn-schoolgirl,r050@vn-grandma,r057@vn-dad,r064@au-mum,r074@au-grandma,r084@au-boy`
-  and `node ../tools/meshy/game_shots.mts <out> village <same list>`; sheet per person:
-  `python3 tools/meshy/regional_sheet.py <shots> <id> docs/meshy-regional-40-100/reference-images/<nnn-name>/front.png <out.jpg> "<title>"`.
-- Look at every sheet at full size. Owner said on 10 Nov: "hốc mắt chưa đẹp, học xem làm mắt như thế nào từ clara finn sol
-  lumi". Fixed by `-LidMatch` (see the skill); check closed eyes again in the game.
-- 11 Nov 2026 AEDT, owner: "Tất cả con mắt, mũi và miệng của các nhân vật đều có vấn đề". Found and fixed: the face was
-  about 120 px wide in the picture (blurry eyes and nose: `-FaceUV 2` makes it one 360 px island); the mouth box was a
-  fixed band of the picture (r057's strap and collar, r084's whole lower face: `-MouthFind`); the smile stayed under the
-  "o" and sad mouths (lid fill kept the pink lips, and the lips passed as hair so the piece was see-through there:
-  `-MouthFind` erases the mouth on its own and the mouth is never hair); mood pieces floated over hollows (`-PieceSnap`);
-  the looking eyes were streaked with the old iris (`-LookSolid` draws the eye afresh). The audit now has an `oldmouth`
-  check (a dark painted mouth left under the "o" and sad mouths), which caught three of the six on the first run.
-- 11 Nov 2026, owner's second answer: "Mắt và miệng, nặng nhất là mắt, không soi kỹ hay sao mà đã hỏi?" The round had been
-  judged on 480 px shots. Since then: `-LidSoft`, the convex-hull `-LookSolid`, and every report is judged on 1024 px face
-  shots (`SHOT_SIZE=1024 SHOT_DIST=.45 SHOT_UP=.06`); `tools/meshy/face_moods_preview.py` previews a face fix without a fit.
-- The 11 named villagers (other chat) were fitted before these flags: they share the mouth and look faults; refit them
-  with the same flags and audit them.
-- Known left: in three-quarter views the far eye can show past the nose (needs the game's shut-eye paint, which only
-  friends with cover marks get: `js/friend-model.ts`, owned by another chat: put it on the board); r045's hair lock over the
-  eye breaks up on a blink; small rim glints at r057's inner corners and a lash flick at r064's outer corner.
-- Game roles: the owner chose "not in the game yet" for r045, r050, r057, r064; ask for r074 and r084 at the report.
-- Report: one sheet per person, the audit summary, sizes (all under 500 KB), credits (270, from the journal), then a
-  pop-up: approve the 6 / fix something / stop. After approval, commit `models/villager-r*.glb` and the docs, and push.
+1. Refit all six with the code at the branch tip (it has 751e6d0a4), two at a time:
+   `pwsh -File tools/meshy/fit_person.ps1 -Id <id> -Villager -NoLimbTint -LidMatch -FaceUV 2 -PieceSnap .001 -MouthFind -LookSolid -LidSoft -VTile 256 <flags> -Ref $SV_MESHY_ROOT/work-v108/villager-<ref>-hd.glb`
+   (with `FIT_SAVE_F=$SV_MESHY_ROOT/fitted/<id>/F.png` set, for the preview tool, and `FIT_LOG=<file>` to keep Blender's lines)
 
----
+   | id | ref | flags | hair colour for the preview |
+   |----|-----|-------|------|
+   | r045 | vn-schoolgirl-game | | .764,.459,.449 |
+   | r050 | vn-grandma-elder | | .78,.632,.545 |
+   | r057 | vn-dad-adult | -EyeDark | .36,.21,.124 |
+   | r064 | au-mum-adult | | .101,.078,.072 |
+   | r074 | au-grandma-elder | -EyeDark -SkinSMax .65 | .935,.428,.325 |
+   | r084 | au-boy-game | -SkinSMax .65 | .671,.477,.341 |
+
+2. Copy `$SV_MESHY_ROOT/fitted/<id>/<id>-mid-packed.glb` to `models/villager-<id>.glb`, then from `tests`:
+   `node ../tools/meshy/audit_villager.mts <out> r045@vn-schoolgirl,r050@vn-grandma,r057@vn-dad,r064@au-mum,r074@au-grandma,r084@au-boy`
+   (must say failing 0; r064's earring has twice been counted as an open eye in a side view, 15 px: look at the picture),
+   then `SHOT_SIZE=1024 SHOT_DIST=.45 SHOT_UP=.06 node ../tools/meshy/game_shots.mts <out> village <same list>` and
+   the 480 px `game_shots.mts` run for the sheets (`tools/meshy/regional_sheet.py`). The test server is
+   `node tools/meshy/serve.mjs <worktree> <port>` from the `sv-meshy-prod` worktree (it is not on this branch), with
+   `SV_URL=http://127.0.0.1:<port>/`.
+3. **Look at every mood of every person at 1024 px, eye by eye**, against the ChatGPT front
+   (`reference-images/<nnn-name>/front.png`), before asking anything. Check r045's eyes and lids above all (owner).
+4. Report to the owner in Vietnamese (pictures sent as files), then one pop-up: approve the 6 (recommended) / fix more
+   / stop. On approval, commit the refitted models and docs and push the branch. Release merges, not this chat.
+5. The 11 named villagers (another chat's work) were fitted before these face flags and share the mouth and look faults:
+   refit them with the same flags and audit them (put it on the board).
+
+## Known left (not for this pilot)
+
+- The far eye can show past the nose in three-quarter views of shut eyes: needs the game's shut-eye paint in
+  `js/friend-model.ts`, owned by another chat (put it on `docs/cores/BOARD.md`).
+- r084's "o" mouth is small (sized from his faint painted lips).
+
+## Tools made in this pilot
+
+- `tools/meshy/face_moods_preview.py`: the nine mood faces from a fit's `F.png` in minutes, no Blender (`ALPHA=<mood>`
+  writes the piece's alpha, change and masks). The picture can be clean while the game is not (the 3D pieces): the
+  game at 1024 px is the judge.
+- `game_shots.mts`: `SHOT_SIZE`, `SHOT_DIST`, `SHOT_UP` for face close-ups.
+- `audit_villager.mts`: `oldmouth` (a painted mouth left under "o" and sad, lip-coloured, box from the 5th-95th
+  percentile of the change) and `lookstill` (look moods that move nothing).
+- `fit_person.ps1` face flags: `-FaceUV 2`, `-PieceSnap .001`, `-MouthFind`, `-LookSolid`, `-LidSoft` (and `FIT_HALF`).
+  What each fixes and what was tried and dropped: `.claude/skills/meshy-characters/SKILL.md`, "Eyes, nose and mouth".
+
+## Resume prompt (paste into the new chat)
+
+> Bạn là chat phụ của Sparkle Valley (repo TPN). Tiếp tục pilot người làng vùng miền trên nhánh `meshy-regional-cloud`
+> (không đụng `main`, không deploy, không đổi số phiên bản). Trả lời tôi bằng tiếng Việt, ngắn gọn; mọi câu hỏi dùng
+> pop-up 2-4 lựa chọn, lựa chọn nên chọn đứng đầu. Commit và push nhánh mỗi giờ. Không gọi Meshy trả tiền nữa (đã dùng
+> hết 270 credit). Đọc trước: `CLAUDE.md`, `.claude/skills/meshy-characters/SKILL.md` (phần "Eyes, nose and mouth"),
+> `docs/meshy-regional-40-100/PILOT-1.md` và `docs/meshy-regional-40-100/HANDOFF-PILOT-1.md`, rồi làm theo "Next steps":
+> fit lại 6 người, audit, chụp mặt cận cảnh 1024 px, tự soi từng mắt và mí (nhất là r045) trước khi hỏi tôi duyệt.
