@@ -1,6 +1,7 @@
 # (Meshy production, 9 Nov 2026) Review sheets from game_shots.mts pictures, the ones the owner reviews.
 #   D:\WorkSpace\meshy\tools\pyenv\Scripts\python.exe tools/meshy/review_sheets.py <kind> <shots dir> <ids> <out.jpg>
 # kinds:
+#   village-eyes: per villager one row of the eyes close up (shut front, three-quarters, sides; open; glance)
 #   eyes    : per friend one row: smile, blink, happy, half (front), happy from the left, blink from the right (faces mode)
 #   chins   : per friend one column: side, three-quarter, front, cropped to chin and collar (faces mode)
 #   tones   : per friend one row: the four skin tones (tones mode)
@@ -24,6 +25,12 @@ if kind == 'village':   # (10 Nov 2026) per villager one row (village mode, v-<i
             sheet.paste(crop(rf'{d}\v-{i}-{f}.png', (.1, .1, .9, .9), (300, 300)), (c * 300, r * 300))
         for c, f in enumerate(full):
             sheet.paste(crop(rf'{d}\v-{i}-{f}.png', (.1, .05, .9, .95), (180, 300)), (300 * len(fs) + c * 180, r * 300))
+elif kind == 'village-eyes':   # (12 Nov 2026, owner circled the far shut eye by the nose, round after round) per villager one row of the eyes close up: shut and smiling from the front, three-quarters both ways and the sides, open from three-quarters, and a glance from the side
+    fs = ['blink-front', 'blink-tq', 'happy-tq', 'blink-sideL', 'blink-sideR', 'smile-tq', 'lookL-sideR', 'sad-front']
+    sheet = Image.new('RGB', (420 * len(fs), 300 * len(ids)), (40, 40, 40))
+    for r, i in enumerate(ids):
+        for c, f in enumerate(fs):
+            sheet.paste(crop(rf'{d}\v-{i}-{f}.png', (.12, .08, .88, .62), (420, 300)), (c * 420, r * 300))
 elif kind == 'eyes':
     fs = ['smile-front', 'blink-front', 'happy-front', 'half-front', 'happy-sideL', 'blink-sideR']
     sheet = Image.new('RGB', (400 * len(fs), 300 * len(ids)))
