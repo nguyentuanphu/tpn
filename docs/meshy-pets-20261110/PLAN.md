@@ -108,6 +108,11 @@ pilot. Farm and wild animals (cow, sheep, pig, buffalo ...) are not in this plan
   calf and "not yet" and wrote "Kiểm tra kỹ khi chạy nhảy và các kiểu chưa" (checked carefully when running, jumping
   and the other moves?): read as not approved yet. Then chose "Quay phim pet": films of each pet moving in the game
   (`tools/meshy/pet_film.mts`: stand, follow walking, run, each own move; six views) before approving.
+- **13 Nov 2026 AEDT, morning (after the films of panda, bunny, calf, kitty)**: the owner ticked bunny and calf and
+  wrote "Gấu trúc và thỏ đã cho feedbacks phía trên, tất cả con vật khi nhảy đều nhìn quá cứng" (all animals look too
+  stiff when jumping; the panda and bunny feedback "above" is not in this chat: ask again). Then chose "Sửa nhảy trước":
+  the jump is now smooth key poses with squash, stretch and follow-through (`extra_moves` jump, `fit_animal.py`);
+  the four are rebuilt and filmed again (`D:\WorkSpace\meshy\pets\film2`). Not approved yet: show the new films.
 
 ## Dog pilot: progress (10 Nov 2026 AEDT, no credits spent)
 

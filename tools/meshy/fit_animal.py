@@ -471,23 +471,41 @@ def extra_moves(J, M, bones):
         put(P, 'tail', .35, math.sin(2 * ph) * .25)
         face(P, None, eye=blink(t, (.9,)), smile=1.25, jaw=.25 if carry else .4)
         return P
+    # (13 Nov 2026, owner after the films: "tất cả con vật khi nhảy đều nhìn quá cứng") the jump as poses one after another,
+    # joined by a smooth curve through them: a crouch to gather, the push off with the body stretched and the nose up, the
+    # back arched in the air with the hind legs tucked, the nose down as it comes in, the front legs reaching for the ground,
+    # a squash on landing and a little settle; head, ears and tail come a beat behind the body (they were held still, and
+    # the legs snapped from pose to pose, so it looked stiff)
+    JK = [  # u,   up/H,  pitch,  front leg, front knee, back leg, back knee, head, tail, ears, squash
+        (0.,   0.,    0.,    0.,   .05,   0.,   .05,  0.,   .05, 0.,   1.),
+        (.2,  -.075,  .14,   .18,  .85,  -.3,   .95,  .08, -.05, .12,  .92),
+        (.33,  .14,  -.34,  -.8,   .1,    .75,  .05,  .22,  .1, -.35, 1.07),
+        (.5,   .45,  -.04,  -.62,  .55,   .45,  .75,  .06,  .45, -.4,  1.),
+        (.66,  .22,   .26,  -.42,  .05,   .25,  .3,  -.14,  .4,  .05, 1.02),
+        (.77, -.06,   .1,    .12,  .7,   -.22,  .75,  .12,  .15, .3,   .91),
+        (.88,  .01,  -.03,   .02,  .15,   0.,   .2,  -.04,  .02, .08, 1.01),
+        (1.,   0.,    0.,    0.,   .05,   0.,   .05,  0.,   .05, 0.,   1.)]
+    def jump_at(u):
+        k = max(0, min(len(JK) - 2, next((n for n in range(len(JK) - 1) if JK[n + 1][0] >= u), len(JK) - 2)))
+        a = (u - JK[k][0]) / max(1e-6, JK[k + 1][0] - JK[k][0]); a = max(0., min(1., a))
+        p0, p1, p2, p3 = JK[max(0, k - 1)], JK[k], JK[k + 1], JK[min(len(JK) - 1, k + 2)]
+        return [.5 * (2 * p1[c] + (-p0[c] + p2[c]) * a + (2 * p0[c] - 5 * p1[c] + 4 * p2[c] - p3[c]) * a * a + (-p0[c] + 3 * p1[c] - 3 * p2[c] + p3[c]) * a ** 3) for c in range(1, 11)]   # (Catmull-Rom through the poses)
     def jump(t):
         L = 1.2; u = t / L; P = R()
-        if u < .22: k = math.sin(u / .22 * math.pi / 2); up = -.07 * H * k; pitch = .1 * k; fl = .2 * k; bl = -.3 * k; kn = .9 * k
-        elif u < .72: a = (u - .22) / .5; up = .45 * H * math.sin(a * math.pi); pitch = -.3 + .5 * a; fl = -.8; bl = .75; kn = .2
-        elif u < .88: k = 1 - (u - .72) / .16; up = -.05 * H * k; pitch = .12 * k; fl = .15 * k; bl = -.2 * k; kn = .7 * k
-        else: up = pitch = fl = bl = kn = 0
-        put(P, 'body', pitch, loc=(0, up, .08 * H * min(1, max(0, (u - .22) / .5))))
-        kn *= FIX.get('jump_knee', 1.0); fl *= FIX.get('jump_legs', 1.0); bl *= FIX.get('jump_legs', 1.0)   # (a kitty's long thin legs: reaching out and folding less in the air, or its paws stretched)
-        for i in front: legs(P, i, fl, kn)
-        for i in back: legs(P, i, bl, kn)
-        put(P, 'head', -pitch * .6); put(P, 'tail', .4, math.sin(TAU * t * 3) * .3)
-        for e in ears: put(P, e, .3 if .22 < u < .72 else -.2)
-        face(P, None, big=1.1 if .22 < u < .72 else 1., smile=1.3, jaw=.6 if .22 < u < .72 else .15)   # (eyes wide in the air: a lid growing mid-leap showed the eye under it)
+        up, pitch, fl, fk, bl, bk, hd, tl, er, sq = jump_at(u)
+        lag = jump_at(max(0., u - .06))   # (head, ears and tail a beat behind)
+        P['body'] = ((pitch, 0, 0), (0, up * H, .08 * H * (1 - math.cos(math.pi * min(1, max(0, (u - .2) / .57)))) / 2), (1 + (1 - sq) * .4, sq, 1 + (1 - sq) * .4))
+        jl, jk = FIX.get('jump_legs', 1.0), FIX.get('jump_knee', 1.0)   # (a kitty's long thin legs: reaching out and folding less in the air, or its paws stretched)
+        for i in front: legs(P, i, fl * jl, fk * jk)
+        for i in back: legs(P, i, bl * jl, bk * jk)
+        put(P, 'head', -lag[1] * .55 + hd); put(P, 'tail', .3 + lag[7], math.sin(TAU * t * 2) * .2)
+        for e in ears: put(P, e, lag[8])
+        air = .25 < u < .74
+        face(P, None, big=1.1 if air else 1., smile=1.3, jaw=.6 if air else .15)   # (eyes wide in the air: a lid growing mid-leap showed the eye under it)
         return P
     def bounce(t):
-        L = 1.6; hop = abs(math.sin(TAU * t / L * 2)); P = R()
-        put(P, 'body', -.08 * hop, loc=(0, hop * .12 * H, 0))
+        L = 1.6; hop = abs(math.sin(TAU * t / L * 2)); P = R(); sq = 1 - .07 * (1 - hop) ** 6   # (a soft squash each time it lands)
+        P['body'] = ((-.08 * hop, 0, 0), (0, hop * .12 * H, 0), (1 + (1 - sq) * .4, sq, 1 + (1 - sq) * .4))
         for i in front: legs(P, i, -.35 * hop, .5 * hop)
         for i in back: legs(P, i, .15 * hop, .25 * hop)
         put(P, 'head', -.1 * hop, 0, math.sin(TAU * t / L) * .15)
