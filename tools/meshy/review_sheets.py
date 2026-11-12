@@ -31,6 +31,20 @@ elif kind == 'village-eyes':   # (12 Nov 2026, owner circled the far shut eye by
     for r, i in enumerate(ids):
         for c, f in enumerate(fs):
             sheet.paste(crop(rf'{d}\v-{i}-{f}.png', (.12, .08, .88, .62), (420, 300)), (c * 420, r * 300))
+elif kind in ('village-gate-a', 'village-gate-b'):   # (13 Nov 2026, owner's approval gate) one villager per sheet (ids: one id), 1024 px shots cropped to the head: a = every mood front, ±.4, ±.7; b = sides, above and below, neck and nape, whole body
+    i = ids[0]; T = 380; F = (.14, .06, .86, .78)
+    if kind == 'village-gate-a':
+        rows = [[f'{m}-{v}' for v in ('tqn', 'q4n', 'front', 'q4', 'tq')] for m in ('smile', 'blink', 'happy', 'half', 'sad', 'o', 'excited', 'lookL', 'lookR')]
+    else:
+        rows = [[f'{m}-side{s}' for m in ('smile', 'blink', 'happy') for s in 'LR'], [f'{m}-side{s}' for m in ('sad', 'lookL', 'lookR') for s in 'LR'],
+                ['smile-above', 'smile-above-tq', 'blink-above', 'blink-above-tq', 'smile-below', 'smile-below-tq'], ['blink-below', 'blink-below-tq', 'neck-front', 'neck-tq', 'neck-side', 'neck-sideR'],
+                ['neck-back-3.1', 'neck-back-2.2', 'neck-back--2.2', 'full-front', 'full-tq', 'full-back']]
+    sheet = Image.new('RGB', (T * max(len(r) for r in rows), T * len(rows)), (40, 40, 40))
+    for r, row in enumerate(rows):
+        for c, f in enumerate(row):
+            p = rf'{d}\v-{i}-{f}.png'
+            try: sheet.paste(crop(p, F if not f.startswith(('full', 'feet')) else (0, 0, 1, 1), (T, T)) if not f.startswith('full') else crop(p, (.1, .05, .9, .95), (int(T * .75), T)), (c * T, r * T))
+            except FileNotFoundError: pass
 elif kind == 'eyes':
     fs = ['smile-front', 'blink-front', 'happy-front', 'half-front', 'happy-sideL', 'blink-sideR']
     sheet = Image.new('RGB', (400 * len(fs), 300 * len(ids)))

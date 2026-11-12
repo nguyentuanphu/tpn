@@ -1389,7 +1389,8 @@ if TEX and KEEP and SHIFT:
             print('FIT eye-area triangles marked skin', int(_add.sum()), 'in eye boxes', int(_all.sum()), 'of them skin already', int((_all & _skp).sum()), 'behind the ears', int((_all & (_fcy >= _ear_y)).sum()), 'ear y', round(float(_ear_y), 3), 'eye y', round(float(np.median(_fcy[_all])), 3) if _all.any() else None)
             if REFP == 'villager-' and 'colour' in dir():   # (12 Nov 2026, the far eye shut from three-quarters, owner circled: its pupil stayed black by the nose) the game paints a shut eye's texels skin by multiplying the picture (js/friend-model.ts: paint / max(texel, .02)), so a texel blacker than .02 can never turn skin: in the eye areas no texel is darker than .05 (the open eye looks the same)
                 _A = px(colour); _tm = uv_texels([me.polygons[int(i)] for i in np.nonzero(_ine & _hz & (_fcy < _ear_y))[0]], _A.shape[:2])
-                _dk = _tm & (_A[..., :3].min(-1) < .05); _A[_dk, :3] = np.maximum(_A[_dk, :3], .05); colour.pixels.foreach_set(_A.ravel()); colour.update()
+                _fl = float(os.environ.get('FIT_EYEFLOOR') or .12)   # (13 Nov 2026, round 23: Mít's red sliver at the near eye's outer corner, and red lash rims and black pupils on the shut body with the face pieces hidden: .05 per channel was pushed back under .02 by the WebP's lossy colour (a dark red lash's green and blue), so the paint could not reach skin there and left red; .12 stays over .02 after the WebP, the open eye's black reads the same)
+                _dk = _tm & (_A[..., :3].min(-1) < _fl); _A[_dk, :3] = np.maximum(_A[_dk, :3], _fl); colour.pixels.foreach_set(_A.ravel()); colour.update()
                 print('FIT eye-area texels lifted from black', int(_dk.sum()))
             if REFP == 'villager-':   # (round 16: Mai's, Bông's, Lan's and Su's temple hair is painted on triangles Meshy's skin test took as skin; out there, 10 px and more beyond the eye box, the shut-eye paint turned it red-brown) dark skin-marked triangles there lose the mark: hair, not eyelid
                 _nr_ = np.zeros(len(me.polygons), bool)
@@ -1406,7 +1407,9 @@ if TEX and KEEP and SHIFT:
                 # (12 Nov 2026, owner chose to fix Lan's orange hair) a few strands of hair beside the face were painted skin by
                 # Meshy: skin-coloured triangles at the face's sides whose neighbours are mostly dark hair take the hair's colour
                 # and lose the skin mark
-                _pv = [list(p.vertices) for p in me.polygons]; _v2p = {}
+                _vco_ = np.zeros(len(me.vertices) * 3, np.float32); me.vertices.foreach_get('co', _vco_); _wk_ = {}   # (13 Nov 2026: neighbours by welded position: the model's vertices are split at the UV seams, and the strand cards' own neighbours were missed)
+                _wid_ = np.array([_wk_.setdefault(tuple(np.round(c, 4)), len(_wk_)) for c in _vco_.reshape(-1, 3)])
+                _pv = [[int(_wid_[v]) for v in p.vertices] for p in me.polygons]; _v2p = {}
                 for _i, _vs in enumerate(_pv):
                     for _v in _vs: _v2p.setdefault(_v, []).append(_i)
                 _Vm = _mc.max(-1); _side = (np.abs(_pc3[:, 0] - _hcx) > _hw * .7) & (np.abs(_pc3[:, 0] - _hcx) < _hw * 1.4) & (_pc3[:, 2] > fz0 - (fz1 - fz0) * .35) & (_pc3[:, 2] < fz1) & (_fcy < _ear_y) & _hz & ~_ine
@@ -1423,6 +1426,44 @@ if TEX and KEEP and SHIFT:
                     for _c in range(3): _b2[_li * 4 + _c] = 0.
                     _cd.foreach_set('color', _b2)
                 print('FIT skin-painted hair strands by the face recoloured', len(_rec), 'of', len(_cand), 'skin-coloured at the sides')
+                # (13 Nov 2026, round 23: Lan's strands by the jaw and behind the ear stayed orange: whole cards painted skin by Meshy,
+                # not skin-marked (so the game draws them as cloth, orange in the light), hanging below the eyes and behind the ear,
+                # where the rule above does not look) from skin-coloured unmarked triangles at the head's sides touching dark hair,
+                # grow through the connected skin-coloured unmarked ones; the face, ears and neck are skin-marked, so it stays in the strands
+                _cd = body.data.color_attributes['skinw'].data; _b3 = np.zeros(len(_cd) * 4, np.float32); _cd.foreach_get('color', _b3); _b3 = _b3.reshape(-1, 4)
+                _mk = np.array([_b3[p.loop_indices[0], 0] > .5 for p in me.polygons]); _cc = np.array([p.center[:] for p in me.polygons])
+                _skc = skin_wide(_mc[:, :3]) & (_Vm > .45)
+                _band = (np.abs(_cc[:, 0] - _hcx) > _hw * .55) & (_cc[:, 2] > L['neck'].z - .03) & (_cc[:, 2] < fz1 - (fz1 - fz0) * .35)
+                _ok_ = ~_mk & _skc & _band & ~_ine; _ok_[_rec] = False
+                _dark = _Vm < .3; _seen = np.zeros(len(_pv), bool); _st_ = [i for i in np.nonzero(_ok_)[0] if any(_dark[j] for v in _pv[i] for j in _v2p[v])]
+                for i in _st_: _seen[i] = True
+                while _st_:
+                    i = _st_.pop()
+                    for v in _pv[i]:
+                        for j in _v2p[v]:
+                            if _ok_[j] and not _seen[j]: _seen[j] = True; _st_.append(j)
+                _grow = np.nonzero(_seen)[0]
+                if len(_grow):
+                    _A = px(colour); _tm = uv_texels([me.polygons[int(i)] for i in _grow], _A.shape[:2])
+                    _hairc = np.median(_mc[_Vm < .3][:, :3], axis=0) if (_Vm < .3).any() else np.array([.05, .04, .04])
+                    _A[_tm, :3] = _hairc; colour.pixels.foreach_set(_A.ravel()); colour.update()
+                print('FIT skin-coloured hair cards beside the face grown and recoloured', len(_grow), 'of', int(_ok_.sum()), 'unmarked skin-coloured at the sides')
+                # (13 Nov 2026, round 23) Lan's orange strand under her ear is a skin-MARKED card fused to the earlobe in the remesh
+                # (so the game tints it as skin, orange in the light; welded, all her skin is one piece): skin-marked triangles far out
+                # at the sides (over .85 of the face's half-width) and below the ear's lowest point, above the shoulders, become hair
+                _far = np.abs(_cc[:, 0] - _hcx) > _hw * .85; _fh = fz1 - fz0
+                _earz = _cc[_mk & (np.abs(_cc[:, 0] - _hcx) > _hw * .9) & (_cc[:, 2] > fz0 + _fh * .3) & (_cc[:, 2] < fz0 + _fh * .8), 2]
+                _eb_ = float(np.percentile(_earz, 3)) if len(_earz) > 10 else fz0 + _fh * .3
+                _isl = np.nonzero(_mk & _far & (_cc[:, 2] < _eb_ - .004) & (_cc[:, 2] > L['neck'].z - .06) & ~_ine)[0]
+                if len(_isl):
+                    _A = px(colour); _tm = uv_texels([me.polygons[int(i)] for i in _isl], _A.shape[:2])
+                    _hairc = np.median(_mc[_Vm < .3][:, :3], axis=0) if (_Vm < .3).any() else np.array([.05, .04, .04])
+                    _A[_tm, :3] = _hairc; colour.pixels.foreach_set(_A.ravel()); colour.update()
+                    _li = np.concatenate([list(me.polygons[int(i)].loop_indices) for i in _isl]).astype(int)
+                    _b2 = _b3.ravel().copy()
+                    for _c in range(3): _b2[_li * 4 + _c] = 0.
+                    _cd.foreach_set('color', _b2)
+                print('FIT skin-marked strands under the ears recoloured', len(_isl), 'ear foot z', round(_eb_, 3))
 if TEX:
     colour.scale(TEX, TEX); colour.file_format = 'JPEG'; colour.save(filepath=jp, quality=int(os.environ.get('FIT_JPGQ') or (88 if TEX >= 1024 else 72)))   # (owner 8 Nov 2026: 62 left speckles on the necks)
     jimg = bpy.data.images.load(jp); jimg.name = ID + '-colour'

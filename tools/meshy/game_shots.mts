@@ -30,14 +30,14 @@ const shots: Record<string, string> = await P.page.evaluate(async ([MODE, LIST, 
     for (let y = 0; y < H; y++) im.data.set(px.subarray((H - 1 - y) * W * 4, (H - y) * W * 4), y * W * 4); x.putImageData(im, 0, 0);
     out[name] = cv.toDataURL('image/png');
   };
-  const headShot = (name: string, root: any, model: any, yaw: number, side: number, villager = false) => {
+  const headShot = (name: string, root: any, model: any, yaw: number, side: number, villager = false, pitch = 0, SZ = 480) => {   // (13 Nov 2026, owner's approval gate: villagers also from above and below (pitch), at 1024 px)
     root.updateMatrixWorld(true); let head: any = null; model.obj.traverse((o: any) => { if (o.isBone && o.name === 'head') head = o; });
     const box = new THREE.Box3().setFromObject(model.obj, true), Hh = box.max.y - box.min.y, bc = box.getCenter(new THREE.Vector3());
     const at = head ? head.getWorldPosition(new THREE.Vector3()).add(new THREE.Vector3(0, villager ? .1 : .12, 0)) : new THREE.Vector3(bc.x, box.min.y + Hh * .86, bc.z);   // (10 Nov 2026: villagers by their head bone too: a raised arm in the box put the head at the picture's foot)
     const fwd = new THREE.Vector3(Math.sin(yaw), 0, Math.cos(yaw)).applyAxisAngle(new THREE.Vector3(0, 1, 0), side);
-    const cam = new THREE.PerspectiveCamera(28, 1, .05, 200); cam.position.copy(at).addScaledVector(fwd, Hh * .75); cam.lookAt(at);
+    const cam = new THREE.PerspectiveCamera(28, 1, .05, 200); cam.position.copy(at).addScaledVector(fwd, Hh * .75 * Math.cos(pitch)); cam.position.y += Hh * .75 * Math.sin(pitch); cam.lookAt(at);
     const hid: any[] = []; if (HIDE === 'face') model.obj.traverse((o: any) => { if (o.isMesh && o.visible && /^face-/.test(o.material && o.material.name || '')) { hid.push(o); o.visible = false; } });   // (HIDE=face: the mood pieces hidden, to tell what the body shows under them)
-    grab(name, cam); hid.forEach(o => { o.visible = true; });
+    grab(name, cam, SZ, SZ); hid.forEach(o => { o.visible = true; });
   };
   const mood = (av: any, M: any, m: string) => { if (av.life) { av.life.mood = m; av.life.blink = av.life.t + 60; av.life.glance = av.life.t + 60; av.life.feel = ''; } M.follow(m); };
   const MOODS = ['smile', 'blink', 'half', 'happy', 'o', 'sad', 'lookL', 'lookR', 'excited'];
@@ -190,10 +190,14 @@ const shots: Record<string, string> = await P.page.evaluate(async ([MODE, LIST, 
     // sides, the back from three sides, and the whole villager front, three-quarter and back in the valley's light
     // (11 Nov 2026) the high-detail model (what a child sees near) as v-<id>-*, the light one (far) as v-<id>-light-*
     for (const [tg, VM] of ([['', n.A.modelHD || n.A.model], ['-light', n.A.modelHD ? n.A.model : null]] as [string, any][])) { if (!VM) continue; A.showHD(n.A, VM === n.A.modelHD);
-      for (const m of MOODS) { mood(n.A, VM, m); for (const s of [0, .7]) headShot(`v-${id}${tg}-${m}-${s ? 'tq' : 'front'}`, n.A.root, VM, yaw, s, true); }
-      for (const m of ['smile', 'blink', 'lookL']) { mood(n.A, VM, m); for (const s of [1.2, -1.2]) headShot(`v-${id}${tg}-${m}-side${s > 0 ? 'L' : 'R'}`, n.A.root, VM, yaw, s, true); }
+      // (13 Nov 2026, owner's approval gate: every mood front, ±.4 (the far eye past the nose) and ±.7, both sides, from above and below, 1024 px)
+      const VA: [string, number][] = [['front', 0], ['tq', .7], ['tqn', -.7], ['q4', .4], ['q4n', -.4]];
+      for (const m of MOODS) { mood(n.A, VM, m); for (const [vn, s] of VA) headShot(`v-${id}${tg}-${m}-${vn}`, n.A.root, VM, yaw, s, true, 0, 1024); }
+      for (const m of ['smile', 'blink', 'happy', 'sad', 'lookL', 'lookR']) { mood(n.A, VM, m); for (const s of [1.2, -1.2]) headShot(`v-${id}${tg}-${m}-side${s > 0 ? 'L' : 'R'}`, n.A.root, VM, yaw, s, true, 0, 1024); }
+      for (const m of ['smile', 'blink']) { mood(n.A, VM, m); for (const [vn, p] of [['above', .5], ['below', -.4]] as [string, number][]) for (const [sn, s] of [['', 0], ['-tq', .5]] as [string, number][]) headShot(`v-${id}${tg}-${m}-${vn}${sn}`, n.A.root, VM, yaw, s, true, p, 1024); }
       mood(n.A, VM, 'smile');
-      for (const s of [Math.PI, 2.2, -2.2]) headShot(`v-${id}${tg}-neck-back-${s.toFixed(1)}`, n.A.root, VM, yaw, s, true);
+      for (const s of [Math.PI, 2.2, -2.2]) headShot(`v-${id}${tg}-neck-back-${s.toFixed(1)}`, n.A.root, VM, yaw, s, true, 0, 1024);
+      for (const [vn, s] of [['front', 0], ['tq', .7], ['side', 1.57], ['sideR', -1.57]] as [string, number][]) headShot(`v-${id}${tg}-neck-${vn}`, n.A.root, VM, yaw, s, true, -.25, 1024);   // (the neck and the head-neck join, from a little below)
       { n.A.root.updateMatrixWorld(true); const box = new THREE.Box3().setFromObject(VM.obj, true), c = box.getCenter(new THREE.Vector3()), Hh = box.max.y - box.min.y;
         for (const [nm, s] of [['front', 0], ['tq', .7], ['back', Math.PI]] as [string, number][]) {
           const dir = new THREE.Vector3(Math.sin(yaw), 0, Math.cos(yaw)).applyAxisAngle(new THREE.Vector3(0, 1, 0), s);
