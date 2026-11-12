@@ -17,7 +17,7 @@ const { chromium } = createRequire(new URL('../../tests/package.json', import.me
 import { writeFileSync, mkdirSync, readdirSync, readFileSync, copyFileSync, existsSync, statSync } from 'node:fs';
 const [OUT, LIST = 'ba', QUICK = ''] = process.argv.slice(2);
 mkdirSync(OUT, { recursive: true });
-const LIMIT = { worn: 0, unseen: 0, eyes: 6, shut: 6, mouth: 100, size: 500, hdsize: 2500 };   // (shut: 12 Nov 2026, dark or white pixels left in the eye areas while shut, any side)   // (hdsize: models/villager-<id>-hd.glb, worn near a child, 11 Nov 2026)   // (unseen: the face pieces cover under 400 px of a head picture: nothing was looked at, 10 Nov)
+const LIMIT = { worn: 0, unseen: 0, eyes: 6, shut: 6, lid: 8, lips: 12, mouth: 100, size: 500, hdsize: 2500 };   // (lid, lips: 13 Nov 2026, from audit.mts's face pass (branch meshy-audit-coverage): a shut lid paler than the skin round it; each mood's mouth shape)   // (shut: 12 Nov 2026, dark or white pixels left in the eye areas while shut, any side)   // (hdsize: models/villager-<id>-hd.glb, worn near a child, 11 Nov 2026)   // (unseen: the face pieces cover under 400 px of a head picture: nothing was looked at, 10 Nov)
 function summarize(cs: any[]) { const keys = Object.keys(LIMIT), fail = cs.filter(c => keys.some(k => c[k] > LIMIT[k]));
   const lines = [`audit ${new Date().toISOString()} cases ${cs.length} failing ${fail.length}`];
   for (const k of keys) lines.push(`${k}: ${cs.filter(c => c[k] > LIMIT[k]).length} cases over ${LIMIT[k]}, worst ${Math.max(0, ...cs.map(c => c[k] || 0))}`);
@@ -109,6 +109,53 @@ const res: any = await P.page.evaluate(async ([LIST, QUICK, LIMIT]) => {
           cases.push({ id: id + tg, pose: m, view: String(s), worn: 0, eyes: k });
           if (k > LIMIT.eyes) pics[`${id}${tg}-face-${m}-${s}-eyes`] = png(C, f);
         }
+        // (13 Nov 2026, audit.mts's 'lid' and 'mouth' rules, ported) lid: a shut eye (blink, happy) must be the skin round it,
+        // its lash line apart: a pixel in the eye area (the smile's whites grown 8 px) about as bright as the skin (not more than
+        // .1 darker) but .12 less saturated than the skin's median in a ring 8 to 16 px round it is a pale rim or flat lid patch
+        { const eye8 = new Uint8Array(N), ring16 = new Uint8Array(N);
+          for (let i = 0; i < N; i++) if (white[i]) { const x = i % W, y = (i / W) | 0; for (let dy = -16; dy <= 16; dy++) for (let dx = -16; dx <= 16; dx++) { const xx = x + dx, yy = y + dy; if (xx < 0 || yy < 0 || xx >= W || yy >= H) continue; const d = Math.max(Math.abs(dx), Math.abs(dy)); if (d <= 8) eye8[yy * W + xx] = 1; else ring16[yy * W + xx] = 1; } }
+          for (const m of ['blink', 'happy']) { setMood(m); const C = read(stage, cam), fl = new Uint8Array(N); let kl = 0; const sv: number[] = [], ss: number[] = [];
+            for (let i = 0; i < N; i++) if (ring16[i] && !eye8[i] && mine(i)) { const [v, sa] = hsv(C, i); if (v > .35) { sv.push(v); ss.push(sa); } }
+            sv.sort((a, b) => a - b); ss.sort((a, b) => a - b); const skv = sv[sv.length >> 1] || 1, sks = ss[ss.length >> 1] || 0;
+            for (let i = 0; i < N; i++) { if (!eye8[i] || !mine(i) || i >= N - W * 10) continue; const [v, sa] = hsv(C, i); if (v > skv - .1 && sa < sks - .12) { fl[i] = 1; kl++; } }
+            const seen = new Uint8Array(N), st: number[] = [];   // (specks under 4 touching pixels are the lash's soft edge)
+            for (let i = 0; i < N; i++) { if (!fl[i] || seen[i]) continue; const grp: number[] = []; st.push(i); seen[i] = 1;
+              while (st.length) { const j = st.pop()!; grp.push(j); const x = j % W, y = (j / W) | 0; for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) { const xx = x + dx, yy = y + dy; if (xx < 0 || yy < 0 || xx >= W || yy >= H) continue; const q = yy * W + xx; if (fl[q] && !seen[q]) { seen[q] = 1; st.push(q); } } }
+              if (grp.length < 4) for (const j of grp) { fl[j] = 0; kl--; } }
+            cases.push({ id: id + tg, pose: m, view: String(s), worn: 0, eyes: 0, lid: kl }); if (kl > LIMIT.lid || QUICK) pics[`${id}${tg}-face-${m}-${s}-lid`] = png(C, fl); }
+          setMood('smile'); }
+        // lips: from the front and ±.4/±.7 the lips are pixels in a box between the nose tip and the chin, judged against the
+        // villager's own skin there (pinker, redder or clearly darker); moods that keep the painted mouth must show the smile's
+        // lips, 'o' and 'excited' a roundish oval that is not the smile's (excited the larger), 'sad' corners lower than its middle
+        if (Math.abs(s) < 1) {
+          let mx0 = W, mx1 = -1, my1 = -1; for (let i = 0; i < N; i++) if (white[i]) { const x = i % W, y = (i / W) | 0; mx0 = Math.min(mx0, x); mx1 = Math.max(mx1, x); my1 = my1 < 0 ? y : Math.min(my1, y); }
+          const ew = mx1 - mx0, mcx = (mx0 + mx1) / 2, mbox = (i: number) => { const x = i % W, y = (i / W) | 0; return ew > 8 && Math.abs(x - mcx) <= ew * .27 && y < my1 - ew * .22 && y > my1 - ew * .52; };   // (villagers .52, not .62: their eyes sit higher and wider, and .62 reached the chin's edge and the neck's shade, Lan's front o and sad)
+          const pk = (px: Uint8Array, i: number) => (px[i * 4 + 2] - px[i * 4 + 1]) / Math.max(1, px[i * 4]), vv = (px: Uint8Array, i: number) => Math.max(px[i * 4], px[i * 4 + 1], px[i * 4 + 2]) / 255, rd = (px: Uint8Array, i: number) => (px[i * 4] - px[i * 4 + 1]) / Math.max(1, px[i * 4]);
+          let skPk = 0, skV = 0, skRd = 0;
+          const lips = (px: Uint8Array) => { const L = new Uint8Array(N); let n = 0; if (ew <= 8) return { L, n }; for (let i = 0; i < N; i++) { if (!mbox(i) || !mine(i)) continue; if (pk(px, i) > skPk + .09 || vv(px, i) < skV - .2 || rd(px, i) > skRd + .08) { L[i] = 1; n++; } } return { L, n }; };
+          const near = (L: Uint8Array, i: number, d: number) => { const x = i % W, y = (i / W) | 0; for (let dy = -d; dy <= d; dy++) for (let dx = -d; dx <= d; dx++) { const xx = x + dx, yy = y + dy; if (xx >= 0 && yy >= 0 && xx < W && yy < H && L[yy * W + xx]) return true; } return false; };
+          const groups = (L: Uint8Array) => { const seen = new Uint8Array(N), out: number[][] = [], st: number[] = [];
+            for (let i = 0; i < N; i++) { if (!L[i] || seen[i]) continue; const g: number[] = []; st.push(i); seen[i] = 1;
+              while (st.length) { const j = st.pop()!; g.push(j); const x = j % W, y = (j / W) | 0; for (let dy = -2; dy <= 2; dy++) for (let dx = -2; dx <= 2; dx++) { const xx = x + dx, yy = y + dy; if (xx < 0 || yy < 0 || xx >= W || yy >= H) continue; const q = yy * W + xx; if (L[q] && !seen[q]) { seen[q] = 1; st.push(q); } } }
+              out.push(g); } return out.sort((a, b) => b.length - a.length); };
+          setMood('smile'); const C0 = read(stage, cam);
+          { const ps: number[] = [], vs: number[] = [], rs: number[] = []; for (let i = 0; i < N; i++) if (mbox(i) && mine(i)) { ps.push(pk(C0, i)); vs.push(vv(C0, i)); rs.push(rd(C0, i)); } const md = (a: number[]) => a.sort((x, y) => x - y)[a.length >> 1] || 0; skPk = md(ps); skV = md(vs); skRd = md(rs); }
+          const SM = lips(C0), mArea: Record<string, number> = {}, mCase: Record<string, any> = {};
+          if (SM.n) for (const m of ['blink', 'half', 'happy', 'sad', 'smile', 'o', 'excited', 'lookL', 'lookR']) {
+            setMood(m); const C = read(stage, cam), ML = lips(C), fm = new Uint8Array(N); let km = 0;
+            if (['blink', 'half', 'happy', 'lookL', 'lookR', 'smile'].includes(m)) { for (let i = 0; i < N; i++) if ((ML.L[i] && !near(SM.L, i, 1)) || (SM.L[i] && !near(ML.L, i, 1))) { fm[i] = 1; km++; } }
+            else { const gs = groups(ML.L), g0 = gs[0] || []; let bad = !g0.length;
+              for (const g of gs.slice(1)) for (const j of g) { fm[j] = 1; km++; }
+              let same = 0; for (const j of g0) if (near(SM.L, j, 1)) same++; let gx0 = W, gx1 = 0, gy0 = H, gy1 = 0; for (const j of g0) { const x = j % W, y = (j / W) | 0; gx0 = Math.min(gx0, x); gx1 = Math.max(gx1, x); gy0 = Math.min(gy0, y); gy1 = Math.max(gy1, y); }
+              const w = gx1 - gx0 + 1, hh = gy1 - gy0 + 1;
+              if (g0.length && same > g0.length * .85 && Math.abs(g0.length - SM.n) < SM.n * .2) bad = true;
+              if (m === 'o' || m === 'excited') { if (hh / w < .55 || hh / w > 1.6 || g0.length < Math.PI / 4 * w * hh * .6) bad = true; mArea[m] = g0.length; }
+              if (m === 'sad' && g0.length) { const col = (a: number, b2: number) => { let sy = 0, c = 0; for (const j of g0) { const x = j % W; if (x >= gx0 + w * a && x <= gx0 + w * b2) { sy += (j / W) | 0; c++; } } return c ? sy / c : 0; }; if ((col(0, .2) + col(.8, 1)) / 2 >= col(.4, .6)) bad = true; }
+              if (bad) for (const j of g0) { if (!fm[j]) { fm[j] = 1; km++; } } }
+            const r: any = { id: id + tg, pose: m, view: String(s), worn: 0, eyes: 0, lips: km }; cases.push(r); mCase[m] = [r, C, fm, ML.L];
+            if (km > LIMIT.lips || QUICK) pics[`${id}${tg}-face-${m}-${s}-lips`] = png(C, fm); }
+          if (mArea.o && mArea.excited && mArea.excited < mArea.o * 1.15 && mCase.excited) { const [r, C, fm, EL] = mCase.excited; for (let i = 0; i < N; i++) if (EL[i] && !fm[i]) { fm[i] = 1; r.lips++; } pics[`${id}${tg}-face-excited-${s}-lips`] = png(C, fm); }
+          setMood('smile'); }
         // (12 Nov 2026, owner circled the far shut eye by the nose from three-quarters and the side on most villagers, while
         // the rule above passed: it looks for whites only, and only under the face pieces, which are drawn from the front)
         // shut: the model's own eye areas in 3D (its eye boxes without their outer 30 % and top 20 %, where temple hair and

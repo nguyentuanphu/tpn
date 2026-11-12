@@ -911,7 +911,7 @@ print('FIT skin faces', nskin, 'of', len(me.polygons))
 SKIN_TEX = TEX > 0 and (not ORIGINAL or SHIFT)   # (original_skin alone: no skin part at all)
 CLEAR_FACE = TEX > 0 and not ORIGINAL   # (an opaque face layer needs no clearing underneath; an own face's open eyes ARE the painted ones under it, 9 Nov)
 # the high-detail model keeps Meshy's painted skin ("skin-tex"); the light one its corner colours
-def uv_texels(polys, shape):   # texels covered by these faces' UV triangles
+def uv_texels(polys, shape, m=-.05):   # texels covered by these faces' UV triangles (m: the barycentric margin, negative reaches a little past the edges)
     hh, ww = shape; out = np.zeros((hh, ww), bool)
     for p in polys:
         uvs = np.array([uv[li].uv[:] for li in p.loop_indices], np.float32)
@@ -923,8 +923,11 @@ def uv_texels(polys, shape):   # texels covered by these faces' UV triangles
         den = (by - cy) * (ax - cx) + (cx - bx) * (ay - cy)
         if abs(den) < 1e-9: continue
         l1 = ((by - cy) * (gx - cx) + (cx - bx) * (gy - cy)) / den; l2 = ((cy - ay) * (gx - cx) + (ax - cx) * (gy - cy)) / den
-        out[y0:y1, x0:x1] |= (l1 >= -.05) & (l2 >= -.05) & (1 - l1 - l2 >= -.05)
+        out[y0:y1, x0:x1] |= (l1 >= m) & (l2 >= m) & (1 - l1 - l2 >= m)
     return out
+def own_texels(idx, shape):   # (13 Nov 2026, round 23: recolouring 24 strand triangles blackened Cô Mai's face and dress: Meshy's UV map lets triangles share picture space) the texels of these faces that no other face uses (the others a little inside their edges, so the shared edges still go)
+    _s = set(int(i) for i in idx); _t = uv_texels([me.polygons[i] for i in _s], shape)
+    return _t & ~uv_texels([p for p in me.polygons if p.index not in _s], shape, .08)
 if CLEAR_FACE:
     # under the face layer the painted skin must be plain skin: Meshy's painted eyes, lashes, brows and mouth there are
     # filled from the skin around them (otherwise they show through a blink)
@@ -1413,12 +1416,13 @@ if TEX and KEEP and SHIFT:
                 for _i, _vs in enumerate(_pv):
                     for _v in _vs: _v2p.setdefault(_v, []).append(_i)
                 _Vm = _mc.max(-1); _side = (np.abs(_pc3[:, 0] - _hcx) > _hw * .7) & (np.abs(_pc3[:, 0] - _hcx) < _hw * 1.4) & (_pc3[:, 2] > fz0 - (fz1 - fz0) * .35) & (_pc3[:, 2] < fz1) & (_fcy < _ear_y) & _hz & ~_ine
+                _dkh = bool(np.median(_Vm[_hreg]) < .35) if _hreg.any() else True; _side &= _dkh; print('FIT dark hair (strand rules on)', _dkh, round(float(np.median(_Vm[_hreg])) if _hreg.any() else -1, 2))   # (13 Nov 2026, round 23: on Ruby's auburn curls, Jack's blond and Bác Ba's grey hair the strand rules took real hair for skin-painted strands and painted it black; a skin-coloured strand only stands out against dark hair)
                 _cand = np.nonzero(_side & (_Vm > .45))[0]; _rec = []
                 for _i in _cand:
                     _nb = {j for v in _pv[_i] for j in _v2p[v] if j != _i}
                     if (len(_nb) >= 4 and np.mean([_Vm[j] < .3 for j in _nb]) >= .6) or (_hreg[_i] and (_pc3[_i, 2] < fz0 + (fz1 - fz0) * .55)): _rec.append(_i)   # (or a skin-coloured triangle of the hair region beside the face, below the eyes: Lan's strands are whole cards painted skin)
                 if _rec:
-                    _A = px(colour); _tm = uv_texels([me.polygons[int(i)] for i in _rec], _A.shape[:2])
+                    _A = px(colour); _tm = own_texels(_rec, _A.shape[:2])
                     _hairc = np.median(_mc[_Vm < .3][:, :3], axis=0) if (_Vm < .3).any() else np.array([.05, .04, .04])
                     _A[_tm, :3] = _hairc; colour.pixels.foreach_set(_A.ravel()); colour.update()
                     _cd = body.data.color_attributes['skinw'].data; _b2 = np.zeros(len(_cd) * 4, np.float32); _cd.foreach_get('color', _b2)
@@ -1434,7 +1438,7 @@ if TEX and KEEP and SHIFT:
                 _mk = np.array([_b3[p.loop_indices[0], 0] > .5 for p in me.polygons]); _cc = np.array([p.center[:] for p in me.polygons])
                 _skc = skin_wide(_mc[:, :3]) & (_Vm > .45)
                 _band = (np.abs(_cc[:, 0] - _hcx) > _hw * .55) & (_cc[:, 2] > L['neck'].z - .03) & (_cc[:, 2] < fz1 - (fz1 - fz0) * .35)
-                _ok_ = ~_mk & _skc & _band & ~_ine; _ok_[_rec] = False
+                _ok_ = ~_mk & _skc & _band & ~_ine & _dkh; _ok_[_rec] = False
                 _dark = _Vm < .3; _seen = np.zeros(len(_pv), bool); _st_ = [i for i in np.nonzero(_ok_)[0] if any(_dark[j] for v in _pv[i] for j in _v2p[v])]
                 for i in _st_: _seen[i] = True
                 while _st_:
@@ -1444,7 +1448,7 @@ if TEX and KEEP and SHIFT:
                             if _ok_[j] and not _seen[j]: _seen[j] = True; _st_.append(j)
                 _grow = np.nonzero(_seen)[0]
                 if len(_grow):
-                    _A = px(colour); _tm = uv_texels([me.polygons[int(i)] for i in _grow], _A.shape[:2])
+                    _A = px(colour); _tm = own_texels(_grow, _A.shape[:2])
                     _hairc = np.median(_mc[_Vm < .3][:, :3], axis=0) if (_Vm < .3).any() else np.array([.05, .04, .04])
                     _A[_tm, :3] = _hairc; colour.pixels.foreach_set(_A.ravel()); colour.update()
                 print('FIT skin-coloured hair cards beside the face grown and recoloured', len(_grow), 'of', int(_ok_.sum()), 'unmarked skin-coloured at the sides')
@@ -1454,9 +1458,9 @@ if TEX and KEEP and SHIFT:
                 _far = np.abs(_cc[:, 0] - _hcx) > _hw * .85; _fh = fz1 - fz0
                 _earz = _cc[_mk & (np.abs(_cc[:, 0] - _hcx) > _hw * .9) & (_cc[:, 2] > fz0 + _fh * .3) & (_cc[:, 2] < fz0 + _fh * .8), 2]
                 _eb_ = float(np.percentile(_earz, 3)) if len(_earz) > 10 else fz0 + _fh * .3
-                _isl = np.nonzero(_mk & _far & (_cc[:, 2] < _eb_ - .004) & (_cc[:, 2] > L['neck'].z - .06) & ~_ine)[0]
+                _isl = np.nonzero(_mk & _far & (_cc[:, 2] < _eb_ - .004) & (_cc[:, 2] > L['neck'].z - .06) & ~_ine & _dkh)[0]
                 if len(_isl):
-                    _A = px(colour); _tm = uv_texels([me.polygons[int(i)] for i in _isl], _A.shape[:2])
+                    _A = px(colour); _tm = own_texels(_isl, _A.shape[:2])
                     _hairc = np.median(_mc[_Vm < .3][:, :3], axis=0) if (_Vm < .3).any() else np.array([.05, .04, .04])
                     _A[_tm, :3] = _hairc; colour.pixels.foreach_set(_A.ravel()); colour.update()
                     _li = np.concatenate([list(me.polygons[int(i)].loop_indices) for i in _isl]).astype(int)
