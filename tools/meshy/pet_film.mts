@@ -47,7 +47,7 @@ for (const [title, secs, speed, move] of PARTS) {
       document.querySelectorAll('.storybook, .dialog, .modal, .reward').forEach(e => e.remove()); G.paused = false;
       for (let k = 0; k < 4; k++) { const d = dt / 4; if (speed) { h.pos.x += Math.sin(h.yaw) * speed * d; h.pos.z += Math.cos(h.yaw) * speed * d; }
         if (move) { L.want = move; L.wantT = .5; }   // (as the game wishes a move: js/pets.ts wish())
-        F.t = (F.t || 100) + d; G.world.update(d, F.t); }
+        F.t = (F.t || 100) + d; G.world.update(d, F.t); if (!speed) L.obj.rotation.y = h.yaw; }   // (standing beside the still child it turned back and forth as it shuffled near its spot)
       const r = L.obj.userData.rig, R = G.renderer; let top = h.av.root; while (top.parent) top = top.parent;
       const o = L.obj; o.updateMatrixWorld(true); const box = new THREE.Box3().setFromObject(r.model.obj, true), cc = box.getCenter(new THREE.Vector3()), rr = Math.max(.5, box.getSize(new THREE.Vector3()).length());
       const hid: any[] = []; top.traverse((q: any) => { if (q.isSprite && q.visible) { q.visible = false; hid.push(q); } });   // (name tags and speech bubbles covered the near views)

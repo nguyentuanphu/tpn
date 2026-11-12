@@ -462,13 +462,16 @@ def extra_moves(J, M, bones):
     def legs(P, i, a, k=0.): put(P, 'leg%d' % i, a); put(P, 'knee%d' % i, k)
     def blink(t, times): return wc.blink(t, times)
     def run(t, carry=False):
-        L = .42; ph = TAU * t / L; P = R()
-        put(P, 'body', math.sin(ph) * .12, loc=(0, abs(math.sin(ph)) * .05 * H, 0))
-        for n, i in enumerate(front): legs(P, i, math.sin(ph + n * .35) * .95, max(0, -math.cos(ph + n * .35)) * 1.2)
-        for n, i in enumerate(back): legs(P, i, math.sin(ph + math.pi + n * .35) * .9, max(0, math.cos(ph + n * .35)) * .9)
-        put(P, 'head', -math.sin(ph) * .1 - (.18 if carry else 0))
-        for k, e in enumerate(ears): put(P, e, -.55 + math.sin(2 * ph + k) * .25)
-        put(P, 'tail', .35, math.sin(2 * ph) * .25)
+        # (13 Nov 2026, owner: the neck and legs looked stiff in the run) the head bobs a beat behind the body instead of
+        # staying level, the body stretches and gathers, each leg folds as it swings forward; ears and tail follow late
+        L = .42; ph = TAU * t / L; P = R(); jl = FIX.get('jump_legs', 1.0)
+        st = math.sin(ph)
+        P['body'] = ((st * .15, 0, 0), (0, abs(math.sin(ph)) * .06 * H, 0), (1, 1 - .025 * math.cos(2 * ph), 1 + .03 * math.cos(2 * ph)))
+        for n, i in enumerate(front): a = ph + n * .35; legs(P, i, math.sin(a) * .95 * jl, max(0, -math.cos(a)) * 1.45 * FIX.get('jump_knee', 1.0))
+        for n, i in enumerate(back): a = ph + math.pi + n * .35; legs(P, i, math.sin(a) * .9 * jl, max(0, math.cos(a - math.pi)) * 1.05 * FIX.get('jump_knee', 1.0))
+        put(P, 'head', -math.sin(ph - .7) * .14 + .04 * math.sin(2 * ph - 1) - (.18 if carry else 0), 0, math.sin(ph * .5) * .04)
+        for k, e in enumerate(ears): put(P, e, -.5 + math.sin(2 * ph - 1.2 + k) * .3)
+        put(P, 'tail', .35 + .15 * math.sin(ph - 1.4), math.sin(2 * ph - .8) * .3)
         face(P, None, eye=blink(t, (.9,)), smile=1.25, jaw=.25 if carry else .4)
         return P
     # (13 Nov 2026, owner after the films: "tất cả con vật khi nhảy đều nhìn quá cứng") the jump as poses one after another,
@@ -504,13 +507,17 @@ def extra_moves(J, M, bones):
         face(P, None, big=1.1 if air else 1., smile=1.3, jaw=.6 if air else .15)   # (eyes wide in the air: a lid growing mid-leap showed the eye under it)
         return P
     def bounce(t):
-        L = 1.6; hop = abs(math.sin(TAU * t / L * 2)); P = R(); sq = 1 - .07 * (1 - hop) ** 6   # (a soft squash each time it lands)
-        P['body'] = ((-.08 * hop, 0, 0), (0, hop * .12 * H, 0), (1 + (1 - sq) * .4, sq, 1 + (1 - sq) * .4))
-        for i in front: legs(P, i, -.35 * hop, .5 * hop)
-        for i in back: legs(P, i, .15 * hop, .25 * hop)
-        put(P, 'head', -.1 * hop, 0, math.sin(TAU * t / L) * .15)
-        for e in ears: put(P, e, -.4 + .5 * hop)
-        put(P, 'tail', .3, math.sin(TAU * t / L * 6) * .55)
+        # (13 Nov 2026, owner: "bước nhảy đứng" still stiff) two happy hops in place, each the jump's own poses made smaller:
+        # a crouch, the spring up, legs tucked in the air, a squash on landing; head, ears and tail a beat behind
+        L = 1.6; p = (t % (L / 2)) / (L / 2); P = R(); hop = max(0., jump_at(p)[0]) / .45
+        up, pitch, fl, fk, bl, bk, hd, tl, er, sq = jump_at(p); lag = jump_at(max(0., p - .08))
+        jl, jk = FIX.get('jump_legs', 1.0) * .8, FIX.get('jump_knee', 1.0)
+        P['body'] = ((pitch * .45, 0, 0), (0, up * .5 * H, 0), (1 + (1 - sq) * .4, sq, 1 + (1 - sq) * .4))
+        for i in front: legs(P, i, fl * jl * .7, fk * jk)
+        for i in back: legs(P, i, bl * jl * .7, bk * jk)
+        put(P, 'head', -lag[1] * .4 + hd * .8, 0, math.sin(TAU * t / L) * .15)
+        for e in ears: put(P, e, lag[8] * 1.2)
+        put(P, 'tail', .3 + lag[7] * .6, math.sin(TAU * t / L * 6) * .55)
         face(P, None, joy=True, smile=1.35, jaw=.5 + .3 * hop)
         return P
     def sitting(P, pitch=-.55):
@@ -544,8 +551,8 @@ def extra_moves(J, M, bones):
     def scratch(t):
         L = 2.; w = TAU / L; P = R(); sitting(P, -.5)
         sc = back[0] if back else 2
-        legs(P, sc, -1.75 + math.sin(TAU * t * 6) * .3, .9)
-        hk = FIX.get('head_turn', 1.0); put(P, 'head', .55 * hk, -.25 * hk, .35 * hk)
+        legs(P, sc, -1.45 + math.sin(TAU * t * 6) * .12, 1.55 + math.sin(TAU * t * 6) * .25)   # (13 Nov 2026, owner: the leg in the scratch: the lower leg folded up to the ear, the scratch in the knee; held straight, the calf's long shin hung down as a dark stick)
+        hk = FIX.get('head_turn', 1.0); put(P, 'head', .35 * hk, -.12 * hk, .3 * hk + math.sin(TAU * t * 3) * .03)   # (and the head turned less far: it looked twisted round)
         face(P, None, eye=.35, smile=1.15, jaw=.1)
         return P
     def swim(t):
