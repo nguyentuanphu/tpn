@@ -232,6 +232,27 @@ Lessons about the checking itself (each hid a fault or showed a false one):
 - Write long queues in one shell (bash), and check every `-Out` path expands: a PowerShell queue started a second
   auditor on the same server, and a `$k` inside a quoted path was not expanded (three pets wrote into one folder).
 
+### Lessons from the panda, calf and joey (13 Nov 2026)
+- The weights by colour find what numbers do not: the panda's neck stretched (up to 1,127) because the back half of its
+  big head was weighted to the body, so it stayed put when the head turned. The neck joint goes where the head meets the
+  body (`joints.head`), and the neck's plane follows the animal's own neck line from chin to nape (`neck_tilt`; 0.55 is
+  the puppy's, 0.31 the panda's). `neck_soft` alone never fixed it.
+- `ear_amp` 0 must keep the ears still in the pets' own moves too (run, swim...), not only in the code shapes' moves: the
+  panda's ear weights reach its cheeks, and the cheeks stretched when the ears swung. A big head on a short neck turns
+  less in roll and scratch (`head_turn`).
+- A tail that hangs down (the calf's) needs `tail_drop`: the tail rule took only points above its root, so the hanging
+  tail stayed on the body.
+- An animal that stands up (the joey): `upright` mode in `fit_animal.py`. Every joint is set by hand in its json, read
+  from ortho renders with a 10 cm grid (0.002 m a pixel, so a pixel is a coordinate); arms by distance to the line from
+  shoulder to paw (`paw0/1`, elbow = knee), hind legs below the hips each side of the middle (the long foot below the
+  hock), the tail behind and below its root and its tip along the ground; its own moves (`upright_moves`: hop, sit back
+  on the tail, beg with paws up, scratch the ear with a paw). If the body is not in the middle of the box (the joey's tail
+  curls to one side), `shift` the model, or every left/right rule is off by the difference.
+- Do not run Blender beside the auditor on this machine: the game page then took over 90 s to open and the audit died.
+  One heavy job at a time.
+- Keep each file's line endings: Python on Windows writes CRLF in text mode (use `newline=''`), and Git Bash's `sed -i`
+  dropped the CRs of the CRLF json files (the whole file then shows as changed).
+
 ### Each animal's own skills
 Every pet has special skills of its own (owner, 10 Nov 2026), in `PET_SKILLS` (`js/pets.ts`), each with a chip under the
 name card (at the right edge on a phone) and a case in `tests/pet-skills.mts`. The puppy: fetch, dig for treasure, lead

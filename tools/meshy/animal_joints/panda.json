@@ -1,5 +1,5 @@
 {
-  "note": "Meshy panda (12 Nov 2026 model): first fit with the puppy's pose and face tuning; values tuned below after looking at its pictures. (12 Nov: small round ears overlapping the wide head from the front: they stay still with the head, ear_amp 0, so their swing never drags the head.) (12 Nov: eyes looked for within 13 cm of the middle (its black ears are bigger dark patches); its big head reaches far back: head_back 0.7.) Shut eyes keep the black eye patch: the eye is only the painted white and iris (eye_grow 0.5), the lid filled from the patch (fill_near), the line light.",
+  "note": "Meshy panda (12 Nov 2026 model): first fit with the puppy's pose and face tuning; values tuned below after looking at its pictures. (12 Nov: small round ears overlapping the wide head from the front: they stay still with the head, ear_amp 0, so their swing never drags the head.) (12 Nov: eyes looked for within 13 cm of the middle (its black ears are bigger dark patches); its big head reaches far back: head_back 0.7.) Shut eyes keep the black eye patch: the eye is only the painted white and iris (eye_grow 0.5), the lid filled from the patch (fill_near), the line light. (13 Nov: the weights by colour showed the back half of the head on the body, so it stayed when the head turned (neck stretch up to 1,127): the neck joint lowered to where the head meets the body (z 0.433) and the neck's plane follows the panda's neck line, from the chin up to the nape (neck_tilt 0.31). Its ears stay still in its own moves too (ear_amp 0: their weights reach the cheeks, which stretched in run and swim); the head turns less in roll and scratch (head_turn 0.6); its hind legs reach back less in the jump (jump_legs 0.7: the inner thighs stretched mid-air).)",
   "lie_drop": 0.95,
   "lie_front": -1.35,
   "lie_front_knee": 0.1,
@@ -19,9 +19,19 @@
     0.8,
     0.78
   ],
-  "neck_soft": 0.1,
+  "neck_soft": 0.08,
   "audit": {
     "eyes": 100,
     "why": "12 Nov 2026, looked at the marked pictures (sleep, happy, roll, far and near): the closed eyes show as a light line inside the black eye patch; the check counts the patch's own black fur next to the lid as a pupil. Not a painted eye showing."
-  }
+  },
+  "joints": {
+    "head": [
+      0,
+      -0.262,
+      0.433
+    ]
+  },
+  "neck_tilt": 0.31,
+  "head_turn": 0.6,
+  "jump_legs": 0.7
 }

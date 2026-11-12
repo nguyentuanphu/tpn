@@ -1,6 +1,32 @@
 {
-  "note": "Meshy joey (12 Nov 2026 model): upright on its big hind feet, small arms in front, a long tail on the ground; joints set by hand from the renders (the four-leg finder looks for four leg columns).",
+  "note": "Meshy joey (12 Nov 2026 model): upright on its big hind feet, small arms in front, a long tail on the ground; joints set by hand from the renders (the four-leg finder looks for four leg columns). (13 Nov 2026: upright mode in fit_animal.py: every joint read from ortho renders with a 10 cm grid; the model moved 6 cm to the right (shift) because its tail curls off to one side and the box's middle was not the body's; leg0/1 are the arms (knee = elbow, paw0/1 the paw tips), leg2/3 the hind legs (knee = the hock where the long foot starts); its own moves in upright_moves.)",
+  "upright": true,
+  "shift": [0.06, 0, 0],
   "smooth": 5,
   "spatial_r": 0.03,
-  "mouth_w": 0.8
+  "mouth_w": 0.8,
+  "ear_mid": 0.04,
+  "ear_amp": 0.3,
+  "leg_amp": 0.6,
+  "neck_tilt": 0.1,
+  "neck_soft": 0.06,
+  "head_back": 0.3,
+  "tail_w": 0.06,
+  "arm_r": 0.035,
+  "joints": {
+    "head": [0, 0.06, 0.745],
+    "ear0": [-0.08, 0.12, 0.95],
+    "ear1": [0.08, 0.12, 0.95],
+    "leg0": [0.07, 0.03, 0.6],
+    "knee0": [0.055, -0.04, 0.51],
+    "leg1": [-0.07, 0.03, 0.6],
+    "knee1": [-0.055, -0.04, 0.51],
+    "leg2": [0.12, 0.14, 0.38],
+    "knee2": [0.12, 0.15, 0.08],
+    "leg3": [-0.12, 0.14, 0.38],
+    "knee3": [-0.12, 0.15, 0.08],
+    "tail": [0, 0.25, 0.25]
+  },
+  "paw0": [0.046, -0.05, 0.43],
+  "paw1": [-0.046, -0.05, 0.43]
 }

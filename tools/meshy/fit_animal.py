@@ -78,6 +78,7 @@ def load(path):
     if COMP:   # (a companion flies: its middle on the code shape's middle)
         c.z = (V[:, 2].min() + V[:, 2].max()) / 2; at.z = (bx['min'][1] + bx['max'][1]) / 2 + FIX.get('lift', 0)
     o.data.transform(Matrix.Translation(at) @ Matrix.Scale(k, 4) @ Matrix.Translation(-c))
+    if FIX.get('shift'): o.data.transform(Matrix.Translation(Vector(FIX['shift'])))   # (the box's middle is not the body's: the joey's tail curls off to one side)
     o.name = 'creature-' + KIND
     return o
 
@@ -85,6 +86,7 @@ def bvh_of(o): return BVHTree.FromObject(o, bpy.context.evaluated_depsgraph_get(
 
 def joints(o):
     """the joints from the shape (blender frame: x right, -y forward, z up)"""
+    if FIX.get('upright'): return upright_joints(o)
     V = np.array([v.co[:] for v in o.data.vertices]); bvh = bvh_of(o)
     H = V[:, 2].max(); y0, y1 = V[:, 1].min(), V[:, 1].max()
     J = {}
@@ -130,6 +132,50 @@ def joints(o):
         J['ear%d' % i] = (float(np.median(out[:, 0])) * .8, float(np.median(out[:, 1])), float(out[:, 2].max()) - H * .03)
     J.update({k: tuple(v) for k, v in FIX.get('joints', {}).items()})
     return J, dict(belly=belly, back=back, hip=hip, H=H, fy=fy, by=by)
+
+def upright_joints(o):
+    """an animal standing up on its hind feet (the joey): every joint set by hand in animal_joints/<kind>.json, read from
+    ortho renders with a 10 cm grid (the four-leg finder looks for four leg columns and put the joints in the air); leg0/1
+    are the arms (shoulder, knee = elbow), leg2/3 the hind legs (hip, knee = the hock, where the long foot starts)"""
+    V = np.array([v.co[:] for v in o.data.vertices])
+    J = {k: tuple(v) for k, v in FIX['joints'].items()}; J['body'] = (0, 0, 0)
+    hip = J['leg2'][2]
+    return J, dict(belly=FIX.get('belly', hip * .6), back=J['head'][2], hip=hip, H=float(V[:, 2].max()), fy=float(V[:, 1].min()), by=float(V[:, 1].max()))
+
+def upright_W(V, J, M, names, ix):
+    """an upright animal's weights: the head over its neck's plane, ears up from their roots, the tail behind and below its
+    root (and its tip along the ground), the arms by their distance to the line from the shoulder to the paw (the forearm
+    from the elbow down), the hind legs below the hips on each side of the middle (the foot below the hock); body the rest"""
+    n = len(V); W = np.zeros((n, len(names))); X, Y, Z = V[:, 0], V[:, 1], V[:, 2]
+    hp = np.array(J['head']); nrm = np.array((0, -FIX.get('neck_tilt', .55), 1.0)); nrm /= np.linalg.norm(nrm)
+    ns = FIX.get('neck_soft', .04); head = smooth01(((V - hp) @ nrm + ns * .375) / ns)
+    head *= smooth01((hp[1] + (M['by'] - M['fy']) * FIX.get('head_back', .25) - Y) / .03)
+    ear = np.zeros(n); ear_side = np.zeros(n, int)
+    for i in (0, 1):
+        ex, ey, ez = J['ear%d' % i]; side = np.sign(ex)
+        e = smooth01((Z - ez) / .015) * smooth01((X * side - FIX.get('ear_mid', .04)) / .015) * (np.sign(X) == side)
+        ear = np.maximum(ear, e); ear_side[e > 0] = i
+    ear *= head > .5
+    tx, ty, tz = J['tail']; tw = FIX.get('tail_w', .06)
+    tail = smooth01((Y - ty + .01) / .03) * smooth01((tz + .03 - Z) / .04) * np.maximum(smooth01((tw - np.abs(X - tx)) / .02),
+           smooth01((.08 - Z) / .02) * smooth01((Y - ty - .01) / .02))   # (near the middle, or its tip lying along the ground behind)
+    w_head = head * (1 - ear); w_ear = head * ear; w_tail = tail * (1 - head)
+    free = (1 - head) * (1 - w_tail); taken = w_head + w_ear + w_tail
+    ar = FIX.get('arm_r', .035)
+    for i in (0, 1):   # (the arms)
+        s0 = np.array(J['leg%d' % i]); el = np.array(J['knee%d' % i]); paw = np.array(FIX['paw%d' % i])
+        d = paw - s0; L2 = d @ d; t = np.clip(((V - s0) @ d) / L2, 0, 1); dist = np.linalg.norm(V - (s0 + t[:, None] * d), axis=1)
+        a = smooth01((ar - dist) / .015 + .5) * free; te = ((el - s0) @ d) / L2; lo = smooth01((t - te) / .12 + .5)
+        W[:, ix['leg%d' % i]] += a * (1 - lo); W[:, ix['knee%d' % i]] += a * lo; taken = taken + a; free = free * (1 - a)
+    for i in (2, 3):   # (the hind legs)
+        hx, hy, hz = J['leg%d' % i]; side = np.sign(hx); kz = J['knee%d' % i][2]
+        h = smooth01((hz + .02 - Z) / FIX.get('hip_soft', .1)) * smooth01((X * side - FIX.get('leg_mid', .02)) / .03) * free
+        lo = smooth01((kz + .04 - Z) / .06)
+        W[:, ix['leg%d' % i]] += h * (1 - lo); W[:, ix['knee%d' % i]] += h * lo; taken = taken + h
+    W[:, ix['head']] += w_head; W[:, ix['tail']] += w_tail
+    for i in (0, 1): W[:, ix['ear%d' % i]] += w_ear * (ear_side == i)
+    W[:, ix['body']] += np.clip(1 - taken, 0, 1)
+    return W
 
 def comp_joints(o):
     """a companion's joints (blender frame): the body at the middle, the head (the top or the front, as the animal is
@@ -219,7 +265,7 @@ def weights(o, J, M):
     W = np.zeros((n, len(names)))
     belly, hip, H = M['belly'], M['hip'], M['H']
     # the head: in front of and above the neck's plane (tilted forward), softly over 3 cm
-    hp = np.array(J['head']); nrm = np.array((0, -.55, 1.0)); nrm /= np.linalg.norm(nrm)
+    hp = np.array(J['head']); nrm = np.array((0, -FIX.get('neck_tilt', .55), 1.0)); nrm /= np.linalg.norm(nrm)   # (neck_tilt: how far the neck's plane leans forward; a panda's big round head sits on its body, its neck line rises only a little to the back: 0.31)
     ns = FIX.get('neck_soft', .04); head = smooth01(((V - hp) @ nrm + ns * .375) / ns)   # (neck_soft: how wide the head blends into the body; a panda's big head needs a wider neck, or the neck ring stretched when it turned)
     # (and not far behind the neck: a kitty's tall tail reaches above the neck's plane at the back, and its tip moved with the head)
     head *= smooth01((hp[1] + (M['by'] - M['fy']) * FIX.get('head_back', .25) - V[:, 1]) / .03)
@@ -240,11 +286,13 @@ def weights(o, J, M):
         # (behind its root, above it and near the middle: not the whole rump, which wagged with it)
         tx, ty, tz = J['tail']; tw = FIX.get('tail_w', .06)
         tail = smooth01((V[:, 1] - ty + .01) / .03) * smooth01((V[:, 2] - (tz - .02)) / .03) * smooth01((tw - np.abs(V[:, 0])) / .02)
+        if FIX.get('tail_drop'):   # (a tail that hangs down (the calf's): also below its root, a little clear of the rump behind it)
+            tail = np.maximum(tail, smooth01((V[:, 1] - ty - FIX.get('tail_gap', .02)) / .02) * smooth01((V[:, 2] - (tz - FIX['tail_drop'])) / .03) * smooth01((tw - np.abs(V[:, 0])) / .02))
     # the legs: below the belly fully, blended into the body up to the hips; each point to its nearest leg (seen from above)
     lx = np.array([[J['leg%d' % i][0], J['leg%d' % i][1]] for i in range(4)])
     d2 = ((V[:, None, :2] - lx[None]) ** 2).sum(-1); near = np.argmin(d2, 1); dist = np.sqrt(d2[np.arange(n), near])
     # how thick each leg is (its points below the belly, seen from above): the belly's fur between the legs is body
-    rl = np.array([np.percentile(dist[(near == i) & (V[:, 2] < belly * .6)], 85) * 1.15 for i in range(4)])
+    rl = np.array([np.percentile(dist[(near == i) & (V[:, 2] < belly * .6)], 85) * 1.15 if ((near == i) & (V[:, 2] < belly * .6)).any() else .05 for i in range(4)])   # (an upright joey's arms have nothing below the belly: its own weights replace these)
     lt = FIX.get('leg_top', 1.0)   # (how high the leg's own weight reaches, as a fraction of the way from the belly to the hip)
     leg = (1 - smooth01((V[:, 2] - belly * .9) / max(.02, (belly * .1 + (hip - belly) * lt)))) * smooth01((rl[near] - dist) / .025 + .5)
     knee_z = np.array([J['knee%d' % i][2] for i in range(4)])[near]; band = np.maximum(.02, knee_z * .35)
@@ -259,6 +307,7 @@ def weights(o, J, M):
         if 'ear%d' % i in ix: W[:, ix['ear%d' % i]] += w_ear * (ear_side == i)
     for i in range(4):
         m = near == i; W[m, ix['leg%d' % i]] += (w_leg * (1 - lower))[m]; W[m, ix['knee%d' % i]] += (w_leg * lower)[m]
+    if FIX.get('upright'): W = upright_W(V, J, M, names, ix)
     # round the legs' tops, smooth in space too: Meshy's fur is many loose cards, and two cards side by side with different
     # weights pull apart when a leg turns far (the elbow's fur torn into strands while lying down)
     sr = FIX.get('spatial_r', 0)
@@ -332,9 +381,9 @@ def make(path, J, M, out, tex_px):
     face_pieces(o, arm, J, Fc)
     material(o, tex_px)
     moves = wc.animal_moves(KIND, A, arm, names + FACE_BONES, F, size)
-    moves = [(n_, L_, lie_down(p_, J, M) if n_ == 'sleep' else p_) for n_, L_, p_ in moves]
+    moves = [(n_, L_, lie_down(p_, J, M) if n_ == 'sleep' and not FIX.get('upright') else p_) for n_, L_, p_ in moves]
     for name, L, pose in moves: ground(o, arm, wc.clip(arm, name, L, damp(pose)))
-    extra = extra_moves(J, M, names + FACE_BONES)   # (made for Meshy's own legs: not damped)
+    extra = (upright_moves if FIX.get('upright') else extra_moves)(J, M, names + FACE_BONES)   # (made for Meshy's own legs: not damped)
     for name, L, pose in extra: ground(o, arm, wc.clip(arm, name, L, pose))
     moves = moves + extra
     for pb in arm.pose.bones: pb.rotation_euler = (0, 0, 0); pb.location = (0, 0, 0); pb.scale = (1, 1, 1)
@@ -405,7 +454,7 @@ def extra_moves(J, M, bones):
     the body's place (x, up, forward). Each loops; ground() keeps it out of the ground"""
     TAU = math.pi * 2; H = M['H']; Z3 = (0, 0, 0); O3 = (1, 1, 1)
     front = [i for i in range(4) if J['leg%d' % i][1] < 0]; back = [i for i in range(4) if i not in front]
-    ears = [b for b in bones if b.startswith('ear')]
+    ears = [b for b in bones if b.startswith('ear')] if FIX.get('ear_amp', 1) else []   # (ears kept still (the panda's, ear_amp 0) in these moves too: its ears' weights reach down the cheeks, which stretched when the ears swung in run and swim)
     def R(): return {b: (Z3, Z3, O3) for b in bones}
     def put(P, b, rx=0., ry=0., rz=0., loc=Z3):
         if b in P: P[b] = ((rx, ry, rz), loc, O3)
@@ -469,7 +518,7 @@ def extra_moves(J, M, bones):
         L = 3.; w = TAU / L; P = R(); wig = math.sin(2 * w * t)
         put(P, 'body', 0, 0, math.pi * .68 + wig * .12, loc=(0, -.1 * H, 0))   # (on its side and back, not upside down)
         for n, i in enumerate(front + back): legs(P, i, -.5 + math.sin(3 * w * t + n) * .2, .8 + math.sin(3 * w * t + n) * .2)
-        put(P, 'head', -.15, 0, -1.0 + wig * .1); put(P, 'tail', 0, math.sin(4 * w * t) * .5)   # (the face turned up to the child)
+        hk = FIX.get('head_turn', 1.0); put(P, 'head', -.15 * hk, 0, (-1.0 + wig * .1) * hk); put(P, 'tail', 0, math.sin(4 * w * t) * .5)   # (the face turned up to the child; head_turn: less for a big head on a short neck (the panda's), whose neck stretched)
         for e in ears: put(P, e, .4)
         face(P, None, joy=True, smile=1.4, jaw=.55)
         return P
@@ -477,7 +526,7 @@ def extra_moves(J, M, bones):
         L = 2.; w = TAU / L; P = R(); sitting(P, -.5)
         sc = back[0] if back else 2
         legs(P, sc, -1.75 + math.sin(TAU * t * 6) * .3, .9)
-        put(P, 'head', .55, -.25, .35)
+        hk = FIX.get('head_turn', 1.0); put(P, 'head', .55 * hk, -.25 * hk, .35 * hk)
         face(P, None, eye=.35, smile=1.15, jaw=.1)
         return P
     def swim(t):
@@ -501,6 +550,111 @@ def extra_moves(J, M, bones):
         face(P, None, eye=blink(t, (.5,)) * .8, smile=1.2, jaw=.2)
         return P
     return [('run', 1.26, run), ('carry', 1.26, lambda t: run(t, True)), ('jump', 1.2, jump), ('bounce', 1.6, bounce), ('sit', 6., sit),
+            ('beg', 2.4, beg), ('roll', 3., roll), ('scratch', 2., scratch), ('swim', 1.1, swim), ('dig', 1.2, dig)]
+
+def upright_moves(J, M, bones):
+    """the pets' own moves for an animal standing on its hind feet (the joey): it hops on both feet with the arms tucked
+    and the tail out behind, sits back on its tail, begs with its paws up, rolls on its side, scratches its ear with a paw,
+    swims lying forward and digs bent over. Same names as extra_moves (the game asks for these clips); same frame"""
+    TAU = math.pi * 2; H = M['H']; Z3 = (0, 0, 0); O3 = (1, 1, 1)
+    arms, hind = (0, 1), (2, 3); ears = [b for b in bones if b.startswith('ear')]
+    def R(): return {b: (Z3, Z3, O3) for b in bones}
+    def put(P, b, rx=0., ry=0., rz=0., loc=Z3):
+        if b in P: P[b] = ((rx, ry, rz), loc, O3)
+    def legs(P, i, a, k=0.): put(P, 'leg%d' % i, a); put(P, 'knee%d' % i, k)
+    def blink(t, times): return wc.blink(t, times)
+    def hop(P, u, big=1.0, lean=.3):   # u 0..1 through one hop: crouch, push off, fly, land
+        air = max(0, math.sin(u * TAU)); crouch = max(0, -math.sin(u * TAU))
+        put(P, 'body', lean + .1 * air - .1 * crouch, loc=(0, air * .1 * H * big - crouch * .02 * H, 0))
+        for i in hind: legs(P, i, .45 * air - .35 * crouch, -.2 * air + .5 * crouch)
+        for i in arms: legs(P, i, -.5, -.5)
+        put(P, 'tail', .15 + .25 * air, 0, 0)
+        put(P, 'head', -lean * .7 - .05 * air)
+        return air
+    def run(t, carry=False):
+        L = .45; P = R(); air = hop(P, (t / L) % 1, 1.0, .45)
+        if carry: put(P, 'head', -.15)
+        for k, e in enumerate(ears): put(P, e, -.35 - .2 * air)
+        face(P, None, eye=blink(t, (.9,)), smile=1.25, jaw=.25 if carry else .4)
+        return P
+    def jump(t):
+        L = 1.2; P = R(); u = t / L
+        if u < .25: k = math.sin(u / .25 * math.pi / 2); up = -.03 * H * k; pitch = .2 * k; lg = -.4 * k; kn = .6 * k; ar = -.3
+        elif u < .75: a = (u - .25) / .5; up = .3 * H * math.sin(a * math.pi); pitch = .15 - .3 * a; lg = .5; kn = -.2; ar = -1.0
+        elif u < .9: k = 1 - (u - .75) / .15; up = -.03 * H * k; pitch = .15 * k; lg = -.35 * k; kn = .5 * k; ar = -.3
+        else: up = pitch = lg = kn = 0; ar = -.3
+        put(P, 'body', pitch, loc=(0, up, .06 * H * min(1, max(0, (u - .25) / .5))))
+        for i in hind: legs(P, i, lg, kn)
+        for i in arms: legs(P, i, ar, -.3)
+        put(P, 'head', -pitch * .6); put(P, 'tail', .3 if .25 < u < .75 else .05)
+        for e in ears: put(P, e, -.4 if .25 < u < .75 else 0)
+        face(P, None, big=1.1 if .25 < u < .75 else 1., smile=1.3, jaw=.6 if .25 < u < .75 else .15)
+        return P
+    def bounce(t):
+        L = 1.6; P = R(); hp_ = abs(math.sin(TAU * t / L * 2))
+        put(P, 'body', -.05 * hp_, loc=(0, hp_ * .07 * H, 0))
+        for i in hind: legs(P, i, .2 * hp_, -.1 * hp_)
+        for i in arms: legs(P, i, -.6 - .5 * hp_, -.4)
+        put(P, 'head', -.1 * hp_, 0, math.sin(TAU * t / L) * .15)
+        for e in ears: put(P, e, -.3 * hp_)
+        put(P, 'tail', .1 + .15 * hp_)
+        face(P, None, joy=True, smile=1.35, jaw=.5 + .3 * hp_)
+        return P
+    def sitting(P, pitch=-.12):   # back on its tail: the body lower and leaning back, the hind legs folded forward, the tail flat behind
+        put(P, 'body', pitch, loc=(0, -.07 * H, .02 * H))
+        for i in hind: legs(P, i, -.55, .75)
+        for i in arms: legs(P, i, -.25, -.35)
+        put(P, 'tail', -.1)
+    def sit(t):
+        L = 6.; w = TAU / L; P = R(); sitting(P)
+        put(P, 'head', .1 + math.sin(2 * w * t) * .03, math.sin(w * t) * .45)
+        for k, e in enumerate(ears): put(P, e, math.sin(2 * w * t + k) * .08)
+        face(P, None, eye=blink(t, (1.4, 4.1)), smile=1.05, look=math.sin(w * t) * .15)
+        return P
+    def beg(t):
+        L = 2.4; w = TAU / L; P = R(); put(P, 'body', -.08, loc=(0, .01 * H, 0))
+        for n, i in enumerate(arms): legs(P, i, -1.2 + math.sin(2 * w * t + n * math.pi) * .2, -.5)
+        put(P, 'head', -.25 + math.sin(w * t) * .05, 0, math.sin(w * t) * .15)
+        put(P, 'tail', 0, math.sin(2 * w * t) * .2)
+        for e in ears: put(P, e, .1)
+        face(P, None, eye=blink(t, (1.6,)), big=1.08, smile=1.2, jaw=.15)
+        return P
+    def roll(t):
+        L = 3.; w = TAU / L; P = R(); wig = math.sin(2 * w * t)
+        put(P, 'body', 0, 0, math.pi * .5 + wig * .1)   # (on its side; ground() lifts it out of the ground)
+        for n, i in enumerate(hind): legs(P, i, -.5 + math.sin(3 * w * t + n) * .35, .4 + math.sin(3 * w * t + n) * .2)
+        for n, i in enumerate(arms): legs(P, i, -.8 + math.sin(3 * w * t + n + 1) * .3, -.4)
+        put(P, 'head', -.1, 0, -.6 + wig * .1); put(P, 'tail', 0, math.sin(4 * w * t) * .3)   # (the face turned up to the child)
+        for e in ears: put(P, e, .3)
+        face(P, None, joy=True, smile=1.4, jaw=.55)
+        return P
+    def scratch(t):
+        L = 2.; P = R(); sitting(P)
+        legs(P, 0, -2.3 + math.sin(TAU * t * 6) * .15, -1.0)   # (a paw up to its ear)
+        put(P, 'head', .2, .2, -.3)
+        face(P, None, eye=.35, smile=1.15, jaw=.1)
+        return P
+    def swim(t):
+        L = 1.1; ph = TAU * t / L; P = R()
+        put(P, 'body', 1.2 + math.sin(ph * 2) * .03)   # (lying forward in the water)
+        for n, i in enumerate(hind): legs(P, i, .3 + math.sin(ph + n * math.pi) * .45, .2)
+        for n, i in enumerate(arms): legs(P, i, -.9 + math.sin(ph + n * math.pi + 1) * .4, -.3)
+        put(P, 'head', -1.0 + math.sin(ph * 2) * .04)
+        for e in ears: put(P, e, -.5)
+        put(P, 'tail', -.1, math.sin(ph) * .25)
+        face(P, None, eye=blink(t, (.6,)), smile=1.1)
+        return P
+    def dig(t):
+        L = 1.2; ph = TAU * t / L * 2; P = R()
+        put(P, 'body', .55, loc=(0, -.02 * H, 0))
+        for n, i in enumerate(arms): legs(P, i, -.6 + math.sin(ph + n * math.pi) * .45, -.3 - max(0, math.sin(ph + n * math.pi)) * .5)
+        for i in hind: legs(P, i, -.3, .35)
+        put(P, 'head', .1 + math.sin(ph) * .05)
+        for e in ears: put(P, e, -.25)
+        put(P, 'tail', .3, math.sin(ph * 1.5) * .3)
+        face(P, None, eye=blink(t, (.5,)) * .8, smile=1.2, jaw=.2)
+        return P
+    return [('run', 1.35, run), ('carry', 1.35, lambda t: run(t, True)), ('jump', 1.2, jump), ('bounce', 1.6, bounce), ('sit', 6., sit),
             ('beg', 2.4, beg), ('roll', 3., roll), ('scratch', 2., scratch), ('swim', 1.1, swim), ('dig', 1.2, dig)]
 
 # ---------- the face ----------
