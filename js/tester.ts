@@ -272,9 +272,11 @@ function watch() {
       const [i, id] = args;
       const requested = String(id || ''); lastGame = requested; lastMode = String(args[2] || ''); note('game', requested);
       // The game rejects a second launch while another activity is open: not a failed open.
-      const cancel = document.querySelector('.gl:not(.out)') ? null : observeGameOpen(requested, () => { if (live) autoReport('noopen', requested); }, {wait:C.LIMITS.openWait * 1000});
+      // (bug #899) a slow device (a few frames a second, still loading the games' pictures) needs longer to open a game
+      const waitMs = C.LIMITS.openWait * 1000 * (fpsNow > 0 && fpsNow < C.LIMITS.slowFps ? 4 : 1);
+      const cancel = document.querySelector('.gl:not(.out)') ? null : observeGameOpen(requested, () => { if (live) autoReport('noopen', requested); }, {wait:waitMs});
       if (cancel) pending.add(cancel);
-      const timer = setTimeout(() => { if (cancel) pending.delete(cancel); }, C.LIMITS.openWait * 1000 + 10);
+      const timer = setTimeout(() => { if (cancel) pending.delete(cancel); }, waitMs + 10);
       try { return pg.apply(this, args); } catch (error) { cancel?.(); pending.delete(cancel); clearTimeout(timer); throw error; }
     }, { __tester:true });
     offs.push(() => { pending.forEach(cancel => cancel()); pending.clear(); G.playGame = pg; });
