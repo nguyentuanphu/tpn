@@ -22,6 +22,8 @@ ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT/'docs/meshy-production-20261107'
 ENDPOINT = 'https://api.meshy.ai/openapi/v1/multi-image-to-3d'
 
+FARM_ASSETS = ('cow', 'sheep', 'chicken')
+
 class NoRedirect(HTTPRedirectHandler):
     def redirect_request(self, req, fp, code, msg, headers, newurl):
         raise RuntimeError('API redirect refused')
@@ -84,16 +86,17 @@ def spec_for(asset):
     parameters = {'ai_model':'meshy-7.1' if expected['group'] in 'ABCD' else 'meshy-6-lite',
         'geometry_resolution':'standard','should_texture':True,'texture_resolution':'2k',
         'enable_pbr':False,'pose_mode':'','target_formats':['glb']}
-    planned = expected['plannedCredits']
-    if spec.get('tierOverride'):
-        # Owner 13 Nov 2026 AEDT: compare only these three farm animals at 7.1, 40 credits each incl. remesh.
-        if asset not in ('cow','sheep','chicken') or expected['group'] != 'E' or spec['tierOverride'] != 'meshy-7.1' or not spec.get('approval'):
-            raise ValueError('Unapproved farm tier override')
-        parameters['ai_model'] = 'meshy-7.1'
-        planned = 30
+    # Owner, 13 Nov 2026 AEDT: three farm trials, 120 credits including two remeshes each.
+    override = spec.get('tierOverride')
+    credits = expected['plannedCredits']
+    if override is not None:
+        if asset not in FARM_ASSETS or expected['group'] != 'E' or override != 'meshy-7.1' or not spec.get('approval'):
+            raise ValueError('Unapproved tier override scope or missing approval reason')
+        parameters['ai_model'] = override
+        credits = 30
     if parameters['ai_model']=='meshy-7.1':
         parameters['image_enhancement']=False
-    if spec['assetId']!=asset or spec['parameters']!=parameters or spec['plannedCredits']!=planned or spec['group']!=expected['group']:
+    if spec['assetId']!=asset or spec['parameters']!=parameters or spec['plannedCredits']!=credits or spec['group']!=expected['group']:
         raise ValueError('Job parameters differ from reviewed model tier and budget')
     inputs = [(i['localPath'],i['sha256']) for i in spec['inputImages']]
     reviewed = [(i['path'],i['sha256']) for i in expected['viewCrops']]
@@ -132,6 +135,15 @@ def journal(path):
     db.commit()
     return db
 
+def reserved_cost(db):
+    total = 0
+    for table in ('jobs', 'remesh'):
+        if db.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name=?", (table,)).fetchone():
+            total += db.execute('SELECT COALESCE(SUM(cost),0) FROM '+table).fetchone()[0]
+            if db.execute("SELECT 1 FROM "+table+" WHERE state IN ('ambiguous','FAILED','CANCELED','CANCELLED')").fetchone():
+                raise ValueError('Stop and reconcile ambiguous or failed jobs before continuing')
+    return total
+
 def reserve(db, asset, cost, digest, balance, cap=990):
     if cost not in (15,30):
         raise ValueError('Unexpected job cost')
@@ -141,12 +153,7 @@ def reserve(db, asset, cost, digest, balance, cap=990):
             raise ValueError('Asset already reserved/submitted; reconcile it, never repeat POST')
         if db.execute("SELECT 1 FROM jobs WHERE state='ambiguous'").fetchone():
             raise ValueError('Reconcile every ambiguous submission before continuing')
-        if cap <= 120:
-            for table in ('jobs', 'remesh'):
-                if db.execute('SELECT 1 FROM sqlite_master WHERE name=?', (table,)).fetchone() and db.execute(f"SELECT 1 FROM {table} WHERE state IN ('ambiguous','FAILED','CANCELED','CANCELLED')").fetchone():
-                    raise ValueError('Stop and reconcile uncertain or failed work')
-        extra = db.execute("SELECT COALESCE(SUM(cost),0) FROM remesh").fetchone()[0] if db.execute("SELECT 1 FROM sqlite_master WHERE name='remesh'").fetchone() else 0
-        total = extra + db.execute('SELECT COALESCE(SUM(cost),0) FROM jobs').fetchone()[0]
+        total = reserved_cost(db)
         if total+cost > cap or total+cost > balance-10:
             raise ValueError('Credit budget or 10-credit reserve would be exceeded')
         db.execute('INSERT INTO jobs VALUES (?,?,?,?,NULL,NULL)',(asset,cost,digest,'ambiguous'))
@@ -161,11 +168,13 @@ def check_account(account, spec):
     if age < 0 or age > 86400:
         raise ValueError('Account verification must be within the last 24 hours')
     if spec.get('tierOverride'):
-        if spec['assetId'] not in ('cow','sheep','chicken') or spec['assetId'] not in account.get('approvedTierOverrides', []):
-            raise ValueError('Tier override absent from account approval')
-        if account.get('apiCreditBalanceConfirmed') is not True or not 0 < account.get('creditCap', 0) <= 120 or account.get('batchStartingAPIBalance', 0) < account['creditCap']:
-            raise ValueError('Missing verified farm balance or 120-credit cap')
-        return  # Scoped farm trial, independent of the old 43-model Clara pilot.
+        # This owner-approved trial uses the live balance GET and its own cap,
+        # without claiming old web-account/private-settings checks were performed.
+        if spec['assetId'] not in FARM_ASSETS or spec['assetId'] not in account.get('approvedTierOverrides', []):
+            raise ValueError('Owner tier override missing from private account metadata')
+        if account.get('apiCreditBalanceConfirmed') is not True or account.get('creditCap') != 120 or account.get('batchStartingAPIBalance', 0) < 130:
+            raise ValueError('Farm trial requires verified balance, cap 120 and 10-credit reserve')
+        return
     for key in ('sameAccountAsKey','privateAssetsConfirmed','apiCreditBalanceConfirmed','pricingConfirmed'):
         if account.get(key) is not True:
             raise ValueError('Missing verified account setting: '+key)
@@ -182,7 +191,7 @@ def submit(db, spec, account, transport=api):
     check_account(account,spec)
     payload = payload_for(spec)
     digest = hashlib.sha256(json.dumps(payload,sort_keys=True).encode()).hexdigest()
-    reserve(db,spec['assetId'],spec['plannedCredits'],digest,account['batchStartingAPIBalance'],account['creditCap'] if spec.get('tierOverride') else 990)
+    reserve(db,spec['assetId'],spec['plannedCredits'],digest,account['batchStartingAPIBalance'],120 if spec.get('tierOverride') else 990)
     # Any transport/parse failure deliberately leaves the row ambiguous and reserved.
     result = transport('POST','',payload)
     task = result.get('result')

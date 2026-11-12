@@ -41,5 +41,5 @@
   "rawDownloadDestination": "raw-models/E/chicken.glb",
   "runtimeDestinationAfterFittingAndValidation": "models/world/creature-chicken.glb",
   "tierOverride": "meshy-7.1",
-  "approval": "Owner approved 13/11/2026 AEDT: cow, sheep, chicken only; 120 credits total (30 + 5 + 5 each). Ask before each paid command. Compare farm animal quality with latest pet workflow."
+  "approval": "Owner approved 13/11/2026 AEDT: cow, sheep, chicken only; 120 credits total (30 + 5 + 5 each), no rigging. Ask before each paid POST."
 }

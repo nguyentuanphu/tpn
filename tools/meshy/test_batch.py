@@ -30,6 +30,48 @@ class BatchTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             batch.submit(self.db,batch.spec_for('finn-body'),self.account,lambda *a:calls.append(a) or {'result':'t'})
         self.assertEqual(calls, [])
+    def test_farm_override_requires_private_allowlist(self):
+        spec = batch.spec_for('cow')
+        self.account.update(creditCap=120, batchStartingAPIBalance=500)
+        with self.assertRaisesRegex(ValueError, 'override'):
+            batch.check_account(self.account, spec)
+        self.account['approvedTierOverrides'] = ['cow', 'sheep', 'chicken']
+        batch.check_account(self.account, spec)
+        self.assertEqual(spec['plannedCredits'], 30)
+        self.assertEqual(batch.spec_for('pig')['parameters']['ai_model'], 'meshy-6-lite')
+
+    def test_farm_cap_counts_remesh_and_blocks_failures(self):
+        self.db.execute('CREATE TABLE remesh (cost INTEGER, state TEXT)')
+        self.db.execute("INSERT INTO remesh VALUES (95, 'SUCCEEDED')")
+        self.db.commit()
+        with self.assertRaises(ValueError):
+            batch.reserve(self.db, 'cow', 30, 'hash', 500, 120)
+        self.db.execute("UPDATE remesh SET cost=5, state='FAILED'")
+        self.db.commit()
+        with self.assertRaisesRegex(ValueError, 'reconcile'):
+            batch.reserve(self.db, 'cow', 30, 'hash', 500, 120)
+
+    def test_farm_9k_uses_30k_task(self):
+        import remesh_once
+        import sys
+        account = self.root/'account.json'
+        self.account.update(creditCap=120, approvedTierOverrides=['cow'], batchStartingAPIBalance=500)
+        account.write_text(json.dumps(self.account))
+        self.db.execute("INSERT INTO jobs VALUES ('cow',30,'hash','SUCCEEDED','original',NULL)")
+        self.db.commit()
+        other = remesh_once.open_journal(self.root/'jobs.sqlite3')
+        other.execute("INSERT INTO remesh VALUES ('cow','original',5,'{}','SUCCEEDED','thirty-k',NULL)")
+        other.commit(); other.close()
+        argv = ['remesh_once.py','submit','--source-asset','cow@9000','--polycount','9000',
+                '--journal',str(self.root/'jobs.sqlite3'),'--account',str(account),'--approved']
+        with patch.dict('os.environ', {'MESHY_API_KEY':'offline-test-only'}), patch.object(sys, 'argv', argv), patch.object(remesh_once, 'api', return_value={'result':'nine-k'}) as send:
+            remesh_once.main()
+        self.assertEqual(send.call_args.args[2]['input_task_id'], 'thirty-k')
+        with patch.dict('os.environ', {'MESHY_API_KEY':'offline-test-only'}), patch.object(sys, 'argv', argv), patch.object(remesh_once, 'api') as send:
+            with self.assertRaises(SystemExit):
+                remesh_once.main()
+            send.assert_not_called()
+
     def test_duplicate_does_not_call_transport_twice(self):
         calls=[]
         def send(*args):calls.append(args);return {'result':'task-123'}
