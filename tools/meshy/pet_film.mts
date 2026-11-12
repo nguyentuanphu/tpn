@@ -22,6 +22,8 @@ P.page.on('pageerror', e => console.log('pageerror', e.message));
 const setup = await P.page.evaluate(async ([kind]) => {
   const G = (window as any).__sv, h = G.heroes[0];
   const go = () => { document.querySelectorAll('.storybook, .dialog, .modal, .reward').forEach(e => e.remove()); G.paused = false; }; go();
+  // (an open place: at the spawn the owl and its speech bubble stood in front of the game's camera)
+  const yard = G.interactables && G.interactables.find((x: any) => x.id === 'petyard'); if (yard && h.place) h.place(yard.x + 6, yard.z + 6);
   h.profile.pets = [{ kind, name: '' }]; G.pets.sync();
   let L: any = null; for (let i = 0; i < 300; i++) { go(); await new Promise(r => setTimeout(r, 200)); L = G.pets.live()[0]; const r = L && L.obj.userData.rig; if (r && r.model && r.hd) break; }
   const r = L && L.obj.userData.rig; if (!r || !r.model) return { error: 'no model' };
@@ -47,6 +49,7 @@ for (const [title, secs, speed, move] of PARTS) {
         F.t = (F.t || 100) + d; G.world.update(d, F.t); }
       const r = L.obj.userData.rig, R = G.renderer; let top = h.av.root; while (top.parent) top = top.parent;
       const o = L.obj; o.updateMatrixWorld(true); const box = new THREE.Box3().setFromObject(r.model.obj, true), cc = box.getCenter(new THREE.Vector3()), rr = Math.max(.5, box.getSize(new THREE.Vector3()).length());
+      const hid: any[] = []; top.traverse((q: any) => { if (q.isSprite && q.visible) { q.visible = false; hid.push(q); } });   // (name tags and speech bubbles covered the near views)
       const W = 300, cv = document.createElement('canvas'); cv.width = W * 3; cv.height = W * 2 + 28; const x = cv.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, cv.width, cv.height);
       const SRGB = new Uint8Array(256).map((_, i) => { const v = i / 255; return Math.round(255 * (v <= .0031308 ? v * 12.92 : 1.055 * Math.pow(v, 1 / 2.4) - .055)); });
       const shot = (cam: any, col: number, row: number, label: string) => {
@@ -58,6 +61,7 @@ for (const [title, secs, speed, move] of PARTS) {
       shot(near(Math.PI), 0, 1, 'gần: sau');
       const gc = new THREE.PerspectiveCamera(50, 1, .1, 400); gc.position.set(h.pos.x - Math.sin(h.yaw) * 6, h.pos.y + 3.2, h.pos.z - Math.cos(h.yaw) * 6); gc.lookAt(h.pos.x, h.pos.y + 1.4, h.pos.z); shot(gc, 1, 1, 'sau bé 6 m (như game)');
       const far = new THREE.PerspectiveCamera(30, 1, .1, 400); far.position.set(h.pos.x + Math.cos(h.yaw) * 12, h.pos.y + 3, h.pos.z - Math.sin(h.yaw) * 12); far.lookAt(cc.x, cc.y - .3, cc.z); shot(far, 2, 1, 'xa 12 m');
+      hid.forEach(q => { q.visible = true; });
       x.fillStyle = '#222'; x.font = 'bold 18px sans-serif'; x.fillText(`${r.kind}: ${title}  (clip ${r.clip || '?'}, ${r.hd ? 'HD' : 'nhẹ'})`, 8, 20);
       return cv.toDataURL('image/jpeg', .85);
     }, [speed, title, STEP / 1000, move] as any);
