@@ -1,5 +1,5 @@
 {
-  "note": "Meshy bunny (12 Nov 2026 model): first fit with the puppy's pose and face tuning; values tuned below after looking at its pictures. (12 Nov: long upright ears: ear_up, pivots at their roots read from the front and side renders.)",
+  "note": "Meshy bunny (12 Nov 2026 model): first fit with the puppy's pose and face tuning; values tuned below after looking at its pictures. (12 Nov: long upright ears: ear_up, pivots at their roots read from the front and side renders.) (12 Nov: its long ears lean back past a quarter-body head: head_back 0.6, or the ears' back halves fell out of the head and stretched in the roll.)",
   "lie_drop": 0.95,
   "lie_front": -1.35,
   "lie_front_knee": 0.1,
@@ -23,5 +23,13 @@
       -0.07,
       0.557
     ]
+  },
+  "head_back": 0.6,
+  "neck_soft": 0.07,
+  "tex_far": 448,
+  "audit": {
+    "float": 120,
+    "hatLoose": 16,
+    "why": "12 Nov 2026, looked at the marked pictures: the bunny walks and follows by hopping (the code bunny's hop gait), so its feet leave the ground in walk and follow (up to 112 mm) by design; in idle and sleep it stays on the ground. The captain's hat sits on the head with the long ears coming up through it; its band is a little loose where the ears leave the head."
   }
 }
