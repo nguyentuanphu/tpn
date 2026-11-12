@@ -231,6 +231,9 @@ Lessons about the checking itself (each hid a fault or showed a false one):
 - Run the game checks with `SV_URL` set to your own server: without it the suite tests port 8765, another checkout.
 - Write long queues in one shell (bash), and check every `-Out` path expands: a PowerShell queue started a second
   auditor on the same server, and a `$k` inside a quoted path was not expanded (three pets wrote into one folder).
+  (13 Nov, again: in a bash double-quoted path a backslash written before `$k` escaped the dollar, so the folder was
+  named with a literal `$k` and four pets wrote into one folder: build Windows paths with forward slashes,
+  `"D:/WorkSpace/meshy/pets/$k-jump"`.)
 
 ### Lessons from the panda, calf and joey (13 Nov 2026)
 - The weights by colour find what numbers do not: the panda's neck stretched (up to 1,127) because the back half of its
