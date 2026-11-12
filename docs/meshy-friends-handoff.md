@@ -77,20 +77,29 @@ Không đổi file models/*.glb (chỉ máy của chủ dựng lại được).
 
 The Meshy dog is on branch `meshy-pets` (64e518476), owner approved, not merged. Pet lessons are in that branch's copy of the skill.
 
-## New task prompt: what the auditor does not check yet (no other chat on it, 11 Nov 2026)
+## Auditor coverage (branch meshy-audit-coverage): status 12 Nov 2026 AEDT
+
+The four items are all done and in the self-test (12 plants, all caught, commit cec29b26b):
+1. Light far-away model: done (`light` pass, `far` check). Found the lost arms; fixed on meshy-production-20261107 (1886a20e7), confirmed.
+2. Evening and night light: done (`evening`, `night` passes, `glow` check). Found skin, face and hair not darkening at night: not fixed yet (friends session).
+3. Items in the hand: done (`item` pass, `grip` check). No fault on Sol; the other three not run with items yet.
+4. Other moods and mouth: done for whether each face piece is seen where it lies (`face`, 9 moods). Left: the mouth's own shape per mood.
+
+Left for the auditor: the mouth's shape per mood, mid skin tones, riding, shop shoes, skirt shapes, the light model's colours far away. A full round of all four friends with the new passes (`audit.mts <out> clara,sol,finn,lumi`) has not been run.
+
+Resume prompt (another account or chat):
 
 ```
-Repo tpn (game Sparkle Valley). Trả lời tiếng Việt, ngắn. Tạo nhánh mới meshy-audit-coverage từ
-origin/meshy-production-20261107 và chỉ làm trên nhánh đó.
-Đọc trước: CLAUDE.md, .claude/skills/meshy-characters/SKILL.md (dòng "Not yet in the auditor"), docs/meshy-friends-handoff.md.
-Việc: dạy máy soi (tools/meshy/audit.mts) xem thêm những thứ nó chưa xem, mỗi thứ một lần, theo thứ tự:
-1) mô hình nhẹ nhìn xa (models/<id>.glb, không phải -hd), 2) ánh sáng chiều tối và ban đêm,
-3) đồ cầm trên tay, 4) các mặt cảm xúc khác và miệng.
-Mỗi thứ mới: thêm một lỗi cài sẵn vào tools/meshy/audit_selftest.ps1 và chứng minh máy bắt được
-(chạy powershell -File tools/meshy/audit_selftest.ps1, mọi dòng phải "caught"); xem ảnh lỗi cỡ thật.
-Chỉ sửa tools/meshy/audit.mts, audit_selftest.ps1 và SKILL.md; không sửa js/, models/ (chat khác đang sửa).
-Lỗi thật tìm được thì ghi vào docs/meshy-friends-handoff.md, không tự sửa.
-Chạy: server node tools/meshy/serve.mjs "<repo>" 8765 (nền); soi nhanh: cd tests && node ../tools/meshy/audit.mts <out> clara poses:walk,everyday,pics
+Repo tpn (game Sparkle Valley). Trả lời tiếng Việt, ngắn. Làm trên nhánh meshy-audit-coverage
+(git pull --no-rebase, rồi merge origin/meshy-production-20261107 vào nhánh).
+Đọc trước: CLAUDE.md, .claude/skills/meshy-characters/SKILL.md (phần "New passes and checks"),
+docs/meshy-friends-handoff.md (phần "Auditor coverage").
+Việc còn lại: 1) chạy một vòng đủ 4 bạn với các lượt mới (light, evening, night, item, face), ghi lỗi thật vào handoff;
+2) dạy máy soi xem hình miệng từng cảm xúc, rồi các mục "Not yet in the auditor" trong SKILL.md.
+Mỗi kiểm mới: thêm lỗi cài sẵn vào tools/meshy/audit_selftest.ps1, mọi dòng phải "caught"; xem ảnh lỗi cỡ thật.
+Chỉ sửa tools/meshy/audit.mts, audit_selftest.ps1, SKILL.md và handoff; không sửa js/, models/; lỗi thật thì ghi, không tự sửa.
+Chạy: node tools/build.mts; server node tools/meshy/serve.mjs "<repo>" 8766 (nền), đặt SV_URL=http://localhost:8766/;
+self-test: powershell -File tools/meshy/audit_selftest.ps1 -Out <thư mục riêng>.
 Luật: không gọi Meshy, không tiêu credit; không merge main, không deploy, không tăng version; hỏi chủ bằng pop-up;
-commit và push nhánh mình mỗi giờ (pull --no-rebase trước), không force-push; không commit content/management-catalogue.json.
+commit và push nhánh mỗi giờ (pull --no-rebase trước), không force-push; không commit content/management-catalogue.json.
 ```
