@@ -104,6 +104,10 @@ pilot. Farm and wild animals (cow, sheep, pig, buffalo ...) are not in this plan
 - **12 Nov 2026 AEDT (pop-up "Cả 5 con, 200")**: the five pets kitty, bunny, panda, joey, calf in one go, 200 credits
   (each multi-image 30 + remesh 30k 5 + remesh 9k 5), balance 1,764 before. Submitted 11:02 AEDT through the journal:
   kitty 01a1cd10-4d53, bunny 01a1cd10-56e6, panda 01a1cd10-6052, joey 01a1cd10-69e0, calf 01a1cd10-736f.
+- **13 Nov 2026 AEDT, early morning (pop-ups)**: asked which of panda, bunny, calf to approve, the owner ticked bunny,
+  calf and "not yet" and wrote "Kiểm tra kỹ khi chạy nhảy và các kiểu chưa" (checked carefully when running, jumping
+  and the other moves?): read as not approved yet. Then chose "Quay phim pet": films of each pet moving in the game
+  (`tools/meshy/pet_film.mts`: stand, follow walking, run, each own move; six views) before approving.
 
 ## Dog pilot: progress (10 Nov 2026 AEDT, no credits spent)
 
