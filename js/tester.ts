@@ -28,6 +28,7 @@ import { RELEASES } from './content/releases.js';
 import { takeCopy, putCopyBack, hasCopy, dropCopy } from './keepcopy.js';
 import { revertOf } from './content/autoplay.js';
 import { easyName } from './content/devname.js';
+import { canStartGame } from './games/frame.js';
 import { unreachableControl, activeReportPanel, observeGameOpen, resizeDeliveryNotice, publicFixedVersion } from './tester-detection.js';
 import { readReportQueue, persistReportQueue } from './report-outbox.js';
 
@@ -272,7 +273,9 @@ function watch() {
       const [i, id] = args;
       const requested = String(id || ''); lastGame = requested; lastMode = String(args[2] || ''); note('game', requested);
       // The game rejects a second launch while another activity is open: not a failed open.
-      const cancel = document.querySelector('.gl:not(.out)') ? null : observeGameOpen(requested, () => { if (live) autoReport('noopen', requested); }, {wait:C.LIMITS.openWait * 1000});
+      // (#895) a game this child has not unlocked, or one Studio holds, is refused by the game itself (as in js/autoplay.ts
+      // gameAvailable): that is not a game that did not open
+      const cancel = document.querySelector('.gl:not(.out)') || !canOpen(i, requested) ? null : observeGameOpen(requested, () => { if (live) autoReport('noopen', requested); }, {wait:C.LIMITS.openWait * 1000});
       if (cancel) pending.add(cancel);
       const timer = setTimeout(() => { if (cancel) pending.delete(cancel); }, C.LIMITS.openWait * 1000 + 10);
       try { return pg.apply(this, args); } catch (error) { cancel?.(); pending.delete(cancel); clearTimeout(timer); throw error; }
@@ -620,6 +623,9 @@ export async function refresh() {
   return status;
 }
 
+// (#895) true when the game would open for this hero: not held by Studio, and unlocked for the child
+function canOpen(i: number, id: string): boolean { const h = G.heroes?.[i]; return !!h && canStartGame(id, [h.profile]); }
+
 // ---------- the retest: a fixed problem replayed on the new version ----------
 async function retest() {
   if (!live || !status || !Array.isArray(status.retest)) return; const done = get(KEY.seen, {});
@@ -627,6 +633,7 @@ async function retest() {
     const tag = 'rt:' + p.k + ':' + BUILD; if (done[tag]) continue;
     if (G.paused || document.querySelector('.gl, .modal, .theatre, .storybook')) return; // (only when the child is free)
     const game = gameIdOf(p.where), before = errors.length; let again = false;
+    if (game && G.playGame && !canOpen(0, game)) continue; // (#895) a game this child cannot open (not unlocked, or held by Studio) cannot be replayed: not "came back"
     if (game && G.playGame) { G.playGame(0, game, 'replay'); await new Promise(r => setTimeout(r, 8000)); again = !document.querySelector('.gl') || errors.length > before; document.querySelector<HTMLElement>('.gl .gl-x')?.click(); }
     else if (p.auto === 'error') { await new Promise(r => setTimeout(r, 8000)); again = errors.slice(before).some(e => p.title.includes(e.split(' @ ')[0].slice(0, 40))); }
     else continue; // (a problem that cannot be replayed by itself waits for the tester's Yes or Still wrong)
