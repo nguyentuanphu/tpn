@@ -682,6 +682,9 @@ if OWN:
     _g = max(2, int(W_ * .012))
     for k in M:
         ch = (np.abs(M[k][..., :3] - F[..., :3]).max(-1) > .025).astype(np.float32)
+        # (13 Nov 2026: Clara's real lips showed through her round and sad mouths: they are faint in this front picture, so
+        # wiping them changed few pixels, and the piece was see-through there over the 3D lips) the whole wiped mouth is in it
+        if k in ('surprised', 'sad', 'excited') and mouth_er: ch = np.maximum(ch, (np.hypot((xx - (mouth_er[0] + mouth_er[2]) / 2) / max(2, (mouth_er[2] - mouth_er[0]) / 2), (yy - (mouth_er[1] + mouth_er[3]) / 2) / max(2, (mouth_er[3] - mouth_er[1]) / 2)) < 1).astype(np.float32))
         M[k][..., 3] = np.minimum(soften(ch, max(1, _g // 2), _g) * 1.6, 1) * PARTS[k] * NOHAIR   # (a narrow soft edge: less of the cheek redrawn)
         # (where see-through it keeps the painted face's own colour in a narrow band round each piece: black there blended
         # into a dark fringe; beyond the band one flat colour, so the picture stays small)
