@@ -28,6 +28,7 @@ import { RELEASES } from './content/releases.js';
 import { takeCopy, putCopyBack, hasCopy, dropCopy } from './keepcopy.js';
 import { revertOf } from './content/autoplay.js';
 import { easyName } from './content/devname.js';
+import { canStartGame } from './games/frame.js';
 import { unreachableControl, activeReportPanel, observeGameOpen, resizeDeliveryNotice, publicFixedVersion } from './tester-detection.js';
 import { readReportQueue, persistReportQueue } from './report-outbox.js';
 
@@ -272,7 +273,9 @@ function watch() {
       const [i, id] = args;
       const requested = String(id || ''); lastGame = requested; lastMode = String(args[2] || ''); note('game', requested);
       // The game rejects a second launch while another activity is open: not a failed open.
-      const cancel = document.querySelector('.gl:not(.out)') ? null : observeGameOpen(requested, () => { if (live) autoReport('noopen', requested); }, {wait:C.LIMITS.openWait * 1000});
+      // Nor when the game itself says no (locked or held for this child), or waits for the child's answer to "Play together?".
+      const hero = G.heroes && G.heroes[i], refused = !hero || !canStartGame(requested, [hero.profile]), asks = !!(G.together && G.together()) && args[2] !== 'online' && !args[3];
+      const cancel = refused || asks || document.querySelector('.gl:not(.out)') ? null : observeGameOpen(requested, () => { if (live) autoReport('noopen', requested); }, {wait:C.LIMITS.openWait * 1000});
       if (cancel) pending.add(cancel);
       const timer = setTimeout(() => { if (cancel) pending.delete(cancel); }, C.LIMITS.openWait * 1000 + 10);
       try { return pg.apply(this, args); } catch (error) { cancel?.(); pending.delete(cancel); clearTimeout(timer); throw error; }
