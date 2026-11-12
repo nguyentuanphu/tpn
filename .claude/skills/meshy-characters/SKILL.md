@@ -223,6 +223,26 @@ Record: `docs/meshy-regional-40-100/PILOT-1.md`. Ids `r<nnn>` (sheet number), jo
     close; a strand that does not touch the eye stays. Debug it with the lid's hole drawn over the face picture (green
     mask before and after the rules) rather than with game shots. A half lid over a high iris left bare white: the white
     under a half lid now takes the lid's shadow (moving the lid line only shut the eye).
+  - *Owner's review gate (12 Nov 2026 evening: "chỉ đưa bản tốt nhất").* No approval question until the auditor is clean
+    and not worse, the `SHOT_GATE=1` picture set at 1024 px (every mood at -.7, -.4, 0, .4, .7, both sides, from above and
+    below; neck, back, whole body) has been looked at picture by picture, a second reviewer (a subagent given only the
+    pictures and a checklist) has listed faults and each is fixed or explained, and every fault the owner ever circled is
+    checked again. `game_shots.mts` with `SHOT_GATE=1` returns about 130 pictures of 1024 px per person: run it one person
+    at a time (all six at once overflowed Node's string limit, `ERR_STRING_TOO_LONG`).
+  - *A fleck that stays put in every view is 3D, not paint (13 Nov 2026).* r045's dark lens over the shut right eye was
+    "fixed" twice in the picture (751e6d0a4) and never moved: the preview was clean. Measured in Blender (each body vertex
+    against the blink piece, rays from the front): a hair tip lay on the lid 6-7 mm in front of the piece, between the
+    grid's snap rays. `-PieceSink` moves every body point that lies in front of a mood piece, where that piece is not
+    see-through, 2 mm behind it. When a fault looks the same from every angle, measure depths before touching the picture.
+  - *Mid-brown hair round a shut eye (13 Nov 2026).* The lid's hair rules sort only dark patches (V < .4): a lock whose
+    body is mid-brown kept its dark outline and lost its body, and came out as a dotted outline past r045's brow.
+    `-LidHair`: above the eye's top, what is not skin, away from the eye white and joined to the kept hair (or running out
+    of the window) stays as painted; an upper lash's top edge, alone, still closes (r050's and r064's flecks when the join
+    test was missing). It also draws strong changes inside the eye box solid: the soft hair guard (`NOHAIR`) made the
+    piece see-through at the box's edge and the erased iris rim showed as grey ticks at r045's and r057's inner corners.
+  - *Mouth piece edges (13 Nov 2026).* The "o" and sad pieces hugged the erased smile; the game cuts at alpha .5, and the
+    cut fell on the smile's soft blur (sharper in the body's picture than in the face tile): a thin pale line along r050's
+    old smile corner. `-MouthSoft` lets the mouth pieces reach a few px further.
   - *Mouth fixes that only worked on the test pair.* After the fixes passed on r050 and r084, the run of all six failed
     `oldmouth` on three: r057's collar edge against the black round the face was darker than his lips (patches touching
     the black are skipped now), and r045's and r074's pink lips passed as hair (nearer the hair's colour mix than the skin's),

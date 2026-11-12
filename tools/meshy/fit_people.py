@@ -224,7 +224,7 @@ if KEEP and FACE_UV > 1:
         for l in f.loops: l[uvl].uv = Vector((MG + (l.vert.co.x - fx0) * side, SHR + MG + (l.vert.co.z - fz0) * side))
     bm.to_mesh(body.data); bm.free()
     print('FIT face front as one island', nface, 'triangles, face box', round(bw_, 3), 'x', round(bh_, 3), 'm,', round(side * bw_ * 1024), 'px wide at 1024; layout', SHR, 'of the height')
-    colour = bpy.data.images.new(ID + '-colour', base_img.size[0], base_img.size[1], alpha=True); bake(body, colour, ext=.002, dist=.006); fill_missing(colour)
+    colour = bpy.data.images.new(ID + '-colour', base_img.size[0], base_img.size[1], alpha=True); bake(body, colour, ext=float(os.environ.get('FIT_BAKE_EXT') or .002), dist=float(os.environ.get('FIT_BAKE_DIST') or .006)); fill_missing(colour)   # (13 Nov 2026: FIT_BAKE_EXT/DIST, shorter rays for the grey lines round r064's ear and neck: the 2 mm cage may reach a fold or hair lying beside the surface)
     body.data.materials.clear(); print('FIT face islands baked', base_img.size[0], 'tris', len(body.data.polygons))
 elif KEEP:   # Meshy's own picture, on Meshy's own UVs (the body still has them)
     colour = bpy.data.images.new(ID + '-colour', base_img.size[0], base_img.size[1], alpha=True)
