@@ -116,6 +116,9 @@ pilot. Farm and wild animals (cow, sheep, pig, buffalo ...) are not in this plan
 - **13 Nov 2026 AEDT, mid-morning (after the film2 films)**: "Nhảy vẫn cứng, Tất cả cần kiểm tra lại ở bước nhảy
   đứng, cổ và chân khi đang chạy và khi gãi": the jump still looks stiff; check again, for all pets, the standing jump,
   and the neck and legs while running and while scratching. None approved.
+- **13 Nov 2026 AEDT, late morning (after film3 of calf and kitty), owner, upset:** not acceptable. **The legs turn
+  pointed ("nhọn") when jumping and running: said many times.** Film the pets in an open place: the farm plots hid the
+  feet. Never send a pet for approval before looking at its feet, frame by frame, at full size, in every run and jump.
 
 ## Dog pilot: progress (10 Nov 2026 AEDT, no credits spent)
 

@@ -235,6 +235,12 @@ Lessons about the checking itself (each hid a fault or showed a false one):
   named with a literal `$k` and four pets wrote into one folder: build Windows paths with forward slashes,
   `"D:/WorkSpace/meshy/pets/$k-jump"`.)
 
+### Owner's standing rule on legs (13 Nov 2026, said many times)
+Feet and legs must never turn pointed ("nhọn") or drawn out in a run, a jump or any move. Before showing the owner any
+pet, look at its feet yourself, frame by frame at full size, in the films of every run and jump, filmed on open flat
+grass (farm plots and fences hid the feet). A clean audit does not prove this: the stretch check counts big triangles,
+not a foot's shape.
+
 ### Lessons from the panda, calf and joey (13 Nov 2026)
 - The weights by colour find what numbers do not: the panda's neck stretched (up to 1,127) because the back half of its
   big head was weighted to the body, so it stayed put when the head turned. The neck joint goes where the head meets the

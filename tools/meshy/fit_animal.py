@@ -459,7 +459,10 @@ def extra_moves(J, M, bones):
     def R(): return {b: (Z3, Z3, O3) for b in bones}
     def put(P, b, rx=0., ry=0., rz=0., loc=Z3):
         if b in P: P[b] = ((rx, ry, rz), loc, O3)
-    def legs(P, i, a, k=0.): put(P, 'leg%d' % i, a); put(P, 'knee%d' % i, k)
+    def legs(P, i, a, k=0., cap=None):
+        if cap is not None: k = max(-cap, min(cap, k))   # (13 Nov 2026, owner: the feet turned pointed in run and jump: a knee folded far drew the thin lower leg and the hoof out into a point)
+        put(P, 'leg%d' % i, a); put(P, 'knee%d' % i, k)
+    KC = FIX.get('knee_max', .55)   # (the most a knee folds in run, jump and the standing hop)
     def blink(t, times): return wc.blink(t, times)
     def run(t, carry=False):
         # (13 Nov 2026, owner: the neck and legs looked stiff in the run) the head bobs a beat behind the body instead of
@@ -467,8 +470,8 @@ def extra_moves(J, M, bones):
         L = .42; ph = TAU * t / L; P = R(); jl = FIX.get('jump_legs', 1.0)
         st = math.sin(ph)
         P['body'] = ((st * .15, 0, 0), (0, abs(math.sin(ph)) * .06 * H, 0), (1, 1 - .025 * math.cos(2 * ph), 1 + .03 * math.cos(2 * ph)))
-        for n, i in enumerate(front): a = ph + n * .35; legs(P, i, math.sin(a) * .95 * jl, max(0, -math.cos(a)) * 1.45 * FIX.get('jump_knee', 1.0))
-        for n, i in enumerate(back): a = ph + math.pi + n * .35; legs(P, i, math.sin(a) * .9 * jl, max(0, math.cos(a - math.pi)) * 1.05 * FIX.get('jump_knee', 1.0))
+        for n, i in enumerate(front): a = ph + n * .35; legs(P, i, math.sin(a) * .95 * jl, max(0, -math.cos(a)) * 1.45 * FIX.get('jump_knee', 1.0), cap=KC)
+        for n, i in enumerate(back): a = ph + math.pi + n * .35; legs(P, i, math.sin(a) * .9 * jl, max(0, math.cos(a - math.pi)) * 1.05 * FIX.get('jump_knee', 1.0), cap=KC)
         put(P, 'head', -math.sin(ph - .7) * .14 + .04 * math.sin(2 * ph - 1) - (.18 if carry else 0), 0, math.sin(ph * .5) * .04)
         for k, e in enumerate(ears): put(P, e, -.5 + math.sin(2 * ph - 1.2 + k) * .3)
         put(P, 'tail', .35 + .15 * math.sin(ph - 1.4), math.sin(2 * ph - .8) * .3)
@@ -499,8 +502,8 @@ def extra_moves(J, M, bones):
         lag = jump_at(max(0., u - .06))   # (head, ears and tail a beat behind)
         P['body'] = ((pitch, 0, 0), (0, up * H, .08 * H * (1 - math.cos(math.pi * min(1, max(0, (u - .2) / .57)))) / 2), (1 + (1 - sq) * .4, sq, 1 + (1 - sq) * .4))
         jl, jk = FIX.get('jump_legs', 1.0), FIX.get('jump_knee', 1.0)   # (a kitty's long thin legs: reaching out and folding less in the air, or its paws stretched)
-        for i in front: legs(P, i, fl * jl, fk * jk)
-        for i in back: legs(P, i, bl * jl, bk * jk)
+        for i in front: legs(P, i, fl * jl, fk * jk, cap=KC)
+        for i in back: legs(P, i, bl * jl, bk * jk, cap=KC)
         put(P, 'head', -lag[1] * .55 + hd); put(P, 'tail', .3 + lag[7], math.sin(TAU * t * 2) * .2)
         for e in ears: put(P, e, lag[8])
         air = .25 < u < .74
@@ -513,8 +516,8 @@ def extra_moves(J, M, bones):
         up, pitch, fl, fk, bl, bk, hd, tl, er, sq = jump_at(p); lag = jump_at(max(0., p - .08))
         jl, jk = FIX.get('jump_legs', 1.0) * .8, FIX.get('jump_knee', 1.0)
         P['body'] = ((pitch * .45, 0, 0), (0, up * .5 * H, 0), (1 + (1 - sq) * .4, sq, 1 + (1 - sq) * .4))
-        for i in front: legs(P, i, fl * jl * .7, fk * jk)
-        for i in back: legs(P, i, bl * jl * .7, bk * jk)
+        for i in front: legs(P, i, fl * jl * .7, fk * jk, cap=KC)
+        for i in back: legs(P, i, bl * jl * .7, bk * jk, cap=KC)
         put(P, 'head', -lag[1] * .4 + hd * .8, 0, math.sin(TAU * t / L) * .15)
         for e in ears: put(P, e, lag[8] * 1.2)
         put(P, 'tail', .3 + lag[7] * .6, math.sin(TAU * t / L * 6) * .55)

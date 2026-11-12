@@ -53,15 +53,20 @@ for (const [title, secs, speed, move] of PARTS) {
       const hid: any[] = []; top.traverse((q: any) => { if (q.isSprite && q.visible) { q.visible = false; hid.push(q); } });   // (name tags and speech bubbles covered the near views)
       const W = 300, cv = document.createElement('canvas'); cv.width = W * 3; cv.height = W * 2 + 28; const x = cv.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, cv.width, cv.height);
       const SRGB = new Uint8Array(256).map((_, i) => { const v = i / 255; return Math.round(255 * (v <= .0031308 ? v * 12.92 : 1.055 * Math.pow(v, 1 / 2.4) - .055)); });
-      const shot = (cam: any, col: number, row: number, label: string) => {
-        const rt = new THREE.WebGLRenderTarget(W, W); R.setRenderTarget(rt); R.clear(); R.render(top, cam); const px = new Uint8Array(W * W * 4); R.readRenderTargetPixels(rt, 0, 0, W, W, px); R.setRenderTarget(null); rt.dispose();
+      const shot = (cam: any, col: number, row: number, label: string, scene: any = top) => {
+        const rt = new THREE.WebGLRenderTarget(W, W); R.setRenderTarget(rt); R.clear(); R.render(scene, cam); const px = new Uint8Array(W * W * 4); R.readRenderTargetPixels(rt, 0, 0, W, W, px); R.setRenderTarget(null); rt.dispose();
         const im = x.createImageData(W, W); for (let yy = 0; yy < W; yy++) for (let xx = 0; xx < W; xx++) { const s = ((W - 1 - yy) * W + xx) * 4, d = (yy * W + xx) * 4; im.data[d] = SRGB[px[s]]; im.data[d + 1] = SRGB[px[s + 1]]; im.data[d + 2] = SRGB[px[s + 2]]; im.data[d + 3] = 255; }
         x.putImageData(im, col * W, 28 + row * W); x.fillStyle = 'rgba(0,0,0,.55)'; x.fillRect(col * W, 28 + row * W, 150, 20); x.fillStyle = '#fff'; x.font = '14px sans-serif'; x.fillText(label, col * W + 5, 28 + row * W + 15); };
       const near = (yaw: number) => { const fwd = new THREE.Vector3(Math.sin(o.rotation.y + yaw), .2, Math.cos(o.rotation.y + yaw)).normalize(), cam = new THREE.PerspectiveCamera(30, 1, .02, 200); cam.position.copy(cc).addScaledVector(fwd, rr * 1.8); cam.lookAt(cc); return cam; };
-      const kid = h.av.root, kv = kid.visible; kid.visible = false;   // (the child beside the pet hid it from the near cameras)
-      shot(near(0), 0, 0, 'gần: trước'); shot(near(.8), 1, 0, 'gần: nghiêng'); shot(near(Math.PI / 2), 2, 0, 'gần: cạnh');
-      shot(near(Math.PI), 0, 1, 'gần: sau');
-      kid.visible = kv;
+      // (13 Nov 2026, owner: "chuyển mấy con này ra chỗ nào trống hơn": farm plots, fences and the child hid the feet) the
+      // near views on a stage of their own: flat grass, the game's own lights, only the pet on it
+      if (!F.stage) { const st = new THREE.Scene(); st.background = new THREE.Color(0xcfe3f2);
+        top.traverse((q: any) => { if (q.isLight) { const c = q.clone(); if (q.target) { c.target = q.target.clone(); st.add(c.target); } st.add(c); } });
+        const gr = new THREE.Mesh(new THREE.PlaneGeometry(200, 200), new THREE.MeshLambertMaterial({ color: 0x7fb069 })); gr.rotation.x = -Math.PI / 2; st.add(gr); F.stage = st; F.ground = gr; }
+      const par = o.parent, st = F.stage; F.ground.position.set(o.position.x, o.position.y - .002, o.position.z); st.add(o); o.updateMatrixWorld(true);
+      shot(near(0), 0, 0, 'gần: trước', st); shot(near(.8), 1, 0, 'gần: nghiêng', st); shot(near(Math.PI / 2), 2, 0, 'gần: cạnh', st);
+      shot(near(Math.PI), 0, 1, 'gần: sau', st);
+      par.add(o); o.updateMatrixWorld(true);
       const gc = new THREE.PerspectiveCamera(50, 1, .1, 400); gc.position.set(h.pos.x - Math.sin(h.yaw) * 6, h.pos.y + 3.2, h.pos.z - Math.cos(h.yaw) * 6); gc.lookAt(h.pos.x, h.pos.y + 1.4, h.pos.z); shot(gc, 1, 1, 'sau bé 6 m (như game)');
       const far = new THREE.PerspectiveCamera(30, 1, .1, 400); far.position.set(h.pos.x + Math.cos(h.yaw) * 12, h.pos.y + 3, h.pos.z - Math.sin(h.yaw) * 12); far.lookAt(cc.x, cc.y - .3, cc.z); shot(far, 2, 1, 'xa 12 m');
       hid.forEach(q => { q.visible = true; });
