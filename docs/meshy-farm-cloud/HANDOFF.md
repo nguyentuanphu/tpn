@@ -55,3 +55,19 @@ Owner asked to try installing Blender. Inspection found `/usr/bin/blender` **4.3
 Real background smoke test PASS: imported the original cow GLB (1 mesh, 678,546 vertices) and rendered a 640×640 image using Cycles CPU, four threads, eight samples. [Render inspected](cow/blender-smoke.png). The packaged build lacks OpenImageDenoise: initial render failed; disabling `scene.cycles.use_denoising` made the test pass. This low-sample image demonstrates execution, not final quality.
 
 Blender can run on this cloud. Actual animal fitting/rigging scripts have not yet been tested for Linux compatibility. No fit/rig, js/models changes or extra paid Meshy POST performed during this check. Trial charge remains 30/120; last observed API balance 1584.
+
+## Cow 30k and working file — 13/11/2026 08:36 AEDT
+
+Owner narrowed scope to **cow only**, paused sheep/chicken, then approved continuing cow. One 5-credit remesh POST was submitted (no retries).
+
+- Task `01a1d1ae-6111-76ee-b081-82919b93869b`: SUCCEEDED, source original task `01a1d19a-7a61-7711-9f5a-8687a2c45778`.
+- Balance **1584 → 1579**, observed charge 5; cumulative cow **35 credits**. Original 30, remesh 30k 5; 9k not yet submitted.
+- [30k GLB](cow/remesh-30000.glb): 11,503,348 bytes, **31,273 actual triangles** (requested target 30,000); SHA256 `c8960b39760f1bdfc2443fdb9620ceba62f4ec3ec436d65f0fd8896399dc9e78`.
+- Four inspected previews: [front](cow/remesh-30000-front.png), [left](cow/remesh-30000-left.png), [back](cow/remesh-30000-back.png), [right](cow/remesh-30000-right.png). Eyes remain clear, pink muzzle/nostrils retained but nostril rims slightly faceted; bell rim also more angular. Four legs/hooves, coat and tail remain intact in these views. No obvious major holes/shattered parts; not a full topology/animation audit.
+- Editable Blender workspace: [cow-work.blend.tar.xz](cow/cow-work.blend.tar.xz). Uncompressed blend exceeds 50 MB, so archived as requested. Contains original and 30k in separate collections, textures packed; original hidden by default. Saved with Blender 4.3.2 and reopened successfully. **Unfitted and unrigged**, no game files installed. Reproduction script: [save_cow_workspace.py](save_cow_workspace.py).
+- Artifacts and workfiles stay on this Git branch under `docs/meshy-farm-cloud/`; original API outputs also retained externally at `/workspace/meshy-farm-raw/`. API key, SQLite and account metadata NEVER committed or uploaded. External metadata allowlist now cow only.
+- Next: separately approve 9k remesh (5 credits), using the succeeded 30k task. Total cow would become 40 credits. No sheep/chicken submission.
+
+```sh
+python tools/meshy/remesh_once.py submit --source-asset cow@9000 --polycount 9000 --approved --journal /workspace/meshy-jobs-farm.sqlite3 --account /workspace/meshy-farm-account.json
+```
