@@ -7,6 +7,7 @@ One POST per source task, reserved in the durable journal before sending, never 
 Remesh costs 5 credits (docs.meshy.ai/en/api/pricing, checked 7 Nov 2026). The journal and raw files live outside the
 repository. MESHY_API_KEY comes from the environment only.
 """
+import run_batch as batch
 import argparse, hashlib, json, os, re, sqlite3, struct, uuid
 from pathlib import Path
 from urllib.parse import urlparse
@@ -40,18 +41,38 @@ def main():
     ap.add_argument('--source-asset', required=True); ap.add_argument('--journal', required=True, type=Path)
     ap.add_argument('--polycount', type=int, default=30000); ap.add_argument('--approved', action='store_true')
     ap.add_argument('--raw-root', type=Path)
+    ap.add_argument('--account', type=Path, help='Private metadata required for farm trial')
     a = ap.parse_args(); db = open_journal(a.journal)
     try:
         if a.command == 'submit':
+            if not os.environ.get('MESHY_API_KEY'):
+                raise ValueError('MESHY_API_KEY is not bound; no job was reserved or submitted')
             if not a.approved: raise ValueError('Remesh needs the owner approval flag')
             if not 100 <= a.polycount <= 300000: raise ValueError('polycount outside 100-300000')
             # (a second remesh of the same model is keyed "<asset>@<polycount>", e.g. clara-r2@9000)
+            farm = a.source_asset.split('@')[0] in batch.FARM_ASSETS
+            account = None
+            if farm:
+                if not a.account or a.account.resolve().is_relative_to(ROOT):
+                    raise ValueError('Farm remesh requires private --account metadata')
+                account = json.loads(a.account.read_text())
+                batch.check_account(account, batch.spec_for(a.source_asset.split('@')[0]))
+                if (a.polycount, a.source_asset) not in ((30000, a.source_asset.split('@')[0]), (9000, a.source_asset.split('@')[0]+'@9000')):
+                    raise ValueError('Farm permits only original to 30k, then 30k to 9k')
             src = db.execute("SELECT task_id, state FROM jobs WHERE asset=?", (a.source_asset.split('@')[0],)).fetchone()
             if not src or src[1] != 'SUCCEEDED' or not src[0]: raise ValueError('Source asset has no succeeded task in this journal')
+            if farm and a.polycount == 9000:
+                src = db.execute('SELECT task_id, state FROM remesh WHERE source=?', (a.source_asset.split('@')[0],)).fetchone()
+                if not src or src[1] != 'SUCCEEDED' or not src[0]:
+                    raise ValueError('Farm 9k requires succeeded 30k remesh as source')
             params = {'input_task_id': src[0], 'target_formats': ['glb'], 'topology': 'triangle', 'target_polycount': a.polycount}
             db.execute('BEGIN IMMEDIATE')
             if db.execute('SELECT 1 FROM remesh WHERE source=?', (a.source_asset,)).fetchone():
                 db.rollback(); raise ValueError('This source was already remeshed or reserved; reconcile, never repeat POST')
+            if farm:
+                total = batch.reserved_cost(db)
+                if total + 5 > account['creditCap'] or total + 5 > account['batchStartingAPIBalance'] - 10:
+                    raise ValueError('Farm total credit cap or balance reserve exceeded')
             db.execute('INSERT INTO remesh VALUES (?,?,?,?,?,NULL,NULL)', (a.source_asset, src[0], 5, json.dumps(params), 'ambiguous')); db.commit()
             res = api('POST', '', params); task = res.get('result')   # any failure leaves the reservation ambiguous
             if not isinstance(task, str) or not re.fullmatch(r'[A-Za-z0-9-]+', task): raise ValueError('Unrecognized response; reconcile in the dashboard')

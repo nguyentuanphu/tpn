@@ -42,3 +42,11 @@ This performs a GET and records the known task. The flag records the operator's 
 Raw GLBs are not runtime replacements. Use [v1.08 compatibility notes](V108-COMPATIBILITY.md): obtain/recreate the external people-fitting workflow, mark joints, preserve skin/material/face conventions, build light/high-detail versions, prove puppy fitting before other animals, and rig the companions. Validate size, animation, dressing, riding, skin tones, save compatibility, offline fallbacks and phone/tablet/desktop output. No deployment or version change is included.
 
 Offline verification: `python tools/meshy/test_batch.py` covers duplicate prevention, lost-response persistence, budget/reserve limits, changed inputs, account/pilot gates and safe raw-output paths. It does not validate Meshy account access or the quality of any new 3D model.
+
+## Farm cloud exception — owner, 13 Nov 2026 AEDT
+
+Only cow, sheep and chicken may carry `tierOverride: "meshy-7.1"`, `plannedCredits: 30`
+and an `approval` reason. Submission requires the asset ID in the private metadata's
+`approvedTierOverrides` and `creditCap: 120`. This trial bypasses the old Clara pilot and
+1000-credit batch minimum, retaining the 10-credit reserve. Other assets keep their tiers
+and prices. See [farm handoff](../meshy-farm-cloud/HANDOFF.md) for per-POST approvals.
