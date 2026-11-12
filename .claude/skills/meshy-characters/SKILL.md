@@ -248,6 +248,13 @@ Lessons about the checking itself (each hid a fault or showed a false one):
   hock), the tail behind and below its root and its tip along the ground; its own moves (`upright_moves`: hop, sit back
   on the tail, beg with paws up, scratch the ear with a paw). If the body is not in the middle of the box (the joey's tail
   curls to one side), `shift` the model, or every left/right rule is off by the difference.
+- A model's size follows its points, not its triangles: Meshy's calf had 68k points for 31k triangles (many picture
+  seams), so its near model was 978 KB; `jpeg` 70 did nothing (the picture is about 170 KB). A 24k copy made here with
+  `decimate.py` (no credits) gave 763 KB; pass it as `make_animal.ps1 -Near`.
+- A wider or higher shut lid (`lid_wide`, `lid_up`) is filled with the colour round the eye: on the calf it painted
+  brown strips into the white blaze. For a 2-3 px painted lash flick beside the lid, look and allow it with a reason.
+- Where an upright paw's fingertips hang below the paw point given for the arm, they stay with the body and are drawn
+  into long claws when the arm rises: put the paw point at the fingertips.
 - Do not run Blender beside the auditor on this machine: the game page then took over 90 s to open and the audit died.
   One heavy job at a time.
 - Keep each file's line endings: Python on Windows writes CRLF in text mode (use `newline=''`), and Git Bash's `sed -i`

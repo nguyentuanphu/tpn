@@ -1,5 +1,5 @@
 {
-  "note": "Meshy joey (12 Nov 2026 model): upright on its big hind feet, small arms in front, a long tail on the ground; joints set by hand from the renders (the four-leg finder looks for four leg columns). (13 Nov 2026: upright mode in fit_animal.py: every joint read from ortho renders with a 10 cm grid; the model moved 6 cm to the right (shift) because its tail curls off to one side and the box's middle was not the body's; leg0/1 are the arms (knee = elbow, paw0/1 the paw tips), leg2/3 the hind legs (knee = the hock where the long foot starts); its own moves in upright_moves.)",
+  "note": "Meshy joey (12 Nov 2026 model): upright on its big hind feet, small arms in front, a long tail on the ground; joints set by hand from the renders (the four-leg finder looks for four leg columns). (13 Nov 2026: upright mode in fit_animal.py: every joint read from ortho renders with a 10 cm grid; the model moved 6 cm to the right (shift) because its tail curls off to one side and the box's middle was not the body's; leg0/1 are the arms (knee = elbow, paw0/1 the paw tips), leg2/3 the hind legs (knee = the hock where the long foot starts); its own moves in upright_moves.) (13 Nov, first look: the paws' fingertips hung below the paw point and stayed with the body, drawn out into long claws when the arms rose: paw points 3 cm lower, arm_r 0.04.)",
   "upright": true,
   "shift": [0.06, 0, 0],
   "smooth": 5,
@@ -12,7 +12,7 @@
   "neck_soft": 0.06,
   "head_back": 0.3,
   "tail_w": 0.06,
-  "arm_r": 0.035,
+  "arm_r": 0.04,
   "joints": {
     "head": [0, 0.06, 0.745],
     "ear0": [-0.08, 0.12, 0.95],
@@ -27,6 +27,6 @@
     "knee3": [-0.12, 0.15, 0.08],
     "tail": [0, 0.25, 0.25]
   },
-  "paw0": [0.046, -0.05, 0.43],
-  "paw1": [-0.046, -0.05, 0.43]
+  "paw0": [0.046, -0.05, 0.4],
+  "paw1": [-0.046, -0.05, 0.4]
 }

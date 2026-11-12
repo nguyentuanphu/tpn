@@ -382,8 +382,9 @@ def make(path, J, M, out, tex_px):
     material(o, tex_px)
     moves = wc.animal_moves(KIND, A, arm, names + FACE_BONES, F, size)
     moves = [(n_, L_, lie_down(p_, J, M) if n_ == 'sleep' and not FIX.get('upright') else p_) for n_, L_, p_ in moves]
-    for name, L, pose in moves: ground(o, arm, wc.clip(arm, name, L, damp(pose)))
     extra = (upright_moves if FIX.get('upright') else extra_moves)(J, M, names + FACE_BONES)   # (made for Meshy's own legs: not damped)
+    own = {e[0] for e in extra}; moves = [m for m in moves if m[0] not in own]   # (an animal's own move of the same name replaces the code shape's: the joey's sleep)
+    for name, L, pose in moves: ground(o, arm, wc.clip(arm, name, L, damp(pose)))
     for name, L, pose in extra: ground(o, arm, wc.clip(arm, name, L, pose))
     moves = moves + extra
     for pb in arm.pose.bones: pb.rotation_euler = (0, 0, 0); pb.location = (0, 0, 0); pb.scale = (1, 1, 1)
@@ -630,18 +631,18 @@ def upright_moves(J, M, bones):
         return P
     def scratch(t):
         L = 2.; P = R(); sitting(P)
-        legs(P, 0, -2.3 + math.sin(TAU * t * 6) * .15, -1.0)   # (a paw up to its ear)
-        put(P, 'head', .2, .2, -.3)
+        legs(P, 0, -1.5 + math.sin(TAU * t * 6) * .12, -1.3)   # (a paw up to its cheek; raised higher, the arm's fur stretched to the chin)
+        put(P, 'head', .15, .15, -.35)
         face(P, None, eye=.35, smile=1.15, jaw=.1)
         return P
     def swim(t):
         L = 1.1; ph = TAU * t / L; P = R()
-        put(P, 'body', 1.2 + math.sin(ph * 2) * .03)   # (lying forward in the water)
+        put(P, 'body', .55 + math.sin(ph * 2) * .03)   # (leaning forward in the water, the head up: lying flat it looked like flying)
         for n, i in enumerate(hind): legs(P, i, .3 + math.sin(ph + n * math.pi) * .45, .2)
         for n, i in enumerate(arms): legs(P, i, -.9 + math.sin(ph + n * math.pi + 1) * .4, -.3)
-        put(P, 'head', -1.0 + math.sin(ph * 2) * .04)
-        for e in ears: put(P, e, -.5)
-        put(P, 'tail', -.1, math.sin(ph) * .25)
+        put(P, 'head', -.45 + math.sin(ph * 2) * .04)
+        for e in ears: put(P, e, -.3)
+        put(P, 'tail', -.3, math.sin(ph) * .25)
         face(P, None, eye=blink(t, (.6,)), smile=1.1)
         return P
     def dig(t):
@@ -654,7 +655,16 @@ def upright_moves(J, M, bones):
         put(P, 'tail', .3, math.sin(ph * 1.5) * .3)
         face(P, None, eye=blink(t, (.5,)) * .8, smile=1.2, jaw=.2)
         return P
-    return [('run', 1.35, run), ('carry', 1.35, lambda t: run(t, True)), ('jump', 1.2, jump), ('bounce', 1.6, bounce), ('sit', 6., sit),
+    def sleep(t):   # lying on its side, curled a little, breathing slowly
+        L = 4.; w = TAU / L; P = R(); b = math.sin(w * t)
+        put(P, 'body', 0, 0, math.pi * .5, loc=(0, 0, 0)); P['body'] = (P['body'][0], Z3, (1 + b * .015, 1 + b * .03, 1 + b * .015))
+        for i in hind: legs(P, i, -.6, .5)
+        for i in arms: legs(P, i, -.5, -.6)
+        put(P, 'head', .25, 0, -.35 + b * .02); put(P, 'tail', 0, .4)
+        for e in ears: put(P, e, .45)
+        face(P, None, shut=True, smile=.8)
+        return P
+    return [('sleep', 4., sleep), ('run', 1.35, run), ('carry', 1.35, lambda t: run(t, True)), ('jump', 1.2, jump), ('bounce', 1.6, bounce), ('sit', 6., sit),
             ('beg', 2.4, beg), ('roll', 3., roll), ('scratch', 2., scratch), ('swim', 1.1, swim), ('dig', 1.2, dig)]
 
 # ---------- the face ----------

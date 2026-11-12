@@ -1,13 +1,13 @@
 # Handoff: pets and companions with Meshy (kept current every hour)
 
-Last update: 12 Nov 2026 AEDT, evening (owner: stop, hand over to another Claude account). Branch `meshy-pets`, worktree `D:\WorkSpace\sv-meshy-pets` (owner's PC). Never merge
+Last update: 13 Nov 2026 AEDT, early morning (taken over by a new chat; panda, bunny, calf done, joey in progress). Branch `meshy-pets`, worktree `D:\WorkSpace\sv-meshy-pets` (owner's PC). Never merge
 main, deploy or bump the version. Reply to the owner in Vietnamese, short; ask with pop-up questions. Ask before every
 Meshy use (paid), through the journal `D:\WorkSpace\meshy\private\meshy-jobs.sqlite3`, never retry a paid POST, never
 print the key; after a paid run `python tools/meshy/ledger_sync.py`. Back up (commit + push) every hour.
 
 Read first: `.claude/skills/meshy-characters/SKILL.md` (section "Animals"), `docs/meshy-pets-20261110/PLAN.md`.
 
-## Takeover summary (12 Nov 2026 AEDT, evening)
+## Takeover summary (13 Nov 2026 AEDT, early morning)
 
 **Approved by the owner and committed:** puppy (11 Nov), dragon and firefly companions, near and light models
 (12 Nov). Board line on `docs/cores/BOARD.md`: "ready for Release" for these.
@@ -15,42 +15,45 @@ Read first: `.claude/skills/meshy-characters/SKILL.md` (section "Animals"), `doc
 **Five new pets, Meshy jobs PAID and DOWNLOADED (never resend):** owner pop-up 12 Nov "Cả 5 con, 200"; balance 1,764
 to 1,564, ledger synced (charged 1295). Journal `D:\WorkSpace\meshy\private\meshy-jobs.sqlite3` holds:
 multi-image kitty 01a1cd10-4d53, bunny 01a1cd10-56e6, panda 01a1cd10-6052, joey 01a1cd10-69e0, calf 01a1cd10-736f;
-remesh 30k and @9000 for each (01a1cd14-...). Raw files: `D:\WorkSpace\meshyaw-models\C\<kind>.glb`,
-`remesh\<kind>.glb`, `remesh\<kind>-9000.glb`. All five match their sheets (`D:\WorkSpace\meshy\petsaw-<kind>-cmp.png`).
-**No pet is approved by the owner yet.** Their working models are committed as a hand-over snapshot only (owner asked
-to upload everything): `models/world/creature-{kitty,bunny,panda,calf}[-hd].glb`. The joey has no Meshy model in the game yet.
+remesh 30k and @9000 for each (01a1cd14-...). Raw files: `D:\WorkSpace\meshy\raw-models\C\<kind>.glb`,
+`remesh\<kind>.glb`, `remesh\<kind>-9000.glb` (and `remesh\calf-24000.glb`, made here without credits). All five match
+their sheets (`D:\WorkSpace\meshy\pets\raw-<kind>-cmp.png`).
+**No pet is approved by the owner yet.** Working models of kitty, bunny, panda, calf are committed (hand-over snapshot,
+not approved): `models/world/creature-{kitty,bunny,panda,calf}[-hd].glb`. The joey's Meshy model is NOT committed
+(`models/world/creature-joey.glb` in git is still the Blender one).
 
-Per pet (last full audits, `make_animal.ps1`; pictures under `D:\WorkSpace\meshy\pets\`):
-- **kitty**: full audit 232 cases, **0 failing**. All HD close shots looked at (`kitty-7\shots\grid*.png`): looks like its
-  sheet. Shut-eye lash specks then got `lash_dark/lash_spot/fill_near` (last run also 0 failing). Mild: the raised hind leg
-  in `scratch`/`sit` looks flat. Next: owner's look (companion-style film or close sheet), then commit approval.
-- **bunny**: full audit 232 cases, **3 failing: captain/other hats loose up to 27** (`audit.hatLoose` 16 in bunny.json;
-  look at the hat pictures before changing it; the long ears come up through the hats). Hop walk floats by design
-  (`audit.float` 120, reason in json). Light model 396 KB (`tex_far` 448).
-- **panda**: full audit 232 cases, **37 failing: neck stretch** (up to 1,127) where the big head meets the body when the
-  head turns, rolls, begs, scratches. `neck_soft` 0.1 did not fix it; try `head_back`, a lower `joints.head`, or the
-  head plane's tilt; render `tools/meshy/weight_colours.py` first. Eyes: black eye patch kept when shut (`eye_grow` 0.5,
-  `fill_near`, light `lash`); `audit.eyes` 100 with reason (the check counts the patch's black fur).
-- **calf**: first audit only: near model 976 KB (over 800) -> `jpeg` 70 set but NOT rebuilt yet; shut-eye lash specks ->
-  lash fill set, not rebuilt; tears are the bell, beg 351 is a leg/belly gap (`audit.tear` 360, reason in json). Its tail
-  hangs down: check the tail weights with `weight_colours.py` (the tail rule takes points behind AND above the root).
-- **joey**: NOT fitted. It stands upright on big hind feet with small arms and a long tail on the ground; the four-leg
-  joint finder puts joints in the wrong places (`D:\WorkSpace\meshy\pets\joey-0\joey-joints-*.png`). Needs an upright
-  mode in `fit_animal.py`: joints from `animal_joints/joey.json` by hand (arms = leg0/1 at the shoulders, hind legs =
-  leg2/3), arm weights by distance to the arm, hind legs by the usual below-the-belly rule, a tail-down rule.
-- **Skills** for the five (agreed proposals in PLAN.md) and the calf's rename ("Bê con") are not started.
-- `js/creatures.ts` `MESHY_CREATURES` and `tests/world-creatures.mts` `MESHY` already list all five pets (a missing
-  `-hd` file falls back).
+Per pet (13 Nov, `make_animal.ps1`; pictures under `D:\WorkSpace\meshy\pets\<kind>-N\`):
+- **kitty**: full audit 232 cases, 0 failing (12 Nov). Unchanged by this round (its json has none of the new options).
+- **bunny**: full audit 232 cases (`bunny-2`): the 3 hat cases were "head through" in cheer/beg, the long ears standing
+  up through the closed hats (pictures looked at). New per-animal `audit.hatPoke` in `audit_pets.mts`, bunny 30 with
+  reason: the 3 cases pass by the new rule (the audit was not run again). Hop walk floats by design (`audit.float` 120).
+- **panda**: FIXED. Full audit 232 cases, **0 failing** (`panda-6`; was 37). The weights by colour showed the back half
+  of its head on the body: neck joint lowered (`joints.head`), the neck's plane along its neck line (`neck_tilt` 0.31),
+  ears still in its own moves too (`ear_amp` 0 now also applies to `extra_moves`), `head_turn` 0.6, `jump_legs` 0.7.
+  All 86 HD close shots looked at (and a few light): looks right.
+- **calf**: rebuilt (`calf-3`). Near model 763 KB from a 24k copy made here (`decimate.py`; 978 KB before, the 31k
+  surface has 68k points). Hanging tail now on the tail bone (`tail_drop`). Full audit: 3 over, allowed with reasons in
+  calf.json (beg leg-belly gap 441 px; one painted 2-3 px lash flick at the left eye's outer top corner, eyes 60).
+  A wider lid was tried and taken out (it painted brown strips into the white blaze). All HD close shots looked at.
+  **Still to show the owner:** the hind hooves look pointed and drawn out in sleep, sit and scratch; the collar bow
+  looks ragged in roll (close up).
+- **joey**: upright mode written (`upright_joints`, `upright_W`, `upright_moves` in `fit_animal.py`; joints by hand in
+  joey.json from ortho renders with a 10 cm grid, `shift` 6 cm). First quick audit (`joey-2`): 70 of 124 over (stretch
+  in roll, swim, scratch, run; far-model lids; hop floats by design; two hats). Second round (`joey-3`, paw points lower, `arm_r` 0.04, own sleep lying on its side, smaller scratch, swim leaning not lying): 62 of 124 over. Paws in beg now look right; still to do: stretch where the scratching arm meets the chin (944), swim (1011), roll (1038), sleep (930), run/bounce/sad/idle (400-570: look at the marks first, likely the arms' or neck's weights), far-model lid specks (`eyes`, add `lash_dark`/`lash_spot`/`fill_near`/`lid_grid_far` as on the kitty), the hop float (by design, an `audit.float` with reason after looking), nón lá and captain's hat (64, 61: look at the pictures). The working joey models were taken out of `models/world` (only in `D:\WorkSpace\meshy\pets\joey-3`).
+- **Skills** for the five (agreed proposals in PLAN.md) and the calf's rename ("Bê con") are not started (after the
+  owner's look, per the plan).
 
-**Nothing is running.** The last queue was stopped; `tests/check-times.json` (suite timing) is left uncommitted on purpose.
+Review sheets for the owner (full-size shots, 2 x 3): `docs/meshy-pets-20261110/review-20261113/`.
+
+`tests/check-times.json` (suite timing) is left uncommitted on purpose. Nothing is running.
 
 **Resume prompt (Vietnamese, for the next chat):**
 > Tiếp tục thú cưng Meshy của Sparkle Valley ở worktree `D:\WorkSpace\sv-meshy-pets`, nhánh `meshy-pets`. Đọc
 > `docs/meshy-pets-20261110/HANDOFF.md` (phần "Takeover summary"), rồi `.claude/skills/meshy-characters/SKILL.md` (phần
-> Animals) và `docs/meshy-pets-20261110/PLAN.md`. Năm thú cưng đã trả tiền Meshy và đã tải về: KHÔNG gửi lại. Làm theo thứ
-> tự: sửa cổ gấu trúc, mũ thỏ, dựng lại bê, rồi chế độ đứng cho chuột túi con; xem mọi ảnh ở kích thước thật; gửi chủ
-> duyệt từng con bằng câu hỏi pop-up trước khi coi là xong. Không merge main, không deploy, không đổi số phiên bản. Trả
-> lời chủ bằng tiếng Việt, ngắn.
+> Animals) và `docs/meshy-pets-20261110/PLAN.md`. Năm thú cưng đã trả tiền Meshy và đã tải về: KHÔNG gửi lại. Gấu trúc,
+> thỏ, bê đã qua kiểm tra; làm tiếp chuột túi con (chế độ đứng, `joey-3`), móng sau của bê; xem mọi ảnh ở kích thước
+> thật; gửi chủ duyệt từng con bằng câu hỏi pop-up trước khi coi là xong. Không merge main, không deploy, không đổi số
+> phiên bản. Trả lời chủ bằng tiếng Việt, ngắn.
 
 ## Where things stand
 - **Puppy: done and approved** (owner 11 Nov "Okay approved"): models on the branch, pet scale 0.6, 18 moves,
