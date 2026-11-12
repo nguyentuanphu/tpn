@@ -215,6 +215,14 @@ Record: `docs/meshy-regional-40-100/PILOT-1.md`. Ids `r<nnn>` (sheet number), jo
     up and down only left lash bits over r045's shut eyes). Judge it with the audit's side views and the front close-up. Also: looking eyes were empty in the game for a whole round (a sign
     error in the eye's hull) and no check said so: `audit_villager.mts` now has `lookstill`. Lesson: a fix is judged in the
     game at 1024 px, the preview only says the picture is right.
+  - *Hair round a shut eye (owner 12 Nov 2026: "Sửa lại 3 lỗi và kiểm tra lại mắt và mí của r45").* The lid's hole took
+    in hair inside the eye's box (r064's fringe block, r045's strands up to the brow) and cut it square, on the half and
+    sad lids too. A painted face's hair colour cannot be trusted (r045's was read from her pink hat), so `-LidSoft` sorts
+    the dark patches round each eye instead: big ones, or ones reaching the window's edge, lying mostly off the eye's oval
+    are hair and only their part along the eye white (the lashes) closes; small ones touching the eye are lash flicks and
+    close; a strand that does not touch the eye stays. Debug it with the lid's hole drawn over the face picture (green
+    mask before and after the rules) rather than with game shots. A half lid over a high iris left bare white: the white
+    under a half lid now takes the lid's shadow (moving the lid line only shut the eye).
   - *Mouth fixes that only worked on the test pair.* After the fixes passed on r050 and r084, the run of all six failed
     `oldmouth` on three: r057's collar edge against the black round the face was darker than his lips (patches touching
     the black are skipped now), and r045's and r074's pink lips passed as hair (nearer the hair's colour mix than the skin's),
