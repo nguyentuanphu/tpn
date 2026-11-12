@@ -26,6 +26,10 @@ Job specifications: `job-specifications/r<nnn>.json` (checked by `tools/meshy/ru
   `D:\WorkSpace\meshy`. Nothing raw is committed. A later session starts from the journal the owner attaches.
 - Game roles (pop-up, asked before the review): r045, r050, r057 and r064 are **not put in the game yet**; the files are only
   kept. Nothing in `js/crowd-models.ts` changes.
+- 11 Nov 2026 AEDT, first approval pop-up: "Tất cả con mắt, mũi và miệng của các nhân vật đều có vấn đề" (fix them, add
+  checks, record the lessons). Second: "Mắt và miệng, nặng nhất là mắt, không soi kỹ hay sao mà đã hỏi?" (judge at 1024 px).
+- 12 Nov 2026 AEDT, third approval pop-up: "Sửa lại 3 lỗi và kiểm tra lại mắt và mí của r45" (r084's half lid, r064's
+  hair notch, r045's eye corners and lids). Game roles: r074 and r084 are **not put in the game yet** either.
 
 ## Spending (from the journal)
 
