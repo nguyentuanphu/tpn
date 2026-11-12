@@ -227,7 +227,9 @@ def weights(o, J, M):
         k = 'ear%d' % i
         if k not in J: continue
         ex, ey, ez = J[k]; side = np.sign(ex)
-        e = smooth01((V[:, 0] * side - abs(ex) * FIX.get('ear_in', .98)) / .02) * smooth01((ez + .02 - V[:, 2]) / .03) * (np.sign(V[:, 0]) == side)
+        if FIX.get('ear_up'):   # (ears that stand up (kitty, bunny, calf): above their root and off the middle; the hanging-ear rule took a kitty's wide cheeks as ears, and they stretched when the ears moved)
+            e = smooth01((V[:, 2] - ez) / .015) * smooth01((V[:, 0] * side - FIX.get('ear_mid', .04)) / .015) * (np.sign(V[:, 0]) == side)
+        else: e = smooth01((V[:, 0] * side - abs(ex) * FIX.get('ear_in', .98)) / .02) * smooth01((ez + .02 - V[:, 2]) / .03) * (np.sign(V[:, 0]) == side)
         ear = np.maximum(ear, e); ear_side[e > 0] = i
     ear *= head > .5
     # the tail: behind its root, above the hips

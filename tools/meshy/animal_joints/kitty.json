@@ -1,0 +1,32 @@
+{
+  "note": "Meshy kitty (12 Nov 2026 model): first fit with the puppy's pose and face tuning; values tuned below after looking at its pictures. (12 Nov: ears stand up: ear_up, pivots at their roots; the tail curves up, so its root is set at the rump by hand.)",
+  "lie_drop": 0.95,
+  "lie_front": -1.35,
+  "lie_front_knee": 0.1,
+  "lie_back": -1.2,
+  "lie_back_knee": 0.3,
+  "smooth": 5,
+  "leg_top": 0.8,
+  "spatial_r": 0.03,
+  "mouth_w": 0.8,
+  "ear_up": true,
+  "ear_mid": 0.07,
+  "ear_amp": 0.3,
+  "joints": {
+    "ear0": [
+      -0.11,
+      -0.239,
+      0.745
+    ],
+    "ear1": [
+      0.11,
+      -0.239,
+      0.745
+    ],
+    "tail": [
+      0,
+      0.19,
+      0.45
+    ]
+  }
+}

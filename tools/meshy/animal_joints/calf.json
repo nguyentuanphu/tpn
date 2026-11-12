@@ -1,0 +1,12 @@
+{
+  "note": "Meshy calf (12 Nov 2026 model): first fit with the puppy's pose and face tuning; values tuned below after looking at its pictures.",
+  "lie_drop": 0.95,
+  "lie_front": -1.35,
+  "lie_front_knee": 0.1,
+  "lie_back": -1.2,
+  "lie_back_knee": 0.3,
+  "smooth": 5,
+  "leg_top": 0.8,
+  "spatial_r": 0.03,
+  "mouth_w": 0.8
+}
