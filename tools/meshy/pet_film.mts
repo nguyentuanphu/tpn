@@ -37,8 +37,10 @@ const FPS = 15, STEP = 1000 / FPS;
 // parts: [title, seconds, child's speed (m/s), the pet's wished move]
 const PARTS: [string, number, number, string][] = [['đứng', 2, 0, ''], ['đi theo', 3, 2.5, ''], ['chạy theo', 3, 7, ''],
   ...(setup as any).has.map((m: string) => [m, m === 'jump' ? 1.4 : 2.6, 0, m] as [string, number, number, string])];
+// (optional 3rd argument: only these parts, e.g. "run,jump,bounce"; run = the child running)
+const ONLY = process.argv[4] ? process.argv[4].split(',') : null;
 let n = 0;
-for (const [title, secs, speed, move] of PARTS) {
+for (const [title, secs, speed, move] of PARTS.filter(p => !ONLY || ONLY.includes(p[3] || (p[2] > 5 ? 'run' : p[2] > 0 ? 'walk' : 'stand')))) {
   await P.page.evaluate(() => { const F = (window as any).__film, h = F.h; h.pos.set(F.start.x, F.start.y, F.start.z); h.yaw = F.start.yaw;
     F.L.obj.position.set(h.pos.x - Math.sin(h.yaw) * 1.7 + Math.cos(h.yaw) * .9, h.pos.y, h.pos.z - Math.cos(h.yaw) * 1.7 - Math.sin(h.yaw) * .9); });   // (the pet back beside the child: after the run it was far behind, and ran back through the next move)
   for (let f = 0; f < secs * FPS; f++) {
