@@ -2,7 +2,7 @@
   "budget": 1000,
   "planned": 990,
   "reserve": 10,
-  "charged": 1095,
+  "charged": 1295,
   "entries": [
     {
       "assetId": "clara",
@@ -135,42 +135,42 @@
     {
       "assetId": "kitty",
       "plannedCredits": 30,
-      "reservedCredits": 0,
-      "chargedCredits": 0,
-      "taskId": null,
-      "state": "not_submitted"
+      "reservedCredits": 30,
+      "chargedCredits": 30,
+      "taskId": "01a1cd10-4d53-738a-a7d6-a88a36be368f",
+      "state": "SUCCEEDED_raw_downloaded"
     },
     {
       "assetId": "bunny",
       "plannedCredits": 30,
-      "reservedCredits": 0,
-      "chargedCredits": 0,
-      "taskId": null,
-      "state": "not_submitted"
+      "reservedCredits": 30,
+      "chargedCredits": 30,
+      "taskId": "01a1cd10-56e6-7432-a629-5610fa264662",
+      "state": "SUCCEEDED_raw_downloaded"
     },
     {
       "assetId": "panda",
       "plannedCredits": 30,
-      "reservedCredits": 0,
-      "chargedCredits": 0,
-      "taskId": null,
-      "state": "not_submitted"
+      "reservedCredits": 30,
+      "chargedCredits": 30,
+      "taskId": "01a1cd10-6052-732e-b47e-0aac989d5352",
+      "state": "SUCCEEDED_raw_downloaded"
     },
     {
       "assetId": "joey",
       "plannedCredits": 30,
-      "reservedCredits": 0,
-      "chargedCredits": 0,
-      "taskId": null,
-      "state": "not_submitted"
+      "reservedCredits": 30,
+      "chargedCredits": 30,
+      "taskId": "01a1cd10-69e0-775e-9660-0518ac5ad9e1",
+      "state": "SUCCEEDED_raw_downloaded"
     },
     {
       "assetId": "calf",
       "plannedCredits": 30,
-      "reservedCredits": 0,
-      "chargedCredits": 0,
-      "taskId": null,
-      "state": "not_submitted"
+      "reservedCredits": 30,
+      "chargedCredits": 30,
+      "taskId": "01a1cd10-736f-71f0-82f7-d4e29729e404",
+      "state": "SUCCEEDED_raw_downloaded"
     },
     {
       "assetId": "dragon",
@@ -738,6 +738,76 @@
       "source": "firefly",
       "chargedCredits": 5,
       "taskId": "01a1c6fa-b293-7489-9722-07e7a000aaa5",
+      "state": "SUCCEEDED"
+    },
+    {
+      "kind": "remesh",
+      "source": "kitty",
+      "chargedCredits": 5,
+      "taskId": "01a1cd14-2e10-718d-a565-6cf079015e05",
+      "state": "SUCCEEDED"
+    },
+    {
+      "kind": "remesh",
+      "source": "kitty@9000",
+      "chargedCredits": 5,
+      "taskId": "01a1cd14-30cf-76e8-926a-a9171c4e2014",
+      "state": "SUCCEEDED"
+    },
+    {
+      "kind": "remesh",
+      "source": "bunny",
+      "chargedCredits": 5,
+      "taskId": "01a1cd14-335f-71d9-b269-9ab38581bd2e",
+      "state": "SUCCEEDED"
+    },
+    {
+      "kind": "remesh",
+      "source": "bunny@9000",
+      "chargedCredits": 5,
+      "taskId": "01a1cd14-3627-777e-addf-7250dbe79e5a",
+      "state": "SUCCEEDED"
+    },
+    {
+      "kind": "remesh",
+      "source": "panda",
+      "chargedCredits": 5,
+      "taskId": "01a1cd14-38a9-75dc-a254-0427fe358637",
+      "state": "SUCCEEDED"
+    },
+    {
+      "kind": "remesh",
+      "source": "panda@9000",
+      "chargedCredits": 5,
+      "taskId": "01a1cd14-3b64-77c9-a23d-e54c7dca9bba",
+      "state": "SUCCEEDED"
+    },
+    {
+      "kind": "remesh",
+      "source": "joey",
+      "chargedCredits": 5,
+      "taskId": "01a1cd14-3def-7411-b932-1effd59162ee",
+      "state": "SUCCEEDED"
+    },
+    {
+      "kind": "remesh",
+      "source": "joey@9000",
+      "chargedCredits": 5,
+      "taskId": "01a1cd14-4093-770b-80f5-425d336c078c",
+      "state": "SUCCEEDED"
+    },
+    {
+      "kind": "remesh",
+      "source": "calf",
+      "chargedCredits": 5,
+      "taskId": "01a1cd14-4310-7066-8b07-09602f575270",
+      "state": "SUCCEEDED"
+    },
+    {
+      "kind": "remesh",
+      "source": "calf@9000",
+      "chargedCredits": 5,
+      "taskId": "01a1cd14-459d-7454-81d9-6c0ab6f4a787",
       "state": "SUCCEEDED"
     },
     {
