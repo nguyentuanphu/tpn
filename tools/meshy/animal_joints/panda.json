@@ -18,5 +18,10 @@
     0.85,
     0.8,
     0.78
-  ]
+  ],
+  "neck_soft": 0.1,
+  "audit": {
+    "eyes": 100,
+    "why": "12 Nov 2026, looked at the marked pictures (sleep, happy, roll, far and near): the closed eyes show as a light line inside the black eye patch; the check counts the patch's own black fur next to the lid as a pupil. Not a painted eye showing."
+  }
 }

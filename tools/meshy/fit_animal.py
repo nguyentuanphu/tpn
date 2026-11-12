@@ -220,7 +220,7 @@ def weights(o, J, M):
     belly, hip, H = M['belly'], M['hip'], M['H']
     # the head: in front of and above the neck's plane (tilted forward), softly over 3 cm
     hp = np.array(J['head']); nrm = np.array((0, -.55, 1.0)); nrm /= np.linalg.norm(nrm)
-    head = smooth01(((V - hp) @ nrm + .015) / .04)
+    ns = FIX.get('neck_soft', .04); head = smooth01(((V - hp) @ nrm + ns * .375) / ns)   # (neck_soft: how wide the head blends into the body; a panda's big head needs a wider neck, or the neck ring stretched when it turned)
     # (and not far behind the neck: a kitty's tall tail reaches above the neck's plane at the back, and its tip moved with the head)
     head *= smooth01((hp[1] + (M['by'] - M['fy']) * FIX.get('head_back', .25) - V[:, 1]) / .03)
     # the ears: on the head, out beyond the cheeks, below the ear's root
@@ -428,7 +428,7 @@ def extra_moves(J, M, bones):
         elif u < .88: k = 1 - (u - .72) / .16; up = -.05 * H * k; pitch = .12 * k; fl = .15 * k; bl = -.2 * k; kn = .7 * k
         else: up = pitch = fl = bl = kn = 0
         put(P, 'body', pitch, loc=(0, up, .08 * H * min(1, max(0, (u - .22) / .5))))
-        kn *= FIX.get('jump_knee', 1.0)   # (a kitty's long thin legs: knees folded less in the air, or its paws stretched)
+        kn *= FIX.get('jump_knee', 1.0); fl *= FIX.get('jump_legs', 1.0); bl *= FIX.get('jump_legs', 1.0)   # (a kitty's long thin legs: reaching out and folding less in the air, or its paws stretched)
         for i in front: legs(P, i, fl, kn)
         for i in back: legs(P, i, bl, kn)
         put(P, 'head', -pitch * .6); put(P, 'tail', .4, math.sin(TAU * t * 3) * .3)
