@@ -71,7 +71,7 @@ float lb_ = clamp(vColor.g - vColor.b, 0.0, 1.0); float w_ = vColor.r * mix((1.0
 #else
 float w_ = (1.0 - smoothstep(${lax ? '.16, .32' : '.025, .06'}, distance(tx_ / sm_, pc_))) * smoothstep(.03, .1, sm_) * (${lax ? 'smoothstep(.46, .56, (max(tx_.r, max(tx_.g, tx_.b)) - min(tx_.r, min(tx_.g, tx_.b))) / max(tx_.r, max(max(tx_.g, tx_.b), 1e-4)))' : '1.0'});   // (skin is strongly coloured; a cream blouse marked skin is not) (owner 9 Nov 2026: the face pieces' blush stayed pink on dark tones: .10-.24 widened)
 #endif // (the picture's own colour: the material colour is near black)
-vec3 k_ = mix(vec3(1.0), uTint, w_);
+vec3 k_ = mix(vec3(1.0), uTint, w_); float shA_ = 0.0;   // (shA_: how far a shut eye's texel is replaced outright by the skin, see below)
 #ifdef USE_COLOR
 // (owner 9 Nov 2026, the skin tones: Meshy's painted light strokes on bare arms kept their orange under a dark tone) an arm or
 // leg takes the tone's colour, keeping only the painted light and shade (its brightness against the painted skin's)
@@ -87,9 +87,9 @@ ${kit ? `#ifdef USE_COLOR_ALPHA
 bool inEye_ = (vKitX > uEyeA.x && vKitX < uEyeA.y && vKitY > uEyeA.z && vKitY < uEyeA.w) || (vKitX > uEyeB.x && vKitX < uEyeB.y && vKitY > uEyeB.z && vKitY < uEyeB.w);
 float ski_ = (1.0 - smoothstep(.06, .14, distance(tx_ / sm_, pc_))) * smoothstep(.9, 1.3, sm_);   // (10 Nov 2026: only what is not skin, lashes, iris and whites, is painted over: a flat box showed as a lighter square once the eye areas really worked)
 float bl_ = step(tx_.g * 1.2, tx_.r) * step(tx_.b * 1.3, tx_.r) * smoothstep(.8, .88, max(tx_.r, max(tx_.g, tx_.b))) * smoothstep(.3, .38, (max(tx_.r, max(tx_.g, tx_.b)) - min(tx_.r, min(tx_.g, tx_.b))) / max(max(tx_.r, max(tx_.g, tx_.b)), 1e-4));   // (11 Nov 2026, owner: Lumi's closed and smiling eyes, a flat square patch with no blush: the blush in the eye areas is not her skin's colour and was painted over; a bright red-pink texel, never an iris, lash or white, stays)
-if (uShut > .5 && vColor.r > .5 && inEye_) k_ = mix(uTint * uPaint / max(tx_, vec3(.02)), k_, max(ski_, bl_));
+if (uShut > .5 && vColor.r > .5 && inEye_) { float kp_ = max(ski_, bl_) * (1.0 - smoothstep(1.1, 1.22, sm_ / (uPaint.r + uPaint.g + uPaint.b + 1e-4)) * (1.0 - bl_)); k_ = mix(uTint * uPaint / max(tx_, vec3(.02)), k_, kp_); shA_ = max(shA_, 1.0 - kp_); }   // (13 Nov 2026: a faint pale ring round every closed eye, Clara's, Sol's, Lumi's: the eye white's soft edge, half white and half skin, passed the skin test; a texel much lighter than the painted skin is lid too, unless it is blush)
 vec2 cA_ = vec2((vKitX - (uEyeA.x + uEyeA.y) * .5) / max((uEyeA.y - uEyeA.x) * .35, 1e-4), (vKitY - (uEyeA.z + uEyeA.w) * .5) / max((uEyeA.w - uEyeA.z) * .3, 1e-4)); vec2 cB_ = vec2((vKitX - (uEyeB.x + uEyeB.y) * .5) / max((uEyeB.y - uEyeB.x) * .35, 1e-4), (vKitY - (uEyeB.z + uEyeB.w) * .5) / max((uEyeB.w - uEyeB.z) * .3, 1e-4));
-if (uShut > .5 && vColor.r < .5 && ((dot(cA_, cA_) < 1.0 && cA_.y < .15) || (dot(cB_, cB_) < 1.0 && cB_.y < .15))) k_ = mix(uTint * uPaint / max(tx_, vec3(.02)), k_, ski_);   // (12 Nov 2026, owner circled Clara's far eye open at three-quarters: triangles there, the eye's own and coloured like her hair, are not skin-marked; the eye's lower core closes whatever its mark, never the fringe above or the hair at the temples)   // (the whole painted eye, rim and lashes too, inside the eye areas: owner circled Lumi's faint rim)
+if (uShut > .5 && vColor.r < .5 && ((dot(cA_, cA_) < 1.0 && cA_.y < .15) || (dot(cB_, cB_) < 1.0 && cB_.y < .15))) { k_ = mix(uTint * uPaint / max(tx_, vec3(.02)), k_, ski_); shA_ = max(shA_, 1.0 - ski_); }   // (12 Nov 2026, owner circled Clara's far eye open at three-quarters: triangles there, the eye's own and coloured like her hair, are not skin-marked; the eye's lower core closes whatever its mark, never the fringe above or the hair at the temples)   // (the whole painted eye, rim and lashes too, inside the eye areas: owner circled Lumi's faint rim)
 if (uShut > .5 && vColor.r > .5 && vKitY > uKitNeck && max(tx_.r, max(tx_.g, tx_.b)) > .78 && (max(tx_.r, max(tx_.g, tx_.b)) - min(tx_.r, min(tx_.g, tx_.b))) < .2 * max(tx_.r, max(tx_.g, tx_.b))) k_ = uTint * uPaint / max(tx_, vec3(.02));
 if (uKitOn > .5 && vColor.r < .5 && vColor.a * 255.0 > .5 && vKitY > uKitWaist - .40) k_ = (vCov > .5 ? ((vKitY > uKitWaist ? vCovT.a : vCovB.a) > .001 ? (vKitY > uKitWaist ? vCovT.rgb / vCovT.a : (vKitY < uKitWaist - .12 && vCovI.a > .001 ? vCovI.rgb / vCovI.a : vCovB.rgb / vCovB.a)) : vCovCol.rgb / max(vCovCol.a, 1e-3)) : (vKitY > uKitWaist ? uKitTop : uKitBot)) * .975 / max(tx_, vec3(.02));   // (flat: the kit's own painted trims and folds showed as dark streaks in the cloth's colour) (10 Nov 2026, the auditor's new bite count: discarded, the kit left see-through holes where no cloth lay behind it, Clara's armpit as she cheered; it is painted in the innermost worn garment's colour over it, or the top's above the waist and the trousers' below)   // (10 Nov 2026: .40 now that the height is in metres: the swim shorts reach 28 cm below the waist, they showed under trousers when climbing)   // (the swimsuit's own height only, trunk and thigh tops: at the ankles a non-skin point under a trouser cuff left a hole, the auditor)   // (owner 9 Nov 2026, circled dark patches in shirts' sides and the auditor's gaps at armpits and crotches: the swim kit is always under the clothes, so while dressed it is not drawn at all; a gap shows the inside of the clothes, never the swimsuit, painted or not)
 #endif` : ''}
@@ -100,8 +100,8 @@ if (uBootTop > 0.0 && vKitY < uBootTop - .01) k_ = uBootCol * .95 / max(tx_, vec
 #ifdef USE_COLOR
 if (vCov > ${BODY_CUT} && vColor.r > .5 && !(uBootTop > 0.0 && vKitY < uBootTop - .01)) k_ = (vKitY < uKitWaist - .12 && vCovI.a > .001 ? vCovI.rgb / vCovI.a : vCovCol.rgb / max(vCovCol.a, 1e-3)) * clamp(sm_ / (uPaint.r + uPaint.g + uPaint.b + 1e-4), .85, 1.05) / max(tx_, vec3(.02));   // (skin only: the swim kit has its own flat paint above)
 #endif` : ''}
-diffuseColor.rgb *= k_;`)
-      .replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\ntotalEmissiveRadiance *= k_;')
+diffuseColor.rgb = mix(diffuseColor.rgb * k_, uTint * uPaint * diffuse, shA_);`)   // (13 Nov 2026: a shut eye's black pupil and dark iris cannot be multiplied into skin, the texel is near 0: Clara's far eye at three-quarters stayed a dark core in an orange ring; it is replaced by the skin outright)
+      .replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\ntotalEmissiveRadiance = mix(totalEmissiveRadiance * k_, emissive * uTint * uPaint, shA_);')
       .replace('#include <color_fragment>', ''); }; // (the corner colour is the skin mark, not a colour)
   m.customProgramCacheKey = () => 'meshy-skintint' + (lax ? '-lax' : '') + (m.vertexColors ? '-mark' : '') + (cover ? '-cover' : '') + (kit ? '-kit' : ''); m.needsUpdate = true; return m;
 }
@@ -372,7 +372,7 @@ export function attachFriendModel(A, id: string, skinHex: string, wear: FriendMo
     }
     let f = MOOD[mood] || 'face-smile'; if (!faces[f]) f = NEAR[f] || 'face-smile';
     if (f !== face) { face = f; for (const [k, list] of Object.entries(faces)) list.forEach(o => { o.visible = k === f; });
-      const shut = /^face-(blink|happy)$/.test(f) ? 1 : 0; for (const m of skinMats) if (m.userData.kitU) m.userData.kitU.shut.value = shut; } // (eyes shut: the painted whites hidden, see skinTint)
+      const shut = /^face-(blink|happy|excited)$/.test(f) ? 1 : 0; for (const m of skinMats) if (m.userData.kitU) m.userData.kitU.shut.value = shut; } // (eyes shut: the painted whites hidden, see skinTint; 13 Nov 2026: excited too, it has the happy face's shut eyes, and the open eye under its mood piece showed as a white crescent at Clara's inner corner)
     if (face3.length) {
       const key = KEY[mood] || mood;
       if (key !== shown) { shown = key; for (const o of face3) { const d = o.morphTargetDictionary, inf = o.morphTargetInfluences; for (const n in d) inf[d[n]] = n === key ? 1 : 0; } }
