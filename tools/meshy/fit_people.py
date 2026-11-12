@@ -856,6 +856,9 @@ if OWN:
     for k in M:
         ch = (np.abs(M[k][..., :3] - F[..., :3]).max(-1) > .025).astype(np.float32)
         M[k][..., 3] = np.minimum(soften(ch, max(1, _g // 2), _g) * 1.6, 1) * PARTS[k] * NOHAIR   # (a narrow soft edge: less of the cheek redrawn)
+        if os.environ.get('FIT_MOUTH_SOFT') and k in ('surprised', 'sad', 'excited'):   # (13 Nov 2026, r050 at 1024 px: a thin pale line along the top of the old smile's corner over the "o" and sad mouths) the mouth piece hugged the erased smile, so its cut edge (the game cuts at alpha .5) fell on the smile's soft blur, sharper in the body's picture: it reaches a few px further round what changed
+            _chm = ch * (MOUTH_A > .02)
+            M[k][..., 3] = np.maximum(M[k][..., 3], np.minimum(soften(_chm, _g + 2, _g) * 1.6, 1) * MOUTH_A * NOHAIR)
         if os.environ.get('FIT_LID_HAIR') and k in ('blink', 'half', 'happy', 'sad', 'excited'):   # (13 Nov 2026, r045 at 1024 px: grey ticks at the inner corners of her shut eyes) the lid had erased the iris's rim there, but the eye box's soft hair guard (NOHAIR) made the piece see-through at the box's edge and the old rim showed: inside the eyes' wide box a strong change is always drawn
             _st = (np.abs(M[k][..., :3] - F[..., :3]).max(-1) > .12).astype(np.float32) * (_ie > .02) * (PARTS[k] > .5)
             M[k][..., 3] = np.maximum(M[k][..., 3], np.minimum(soften(_st, 1, 1) * 1.6, 1) * PARTS[k])
