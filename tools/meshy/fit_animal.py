@@ -366,9 +366,58 @@ def material(o, tex_px):
             for l in list(bsdf.inputs[inp].links): nt.links.remove(l)
         for n in list(nt.nodes):
             if n.type == 'TEX_IMAGE' and n.image and not n.outputs['Color'].links or (n.type == 'TEX_IMAGE' and n.image and 'metallic' in n.image.name) or n.type == 'NORMAL_MAP': nt.nodes.remove(n)
+        if FIX.get('repack', 0): repack(o, m, tex_px); continue
         for n in nt.nodes:
             if n.type == 'TEX_IMAGE' and n.image and n.image.size[0] > tex_px: n.image.scale(tex_px, tex_px)
         bsdf.inputs['Metallic'].default_value = 0; bsdf.inputs['Roughness'].default_value = 1
+
+def repack(o, m, tex_px):
+    """(13 Nov 2026, owner: "sao nhiều vết trắng" on the panda's black fur) Meshy packs its picture's pieces edge to edge,
+    a black piece touching a white one with no gap, so when the game blurs or shrinks the picture (mipmaps, far away) the
+    white of the next piece bleeds into the black one's edges: thin white lines along every seam. The pieces are packed
+    again with a gap round each (the same pieces, same shapes) and the picture painted again onto them (a Cycles bake from
+    the full-size picture), the colour spread past each piece's edge into the gap (bake margin)"""
+    nt = m.node_tree; bsdf = next(n for n in nt.nodes if n.type == 'BSDF_PRINCIPLED')
+    src = next(n for n in nt.nodes if n.type == 'TEX_IMAGE' and n.image and n.outputs['Color'].links)
+    me = o.data; old = me.uv_layers.active.name
+    new = me.uv_layers.new(name='packed'); me.uv_layers.active = new
+    bpy.context.view_layer.objects.active = o; o.select_set(True)
+    bpy.ops.object.mode_set(mode='EDIT'); bpy.ops.mesh.select_all(action='SELECT')
+    bpy.ops.mesh.remove_doubles(threshold=1e-5)   # (the import leaves every triangle's points apart, so each triangle was its own piece; welded by place, a piece is the picture's own island again: the UVs stay per corner)
+    bpy.ops.uv.select_all(action='SELECT'); bpy.ops.uv.seams_from_islands()
+    bpy.ops.uv.pack_islands(rotate=False, margin=FIX.get('repack', .006)); bpy.ops.object.mode_set(mode='OBJECT')
+    img = bpy.data.images.new('meshy-%s-packed' % KIND, tex_px, tex_px, alpha=True); img.pixels[:] = np.tile(np.array((1., 0., 1., 0.), np.float32), tex_px * tex_px)   # (magenta, see-through: what the bake leaves untouched)
+    uvo = nt.nodes.new('ShaderNodeUVMap'); uvo.uv_map = old; nt.links.new(uvo.outputs['UV'], src.inputs['Vector'])
+    em = nt.nodes.new('ShaderNodeEmission'); nt.links.new(src.outputs['Color'], em.inputs['Color'])
+    outn = next(n for n in nt.nodes if n.type == 'OUTPUT_MATERIAL'); was = outn.inputs['Surface'].links[0].from_socket
+    nt.links.new(em.outputs['Emission'], outn.inputs['Surface'])
+    tgt = nt.nodes.new('ShaderNodeTexImage'); tgt.image = img
+    for n in nt.nodes: n.select = False
+    tgt.select = True; nt.nodes.active = tgt
+    sc = bpy.context.scene; eng = sc.render.engine; sc.render.engine = 'CYCLES'; sc.cycles.samples = 1; sc.cycles.device = 'CPU'
+    mods = [(md, md.show_viewport) for md in o.modifiers]
+    for md, _ in mods: md.show_viewport = False   # (the rest shape: the rig's modifier off while baking)
+    bpy.ops.object.select_all(action='DESELECT'); o.select_set(True); bpy.context.view_layer.objects.active = o
+    bpy.ops.object.bake(type='EMIT', margin=FIX.get('repack_margin', 8), margin_type='EXTEND', use_clear=False)
+    for md, v in mods: md.show_viewport = v
+    sc.render.engine = eng
+    # the material again: the new picture on the new pieces, the old ones gone
+    nt.links.new(was, outn.inputs['Surface']); nt.nodes.remove(em); nt.nodes.remove(uvo)
+    tgt.select = False; nt.links.new(tgt.outputs['Color'], bsdf.inputs['Base Color']); nt.nodes.remove(src)
+    me.uv_layers.remove(me.uv_layers[old]); me.uv_layers.active = me.uv_layers['packed']; me.uv_layers['packed'].active_render = True
+    # (the bake left the gaps black (its margin did not reach): each piece's edge colour spread out into the gaps here, so a
+    # blurred or shrunk picture never mixes black into a white piece's edge or white into a black one)
+    px = np.array(img.pixels[:], dtype=np.float32).reshape(tex_px, tex_px, 4); have = ~((px[..., 0] > .99) & (px[..., 1] < .01) & (px[..., 2] > .99)); col = px[..., :3] * have[..., None]
+    for _ in range(FIX.get('repack_grow', 24)):
+        if have.all(): break
+        s_ = np.zeros_like(col); c_ = np.zeros(have.shape, np.float32)
+        for dy, dx in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            s_ += np.roll(col, (dy, dx), (0, 1)); c_ += np.roll(have, (dy, dx), (0, 1))
+        new = (~have) & (c_ > 0); col[new] = s_[new] / c_[new][:, None]; have = have | new
+    px[..., :3] = col; px[..., 3] = 1; img.pixels[:] = px.ravel(); img.update()
+    img.pack()
+    bsdf.inputs['Metallic'].default_value = 0; bsdf.inputs['Roughness'].default_value = 1
+    print('REPACK', KIND, tex_px, flush=True)
 
 FARLOD = False
 def make(path, J, M, out, tex_px):
@@ -525,8 +574,9 @@ def extra_moves(J, M, bones):
         face(P, None, joy=True, smile=1.35, jaw=.5 + .3 * hop)
         return P
     def sitting(P, pitch=-.55):
-        put(P, 'body', pitch, loc=(0, 0, -.06 * H))
-        for i in back: legs(P, i, -1.1, 1.25)
+        sf = FIX.get('sit_fold', 1.0)   # (13 Nov 2026, owner: the panda's hind feet looked dented when it sat up and begged: its short thick hind legs folded as far as the puppy's opened a jagged gap at the foot)
+        put(P, 'body', pitch * (.5 + .5 * sf), loc=(0, 0, -.06 * H))
+        for i in back: legs(P, i, -1.1 * sf, 1.25 * sf)
         for i in front: legs(P, i, -pitch, 0)
         put(P, 'tail', -.45)
     def sit(t):
