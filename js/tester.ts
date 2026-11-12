@@ -25,6 +25,7 @@ import { setProblemHook } from './players.js';
 import { SFX } from './audio.js';
 import * as C from './content/tester.js';
 import { RELEASES } from './content/releases.js';
+import { gameInfo } from './content/activities.js';
 import { takeCopy, putCopyBack, hasCopy, dropCopy } from './keepcopy.js';
 import { revertOf } from './content/autoplay.js';
 import { easyName } from './content/devname.js';
@@ -272,7 +273,7 @@ function watch() {
       const [i, id] = args;
       const requested = String(id || ''); lastGame = requested; lastMode = String(args[2] || ''); note('game', requested);
       // The game rejects a second launch while another activity is open: not a failed open.
-      const cancel = document.querySelector('.gl:not(.out)') ? null : observeGameOpen(requested, () => { if (live) autoReport('noopen', requested); }, {wait:C.LIMITS.openWait * 1000});
+      const cancel = document.querySelector('.gl:not(.out)') || heldBack(requested) ? null : observeGameOpen(requested, () => { if (live) autoReport('noopen', requested); }, {wait:C.LIMITS.openWait * 1000});
       if (cancel) pending.add(cancel);
       const timer = setTimeout(() => { if (cancel) pending.delete(cancel); }, C.LIMITS.openWait * 1000 + 10);
       try { return pg.apply(this, args); } catch (error) { cancel?.(); pending.delete(cancel); clearTimeout(timer); throw error; }
@@ -401,6 +402,8 @@ const paintCount = () => { dispatchEvent(new Event('sv-report-queue')); const n 
 // (#736 #674 #675) auto play's reports name the game as its step, "game:sparkleorchard" (that stays: it is part of the
 // problem's key); the game itself is "sparkleorchard": a replay of "game:…" opened nothing and was taken as a game that
 // did not open, and as the problem still being there
+// (#901) a game the family cannot see yet (a held-back tester game, a closed switch, a game not due) never opens, and that is not a fault
+const heldBack = (id: string): boolean => { try { return !!gameInfo(id).hidden; } catch { return false; } };
 const gameIdOf = (w): string => String(w && w.game || '').replace(/^game:/, '');
 const gameName = p => { const w = p && p.where || {}; if (w.game) return { id: gameIdOf(w) }; const m = /^autoplay: ([^:]+):/.exec(p && p.title || ''); return m ? { name: m[1].trim() } : null; };
 const spotOf = p => { const w = p && p.where || {}; let x = +w.x, z = +w.z; const m = /(-?\d+),\s*(-?\d+)/.exec(p && p.title || ''); if ((!x && !z || !Number.isFinite(x)) && m) { x = +m[1]; z = +m[2]; } return Number.isFinite(x) && Number.isFinite(z) && (x || z) ? { x, z } : null; };
@@ -627,6 +630,7 @@ async function retest() {
     const tag = 'rt:' + p.k + ':' + BUILD; if (done[tag]) continue;
     if (G.paused || document.querySelector('.gl, .modal, .theatre, .storybook')) return; // (only when the child is free)
     const game = gameIdOf(p.where), before = errors.length; let again = false;
+    if (game && heldBack(game)) continue; // (#901) not open to this family: nothing to replay, so no "came back"
     if (game && G.playGame) { G.playGame(0, game, 'replay'); await new Promise(r => setTimeout(r, 8000)); again = !document.querySelector('.gl') || errors.length > before; document.querySelector<HTMLElement>('.gl .gl-x')?.click(); }
     else if (p.auto === 'error') { await new Promise(r => setTimeout(r, 8000)); again = errors.slice(before).some(e => p.title.includes(e.split(' @ ')[0].slice(0, 40))); }
     else continue; // (a problem that cannot be replayed by itself waits for the tester's Yes or Still wrong)
