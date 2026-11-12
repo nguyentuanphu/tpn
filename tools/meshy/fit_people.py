@@ -677,6 +677,9 @@ if OWN:
     _ie = _ineyes.astype(np.float32)
     for _ in range(6): _ie = (_ie + np.roll(_ie, 1, 0) + np.roll(_ie, -1, 0) + np.roll(_ie, 1, 1) + np.roll(_ie, -1, 1)) / 5   # (soft: its box edge showed as straight lines on Clara)
     NOHAIR = 1 - np.clip(HAIRISH.astype(np.float32) * 1.5, 0, 1) * (1 - _ie)
+    # (13 Nov 2026: a see-through hole in every new mouth, where Clara's real lips showed: her red lips are hair-coloured, so
+    # the mouth piece left them as "hair") nothing in the wiped mouth is hair
+    if mouth_er: NOHAIR = np.maximum(NOHAIR, (np.hypot((xx - (mouth_er[0] + mouth_er[2]) / 2) / max(2, (mouth_er[2] - mouth_er[0]) / 2), (yy - (mouth_er[1] + mouth_er[3]) / 2) / max(2, (mouth_er[3] - mouth_er[1]) / 2)) < 1.1).astype(np.float32))
     PARTS = {'smile': 0 * EYE_A, 'blink': EYE_A, 'half': EYE_A, 'happy': EYE_A, 'lookL': EYE_A, 'lookR': EYE_A,
              'surprised': MOUTH_A, 'sad': np.maximum(EYE_A, MOUTH_A), 'excited': np.maximum(EYE_A, MOUTH_A)}
     # only what the mood changes (the lids, lash lines, moved irises, the mouth), a little wider and softened: the rest of
