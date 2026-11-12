@@ -221,6 +221,8 @@ def weights(o, J, M):
     # the head: in front of and above the neck's plane (tilted forward), softly over 3 cm
     hp = np.array(J['head']); nrm = np.array((0, -.55, 1.0)); nrm /= np.linalg.norm(nrm)
     head = smooth01(((V - hp) @ nrm + .015) / .04)
+    # (and not far behind the neck: a kitty's tall tail reaches above the neck's plane at the back, and its tip moved with the head)
+    head *= smooth01((hp[1] + (M['by'] - M['fy']) * FIX.get('head_back', .25) - V[:, 1]) / .03)
     # the ears: on the head, out beyond the cheeks, below the ear's root
     ear = np.zeros(n); ear_side = np.zeros(n, int)
     for i in (0, 1):
@@ -426,6 +428,7 @@ def extra_moves(J, M, bones):
         elif u < .88: k = 1 - (u - .72) / .16; up = -.05 * H * k; pitch = .12 * k; fl = .15 * k; bl = -.2 * k; kn = .7 * k
         else: up = pitch = fl = bl = kn = 0
         put(P, 'body', pitch, loc=(0, up, .08 * H * min(1, max(0, (u - .22) / .5))))
+        kn *= FIX.get('jump_knee', 1.0)   # (a kitty's long thin legs: knees folded less in the air, or its paws stretched)
         for i in front: legs(P, i, fl, kn)
         for i in back: legs(P, i, bl, kn)
         put(P, 'head', -pitch * .6); put(P, 'tail', .4, math.sin(TAU * t * 3) * .3)
@@ -557,7 +560,7 @@ def find_face(o, J, M):
     comps = [c for c in comps if c['n'] >= 6]
     mids = [c for c in comps if abs(c['c'][0]) < .03]
     nose = min(mids, key=lambda c: c['c'][1]) if mids else None   # (the middle one farthest forward; the dragon has none)
-    eyes = sorted((c for c in comps if abs(c['c'][0]) >= .03 and (nose is None or c['c'][2] > nose['c'][2])), key=lambda c: -c['n'])[:2]
+    eyes = sorted((c for c in comps if .03 <= abs(c['c'][0]) <= FIX.get('eye_xmax', 1.0) and (nose is None or c['c'][2] > nose['c'][2])), key=lambda c: -c['n'])[:2]   # (eye_xmax: not the panda's black ears, which are bigger dark patches than its eye patches)
     eyes.sort(key=lambda c: c['c'][0])
     if nose is None:   # (no dark nose: a point on the face's middle below the eyes, a nose-sized one)
         ed = float(np.linalg.norm(eyes[0]['c'] - eyes[1]['c'])); mid = (eyes[0]['c'] + eyes[1]['c']) / 2

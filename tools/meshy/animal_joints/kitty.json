@@ -1,8 +1,8 @@
 {
-  "note": "Meshy kitty (12 Nov 2026 model): first fit with the puppy's pose and face tuning; values tuned below after looking at its pictures. (12 Nov: ears stand up: ear_up, pivots at their roots; the tail curves up, so its root is set at the rump by hand.)",
+  "note": "Meshy kitty (12 Nov 2026 model): first fit with the puppy's pose and face tuning; values tuned below after looking at its pictures. (12 Nov: ears stand up: ear_up, pivots at their roots; the tail curves up, so its root is set at the rump by hand.) (12 Nov: the head stops a quarter of the body behind the neck (head_back), or the tall tail tip moved with the head. Sleep folds the long front legs more, like a loaf.)",
   "lie_drop": 0.95,
-  "lie_front": -1.35,
-  "lie_front_knee": 0.1,
+  "lie_front": -1.1,
+  "lie_front_knee": 0.45,
   "lie_back": -1.2,
   "lie_back_knee": 0.3,
   "smooth": 5,
@@ -28,5 +28,11 @@
       0.19,
       0.45
     ]
-  }
+  },
+  "leg_amp": 0.5,
+  "audit": {
+    "tear": 25,
+    "why": "12 Nov 2026, looked at the marked pictures (idle, bounce, carry, from the side and level): 7-21 px of background between the little bell hanging on the collar and the chest; not a hole in the skin."
+  },
+  "jump_knee": 0.5
 }

@@ -1,5 +1,5 @@
 {
-  "note": "Meshy bunny (12 Nov 2026 model): first fit with the puppy's pose and face tuning; values tuned below after looking at its pictures.",
+  "note": "Meshy bunny (12 Nov 2026 model): first fit with the puppy's pose and face tuning; values tuned below after looking at its pictures. (12 Nov: long upright ears: ear_up, pivots at their roots read from the front and side renders.)",
   "lie_drop": 0.95,
   "lie_front": -1.35,
   "lie_front_knee": 0.1,
@@ -8,5 +8,20 @@
   "smooth": 5,
   "leg_top": 0.8,
   "spatial_r": 0.03,
-  "mouth_w": 0.8
+  "mouth_w": 0.8,
+  "ear_up": true,
+  "ear_mid": 0.03,
+  "ear_amp": 0.3,
+  "joints": {
+    "ear0": [
+      -0.06,
+      -0.07,
+      0.557
+    ],
+    "ear1": [
+      0.06,
+      -0.07,
+      0.557
+    ]
+  }
 }

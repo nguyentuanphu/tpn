@@ -1,5 +1,5 @@
 {
-  "note": "Meshy panda (12 Nov 2026 model): first fit with the puppy's pose and face tuning; values tuned below after looking at its pictures.",
+  "note": "Meshy panda (12 Nov 2026 model): first fit with the puppy's pose and face tuning; values tuned below after looking at its pictures. (12 Nov: small round ears overlapping the wide head from the front: they stay still with the head, ear_amp 0, so their swing never drags the head.) (12 Nov: eyes looked for within 13 cm of the middle (its black ears are bigger dark patches); its big head reaches far back: head_back 0.7.) Shut eyes keep the black eye patch: the eye is only the painted white and iris (eye_grow 0.5), the lid filled from the patch (fill_near), the line light.",
   "lie_drop": 0.95,
   "lie_front": -1.35,
   "lie_front_knee": 0.1,
@@ -8,5 +8,15 @@
   "smooth": 5,
   "leg_top": 0.8,
   "spatial_r": 0.03,
-  "mouth_w": 0.8
+  "mouth_w": 0.8,
+  "ear_amp": 0,
+  "eye_xmax": 0.13,
+  "head_back": 0.7,
+  "eye_grow": 0.5,
+  "fill_near": 0.25,
+  "lash": [
+    0.85,
+    0.8,
+    0.78
+  ]
 }
