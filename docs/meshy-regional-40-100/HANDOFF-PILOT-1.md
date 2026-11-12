@@ -24,6 +24,21 @@ about 16:30 AEDT, when the owner stopped this chat so that another Claude accoun
   12 Nov). Nothing in `js/crowd-models.ts` changes.
 - Nothing is running. The test server on port 8794 and every Blender fit of this chat were stopped.
 
+## Review gate before any approval question (owner, 12 Nov 2026 evening AEDT)
+
+Owner: "Tất cả dân làng và thú đều đa số bị ở mặt, mắt, hốc mắt và mũi ... rất nhiều trường hợp hỏi approve trong khi có
+nhiều vấn đề ở mặt cổ và áo etc nên phải nghiêm túc xem sét ... và chỉ đưa bản tốt nhất". No approval question until, for
+every model:
+1. The auditor (`audit_villager.mts`) says 0 failing, and no count is worse than the round before.
+2. The 1024 px picture set (`SHOT_GATE=1 SHOT_SIZE=1024 SHOT_DIST=.45 SHOT_UP=.06 game_shots.mts <out> village <list>`:
+   every mood front, -.7, -.4, .4, .7, both sides, from above and below front and half to either side; neck from behind,
+   whole body; the auditor's pose pictures) is looked at, each picture at full size.
+3. A second reviewer that does not know what was fixed (a subagent given only the picture paths and the checklist) lists
+   faults at full size; each one is fixed or written down with why it is not a fault.
+4. Every fault the owner ever circled (this file, `PILOT-1.md`, SKILL.md) is checked again on the new pictures.
+5. Only then one approval question for the whole group, with the sheets and the list fixed / left. Not clean: keep working,
+   do not ask.
+
 ## Next steps
 
 1. Refit all six with the code at the branch tip (it has 751e6d0a4), two at a time:

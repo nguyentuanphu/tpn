@@ -620,6 +620,18 @@ def lid(img, b, top=0., bot=1.):   # (original_skin) a closed lid painted over t
                 elif _FULL and (_cp & hm).any() and (_cp & _near).sum() * 2 >= _cp.sum(): hm |= _cp & _near   # (a small mark already half under the lid closes whole: the end of a strand stayed as a dark fleck over r045's right eye)
                 else: hm &= ~(_cp & ~_eyeE); _hairall |= _cp & ~_eyeE
             _hairall = _hairall | np.roll(_hairall, 1, 0) | np.roll(_hairall, -1, 0) | np.roll(_hairall, 1, 1) | np.roll(_hairall, -1, 1); hm &= ~(_hairall & ~_eyeE)   # (and the hair's soft edge, 1 px: it closed as thin skin lines along r045's strands)
+            if os.environ.get('FIT_LID_HAIR'):   # (13 Nov 2026, r045 at 1024 px: the lock past her right brow's end came out dotted on every shut eye: its mid-brown body is not "dark" (V .4-.6), so only its dark outline was kept as hair and the body between was filled with skin) above the eye's top, what is not skin and not near the eye white stays as painted (hair, the brow's end); light streaks a few px wide between hair lines too
+                _hc = _hairall.copy(); _r = max(2, int(round(w_ * .06)))
+                for _ in range(_r): _hc = _hc | np.roll(_hc, 1, 0) | np.roll(_hc, -1, 0) | np.roll(_hc, 1, 1) | np.roll(_hc, -1, 1)
+                for _ in range(_r): _hc = _hc & np.roll(_hc, 1, 0) & np.roll(_hc, -1, 0) & np.roll(_hc, 1, 1) & np.roll(_hc, -1, 1)
+                hm &= ~(_hc & ~_lashz)
+                _kp = ~skin_mask(F)[ya:yb, xa:xb] & ~_flz & (yy < b[1] + h_ * .24)[ya:yb, xa:xb] & (V < .62)[ya:yb, xa:xb]
+                _sd = _hairall.copy(); _sd[0] = _sd[-1] = True; _sd[:, 0] = _sd[:, -1] = True; _sd = _kp & (_sd | np.roll(_sd, 1, 0) | np.roll(_sd, -1, 0) | np.roll(_sd, 1, 1) | np.roll(_sd, -1, 1))
+                for _ in range(_kp.shape[0] + _kp.shape[1]):   # (only what joins the kept hair or runs out of the window: an upper lash's top edge, alone, still closes: r064)
+                    _n = _sd | (_kp & (np.roll(_sd, 1, 0) | np.roll(_sd, -1, 0) | np.roll(_sd, 1, 1) | np.roll(_sd, -1, 1) | np.roll(np.roll(_sd, 1, 0), 1, 1) | np.roll(np.roll(_sd, -1, 0), -1, 1) | np.roll(np.roll(_sd, 1, 0), -1, 1) | np.roll(np.roll(_sd, -1, 0), 1, 1)))
+                    if (_n == _sd).all(): break
+                    _sd = _n
+                hm &= ~_sd
         for _ in range(max(2, int(round(w_ * .06)))): hm = hm | (_sk3 & (np.roll(hm, 1, 0) | np.roll(hm, -1, 0) | np.roll(hm, 1, 1) | np.roll(hm, -1, 1)))
     # (owner 8 Nov 2026: dark smudges round the closed eyes in the game) only skin flows in: lashes, brows and hair round
     # the eye are held at her skin colour while the lid is filled (they themselves stay as they are outside the lid)
@@ -844,6 +856,9 @@ if OWN:
     for k in M:
         ch = (np.abs(M[k][..., :3] - F[..., :3]).max(-1) > .025).astype(np.float32)
         M[k][..., 3] = np.minimum(soften(ch, max(1, _g // 2), _g) * 1.6, 1) * PARTS[k] * NOHAIR   # (a narrow soft edge: less of the cheek redrawn)
+        if os.environ.get('FIT_LID_HAIR') and k in ('blink', 'half', 'happy', 'sad', 'excited'):   # (13 Nov 2026, r045 at 1024 px: grey ticks at the inner corners of her shut eyes) the lid had erased the iris's rim there, but the eye box's soft hair guard (NOHAIR) made the piece see-through at the box's edge and the old rim showed: inside the eyes' wide box a strong change is always drawn
+            _st = (np.abs(M[k][..., :3] - F[..., :3]).max(-1) > .12).astype(np.float32) * (_ie > .02) * (PARTS[k] > .5)
+            M[k][..., 3] = np.maximum(M[k][..., 3], np.minimum(soften(_st, 1, 1) * 1.6, 1) * PARTS[k])
         if k in ('lookL', 'lookR') and os.environ.get('FIT_LOOK_SOLID') and LOOK_A.any():
             # (owner 11 Nov 2026: the looking eyes were streaked, rings of the old iris round the moved one) the piece drew
             # only the pixels that changed, with soft edges, so the painted iris under it showed through: it now covers the
@@ -1014,6 +1029,17 @@ if ORIGINAL and moods and not OWN:   # (opaque face layer) any body point in fro
         if not (0 <= cpx < W_ and 0 <= rpx < H_) or base[rpx, cpx, 3] < .5: continue   # (where the layer is see-through, hair: left in front)
         if v.co.y < h_[0].y + .004: v.co.y = h_[0].y + .004; _np += 1
     body.data.update(); print('FIT body points moved behind the face layer', _np)
+if OWN and moods and os.environ.get('FIT_PIECE_SINK'):   # (13 Nov 2026, r045 at 1024 px: a lens-shaped dark fleck over the shut right eye in every view, the tip of a hair lock lying on the lid 7 mm in front of the blink piece; the grid's snap rays passed beside it) a body point in front of a mood piece, where any piece is not see-through, goes 2 mm behind the pieces
+    _lt = BVHTree.FromObject(moods[0], bpy.context.evaluated_depsgraph_get()); _np = 0; _mx = 0.
+    _PA = np.max(np.stack([M[k][..., 3] for k in M]), 0)
+    for v in body.data.vertices:
+        if v.co.y > .05 or not (fx0 - .01 < v.co.x < fx1 + .01 and fz0 - .01 < v.co.z < fz1 + .01): continue
+        h_ = _lt.ray_cast(Vector((v.co.x, -2, v.co.z)), Vector((0, 1, 0)))
+        if h_[0] is None: continue
+        cpx = int((v.co.x - fx0) / (fx1 - fx0) * W_); rpx = int((fz1 - v.co.z) / (fz1 - fz0) * H_)
+        if not (0 <= cpx < W_ and 0 <= rpx < H_) or _PA[max(0, rpx - 1):rpx + 2, max(0, cpx - 1):cpx + 2].max() < .02: continue   # (where every piece is see-through the body is what is seen: left as it is)
+        if v.co.y < h_[0].y + .002: _mx = max(_mx, h_[0].y + .002 - v.co.y); v.co.y = h_[0].y + .002; _np += 1
+    body.data.update(); print('FIT body points moved behind the mood pieces', _np, 'most', round(_mx * 1000, 1), 'mm')
 if KEEP:
     for p in body.data.polygons: p.use_smooth = True   # (Meshy's remesh: soft shading, not flat facets)
 
