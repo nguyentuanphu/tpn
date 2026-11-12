@@ -39,7 +39,8 @@ const PARTS: [string, number, number, string][] = [['đứng', 2, 0, ''], ['đi 
   ...(setup as any).has.map((m: string) => [m, m === 'jump' ? 1.4 : 2.6, 0, m] as [string, number, number, string])];
 let n = 0;
 for (const [title, secs, speed, move] of PARTS) {
-  await P.page.evaluate(() => { const F = (window as any).__film; F.h.pos.set(F.start.x, F.start.y, F.start.z); F.h.yaw = F.start.yaw; });
+  await P.page.evaluate(() => { const F = (window as any).__film, h = F.h; h.pos.set(F.start.x, F.start.y, F.start.z); h.yaw = F.start.yaw;
+    F.L.obj.position.set(h.pos.x - Math.sin(h.yaw) * 1.7 + Math.cos(h.yaw) * .9, h.pos.y, h.pos.z - Math.cos(h.yaw) * 1.7 - Math.sin(h.yaw) * .9); });   // (the pet back beside the child: after the run it was far behind, and ran back through the next move)
   for (let f = 0; f < secs * FPS; f++) {
     const url = await P.page.evaluate(async ([speed, title, dt, move]) => {
       const G = (window as any).__sv, F = (window as any).__film, { THREE } = await import(String('/js/gfx.js')), { L, h } = F;
