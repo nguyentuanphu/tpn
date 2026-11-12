@@ -661,7 +661,7 @@ if OWN:
         w_, h_ = b[2] - b[0], b[3] - b[1]; cx_, cy_ = (b[0] + b[2]) / 2, (b[1] + b[3]) / 2
         d = np.hypot((xx - cx_) / (w_ / 2 * gx_), (yy - cy_) / (h_ / 2 * gy_)); return np.clip((1 - d) / .25, 0, 1)
     EYE_A = np.zeros((H_, W_), np.float32)
-    for b in eyes.values(): EYE_A = np.maximum(EYE_A, soft_oval(grow(b), 1.3, 1.8))   # (10 Nov 2026: 1.3 wide, was 1.7: on Finn's narrow face the blink piece reached the cheek's side and drew dark streaks before his ears)
+    for b in eyes.values(): EYE_A = np.maximum(EYE_A, soft_oval(grow(b), 1.3, 1.8) * np.clip((grow(b)[3] + 3 - yy) / 6, 0, 1))   # (13 Nov 2026, Lumi's and Finn's closed eyes at three-quarters: the lid piece reached down over the cheek as a lighter flat patch with a hard edge across the blush; it ends softly just below the eye's grown box)   # (10 Nov 2026: 1.3 wide, was 1.7: on Finn's narrow face the blink piece reached the cheek's side and drew dark streaks before his ears)
     MOUTH_A = np.maximum(soft_oval(mouth, 1.7, 2.6), soft_oval(mouth_er, 1.4, 1.6)) if mouth else np.zeros((H_, W_), np.float32)
     # (hair in front stays the 3D hair; but never inside the eyes: Sol's amber irises are hair-coloured and stayed open)
     _ineyes = np.zeros((H_, W_), bool)
