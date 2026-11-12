@@ -587,8 +587,8 @@ def lid(img, b, top=0., bot=1.):   # (original_skin) a closed lid painted over t
     if os.environ.get('FIT_LID_SOFT') and OWN:   # (12 Nov 2026, close-up: -LidMatch scaled the fill to the skin 4-12 px out, lighter than the socket's shade: a pale oval under every closed eye) the lid takes a few px of the skin round it and fills from there, by itself matching the skin at its edge
         _sk3 = skin_mask(img[ya:yb, xa:xb]) & (hsv_np(sub)[2] > .45); hm = hm.copy()
         # (close-up, 12 Nov: broken lash and fringe bits round r045's closed eyes, a dark tick at r050's inner corners) every
-        # dark mark round the eye, below the brows, closes with it
-        _ext = (np.hypot((xx - cx_) / (w_ * .76 * 1.15), (yy - (b[1] + b[3]) / 2) / (h_ * .64 * 1.15)) < 1) & (yy >= b[1] + h_ * .24) & ((V < .5) | ((D > .3) & ~skin_mask(F))) & ~(HAIRISH & ((yy < cy_) | (xx < b[0]) | (xx >= b[2])))   # (hair above the eye's middle or beside its box stays: r045's painted fringe was cut square)
+        # dark mark round the eye, below the brows, closes with it (and greyer ones: the painted outline's grey ticks at r045's inner corners, 12 Nov)
+        _ext = (np.hypot((xx - cx_) / (w_ * .76 * 1.15), (yy - (b[1] + b[3]) / 2) / (h_ * .64 * 1.15)) < 1) & (yy >= b[1] + h_ * .24) & ((V < .5) | ((D > .3) & ~skin_mask(F)) | (V < float(max(REF[:3])) - .15)) & ~(HAIRISH & ((yy < cy_) | (xx < b[0]) | (xx >= b[2])))   # (hair above the eye's middle or beside its box stays: r045's painted fringe was cut square)
         if top <= 0 and bot >= 1 and not PART: hm |= _ext[ya:yb, xa:xb]   # (a fully shut eye only: the half and sad lids keep the iris)
         # (dark hair beside the eye is never lid: r045's hair colour was read from her pink hat and her dark fringe was cut
         # square; but r064's and r074's small lash flicks at the outer corners, just outside the box, stayed on every shut
@@ -597,7 +597,13 @@ def lid(img, b, top=0., bot=1.):   # (original_skin) a closed lid painted over t
         if top <= 0 and bot >= 1 and not PART:
             _dk = (V < .4)[ya:yb, xa:xb].copy(); _ob = ((xx < b[0]) | (xx >= b[2]) | (yy < b[1]) | (yy >= b[3]))[ya:yb, xa:xb]
             _near = (np.hypot((xx - cx_) / (w_ * .76 * 1.35), (yy - (b[1] + b[3]) / 2) / (h_ * .64 * 1.35)) < 1)[ya:yb, xa:xb] & (yy >= b[1] + h_ * .24)[ya:yb, xa:xb]
-            _left = _dk & _ob
+            _eyeE = (np.hypot((xx - cx_) / (w_ * .76), (yy - (b[1] + b[3]) / 2) / (h_ * .64)) < 1)[ya:yb, xa:xb]
+            _lashz = ((V > .78) & (S_ < .22))[ya:yb, xa:xb] & _eyeE   # (the eye white; lashes lie right against it)
+            for _ in range(max(2, int(round(w_ * .08)))): _lashz = _lashz | np.roll(_lashz, 1, 0) | np.roll(_lashz, -1, 0) | np.roll(_lashz, 1, 1) | np.roll(_lashz, -1, 1)
+            _flz = _lashz.copy()
+            for _ in range(max(2, int(round(w_ * .12)))): _flz = _flz | np.roll(_flz, 1, 0) | np.roll(_flz, -1, 0) | np.roll(_flz, 1, 1) | np.roll(_flz, -1, 1)   # (lash flicks touch the eye; a strand of hair down the face's side does not: r064's closed as a skin strip)
+            _left = _dk & (_ob | ~_eyeE)   # (12 Nov 2026, owner: "sửa lại 3 lỗi": hair inside the eye's box but outside its oval, r064's fringe at the eye's top-left corner and r045's strand up to her brow, was closed square)
+            _hairall = np.zeros_like(_dk)
             while _left.any():
                 _ys0, _xs0 = np.nonzero(_left); _cp = np.zeros_like(_dk); _cp[_ys0[0], _xs0[0]] = True
                 for _ in range(_dk.shape[0] + _dk.shape[1]):
@@ -606,8 +612,11 @@ def lid(img, b, top=0., bot=1.):   # (original_skin) a closed lid painted over t
                     _cp = _n
                 _left &= ~_cp
                 _edge = _cp[0].any() or _cp[-1].any() or _cp[:, 0].any() or _cp[:, -1].any()
-                if _edge or _cp.sum() > w_ * h_ * .12: hm &= ~(_cp & _ob)
-                elif (_cp & _near).sum() * 2 >= _cp.sum(): hm |= _cp
+                if (_edge or _cp.sum() > w_ * h_ * .12) and (_cp & _eyeE).sum() * 2 < _cp.sum(): _hairall |= _cp & ~_lashz; hm &= ~(_cp & ~_lashz)   # (hair: mostly outside the eye's oval; only the lashes along the eye white close, the rest stays hair: r064's fringe block at the eye's corner)
+                elif _edge or _cp.sum() > w_ * h_ * .12: hm |= _cp & _near   # (the lashes joined to the iris: mostly on the eye, close with it)
+                elif (_cp & _near).sum() * 2 >= _cp.sum() and (_cp & _flz).any(): hm |= _cp
+                else: hm &= ~(_cp & ~_eyeE); _hairall |= _cp & ~_eyeE
+            _hairall = _hairall | np.roll(_hairall, 1, 0) | np.roll(_hairall, -1, 0) | np.roll(_hairall, 1, 1) | np.roll(_hairall, -1, 1); hm &= ~(_hairall & ~_eyeE)   # (and the hair's soft edge, 1 px: it closed as thin skin lines along r045's strands)
         for _ in range(max(2, int(round(w_ * .06)))): hm = hm | (_sk3 & (np.roll(hm, 1, 0) | np.roll(hm, -1, 0) | np.roll(hm, 1, 1) | np.roll(hm, -1, 1)))
     # (owner 8 Nov 2026: dark smudges round the closed eyes in the game) only skin flows in: lashes, brows and hair round
     # the eye are held at her skin colour while the lid is filled (they themselves stay as they are outside the lid)
@@ -638,10 +647,20 @@ def lid(img, b, top=0., bot=1.):   # (original_skin) a closed lid painted over t
         for _ in range(_k): _big = _big | np.roll(_big, 1, 0) | np.roll(_big, -1, 0) | np.roll(_big, 1, 1) | np.roll(_big, -1, 1)
         for _ in range(_k): _sm2 = _sm2 & np.roll(_sm2, 1, 0) & np.roll(_sm2, -1, 0) & np.roll(_sm2, 1, 1) & np.roll(_sm2, -1, 1)
         _rg = img[ya:yb, xa:xb, :3]; _ok = _big & ~_sm2 & (hm | (skin_mask(img[ya:yb, xa:xb]) & (hsv_np(_rg)[2] > .45)))
-        _bl = _rg.copy()
+        # (12 Nov 2026: blurred from the skin and the lid only: the dark hair beside r064's eye bled into the band as a strip)
+        _wm = (hm | (skin_mask(img[ya:yb, xa:xb]) & (hsv_np(_rg)[2] > .45))).astype(np.float32)[..., None]; _bl = _rg * _wm; _bw = _wm.copy()
         for _ in range(_k * 2):
             P = np.pad(_bl, ((1, 1), (1, 1), (0, 0)), mode='edge'); _bl = (P[:-2, 1:-1] + P[2:, 1:-1] + P[1:-1, :-2] + P[1:-1, 2:] + P[1:-1, 1:-1]) / 5
+            P = np.pad(_bw, ((1, 1), (1, 1), (0, 0)), mode='edge'); _bw = (P[:-2, 1:-1] + P[2:, 1:-1] + P[1:-1, :-2] + P[1:-1, 2:] + P[1:-1, 1:-1]) / 5
+        _bl = np.where(_bw > 1e-3, _bl / np.maximum(_bw, 1e-3), _rg)
         _rg[_ok] = _bl[_ok]; img[ya:yb, xa:xb, 3] = np.maximum(img[ya:yb, xa:xb, 3], _ok.astype(np.float32))
+    if PART and os.environ.get('FIT_LID_SOFT') and OWN:
+        # (12 Nov 2026, owner: r084's half lid left a bare white crescent under his high iris) the eye white still showing
+        # under a half lid lies in the lid's shadow: darker and warmer, most right under the lid
+        _ly = lidline(xx); _bel = (yy >= _ly) & (yy < b[3]) & (xx >= b[0]) & (xx < b[2])
+        _wh = _bel & (V > .72) & (S_ < .25); _t = np.clip(1 - (yy - _ly) / max(2., h_ * .45), 0, 1)
+        _sh = (.62 + .2 * (1 - _t))[..., None]; _warm = np.array(sk) * .55
+        img[..., :3] = np.where(_wh[..., None], img[..., :3] * _sh + _warm * (1 - _sh) * .5, img[..., :3]); img[..., 3] = np.maximum(img[..., 3], _wh.astype(np.float32))
     if PART:   # the lid's edge: a soft lash line along the curve, over the eye only
         xs_ = np.linspace(b[0] + w_ * .06, b[2] - w_ * .06, 24); stroke(img, list(zip(xs_, lidline(xs_))), lash, max(1.2, H_ * .008))
 def shut(img, b, top=0., bot=1.):   # close an eye: a painted lid (original skin) or see-through (skin-tone mode)
@@ -765,7 +784,7 @@ for b in eyes.values(): shut(im, grow(b)); stroke(im, arc(b, .62, .16), lash, lw
 M['blink'] = im
 im = base.copy()
 for b in eyes.values():
-    shut(im, grow(b), 0, .55)
+    shut(im, grow(b), 0, float(os.environ.get('FIT_HALF') or .55))   # (12 Nov 2026, owner: r084's half lid left a bare white crescent under his high iris: FIT_HALF tried .58-.68, the shadow below was kept)
     if not OWN: stroke(im, arc(b, .5, -.06), lash, lw)   # (own face: the lid draws its own lash line along its curve)
 M['half'] = im
 im = base.copy()
