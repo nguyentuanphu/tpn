@@ -17,7 +17,7 @@ const { chromium } = createRequire(new URL('../../tests/package.json', import.me
 import { writeFileSync, mkdirSync, readdirSync, readFileSync, copyFileSync, existsSync, statSync } from 'node:fs';
 const [OUT, LIST = 'ba', QUICK = ''] = process.argv.slice(2);
 mkdirSync(OUT, { recursive: true });
-const LIMIT = { worn: 0, unseen: 0, eyes: 6, mouth: 100, size: 500, hdsize: 2500 };   // (hdsize: models/villager-<id>-hd.glb, worn near a child, 11 Nov 2026)   // (unseen: the face pieces cover under 400 px of a head picture: nothing was looked at, 10 Nov)
+const LIMIT = { worn: 0, unseen: 0, eyes: 6, shut: 6, mouth: 100, size: 500, hdsize: 2500 };   // (shut: 12 Nov 2026, dark or white pixels left in the eye areas while shut, any side)   // (hdsize: models/villager-<id>-hd.glb, worn near a child, 11 Nov 2026)   // (unseen: the face pieces cover under 400 px of a head picture: nothing was looked at, 10 Nov)
 function summarize(cs: any[]) { const keys = Object.keys(LIMIT), fail = cs.filter(c => keys.some(k => c[k] > LIMIT[k]));
   const lines = [`audit ${new Date().toISOString()} cases ${cs.length} failing ${fail.length}`];
   for (const k of keys) lines.push(`${k}: ${cs.filter(c => c[k] > LIMIT[k]).length} cases over ${LIMIT[k]}, worst ${Math.max(0, ...cs.map(c => c[k] || 0))}`);
@@ -88,7 +88,7 @@ const res: any = await P.page.evaluate(async ([LIST, QUICK, LIMIT]) => {
       };
       // eyes (audit.mts's rule): the open eye's whites are found in the smile, under the face pieces only, and must be gone shut
       av.life = null; A.animate(av, 'idle', 1);
-      for (const s of (QUICK ? [0, .7] : [0, .7, -.7, 1.2, -1.2])) {
+      for (const s of (QUICK ? [0, .4, .7] : [0, .4, -.4, .7, -.7, 1.2, -1.2])) {   // (±.4, 12 Nov 2026: where the far eye shows beside the nose)
         const cam = frame(s, .86, true), solo = new THREE.Scene(), par = stage;
         const saved: any[] = []; M.obj.traverse((o: any) => { if (o.isMesh) saved.push([o, o.material, o.visible]); });
         setMood('smile'); saved.forEach(([o, m, v]: any) => { o.visible = v && /^face-/.test(m.name || ''); if (o.visible) o.material = flat; });
@@ -109,6 +109,31 @@ const res: any = await P.page.evaluate(async ([LIST, QUICK, LIMIT]) => {
           cases.push({ id: id + tg, pose: m, view: String(s), worn: 0, eyes: k });
           if (k > LIMIT.eyes) pics[`${id}${tg}-face-${m}-${s}-eyes`] = png(C, f);
         }
+        // (12 Nov 2026, owner circled the far shut eye by the nose from three-quarters and the side on most villagers, while
+        // the rule above passed: it looks for whites only, and only under the face pieces, which are drawn from the front)
+        // shut: the model's own eye areas in 3D (its eye boxes, skin-marked, front half, hidden by the nose as the face is)
+        // must show no dark or white pixel while the eyes are shut, besides the lash line the lid piece draws
+        { const bm: any[] = []; M.obj.traverse((o: any) => { if (o.isMesh && o.visible && o.material && o.material.userData && o.material.userData.kitU && !/^face-/.test(o.material.name || '')) bm.push(o); });
+          if (bm.length) {
+            const mask = (o: any) => { const u = o.material.userData.kitU, m = new THREE.MeshBasicMaterial({ color: 0xffffff, vertexColors: true, side: THREE.FrontSide });
+              m.onBeforeCompile = (sh: any) => { sh.uniforms.uDq = { value: u.deq.value }; sh.uniforms.uEA = { value: u.eyeA.value }; sh.uniforms.uEB = { value: u.eyeB.value };
+                sh.vertexShader = 'uniform mat4 uDq;\nvarying vec3 vQ_;\n' + sh.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\nvQ_ = (uDq * vec4(position, 1.0)).xyz;');
+                sh.fragmentShader = 'uniform vec4 uEA;\nuniform vec4 uEB;\nvarying vec3 vQ_;\n' + sh.fragmentShader.replace('#include <dithering_fragment>', '#include <dithering_fragment>\nbool e_ = vColor.r > .5 && vQ_.z > 0.0 && ((vQ_.x > uEA.x && vQ_.x < uEA.y && vQ_.y > uEA.z && vQ_.y < uEA.w) || (vQ_.x > uEB.x && vQ_.x < uEB.y && vQ_.y > uEB.z && vQ_.y < uEB.w));\ngl_FragColor = vec4(e_ ? vec3(1.0) : vec3(0.0), 1.0);'); };
+              return m; };
+            const sv: any[] = []; M.obj.traverse((o: any) => { if (o.isMesh) sv.push([o, o.material, o.visible]); });
+            sv.forEach(([o, m, v]: any) => { if (bm.includes(o)) o.material = mask(o); else o.visible = false; });
+            const MK = read(stage, cam); sv.forEach(([o, m, v]: any) => { o.material = m; o.visible = v; });
+            for (const m of ['blink', 'happy']) {
+              setMood(m); const C = read(stage, cam);
+              const vis = sv.map(([o]: any) => o.visible); sv.forEach(([o, mm]: any, j: number) => { o.visible = vis[j] && /^face-/.test(mm.name || ''); }); solo.add(av.root); av.root.updateMatrixWorld(true); const LP = read(solo, cam); par.add(av.root); av.root.updateMatrixWorld(true); sv.forEach(([o]: any, j: number) => { o.visible = vis[j]; });   // (the pieces shown in this mood, not the smile's)
+              const lash = new Uint8Array(N); for (let i = 0; i < N; i++) if (LP[i * 4 + 3] > 40 && hsv(LP, i)[0] < .45) { const x = i % W, y = (i / W) | 0; for (let dy = -3; dy <= 3; dy++) for (let dx = -3; dx <= 3; dx++) { const xx = x + dx, yy = y + dy; if (xx >= 0 && yy >= 0 && xx < W && yy < H) lash[yy * W + xx] = 1; } }
+              const f = new Uint8Array(N); let k = 0, area = 0;
+              for (let i = 0; i < N; i++) { if (MK[i * 4] < 128 || MK[i * 4 + 3] < 128) continue; area++; if (lash[i]) continue; const [v, sa] = hsv(C, i); if (v < .35 || (v > .82 && sa < .16)) { f[i] = 1; k++; } }
+              cases.push({ id: id + tg, pose: m, view: String(s), worn: 0, eyes: 0, shut: k, shutArea: area });
+              if (k > LIMIT.shut || QUICK) pics[`${id}${tg}-face-${m}-${s}-shut`] = png(C, f);
+            }
+            setMood('smile');
+          } }
         if (s === 0) {   // the mouth's place, front only
           setMood('smile'); const S0 = read(stage, cam); setMood('blink'); const SB = read(stage, cam); setMood('o'); const SS = read(stage, cam); setMood('smile');
           const df = (a: Uint8Array, b: Uint8Array, i: number) => Math.abs(a[i * 4] - b[i * 4]) + Math.abs(a[i * 4 + 1] - b[i * 4 + 1]) + Math.abs(a[i * 4 + 2] - b[i * 4 + 2]) > 40;
