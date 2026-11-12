@@ -594,7 +594,8 @@ def lid(img, b, top=0., bot=1.):   # (original_skin) a closed lid painted over t
         # square; but r064's and r074's small lash flicks at the outer corners, just outside the box, stayed on every shut
         # eye) the dark patches round the eye: big ones, or ones reaching the window's edge, are hair and stay; small
         # ones near the eye are lash flicks and close with it
-        if top <= 0 and bot >= 1 and not PART:
+        _FULL = top <= 0 and bot >= 1 and not PART
+        if True:   # (12 Nov 2026: the half and sad lids cut r045's hair square too: the hair rules hold for every lid, closing lashes and marks only for a shut eye)
             _dk = (V < .4)[ya:yb, xa:xb].copy(); _ob = ((xx < b[0]) | (xx >= b[2]) | (yy < b[1]) | (yy >= b[3]))[ya:yb, xa:xb]
             _near = (np.hypot((xx - cx_) / (w_ * .76 * 1.35), (yy - (b[1] + b[3]) / 2) / (h_ * .64 * 1.35)) < 1)[ya:yb, xa:xb] & (yy >= b[1] + h_ * .24)[ya:yb, xa:xb]
             _eyeE = (np.hypot((xx - cx_) / (w_ * .76), (yy - (b[1] + b[3]) / 2) / (h_ * .64)) < 1)[ya:yb, xa:xb]
@@ -613,6 +614,7 @@ def lid(img, b, top=0., bot=1.):   # (original_skin) a closed lid painted over t
                 _left &= ~_cp
                 _edge = _cp[0].any() or _cp[-1].any() or _cp[:, 0].any() or _cp[:, -1].any()
                 if (_edge or _cp.sum() > w_ * h_ * .12) and (_cp & _eyeE).sum() * 2 < _cp.sum(): _hairall |= _cp & ~_lashz; hm &= ~(_cp & ~_lashz)   # (hair: mostly outside the eye's oval; only the lashes along the eye white close, the rest stays hair: r064's fringe block at the eye's corner)
+                elif not _FULL: pass
                 elif _edge or _cp.sum() > w_ * h_ * .12: hm |= _cp & _near   # (the lashes joined to the iris: mostly on the eye, close with it)
                 elif (_cp & _near).sum() * 2 >= _cp.sum() and (_cp & _flz).any(): hm |= _cp
                 else: hm &= ~(_cp & ~_eyeE); _hairall |= _cp & ~_eyeE
