@@ -63,6 +63,12 @@ Done since: `pet_film.mts` draws the near views on a stage of flat grass with th
 `D:\WorkSpace\meshy\petsilm9\`. **Before sending any film: look at the feet yourself, 2x, frame by frame, in run, jump
 and bounce (owner's standing rule in SKILL.md).** Still open: the scratch leg, the joey.
 
+**Owner, 13 Nov (pictures of the panda): "nhiều vết trắng" on the black fur and "dưới bàn chân có lõm vào".** Cause of the
+white: Meshy's picture pieces touch with no gap, the white bled into the black at every seam. Fixed with `repack` (see
+SKILL.md), on for panda, calf, kitty, bunny. The dent: the panda's hind legs folded too far sitting up (`sit_fold` 0.6).
+Panda checked at 2x in `film10`/`film11` (fur clean, feet whole); all four rebuilt and filmed into
+`D:\WorkSpace\meshy\petsilm12\`.
+
 `tests/check-times.json` (suite timing) is left uncommitted on purpose. Nothing is running.
 
 **Resume prompt (Vietnamese, for the next chat):**

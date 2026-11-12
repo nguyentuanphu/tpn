@@ -246,6 +246,13 @@ level (`legs(..., cap=KC, bp=pitch)` in `extra_moves`), and the legs swing less.
 bounce at 2x: crop the legs (`pet_film.mts <out> <kind> run,jump,bounce`, then crop x 600-900 of each frame).
 
 ### Lessons from the panda, calf and joey (13 Nov 2026)
+- White specks or lines on dark fur (owner, panda): Meshy packs its picture's pieces edge to edge with no gap, a black
+  piece touching a white one; when the game blurs or shrinks the picture (mipmaps, far away) the next piece's colour
+  bleeds in along every seam. `repack` in the animal's json: the points welded by place (the import leaves every
+  triangle's points apart, so without the weld each triangle packs as its own piece and the picture breaks into
+  thousands of dots), the pieces packed again with a gap, the picture painted again by a Cycles bake, the edge colour
+  spread into the gaps by hand (the bake's margin left them black). Look at the picture itself after a change like this.
+- A short thick hind leg folded as far as the puppy's opens a jagged gap at the foot when sitting up (`sit_fold`).
 - The weights by colour find what numbers do not: the panda's neck stretched (up to 1,127) because the back half of its
   big head was weighted to the body, so it stayed put when the head turned. The neck joint goes where the head meets the
   body (`joints.head`), and the neck's plane follows the animal's own neck line from chin to nape (`neck_tilt`; 0.55 is
