@@ -101,6 +101,10 @@ pilot. Farm and wild animals (cow, sheep, pig, buffalo ...) are not in this plan
 - **Dragon: keep the existing sheet** (standing, small wings); it flies on its small wings.
 - **Firefly: Meshy body, wings and glow stay the game's code**; the body a lighter navy so it reads from far away.
 
+- **12 Nov 2026 AEDT (pop-up "Cả 5 con, 200")**: the five pets kitty, bunny, panda, joey, calf in one go, 200 credits
+  (each multi-image 30 + remesh 30k 5 + remesh 9k 5), balance 1,764 before. Submitted 11:02 AEDT through the journal:
+  kitty 01a1cd10-4d53, bunny 01a1cd10-56e6, panda 01a1cd10-6052, joey 01a1cd10-69e0, calf 01a1cd10-736f.
+
 ## Dog pilot: progress (10 Nov 2026 AEDT, no credits spent)
 
 - `tools/meshy/fit_animal.py` (Blender): turns the Meshy puppy to face the game's front at the game animal's height;
