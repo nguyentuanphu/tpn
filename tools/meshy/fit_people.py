@@ -617,6 +617,7 @@ def lid(img, b, top=0., bot=1.):   # (original_skin) a closed lid painted over t
                 elif not _FULL: pass
                 elif _edge or _cp.sum() > w_ * h_ * .12: hm |= _cp & _near   # (the lashes joined to the iris: mostly on the eye, close with it)
                 elif (_cp & _near).sum() * 2 >= _cp.sum() and (_cp & _flz).any(): hm |= _cp
+                elif _FULL and (_cp & hm).any() and (_cp & _near).sum() * 2 >= _cp.sum(): hm |= _cp & _near   # (a small mark already half under the lid closes whole: the end of a strand stayed as a dark fleck over r045's right eye)
                 else: hm &= ~(_cp & ~_eyeE); _hairall |= _cp & ~_eyeE
             _hairall = _hairall | np.roll(_hairall, 1, 0) | np.roll(_hairall, -1, 0) | np.roll(_hairall, 1, 1) | np.roll(_hairall, -1, 1); hm &= ~(_hairall & ~_eyeE)   # (and the hair's soft edge, 1 px: it closed as thin skin lines along r045's strands)
         for _ in range(max(2, int(round(w_ * .06)))): hm = hm | (_sk3 & (np.roll(hm, 1, 0) | np.roll(hm, -1, 0) | np.roll(hm, 1, 1) | np.roll(hm, -1, 1)))
