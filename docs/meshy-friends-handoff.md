@@ -1,6 +1,6 @@
 # Meshy friends: handoff for the next chat
 
-Updated 11 Nov 2026 AEDT. Paste the prompt below into a new chat if this one runs out of usage.
+Updated 13 Nov 2026 AEDT. Paste the prompt below into a new chat if this one runs out of usage.
 
 ## Short prompt
 
@@ -8,8 +8,8 @@ Updated 11 Nov 2026 AEDT. Paste the prompt below into a new chat if this one run
 Tiếp tục việc sửa lỗi 4 bạn Meshy (Finn, Sol, Clara, Lumi) trong game Sparkle Valley.
 Thư mục D:\WorkSpace\sv-meshy-prod, nhánh meshy-production-20261107. Trả lời tiếng Việt, ngắn.
 Đọc trước: CLAUDE.md, .claude/skills/meshy-characters/SKILL.md, docs/meshy-friends-handoff.md (phần "Where it stands" và "Next").
-Việc trước mắt: dựng lại quần áo Clara, Sol, Finn bằng make_clothes.py mới (dress_own.ps1, chỉ Lumi đã dựng),
-chạy vòng soi đầy đủ 86, rồi tìm tiếp nguyên nhân mép tay áo/quần short răng cưa trong game (xem "Next").
+Việc trước mắt (13/11): soi cận mép tay áo Clara, Finn, Lumi (game_shots arms), chạy vòng soi đầy đủ 86,
+sửa vành mờ quanh mắt nhắm, rồi làm "cổng" trước khi hỏi chủ approve (xem "Gate" và "Next").
 Luật: không gọi Meshy / không tiêu credit; không merge main, không deploy, không tăng version; hỏi chủ bằng pop-up;
 commit và push nhánh mỗi giờ (pull --no-rebase trước), không force-push; không commit content/management-catalogue.json;
 xem ảnh lỗi cỡ thật; ghi bài học vào SKILL.md và cập nhật file handoff này.
@@ -49,6 +49,14 @@ The auditor branch (meshy-audit-coverage) is adding a mouth check, then eye sock
 
 ## Where it stands
 
+**13 Nov 2026 (AEDT), early morning.**
+
+- All four refitted (lid 2 px wider, light island margin .012, new mouth finder) and redressed with the new hem rule. Light models: Clara 473 KB, Sol 408, Finn 445, Lumi 464.
+- Mouths: surprised, sad and excited now change the mouth for all four (they drew on Sol's and Finn's nostril and a speck by Lumi's mouth: fit_people.py finds the lips as a line). Clara's surprised and excited mouths are small; the o mouth's outline looks plum on Clara and Sol (`mouth_o`, outline `lip * .95`): a look question, not yet changed.
+- Closed eyes (js/friend-model.ts): excited shuts the painted eye (Clara's white crescent gone); the far eye at three-quarters is closed (dark pupil replaced outright). Still open: a faint thin ring round closed eyes (Sol and Finn most), visible with `HIDE=face` and faintly through the lid piece. It is inside the eye areas; the soft edge is now closed three times as strongly, the ring is fainter but there.
+- Ragged hems: found and fixed (the painted body's edge inside the sleeve followed the triangles; gltfpack ruled out by an unpacked model). Sol checked in `arms` close-ups: clean. Clara, Finn, Lumi redressed with it; not yet looked at close.
+- Round 86 (full audit) not run yet. The approval gate above applies: do not ask the owner until it is clean.
+
 **Hand-over, 12 Nov 2026 (AEDT), owner asked to stop and pass to another account.** Nothing is running.
 
 - Last full round: 85, 561 of 2576 failing (`D:\WorkSpace\meshyittedudit-f85`), before the face refits. Round 86 not run yet.
@@ -62,6 +70,10 @@ The auditor branch (meshy-audit-coverage) is adding a mouth check, then eye sock
 - **Sleeve and shorts hems still ragged in the game** (skin-coloured teeth). Ruled out, each with game shots: helper bones (`HELP_T=0` and `1` in game_shots: no change), shoulder smoothing, sleeve weights, the body painted past the hem, the 6 mm cover rule, hem offset, the 4-bone limit. In Blender, posed with arms down (scratchpad `pose_render.py`: body red, chosen garments yellow), the hems are clean. `HIDE=body` in game_shots poses shows the clothes alone: the real short sleeves are short and their edge is jagged in the game.
 
 ## Next
+
+(13 Nov) 1 (refit and redress) and 3 (ragged hems) below are done. Now: `arms` close-ups of Clara, Finn, Lumi (`node ../tools/meshy/game_shots.mts <dir> arms clara,finn,lumi`); round 86; the faint ring round closed eyes; the o mouth's colour and Clara's small mouths; the standard 1024 px sheets and a second-reviewer subagent (the gate); only then ask the owner.
+
+Old list (12 Nov):
 
 1. `powershell -File tools/meshy/dress_own.ps1 -Id clara` (and sol, finn; lumi with `-LightTex 512`), copy `D:\WorkSpace\meshyitted\<id>-own\<id>-dressed-{light,hd}-packed.glb` to `models/<id>.glb`, `<id>-hd.glb`; or refit first (`fit_person.ps1 -Id <id>-swim -Ref 'D:\WorkSpace\meshy\work-v108\<id>-game-hd.glb' -Prefix <id>-`) to apply the two face changes. In Git Bash pass the Ref path in single quotes: double quotes lost the backslashes and every fit failed.
 2. Round 86 (all four, parts one minute apart, rerun lost parts alone, then `audit.mts <out> merge`); compare with round 85.
