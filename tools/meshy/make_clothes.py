@@ -787,20 +787,28 @@ for o in parts:
     # the garment over it, and at the shoulder's curve a body point's 3 cm ray slanted up into the sleeve, so the arm well
     # below the hem counted as covered, painted shirt-coloured to a jagged edge along the body's triangles, past the
     # sleeve's own straight hem) on an arm, a point past the garment's own sleeve cut is never under it
-    _acut = None
+    # (13 Nov 2026, the ragged hems again, seen close up in game_shots arms: the painted body's edge inside a sleeve or a
+    # shorts leg follows the body's triangles, as stripes of cloth colour on the arm, a row of teeth at every hem; it is the
+    # same with the model unpacked, so not gltfpack) a limb point within HEM_IN metres inside a garment's limb cut, or past
+    # it, is never under it: the painted edge lies inside the sleeve or leg, out of sight
+    HEM_IN = .02
+    _lcut = {}
     for _sh in SHAPES:
         if _sh['name'] == nm:
             for _c in _sh.get('cuts', []):
-                if _c.startswith('arm:'): _acut = _num(_c[4:])
+                if _c.startswith('arm:'): _lcut['arm'] = _num(_c[4:])
+                if _c.startswith('leg:'): _lcut['leg'] = _num(_c[4:])
     _ncut = 0
     for v_ in me.vertices:
         if _ishair[v_.index] or v_.co.z > NECK + .06: continue
-        if _acut is not None:
+        if _lcut:
             _hb = btree.find_nearest(v_.co)
-            if _hb[0] is not None and bool(isarm[_hb[2]]):
-                _s = 'L' if (v_.co.x > 0) == (J['armL'].x > 0) else 'R'
-                _P = np.array([v_.co[:]]); _d, _t = along(_P, J['arm' + _s], J['elbow' + _s], J['hand' + _s])
-                if float(_t[0]) > _acut - .03: _ncut += 1; continue
+            _lk = 'arm' if _hb[0] is not None and bool(isarm[_hb[2]]) else 'leg' if _hb[0] is not None and bool(isleg[_hb[2]]) else None
+            if _lk in _lcut:
+                _s = 'L' if (v_.co.x > 0) == (J[_lk + 'L'].x > 0) else 'R'
+                _j = (J['arm' + _s], J['elbow' + _s], J['hand' + _s]) if _lk == 'arm' else (J['leg' + _s], J['knee' + _s], J['ankle' + _s])
+                _cp, _cd = seg_point(*_j, _lcut[_lk])
+                if (v_.co - _cp).dot(_cd) > -HEM_IN: _ncut += 1; continue
         if 'cone_c' in o:
             if _in_cone(o, tr, v_.co): _cbits[v_.index] |= COVER_BIT[nm]; n_cov += 1
             continue
@@ -812,7 +820,7 @@ for o in parts:
         # (12 Nov 2026: no longer 6 mm short of an open edge: that rule was for when the covered body was hidden, a gap at hems;
         # it is painted in the garment's colour now, and the skin left at every hem came through it as teeth)
         _cbits[v_.index] |= COVER_BIT[nm]; n_cov += 1
-    print('CL covered by', nm, n_cov, 'body points', 'past the sleeve cut', _ncut)
+    print('CL covered by', nm, n_cov, 'body points', 'near or past a limb cut', _ncut)
 _ca = me.color_attributes.get('skinw')
 if _ca is not None and _ca.domain == 'CORNER':
     _al = np.array([_cbits[l.vertex_index] for l in me.loops], np.float32) / 255.
