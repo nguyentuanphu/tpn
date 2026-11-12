@@ -636,11 +636,20 @@ def lid(img, b, top=0., bot=1.):   # (original_skin) a closed lid painted over t
     # (owner 8 Nov 2026: dark smudges round the closed eyes in the game) only skin flows in: lashes, brows and hair round
     # the eye are held at her skin colour while the lid is filled (they themselves stay as they are outside the lid)
     _sm = skin_mask(img[ya:yb, xa:xb]) & (hsv_np(img[ya:yb, xa:xb, :3])[2] > .45); sub[~hm & ~_sm] = sk
+    if os.environ.get('FIT_LID_LOCAL') and top <= 0 and bot >= 1 and not PART:   # (a shut eye only: under a half or sad lid the iris, warm and light too, bled up into the lid as a brown smudge) (13 Nov 2026, r050 and r057 at three-quarters: every shut eye a lighter disc with a crisp top edge) the lashes, brows and shaded socket round the hole were held at her lightest painted skin, and the fill settled between that and the socket's own skin: they are held at the skin right round the hole instead
+        # (measured on r050: the fill was her painted skin exactly, (254,199,146), while the blush under the eye is (255,182,132):
+        # the blush is not "skin" to skin_mask, so it was held at the painted skin too) only what is dark or grey (lashes, brows,
+        # hair, the eye white) is held; light warm colour round the hole (blush, the socket's shade) keeps its own colour
+        _hsv0 = hsv_np(img[ya:yb, xa:xb, :3]); _warm0 = (_hsv0[2] > .62) & (_hsv0[1] > .18)
+        sub[~hm & ~_sm & _warm0] = img[ya:yb, xa:xb, :3][~hm & ~_sm & _warm0]
     # (owner 8 Nov 2026: the closed lid was paler than the cheek round it) the fill starts from the skin right round the
     # hole, not her lightest skin, and runs until it has settled
     _rim = ~hm & _sm & (np.roll(hm, 1, 0) | np.roll(hm, -1, 0) | np.roll(hm, 1, 1) | np.roll(hm, -1, 1) | np.roll(hm, 2, 0) | np.roll(hm, -2, 0) | np.roll(hm, 2, 1) | np.roll(hm, -2, 1))
     sub[hm] = np.median(sub[_rim], axis=0) if _rim.sum() > 8 else sk
-    for _ in range(700):
+    _nit = 700
+    if os.environ.get('FIT_LID_LOCAL') and hm.any():   # (13 Nov 2026, r050 and r064 at three-quarters, seen at once in the preview: every shut eye a flat light disc cutting the blush under it) 700 passes of this averaging carry the rim's colour only about 25 px in: a 50-60 px hole kept the flat start colour in its middle; the passes now grow with the hole (about 3 times its size squared)
+        _ys_, _xs_ = np.nonzero(hm); _nit = int(min(20000, max(700, 3 * max(_ys_.max() - _ys_.min() + 1, _xs_.max() - _xs_.min() + 1) ** 2)))
+    for _ in range(_nit):
         P = np.pad(sub, ((1, 1), (1, 1), (0, 0)), mode='edge')
         av = (P[:-2, 1:-1] + P[2:, 1:-1] + P[1:-1, :-2] + P[1:-1, 2:]) / 4; sub[hm] = av[hm]
     if os.environ.get('FIT_LID_MATCH') and OWN and not os.environ.get('FIT_LID_SOFT'):   # (10 Nov 2026, owner: "hốc mắt chưa đẹp"; fit_person.ps1 -LidMatch) the fill flows in from the skin right at the eye's edge, which lies in the socket's shadow (a grey-brown lid): it takes the colour of the face's skin a little further out, 4 to 12 px round the eye, keeping its smooth shape
