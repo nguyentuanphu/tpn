@@ -622,8 +622,9 @@ im = base.copy()
 for b in eyes.values(): shut(im, grow(b)); stroke(im, arc(b, .7, -.32), lash, lw)
 M['happy'] = im
 # (13 Nov 2026, the auditor's mouth check: faint ends of the smile's lips stayed beside the round and sad mouths) the old
-# mouth is wiped a quarter of its width further at each end and a little above and below
-mouth_er = [max(0, int(mouth[0] - (mouth[2] - mouth[0]) * .25)), max(0, int(mouth[1] - max(3, (mouth[3] - mouth[1]) * .5))), min(W_, int(mouth[2] + (mouth[2] - mouth[0]) * .25)), min(H_, int(mouth[3] + max(3, (mouth[3] - mouth[1]) * .5)))] if mouth else None
+# mouth is wiped a quarter of its width further at each end, and above and below by a seventh of its width (Clara's
+# full pink lips round the line found between them stayed under her round and sad mouths)
+mouth_er = [max(0, int(mouth[0] - (mouth[2] - mouth[0]) * .25)), max(0, int(mouth[1] - max(3, (mouth[3] - mouth[1]) * .5, (mouth[2] - mouth[0]) * .14))), min(W_, int(mouth[2] + (mouth[2] - mouth[0]) * .25)), min(H_, int(mouth[3] + max(3, (mouth[3] - mouth[1]) * .5, (mouth[2] - mouth[0]) * .14)))] if mouth else None
 def mouth_o(im, big):
     if not mouth: return im
     erase(im, mouth_er); cx, cy = (mouth[0] + mouth[2]) / 2, (mouth[1] + mouth[3]) / 2; mw = mouth[2] - mouth[0]
