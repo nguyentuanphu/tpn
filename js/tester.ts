@@ -29,6 +29,7 @@ import { takeCopy, putCopyBack, hasCopy, dropCopy } from './keepcopy.js';
 import { revertOf } from './content/autoplay.js';
 import { easyName } from './content/devname.js';
 import { unreachableControl, activeReportPanel, observeGameOpen, resizeDeliveryNotice, publicFixedVersion } from './tester-detection.js';
+import { testerArcadeAvailable } from './content/tester-arcades.js';
 import { readReportQueue, persistReportQueue } from './report-outbox.js';
 
 import type { SvMain } from './main.js';
@@ -272,7 +273,9 @@ function watch() {
       const [i, id] = args;
       const requested = String(id || ''); lastGame = requested; lastMode = String(args[2] || ''); note('game', requested);
       // The game rejects a second launch while another activity is open: not a failed open.
-      const cancel = document.querySelector('.gl:not(.out)') ? null : observeGameOpen(requested, () => { if (live) autoReport('noopen', requested); }, {wait:C.LIMITS.openWait * 1000});
+      // The invited-tester games refuse to open for a device that is not an accepted tester (or while Studio holds them): not a failed open.
+      const heldArcade = (requested === 'sparkleorchard' || requested === 'sparklefruitbar') && !testerArcadeAvailable(requested, String(args[2] || '') === 'online' ? 'multi' : 'single');
+      const cancel = heldArcade || document.querySelector('.gl:not(.out)') ? null : observeGameOpen(requested, () => { if (live) autoReport('noopen', requested); }, {wait:C.LIMITS.openWait * 1000});
       if (cancel) pending.add(cancel);
       const timer = setTimeout(() => { if (cancel) pending.delete(cancel); }, C.LIMITS.openWait * 1000 + 10);
       try { return pg.apply(this, args); } catch (error) { cancel?.(); pending.delete(cancel); clearTimeout(timer); throw error; }
