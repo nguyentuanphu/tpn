@@ -625,13 +625,24 @@ M['happy'] = im
 # mouth is wiped a quarter of its width further at each end, and above and below by a seventh of its width (Clara's
 # full pink lips round the line found between them stayed under her round and sad mouths)
 mouth_er = [max(0, int(mouth[0] - (mouth[2] - mouth[0]) * .25)), max(0, int(mouth[1] - max(3, (mouth[3] - mouth[1]) * .5, (mouth[2] - mouth[0]) * .14))), min(W_, int(mouth[2] + (mouth[2] - mouth[0]) * .25)), min(H_, int(mouth[3] + max(3, (mouth[3] - mouth[1]) * .5, (mouth[2] - mouth[0]) * .14)))] if mouth else None
+def erase_mouth(img, b):   # (13 Nov 2026: erase() is the eye's lid, which closes only dark, white or far-from-skin pixels: Clara's pink
+    # lips, near her skin's colour, stayed under every new mouth) the whole oval in the box is filled from the skin round it
+    if not ORIGINAL: return erase(img, b)
+    cx_, cy_ = (b[0] + b[2]) / 2, (b[1] + b[3]) / 2; rx, ry = max(2, (b[2] - b[0]) / 2), max(2, (b[3] - b[1]) / 2)
+    ya, yb = max(0, int(cy_ - ry) - 4), min(H_, int(cy_ + ry) + 5); xa, xb = max(0, int(cx_ - rx) - 4), min(W_, int(cx_ + rx) + 5)
+    hm = np.hypot((xx[ya:yb, xa:xb] - cx_) / rx, (yy[ya:yb, xa:xb] - cy_) / ry) < 1
+    sub = img[ya:yb, xa:xb, :3].copy(); _rim = ~hm & (np.roll(hm, 1, 0) | np.roll(hm, -1, 0) | np.roll(hm, 1, 1) | np.roll(hm, -1, 1))
+    sub[hm] = np.median(sub[_rim], axis=0) if _rim.sum() > 4 else REF[:3]
+    for _ in range(500):
+        P = np.pad(sub, ((1, 1), (1, 1), (0, 0)), mode='edge'); av = (P[:-2, 1:-1] + P[2:, 1:-1] + P[1:-1, :-2] + P[1:-1, 2:]) / 4; sub[hm] = av[hm]
+    img[ya:yb, xa:xb, :3][hm] = sub[hm]; img[ya:yb, xa:xb, 3] = np.maximum(img[ya:yb, xa:xb, 3], hm.astype(np.float32))
 def mouth_o(im, big):
     if not mouth: return im
-    erase(im, mouth_er); cx, cy = (mouth[0] + mouth[2]) / 2, (mouth[1] + mouth[3]) / 2; mw = mouth[2] - mouth[0]
+    erase_mouth(im, mouth_er); cx, cy = (mouth[0] + mouth[2]) / 2, (mouth[1] + mouth[3]) / 2; mw = mouth[2] - mouth[0]
     ellipse(im, cx, cy + (mouth[3] - mouth[1]) * .2, mw * (.17 if not big else .24), mw * (.15 if not big else .19), np.array([.80, .42, .45]), np.clip(lip * .95, 0, 1)); return im   # (owner: no black lips) a soft rose mouth, like the game's own faces
 M['surprised'] = mouth_o(base.copy(), False)
 im = base.copy()
-if mouth: erase(im, mouth_er); mb = [mouth[0] + (mouth[2] - mouth[0]) * .15, mouth[1], mouth[2] - (mouth[2] - mouth[0]) * .15, mouth[3]]; stroke(im, arc(mb, .75, -.45), lip * .8, lw * 1.1)
+if mouth: erase_mouth(im, mouth_er); mb = [mouth[0] + (mouth[2] - mouth[0]) * .15, mouth[1], mouth[2] - (mouth[2] - mouth[0]) * .15, mouth[3]]; stroke(im, arc(mb, .75, -.45), lip * .8, lw * 1.1)
 for b in eyes.values(): erase(im, b, 0, .18)
 M['sad'] = im
 im = base.copy()
@@ -651,7 +662,7 @@ if OWN:
         d = np.hypot((xx - cx_) / (w_ / 2 * gx_), (yy - cy_) / (h_ / 2 * gy_)); return np.clip((1 - d) / .25, 0, 1)
     EYE_A = np.zeros((H_, W_), np.float32)
     for b in eyes.values(): EYE_A = np.maximum(EYE_A, soft_oval(grow(b), 1.3, 1.8))   # (10 Nov 2026: 1.3 wide, was 1.7: on Finn's narrow face the blink piece reached the cheek's side and drew dark streaks before his ears)
-    MOUTH_A = soft_oval(mouth, 1.7, 2.6) if mouth else np.zeros((H_, W_), np.float32)
+    MOUTH_A = np.maximum(soft_oval(mouth, 1.7, 2.6), soft_oval(mouth_er, 1.4, 1.6)) if mouth else np.zeros((H_, W_), np.float32)
     # (hair in front stays the 3D hair; but never inside the eyes: Sol's amber irises are hair-coloured and stayed open)
     _ineyes = np.zeros((H_, W_), bool)
     # (8 Nov 2026: a light patch over Finn's fringe on every blink) only the lower part of the eye area counts as "eye":
