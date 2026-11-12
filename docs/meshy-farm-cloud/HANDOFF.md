@@ -22,7 +22,7 @@ Offline validation: existing `test_batch.py` 14 tests PASS; `test_farm.py` PASS;
 
 Download each successful GLB immediately to external raw storage, then copy delivery files here. Deliver original, 30k, 9k and four-angle previews for each animal. Archive any file over 50 MB and record its path. Inspect eyes, muzzle/beak, nose, legs, fur/wool/feathers and holes/broken geometry before reporting quality. Signed URLs stay in the private journal only.
 
-## Next paid command (requires owner answer)
+## Original command (already executed; NEVER resend)
 
 From repository root:
 
@@ -47,3 +47,11 @@ python tools/meshy/remesh_once.py submit --source-asset cow --polycount 30000 --
 ```
 
 Cost 5 credits; cumulative total would become 35/120. Never resend original cow.
+
+## Blender capability correction — 13/11/2026 08:22 AEDT
+
+Owner asked to try installing Blender. Inspection found `/usr/bin/blender` **4.3.2 already installed**, so no installation was needed. The earlier statement that cloud had no Blender was unverified and incorrect.
+
+Real background smoke test PASS: imported the original cow GLB (1 mesh, 678,546 vertices) and rendered a 640×640 image using Cycles CPU, four threads, eight samples. [Render inspected](cow/blender-smoke.png). The packaged build lacks OpenImageDenoise: initial render failed; disabling `scene.cycles.use_denoising` made the test pass. This low-sample image demonstrates execution, not final quality.
+
+Blender can run on this cloud. Actual animal fitting/rigging scripts have not yet been tested for Linux compatibility. No fit/rig, js/models changes or extra paid Meshy POST performed during this check. Trial charge remains 30/120; last observed API balance 1584.
