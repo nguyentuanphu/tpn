@@ -209,6 +209,29 @@ Lessons about the checking itself (each hid a fault or showed a false one):
 - A `#` or `//` comment inserted in the middle of a long one-line statement turns the rest of the line into comment
   (the shots' render call was lost this way): after such an edit, print the whole line.
 
+### Lessons from the companions and the five pets (11-12 Nov 2026)
+- Compare every animal with its reference sheet in the game's own group (`pet_shots.mts ... companion`, or
+  `companion_film.mts` for moves): the bare-model `close` shots never show what the game adds (Sparkle's wings were
+  missing and nobody saw it). Show the owner films of moves (hover, walk, run, tricks; near and far; HD and light).
+- Paint a face piece magenta in a debug build (`LID_DEBUG=1`) to see what it covers in the game: the firefly's lid
+  covered her whole head and rode the antennae, and small bumps in Meshy's mesh poked through it.
+- Render the weights by colour before tuning numbers (`tools/meshy/weight_colours.py`): the kitty's tall tail tip was
+  moved by the head (the head is "above the neck plane"; now bounded behind, `head_back`).
+- Ears that stand up (kitty, bunny) need `ear_up` and their pivots at the roots; the hanging-ear rule took a kitty's
+  wide cheeks as ears. Ears that lean back need the head to reach them (`head_back`), or they fall out of the head.
+- A panda's black ears are bigger dark patches than its eyes: `eye_xmax`. A closed eye in a black patch: the eye is
+  only the painted white and iris (`eye_grow` 0.5), the lid filled from the patch (`fill_near`), the line light.
+- Lash specks next to a shut lid: `lash_dark` (the lash arc), `lash_spot` (small warm specks darker than the face round
+  them), `fill_near` (fill from the face colour only), a fine lid grid on the light model too (`lid_grid_far`).
+- Thin-legged animals: the puppy's jump and sphinx sleep stretch them (`jump_legs`, `lie_front`, `lie_front_knee`).
+- Before a per-animal audit limit, look at the marks and write the reason in the json: a hanging bell, a gap between a
+  leg and the belly, a hop gait in the air are not faults.
+- A light model can be made here without credits (`tools/meshy/decimate.py`) when Meshy's 9k remesh is missing; do not
+  go below the triangles the lids need (a 7k firefly broke her shut-eye line).
+- Run the game checks with `SV_URL` set to your own server: without it the suite tests port 8765, another checkout.
+- Write long queues in one shell (bash), and check every `-Out` path expands: a PowerShell queue started a second
+  auditor on the same server, and a `$k` inside a quoted path was not expanded (three pets wrote into one folder).
+
 ### Each animal's own skills
 Every pet has special skills of its own (owner, 10 Nov 2026), in `PET_SKILLS` (`js/pets.ts`), each with a chip under the
 name card (at the right edge on a phone) and a case in `tests/pet-skills.mts`. The puppy: fetch, dig for treasure, lead
