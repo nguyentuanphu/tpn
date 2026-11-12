@@ -20,7 +20,7 @@ const COMPANIONS = ['firefly', 'dragon'];
 // 800 KB, 21,000 triangles with the eyelid pieces: see the triangle rule below), and a painted face whose eyes shut with lid pieces (bones shut0/1,
 // joy0/1) instead of the Blender face's eye, lid and upper-lid bones. Everything else is checked the same way.
 // (a kind is checked as Meshy when its near model is installed: until the owner approves, the branch keeps the Blender one)
-const MESHY = ['puppy', 'dragon', 'firefly', 'kitty', 'bunny', 'panda', 'calf', 'joey'].filter(k => fs.existsSync(path.join(ROOT, 'models/world', `creature-${k}-hd.glb`)));
+const MESHY = ['puppy', 'dragon', 'firefly', 'kitty', 'bunny', 'panda', 'calf', 'joey', 'cow'].filter(k => fs.existsSync(path.join(ROOT, 'models/world', `creature-${k}-hd.glb`)));
 const SPECBOX: Record<string, any> = {}; try { for (const [k, v] of Object.entries<any>(JSON.parse(fs.readFileSync(path.join(ROOT, 'tools/blender/creatures-spec.json'), 'utf8')).companions)) SPECBOX[k] = v.box; } catch { }
 const HEIGHT: Record<string, number> = {}; for (const k of MESHY) try { HEIGHT[k] = JSON.parse(fs.readFileSync(path.join(ROOT, 'tools/meshy/animal_joints', `${k}.json`), 'utf8')).height; } catch { }
 

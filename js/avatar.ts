@@ -559,7 +559,7 @@ const FRIEND_AVS = new Set<SvAvatar>(), HD_ASKED = new Set<string>(), HD_NEAR = 
 function attachHDLate(A: SvAvatar, id: string) {
   const keep = JOINTS.map(j => A[j] ? A[j].rotation.clone() : null), lift = A.rig.position.y, sc = A.rig.scale.clone(), H = A.height || 1;
   JOINTS.forEach(j => { if (A[j] && j !== 'rig') A[j].rotation.set(0, 0, 0); }); A.rig.position.y = 0; A.rig.scale.set(H, H, H); A.root.updateMatrixWorld(true);
-  A.modelHD = FRIEND_MODELS.attach(A, id, A.look.skin, { item: A.model.item, shoes: !A.model.boots }, true);
+  A.modelHD = FRIEND_MODELS.attach(A, id, A.look.skin as string, { item: A.model.item, shoes: !A.model.boots }, true);
   JOINTS.forEach((j, i) => { if (keep[i]) A[j].rotation.copy(keep[i]); }); A.rig.position.y = lift; A.rig.scale.copy(sc);
   if (A.modelHD) { A.modelHD.obj.visible = false; A._hd = false; }
 }

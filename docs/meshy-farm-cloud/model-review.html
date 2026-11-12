@@ -1,0 +1,10 @@
+<!doctype html><meta charset="utf-8"><title>Sparkle Valley — cow review</title>
+<base href="/"><style>body{margin:0;background:#cad2dc}canvas{display:block}</style>
+<script type="module">
+import {THREE} from '/js/gfx.js';
+const renderer=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});renderer.setSize(900,700);renderer.outputColorSpace=THREE.SRGBColorSpace;document.body.append(renderer.domElement);
+const scene=new THREE.Scene();scene.background=new THREE.Color(0xcad2dc);scene.add(new THREE.HemisphereLight(0xffffff,0x888888,2.2));
+const root=new THREE.Group();scene.add(root);
+window.__sv={renderer,scene,paused:true,world:{groundAt:()=>0,time:.42},heroes:[{pos:new THREE.Vector3(),av:{root}}]};
+document.body.dataset.ready='true';
+</script>

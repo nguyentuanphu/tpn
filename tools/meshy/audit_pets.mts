@@ -40,12 +40,26 @@ const LIMIT = { stretch: 300, tear: 6, sink: 0, float: 0, eyes: 6, hat: 0, flick
 const SIZE = { near: 800, far: 400 };
 const b = await chromium.launch({ args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'] });
 const _nc = b.newContext.bind(b); b.newContext = async (o: any) => { const c = await _nc(o); c.setDefaultNavigationTimeout(240000); c.setDefaultTimeout(600000); return c; };
-const P = await open(b, { w: 900, h: 700, fast: false }); await clear(P.page);
+// Geometry review can use the same game loader/materials without running the whole valley.
+// Integration checks still use the normal game path by default.
+const P = process.env.SV_MODEL_REVIEW === '1' ? await (async () => {
+  const ctx = await b.newContext({ viewport: { width: 900, height: 700 } });
+  const page = await ctx.newPage();
+  await page.goto(new URL('/docs/meshy-farm-cloud/model-review.html', process.env.SV_URL || 'http://localhost:8777/').href);
+  await page.waitForSelector('body[data-ready="true"]');
+  return { ctx, page };
+})() : await open(b, { w: 900, h: 700, fast: true });
+await clear(P.page);
+// Review tools drive their own poses/renders; stop the valley's background animation loop.
+await P.page.evaluate(() => { window.requestAnimationFrame = () => 0; });
 P.page.on('pageerror', e => console.log('pageerror', e.message));
 const kinds = LIST.split(',');
-const res: any = await P.page.evaluate(async ([kinds, MODE, LIMIT]) => {
+const EYE_PROBES: Record<string, number[]> = {};
+for (const k of kinds) { const a = JSON.parse(readFileSync(new URL(`./animal_joints/${k}.json`, import.meta.url), 'utf8')); if (a.auditEyeProbe) EYE_PROBES[k] = a.auditEyeProbe; }
+const res: any = await P.page.evaluate(async ([kinds, MODE, LIMIT, EYE_PROBES]) => {
   const G = (window as any).__sv, MK = await import(String('/js/modelkit.js')), { THREE } = await import(String('/js/gfx.js'));
   const { clone } = await import(String('/vendor/SkeletonUtils.js')), PETS = await import(String('/js/pets.js'));
+  const { PETS: PET_KINDS } = await import(String('/js/farm.js'));
   const R = G.renderer, out: any = { cases: [], pics: {} }, S = 360;
   const out_pics = (k: string, v: string) => { out.pics[k] = v; };
   const quick = MODE === 'quick', self = MODE === 'selftest';
@@ -112,6 +126,19 @@ const res: any = await P.page.evaluate(async ([kinds, MODE, LIMIT]) => {
     const REST = body.skeleton.bones.map((b: any) => [b.position.clone(), b.quaternion.clone(), b.scale.clone()]);
     const toRest = () => body.skeleton.bones.forEach((b: any, i: number) => { b.position.copy(REST[i][0]); b.quaternion.copy(REST[i][1]); b.scale.copy(REST[i][2]); });
     skinned(body, rest);
+    // Patterned fur can be as black as a pupil. Probe actual eye-surface visibility instead:
+    // closed lid meshes must occlude the original eye surface, independent of coat colour.
+    const probe = EYE_PROBES[kind]; let eyeMask: any = null;
+    if (probe) {
+      const eyes = [bone('shut0'), bone('shut1')].map(e => e.getWorldPosition(new THREE.Vector3()));
+      const colors = new Float32Array(nv * 3);
+      for (let i = 0; i < nv; i++) for (const e of eyes) {
+        const dx = (rest[i * 3] - e.x) / probe[0], dy = (rest[i * 3 + 1] - e.y) / probe[1];
+        if (dx * dx + dy * dy <= 1 && Math.abs(rest[i * 3 + 2] - e.z) < probe[2]) colors[i * 3] = 1;
+      }
+      eyeMask = new THREE.BufferAttribute(colors, 3);
+    }
+
     let lo = 1e9, hi = -1e9; for (let i = 1; i < rest.length; i += 3) { lo = Math.min(lo, rest[i]); hi = Math.max(hi, rest[i]); }
     const Hh = hi - lo, c0 = new THREE.Box3().setFromBufferAttribute(new THREE.BufferAttribute(rest, 3)).getCenter(new THREE.Vector3());
     const restLen = new Float32Array(idx.length);
@@ -192,7 +219,22 @@ const res: any = await P.page.evaluate(async ([kinds, MODE, LIMIT]) => {
             cam.position.copy(mid).addScaledVector(dir, er * 9); cam.lookAt(mid); cam.updateMatrixWorld(true);
             const px = read(cam), flags = new Uint8Array(S * S); let n = 0;
             const eyes = yaw === 0 ? [e0, e1] : [e0.distanceTo(cam.position) < e1.distanceTo(cam.position) ? e0 : e1];
-            for (const e of eyes) disc(cam, e, (i, x, y) => { if (!px[i + 3]) return;
+            if (eyeMask) {
+              const materials: any[] = [], oldColor = body.geometry.getAttribute('color');
+              const black = new THREE.MeshBasicMaterial({color: 0, side: THREE.DoubleSide});
+              const mask = new THREE.MeshBasicMaterial({vertexColors: true, side: THREE.DoubleSide});
+              const alphaMasks: any[] = [];
+              obj.traverse((m: any) => { if (m.isMesh) { materials.push([m,m.material]);
+                if (m.material.transparent && m.material.map) { const a = new THREE.MeshBasicMaterial({color:0,map:m.material.map,alphaTest:.95,side:THREE.DoubleSide}); alphaMasks.push(a); m.material=a; }
+                else m.material=black;
+              } });
+              body.geometry.setAttribute('color', eyeMask); body.material = mask;
+              const visibleEye = read(cam);
+              for (const e of eyes) disc(cam,e,(i,x,y) => { if (visibleEye[i] > 128 && visibleEye[i+1] < 20) { n++; flags[y*S+x]=1; } });
+              if (oldColor) body.geometry.setAttribute('color',oldColor); else body.geometry.deleteAttribute('color');
+              for (const [m,mat] of materials) m.material=mat;
+              black.dispose(); mask.dispose(); alphaMasks.forEach(m => m.dispose());
+            } else for (const e of eyes) disc(cam, e, (i, x, y) => { if (!px[i + 3]) return;
               const L = (.3 * px[i] + .59 * px[i + 1] + .11 * px[i + 2]) / 255, sat = Math.max(px[i], px[i + 1], px[i + 2]) - Math.min(px[i], px[i + 1], px[i + 2]);
               if (L < .012 || (L > .8 && sat < 25)) { n++; flags[y * S + x] = 1; } });   // (linear light: .012 is the pupil's near-black)
             if (n > cs.eyes) { cs.eyes = n; cs.eyesAt = yaw; }
@@ -228,7 +270,7 @@ const res: any = await P.page.evaluate(async ([kinds, MODE, LIMIT]) => {
     //   floating: the skull under the hat's middle more than 6 % of hH below its base
     //   loose:    more than 4 of 16 points round its band outside the head and farther than 8 % of hH from it (horns count)
     //   poke:     a closed hat (party, nón lá, beanie, captain, wizard) with the head out through the middle of its top
-    if (!self || (kind === kinds[0] && lod === 'near')) {   // (selftest: one hat lifted off the head must be caught)
+    if ((kind in PET_KINDS || ['dragon', 'firefly'].includes(kind) || self) && (!self || (kind === kinds[0] && lod === 'near'))) {   // (selftest: one hat lifted off the head must be caught)
       const KP = await import(String('/js/kidplay.js')), holder = new THREE.Group(); scene.add(holder); scene.remove(obj); holder.add(obj);
       holder.userData.rig = { model: { obj } };
       for (let i = 0; i < 100 && !PETS.putHat(holder, 'party'); i++) await new Promise(r => setTimeout(r, 200));   // (the hats' drawings load on first use: wait for them)
@@ -278,7 +320,7 @@ const res: any = await P.page.evaluate(async ([kinds, MODE, LIMIT]) => {
   }
   out.dbgHat = (window as any).__dbgHat;
   return out;
-}, [kinds, MODE, LIMIT] as any);
+}, [kinds, MODE, LIMIT, EYE_PROBES] as any);
 if (res.dbgHat) writeFileSync(`${OUT}/dbg-hat.json`, JSON.stringify(res.dbgHat));
 for (const [k, v] of Object.entries(res.pics)) writeFileSync(`${OUT}/${k}.png`, Buffer.from(String(v).split(',')[1], 'base64'));
 const cs = res.cases, keys = Object.keys(LIMIT);

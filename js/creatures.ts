@@ -36,7 +36,7 @@ const _look = (dt: number) => {
 // (Meshy pets, 10 Nov 2026) kinds made with Meshy (tools/meshy/fit_animal.py) have two models: creature-<kind>-hd near a
 // child (within 16 m), creature-<kind> (lighter: fewer triangles, a smaller picture) farther than 24 m; between, the one
 // it has stays (no flicker back and forth). The way the Meshy friends switch (friendsHDNear, js/main.ts).
-export const MESHY_CREATURES = new Set(['puppy', 'dragon', 'firefly', 'kitty', 'bunny', 'panda', 'calf', 'joey']);
+export const MESHY_CREATURES = new Set(['puppy', 'dragon', 'firefly', 'kitty', 'bunny', 'panda', 'calf', 'joey', 'cow']);
 const HD_NEAR = 16, HD_FAR = 24;
 function near(g, r) {
   const now = performance.now(); if (now - since > 100) { since = now; asked = 0; }

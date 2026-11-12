@@ -33,8 +33,8 @@ const toon = (name: string, skin = false) => {
 // little smooth valley light on top (no toon bands: they drew hard stripes across the fur), both sides
 // The shut and happy eyelids (meshy-<kind>-shut0, -joy1 ...) lie just over the painted eyes: drawn on top of the face
 // (polygon offset), as the friends' mood pieces are
-const meshyMat = (name: string, map: THREE.Texture) => { const lid = /-(shut\d|joy\d|mouth)$/.test(name);   // (the open mouth piece too, 11 Nov 2026)
-  return new THREE.MeshLambertMaterial({ name, map, emissiveMap: map, emissive: '#ffffff', emissiveIntensity: .95, color: '#262524', side: lid ? THREE.FrontSide : THREE.DoubleSide, polygonOffset: lid, polygonOffsetFactor: lid ? -2 : 0, polygonOffsetUnits: lid ? -4 : 0 }); };
+const meshyMat = (name: string, map: THREE.Texture, transparent = false) => { const lid = /-(shut\d|joy\d|mouth)$/.test(name);   // (the open mouth piece too, 11 Nov 2026)
+  return new THREE.MeshLambertMaterial({ name, map, transparent, alphaTest: transparent ? .01 : 0, depthWrite: !transparent, emissiveMap: map, emissive: '#ffffff', emissiveIntensity: .95, color: '#262524', side: lid ? THREE.FrontSide : THREE.DoubleSide, polygonOffset: lid, polygonOffsetFactor: lid ? -2 : 0, polygonOffsetUnits: lid ? -4 : 0 }); };
 /** load a model once; resolves null when it cannot load (the fallback stays) */
 export function loadWorldModel(name: string): Promise<Template | null> {
   if (ready.has(name)) return Promise.resolve(ready.get(name));
@@ -48,7 +48,7 @@ export function loadWorldModel(name: string): Promise<Template | null> {
       // the picture-book look of the friends (js/friend-model.ts): toon bands, colours from the corners
       const mats = new Map();
       g.scene.traverse((o: any) => { if (!o.isMesh) return; const m = o.material, n = (m && m.name) || '';
-        if (!mats.has(m)) mats.set(m, n.startsWith('meshy-') && m.map ? meshyMat(n, m.map) : toon(n, n.startsWith('skin'))); o.material = mats.get(m); });
+        if (!mats.has(m)) mats.set(m, n.startsWith('meshy-') && m.map ? meshyMat(n, m.map, m.transparent) : toon(n, n.startsWith('skin'))); o.material = mats.get(m); });
       const t = { scene: g.scene, clips: g.animations || [] }; ready.set(name, t); return t;
     } catch (e) { failed.add(name); console.warn('world model', name, e && e.message); return null; }
   })());

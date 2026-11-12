@@ -1,0 +1,92 @@
+{
+  "note": "Cow farm model: only farm clips plus run/jump, not dog-only beg/roll/scratch/dig/carry. Explicit eye landmarks avoid black coat being mistaken for pupils. Trunk baseline ignores udder; tail root/width include hanging tuft. AO baked from actual mesh into texture restores nostril depth under game emissive material. No extra paid calls.",
+  "lie_drop": 0.95,
+  "lie_front": 1.05,
+  "lie_front_knee": -1.45,
+  "lie_back": -1.05,
+  "lie_back_knee": 1.45,
+  "smooth": 5,
+  "leg_top": 1.0,
+  "spatial_r": 0.04,
+  "mouth_w": 0.8,
+  "lash_dark": 0.2,
+  "lash_spot": 0.06,
+  "fill_near": 0.25,
+  "lid_lift": 0.008,
+  "jpeg": 80,
+  "tail_drop": 0.55,
+  "tail_gap": 0.005,
+  "jump_legs": 0.55,
+  "tex_near": 1024,
+  "tex_far": 360,
+  "lid_grid_far": 30,
+  "face_hints": {
+    "eye0": [
+      -0.105,
+      1.065,
+      0.042
+    ],
+    "eye1": [
+      0.105,
+      1.065,
+      0.042
+    ],
+    "nose": [
+      0,
+      0.96,
+      0.065
+    ],
+    "mouth": [
+      0,
+      0.902
+    ]
+  },
+  "lid_size": 2.2,
+  "head_turn": 0.6,
+  "ear_amp": 0.35,
+  "auditEyeProbe": [
+    0.044,
+    0.057,
+    0.05
+  ],
+  "lid_rim": 0.002,
+  "belly": 0.44,
+  "neck_soft": 0.07,
+  "tail_w": 0.125,
+  "joints": {
+    "tail": [
+      0,
+      0.37,
+      0.84
+    ]
+  },
+  "extra_move_names": [
+    "run",
+    "jump"
+  ],
+  "jump_knee": 0.7,
+  "audit": {
+    "tear": 30,
+    "why": "13 Nov 2026 AEDT: inspected all 72 marked r3 tear images in three sheets plus full-size samples: tiny enclosed gaps are the collar/bell suspension ring, not holes in the body. Keep measured count with 30-pixel limit; actual skin tears must still be inspected. No eye/stretch exceptions."
+  },
+  "lid_feather": 0.22,
+  "tail_profile": [
+    [
+      0,
+      0.42
+    ],
+    [
+      0.75,
+      0.42
+    ],
+    [
+      0.84,
+      0.35
+    ],
+    [
+      1,
+      0.35
+    ]
+  ],
+  "lid_fill_radius": 1.65
+}

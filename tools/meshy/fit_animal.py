@@ -95,7 +95,7 @@ def joints(o):
     for t in np.linspace(.25, .75, 11):
         y = y0 + (y1 - y0) * t; loc, _, _, _ = bvh.ray_cast(Vector((0, y, -.5)), Vector((0, 0, 1)))
         if loc is not None and loc.z < H * .7: under.append(loc.z)
-    belly = float(np.median(under)) if under else H * .3
+    belly = FIX.get('belly', float(np.median(under)) if under else H * .3)   # e.g. cow udder is below the trunk/leg junction
     # the legs: everything below the belly, in four corners
     L = V[V[:, 2] < belly * .85]
     ymid = float(np.median(L[:, 1]))
@@ -288,6 +288,11 @@ def weights(o, J, M):
         tail = smooth01((V[:, 1] - ty + .01) / .03) * smooth01((V[:, 2] - (tz - .02)) / .03) * smooth01((tw - np.abs(V[:, 0])) / .02)
         if FIX.get('tail_drop'):   # (a tail that hangs down (the calf's): also below its root, a little clear of the rump behind it)
             tail = np.maximum(tail, smooth01((V[:, 1] - ty - FIX.get('tail_gap', .02)) / .02) * smooth01((V[:, 2] - (tz - FIX['tail_drop'])) / .03) * smooth01((tw - np.abs(V[:, 0])) / .02))
+    if FIX.get('tail_profile'):
+        # Curved, hanging tail: separate the full tuft from the rump by its rear silhouette.
+        profile = np.array(FIX['tail_profile'])
+        edge = np.interp(V[:, 2], profile[:, 0], profile[:, 1])
+        tail = smooth01((V[:, 1] - edge) / .015) * smooth01((FIX.get('tail_w', .06) - np.abs(V[:, 0])) / .02)
     # the legs: below the belly fully, blended into the body up to the hips; each point to its nearest leg (seen from above)
     lx = np.array([[J['leg%d' % i][0], J['leg%d' % i][1]] for i in range(4)])
     d2 = ((V[:, None, :2] - lx[None]) ** 2).sum(-1); near = np.argmin(d2, 1); dist = np.sqrt(d2[np.arange(n), near])
@@ -383,6 +388,7 @@ def make(path, J, M, out, tex_px):
     moves = wc.animal_moves(KIND, A, arm, names + FACE_BONES, F, size)
     moves = [(n_, L_, lie_down(p_, J, M) if n_ == 'sleep' and not FIX.get('upright') else p_) for n_, L_, p_ in moves]
     extra = (upright_moves if FIX.get('upright') else extra_moves)(J, M, names + FACE_BONES)   # (made for Meshy's own legs: not damped)
+    if 'extra_move_names' in FIX: extra = [e for e in extra if e[0] in FIX['extra_move_names']]
     own = {e[0] for e in extra}; moves = [m for m in moves if m[0] not in own]   # (an animal's own move of the same name replaces the code shape's: the joey's sleep)
     for name, L, pose in moves: ground(o, arm, wc.clip(arm, name, L, damp(pose)))
     for name, L, pose in extra: ground(o, arm, wc.clip(arm, name, L, pose))
@@ -755,6 +761,16 @@ def find_face(o, J, M):
     # the mouth: on the face under the nose, where the painted smile is
     loc, nor, _, _ = bvh.ray_cast(Vector((nose['c'][0], -2, nose['c'][2] - out['nose_r'] * FIX.get('mouth_drop', 2.0))), Vector((0, 1, 0)))
     if loc is not None: out['mouth'] = np.array(loc[:]); out['mouth_n'] = np.array(nor[:])
+    # Per-animal landmarks for patterned faces where black coat patches resemble eyes.
+    # Hints are front-view x,z coordinates and radius in fitted Blender metres.
+    for name, hint in FIX.get('face_hints', {}).items():
+        x, z = hint[:2]
+        loc, nor, _, _ = bvh.ray_cast(Vector((x, -2, z)), Vector((0, 1, 0)))
+        if loc is None:
+            raise ValueError('Face landmark misses surface: ' + name)
+        out[name] = np.array(loc[:])
+        if len(hint) > 2: out[name + '_r'] = hint[2]
+        if name == 'mouth': out['mouth_n'] = np.array(nor[:])
     return out
 
 def face_pieces(o, arm, J, Fc):
@@ -833,7 +849,11 @@ def face_pieces(o, arm, J, Fc):
             a_ = np.clip((r * .09 - dl) / px_ + .5, 0, 1) * np.clip(-de / px_ + .5, 0, 1)   # (across the whole eye, at its middle; soft edges a texel wide, not stair steps)
             img = img * (1 - a_[..., None]) + lash * a_[..., None]
             name = f'meshy-{KIND}-{kind}{i}'
-            pim = bpy.data.images.new(name, TP, TP); pim.pixels[:] = np.concatenate([img, np.ones((TP, TP, 1))], 2).astype(np.float32).ravel()
+            alpha = np.ones((TP, TP, 1))
+            if FIX.get('lid_feather'):
+                mask_r = r * FIX.get('lid_fill_radius', R / r)
+                alpha = np.clip((.98 - np.hypot((xx-gx)/mask_r, (yy-gy)/(mask_r*1.1))) / FIX['lid_feather'], 0, 1)[...,None]
+            pim = bpy.data.images.new(name, TP, TP); pim.pixels[:] = np.concatenate([img, alpha], 2).astype(np.float32).ravel()
             pim.pack()
             if DEBUG: pim.filepath_raw = os.path.join(OUT, name + '.png'); pim.file_format = 'PNG'; pim.save()
             # the piece: a fine grid laid on the head's surface over the eye (rays along -normal), a little in front, its
@@ -865,6 +885,9 @@ def face_pieces(o, arm, J, Fc):
             po = bpy.data.objects.new(name, pm); bpy.context.collection.objects.link(po)
             mat = bpy.data.materials.new(name); mat.use_nodes = True; nt = mat.node_tree; tn = nt.nodes.new('ShaderNodeTexImage'); tn.image = pim
             nt.links.new(tn.outputs['Color'], nt.nodes['Principled BSDF'].inputs['Base Color']); pm.materials.append(mat)
+            if FIX.get('lid_feather'):
+                nt.links.new(tn.outputs['Alpha'], nt.nodes['Principled BSDF'].inputs['Alpha'])
+                mat.surface_render_method = 'DITHERED'
             g = po.vertex_groups.new(name=f'{kind}{i}'); g.add(list(range(len(pm.vertices))), 1.0, 'REPLACE')
             po.parent = arm; md = po.modifiers.new('rig', 'ARMATURE'); md.object = arm
     # the open mouth (owner, 11 Nov 2026: "có thử khi há miệng chưa"): a piece laid on the muzzle's own surface, as the
@@ -927,6 +950,6 @@ if 'mouth' in Fc: J['jaw'] = tuple(Fc['mouth'])
 print('JOINTS', json.dumps({k: [round(x, 3) for x in v] for k, v in J.items()}), json.dumps({k: (np.round(v, 3).tolist() if hasattr(v, '__len__') else round(float(v), 3)) for k, v in M.items()}), flush=True)
 if DEBUG: debug_picture(o, J, os.path.join(OUT, KIND + '-joints.png'))
 make(NEAR, J, M, os.path.join(OUT, f'creature-{KIND}-hd.glb'), FIX.get('tex_near', 1024))
-if DEBUG: bpy.ops.wm.save_as_mainfile(filepath=os.path.join(OUT, KIND + '-hd.blend'))
+if DEBUG: bpy.ops.file.pack_all(); bpy.ops.wm.save_as_mainfile(filepath=os.path.join(OUT, KIND + '-hd.blend'))
 FARLOD = True   # (the far model: coarser lid pieces)
 make(FAR, J, M, os.path.join(OUT, f'creature-{KIND}.glb'), FIX.get('tex_far', 512))

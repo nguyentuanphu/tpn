@@ -55,3 +55,17 @@ Cloud thực tế có `/usr/bin/blender` 4.3.2. Báo trước đó rằng cloud 
 - Bản tải gốc cũng còn ở `/workspace/meshy-farm-raw/`; bản làm việc chưa nén ở `/workspace/meshy-farm-viewer/cow-complete.blend`. Repo là bản bàn giao lâu dài; không dựa vào cloud để lưu bền.
 - Exception tier chỉ ba asset nhóm E đã nêu, job spec có tierOverride/approval/plannedCredits=30; submit còn cần approvedTierOverrides trong metadata. Không thay tier nhóm khác. Chung trần jobs+remesh, chặn lỗi/ambiguous, không POST lại.
 - 14 test_batch + test_farm offline PASS trước chạy; ba check ảnh/hash PASS. GLB kiểm header đầy đủ khi download; ảnh 12 góc đã xem, workspace mở lại đủ collection/texture. Không chạy suite game vì chưa thay runtime; lần chọn suite trước yêu cầu full do chênh nhánh nguồn với main, không chạy local full suite.
+
+## Cow game fitting in progress — 13/11/2026 09:09 AEDT
+
+Owner explicitly instructed to continue fixing cow through Blender/game checks until a complete review candidate, without stopping between iterations. This supersedes the initial no-fit/no-runtime-edit scope **for cow only**. No further Meshy paid POST; total remains 40.
+
+Six local iterations: repaired/welded/smoothed 30k source, baked surface AO into base colour so the nostrils remain visible in the game's emissive material, rebuilt a 14k far source locally because the paid 9k has visible cheek/facet faults. All three paid originals are preserved unchanged above. Config fixes eye landmarks, trunk height (the udder confused automatic detection), hanging tail silhouette/weights and folded sleep. Cow has the eight farm clips plus run/jump; dog-only tricks/accessory cases are not gameplay for a farm cow.
+
+Current candidate installed only on this working branch for review: `models/world/creature-cow-hd.glb` (about 681 KB), `creature-cow.glb` (about 393 KB). Packed with gltfpack 0.20 (`-cc -kn -km -ke -vp 14 -vt 14 -vn 8`). `MESHY_CREATURES` includes cow for actual near/far loading. Soft eyelid alpha is preserved by the shared loader; existing opaque animal textures retain their material behavior.
+
+Checks so far: quick 60 cases / 0 failing; full 120 cases / 0 failing; selftest catches all six deliberately planted defects (stretch, tear, eyes, sink, hat, mouth). Patterned cow eyes use surface-occlusion probes, so black fur is not misclassified as a pupil. Probe honours alpha, and the planted missing-lid defect is caught. No eye/stretch thresholds raised. Tear allowance 30 records the physically open bell/collar ring, inspected across 72 marked samples; worst final full count 21. Cow is not equipped with pet hats; the hat detector is still exercised as an artificial fault in selftest.
+
+Artifacts so far under [cow/review/](cow/review/): four-view animation film, packed editable fitted blend, full audit and selftest results. Further game/device integration and repository checks are running. **Work in progress, not owner-approved and not ready to merge/deploy.**
+
+The first repository `types` check found an existing compile error at avatar.ts:562: the late HD attachment's skin field is typed by a broad look dictionary. A string assertion now aligns that call with its constructor; type-only, stripped JavaScript behavior is unchanged. It will be rechecked.
