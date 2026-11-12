@@ -34,7 +34,7 @@ const shots: Record<string, string> = await P.page.evaluate(async ([MODE, LIST, 
     const at = head && !villager ? head.getWorldPosition(new THREE.Vector3()).add(new THREE.Vector3(0, .12, 0)) : new THREE.Vector3(bc.x, box.min.y + Hh * .86, bc.z);
     const fwd = new THREE.Vector3(Math.sin(yaw), 0, Math.cos(yaw)).applyAxisAngle(new THREE.Vector3(0, 1, 0), side);
     const cam = new THREE.PerspectiveCamera(28, 1, .05, 200); cam.position.copy(at).addScaledVector(fwd, Hh * .75); cam.lookAt(at);
-    const hid: any[] = []; if (HIDE === 'face') model.obj.traverse((o: any) => { if (o.isMesh && o.visible && /^face-/.test(o.material && o.material.name || '')) { hid.push(o); o.visible = false; } });   // (HIDE=face: the mood pieces hidden, to tell what the body shows under them)
+    const hid: any[] = []; if (HIDE) model.obj.traverse((o: any) => { if (o.isMesh && o.visible && (HIDE === 'face' ? /^face-/ : new RegExp('^(face-|' + HIDE + ')')).test(o.material && o.material.name || '')) { hid.push(o); o.visible = false; } });   // (HIDE=<material>: that material hidden too, with the mood pieces, e.g. HIDE=cloth-body)   // (HIDE=face: the mood pieces hidden, to tell what the body shows under them)
     grab(name, cam); hid.forEach(o => { o.visible = true; });
   };
   const mood = (av: any, M: any, m: string) => { if (av.life) { av.life.mood = m; av.life.blink = av.life.t + 60; av.life.glance = av.life.t + 60; av.life.feel = ''; } M.follow(m); };
