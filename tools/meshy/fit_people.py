@@ -183,7 +183,7 @@ if not KEEP:
             for l in f.loops: l[uvl].uv = cu + (l[uvl].uv - cu) * k
     bm.to_mesh(body.data); bm.free()
     bpy.ops.object.mode_set(mode='EDIT'); bpy.ops.mesh.select_all(action='SELECT'); bpy.ops.uv.select_all(action='SELECT')
-    bpy.ops.uv.pack_islands(rotate=True, margin=0.004); bpy.ops.object.mode_set(mode='OBJECT')
+    bpy.ops.uv.pack_islands(rotate=True, margin=0.012 if TEX <= 512 else 0.004)   # (12 Nov 2026: the light model's face, cracked along its picture islands: at 512 px .004 is 2 px, and far away the smaller picture levels mixed the neighbours' colours in); bpy.ops.object.mode_set(mode='OBJECT')
     print('FIT texture space: face islands x3.5', nface, 'head/hair islands x1.6', nhead)
     body.data.materials.clear()
     print('FIT body tris', len(body.data.polygons))
@@ -492,6 +492,7 @@ def lid(img, b, top=0., bot=1.):   # (original_skin) a closed lid painted over t
         # the eye stays as painted: below the eye's middle, a red-pink pixel (not dark, not white, red above green and blue)
         # is blush, never lid, whatever the outline tracing above reached
         _R, _G, _B = F[..., 0], F[..., 1], F[..., 2]
+        for _ in range(2): hole = hole | (_far & (np.roll(hole, 1, 0) | np.roll(hole, -1, 0) | np.roll(hole, 1, 1) | np.roll(hole, -1, 1)))   # (12 Nov 2026: a faint ring stayed round one closed eye of Sol and Lumi, the eye white's soft outer edge just outside the lid: 2 px more)
         _esh = ((V < .55) | ((V > .78) & (S_ < .22))) & (np.hypot((xx - cx_) / (rx * 1.2), (yy - cy_) / (ry * 1.1)) < 1)   # (the eye's own dark and white pixels, and 4 px round them: their soft edge, half white and half skin, passed as blush and showed as a pale ring round every closed eye)
         for _ in range(4): _esh = _esh | np.roll(_esh, 1, 0) | np.roll(_esh, -1, 0) | np.roll(_esh, 1, 1) | np.roll(_esh, -1, 1)
         hole &= ~(~_esh & (yy > cy_) & (V > .82) & (S_ > .3) & (_R > _G * 1.2) & (_R > _B * 1.3))   # (bright: Sol's amber iris, red but darker, passed at .6 and showed through his closed lids; a blue-near-green test instead broke Lumi's orange-red blush into specks)   # (inside the eye's box too: Lumi's box reaches down over her blush)

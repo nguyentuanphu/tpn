@@ -15,8 +15,9 @@ const [OUT, MODE = 'faces', LIST = 'finn,sol,clara,lumi'] = process.argv.slice(2
 mkdirSync(OUT, { recursive: true });
 const b = await chromium.launch({ args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'] });
 const P = await open(b, { w: 900, h: 700, fast: false }); await clear(P.page);
-const shots: Record<string, string> = await P.page.evaluate(async ([MODE, LIST, BARE, HIDE]) => {
+const shots: Record<string, string> = await P.page.evaluate(async ([MODE, LIST, BARE, HIDE, HELP_T]) => {
   const G = (window as any).__sv, A = await import(String('/js/avatar.js')), FM = await import(String('/js/friend-model.js')), { THREE } = await import(String('/js/gfx.js'));
+  if (HELP_T !== '') (globalThis as any).__HELP_T = Number(HELP_T);   // (HELP_T=0..1: how far the shoulder and hip helper bones turn with the limb, to test them; the game uses .5)
   const h = G.heroes[0], R = G.renderer, out: Record<string, string> = {};
   const w = (ms: number) => { dispatchEvent(new Event('pointermove')); document.querySelectorAll('.storybook, .dialog, .modal, .reward').forEach(e => e.remove()); G.paused = false; G.world.time = .42; return new Promise(res => setTimeout(res, ms)); };
   let top = h.av.root; while (top.parent) top = top.parent; G.world.time = .42;
@@ -72,7 +73,7 @@ const shots: Record<string, string> = await P.page.evaluate(async ([MODE, LIST, 
     await A.loadFriendModels(id); await A.loadFriendModels(id + '-hd');
     for (const kind of ['everyday', 'aodai']) {
       const av: any = A.buildAvatar({ set: LOOK[id] || 'girl', friend: id, skin: '#f6c7a5', suit: `${id}-${kind}` }, null, { hd: true }); A.showHD(av, true);
-      if (HIDE) av.modelHD.obj.traverse((o: any) => { if (o.isMesh && new RegExp('^lit-g-(' + HIDE + ')').test(o.material && o.material.name || '')) o.visible = false; });
+      if (HIDE) av.modelHD.obj.traverse((o: any) => { const mn = o.material && o.material.name || ''; if (o.isMesh && (HIDE === 'body' ? !/^(lit-g-|face-)/.test(mn) : new RegExp('^lit-g-(' + HIDE + ')').test(mn))) o.visible = false; });   // (HIDE=body: the body hidden, the clothes alone: a hole in a garment from a body poking through it, 12 Nov 2026)
       top.add(av.root); av.root.position.set(h.pos.x + 3, h.av.root.position.y, h.pos.z + 3); av.root.rotation.y = 0;
       for (const [st, sp, frames] of [['walk', 3, 9], ['walk', 9, 14], ['cheer', 0, 3], ['wave', 0, 3], ['dance', 0, 5], ['air', 0, 2], ['sit', 0, 2], ['climb', 0, 4]] as [string, number, number][]) {
         av.life = null; for (let f = 0; f <= frames; f++) A.animate(av, st, 10 + f * .05, sp);
@@ -178,7 +179,7 @@ const shots: Record<string, string> = await P.page.evaluate(async ([MODE, LIST, 
     for (const s of [Math.PI, 2.2]) headShot(`v-${id}-neck-back-${s.toFixed(1)}`, n.A.root, n.A.model, yaw, s, true);
   }
   return out;
-}, [MODE, LIST, !!process.env.BARE, process.env.HIDE || ''] as any);   // (HIDE=shorts: that garment hidden in the poses, to tell which layer shows)
+}, [MODE, LIST, !!process.env.BARE, process.env.HIDE || '', process.env.HELP_T || ''] as any);   // (HIDE=shorts: that garment hidden in the poses, to tell which layer shows)
 if (MODE === 'cover' || MODE === 'skirt') for (const [k, v] of Object.entries(shots)) if (!String(v).startsWith('data:')) console.log(k, v);
 for (const [k, v] of Object.entries(shots)) { if (v) writeFileSync(`${OUT}/${k}.png`, Buffer.from(v.split(',')[1], 'base64')); else console.log('missing', k); }
 console.log('shots', Object.keys(shots).length, 'in', OUT);

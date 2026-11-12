@@ -345,7 +345,7 @@ export function attachFriendModel(A, id: string, skinHex: string, wear: FriendMo
     for (const h of helpers) {   // (half way between the trunk's turn and the limb's, from their rests)
       h.t.getWorldQuaternion(hq1); hq1.premultiply(inv).multiply(h.rt);
       h.l.getWorldQuaternion(hq2); hq2.premultiply(inv).multiply(h.rl);
-      hq1.slerp(hq2, .5); sq.copy(hq1).multiply(h.r);
+      hq1.slerp(hq2, (globalThis as any).__HELP_T ?? .5); sq.copy(hq1).multiply(h.r);
       h.b.parent.getWorldQuaternion(parentQ); parentQ.premultiply(inv);
       h.b.quaternion.copy(parentQ.invert().multiply(sq)); h.b.updateMatrixWorld(true);
     }
