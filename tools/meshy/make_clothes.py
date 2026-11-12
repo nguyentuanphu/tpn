@@ -310,6 +310,32 @@ def _move_with_body(bm, o, name):
                 if k != 'hair-v': new[k] = new.get(k, 0) + t * w
             setw(v, new); _nc += 1
         print('CL move', name, 'collar points on body weights', _nc)
+    # (5) (12 Nov 2026, owner: "tay áo lởm chởm", ragged hems in the game, clean in Blender) the smoothing above spread a top's
+    # points over up to 8 bones; glTF keeps 4, so the exporter dropped a different bone at each point and every hem became a
+    # row of teeth. Each point keeps only its own side's limb bones and its 4 largest weights, and the weights are smoothed a
+    # little over the garment again within that set, so the game moves the cloth exactly as Blender does
+    def _side_ok(k, x):
+        if k[-1:] in 'LR' and k.rstrip('LR') in ('arm', 'elbow', 'leg', 'knee', 'helpArm', 'helpLeg', 'hand', 'ankle'):
+            return (k[-1] == 'L') == ((x > 0) == (J['armL'].x > 0)) or abs(x) < .02
+        return True
+    _n4 = 0
+    for _pass in range(3):
+        cur = {}
+        for v in bm.verts:
+            w = {k: x for k, x in getw(v).items() if _side_ok(k, v.co.x)}
+            top = dict(sorted(w.items(), key=lambda kv: -kv[1])[:4])
+            if len(w) > 4: _n4 += 1
+            cur[v] = top
+        if _pass == 2:
+            for v, w in cur.items(): setw(v, w)
+            break
+        for v in bm.verts:   # (a gentle pass over neighbours, kept within each point's own four)
+            acc = dict(cur[v])
+            for e in v.link_edges:
+                for k, x in cur[e.other_vert(v)].items():
+                    if k in acc: acc[k] += x * .5
+            setw(v, acc)
+    print('CL move', name, 'points over 4 bones trimmed', _n4)
 def _helper_bones():
     if 'helpArmL' in rig.data.bones: return
     VL.objects.active = rig; rig.select_set(True); bpy.ops.object.mode_set(mode='EDIT')
