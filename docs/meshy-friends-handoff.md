@@ -8,8 +8,8 @@ Updated 13 Nov 2026 AEDT. Paste the prompt below into a new chat if this one run
 Tiếp tục việc sửa lỗi 4 bạn Meshy (Finn, Sol, Clara, Lumi) trong game Sparkle Valley.
 Thư mục D:\WorkSpace\sv-meshy-prod, nhánh meshy-production-20261107. Trả lời tiếng Việt, ngắn.
 Đọc trước: CLAUDE.md, .claude/skills/meshy-characters/SKILL.md, docs/meshy-friends-handoff.md (phần "Where it stands" và "Next").
-Việc trước mắt (13/11): soi cận mép tay áo Clara, Finn, Lumi (game_shots arms), chạy vòng soi đầy đủ 86,
-sửa vành mờ quanh mắt nhắm, rồi làm "cổng" trước khi hỏi chủ approve (xem "Gate" và "Next").
+Việc trước mắt (13/11, 8 giờ 20): sửa mảng mi nhắm sáng hơn má (Sol, Lumi, Finn), răng ở mép tay áo Lumi,
+rồi vòng soi 86 và "cổng" trước khi hỏi chủ approve (xem "Where it stands", "Gate" và "Next").
 Luật: không gọi Meshy / không tiêu credit; không merge main, không deploy, không tăng version; hỏi chủ bằng pop-up;
 commit và push nhánh mỗi giờ (pull --no-rebase trước), không force-push; không commit content/management-catalogue.json;
 xem ảnh lỗi cỡ thật; ghi bài học vào SKILL.md và cập nhật file handoff này.
@@ -49,17 +49,20 @@ The auditor branch (meshy-audit-coverage) is adding a mouth check, then eye sock
 
 ## Where it stands
 
-**13 Nov 2026 (AEDT), about 5 am.**
+**13 Nov 2026 (AEDT), about 8:20 am.** Nothing of this chat is running. Models committed at 269e98787.
 
-- Face audit: use the auditor branch's `audit.mts` (meshy-audit-coverage 6086ef592, it has the `mouth` and `lid` checks) against this branch's server: `git show origin/meshy-audit-coverage:tools/meshy/audit.mts > tools/meshy/audit-cov.mts` (not committed), then `cd tests; node ../tools/meshy/audit-cov.mts <out> <id> poses:face,pics`.
-- **Sol** (refitted at 8201a367f, committed 27e28e041): lid 0, eyes 0, face 0, mouth 0 from the front. Mouth at three-quarters (0.7) 5 cases, but the marks lie on the cheek blush under the near eye, not the mouth: an auditor false alarm, reported to the Release chat.
-- **Clara, Finn, Lumi** are being refitted again (started about 4:40 am) with the last fit_people.py (the smile's lips wiped wider, no amber iris kept as blush). Before that refit: Clara lid 9 (was 43), Finn lid 0, Lumi lid 9; their round and sad mouths still had old lip ends beside them.
-- Mouths: surprised, sad and excited now change the mouth (fit_people.py finds the lips as a line). Clara's surprised and excited mouths are small; the o mouth's outline looks plum (`mouth_o`, outline `lip * .95`): a look question, not yet changed.
-- Closed eyes (js/friend-model.ts): excited shuts the painted eye; shut texels are replaced outright; the eye's whole core (`cA_`/`cB_`, .5 x .46 of the eye area, below its top) is lid whatever its mark, only blush stays. That took Sol's lid line from 76 to 0 (with the iris fix).
-- Ragged hems, two causes:
-  1. (fixed, all four redressed) the painted body inside a sleeve followed the triangles as cloth-coloured stripes; limb points within 2 cm inside a limb cut are no longer covered. Sol's `arms` close-ups are clean.
-  2. (open, Lumi most) cream teeth hanging from the sleeve's hem over the arm (`D:\WorkSpace\meshy\fitted\arms-3\lumi-idle-armR-front.png`, `-armL-out`), and a torn look round the raised arm (`lumi-cheer-armL-out`). Tried and ruled out (13 Nov): painting the swim kit that sticks out past a hem in the skin's colour (no change at all, reverted). Next suspect: make_clothes.py pushes the hem and the ring next to it 6 and 3 mm out along the *nearest body point's* normal; near the armpit that point jumps between arm and trunk, which would zigzag the hem. Render Lumi's top-short alone in Blender close to the hem, then try pushing along the sleeve's own direction from the arm's axis.
-- Round 86 (full audit) not run yet. The approval gate above applies: do not ask the owner until it is clean.
+- Face audit (auditor branch meshy-audit-coverage a39af972a, copied as `tools/meshy/audit-cov.mts`, not committed; `cd tests; node ../tools/meshy/audit-cov.mts <out> <id> poses:face,pics` against this branch's server 8765):
+  - Sol: eyes 0, lid 0, mouth 0, face 0 (`D:\WorkSpace\meshy\fitted\f9-sol`).
+  - Finn: eyes 0, lid 0, mouth 0; face 5 cases at -0.7/-1.2 (worst 73 px): a few specks at the hair's edge by the ear (`f8-finn`).
+  - Clara: eyes 0, lid 0, face 0; mouth 4 cases at three-quarters (worst 75 px) while the mouths look right (`f9-clara`).
+  - Lumi: eyes 0, lid 0; mouth 5 cases at ±0.7, labelled by the auditor "a mood piece edge over the cheek" (`f8-lumi`): real, see the next point.
+- **Open, seen by eye and not yet counted by the auditor:** closed and happy eyes (blink, happy, excited) are lighter flat ovals over the cheek's blush with a visible edge (Sol from the front, Lumi and Finn at three-quarters). Measured in the game (Sol blink front): inside the oval (241,122,69) flat, the blush round it (241,90,49). The lid fill in `lid()` (fit_people.py) starts at the rim's median and is averaged 700 times; the hole reaches down past the eye into the blush. Next: limit the hole below the eye (the blush test keeps blush only outside `d > .7` and below `cy_`), or start the fill from a weighted blur of the skin round it (tried offline on a small hole: no visible difference, not committed). Ask the auditor chat for a check of a closed-eye piece's brightness against the cheek.
+- Mouths (fit_people.py): the lips are found as a line; the old mouth is wiped by `erase_mouth()` (its own filler), over a box wider and taller than the line; the mouth piece covers all of it and nothing in it counts as hair (Clara's red lips are hair-coloured); the reduced face layer is put back on the face 4.5 mm in front (Clara's sculpted lips came through). The o mouth is dark wine red: a look question for the owner.
+- Closed eyes in the game (js/friend-model.ts): excited shuts the painted eye; inside the eye's core every texel is lid, marked or not, only blush stays; shut texels are replaced outright.
+- Ragged hems: cause 1 fixed (limb points within 2 cm inside a limb cut are not painted in the cloth colour; Sol clean in `arms` close-ups). Cause 2 open (Lumi most):
+  cream teeth hanging from the sleeve over the arm (`D:\WorkSpace\meshy\fitted\arms-3\lumi-idle-armR-front.png`) and a torn look round a raised arm. Ruled out: painting the kit past a hem in skin colour (no change, reverted). Next suspect: make_clothes.py pushes the hem and the ring next to it 6 and 3 mm out along the nearest body point's normal, which jumps between arm and trunk near the armpit.
+- Round 86 (full audit), the 1024 px sheets and the second reviewer are not done. The approval gate applies: do not ask the owner yet.
+- Blender crashes on about one fit in three on the shared machine (`EXCEPTION_ACCESS_VIOLATION`); retry: `powershell -File tools/meshy/refit_friends.ps1 clara sol finn lumi` tries each fit three times and installs both sizes.
 
 **Hand-over, 12 Nov 2026 (AEDT), owner asked to stop and pass to another account.** Nothing is running.
 
@@ -75,7 +78,7 @@ The auditor branch (meshy-audit-coverage) is adding a mouth check, then eye sock
 
 ## Next
 
-(13 Nov) 1 (refit and redress) and 3 (ragged hems, first cause) below are done. Now: when the Clara, Finn, Lumi refit is in, the face audit of the three (lid and mouth 0) and their `arms` close-ups; the second hem cause (Lumi, above); round 86; the faint ring round closed eyes; the o mouth's colour and Clara's small mouths; the standard 1024 px sheets and a second-reviewer subagent (the gate); only then ask the owner.
+(13 Nov, 8:20 am) Next, in order: the lighter closed-eye ovals over the blush (see above); Lumi's sleeve teeth (cause 2); round 86 (all four, parts a minute apart, then `audit.mts <out> merge`, compare with 85: 561); the standard 1024 px sheets and a second-reviewer subagent; only then ask the owner, once, for all four.
 
 Old list (12 Nov):
 
