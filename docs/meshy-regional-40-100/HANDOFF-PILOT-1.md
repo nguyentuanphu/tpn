@@ -3,7 +3,22 @@
 Branch `meshy-regional-cloud` (never `main`, no deploy, no version bump, draft pull requests only). Written 12 Nov 2026,
 about 16:30 AEDT, when the owner stopped this chat so that another Claude account takes over.
 
-## Where it stands (12 Nov 2026 AEDT)
+## Where it stands (13 Nov 2026, about 07:30 AEDT; next chat on the owner's PC)
+
+- **Refit of 13 Nov committed as a work-in-progress snapshot** (commit 2ad8cc7f4): all six with the new flags
+  `-PieceSink -LidHair -MouthSoft -LidLocal` (what each fixes: SKILL.md, "Eyes, nose and mouth"). r045's dark fleck over
+  the shut right eye (owner's fault) is gone; the dotted lock, the inner-corner ticks and the light disc round shut eyes
+  are gone. **Not approved and the review gate is not clean: no approval question was asked.** What is left, from three
+  second-reviewer subagents and my own review at 1024 px: `review-20261113/FINDINGS.md`.
+- Auditor: `audit_villager.mts` now also has `lid` and `mshape` (from `audit.mts`, fitted to villagers). Last run: lid 19
+  and mshape 15 failing (side-view eye remnants, see FINDINGS A; some mshape still false on a random host).
+- On the owner's PC: Python `D:\WorkSpace\meshy\tools\pyenv\Scripts\python.exe`, Blender
+  `C:\Users\nguye\tools\blender-4.2.23-windows-x64\blender.exe`, Windows PowerShell 5.1 (`powershell -File`, no
+  `pwsh`); a fit pair takes 10-60 min depending on the other chats' load. Server: from `D:\WorkSpace\sv-meshy-prod`,
+  `node tools/meshy/serve.mjs D:\WorkSpace\sv-meshy-regional 8794`. Fitting rewrites `joints/<id>.json` with CRLF only:
+  `git checkout -- docs/meshy-production-20261107/joints/` after a fit (the content is the same).
+
+## Where it stood (12 Nov 2026 AEDT)
 
 - **Meshy spending is finished:** 24 paid steps, 270 credits, the whole budget (journal `meshy-jobs-cloud.sqlite3`, tables
   jobs, remesh and rigging). **No more paid calls.** The raw files are on the owner's PC in
@@ -39,10 +54,21 @@ every model:
 5. Only then one approval question for the whole group, with the sheets and the list fixed / left. Not clean: keep working,
    do not ask.
 
-## Next steps
+## Next steps (13 Nov 2026)
+
+1. Work through `review-20261113/FINDINGS.md`, biggest first: A (the open eye showing beside a shut lid in angled views,
+   all six: pieces that wrap round the eye's sides, or the game's shut-eye paint in `js/friend-model.ts` via the board),
+   then B-F (r064's skin slab over a lock on blink, r064's sad double lash, half-lid crescents, r074's flattened blush,
+   r084's hair strip). Try each in `face_moods_preview.py` first, then refit, audit, `SHOT_GATE=1` shots, look.
+2. Rerun the gate (auditor clean and not worse, own review, second-reviewer subagents, the owner's old faults) and only
+   then ask the owner, once, for the group.
+3. H (Meshy's own geometry and paint) cannot be fixed in the fit without new Meshy work (no credits left): list it for
+   the owner with the pictures.
+
+## Next steps as written 12 Nov (done 13 Nov, kept for the commands)
 
 1. Refit all six with the code at the branch tip (it has 751e6d0a4), two at a time:
-   `pwsh -File tools/meshy/fit_person.ps1 -Id <id> -Villager -NoLimbTint -LidMatch -FaceUV 2 -PieceSnap .001 -MouthFind -LookSolid -LidSoft -PieceSink -LidHair -MouthSoft -VTile 256 <flags> -Ref $SV_MESHY_ROOT/work-v108/villager-<ref>-hd.glb`
+   `pwsh -File tools/meshy/fit_person.ps1 -Id <id> -Villager -NoLimbTint -LidMatch -FaceUV 2 -PieceSnap .001 -MouthFind -LookSolid -LidSoft -PieceSink -LidHair -MouthSoft -LidLocal -VTile 256 <flags> -Ref $SV_MESHY_ROOT/work-v108/villager-<ref>-hd.glb`
    (with `FIT_SAVE_F=$SV_MESHY_ROOT/fitted/<id>/F.png` set, for the preview tool, and `FIT_LOG=<file>` to keep Blender's lines)
 
    | id | ref | flags | hair colour for the preview |
@@ -57,7 +83,7 @@ every model:
 2. Copy `$SV_MESHY_ROOT/fitted/<id>/<id>-mid-packed.glb` to `models/villager-<id>.glb`, then from `tests`:
    `node ../tools/meshy/audit_villager.mts <out> r045@vn-schoolgirl,r050@vn-grandma,r057@vn-dad,r064@au-mum,r074@au-grandma,r084@au-boy`
    (must say failing 0; r064's earring has twice been counted as an open eye in a side view, 15 px: look at the picture),
-   then `SHOT_SIZE=1024 SHOT_DIST=.45 SHOT_UP=.06 node ../tools/meshy/game_shots.mts <out> village <same list>` and
+   then `SHOT_GATE=1 SHOT_SIZE=1024 SHOT_DIST=.45 SHOT_UP=.06 node ../tools/meshy/game_shots.mts <out> village <one id@role at a time>` and
    the 480 px `game_shots.mts` run for the sheets (`tools/meshy/regional_sheet.py`). The test server is
    `node tools/meshy/serve.mjs <worktree> <port>` from the `sv-meshy-prod` worktree (it is not on this branch), with
    `SV_URL=http://127.0.0.1:<port>/`.
