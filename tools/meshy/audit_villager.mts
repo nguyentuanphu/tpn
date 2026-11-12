@@ -111,14 +111,15 @@ const res: any = await P.page.evaluate(async ([LIST, QUICK, LIMIT]) => {
         }
         // (12 Nov 2026, owner circled the far shut eye by the nose from three-quarters and the side on most villagers, while
         // the rule above passed: it looks for whites only, and only under the face pieces, which are drawn from the front)
-        // shut: the model's own eye areas in 3D (its eye boxes, skin-marked, front half, hidden by the nose as the face is)
+        // shut: the model's own eye areas in 3D (its eye boxes without their outer 30 % and top 20 %, where temple hair and
+        // fringes lie: Bông, Mai; skin-marked, front half, hidden by the nose as the face is)
         // must show no dark or white pixel while the eyes are shut, besides the lash line the lid piece draws
         { const bm: any[] = []; M.obj.traverse((o: any) => { if (o.isMesh && o.visible && o.material && o.material.userData && o.material.userData.kitU && !/^face-/.test(o.material.name || '')) bm.push(o); });
           if (bm.length) {
             const mask = (o: any) => { const u = o.material.userData.kitU, m = new THREE.MeshBasicMaterial({ color: 0xffffff, vertexColors: true, side: THREE.FrontSide });
               m.onBeforeCompile = (sh: any) => { sh.uniforms.uDq = { value: u.deq.value }; sh.uniforms.uEA = { value: u.eyeA.value }; sh.uniforms.uEB = { value: u.eyeB.value };
                 sh.vertexShader = 'uniform mat4 uDq;\nvarying vec3 vQ_;\n' + sh.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\nvQ_ = (uDq * vec4(position, 1.0)).xyz;');
-                sh.fragmentShader = 'uniform vec4 uEA;\nuniform vec4 uEB;\nvarying vec3 vQ_;\n' + sh.fragmentShader.replace('#include <dithering_fragment>', '#include <dithering_fragment>\nbool e_ = vColor.r > .5 && vQ_.z > 0.0 && ((vQ_.x > uEA.x && vQ_.x < uEA.y && vQ_.y > uEA.z && vQ_.y < uEA.w) || (vQ_.x > uEB.x && vQ_.x < uEB.y && vQ_.y > uEB.z && vQ_.y < uEB.w));\ngl_FragColor = vec4(e_ ? vec3(1.0) : vec3(0.0), 1.0);'); };
+                sh.fragmentShader = 'uniform vec4 uEA;\nuniform vec4 uEB;\nvarying vec3 vQ_;\n' + sh.fragmentShader.replace('#include <dithering_fragment>', '#include <dithering_fragment>\nbool e_ = vColor.r > .5 && vQ_.z > 0.0 && ((vQ_.x > uEA.x + (uEA.y - uEA.x) * .3 && vQ_.x < uEA.y && vQ_.y > uEA.z && vQ_.y < uEA.z + (uEA.w - uEA.z) * .8) || (vQ_.x > uEB.x && vQ_.x < uEB.y - (uEB.y - uEB.x) * .3 && vQ_.y > uEB.z && vQ_.y < uEB.z + (uEB.w - uEB.z) * .8));\ngl_FragColor = vec4(e_ ? vec3(1.0) : vec3(0.0), 1.0);'); };
               return m; };
             const sv: any[] = []; M.obj.traverse((o: any) => { if (o.isMesh) sv.push([o, o.material, o.visible]); });
             sv.forEach(([o, m, v]: any) => { if (bm.includes(o)) o.material = mask(o); else o.visible = false; });
