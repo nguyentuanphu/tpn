@@ -289,8 +289,11 @@ const FOLDED = ['sleep', 'sit', 'beg', 'scratch', 'roll'];
 const OWN: Record<string, any> = {};
 for (const k of kinds) { try { OWN[k] = JSON.parse(readFileSync(new URL(`./animal_joints/${k}.json`, import.meta.url), 'utf8')).audit || {}; } catch { OWN[k] = {}; } }
 // (a hat only loose within the animal's own allowance, neither floating nor through the head, passes: the dragon's head is
-// egg-shaped, so a round band sits close in front and a little off it at the back, hidden under the band)
-const val = (c: any, k: string) => k === 'hat' && OWN[c.kind] && OWN[c.kind].hatLoose != null && !c.hatFloat && !c.hatPoke && (c.hatLoose || 0) <= OWN[c.kind].hatLoose ? 0 : c[k];
+// egg-shaped, so a round band sits close in front and a little off it at the back, hidden under the band. (13 Nov 2026) A
+// "head through" within the animal's own hatPoke passes too: the bunny's long ears stand up through the closed hats, and
+// in cheer and beg the bottom of the ears, partly the head's, rises through the middle of the top; never a floating hat)
+const val = (c: any, k: string) => { const O = OWN[c.kind] || {};
+  return k === 'hat' && (O.hatLoose != null || O.hatPoke != null) && !c.hatFloat && (c.hatPoke || 0) <= (O.hatPoke || 0) && (c.hatLoose || 0) <= (O.hatLoose || 0) ? 0 : c[k]; };
 const lim = (c: any, k: string) => (OWN[c.kind] && OWN[c.kind][k] != null) ? OWN[c.kind][k] : k === 'stretch' && FOLDED.includes(c.clip) ? 900 : LIMIT[k];
 const fail = real.filter((c: any) => keys.some(k => val(c, k) > lim(c, k)) || c.missing);
 const lines = [`pets audit ${new Date().toISOString()} cases ${real.length} failing ${fail.length}`];

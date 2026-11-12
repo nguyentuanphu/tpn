@@ -30,6 +30,7 @@
   "audit": {
     "float": 120,
     "hatLoose": 16,
-    "why": "12 Nov 2026, looked at the marked pictures: the bunny walks and follows by hopping (the code bunny's hop gait), so its feet leave the ground in walk and follow (up to 112 mm) by design; in idle and sleep it stays on the ground. The captain's hat sits on the head with the long ears coming up through it; its band is a little loose where the ears leave the head."
+    "hatPoke": 30,
+    "why": "12 Nov 2026, looked at the marked pictures: the bunny walks and follows by hopping (the code bunny's hop gait), so its feet leave the ground in walk and follow (up to 112 mm) by design; in idle and sleep it stays on the ground. The captain's hat sits on the head with the long ears coming up through it; its band is a little loose where the ears leave the head. 13 Nov 2026, full audit: the nón lá, beanie and captain's hat show 'head through' 16-27 points in cheer and beg only; the pictures (cheer from the side and front, close front and side) show the long ears standing up through the hats as made, the bottom of the ears (partly the head's) rising through the middle of the top as the ears move, not the skull: hatPoke 30."
   }
 }
