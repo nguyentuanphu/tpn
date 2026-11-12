@@ -303,6 +303,12 @@ for r_ in range(_Hn):
         if n_: F[r_, c_, :3] = acc / n_; _nr += 1
 print('FIT face picture projected from the front', _nr, 'of', _Hn * _Wn)
 activate(decal); dd = decal.modifiers.new('dec', 'DECIMATE'); dd.ratio = min(1, 1200 / max(1, len(decal.data.polygons))); bpy.ops.object.modifier_apply(modifier='dec')
+# (13 Nov 2026: Clara's sculpted lips came through her round and sad mouths as a pink lens with a straight edge) the reduced
+# layer is flatter than the face: each of its points is put back on the body's surface, 4.5 mm in front of it
+_dbt = _BVH.FromObject(body, bpy.context.evaluated_depsgraph_get())
+for _v in decal.data.vertices:
+    _h = _dbt.find_nearest(_v.co)
+    if _h[0] is not None: _v.co = _h[0] + _h[1].normalized() * .0045
 print('FIT face layer tris', len(dme.polygons))
 
 # ---- skin colour: the face's typical light skin
