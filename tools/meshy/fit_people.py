@@ -513,12 +513,13 @@ def lid(img, b, top=0., bot=1.):   # (original_skin) a closed lid painted over t
         hole |= _wide & (yy >= b[1] + h_ * .24)   # (below the brows: b reaches up over them, and closed eyes lost Clara's and Lumi's brows)
     if OWN:   # (11 Nov 2026, owner: Lumi's closed and smiling eyes, a flat patch over the face with no blush) the cheek under
         # the eye stays as painted: below the eye's middle, a red-pink pixel (not dark, not white, red above green and blue)
-        # is blush, never lid, whatever the outline tracing above reached
+        # is blush, never lid, whatever the outline tracing above reached; never inside the eye itself (d < .7: 13 Nov 2026, orange
+        # specks of Sol's amber iris stayed on his closed and happy lids)
         _R, _G, _B = F[..., 0], F[..., 1], F[..., 2]
         for _ in range(2): hole = hole | (_far & (np.roll(hole, 1, 0) | np.roll(hole, -1, 0) | np.roll(hole, 1, 1) | np.roll(hole, -1, 1)))   # (12 Nov 2026: a faint ring stayed round one closed eye of Sol and Lumi, the eye white's soft outer edge just outside the lid: 2 px more)
         _esh = ((V < .55) | ((V > .78) & (S_ < .22))) & (np.hypot((xx - cx_) / (rx * 1.2), (yy - cy_) / (ry * 1.1)) < 1)   # (the eye's own dark and white pixels, and 4 px round them: their soft edge, half white and half skin, passed as blush and showed as a pale ring round every closed eye)
         for _ in range(4): _esh = _esh | np.roll(_esh, 1, 0) | np.roll(_esh, -1, 0) | np.roll(_esh, 1, 1) | np.roll(_esh, -1, 1)
-        hole &= ~(~_esh & (yy > cy_) & (V > .82) & (S_ > .3) & (_R > _G * 1.2) & (_R > _B * 1.3))   # (bright: Sol's amber iris, red but darker, passed at .6 and showed through his closed lids; a blue-near-green test instead broke Lumi's orange-red blush into specks)   # (inside the eye's box too: Lumi's box reaches down over her blush)
+        hole &= ~(~_esh & (d > .7) & (yy > cy_) & (V > .82) & (S_ > .3) & (_R > _G * 1.2) & (_R > _B * 1.3))   # (bright: Sol's amber iris, red but darker, passed at .6 and showed through his closed lids; a blue-near-green test instead broke Lumi's orange-red blush into specks)   # (inside the eye's box too: Lumi's box reaches down over her blush)
     if top > 0: hole &= yy >= y0
     if PART: hole &= yy < lidline(xx)
     # her own skin flows in from all round the eye (a smooth fill, no disc edge): the eye pixels are repeatedly
@@ -620,13 +621,16 @@ M['half'] = im
 im = base.copy()
 for b in eyes.values(): shut(im, grow(b)); stroke(im, arc(b, .7, -.32), lash, lw)
 M['happy'] = im
+# (13 Nov 2026, the auditor's mouth check: faint ends of the smile's lips stayed beside the round and sad mouths) the old
+# mouth is wiped a quarter of its width further at each end and a little above and below
+mouth_er = [max(0, int(mouth[0] - (mouth[2] - mouth[0]) * .25)), max(0, int(mouth[1] - max(3, (mouth[3] - mouth[1]) * .5))), min(W_, int(mouth[2] + (mouth[2] - mouth[0]) * .25)), min(H_, int(mouth[3] + max(3, (mouth[3] - mouth[1]) * .5)))] if mouth else None
 def mouth_o(im, big):
     if not mouth: return im
-    erase(im, mouth); cx, cy = (mouth[0] + mouth[2]) / 2, (mouth[1] + mouth[3]) / 2; mw = mouth[2] - mouth[0]
+    erase(im, mouth_er); cx, cy = (mouth[0] + mouth[2]) / 2, (mouth[1] + mouth[3]) / 2; mw = mouth[2] - mouth[0]
     ellipse(im, cx, cy + (mouth[3] - mouth[1]) * .2, mw * (.17 if not big else .24), mw * (.15 if not big else .19), np.array([.80, .42, .45]), np.clip(lip * .95, 0, 1)); return im   # (owner: no black lips) a soft rose mouth, like the game's own faces
 M['surprised'] = mouth_o(base.copy(), False)
 im = base.copy()
-if mouth: erase(im, mouth); mb = [mouth[0] + (mouth[2] - mouth[0]) * .15, mouth[1], mouth[2] - (mouth[2] - mouth[0]) * .15, mouth[3]]; stroke(im, arc(mb, .75, -.45), lip * .8, lw * 1.1)
+if mouth: erase(im, mouth_er); mb = [mouth[0] + (mouth[2] - mouth[0]) * .15, mouth[1], mouth[2] - (mouth[2] - mouth[0]) * .15, mouth[3]]; stroke(im, arc(mb, .75, -.45), lip * .8, lw * 1.1)
 for b in eyes.values(): erase(im, b, 0, .18)
 M['sad'] = im
 im = base.copy()
