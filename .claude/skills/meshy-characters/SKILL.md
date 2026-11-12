@@ -15,6 +15,15 @@ Owner rules first (from the owner, 7–8 Nov 2026). They override everything bel
 - Friends keep the skin Meshy painted. The skin tone choice is hidden (`SKIN_CHOICE` in `js/ui/friends-ui.ts`, `MESHY_TONES` in `js/friend-model.ts`); the tinting must still work cleanly, because the choice may come back.
 - (8 Nov 2026, owner's decision) **Friends become a Meshy body plus code-made clothes**: ChatGPT draws each friend with only body, face and hair; clothes are made in Blender from the body's own surface so they fit. Villagers have no shop and stay whole Meshy models.
 
+## The gate before asking the owner to approve (owner, 12 Nov 2026 AEDT)
+
+Owner: villagers and pets fail mostly at the face, eyes, eye sockets and nose, and approval was often asked while the face, neck and clothes still had problems; "chỉ đưa bản tốt nhất". So no model goes to the owner for approval until all of these are clean:
+1. The auditor: 0 failing and no regression on the last round. Faces: open, shut, half, sad, glance and every mood, the mouth; the sockets from three-quarters both ways (±.4 and ±.7, the far eye through the face), the sides, from above and below; nose or muzzle; hair round the eyes; the head-neck join; collars; sleeve and trouser hems.
+2. A standard sheet at 1024 px, every picture looked at full size: the face angles above, every mood, neck and nape, back of the head, the whole body in several poses.
+3. A second reviewer: a subagent given only the sheet paths and this checklist, not what was fixed, looks at full size and lists faults; each is fixed or written down with why it is not a fault.
+4. Every fault the owner ever circled (handoffs, this file) checked again, one by one, on the new pictures.
+5. Only then ask, once for the whole group, with the sheets and a list of what was fixed and what is left. Not clean: keep working, do not ask.
+
 ## Working at scale (owner, 9 Nov 2026: dozens of outfits, villagers and animals to come)
 
 Plan: `docs/meshy-pipeline-20261109/PLAN.md`. In short:
@@ -147,6 +156,8 @@ Then the checks: `node suite.mts --only faces,friendmodel,frienditems,friendoutf
   - Self-test plants: `far` (the high-detail model's legs below the knee not drawn, against itself unplanted: no light model was clean), `glow` (the top unlit at night; only clothes judged in the plant, as the skin already glowed), `grip` (the item bound to the trunk), `face` (every piece 3 mm behind where it lies), `lightpoke` (the poke plant on Finn's light model). Each plant runs on a friend whose real model does not already fail its check, or the "caught" proves nothing.
   - Lessons from making them (12 Nov): plant a fault in the game's own drawing (an `onBeforeCompile` wrapper switched by a uniform), never with `o.scale` or position on a skinned mesh, which the bones override; check a new limit against the real spread first (the night median is about .74, so a first glow limit of 1.8 times could never fire); after the light models were fixed (1886a20e7) `far` still counts 1 to 3 px hem slivers that grow large only in the feet close-ups, harmless beyond 15 m, so read its feet views with that in mind rather than raising the limit.
   - Port: `SV_URL` (tests/harness.mts) picks the page server; the self-test takes `-Out <folder>` so sessions on one PC do not delete each other's plant rounds, and `-Only far,glow`. It retries a plant when the busy PC times the page out.
+- (12 Nov) Five worktrees on one PC, each with its own page server (friends 8765, auditor 8766, pets 8777, villagers 8793, regional 8794). The app's `preview_start` read another worktree's launch config and started the pets server on 8777 instead of the auditor's: stop it at once and start the auditor's own server in the background (`node tools/meshy/serve.mjs "<worktree>" 8766`, `SV_URL=http://localhost:8766/`). With five sessions busy, `page.goto` times out often: retry a run up to 4 times, 90 s apart, on `TimeoutError` only.
+- (12 Nov) Code inside `page.evaluate` is only checked when it runs: a `const` declared inside an `if` and used after it failed as "ML is not defined" only at the end of a run. After every change to audit.mts, run one friend with `poses:face,pics` (or the pass changed) and read the log for `Error` before a full round or the self-test.
 - Not yet in the auditor (11 Nov): mid skin tones (the tint is linear, so the light and dark tones bound them), riding, shop shoes, shapes (a skirt standing like a board), the light model's colours far away (only its outline), the mouth's own shape per mood (only that each piece is seen where it lies).
 - Python for pictures: `D:\WorkSpace\meshy\tools\pyenv\Scripts\python.exe` (there is no `python` on the path).
 

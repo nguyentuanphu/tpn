@@ -110,6 +110,12 @@ The four items are all done and in the self-test (12 plants, all caught, commit 
 
 Left for the auditor: the mouth's shape per mood, mid skin tones, riding, shop shoes, skirt shapes, the light model's colours far away. A full round of all four friends with the new passes (`audit.mts <out> clara,sol,finn,lumi`) has not been run.
 
+**12 Nov 2026, late evening AEDT (new chat, took over all five Meshy streams):**
+- Owner's new rule for every stream: the gate before asking for approval (SKILL.md, "The gate before asking the owner to approve"). Sent to the four other sessions; also in the scheduled task `sv-meshy-resume` (3:31 am 13 Nov AEDT, then every 5 hours, resumes stalled streams).
+- Full round with the new passes running: `D:\WorkSpace\meshy\fitted\acov-full1` (parts a minute apart, then `audit.mts <out> merge`). Results not read yet.
+- New check `mouth` (audit.mts, face pass, work in progress, not yet seen to work): lips found below the smile's eye whites; moods that keep the painted mouth must match the smile's; 'o' and 'excited' a roundish oval, no old lip beside it, excited larger; 'sad' corners lower than the middle. Plant `mouth` in audit_selftest.ps1 ('o' shows the smile). First try on Sol (`acov-mouth1`) found a scope bug, fixed; rerun pending. Next: tune it on all four by looking at the `-mouth-look` pictures at full size, run the self-test, then the sockets, nose and neck checks for villagers and pets (the owner's main complaint).
+- Page server for this branch: run it in the background (`node tools/meshy/serve.mjs "D:\WorkSpace\sv-meshy-audit" 8766`), not with preview_start.
+
 Resume prompt (another account or chat):
 
 ```
