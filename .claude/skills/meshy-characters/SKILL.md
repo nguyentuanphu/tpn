@@ -243,6 +243,20 @@ Record: `docs/meshy-regional-40-100/PILOT-1.md`. Ids `r<nnn>` (sheet number), jo
   - *Mouth piece edges (13 Nov 2026).* The "o" and sad pieces hugged the erased smile; the game cuts at alpha .5, and the
     cut fell on the smile's soft blur (sharper in the body's picture than in the face tile): a thin pale line along r050's
     old smile corner. `-MouthSoft` lets the mouth pieces reach a few px further.
+  - *The light disc round a shut eye (13 Nov 2026, r050, r057, r064 at three-quarters).* Measured on r050's preview: the
+    fill was exactly her painted skin (254,199,146) while the blush under the eye is (255,182,132). Round the hole,
+    whatever `skin_mask` does not call skin (lashes, brows, hair, but also blush and the socket's shade) was held at the
+    painted skin, and the fill settled to it. `-LidLocal` (shut eyes only: under a half lid the iris bled up as a brown
+    smudge) keeps light warm colour round the hole as it is and runs the smoothing about 3 times the hole's size squared
+    (700 passes reach only about 25 px). Tried first and no change: `-SmoothPieces` (piece normals), holding at the rim's
+    median. Read the numbers in the preview before guessing at lights.
+  - *The villager auditor's `lid` and `mshape` (13 Nov 2026, from audit.mts).* Ported as they were, they failed on things
+    that are not faults: earrings, the white patch at r064's ear and r045's hat lay under the face grid and passed as eye
+    whites (only whites the shut eye covers count now); the friends' lips box (nose tip to chin) took grown-ups' pink
+    noses, blush and the hair by the chin, and cut big "o" mouths in half, and at three-quarters the mouth is not half
+    way between the eyes (the box is now the smile's own lips, a little wider, within the face grid, and only pixels the
+    mood changes count). The crowd host wearing the model is random per load, so counts move between runs: look at the
+    pictures of every failing case.
   - *Thin grey and white lines round the ears and on the neck (13 Nov 2026, left).* Not in Meshy's own model at the same
     view; not the bake's ray length either (`FIT_BAKE_EXT=.0005 FIT_BAKE_DIST=.0015` gave the same picture as .002/.006).
     Likely the 2048 px picture squeezed into 1024 at .7 of the height (island edges). The white patch at r064's ear and the
