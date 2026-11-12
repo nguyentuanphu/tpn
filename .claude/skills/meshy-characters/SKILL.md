@@ -240,6 +240,10 @@ Feet and legs must never turn pointed ("nhọn") or drawn out in a run, a jump o
 pet, look at its feet yourself, frame by frame at full size, in the films of every run and jump, filmed on open flat
 grass (farm plots and fences hid the feet). A clean audit does not prove this: the stretch check counts big triangles,
 not a foot's shape.
+How it was fixed (13 Nov): a leg swung far with a straight knee points its hoof like a spike (front, reaching) or lays
+it flat like a long slipper (hind, pushing). The knee turns against the hip and the body's own pitch so the hoof stays
+level (`legs(..., cap=KC, bp=pitch)` in `extra_moves`), and the legs swing less. Look at the side view of run, jump and
+bounce at 2x: crop the legs (`pet_film.mts <out> <kind> run,jump,bounce`, then crop x 600-900 of each frame).
 
 ### Lessons from the panda, calf and joey (13 Nov 2026)
 - The weights by colour find what numbers do not: the panda's neck stretched (up to 1,127) because the back half of its

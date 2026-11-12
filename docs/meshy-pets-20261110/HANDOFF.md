@@ -55,6 +55,14 @@ arched flight, reach, squash, settle; head, ears and tail a beat behind; squash 
 pet, and run the full audits again for the approved ones before committing their models. The joey's jump in
 `upright_moves` is still the old style.
 
+**Owner, late morning 13 Nov (upset): the feet turn pointed in run and jump, said many times; film in an open place.**
+Done since: `pet_film.mts` draws the near views on a stage of flat grass with the game's lights (nothing hides the feet);
+`legs(..., cap, bp)` in `extra_moves`: the knee turns against the hip and the body's pitch (`foot_level` 1.0, `knee_max`
+0.95) so the hoof stays level, and the jump's legs reach and push less. Checked on the calf at 2x, frame by frame
+(`film7`/`film8`): run and the standing hop level; the push-off of the jump much better. All four rebuilt and filmed into
+`D:\WorkSpace\meshy\petsilm9\`. **Before sending any film: look at the feet yourself, 2x, frame by frame, in run, jump
+and bounce (owner's standing rule in SKILL.md).** Still open: the scratch leg, the joey.
+
 `tests/check-times.json` (suite timing) is left uncommitted on purpose. Nothing is running.
 
 **Resume prompt (Vietnamese, for the next chat):**
