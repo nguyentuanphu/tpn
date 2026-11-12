@@ -546,7 +546,7 @@ def lid(img, b, top=0., bot=1.):   # (original_skin) a closed lid painted over t
     _w = img[ya:yb, xa:xb, :3]; _w[hm] = sub[hm]   # (only the lid itself: the brows, lashes and hair held at skin colour above were written back too, and vanished on every blink)
     img[ya:yb, xa:xb, 3] = np.maximum(img[ya:yb, xa:xb, 3], hm.astype(np.float32))
     if PART:   # the lid's edge: a soft lash line along the curve, over the eye only
-        xs_ = np.linspace(b[0] + w_ * .06, b[2] - w_ * .06, 24); stroke(img, list(zip(xs_, lidline(xs_))), lash, max(1.2, H_ * .008))
+        xs_ = np.linspace(b[0] + w_ * .06, b[2] - w_ * .06, 24); stroke(img, list(zip(xs_, lidline(xs_))), lash, max(1.2, H_ * .008) * (.6 if REFP == 'villager-' else 1))   # (12 Nov 2026, villagers: Tí's sad lids looked heavy)
 def shut(img, b, top=0., bot=1.):   # close an eye: a painted lid (original skin) or see-through (skin-tone mode)
     if ORIGINAL: lid(img, b, top, bot)
     else: erase(img, b, top, bot)
@@ -625,7 +625,10 @@ lw = max(1.6, H_ * .012)
 M = {}
 M['smile'] = base.copy()
 im = base.copy()
-for b in eyes.values(): shut(im, grow(b)); stroke(im, lash_arc(b, .62, .16), lash, lw)
+def lash_steep(im, pre):   # (12 Nov 2026, owner circled the far shut eye's lash line at the cheek's edge from three-quarters) a villager's shut lash line fades out where the face turns from the front, into the lid under it
+    if REFP != 'villager-' or 'NF' not in globals(): return
+    f_ = np.clip((NF + .5) / .2, 0, 1)[..., None]   # (only the steepest: from -.78 the lash ends were cut short from the front, Mít's and Lan's); im[..., :3] = im[..., :3] * (1 - f_) + pre[..., :3] * f_
+for b in eyes.values(): shut(im, grow(b)); _pre = im.copy(); stroke(im, lash_arc(b, .62, .16), lash, lw); lash_steep(im, _pre)
 M['blink'] = im
 im = base.copy()
 for b in eyes.values():
@@ -633,7 +636,7 @@ for b in eyes.values():
     if not OWN: stroke(im, arc(b, .5, -.06), lash, lw)   # (own face: the lid draws its own lash line along its curve)
 M['half'] = im
 im = base.copy()
-for b in eyes.values(): shut(im, grow(b)); stroke(im, lash_arc(b, .7, -.32), lash, lw)
+for b in eyes.values(): shut(im, grow(b)); _pre = im.copy(); stroke(im, lash_arc(b, .7, -.32), lash, lw); lash_steep(im, _pre)
 M['happy'] = im
 def gmouth():   # (12 Nov 2026, owner circled the old smile's corners beside the sad and round mouths) a villager's old mouth is erased a little past its box
     if REFP != 'villager-': return mouth
@@ -724,6 +727,13 @@ if OWN:
                 cx_ = (g_[0] + g_[2]) / 2 + (w_ * .12 if _l else -w_ * .12)   # (shifted towards the nose)
                 d_ = np.hypot((xx - cx_) / (w_ * .5 * 1.55), (yy - (g_[1] + g_[3]) / 2 - h_ * .08) / (h_ * .5 * 1.35))
                 _wide = np.maximum(_wide, np.clip((1 - d_) / .2, 0, 1) * (yy >= b[1]))
+                ox_ = (g_[0] - w_ * .12) if _l else (g_[2] + w_ * .12); d2_ = np.hypot((xx - ox_) / (w_ * .42), (yy - (b[1] + b[3]) / 2 + h_ * .25) / (h_ * .75))   # (round 22: further out: from three-quarters the near eye's outer upper lash showed past the sheet's edge towards the temple, parallax again)   # (12 Nov 2026, owner circled Mít's near eye's outer corner, happy from three-quarters: the painted lashes flick out and up past the lid there)
+                _wide = np.maximum(_wide, np.clip((1 - d2_) / .2, 0, 1) * (yy >= b[1] - h_ * .45))   # (the outer upper lash flicks up: Mít's red sliver)
+            _same = np.abs(M[k][..., :3] - F[..., :3]).max(-1) < .03
+            _mark = _same & (_wide > .3) & (V < .5) & ~HAIRISH   # (dark only: the blush stays)
+            if _mark.any():
+                _rg = (_wide > .05) & _same & ~_mark & skin_wide(F)
+                M[k][_mark, :3] = np.median(F[_rg][:, :3], axis=0) if _rg.sum() > 8 else REF[:3]
             M[k][..., 3] = np.maximum(M[k][..., 3], _wide * NOHAIR)
         _band = M[k][..., 3] >= .01
         for _ in range(4): _band = _band | np.roll(_band, 1, 0) | np.roll(_band, -1, 0) | np.roll(_band, 1, 1) | np.roll(_band, -1, 1)
@@ -890,6 +900,7 @@ for p in me.polygons:
     zone = (pc.z > L['neck'].z + .02 and not hairzone) or armzone or neckzone
     # below the face, cream and ivory cloth (sleeves, collars) can sit in the skin hue range: skin there needs more colour
     isskin = ((not ORIGINAL) or SHIFT) and (infaceregion or (zone and bool(skin_mask(avg[None])[0]) and (pc.z > L['neck'].z + .02 or hsv(avg)[1] > .2)))
+    if not isskin and REFP == 'villager-' and ((not ORIGINAL) or SHIFT) and neckzone and pc.z > L['neck'].z - .03 and bool(skin_mask(avg[None])[0]) and hsv(avg)[1] > .1: isskin = True   # (12 Nov 2026, owner chose to fix Ruby's neck: its pale front, under .2 saturation, was not skin, and the neck showed two-tone triangles; the upper neck, away from the collar line, is skin when skin-coloured)
     p.material_index = 1 if isskin else 0; nskin += isskin
     for li, cv in zip(p.loop_indices, cs):
         if isskin:
@@ -1383,13 +1394,35 @@ if TEX and KEEP and SHIFT:
             if REFP == 'villager-':   # (round 16: Mai's, Bông's, Lan's and Su's temple hair is painted on triangles Meshy's skin test took as skin; out there, 10 px and more beyond the eye box, the shut-eye paint turned it red-brown) dark skin-marked triangles there lose the mark: hair, not eyelid
                 _nr_ = np.zeros(len(me.polygons), bool)
                 for b in list(eyes.values())[:2]: _nr_ |= (_fcx > fx0 + (b[0] - 10) / W_ * (fx1 - fx0)) & (_fcx < fx0 + (b[2] + 10) / W_ * (fx1 - fx0)) & (_fcz > fz1 - (b[3] + 10) / H_ * (fz1 - fz0)) & (_fcz < fz1 - (b[1] - 10) / H_ * (fz1 - fz0))
-                _unm = _ine & ~_nr_ & _skp & _hz & (_mc.max(-1) < .35) & (_fcy < _ear_y)
+                _top = np.zeros(len(me.polygons), bool)   # (12 Nov 2026, owner circled orange bits at Su's far eye's top by the hat: dark hair just over the eye, skin-marked, took the shut-eye paint)
+                for b in list(eyes.values())[:2]: _top |= (_fcz > fz1 - b[1] / H_ * (fz1 - fz0)) & (_fcx > fx0 + (b[0] - 10) / W_ * (fx1 - fx0)) & (_fcx < fx0 + (b[2] + 10) / W_ * (fx1 - fx0))
+                _unm = _ine & (~_nr_ | _top) & _skp & _hz & (_mc.max(-1) < .35) & (_fcy < _ear_y)
                 if _unm.any():
                     _cd = body.data.color_attributes['skinw'].data; _b2 = np.zeros(len(_cd) * 4, np.float32); _cd.foreach_get('color', _b2)
                     _li = np.concatenate([list(me.polygons[int(i)].loop_indices) for i in np.nonzero(_unm)[0]]).astype(int)
                     for _c in range(3): _b2[_li * 4 + _c] = 0.
                     _cd.foreach_set('color', _b2)
                 print('FIT dark temple triangles unmarked', int(_unm.sum()))
+                # (12 Nov 2026, owner chose to fix Lan's orange hair) a few strands of hair beside the face were painted skin by
+                # Meshy: skin-coloured triangles at the face's sides whose neighbours are mostly dark hair take the hair's colour
+                # and lose the skin mark
+                _pv = [list(p.vertices) for p in me.polygons]; _v2p = {}
+                for _i, _vs in enumerate(_pv):
+                    for _v in _vs: _v2p.setdefault(_v, []).append(_i)
+                _Vm = _mc.max(-1); _side = (np.abs(_pc3[:, 0] - _hcx) > _hw * .7) & (np.abs(_pc3[:, 0] - _hcx) < _hw * 1.4) & (_pc3[:, 2] > fz0 - (fz1 - fz0) * .35) & (_pc3[:, 2] < fz1) & (_fcy < _ear_y) & _hz & ~_ine
+                _cand = np.nonzero(_side & (_Vm > .45))[0]; _rec = []
+                for _i in _cand:
+                    _nb = {j for v in _pv[_i] for j in _v2p[v] if j != _i}
+                    if (len(_nb) >= 4 and np.mean([_Vm[j] < .3 for j in _nb]) >= .6) or (_hreg[_i] and (_pc3[_i, 2] < fz0 + (fz1 - fz0) * .55)): _rec.append(_i)   # (or a skin-coloured triangle of the hair region beside the face, below the eyes: Lan's strands are whole cards painted skin)
+                if _rec:
+                    _A = px(colour); _tm = uv_texels([me.polygons[int(i)] for i in _rec], _A.shape[:2])
+                    _hairc = np.median(_mc[_Vm < .3][:, :3], axis=0) if (_Vm < .3).any() else np.array([.05, .04, .04])
+                    _A[_tm, :3] = _hairc; colour.pixels.foreach_set(_A.ravel()); colour.update()
+                    _cd = body.data.color_attributes['skinw'].data; _b2 = np.zeros(len(_cd) * 4, np.float32); _cd.foreach_get('color', _b2)
+                    _li = np.concatenate([list(me.polygons[int(i)].loop_indices) for i in _rec]).astype(int)
+                    for _c in range(3): _b2[_li * 4 + _c] = 0.
+                    _cd.foreach_set('color', _b2)
+                print('FIT skin-painted hair strands by the face recoloured', len(_rec), 'of', len(_cand), 'skin-coloured at the sides')
 if TEX:
     colour.scale(TEX, TEX); colour.file_format = 'JPEG'; colour.save(filepath=jp, quality=int(os.environ.get('FIT_JPGQ') or (88 if TEX >= 1024 else 72)))   # (owner 8 Nov 2026: 62 left speckles on the necks)
     jimg = bpy.data.images.load(jp); jimg.name = ID + '-colour'
