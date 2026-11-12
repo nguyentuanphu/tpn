@@ -37,6 +37,16 @@ không commit content/management-catalogue.json (build tự sửa); ghi bài h�
 Không đổi file models/*.glb (chỉ máy của chủ dựng lại được).
 ```
 
+## Gate before asking the owner to approve (owner, 12 Nov 2026 evening AEDT)
+
+Owner: villagers and animals mostly fail at the face, eyes, eye sockets and nose; too many approvals were asked while the face, neck and clothes still had faults, so look seriously and bring only the best version. Do not ask for approval until, for every friend:
+1. The auditor (`audit.mts`) does not go back from the last round, and the face has 0 faults (eyes open, shut, half, sad, glancing, every mood; eye sockets seen at ±.4 and ±.7, both sides, from above and below; nose; neck and collar; sleeve and trouser hems).
+2. A standard sheet at 1024 px, every picture looked at full size: face front, ±.4, ±.7, both sides, from above and below, every mood, neck and nape, back of the head, whole child in the poses.
+3. A second reviewer who does not know what was fixed: a subagent given only the sheets' paths and the checklist, looking at full size and listing faults. Each fault it finds is fixed or written down with why it is not one.
+4. Every fault the owner ever circled (this file and SKILL.md) is checked again, one by one, on the new pictures.
+5. Only when 1 to 4 are clean: ask once for all four friends, with the sheets and a list of what was fixed and what is left. Otherwise keep working, do not ask.
+The auditor branch (meshy-audit-coverage) is adding a mouth check, then eye sockets, nose and neck.
+
 ## Where it stands
 
 **Hand-over, 12 Nov 2026 (AEDT), owner asked to stop and pass to another account.** Nothing is running.

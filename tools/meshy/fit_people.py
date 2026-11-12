@@ -371,6 +371,29 @@ if mouthm.any():
             _v = float(V[_m].mean())
             if _best is None or _v < _best[0]: _best = (_v, _m)
     if _best is not None: mouthm = _best[1]
+# (13 Nov 2026, the auditor's new mouth check: the surprised, sad and excited faces of Sol, Finn and Lumi kept the smiling
+# mouth and drew on a nostril or a speck instead) light pink lips failed the colour test above (Clara's found nothing, Sol's
+# and Finn's darker nostrils won). The lips are a line redder and darker than the skin just above and below it, crossing the
+# face's middle and much wider than tall: found that way first; the rule above only when no such line is there
+_k = max(3, int(H_ * .03)); _red = F[..., 0] - (F[..., 1] + F[..., 2]) / 2
+def _colmean(a):
+    c_ = np.cumsum(np.pad(a, ((_k + 1, _k), (0, 0)), mode='edge'), 0); return (c_[2 * _k + 1:] - c_[:-2 * _k - 1]) / (2 * _k + 1)
+_e = (_red - _colmean(_red)) + (_colmean(V) - V)
+_lm = (yy > H_ * .6) & (yy < H_ * .95) & (np.abs(xx - W_ / 2) < W_ * .2) & (_e > .025)
+_left = _lm & (np.abs(xx - W_ / 2) < W_ * .04); _lbest = None
+while _left.any():
+    ys_, xs_ = np.nonzero(_left); _m = np.zeros_like(_lm); _m[ys_[0], xs_[0]] = True
+    for _ in range(W_):
+        _n = _m | (_lm & (np.roll(_m, 1, 0) | np.roll(_m, -1, 0) | np.roll(_m, 1, 1) | np.roll(_m, -1, 1)))
+        if (_n == _m).all(): break
+        _m = _n
+    _left &= ~_m
+    _xs = np.nonzero(_m)[1]; _ys = np.nonzero(_m)[0]
+    if _m.sum() >= 5 and _xs.min() <= W_ / 2 <= _xs.max() and np.ptp(_xs) >= max(W_ * .06, 1.5 * np.ptp(_ys)):
+        _s = float(_e[_m].sum())
+        if _lbest is None or _s > _lbest[0]: _lbest = (_s, _m)
+if _lbest is not None: mouthm = _lbest[1]
+print('FIT mouth found as', 'the lips line' if _lbest is not None else 'the darkest red patch')
 mouth = box_of(mouthm)
 print('FIT eyes', eyes, 'mouth', mouth)
 # (owner 8 Nov 2026) the painted skin's typical colour, for the game's texel-by-texel tone (skin_paint): the cheeks and nose

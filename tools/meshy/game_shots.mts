@@ -87,6 +87,27 @@ const shots: Record<string, string> = await P.page.evaluate(async ([MODE, LIST, 
       top.remove(av.root);
     }
   }
+  // arms (13 Nov 2026: the ragged sleeve and shorts hems): close-ups of each sleeve's hem and each leg's hem in the everyday
+  // outfit, idle, waving, arms up and walking, front and outside, 480 px (the poses shots are too small to see a hem's shape)
+  if (MODE === 'arms') for (const id of ids) {
+    await A.loadFriendModels(id); await A.loadFriendModels(id + '-hd');
+    const av: any = A.buildAvatar({ set: LOOK[id] || 'girl', friend: id, skin: '#f6c7a5', suit: `${id}-everyday` }, null, { hd: true }); A.showHD(av, true);
+    if (HIDE) av.modelHD.obj.traverse((o: any) => { const mn = o.material && o.material.name || ''; if (o.isMesh && (HIDE === 'body' ? !/^(lit-g-|face-)/.test(mn) : new RegExp('^lit-g-(' + HIDE + ')').test(mn))) o.visible = false; });
+    top.add(av.root); av.root.position.set(h.pos.x + 3, h.av.root.position.y, h.pos.z + 3); av.root.rotation.y = 0;
+    const bone = (n: string) => { let b: any = null; av.modelHD.obj.traverse((o: any) => { if (o.isBone && o.name === n) b = o; }); return b && b.getWorldPosition(new THREE.Vector3()); };
+    for (const [st, sp, frames] of [['idle', 0, 1], ['wave', 0, 3], ['cheer', 0, 3], ['walk', 3, 9]] as [string, number, number][]) {
+      av.life = null; for (let f = 0; f <= frames; f++) A.animate(av, st, 10 + f * .05, sp);
+      av.root.updateMatrixWorld(true);
+      for (const [a, b2, nm] of [['armL', 'elbowL', 'armL'], ['armR', 'elbowR', 'armR'], ['legL', 'kneeL', 'legL'], ['legR', 'kneeR', 'legR']]) {
+        const p = bone(a), q = bone(b2); if (!p || !q) continue;
+        const c = p.clone().lerp(q, .5), side = Math.sign(c.x - av.root.position.x) || 1;
+        for (const [d, vn] of [[new THREE.Vector3(0, 0, 1), 'front'], [new THREE.Vector3(side, 0, .3).normalize(), 'out']] as [any, string][]) {
+          const cam = new THREE.PerspectiveCamera(30, 1, .02, 100); cam.position.copy(c).addScaledVector(d, .55); cam.lookAt(c); grab(`${id}-${st}-${nm}-${vn}`, cam, 480, 480);
+        }
+      }
+    }
+    top.remove(av.root);
+  }
   // skirt: the driven skirt bones in the áo dài while walking (bone names, the code person's legs, the bones' turn)
   if (MODE === 'skirt') for (const id of ids) {
     await A.loadFriendModels(id); await A.loadFriendModels(id + '-hd');
