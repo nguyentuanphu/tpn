@@ -7,6 +7,7 @@ One POST per source task, reserved in the durable journal before sending, never 
 Remesh costs 5 credits (docs.meshy.ai/en/api/pricing, checked 7 Nov 2026). The journal and raw files live outside the
 repository. MESHY_API_KEY comes from the environment only.
 """
+import run_batch as batch
 import argparse, hashlib, json, os, re, sqlite3, struct, uuid
 from pathlib import Path
 from urllib.parse import urlparse
@@ -40,6 +41,7 @@ def main():
     ap.add_argument('--source-asset', required=True); ap.add_argument('--journal', required=True, type=Path)
     ap.add_argument('--polycount', type=int, default=30000); ap.add_argument('--approved', action='store_true')
     ap.add_argument('--raw-root', type=Path)
+    ap.add_argument('--account', type=Path)
     a = ap.parse_args(); db = open_journal(a.journal)
     try:
         if a.command == 'submit':
@@ -48,8 +50,24 @@ def main():
             # (a second remesh of the same model is keyed "<asset>@<polycount>", e.g. clara-r2@9000)
             src = db.execute("SELECT task_id, state FROM jobs WHERE asset=?", (a.source_asset.split('@')[0],)).fetchone()
             if not src or src[1] != 'SUCCEEDED' or not src[0]: raise ValueError('Source asset has no succeeded task in this journal')
+            base = a.source_asset.split('@')[0]
+            spec = batch.spec_for(base)
+            account = None
+            if spec.get('tierOverride'):
+                if not a.account or a.account.resolve().is_relative_to(ROOT): raise ValueError('Farm remesh requires external account metadata')
+                account = json.loads(a.account.read_text()); batch.check_account(account, spec)
+                if (a.source_asset, a.polycount) not in ((base, 30000), (base+'@9000', 9000)):
+                    raise ValueError('Farm permits only 30k then 9k')
+                if a.polycount == 9000:
+                    src = db.execute('SELECT task_id, state FROM remesh WHERE source=?', (base,)).fetchone()
+                    if not src or src[1] != 'SUCCEEDED' or not src[0]: raise ValueError('9k requires succeeded 30k source')
             params = {'input_task_id': src[0], 'target_formats': ['glb'], 'topology': 'triangle', 'target_polycount': a.polycount}
             db.execute('BEGIN IMMEDIATE')
+            if account:
+                if db.execute("SELECT 1 FROM jobs WHERE state IN ('ambiguous','FAILED','CANCELED','CANCELLED') UNION ALL SELECT 1 FROM remesh WHERE state IN ('ambiguous','FAILED','CANCELED','CANCELLED')").fetchone():
+                    raise ValueError('Stop and reconcile uncertain or failed work')
+                total = db.execute('SELECT COALESCE(SUM(cost),0) FROM jobs').fetchone()[0] + db.execute('SELECT COALESCE(SUM(cost),0) FROM remesh').fetchone()[0]
+                if total + 5 > account['creditCap'] or total + 5 > account['batchStartingAPIBalance'] - 10: raise ValueError('Farm cap exceeded')
             if db.execute('SELECT 1 FROM remesh WHERE source=?', (a.source_asset,)).fetchone():
                 db.rollback(); raise ValueError('This source was already remeshed or reserved; reconcile, never repeat POST')
             db.execute('INSERT INTO remesh VALUES (?,?,?,?,?,NULL,NULL)', (a.source_asset, src[0], 5, json.dumps(params), 'ambiguous')); db.commit()

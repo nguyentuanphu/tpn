@@ -4,7 +4,7 @@
   "endpoint": "https://api.meshy.ai/openapi/v1/multi-image-to-3d",
   "method": "POST",
   "parameters": {
-    "ai_model": "meshy-6-lite",
+    "ai_model": "meshy-7.1",
     "geometry_resolution": "standard",
     "should_texture": true,
     "texture_resolution": "2k",
@@ -12,7 +12,8 @@
     "pose_mode": "",
     "target_formats": [
       "glb"
-    ]
+    ],
+    "image_enhancement": false
   },
   "inputImages": [
     {
@@ -32,11 +33,13 @@
     }
   ],
   "transportNote": "Runner must populate image_urls with public URLs or data URIs in this order. Local paths are not accepted by the API.",
-  "plannedCredits": 15,
+  "plannedCredits": 30,
   "submitted": false,
   "taskId": null,
   "accountVerified": false,
   "privateSettingsVerified": false,
   "rawDownloadDestination": "raw-models/E/cow.glb",
-  "runtimeDestinationAfterFittingAndValidation": "models/world/creature-cow.glb"
+  "runtimeDestinationAfterFittingAndValidation": "models/world/creature-cow.glb",
+  "tierOverride": "meshy-7.1",
+  "approval": "Owner approved 13/11/2026 AEDT: cow, sheep, chicken only; 120 credits total (30 + 5 + 5 each). Ask before each paid command. Compare farm animal quality with latest pet workflow."
 }
