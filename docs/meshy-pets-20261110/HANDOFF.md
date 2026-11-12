@@ -45,6 +45,16 @@ Per pet (13 Nov, `make_animal.ps1`; pictures under `D:\WorkSpace\meshy\pets\<kin
 
 Review sheets for the owner (full-size shots, 2 x 3): `docs/meshy-pets-20261110/review-20261113/`.
 
+**Films and the owner's answers (13 Nov 2026 AEDT, morning):** `tools/meshy/pet_film.mts` films a pet in the game (stand,
+follow, run, each own move; six views; the pet set beside the child at each part; name tags and the child hidden from
+the near views). First films `D:\WorkSpace\meshy\petsilm\{panda,bunny,calf,kitty}.mp4` were sent. Owner: ticked bunny
+and calf, wrote that the panda and bunny feedback is "above" (not in this chat: ask for it again) and "all animals look
+too stiff when jumping"; chose "fix the jump first". New jump in `extra_moves` (smooth key poses: crouch, push off,
+arched flight, reach, squash, settle; head, ears and tail a beat behind; squash in bounce). Rebuilt with `-Quick`
+(panda and kitty 0 failing) and filmed again into `D:\WorkSpace\meshy\petsilm2\`; then show the owner, ask approval per
+pet, and run the full audits again for the approved ones before committing their models. The joey's jump in
+`upright_moves` is still the old style.
+
 `tests/check-times.json` (suite timing) is left uncommitted on purpose. Nothing is running.
 
 **Resume prompt (Vietnamese, for the next chat):**
