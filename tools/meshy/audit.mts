@@ -358,6 +358,7 @@ gl_FragColor = vec4(code_ / 255.0, floor(dm_ / 256.0) / 255.0, mod(dm_, 256.0) /
     if (PLANT === 'lid') M.obj.traverse((o: any) => { if (!o.isMesh || !/^face-/.test(o.material.name || '')) return; const m = o.material, prev = m.onBeforeCompile, key = m.customProgramCacheKey;
       m.onBeforeCompile = (sh: any, r: any) => { if (prev) prev.call(m, sh, r); sh.uniforms.uMB = MB; sh.uniforms.uMC = MC; sh.fragmentShader = 'uniform vec4 uMB;\nuniform vec3 uMC;\n' + sh.fragmentShader.replace('#include <dithering_fragment>', '#include <dithering_fragment>\nif (uMB.z > uMB.x && gl_FragCoord.x > uMB.x && gl_FragCoord.x < uMB.z && gl_FragCoord.y > uMB.y && gl_FragCoord.y < uMB.w) gl_FragColor = vec4(uMC, 1.0);'); };
       m.customProgramCacheKey = () => (key ? key.call(m) : '') + '-lidplant'; m.needsUpdate = true; });
+    let MW: any = null, MHW = 0, MUP = 0, MDN = 0;   // ('mouth': the front view's mouth in 3D, and its box about it in pixels)
     for (const s of [0, .7, -.7, 1.2, -1.2]) {
       const cam = new THREE.PerspectiveCamera(28, W / H, .05, 100), dir = new THREE.Vector3(Math.sin(s), 0, Math.cos(s));
       cam.position.copy(at).addScaledVector(dir, Hh * .75); cam.lookAt(at); cam.updateMatrixWorld(true);
@@ -399,10 +400,15 @@ gl_FragColor = vec4(code_ / 255.0, floor(dm_ / 256.0) / 255.0, mod(dm_, 256.0) /
          judged against the friend's own skin in the box: pinker (blue over green, for its red) or clearly darker; the box lies
          between the nose tip (.22 of the eyes' span below their whites) and the chin (.62), and within .27 of the span
          either side of the middle (no blush on the cheeks) */
-      const ew = mx1 - mx0, mcx = (mx0 + mx1) / 2, mbox = (i: number) => { const x = i % W, y = (i / W) | 0; return ew > 8 && Math.abs(x - mcx) <= ew * .27 && y < my1 - ew * .22 && y > my1 - ew * .62; };
+      const ew = mx1 - mx0, mcx = (mx0 + mx1) / 2;
+      let bx0 = 0, bx1 = -1, by0 = 0, by1 = -1; if (ew > 8) { bx0 = mcx - ew * .27; bx1 = mcx + ew * .27; by0 = my1 - ew * .62; by1 = my1 - ew * .22; }
+      /* (13 Nov 2026, Sol rebuilt, three-quarters: only the near eye's white is seen, so a box under the eyes' span lay on
+         that eye's blush) away from the front, the box is where the front view's mouth lies in 3D, projected into this view */
+      if (s !== 0 && MW) { const p = MW.clone().project(cam), px = (p.x + 1) / 2 * W, py = (p.y + 1) / 2 * H; bx0 = px - MHW * 1.3; bx1 = px + MHW * 1.3; by0 = py - MDN * 1.6; by1 = py + MUP * 1.6; }   // (a little larger: the box of the front's faint smile cut the round 'o' at three-quarters to a flat band, h/w .38)
+      const mbox = (i: number) => { const x = i % W, y = (i / W) | 0; return bx1 > bx0 && x >= bx0 && x <= bx1 && y > by0 && y < by1; };
       const pk = (px: Uint8Array, i: number) => (px[i * 4 + 2] - px[i * 4 + 1]) / Math.max(1, px[i * 4]), vv = (px: Uint8Array, i: number) => Math.max(px[i * 4], px[i * 4 + 1], px[i * 4 + 2]) / 255;
       let skPk = 0, skV = 0, skRd = 0; const rd = (px: Uint8Array, i: number) => (px[i * 4] - px[i * 4 + 1]) / Math.max(1, px[i * 4]);   // (second run: Sol's lips are only redder than his skin, green .34 of red against .47)
-      const lips = (px: Uint8Array) => { const L = new Uint8Array(N); let n = 0; if (ew <= 8) return { L, n };
+      const lips = (px: Uint8Array) => { const L = new Uint8Array(N); let n = 0; if (bx1 <= bx0) return { L, n };
         for (let i = 0; i < N; i++) { if (!mbox(i) || !mine(i)) continue; if (pk(px, i) > skPk + .09 || vv(px, i) < skV - .2 || rd(px, i) > skRd + .08) { L[i] = 1; n++; } } return { L, n }; };
       const near = (L: Uint8Array, i: number, d: number) => { const x = i % W, y = (i / W) | 0; for (let dy = -d; dy <= d; dy++) for (let dx = -d; dx <= d; dx++) { const xx = x + dx, yy = y + dy; if (xx >= 0 && yy >= 0 && xx < W && yy < H && L[yy * W + xx]) return true; } return false; };
       const groups = (L: Uint8Array) => { const seen = new Uint8Array(N), out: number[][] = [], st: number[] = [];
@@ -412,7 +418,12 @@ gl_FragColor = vec4(code_ / 255.0, floor(dm_ / 256.0) / 255.0, mod(dm_, 256.0) /
       setMood('smile'); const C0 = mouthOn ? read(top, cam) : null;
       if (C0) { const ps: number[] = [], vs: number[] = [], rs: number[] = []; for (let i = 0; i < N; i++) if (mbox(i) && mine(i)) { ps.push(pk(C0, i)); vs.push(vv(C0, i)); rs.push(rd(C0, i)); } const md = (a: number[]) => a.sort((x, y) => x - y)[a.length >> 1] || 0; skPk = md(ps); skV = md(vs); skRd = md(rs);
         let n = 0, sr = 0, sg = 0, sb = 0; for (let i = 0; i < N; i++) if (mbox(i) && mine(i) && Math.abs(rd(C0, i) - skRd) < .03) { sr += C0[i * 4]; sg += C0[i * 4 + 1]; sb += C0[i * 4 + 2]; n++; } if (n) MC.value.set(sr / n / 255, sg / n / 255, sb / n / 255); MCs.value.copy(MC.value); }   // (the skin: the box's median, mostly skin)
-      const SM = C0 ? lips(C0) : { L: new Uint8Array(N), n: 0 }; let SMm: Uint8Array | null = null; const mArea: Record<string, number> = {}, mCase: Record<string, any> = {};
+      const SM = C0 ? lips(C0) : { L: new Uint8Array(N), n: 0 }; let SMm: Uint8Array | null = null;
+      if (s === 0 && SM.n) {   // (the smile's mouth, its lowest lip patch, placed in 3D by the depth of the head under it)
+        SMm = new Uint8Array(N); let best: number[] | null = null, by = 1e9; for (const g of groups(SM.L)) { if (g.length < 10) continue; let sy = 0; for (const j of g) sy += (j / W) | 0; if (sy / g.length < by) { by = sy / g.length; best = g; } }
+        if (best) { let sx = 0, sy = 0, sz = 0, nz = 0; for (const j of best) { SMm[j] = 1; sx += j % W; sy += (j / W) | 0; if (Pb[j * 4 + 3]) { sz += dep(Pb, j); nz++; } }
+          if (nz) { const cx = sx / best.length, cy = sy / best.length, dz = sz / nz, d3 = new THREE.Vector3((cx + .5) / W * 2 - 1, (cy + .5) / H * 2 - 1, -1).unproject(cam).sub(cam.position).normalize();
+            MW = cam.position.clone().addScaledVector(d3, dz / d3.dot(cam.getWorldDirection(new THREE.Vector3()))); MHW = (bx1 - bx0) / 2; MUP = by1 - cy; MDN = cy - by0; } } } const mArea: Record<string, number> = {}, mCase: Record<string, any> = {};
       for (const m of (PLANT === 'eyes' ? ['blink', 'half', 'happy', 'sad'] : PLANT === 'mouth' || PLANT === 'lid' ? ['blink'] : ['blink', 'half', 'happy', 'sad', 'smile', 'o', 'excited', 'lookL', 'lookR'])) {
         MB.value.set(0, 0, 0, 0); if (PLANT === 'mouth' && m === 'blink') { MB.value.set(mcx - ew * .27, my1 - ew * .62, mcx + ew * .27, my1 - ew * .22); }
         if (PLANT === 'lid' && m === 'blink') { MB.value.set(mx0 + ew * .05, my1 - 2, mx0 + ew * .3, my1 + 2); MC.value.copy(MCs.value).lerp(new THREE.Vector3(1, 1, 1), .45); }   // (the lid plant: a pale band under the first eye, as Sol's rim)
@@ -424,7 +435,7 @@ gl_FragColor = vec4(code_ / 255.0, floor(dm_ / 256.0) / 255.0, mod(dm_, 256.0) /
            and freckles are) but paler (.12 less saturated; Sol's rim: s .55 against his skin's .78, v .89 against .93) than
            the skin's median in a ring 8 to 16 px round it (dark pixels, the lash, brows and hair, left out of both) */
         const fl = new Uint8Array(N); let kl = 0;
-        if (m === 'blink' || m === 'happy') { const sv: number[] = [], ss: number[] = [];
+        if (m === 'blink' || m === 'happy' || m === 'excited') { const sv: number[] = [], ss: number[] = [];
           for (let i = 0; i < N; i++) if (ring16[i] && !eye8[i] && mine(i)) { const [v, sa] = hsv(C, i); if (v > .35) { sv.push(v); ss.push(sa); } }
           sv.sort((a, b) => a - b); ss.sort((a, b) => a - b); const skv = sv[sv.length >> 1] || 1, sks = ss[ss.length >> 1] || 0;
           for (let i = 0; i < N; i++) { if (!eye8[i] || !mine(i) || i >= N - W * 10) continue; const [v, sa] = hsv(C, i); if (v > skv - .1 && sa < sks - .12) { fl[i] = 1; kl++; } }
@@ -452,7 +463,7 @@ gl_FragColor = vec4(code_ / 255.0, floor(dm_ / 256.0) / 255.0, mod(dm_, 256.0) /
             while (st.length) { const j = st.pop()!; grp.push(j); const x = j % W, y = (j / W) | 0;
               for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) { const xx = x + dx, yy = y + dy; if (xx < 0 || yy < 0 || xx >= W || yy >= H) continue; const q = yy * W + xx; if (fc[q] && !seen[q]) { seen[q] = 1; st.push(q); } } }
             if (grp.length < 4) for (const j of grp) { fc[j] = 0; kf--; } } }
-        const fm = new Uint8Array(N); let km = 0, ML = { L: new Uint8Array(N), n: 0 };
+        const fm = new Uint8Array(N); let km = 0, ML = { L: new Uint8Array(N), n: 0 }, why = '';
         if (mouthOn && SM.n) { ML = lips(C);
           if (['blink', 'half', 'happy', 'lookL', 'lookR', 'smile'].includes(m)) { for (let i = 0; i < N; i++) if ((ML.L[i] && !near(SM.L, i, 1)) || (SM.L[i] && !near(ML.L, i, 1))) { fm[i] = 1; km++; } }
           else {
@@ -461,22 +472,23 @@ gl_FragColor = vec4(code_ / 255.0, floor(dm_ / 256.0) / 255.0, mod(dm_, 256.0) /
                or .25 redder, or .2 pinker); the faint lip pixels not within 3 px of that core (its paler rim) are old lips left beside it, and
                only they are marked. With no core (the smile's faint lips only: the mood piece missing) the whole lips are. */
             const core = new Uint8Array(N); let nc = 0; for (let i = 0; i < N; i++) if (ML.L[i] && (vv(C, i) < skV - .2 || rd(C, i) > skRd + .25 || pk(C, i) > skPk + .2)) { core[i] = 1; nc++; }
-            const gs = groups(nc > 12 ? core : ML.L), g0 = gs[0] || []; let bad = !g0.length;
+            const gs = groups(nc > 12 ? core : ML.L), g0 = gs[0] || []; let bad = !g0.length; why += `[lips ${ML.n} core ${nc} groups ${gs.map(g => g.length).slice(0, 4).join('/')} skin v ${skV.toFixed(2)} rd ${skRd.toFixed(2)} pk ${skPk.toFixed(2)}] `;
             const in0 = new Uint8Array(N); for (const j of g0) in0[j] = 1;
             /* (second run, three-quarters: the cheek's blush lies in the box and was marked as old lips) old lips count only
                where the smile's mouth was: its lowest patch of 10 px or more (the blush is higher, on the cheek) */
             if (!SMm) { SMm = new Uint8Array(N); let best: number[] | null = null, by = 1e9; for (const g of groups(SM.L)) { if (g.length < 10) continue; let sy = 0; for (const j of g) sy += (j / W) | 0; if (sy / g.length < by) { by = sy / g.length; best = g; } } if (best) for (const j of best) SMm[j] = 1; }
             for (let i = 0; i < N; i++) if (ML.L[i] && !near(in0, i, 3) && near(SMm, i, 2)) { fm[i] = 1; km++; }   // (old lips left beside the new mouth)
             let same = 0; for (const j of g0) if (near(SM.L, j, 1)) same++; let gx0 = W, gx1 = 0, gy0 = H, gy1 = 0; for (const j of g0) { const x = j % W, y = (j / W) | 0; gx0 = Math.min(gx0, x); gx1 = Math.max(gx1, x); gy0 = Math.min(gy0, y); gy1 = Math.max(gy1, y); }
-            const w = gx1 - gx0 + 1, hh = gy1 - gy0 + 1;
-            if (g0.length && same > g0.length * .85 && Math.abs(g0.length - SM.n) < SM.n * .2) bad = true;   // (still the smile's mouth: the mood piece is missing)
-            if (m === 'o' || m === 'excited') { if (hh / w < .55 || hh / w > 1.6 || g0.length < Math.PI / 4 * w * hh * .6) bad = true; mArea[m] = g0.length; }
+            const w = gx1 - gx0 + 1, hh = gy1 - gy0 + 1;   // (13 Nov: no correction for the turn: from three-quarters the mouth on the round face looks as wide as from the front; dividing by the cosine failed Sol's excited, h/w .51)
+            if (g0.length && same > g0.length * .85 && Math.abs(g0.length - SM.n) < SM.n * .2) { bad = true; why += 'smile '; }   // (still the smile's mouth: the mood piece is missing)
+            // (13 Nov: at three-quarters the oval's edge is ragged and Sol's 'o' filled .56 in one run and passed the next: .5 there)
+            if (m === 'o' || m === 'excited') { if (hh / w < .55 || hh / w > 1.6 || g0.length < Math.PI / 4 * (gx1 - gx0 + 1) * hh * (s ? .5 : .6)) { bad = true; why += `round h/w ${(hh / w).toFixed(2)} fill ${(g0.length / (Math.PI / 4 * (gx1 - gx0 + 1) * hh)).toFixed(2)} `; } mArea[m] = g0.length; }
             if (m === 'sad' && g0.length) { const col = (a: number, b2: number) => { let sy = 0, c = 0; for (const j of g0) { const x = j % W; if (x >= gx0 + w * a && x <= gx0 + w * b2) { sy += (j / W) | 0; c++; } } return c ? sy / c : 0; };
-              if ((col(0, .2) + col(.8, 1)) / 2 >= col(.4, .6)) bad = true; }   // (the buffer's rows run upwards: a corner lower on screen has the smaller row)
+              if ((col(0, .2) + col(.8, 1)) / 2 >= col(.4, .6)) { bad = true; why += `sad corners ${col(0, .2).toFixed(1)} ${col(.8, 1).toFixed(1)} middle ${col(.4, .6).toFixed(1)} `; } }   // (the buffer's rows run upwards: a corner lower on screen has the smaller row)
             if (bad) for (const j of g0) { if (!fm[j]) { fm[j] = 1; km++; } } } }
-        const r: any = { id, kind: 'face', pose: m, view: String(s), kit: 0, poke: 0, hairtone: 0, skintone: 0, eyes: k, face: kf, mouth: km, lid: kl }; cases.push(r); mCase[m] = [r, C, fm, ML.L];
+        const r: any = { id, kind: 'face', pose: m, view: String(s), kit: 0, poke: 0, hairtone: 0, skintone: 0, eyes: k, face: kf, mouth: km, lid: kl, mouthWhy: why.trim() }; cases.push(r); mCase[m] = [r, C, fm, ML.L];
         if (k > LIMIT.eyes) pics[`${id}-face-${m}-${s}-eyes`] = png(C, f);
-        if (kl > LIMIT.lid || (ALLPICS && (m === 'blink' || m === 'happy'))) pics[`${id}-face-${m}-${s}-lid${kl > LIMIT.lid ? '' : '-look'}`] = png(C, fl);
+        if (kl > LIMIT.lid || (ALLPICS && (m === 'blink' || m === 'happy' || m === 'excited'))) pics[`${id}-face-${m}-${s}-lid${kl > LIMIT.lid ? '' : '-look'}`] = png(C, fl);
         if (kf > LIMIT.face || ALLPICS) { pics[`${id}-face-${m}-${s}-${kf > LIMIT.face ? 'face' : 'look'}`] = png(C, fc); }
         if (km > LIMIT.mouth || (ALLPICS && mouthOn)) pics[`${id}-face-${m}-${s}-mouth${km > LIMIT.mouth ? '' : '-look'}`] = png(C, fm);
       }
