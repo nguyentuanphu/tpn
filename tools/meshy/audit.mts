@@ -412,7 +412,7 @@ gl_FragColor = vec4(code_ / 255.0, floor(dm_ / 256.0) / 255.0, mod(dm_, 256.0) /
       setMood('smile'); const C0 = mouthOn ? read(top, cam) : null;
       if (C0) { const ps: number[] = [], vs: number[] = [], rs: number[] = []; for (let i = 0; i < N; i++) if (mbox(i) && mine(i)) { ps.push(pk(C0, i)); vs.push(vv(C0, i)); rs.push(rd(C0, i)); } const md = (a: number[]) => a.sort((x, y) => x - y)[a.length >> 1] || 0; skPk = md(ps); skV = md(vs); skRd = md(rs);
         let n = 0, sr = 0, sg = 0, sb = 0; for (let i = 0; i < N; i++) if (mbox(i) && mine(i) && Math.abs(rd(C0, i) - skRd) < .03) { sr += C0[i * 4]; sg += C0[i * 4 + 1]; sb += C0[i * 4 + 2]; n++; } if (n) MC.value.set(sr / n / 255, sg / n / 255, sb / n / 255); MCs.value.copy(MC.value); }   // (the skin: the box's median, mostly skin)
-      const SM = C0 ? lips(C0) : { L: new Uint8Array(N), n: 0 }; const mArea: Record<string, number> = {}, mCase: Record<string, any> = {};
+      const SM = C0 ? lips(C0) : { L: new Uint8Array(N), n: 0 }; let SMm: Uint8Array | null = null; const mArea: Record<string, number> = {}, mCase: Record<string, any> = {};
       for (const m of (PLANT === 'eyes' ? ['blink', 'half', 'happy', 'sad'] : PLANT === 'mouth' || PLANT === 'lid' ? ['blink'] : ['blink', 'half', 'happy', 'sad', 'smile', 'o', 'excited', 'lookL', 'lookR'])) {
         MB.value.set(0, 0, 0, 0); if (PLANT === 'mouth' && m === 'blink') { MB.value.set(mcx - ew * .27, my1 - ew * .62, mcx + ew * .27, my1 - ew * .22); }
         if (PLANT === 'lid' && m === 'blink') { MB.value.set(mx0 + ew * .05, my1 - 2, mx0 + ew * .3, my1 + 2); MC.value.copy(MCs.value).lerp(new THREE.Vector3(1, 1, 1), .45); }   // (the lid plant: a pale band under the first eye, as Sol's rim)
@@ -455,8 +455,18 @@ gl_FragColor = vec4(code_ / 255.0, floor(dm_ / 256.0) / 255.0, mod(dm_, 256.0) /
         const fm = new Uint8Array(N); let km = 0, ML = { L: new Uint8Array(N), n: 0 };
         if (mouthOn && SM.n) { ML = lips(C);
           if (['blink', 'half', 'happy', 'lookL', 'lookR', 'smile'].includes(m)) { for (let i = 0; i < N; i++) if ((ML.L[i] && !near(SM.L, i, 1)) || (SM.L[i] && !near(ML.L, i, 1))) { fm[i] = 1; km++; } }
-          else { const gs = groups(ML.L), g0 = gs[0] || []; let bad = !g0.length;
-            for (const g of gs.slice(1)) for (const j of g) { fm[j] = 1; km++; }   // (old lips left beside the new mouth, or a second patch)
+          else {
+            /* (13 Nov 2026, friends' new mouths: Sol's 'o' a dark rose oval, his 'sad' a brown arc, with faint ends of the old
+               smile left either side) the shape is judged on the mouth's core, the pixels well apart from the skin (.2 darker,
+               or .25 redder, or .2 pinker); the faint lip pixels not within 3 px of that core (its paler rim) are old lips left beside it, and
+               only they are marked. With no core (the smile's faint lips only: the mood piece missing) the whole lips are. */
+            const core = new Uint8Array(N); let nc = 0; for (let i = 0; i < N; i++) if (ML.L[i] && (vv(C, i) < skV - .2 || rd(C, i) > skRd + .25 || pk(C, i) > skPk + .2)) { core[i] = 1; nc++; }
+            const gs = groups(nc > 12 ? core : ML.L), g0 = gs[0] || []; let bad = !g0.length;
+            const in0 = new Uint8Array(N); for (const j of g0) in0[j] = 1;
+            /* (second run, three-quarters: the cheek's blush lies in the box and was marked as old lips) old lips count only
+               where the smile's mouth was: its lowest patch of 10 px or more (the blush is higher, on the cheek) */
+            if (!SMm) { SMm = new Uint8Array(N); let best: number[] | null = null, by = 1e9; for (const g of groups(SM.L)) { if (g.length < 10) continue; let sy = 0; for (const j of g) sy += (j / W) | 0; if (sy / g.length < by) { by = sy / g.length; best = g; } } if (best) for (const j of best) SMm[j] = 1; }
+            for (let i = 0; i < N; i++) if (ML.L[i] && !near(in0, i, 3) && near(SMm, i, 2)) { fm[i] = 1; km++; }   // (old lips left beside the new mouth)
             let same = 0; for (const j of g0) if (near(SM.L, j, 1)) same++; let gx0 = W, gx1 = 0, gy0 = H, gy1 = 0; for (const j of g0) { const x = j % W, y = (j / W) | 0; gx0 = Math.min(gx0, x); gx1 = Math.max(gx1, x); gy0 = Math.min(gy0, y); gy1 = Math.max(gy1, y); }
             const w = gx1 - gx0 + 1, hh = gy1 - gy0 + 1;
             if (g0.length && same > g0.length * .85 && Math.abs(g0.length - SM.n) < SM.n * .2) bad = true;   // (still the smile's mouth: the mood piece is missing)
