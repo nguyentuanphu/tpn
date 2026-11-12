@@ -1,73 +1,57 @@
-# Sparkle Valley — farm cloud trial
+# Sparkle Valley — cow trên cloud
 
-13/11/2026 AEDT. Branch `meshy-farm-cloud`, based on `origin/meshy-pets` at `a89a0b877`.
+Cập nhật 13/11/2026 08:41 AEDT (Sydney). Nhánh `meshy-farm-cloud`, bắt đầu từ `origin/meshy-pets` (`a89a0b877`), đã đối chiếu và hợp nhất phần chuẩn bị có sẵn trên nhánh farm. **Chỉ làm cow; sheep/chicken tạm dừng theo chủ.**
 
-Owner scope: cow (25), sheep (26), chicken (24) only. Each: Meshy 7.1 standard, 2k, three recorded views (30 credits), remesh 30k (5), remesh 9k **from 30k** (5). Total ceiling 120. Ask before every paid command; no rigging, fitting, runtime changes, merge, deployment or version bump.
+## Kết quả và tiền
 
-Balance verified by GET `/openapi/v1/balance` at 08:06:01 AEDT: **1614** (1599 monthly + 15 permanent). Owner approved cow original via pop-up. Exactly one paid POST submitted. Balance after submission: **1584**; charged **30/120**. Task SUCCEEDED and GLB downloaded immediately.
+Cow đã xong phần tạo model và hai remesh Meshy. Mỗi POST được chủ duyệt, reserve trước vào SQLite mới, gửi đúng một lần. Tải ngay sau SUCCEEDED. Không trả tiền rigging hoặc làm thêm con nào.
 
-Private files (never commit/upload): `/workspace/meshy-farm-account.json`, `/workspace/meshy-jobs-farm.sqlite3`. New journal; cow original reserved/submitted, remesh table empty. Key comes only from cloud `MESHY_API_KEY`. Reserve before POST, never resend; uncertainty/failure means stop and reconcile. Existing 35 paid models and prior pet tasks are outside this trial and must never be resubmitted.
+| Bước | Task ID | Credit | Số dư trước → sau |
+| --- | --- | --- | --- |
+| Gốc: Meshy 7.1 standard, texture 2k, front/left-side/back | `01a1d19a-7a61-7711-9f5a-8687a2c45778` | 30 | 1614 → 1584 |
+| Remesh target 30k từ gốc | `01a1d1ae-6111-76ee-b081-82919b93869b` | 5 | 1584 → 1579 |
+| Remesh target 9k **từ task 30k** | `01a1d1b3-61f1-7650-a8ad-27d29117a9cf` | 5 | 1579 → 1574 |
 
-Runner exception is restricted to these three group E assets with tierOverride, 30-credit spec and approval text; live submission also requires approvedTierOverrides and verified balance/cap in external account metadata. Other groups retain their tier rules. Farm remesh requires the same account metadata, enforces cumulative jobs+remesh cap and the 30k→9k chain.
+**Tổng chi cow 40 credit**, số dư cuối đã GET xác nhận **1574**. Sheep/chicken chưa gửi, chi 0. Không gửi lại bất kỳ model/task nào đã trả tiền (kể cả 35 model cũ). Không có bước Meshy trả tiền tiếp theo cho cow.
 
-Offline validation: existing `test_batch.py` 14 tests PASS; `test_farm.py` PASS; all three `check` commands PASS (nine image hashes verified, zero network calls). Suite selection requests full suite because the source branch differs widely from main; no local full suite run. No game/UI changes.
+## File đã lưu trên repo
 
-## Outputs and review — pending generation
+Thư mục [cow/](cow/), thuộc nhánh này:
 
-| Animal | Original task | 30k task | 9k task | Charged | Face / legs / coat / holes |
-|---|---|---|---|---|---|
-| cow | `01a1d19a-7a61-7711-9f5a-8687a2c45778` | pending | pending | 30 | Original four views reviewed: eyes and pink muzzle/nostrils clear; four legs/hooves separate, short black/white coat and tail tuft intact; no obvious holes/broken geometry in these views (not a topology guarantee). |
-| sheep | pending | pending | pending | 0 | Not generated; not reviewed |
-| chicken | pending | pending | pending | 0 | Not generated; not reviewed |
+| File | Byte | Tam giác thực tế |
+| --- | ---: | ---: |
+| [original.glb](cow/original.glb) | 39939624 | 1293114 |
+| [remesh-30000.glb](cow/remesh-30000.glb) | 11503348 | 31273 |
+| [remesh-9000.glb](cow/remesh-9000.glb) | 9594340 | 9423 |
 
-Download each successful GLB immediately to external raw storage, then copy delivery files here. Deliver original, 30k, 9k and four-angle previews for each animal. Archive any file over 50 MB and record its path. Inspect eyes, muzzle/beak, nose, legs, fur/wool/feathers and holes/broken geometry before reporting quality. Signed URLs stay in the private journal only.
+Target Meshy là 30000/9000, số tam giác trả về không đúng tuyệt đối. SHA256 xem [ARTIFACTS.json](ARTIFACTS.json).
 
-## Original command (already executed; NEVER resend)
+Ảnh đã nhìn trực tiếp bằng viewer Three.js + Chromium, không sửa model:
 
-From repository root:
+| Bản | Trước | Trái | Sau | Phải |
+| --- | --- | --- | --- | --- |
+| Gốc | [front](cow/original-front.png) | [left](cow/original-left.png) | [back](cow/original-back.png) | [right](cow/original-right.png) |
+| 30k | [front](cow/remesh-30000-front.png) | [left](cow/remesh-30000-left.png) | [back](cow/remesh-30000-back.png) | [right](cow/remesh-30000-right.png) |
+| 9k | [front](cow/remesh-9000-front.png) | [left](cow/remesh-9000-left.png) | [back](cow/remesh-9000-back.png) | [right](cow/remesh-9000-right.png) |
 
-```sh
-python tools/meshy/run_batch.py submit --asset cow --journal /workspace/meshy-jobs-farm.sqlite3 --account /workspace/meshy-farm-account.json
-```
+File làm việc Blender: [cow-work.blend.tar.xz](cow/cow-work.blend.tar.xz). `.blend` vượt 50 MB nên nén tar.xz; giải nén được `cow-work.blend`. Có ba collection gốc/30k/9k, texture đã pack (7 image datablock); mặc định chỉ hiện 30k. Đã mở lại bằng Blender 4.3.2 và kiểm đủ ba collection. Script dựng lại: [save_cow_workspace.py](save_cow_workspace.py).
 
-This command makes one POST, reserving 30 credits first. It does not authorize any remesh or other animal.
+## Nhận xét chất lượng
 
-## Cow original — 13/11/2026 08:14 AEDT
+- Gốc: mắt nâu rõ, viền trắng và hai mắt giữ được; mõm hồng, hai lỗ mũi và đường miệng nhìn rõ. Bốn chân/móng chẻ còn nguyên. Lông ngắn đen trắng và chỏm lông đầu/đuôi có chi tiết. Không thấy lỗ/vỡ lớn qua bốn góc tĩnh.
+- 30k: giữ mắt, chân, lông và đuôi; vành lỗ mũi, mép chuông hơi góc cạnh hơn bản gốc. Chưa thấy lỗ/vỡ lớn qua bốn góc.
+- 9k: giảm chất lượng rõ ở mõm/lỗ mũi, sừng, tai, chỏm lông và chuông; hình khối góc cạnh. Có vệt tối nhỏ ở má cần kiểm tra gần bằng Blender để phân biệt texture, mặt chồng hay khe mesh. Chân vẫn đủ bốn; chi tiết lông phần lớn còn trong texture, silhouette đuôi thô hơn. Không thấy thiếu bộ phận lớn, **chưa chứng minh mesh kín hoặc không có lỗi nhỏ**. Không coi bản 9k là đạt chất lượng dùng trong game.
 
-- Owner explicitly approved this 30-credit POST via pop-up; no other paid step approved yet.
-- Task `01a1d19a-7a61-7711-9f5a-8687a2c45778`: SUCCEEDED.
-- [Original GLB](cow/original.glb): 39,939,624 bytes, 1,293,114 triangles; SHA256 `e38895cdad1d7a01559dcef3207762a1a041ebb632e506ca86ed8f770eb3639a`.
-- Raw model rendered directly using repository Three.js/GLTFLoader and headless Chromium (no Blender/fitting). Four reviewed views: [front](cow/original-front.png), [left](cow/original-left.png), [back](cow/original-back.png), [right](cow/original-right.png).
-- Face: large brown eyes with white rims; pink rounded muzzle, two visible nostrils and subtle mouth line. Short white/black fur, forehead tufts and tail tuft visible. Four legs and cloven hooves appear intact. No obvious holes or shattered parts in the four static views; underside/interior and animation not checked.
-- Balance 1614 → 1584; observed charge 30. Remesh 30k and 9k not submitted. Sheep/chicken not submitted.
-- Next paid command, only after separate owner approval:
+## Blender và phần còn lại
 
-```sh
-python tools/meshy/remesh_once.py submit --source-asset cow --polycount 30000 --approved --journal /workspace/meshy-jobs-farm.sqlite3 --account /workspace/meshy-farm-account.json
-```
+Cloud thực tế có `/usr/bin/blender` 4.3.2. Báo trước đó rằng cloud không có Blender là sai do chưa kiểm tra. Đã import GLB gốc và render Cycles CPU thành công: [ảnh smoke](cow/blender-smoke.png). Bản cài thiếu OpenImageDenoise; phải tắt `scene.cycles.use_denoising`.
 
-Cost 5 credits; cumulative total would become 35/120. Never resend original cow.
+**Chưa fit, chưa rig, chưa animation/audit trong game, chưa thay js/ hay models/.** File Blender hiện là nguồn chỉnh sửa, chưa phải model sẵn dùng trong game. Quy trình fit_animal.py trên Linux chưa được chạy kiểm chứng. Bước kỹ thuật tiếp theo để đưa vào game là xử lý/đánh giá bản nhẹ, fit khớp, rig và kiểm tra chuyển động; phạm vi ban đầu cấm fit/rig nên cần chỉ thị tiếp của chủ cho giai đoạn này. Không merge main, deploy hoặc tăng version.
 
-## Blender capability correction — 13/11/2026 08:22 AEDT
+## Riêng tư và cơ chế an toàn
 
-Owner asked to try installing Blender. Inspection found `/usr/bin/blender` **4.3.2 already installed**, so no installation was needed. The earlier statement that cloud had no Blender was unverified and incorrect.
-
-Real background smoke test PASS: imported the original cow GLB (1 mesh, 678,546 vertices) and rendered a 640×640 image using Cycles CPU, four threads, eight samples. [Render inspected](cow/blender-smoke.png). The packaged build lacks OpenImageDenoise: initial render failed; disabling `scene.cycles.use_denoising` made the test pass. This low-sample image demonstrates execution, not final quality.
-
-Blender can run on this cloud. Actual animal fitting/rigging scripts have not yet been tested for Linux compatibility. No fit/rig, js/models changes or extra paid Meshy POST performed during this check. Trial charge remains 30/120; last observed API balance 1584.
-
-## Cow 30k and working file — 13/11/2026 08:36 AEDT
-
-Owner narrowed scope to **cow only**, paused sheep/chicken, then approved continuing cow. One 5-credit remesh POST was submitted (no retries).
-
-- Task `01a1d1ae-6111-76ee-b081-82919b93869b`: SUCCEEDED, source original task `01a1d19a-7a61-7711-9f5a-8687a2c45778`.
-- Balance **1584 → 1579**, observed charge 5; cumulative cow **35 credits**. Original 30, remesh 30k 5; 9k not yet submitted.
-- [30k GLB](cow/remesh-30000.glb): 11,503,348 bytes, **31,273 actual triangles** (requested target 30,000); SHA256 `c8960b39760f1bdfc2443fdb9620ceba62f4ec3ec436d65f0fd8896399dc9e78`.
-- Four inspected previews: [front](cow/remesh-30000-front.png), [left](cow/remesh-30000-left.png), [back](cow/remesh-30000-back.png), [right](cow/remesh-30000-right.png). Eyes remain clear, pink muzzle/nostrils retained but nostril rims slightly faceted; bell rim also more angular. Four legs/hooves, coat and tail remain intact in these views. No obvious major holes/shattered parts; not a full topology/animation audit.
-- Editable Blender workspace: [cow-work.blend.tar.xz](cow/cow-work.blend.tar.xz). Uncompressed blend exceeds 50 MB, so archived as requested. Contains original and 30k in separate collections, textures packed; original hidden by default. Saved with Blender 4.3.2 and reopened successfully. **Unfitted and unrigged**, no game files installed. Reproduction script: [save_cow_workspace.py](save_cow_workspace.py).
-- Artifacts and workfiles stay on this Git branch under `docs/meshy-farm-cloud/`; original API outputs also retained externally at `/workspace/meshy-farm-raw/`. API key, SQLite and account metadata NEVER committed or uploaded. External metadata allowlist now cow only.
-- Next: separately approve 9k remesh (5 credits), using the succeeded 30k task. Total cow would become 40 credits. No sheep/chicken submission.
-
-```sh
-python tools/meshy/remesh_once.py submit --source-asset cow@9000 --polycount 9000 --approved --journal /workspace/meshy-jobs-farm.sqlite3 --account /workspace/meshy-farm-account.json
-```
+- API key chỉ từ biến cloud `MESHY_API_KEY`, không in/commit/truyền trên command line.
+- SQLite: `/workspace/meshy-jobs-farm.sqlite3`; metadata `/workspace/meshy-farm-account.json`. Không commit/upload. Metadata allowlist hiện chỉ cow; trần ban đầu 120, chi thực tế 40.
+- Bản tải gốc cũng còn ở `/workspace/meshy-farm-raw/`; bản làm việc chưa nén ở `/workspace/meshy-farm-viewer/cow-complete.blend`. Repo là bản bàn giao lâu dài; không dựa vào cloud để lưu bền.
+- Exception tier chỉ ba asset nhóm E đã nêu, job spec có tierOverride/approval/plannedCredits=30; submit còn cần approvedTierOverrides trong metadata. Không thay tier nhóm khác. Chung trần jobs+remesh, chặn lỗi/ambiguous, không POST lại.
+- 14 test_batch + test_farm offline PASS trước chạy; ba check ảnh/hash PASS. GLB kiểm header đầy đủ khi download; ảnh 12 góc đã xem, workspace mở lại đủ collection/texture. Không chạy suite game vì chưa thay runtime; lần chọn suite trước yêu cầu full do chênh nhánh nguồn với main, không chạy local full suite.

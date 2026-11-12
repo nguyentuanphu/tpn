@@ -1,0 +1,92 @@
+{
+  "asset": "cow",
+  "creditsSpent": 40,
+  "finalBalanceConfirmed": 1574,
+  "artifacts": [
+    {
+      "path": "cow/blender-smoke.png",
+      "bytes": 306989,
+      "sha256": "6ccb9b4038b1e707facb3edffac8f6d832873f669e7ef56ec784cdd224a6ec66"
+    },
+    {
+      "path": "cow/cow-work.blend.tar.xz",
+      "bytes": 82977008,
+      "sha256": "89fae19eb90841d751a7b1720eaacfd5dded13882df8ff0e0b30709a746a6ce7"
+    },
+    {
+      "path": "cow/original-back.png",
+      "bytes": 294862,
+      "sha256": "425bdd866abf57351019d65c4a1b550e208ce92c224952a6e90d0f1ae6f88ca7"
+    },
+    {
+      "path": "cow/original-front.png",
+      "bytes": 307583,
+      "sha256": "c74bd0d9547a6957e58f094bd19cf586f6049dd5bb99fc959828601e7e110f1f"
+    },
+    {
+      "path": "cow/original-left.png",
+      "bytes": 410784,
+      "sha256": "64ce063147afc9b9c46ec5203bcea70a86ee49599bee0bcac2c9aecc0796e1ea"
+    },
+    {
+      "path": "cow/original-right.png",
+      "bytes": 396373,
+      "sha256": "9602624385f5482795a917335106972d223562503c150a333e71d14b169be2a4"
+    },
+    {
+      "path": "cow/original.glb",
+      "bytes": 39939624,
+      "sha256": "e38895cdad1d7a01559dcef3207762a1a041ebb632e506ca86ed8f770eb3639a"
+    },
+    {
+      "path": "cow/remesh-30000-back.png",
+      "bytes": 278032,
+      "sha256": "68c75cde863d59d4801c5ee97249e4e7e9338848df435a641f931af7a3182e3c"
+    },
+    {
+      "path": "cow/remesh-30000-front.png",
+      "bytes": 295260,
+      "sha256": "94883fc1935ec851f3703b40594a4d46cfafb525606d39e1bb4dca3de6e1e46a"
+    },
+    {
+      "path": "cow/remesh-30000-left.png",
+      "bytes": 390829,
+      "sha256": "9975660706584ff836daeb223d93647664d5778c916af0cbfca2c37dda66398b"
+    },
+    {
+      "path": "cow/remesh-30000-right.png",
+      "bytes": 375356,
+      "sha256": "120d61894f170530486c061cee74f89c9f5631e40c593530fb7c35efeb978238"
+    },
+    {
+      "path": "cow/remesh-30000.glb",
+      "bytes": 11503348,
+      "sha256": "c8960b39760f1bdfc2443fdb9620ceba62f4ec3ec436d65f0fd8896399dc9e78"
+    },
+    {
+      "path": "cow/remesh-9000-back.png",
+      "bytes": 262253,
+      "sha256": "4b0455e2ccc13b6eac8c58b80e1d199991e57dc7345e78c46d1f4e924e659031"
+    },
+    {
+      "path": "cow/remesh-9000-front.png",
+      "bytes": 282522,
+      "sha256": "77c1df9de20b983a13434350d30c6709e17a3c28b4e2776329ed3d813c9f3fd3"
+    },
+    {
+      "path": "cow/remesh-9000-left.png",
+      "bytes": 372238,
+      "sha256": "9b77afc5a140e9868550c060388c68142168cfd13a96de1681126fa95768c659"
+    },
+    {
+      "path": "cow/remesh-9000-right.png",
+      "bytes": 351412,
+      "sha256": "5d331134cc882b140c59df9dcfb602f8c88288effd69e4ddadb27456dae11b97"
+    },
+    {
+      "path": "cow/remesh-9000.glb",
+      "bytes": 9594340,
+      "sha256": "4eca7af228de857ef797237943c12d9dd3d0778f8aa5afbc8b7b7a1f5cb65212"
+    }
+  ]
+}
