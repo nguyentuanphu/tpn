@@ -58,8 +58,10 @@ for (const [title, secs, speed, move] of PARTS) {
         const im = x.createImageData(W, W); for (let yy = 0; yy < W; yy++) for (let xx = 0; xx < W; xx++) { const s = ((W - 1 - yy) * W + xx) * 4, d = (yy * W + xx) * 4; im.data[d] = SRGB[px[s]]; im.data[d + 1] = SRGB[px[s + 1]]; im.data[d + 2] = SRGB[px[s + 2]]; im.data[d + 3] = 255; }
         x.putImageData(im, col * W, 28 + row * W); x.fillStyle = 'rgba(0,0,0,.55)'; x.fillRect(col * W, 28 + row * W, 150, 20); x.fillStyle = '#fff'; x.font = '14px sans-serif'; x.fillText(label, col * W + 5, 28 + row * W + 15); };
       const near = (yaw: number) => { const fwd = new THREE.Vector3(Math.sin(o.rotation.y + yaw), .2, Math.cos(o.rotation.y + yaw)).normalize(), cam = new THREE.PerspectiveCamera(30, 1, .02, 200); cam.position.copy(cc).addScaledVector(fwd, rr * 1.8); cam.lookAt(cc); return cam; };
+      const kid = h.av.root, kv = kid.visible; kid.visible = false;   // (the child beside the pet hid it from the near cameras)
       shot(near(0), 0, 0, 'gần: trước'); shot(near(.8), 1, 0, 'gần: nghiêng'); shot(near(Math.PI / 2), 2, 0, 'gần: cạnh');
       shot(near(Math.PI), 0, 1, 'gần: sau');
+      kid.visible = kv;
       const gc = new THREE.PerspectiveCamera(50, 1, .1, 400); gc.position.set(h.pos.x - Math.sin(h.yaw) * 6, h.pos.y + 3.2, h.pos.z - Math.cos(h.yaw) * 6); gc.lookAt(h.pos.x, h.pos.y + 1.4, h.pos.z); shot(gc, 1, 1, 'sau bé 6 m (như game)');
       const far = new THREE.PerspectiveCamera(30, 1, .1, 400); far.position.set(h.pos.x + Math.cos(h.yaw) * 12, h.pos.y + 3, h.pos.z - Math.sin(h.yaw) * 12); far.lookAt(cc.x, cc.y - .3, cc.z); shot(far, 2, 1, 'xa 12 m');
       hid.forEach(q => { q.visible = true; });
