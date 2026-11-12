@@ -58,7 +58,7 @@ The auditor branch (meshy-audit-coverage) is adding a mouth check, then eye sock
 - Closed eyes (js/friend-model.ts): excited shuts the painted eye; shut texels are replaced outright; the eye's whole core (`cA_`/`cB_`, .5 x .46 of the eye area, below its top) is lid whatever its mark, only blush stays. That took Sol's lid line from 76 to 0 (with the iris fix).
 - Ragged hems, two causes:
   1. (fixed, all four redressed) the painted body inside a sleeve followed the triangles as cloth-coloured stripes; limb points within 2 cm inside a limb cut are no longer covered. Sol's `arms` close-ups are clean.
-  2. (open, Lumi most) the swim kit that sticks out past a sleeve or shorts hem is painted in the top's colour (`uKitTop`/`uKitBot`, the uncovered branch of the kit paint in js/friend-model.ts), so it looks like a ragged extension of the sleeve. Plan: an uncovered kit fragment on an arm (|x| past the shoulder joint) or a leg (more than 12 cm below the waist) takes the skin's paint instead (like `lim_`), keeping the armpit and waist gaps in the cloth's colour. Needs the shoulder's x in the shader (a uniform from the rig, or a material extra written by make_clothes.py). See `D:\WorkSpace\meshyittedrms-3\lumi-idle-armR-front.png`.
+  2. (open, Lumi most) cream teeth hanging from the sleeve's hem over the arm (`D:\WorkSpace\meshy\fitted\arms-3\lumi-idle-armR-front.png`, `-armL-out`), and a torn look round the raised arm (`lumi-cheer-armL-out`). Tried and ruled out (13 Nov): painting the swim kit that sticks out past a hem in the skin's colour (no change at all, reverted). Next suspect: make_clothes.py pushes the hem and the ring next to it 6 and 3 mm out along the *nearest body point's* normal; near the armpit that point jumps between arm and trunk, which would zigzag the hem. Render Lumi's top-short alone in Blender close to the hem, then try pushing along the sleeve's own direction from the arm's axis.
 - Round 86 (full audit) not run yet. The approval gate above applies: do not ask the owner until it is clean.
 
 **Hand-over, 12 Nov 2026 (AEDT), owner asked to stop and pass to another account.** Nothing is running.
@@ -75,7 +75,7 @@ The auditor branch (meshy-audit-coverage) is adding a mouth check, then eye sock
 
 ## Next
 
-(13 Nov) 1 (refit and redress) and 3 (ragged hems, first cause) below are done. Now: when the Clara, Finn, Lumi refit is in, the face audit of the three (lid and mouth 0) and their `arms` close-ups; the kit past the hems (cause 2 above); round 86; the faint ring round closed eyes; the o mouth's colour and Clara's small mouths; the standard 1024 px sheets and a second-reviewer subagent (the gate); only then ask the owner.
+(13 Nov) 1 (refit and redress) and 3 (ragged hems, first cause) below are done. Now: when the Clara, Finn, Lumi refit is in, the face audit of the three (lid and mouth 0) and their `arms` close-ups; the second hem cause (Lumi, above); round 86; the faint ring round closed eyes; the o mouth's colour and Clara's small mouths; the standard 1024 px sheets and a second-reviewer subagent (the gate); only then ask the owner.
 
 Old list (12 Nov):
 
