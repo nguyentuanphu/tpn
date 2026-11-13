@@ -282,6 +282,17 @@ Record: `docs/meshy-regional-40-100/PILOT-1.md`. Ids `r<nnn>` (sheet number), jo
     eye kept its iris and lashes past the nose while shut, whatever the shader did. `-EyeSkin` marks the triangles inside
     each eye's oval (not hair-like, the face side). On that path `_ear_y` was undefined for villagers (all six fits
     failed once): the head skin's middle depth stands in.
+  - *Half and sad lids, and how far the paint reaches (14 Nov 2026, gates k and l).* The shut-eye paint ran only for
+    blink and happy, so from above the half and sad faces showed the old upper lash and the far iris over their lids: the
+    game paints a villager's oval above each lid's own depth too (`uLid`, a villager-only uniform: the friends' paint keys
+    on `uShut > .5` and must not change; depths `lid_half`, `lid_sad` from the fit). Widening the oval (.24 / .28 / .32)
+    took the socket's pale outline, but then painted the brow's mid-tone edges and the shaded socket skin: above each
+    eye's box only grey is painted, and texels within .12-.2 of the skin round the eyes stay.
+  - *Shut pieces over the hair's edge (14 Nov 2026, r045).* With the pieces hidden (`HIDE=face`) her hair was intact, so
+    the skin over her hairline and the dashed brow from the side were the blink piece: opaque up to the brows (the soft
+    lid band's small changes). `-LidClip` keeps the shut pieces to an oval round each eye (the eye's box 1.3 wide, 1.2
+    tall); the game's paint covers the rest. In the preview the outer lash corner then shows (it draws the plain face
+    picture under the piece): judge it in the game.
   - *3D folds in front of an eye (13 Nov 2026).* r084's skin wedge across an iris and r045's shards over the upper lids
     were not in `F.png`: Meshy's lid folded in front of the eye. `-EyeDespike` moves a body point in an eye's area that sits
     2.5 to 30 mm in front of its neighbours' middle depth back to it. Without the 30 mm cap r064's lock of hair, 12 cm in

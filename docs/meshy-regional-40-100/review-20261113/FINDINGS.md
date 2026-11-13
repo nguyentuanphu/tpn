@@ -90,3 +90,19 @@ Auditor: lid 0 (was 10), eyes 2 (r064's earring at -1.2: false), mshape 9 (r074 
    edge** in look moods (r057, r064, r074). Not fixed yet.
 6. **Meshy's geometry** (left unless a cheap fix shows): shattered ears (r045, r064, r074, r084), forehead shards (r050,
    r064), r057's chin strap edge, r084's neck-back views see only the hat (camera framing).
+
+## Gates k and l (14 Nov 2026 AEDT)
+
+Gate k (models 9879d1acb): auditor eyes 0, lid 2; mshape up on a darker random host (the red nose read as lips: looked
+at, false). Second reviewers: shut eyes clean from the front and the sides on most; left the socket's pale outline
+just outside the oval (all six), the half and sad lids showing the old upper lash and the far iris from above, r045's
+and r050's forehead shards, r064's skin flap at .4 and tq, lookL and lookR alike.
+Fixed for gate l (93d894e9e): ovals wider (.24 / .28 / .32), half and sad painted above their own lid depth (`uLid`,
+`lid_half`, `lid_sad`), brows above the eye box kept.
+Gate l second reviewers: r045's brow dashed and hairline turned skin on shut eyes from the side, r050 a lighter disc
+round shut eyes. Causes: the wider oval painted brow edges and shaded sockets (fixed in the shader, 831a77f57: above the
+box only grey is painted, skin kept within .12-.2); and the shut pieces opaque up to the brows and the hair's edge (seen
+with the pieces hidden: the body's hair was intact), fixed by `-LidClip` (refit of all six running). Auditor: `stray`
+ported (a mood may change only the eyes and the mouth), first run 47 cases, mostly r045 (the brow and hairline above),
+r064 (the flap), r074 at -.7; the mood's own big mouth was counted as stray in the first port (fixed).
+Left and not a fault: r084's far pupil below a half lid seen from above (a half-open eye shows its iris).
