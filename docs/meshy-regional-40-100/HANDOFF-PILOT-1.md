@@ -3,7 +3,18 @@
 Branch `meshy-regional-cloud` (never `main`, no deploy, no version bump, draft pull requests only). Written 12 Nov 2026,
 about 16:30 AEDT, when the owner stopped this chat so that another Claude account takes over.
 
-## Where it stands (13 Nov 2026, about 20:00 AEDT)
+## For Release: js/friend-model.ts (14 Nov 2026)
+
+`js/friend-model.ts` is also changed on the friends' branch (`meshy-production-20261107`). This branch's commits to it
+(f1d36fdfb, 8ddb76a7d, 64b63c4bc, e303428c1) add **only a villager branch**: `skinTint`'s `eyes = !cover &&
+eye_boxes && deq` (a model with eye areas and **no** code clothes), its own vertex and fragment additions inside
+`if (eyes) { ... }` (`vKitX/vKitY`, `uEyeA/B`, `uOvA/B`, `uEyeSkin`, `vEyeN_`, `eyeK_`), and in the loader the copy of
+`eye_boxes`, `eye_ovals`, `eye_skin` when the material is not `cover`. The friends' shut-eye paint (the `cover`/`kit`
+branch, line `if (uShut > .5 && vColor.r > .5 && inEye_) k_ = ...`) is not changed. On a merge conflict keep both:
+the friends' side as theirs, the `eyes` branch as here. The 11 named villagers (no code clothes) take the `eyes` branch
+too; without `eye_ovals` they get only the colour test.
+
+## Where it stood (13 Nov 2026, about 20:00 AEDT)
 
 - **Shut eyes from every side fixed in the game** (commit e303428c1): `js/friend-model.ts` paints each eye's own oval
   (`eye_ovals`, `eye_skin`, written by the fit; `tools/meshy/patch_eye_ovals.py` adds them to fitted glbs) in the skin
