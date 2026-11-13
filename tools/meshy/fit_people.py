@@ -530,17 +530,17 @@ def lid(img, b, top=0., bot=1.):   # (original_skin) a closed lid painted over t
     if OWN and REFP == 'villager-' and not PART:   # (13 Nov 2026, rounds 27-28, second reviewer: on Jack, Lan, Mai, Mit, Su and Ti the shut lid wiped the brow and the fringe on one side into a flat skin patch: a shut eye's box is grown a quarter of its height upwards (grow), and the dark-pixel rules near it reached the brow and dark fringe touching the lashes; then a straight cut at the eye's top left a straight-edged lighter patch, Lan's) nothing above the eye's own upper lash line closes, column by column: the fill follows the eye's top curve
         _t0 = b[1] + h_ * .12; _cy0 = (b[1] + b[3]) / 2
         _top = np.full(W_, _cy0, np.float32)
-        _lk = (V < .18) & (yy >= _t0) & (yy <= _cy0)   # (lashes are near black: Lan's dark brown strand over the eye, .21, set the top too high)
+        _lk = (V < .45) & (yy >= _t0) & (yy <= _cy0)   # (round 28: .18 (lashes only) left the upper half of the open eye above the lid on Lan, Jack and Ruby)
         _cols = np.nonzero(_lk.any(0))[0]
         if len(_cols): _top[_cols] = np.argmax(_lk[:, _cols], axis=0).astype(np.float32)
         _tp = np.pad(_top, 3, mode='edge'); _top = np.min(np.stack([_tp[k:k + W_] for k in range(7)]), 0)   # (the lash line's highest point nearby: no notches)
         hole &= yy >= (_top[None, :] - 2)
-        _bot = np.full(W_, _cy0, np.float32); _b0 = b[3] - h_ * .3 / 1.55 + h_ * .1   # (and below: the eye's own lower edge, its white or dark rim, column by column: Jack's, Ruby's, Teo's and Su's freckles under the eyes vanished when shut)
+        _bot = np.full(W_, _cy0, np.float32); _b0 = b[3] - h_ * .3 / 1.55 + h_ * .18   # (and below: the eye's own lower edge, its white or dark rim, column by column: Jack's, Ruby's, Teo's and Su's freckles under the eyes vanished when shut)
         _lb = ((V < .45) | ((V > .78) & (S_ < .22))) & (yy >= _cy0) & (yy <= _b0)
         _cb = np.nonzero(_lb.any(0))[0]
         if len(_cb): _bot[_cb] = (_lb.shape[0] - 1 - np.argmax(_lb[::-1, :][:, _cb], axis=0)).astype(np.float32)
         _bp = np.pad(_bot, 3, mode='edge'); _bot = np.max(np.stack([_bp[k:k + W_] for k in range(7)]), 0)
-        hole &= yy <= (_bot[None, :] + 5)
+        hole &= yy <= np.maximum(_bot[None, :] + 5, b[3] - h_ * .3 / 1.55 + h_ / 1.55 * .3)   # (round 28: at least the eye's whole lower rim: Ruby's lower whites showed under the lid)
     if top > 0: hole &= yy >= y0
     if PART: hole &= yy < lidline(xx)
     # her own skin flows in from all round the eye (a smooth fill, no disc edge): the eye pixels are repeatedly
@@ -558,6 +558,7 @@ def lid(img, b, top=0., bot=1.):   # (original_skin) a closed lid painted over t
     for _ in range(700):
         P = np.pad(sub, ((1, 1), (1, 1), (0, 0)), mode='edge')
         av = (P[:-2, 1:-1] + P[2:, 1:-1] + P[1:-1, :-2] + P[1:-1, 2:]) / 4; sub[hm] = av[hm]
+    if OWN and REFP == 'villager-' and not PART: sub[hm] *= float(os.environ.get('FIT_LIDSHADE', '1'))   # (13 Nov 2026, round 28: tried .94 against a lighter lid patch: dark grey spectacles round the shut eyes and a pale bar between them; left at 1)
     _w = img[ya:yb, xa:xb, :3]; _w[hm] = sub[hm]   # (only the lid itself: the brows, lashes and hair held at skin colour above were written back too, and vanished on every blink)
     img[ya:yb, xa:xb, 3] = np.maximum(img[ya:yb, xa:xb, 3], hm.astype(np.float32))
     if PART:   # the lid's edge: a soft lash line along the curve, over the eye only
@@ -934,9 +935,9 @@ for p in me.polygons:
     # below the face, cream and ivory cloth (sleeves, collars) can sit in the skin hue range: skin there needs more colour
     isskin = ((not ORIGINAL) or SHIFT) and (infaceregion or (zone and bool(skin_mask(avg[None])[0]) and (pc.z > L['neck'].z + .02 or hsv(avg)[1] > .2)))
     if not isskin and REFP == 'villager-' and ((not ORIGINAL) or SHIFT) and neckzone and pc.z > L['neck'].z - .03 and bool(skin_mask(avg[None])[0]) and hsv(avg)[1] > .1: isskin = True   # (12 Nov 2026, owner chose to fix Ruby's neck: its pale front, under .2 saturation, was not skin, and the neck showed two-tone triangles; the upper neck, away from the collar line, is skin when skin-coloured)
-    if not isskin and REFP == 'villager-' and ((not ORIGINAL) or SHIFT) and neckzone and pc.z > L['neck'].z - .1:   # (round 27: to .1, the second reviewer still saw a zigzag at the neck's base)   # (13 Nov 2026, round 24, second reviewer: Ruby's neck still two-tone, a pale left half and a zigzag down to the collar: its pale skin is under .1 saturated and lies lower) skin hue, bright, a little coloured, down to the collar line
+    if not isskin and REFP == 'villager-' and ((not ORIGINAL) or SHIFT) and pc.z > L['neck'].z - .1 and abs(pc.x) < .08 and pc.z < FB[1].z:   # (round 28: its own throat zone, neckzone stops at .06 and the rule never reached the collar)   # (round 27: to .1, the second reviewer still saw a zigzag at the neck's base)   # (13 Nov 2026, round 24, second reviewer: Ruby's neck still two-tone, a pale left half and a zigzag down to the collar: its pale skin is under .1 saturated and lies lower) skin hue, bright, a little coloured, down to the collar line
         _nh, _ns, _nv = hsv(avg)
-        if (_nh < .1 or _nh > .94) and _nv > .55 and .06 < _ns < .55: isskin = True
+        if ((_nh < .1 or _nh > .94) and _nv > .55 and .06 < _ns < .55) or (_ns < .15 and .55 < _nv < .93): isskin = True   # (round 28: Ruby's pale lilac-streaked neck triangles are hardly coloured; near-white stays cloth, white collars)
     p.material_index = 1 if isskin else 0; nskin += isskin
     for li, cv in zip(p.loop_indices, cs):
         if isskin:
@@ -1291,6 +1292,11 @@ if TEX and KEEP and SHIFT:
         _skp = _skp | _add
         _rem = (_skp & _hz & ~_core & (_fr < .34)) | (_skp & _hz & ~_face & (_sat > _ssk * 1.2))   # (and hair more strongly coloured than her face skin: Clara's)
         _skp = (_skp | _add) & ~_rem
+    if REFP == 'villager-' and ID in os.environ.get('FIT_THROAT', 'ruby').split(','):   # (round 28: only where asked: on Ti it took her white embroidered collar for skin)   # (13 Nov 2026, round 28, second reviewer: Ruby's neck two-tone, a patchwork of marked and unmarked triangles: her pale, lilac-streaked throat failed the grow's colour likeness) a villager's throat below the chin is skin when skin-hued or hardly coloured, not near-white (white collars)
+        _nh_, _ns_, _nv_ = hsv_np(_mc[:, :3])
+        _thr = (_pc3[:, 2] > L['neck'].z - .08) & (_pc3[:, 2] < fz0) & (np.abs(_pc3[:, 0] - _hcx) < _hw * .55) & ~_face & (_tot > 0)   # (its own zone: the neck zone stops at the neck joint, the upper neck is in the head zone) & ~_hairlike & ((((_nh_ < .1) | (_nh_ > .94)) & (_ns_ > .06) & (_ns_ < .55) & (_nv_ > .55)) | ((_ns_ < .15) & (_nv_ > .55) & (_nv_ < .93)))
+        print('FIT throat triangles marked skin', int((_thr & ~_skp).sum()))
+        _skp |= _thr
     # (owner 9 Nov 2026, the skin tones: thin unmarked slivers on Sol's arms showed as orange streaks) on a swim body the arms and
     # legs are bare: every coloured triangle there that is not the grey kit nor hair is skin
     if 'swim' in ID:
