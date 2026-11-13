@@ -72,6 +72,13 @@ begging, scratching (`sit_fold` 0.35, hooves pointed). All four rebuilt and film
 `D:\WorkSpace\meshy\pets\film20\`. Known, older than this round: mid-blink the shut lid shows as a ring round the eye
 for a frame or two (the lid growing from nothing).
 
+**Owner, 13 Nov afternoon:** bunny OK but its four-leg jump stiff (fixed: `jump_spring` 0.8 on the bunny); then "Bê mèo thỏ
+nhảy tại chỗ còn cứng quá" plus pictures of legs (kitty beg and dig, calf sit and run). Fixed: the standing hop
+(`bounce`) is springier for all (`hop_spring`, deeper crouch, bigger squash and stretch, a turn each hop, head/ears/tail
+lag; the tail lift capped, the kitty's swung over its back); sitting, begging, digging lay the lower hind leg flat
+(`legs(..., level=)`); kitty `sit_fold` 0.6. All four rebuilt (quick audits 0 failing), films
+`D:\WorkSpace\meshy\petsilm22\` sent. No pet approved yet; full audits not run since these changes.
+
 `tests/check-times.json` (suite timing) is left uncommitted on purpose. Nothing is running.
 
 **Resume prompt (Vietnamese, for the next chat):**
