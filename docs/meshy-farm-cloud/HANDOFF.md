@@ -78,6 +78,17 @@ SV_URL=http://127.0.0.1:PORT node --experimental-strip-types tools/meshy/film_co
 
 Các sửa mặc định chung giữ tương thích thú trước; ngoại lệ giải phẫu/mí/config chỉ cow. Runner vẫn chỉ cho tierOverride Meshy 7.1 khi spec có plannedCredits=30, approval và assetId nằm trong metadata allowlist; không đổi tier nhóm khác.
 
+## Soát của chủ và Claude, 14/11/2026 AEDT: chưa duyệt, sửa tiếp (giao lại ChatGPT)
+
+Claude (máy của chủ) đã xem các bảng ảnh, 102 ảnh cận, ảnh ba thiết bị và cả hai phim ở cỡ thật (phim phát thật, không tua: hai phim đủ 10 động tác, chuyển động ổn). Dáng, chân, móng, đuôi, sừng, chuông, lông ổn. **Hai lỗi mặt thật, chưa được duyệt:**
+
+1. **Mắt nhắm phía mảng lông đen gần như biến mất** (cheer, wag, sleep, blink; rõ nhất `shots/cow-hd-cheer-face.png`, `cow-hd-sleep-facetq.png`): hàng mi đen chìm vào lông đen, còn lại một ô mi xám phẳng hơi khác màu, ở góc 3/4 thành hình bầu dục có viền cứng. Mắt nhắm bên lông trắng thì hàng mi mảnh và nhạt. Cần: mi nhắm cùng màu, cùng chất lông với vùng quanh mắt (đen thì đen, trắng thì trắng, không ô phẳng, không viền), và một nét mi nhìn rõ trên cả lông đen (ví dụ nét sáng hơn hoặc nét có bóng) lẫn lông trắng.
+2. **Mắt phía xa nhô ra ngoài viền mặt ở góc 3/4** (rõ nhất `shots/cow-hd-sad-facetq.png`; cũng thấy ở follow/run facetq): mắt xa phải nằm trong đường viền đầu, như con mắt thật nằm trong hốc.
+
+Còn cần xác minh: hình tam giác vàng phẳng sát mõm bò trong cả ba ảnh thiết bị (`devices/cow-*.png`). Có thể là ô đánh dấu chỗ trồng của game (nút Plant đang hiện), không phải của bò; phải chụp lại ở chỗ khác hoặc tắt ô đánh dấu để chắc.
+
+**Cổng duyệt của chủ** (mọi model): máy soi 0 và không lùi; bảng ảnh 1024 px xem cỡ thật (mặt thẳng, ±.4, ±.7, hai bên, từ trên/dưới, mọi cảm xúc, cổ, sau đầu, toàn thân); một người soi thứ hai không biết đã sửa gì; mọi lỗi chủ từng khoanh xem lại; chỉ khi sạch mới hỏi duyệt. Máy soi bò hiện báo 0 cho cả hai lỗi trên, nên không được dựa vào số 0: phải nhìn ảnh.
+
 ## Dữ liệu riêng và quyết định của chủ
 
 API key chỉ từ biến cloud `MESHY_API_KEY`. SQLite `/workspace/meshy-jobs-farm.sqlite3`, backup `/workspace/meshy-jobs-farm-final.sqlite3`, metadata `/workspace/meshy-farm-account.json`: **ngoài repo, không commit/upload**. Allowlist hiện chỉ cow. Không đưa signed download URL vào bàn giao.
