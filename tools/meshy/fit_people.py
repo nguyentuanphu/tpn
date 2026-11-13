@@ -527,7 +527,20 @@ def lid(img, b, top=0., bot=1.):   # (original_skin) a closed lid painted over t
         _wide = (np.hypot((xx - cx_) / (w_ * .76), (yy - (b[1] + b[3]) / 2) / (h_ * .64)) < 1) & ~(HAIRISH & (yy < b[1] + h_ * .15)) & ~(HAIRISH & ~_inb & (S_ > .3) & (V > .45) & ~((V > .7) & (S_ < .22)))   # (dark lash flicks close even when hair-coloured, Lumi's; only bright, strongly coloured hair beside the eye stays: the faint grey edge of Lumi's outline closes, 9 Nov)   # (an eye's white is never hair: Clara's inner corner; Lumi's outer arc, 9 Nov; a strand of hair beside the eye stays hair: Clara's)
         hole |= _wide & (yy >= b[1] + h_ * .24)   # (below the brows: b reaches up over them, and closed eyes lost Clara's and Lumi's brows)
         hole &= ~((yy < b[1] + h_ * (0 if PART and REFP == 'villager-' else .16)) & (xx > b[0] + w_ * .2) & (xx < b[2] - w_ * .2) & ((V < .6) | HAIRISH))   # (12 Nov 2026, owner circled grey marks over the sad lids: a part lid is drawn on the eye's own box, not one grown up to the brows, so this keep held the eye's own upper lash line inside the lid)   # (over the eye's middle only: at the corners the lashes flick up past the box, and Mit's far eye kept them)   # (11 Nov 2026: Cô Mai's brows lie just over her eyes and her closed lids wiped half of them: dark pixels above the eye's own box (b is grown by .25 of it upwards) are brows or hair, and stay)
-    if OWN and REFP == 'villager-' and not PART: hole &= yy >= b[1] + h_ * .12   # (13 Nov 2026, round 27, second reviewer: on Jack, Lan, Mai, Mit, Su and Ti the shut lid wiped the brow and the fringe on one side into a flat skin patch: a shut eye's box is grown a quarter of its height upwards (grow), and the dark-pixel rules near it reached the brow and dark fringe touching the lashes. Nothing above the eye's own top closes; the lashes up there are painted shut by the game's eye areas)
+    if OWN and REFP == 'villager-' and not PART:   # (13 Nov 2026, rounds 27-28, second reviewer: on Jack, Lan, Mai, Mit, Su and Ti the shut lid wiped the brow and the fringe on one side into a flat skin patch: a shut eye's box is grown a quarter of its height upwards (grow), and the dark-pixel rules near it reached the brow and dark fringe touching the lashes; then a straight cut at the eye's top left a straight-edged lighter patch, Lan's) nothing above the eye's own upper lash line closes, column by column: the fill follows the eye's top curve
+        _t0 = b[1] + h_ * .12; _cy0 = (b[1] + b[3]) / 2
+        _top = np.full(W_, _cy0, np.float32)
+        _lk = (V < .18) & (yy >= _t0) & (yy <= _cy0)   # (lashes are near black: Lan's dark brown strand over the eye, .21, set the top too high)
+        _cols = np.nonzero(_lk.any(0))[0]
+        if len(_cols): _top[_cols] = np.argmax(_lk[:, _cols], axis=0).astype(np.float32)
+        _tp = np.pad(_top, 3, mode='edge'); _top = np.min(np.stack([_tp[k:k + W_] for k in range(7)]), 0)   # (the lash line's highest point nearby: no notches)
+        hole &= yy >= (_top[None, :] - 2)
+        _bot = np.full(W_, _cy0, np.float32); _b0 = b[3] - h_ * .3 / 1.55 + h_ * .1   # (and below: the eye's own lower edge, its white or dark rim, column by column: Jack's, Ruby's, Teo's and Su's freckles under the eyes vanished when shut)
+        _lb = ((V < .45) | ((V > .78) & (S_ < .22))) & (yy >= _cy0) & (yy <= _b0)
+        _cb = np.nonzero(_lb.any(0))[0]
+        if len(_cb): _bot[_cb] = (_lb.shape[0] - 1 - np.argmax(_lb[::-1, :][:, _cb], axis=0)).astype(np.float32)
+        _bp = np.pad(_bot, 3, mode='edge'); _bot = np.max(np.stack([_bp[k:k + W_] for k in range(7)]), 0)
+        hole &= yy <= (_bot[None, :] + 5)
     if top > 0: hole &= yy >= y0
     if PART: hole &= yy < lidline(xx)
     # her own skin flows in from all round the eye (a smooth fill, no disc edge): the eye pixels are repeatedly
@@ -1492,6 +1505,14 @@ if TEX and KEEP and SHIFT:
                     for _c in range(3): _b2[_li * 4 + _c] = 0.
                     _cd.foreach_set('color', _b2)
                 print('FIT skin-marked strands under the ears recoloured', len(_isl), 'ear foot z', round(_eb_, 3))
+                # (13 Nov 2026, round 28, second reviewer: Ruby's neck two-tone, a sawtooth of darker triangles at the collar and pale
+                # lilac scratches on the throat, all in Meshy's paint) a villager's neck, chin to collar, skin-marked, is one smooth
+                # colour in the picture: the median of its own triangles (only texels no other face uses)
+                _nk = np.nonzero(_mk & (_cc[:, 2] < fz0 - (fz1 - fz0) * .02) & (_cc[:, 2] > L['neck'].z - .1) & (np.abs(_cc[:, 0] - _hcx) < _hw * .7) & ~_ine)[0]
+                if len(_nk) > 10 and os.environ.get('FIT_NECKFLAT', '1') != '0':
+                    _A = px(colour); _tm = own_texels(_nk, _A.shape[:2]); _nc = np.median(_A[_tm][:, :3], axis=0)
+                    _A[_tm, :3] = _A[_tm, :3] * .25 + _nc * .75; colour.pixels.foreach_set(_A.ravel()); colour.update()   # (a quarter of the painted shade kept: not a flat cut-out)
+                print('FIT neck evened', len(_nk), 'triangles')
 if TEX:
     colour.scale(TEX, TEX); colour.file_format = 'JPEG'; colour.save(filepath=jp, quality=int(os.environ.get('FIT_JPGQ') or (88 if TEX >= 1024 else 72)))   # (owner 8 Nov 2026: 62 left speckles on the necks)
     jimg = bpy.data.images.load(jp); jimg.name = ID + '-colour'
