@@ -3,7 +3,24 @@
 Branch `meshy-regional-cloud` (never `main`, no deploy, no version bump, draft pull requests only). Written 12 Nov 2026,
 about 16:30 AEDT, when the owner stopped this chat so that another Claude account takes over.
 
-## Where it stands (13 Nov 2026, about 07:30 AEDT; next chat on the owner's PC)
+## Where it stands (13 Nov 2026, about 20:00 AEDT)
+
+- **Shut eyes from every side fixed in the game** (commit e303428c1): `js/friend-model.ts` paints each eye's own oval
+  (`eye_ovals`, `eye_skin`, written by the fit; `tools/meshy/patch_eye_ovals.py` adds them to fitted glbs) in the skin
+  round the eyes while shut. Gate j (`D:\WorkSpace\meshyittedegional-gate-20261113j`): auditor lid 0 (was 10),
+  eyes 2 (r064's earring at -1.2, false), mshape 9 (r074 at -.7; r050 "o"), the rest 0. **Release note:**
+  `js/friend-model.ts` changes the shut-eye paint for every model with `eye_boxes` and no code clothes, so the 11 named
+  villagers too (they have no `eye_ovals`, so only the colour test applies to them, as before e303428c1 except the
+  `diffuse` factor and the flat lighting, which apply only inside the ovals).
+- Fit flags added: `-SadTall` (r050, r064: two lash lines on sad), `-SadBot .42` (r074: her sad lid closed nothing),
+  `-EyeDespike` (r084's skin wedge across an iris, r045's shards over a lid: 3D folds pushed back). Refit of r074, r084
+  and r045 with them running at 20:00; then gate k.
+- **Not approved; gate not clean; no approval question asked.** Second reviewers on gate j were running; findings go
+  into `review-20261113/FINDINGS.md`.
+- `game_shots.mts`: `SHOT_ONLY=blink,happy` (with `SHOT_GATE=1`) shoots only those moods at seven side angles, for a
+  quick look at one fix. The game's start sometimes times out while Blender fits run: retry the person.
+
+## Where it stood (13 Nov 2026, about 07:30 AEDT)
 
 - **Refit of 13 Nov committed as a work-in-progress snapshot** (commit 2ad8cc7f4): all six with the new flags
   `-PieceSink -LidHair -MouthSoft -LidLocal` (what each fixes: SKILL.md, "Eyes, nose and mouth"). r045's dark fleck over

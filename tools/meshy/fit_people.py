@@ -827,10 +827,11 @@ def mouth_o(im, big):
 M['surprised'] = mouth_o(base.copy(), False)
 im = base.copy()
 if mouth: erase_mouth(im, mouth); mb = [mouth[0] + (mouth[2] - mouth[0]) * .15, mouth[1], mouth[2] - (mouth[2] - mouth[0]) * .15, mouth[3]]; stroke(im, arc(mb, .75, -.45), lip * .8, lw * 1.1)
+_sb = float(os.environ.get('FIT_SAD_BOT') or .18)   # (13 Nov 2026, r074's sad face: her lash sat below the box's top .18, so the drawn lid lay above it and closed nothing, a second line like a frown) how far down the box the sad lid comes
 for b in eyes.values():
     if os.environ.get('FIT_SAD_TALL'):   # (13 Nov 2026, r064's sad face at 1024 px: two lash lines, the old one above the drooped lid) her thick upper lash sat above the eye's box, so the part lid (top .18 of the box) never reached it: the box is taken a quarter higher, the lid's edge kept where it was
-        _h = b[3] - b[1]; erase(im, [b[0], max(0, int(b[1] - _h * .25)), b[2], b[3]], 0, (.25 + .18) / 1.25)
-    else: erase(im, b, 0, .18)
+        _h = b[3] - b[1]; erase(im, [b[0], max(0, int(b[1] - _h * .25)), b[2], b[3]], 0, (.25 + _sb) / 1.25)
+    else: erase(im, b, 0, _sb)
 M['sad'] = im
 im = base.copy()
 for b in eyes.values(): im = shift_iris(im, b, .16)
@@ -1061,6 +1062,28 @@ if OWN and moods and os.environ.get('FIT_PIECE_SINK'):   # (13 Nov 2026, r045 at
         if not (0 <= cpx < W_ and 0 <= rpx < H_) or _PA[max(0, rpx - 1):rpx + 2, max(0, cpx - 1):cpx + 2].max() < .02: continue   # (where every piece is see-through the body is what is seen: left as it is)
         if v.co.y < h_[0].y + .002: _mx = max(_mx, h_[0].y + .002 - v.co.y); v.co.y = h_[0].y + .002; _np += 1
     body.data.update(); print('FIT body points moved behind the mood pieces', _np, 'most', round(_mx * 1000, 1), 'mm')
+if OWN and eyes and os.environ.get('FIT_EYE_DESPIKE'):   # (13 Nov 2026, second reviewers: r084's skin wedge across the left iris and r045's
+    # shards over the upper lid, in every open mood and from every side: not in the face picture (F.png is clean), so 3D,
+    # Meshy's lid folded in front of the eye) a body point in an eye's area well in front of the points round it goes
+    # back to their middle depth; the eye's own dome stays (its neighbours share it)
+    _ev = []
+    for b in list(eyes.values())[:2]:
+        _w, _h = b[2] - b[0], b[3] - b[1]
+        _ev.append((fx0 + (b[0] - _w * .2) / W_ * (fx1 - fx0), fx0 + (b[2] + _w * .2) / W_ * (fx1 - fx0), fz1 - (b[3] + _h * .3) / H_ * (fz1 - fz0), fz1 - (b[1] - _h * .3) / H_ * (fz1 - fz0)))
+    _co = np.array([v.co[:] for v in body.data.vertices]); _ns = 0; _mx = 0.
+    _r = abs(fx1 - fx0) / W_ * max(2.5, (list(eyes.values())[0][2] - list(eyes.values())[0][0]) * .14)
+    for (xa, xb, za, zb) in _ev:
+        xa, xb = min(xa, xb), max(xa, xb); za, zb = min(za, zb), max(za, zb)
+        _in = np.nonzero((_co[:, 0] > xa) & (_co[:, 0] < xb) & (_co[:, 2] > za) & (_co[:, 2] < zb) & (_co[:, 1] < .05))[0]
+        if len(_in) < 8: continue
+        _P = _co[_in]; _new = _P[:, 1].copy()
+        for i_ in range(len(_in)):
+            _d = np.hypot(_P[:, 0] - _P[i_, 0], _P[:, 2] - _P[i_, 2]); _nb = _P[(_d < _r) & (_d > 0), 1]
+            if len(_nb) < 4: continue
+            _md = float(np.median(_nb))
+            if _P[i_, 1] < _md - .0025: _mx = max(_mx, _md - _P[i_, 1]); _new[i_] = _md; _ns += 1
+        for j_, i_ in enumerate(_in): body.data.vertices[int(i_)].co.y = float(_new[j_])
+    body.data.update(); print('FIT eye areas: points folded in front pushed back', _ns, 'most', round(_mx * 1000, 1), 'mm')
 if KEEP:
     for p in body.data.polygons: p.use_smooth = True   # (Meshy's remesh: soft shading, not flat facets)
 
