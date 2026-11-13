@@ -534,7 +534,11 @@ gl_FragColor = vec4(code_ / 255.0, floor(dm_ / 256.0) / 255.0, mod(dm_, 256.0) /
             const x = i % W, y = (i / W) | 0; if (bx1 > bx0 && x >= bx0 - 3 && x <= bx1 + 3 && y >= by0 - 3 && y <= by1 + 3) continue;
             let best = 9; for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) { const xx = x + dx, yy = y + dy; if (xx < 0 || yy < 0 || xx >= W || yy >= H) continue; const q = (yy * W + xx) * 4; best = Math.min(best, Math.hypot(C[i * 4] - C0[q], C[i * 4 + 1] - C0[q + 1], C[i * 4 + 2] - C0[q + 2]) / 255); }
             if (best > .08) { fs[i] = 1; ks++; } }
-          for (const g of groups(fs)) if (g.length < 4) for (const j of g) { fs[j] = 0; ks--; } }
+          /* (14 Nov: what was left after the hair-edge leave-out was thin lines, 1-2 px, along Lumi's temples and brow tops,
+             invisible at full size, while Finn's lid patch over his cheek is a solid block) a group counts only if it has a
+             core: a pixel whose 8 neighbours are all marked too */
+          for (const g of groups(fs)) { let core = false; if (g.length >= 4) for (const j of g) { const x = j % W, y = (j / W) | 0; let all = x > 0 && y > 0 && x < W - 1 && y < H - 1; if (all) for (let dy = -1; dy <= 1 && all; dy++) for (let dx = -1; dx <= 1; dx++) if (!fs[(y + dy) * W + x + dx]) { all = false; break; } if (all) { core = true; break; } }
+            if (!core) for (const j of g) { fs[j] = 0; ks--; } } }
         const r: any = { id, kind: 'face', pose: m, view: String(s), kit: 0, poke: 0, hairtone: 0, skintone: 0, eyes: k, face: kf, mouth: km, lid: kl, stray: ks, mouthWhy: why.trim() };
         if (ks > LIMIT.stray || (ALLPICS && C0 && m !== 'smile')) pics[`${id}-face-${m}-${s}-stray${ks > LIMIT.stray ? '' : '-look'}`] = png(C, fs); cases.push(r); mCase[m] = [r, C, fm, ML.L];
         if (k > LIMIT.eyes) pics[`${id}-face-${m}-${s}-eyes`] = png(C, f);
