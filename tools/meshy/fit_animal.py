@@ -370,6 +370,41 @@ def material(o, tex_px):
         for n in nt.nodes:
             if n.type == 'TEX_IMAGE' and n.image and n.image.size[0] > tex_px: n.image.scale(tex_px, tex_px)
         bsdf.inputs['Metallic'].default_value = 0; bsdf.inputs['Roughness'].default_value = 1
+    if FIX.get('seam_inset', 0): seam_inset(o, FIX['seam_inset'] / tex_px)
+
+def seam_inset(o, d):
+    """(13 Nov 2026, owner: "sao nhiều vết trắng" on the panda's black fur) Meshy packs its picture's pieces edge to edge, a
+    black piece touching a white one; the picture made smaller, and the game's own blending, mix the next piece's colour
+    into the texels along every seam, and those showed as thin white lines. Each corner on a seam reads its colour a
+    little inside its own piece (d, in picture units: about a texel and a half), towards its triangle's middle. The
+    picture and the pieces stay as they are (a repack and bake broke the eyes into scattered bits)"""
+    me = o.data; uv = me.uv_layers.active.data; co = [v.co for v in me.vertices]
+    key = lambda vi: tuple(round(c, 5) for c in co[vi])
+    edges = {}
+    for p in me.polygons:
+        n = len(p.loop_indices)
+        for k in range(n):
+            a, b = p.loop_indices[k], p.loop_indices[(k + 1) % n]; va, vb = me.loops[a].vertex_index, me.loops[b].vertex_index
+            ka, kb = key(va), key(vb); e = (ka, kb) if ka < kb else (kb, ka)
+            ua, ub = tuple(round(x, 6) for x in uv[a].uv), tuple(round(x, 6) for x in uv[b].uv)
+            edges.setdefault(e, []).append((p.index, a, b, frozenset([(ka, ua), (kb, ub)])))
+    seam = set()
+    for e, L in edges.items():
+        if len(L) != 2 or L[0][3] != L[1][3]: seam.update(x for f in L for x in (f[1], f[2]))
+    # (corners at one place with one colour are one point of the packed model: they move together, the same way (towards
+    # the middle of their triangles together), or each would become a point of its own and the model grew past 800 KB)
+    grp = {}
+    for p in me.polygons:
+        ls = list(p.loop_indices); c = sum((uv[l].uv for l in ls), Vector((0, 0))) / len(ls)
+        for l in ls:
+            if l in seam: grp.setdefault((key(me.loops[l].vertex_index), tuple(round(x, 6) for x in uv[l].uv)), []).append((l, c - uv[l].uv))
+    moved = 0
+    for g, L_ in grp.items():
+        v = sum((x[1] for x in L_), Vector((0, 0))) / len(L_); n_ = v.length
+        if n_ < 1e-9: continue
+        step = v * (min(d, min(x[1].length for x in L_) * .35) / n_)
+        for l, _ in L_: uv[l].uv = uv[l].uv + step; moved += 1
+    print('SEAM_INSET', KIND, len(seam), 'corners moved', moved, flush=True)
 
 def repack(o, m, tex_px):
     """(13 Nov 2026, owner: "sao nhiều vết trắng" on the panda's black fur) Meshy packs its picture's pieces edge to edge,
@@ -383,7 +418,18 @@ def repack(o, m, tex_px):
     new = me.uv_layers.new(name='packed'); me.uv_layers.active = new
     bpy.context.view_layer.objects.active = o; o.select_set(True)
     bpy.ops.object.mode_set(mode='EDIT'); bpy.ops.mesh.select_all(action='SELECT')
-    bpy.ops.mesh.remove_doubles(threshold=1e-5)   # (the import leaves every triangle's points apart, so each triangle was its own piece; welded by place, a piece is the picture's own island again: the UVs stay per corner)
+    # (the import leaves every triangle's points apart, so each triangle was its own piece: points at one place AND one
+    # place in the picture are welded, so a piece is the picture's own island again. Not by place alone: Meshy's eyes are
+    # layers lying on each other (the white, the iris), and a weld by place merged them and lost a layer: the eyes broke)
+    import bmesh as _bm
+    bm = _bm.from_edit_mesh(me); ul = bm.loops.layers.uv.active; seen = {}; tm = {}
+    for v in bm.verts:
+        if not v.link_loops: continue
+        k = (round(v.co.x, 5), round(v.co.y, 5), round(v.co.z, 5), round(v.link_loops[0][ul].uv.x, 6), round(v.link_loops[0][ul].uv.y, 6))
+        if k in seen: tm[v] = seen[k]
+        else: seen[k] = v
+    _bm.ops.weld_verts(bm, targetmap=tm); _bm.update_edit_mesh(me)
+    print('WELD', KIND, len(tm), flush=True)
     bpy.ops.uv.select_all(action='SELECT'); bpy.ops.uv.seams_from_islands()
     bpy.ops.uv.pack_islands(rotate=False, margin=FIX.get('repack', .006)); bpy.ops.object.mode_set(mode='OBJECT')
     img = bpy.data.images.new('meshy-%s-packed' % KIND, tex_px, tex_px, alpha=True); img.pixels[:] = np.tile(np.array((1., 0., 1., 0.), np.float32), tex_px * tex_px)   # (magenta, see-through: what the bake leaves untouched)

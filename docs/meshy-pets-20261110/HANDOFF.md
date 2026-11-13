@@ -47,11 +47,11 @@ Review sheets for the owner (full-size shots, 2 x 3): `docs/meshy-pets-20261110/
 
 **Films and the owner's answers (13 Nov 2026 AEDT, morning):** `tools/meshy/pet_film.mts` films a pet in the game (stand,
 follow, run, each own move; six views; the pet set beside the child at each part; name tags and the child hidden from
-the near views). First films `D:\WorkSpace\meshy\petsilm\{panda,bunny,calf,kitty}.mp4` were sent. Owner: ticked bunny
+the near views). First films `D:\WorkSpace\meshy\pets\film\{panda,bunny,calf,kitty}.mp4` were sent. Owner: ticked bunny
 and calf, wrote that the panda and bunny feedback is "above" (not in this chat: ask for it again) and "all animals look
 too stiff when jumping"; chose "fix the jump first". New jump in `extra_moves` (smooth key poses: crouch, push off,
 arched flight, reach, squash, settle; head, ears and tail a beat behind; squash in bounce). Rebuilt with `-Quick`
-(panda and kitty 0 failing) and filmed again into `D:\WorkSpace\meshy\petsilm2\`; then show the owner, ask approval per
+(panda and kitty 0 failing) and filmed again into `D:\WorkSpace\meshy\pets\film2\`; then show the owner, ask approval per
 pet, and run the full audits again for the approved ones before committing their models. The joey's jump in
 `upright_moves` is still the old style.
 
@@ -60,14 +60,17 @@ Done since: `pet_film.mts` draws the near views on a stage of flat grass with th
 `legs(..., cap, bp)` in `extra_moves`: the knee turns against the hip and the body's pitch (`foot_level` 1.0, `knee_max`
 0.95) so the hoof stays level, and the jump's legs reach and push less. Checked on the calf at 2x, frame by frame
 (`film7`/`film8`): run and the standing hop level; the push-off of the jump much better. All four rebuilt and filmed into
-`D:\WorkSpace\meshy\petsilm9\`. **Before sending any film: look at the feet yourself, 2x, frame by frame, in run, jump
+`D:\WorkSpace\meshy\pets\film9\`. **Before sending any film: look at the feet yourself, 2x, frame by frame, in run, jump
 and bounce (owner's standing rule in SKILL.md).** Still open: the scratch leg, the joey.
 
 **Owner, 13 Nov (pictures of the panda): "nhiều vết trắng" on the black fur and "dưới bàn chân có lõm vào".** Cause of the
 white: Meshy's picture pieces touch with no gap, the white bled into the black at every seam. Fixed with `repack` (see
 SKILL.md), on for panda, calf, kitty, bunny. The dent: the panda's hind legs folded too far sitting up (`sit_fold` 0.6).
-Panda checked at 2x in `film10`/`film11` (fur clean, feet whole); all four rebuilt and filmed into
-`D:\WorkSpace\meshy\petsilm12\`.
+Panda checked at 2x (fur clean, feet whole). The first repack broke the eyes (weld by place merged the eye layers);
+fixed with a weld by place and picture place; pack with `make_animal.ps1 -Vt 12`. The calf's legs fold less sitting,
+begging, scratching (`sit_fold` 0.35, hooves pointed). All four rebuilt and filmed into
+`D:\WorkSpace\meshy\pets\film20\`. Known, older than this round: mid-blink the shut lid shows as a ring round the eye
+for a frame or two (the lid growing from nothing).
 
 `tests/check-times.json` (suite timing) is left uncommitted on purpose. Nothing is running.
 
@@ -122,7 +125,7 @@ Panda checked at 2x in `film10`/`film11` (fur clean, feet whole); all four rebui
 
 - 12 Nov, owner asked to see both flying, flying fast, tricks, near and far, all angles, HD or normal:
   `tools/meshy/companion_film.mts` films (held page clock, the world stepped by the tool; six views; hover, walk, run,
-  loop, spin; `far` swaps in the light model). Films: `D:\WorkSpace\meshy\petsilm\{firefly,dragon,dragon-far}.mp4`.
+  loop, spin; `far` swaps in the light model). Films: `D:\WorkSpace\meshy\pets\film\{firefly,dragon,dragon-far}.mp4`.
   Fast flight looked like hovering: companions now lean into the flight and beat their wings faster with speed
   (`js/companion.ts`). Companions always use the HD (near) model in the game; the dragon also has a light one (fallback),
   the firefly's fallback is still the Blender model. Build note: on this loaded machine `node tools/build.mts` can fail in

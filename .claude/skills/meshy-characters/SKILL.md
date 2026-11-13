@@ -248,10 +248,14 @@ bounce at 2x: crop the legs (`pet_film.mts <out> <kind> run,jump,bounce`, then c
 ### Lessons from the panda, calf and joey (13 Nov 2026)
 - White specks or lines on dark fur (owner, panda): Meshy packs its picture's pieces edge to edge with no gap, a black
   piece touching a white one; when the game blurs or shrinks the picture (mipmaps, far away) the next piece's colour
-  bleeds in along every seam. `repack` in the animal's json: the points welded by place (the import leaves every
-  triangle's points apart, so without the weld each triangle packs as its own piece and the picture breaks into
-  thousands of dots), the pieces packed again with a gap, the picture painted again by a Cycles bake, the edge colour
-  spread into the gaps by hand (the bake's margin left them black). Look at the picture itself after a change like this.
+  bleeds in along every seam. `repack` in the animal's json: the points welded where they share both place AND picture
+  place (the import leaves every triangle's points apart, so without the weld each triangle packs as its own piece and
+  the picture breaks into dots; a weld by place alone merged the eyes' stacked layers, white and iris, and the eyes
+  broke), the pieces packed again with a gap, the picture painted again by a Cycles bake, the edge colour spread into
+  the gaps by hand (the bake's margin left them black). Pack with `make_animal.ps1 -Vt 12`. Tried and dropped: moving
+  each seam corner a texel inward (`seam_inset`): gltfpack's 10-bit picture places round to about a texel, which undid
+  it, and moving corners one by one split shared points (the model grew past 800 KB). Look at the eyes from the front
+  and the dark fur at full size after any change to the picture.
 - A short thick hind leg folded as far as the puppy's opens a jagged gap at the foot when sitting up (`sit_fold`).
 - The weights by colour find what numbers do not: the panda's neck stretched (up to 1,127) because the back half of its
   big head was weighted to the body, so it stayed put when the head turned. The neck joint goes where the head meets the
