@@ -1,0 +1,43 @@
+{
+  "assetId": "puppy",
+  "group": "C",
+  "endpoint": "https://api.meshy.ai/openapi/v1/multi-image-to-3d",
+  "method": "POST",
+  "parameters": {
+    "ai_model": "meshy-7.1",
+    "geometry_resolution": "standard",
+    "should_texture": true,
+    "texture_resolution": "2k",
+    "enable_pbr": false,
+    "pose_mode": "",
+    "target_formats": [
+      "glb"
+    ],
+    "image_enhancement": false
+  },
+  "inputImages": [
+    {
+      "view": "front",
+      "localPath": "reference-images/16-puppy/front.png",
+      "sha256": "c402cd8b2325054d9724831900a46102724c298ebfb8a5368bc43f31ff9ca828"
+    },
+    {
+      "view": "left-side",
+      "localPath": "reference-images/16-puppy/left-side.png",
+      "sha256": "d426c55b0241fab35b77cae14aa6640995b3688cdef3dbdee5a39ea0a6754a54"
+    },
+    {
+      "view": "back",
+      "localPath": "reference-images/16-puppy/back.png",
+      "sha256": "a139bd4aca005876beaa62213aebf2516198bdd25f722f3e5c9a0ed16fa9f35a"
+    }
+  ],
+  "transportNote": "Runner must populate image_urls with public URLs or data URIs in this order. Local paths are not accepted by the API.",
+  "plannedCredits": 30,
+  "submitted": false,
+  "taskId": null,
+  "accountVerified": false,
+  "privateSettingsVerified": false,
+  "rawDownloadDestination": "raw-models/C/puppy.glb",
+  "runtimeDestinationAfterFittingAndValidation": "models/world/creature-puppy.glb"
+}

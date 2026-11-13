@@ -1,0 +1,125 @@
+{
+  "date": "2026-11-08",
+  "timezone": "Australia/Sydney",
+  "kind": "reference images only",
+  "viewOrder": [
+    "front",
+    "left side",
+    "back",
+    "three-quarter front"
+  ],
+  "ownerReview": "Bright pink set received; final asset selection pending",
+  "runtimeIntegrated": false,
+  "paidMeshyCallsInThisTask": 0,
+  "assets": [
+    {
+      "character": "finn",
+      "variant": "grey",
+      "source": "/workspace/generated_images/exec-57197808-1a55-4f68-a286-070a10c17d0c.png",
+      "path": "grey/finn.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "sha256": "a583e90c39dd6e9ef56dda59e3e8e1219bf36d03197e53bb63d19eed65fd88f5",
+      "bytes": 1812105
+    },
+    {
+      "character": "sol",
+      "variant": "grey",
+      "source": "/workspace/generated_images/exec-c6c1be16-4964-4998-b902-073bf145512f.png",
+      "path": "grey/sol.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "sha256": "c43cf7b58fed12280662f5893add79c18d6a1ca231d10ef5313e38c3cc21f7c4",
+      "bytes": 1783524
+    },
+    {
+      "character": "clara",
+      "variant": "grey",
+      "source": "/workspace/generated_images/exec-8c006c56-7c57-423d-aadd-12decf9fb0db.png",
+      "path": "grey/clara.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "sha256": "141b64f6a63c038c95e1f2416a0cc37764dd6248f9236948528bdf330b08471e",
+      "bytes": 1764242
+    },
+    {
+      "character": "lumi",
+      "variant": "grey",
+      "source": "/workspace/generated_images/exec-9a55a40f-e690-44e7-ae5c-fe7a94ac1f0c.png",
+      "path": "grey/lumi.png",
+      "dimensions": [
+        1774,
+        887
+      ],
+      "sha256": "13af03b742f018f08a888cbe878799650993314f54b094d46a983aaae17ab09d",
+      "bytes": 1764970
+    },
+    {
+      "character": "finn",
+      "variant": "bright-pink",
+      "source": "/workspace/generated_images/exec-83b1023d-2c96-49d3-be20-cfa3e00798f5.png",
+      "path": "bright-pink/finn.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "sha256": "ce76812aeffbcdff88300c88bde31cba614993271084e6bf7f6b5dbadd3f7732",
+      "bytes": 1747685
+    },
+    {
+      "character": "sol",
+      "variant": "bright-pink",
+      "source": "/workspace/generated_images/exec-aeaaa85d-efa6-4a14-81df-b81af2d5efff.png",
+      "path": "bright-pink/sol.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "sha256": "5d111ae43222d38275738f1163748eb6f33581f607d98c9ae245c5c97560b57c",
+      "bytes": 1745385
+    },
+    {
+      "character": "clara",
+      "variant": "bright-pink",
+      "source": "/workspace/generated_images/exec-f8f1048d-ff09-4336-ab94-18cf37f39d2c.png",
+      "path": "bright-pink/clara.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "sha256": "1a344767309c26e20536d9371089900ad1d6c019077124b57df1808700f20585",
+      "bytes": 1725619
+    },
+    {
+      "character": "lumi",
+      "variant": "bright-pink",
+      "source": "/workspace/generated_images/exec-81045b6e-b595-4ced-b76d-b32e17c5bffd.png",
+      "path": "bright-pink/lumi.png",
+      "dimensions": [
+        1774,
+        887
+      ],
+      "sha256": "583074336fdf1c3acc325aec6932817b6f87f4c8dbff5279bbe51b209df85a76",
+      "bytes": 1754998
+    },
+    {
+      "character": "finn",
+      "variant": "grey-warm-peach-request",
+      "source": "/workspace/generated_images/exec-13839987-0d0a-417c-9ef4-e4ae3c9ec331.png",
+      "path": "variants/finn-grey-warm-peach.png",
+      "notes": "Additional grey-kit generation using requested skin base albedo #E3A88B; rendered pixels vary with lighting. Clothing remains light grey.",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "sha256": "8dadd72e80788a0557c5a1c674f35639c7451f17ed110f9cc2e83514931091ec",
+      "bytes": 1778577
+    }
+  ]
+}

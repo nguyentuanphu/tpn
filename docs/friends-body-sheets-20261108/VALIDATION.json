@@ -1,0 +1,41 @@
+{
+  "recordedAtSydney": "2026-11-08T11:50:58.261561+11:00",
+  "sheets": 4,
+  "viewsPerSheet": 4,
+  "PNGIntegrityAndSHA256": "passed",
+  "referenceHashes": "passed",
+  "MarkdownLocalLinks": "passed",
+  "visualReview": "technical review complete; final owner review pending",
+  "browser": [
+    {
+      "device": "phone",
+      "width": 393,
+      "height": 852,
+      "cards": 4,
+      "images": 4,
+      "overflow": false,
+      "allFourPNGsHTTP200": true
+    },
+    {
+      "device": "tablet",
+      "width": 820,
+      "height": 1180,
+      "cards": 4,
+      "images": 4,
+      "overflow": false,
+      "allFourPNGsHTTP200": true
+    },
+    {
+      "device": "desktop",
+      "width": 1440,
+      "height": 1000,
+      "cards": 4,
+      "images": 4,
+      "overflow": false,
+      "allFourPNGsHTTP200": true
+    }
+  ],
+  "runtimeChanges": false,
+  "paidTaskHistoryChanges": false,
+  "MeshyCallsForThisPack": 0
+}

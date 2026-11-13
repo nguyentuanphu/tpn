@@ -23,7 +23,7 @@ import { createWorld, levelUnderBuildings, widenFlatLand, paintMap, paintWater, 
 import { studioPosition } from './studio-position.js';
 import { landmarkAt, MAP_VERSION, onThisMap, rowSlot } from './content/map.js';
 import { build, seatRider, VEHICLES } from './vehicles.js';
-import { buildAvatar, nameAvatar, applyNpcFaces, buildOwl, buildGourd, avatarURL, OUTLINED, showStill, wakeLateAvatars, lateLeft, buildAllLate, loadFriendModels, wearVillagerModel } from './avatar.js';
+import { buildAvatar, nameAvatar, applyNpcFaces, buildOwl, buildGourd, avatarURL, OUTLINED, showStill, wakeLateAvatars, lateLeft, buildAllLate, loadFriendModels, wearVillagerModel, friendsHDNear } from './avatar.js';
 import { Hero } from './player.js';
 import { Hud, fogMapFor, EMOTES } from './hud.js';
 import { pads, initInput } from './input.js';
@@ -444,6 +444,8 @@ function setupNPCs() {
   });
   // (v1.08e villagers) the 11 named villagers' own models, loaded when a child comes within 40 m (a few at a time), worn
   // in place of the code person (js/avatar.ts wearVillagerModel); blocked or not yet arrived, the code person stays
+  // (owner 8 Nov 2026) every friend near a child's camera in high detail (js/avatar.ts friendsHDNear), checked 4 times a second
+  let hdT = 0; world.updaters.push(dt => { if ((hdT -= dt) > 0) return; hdT = .25; friendsHDNear(G.heroes.map(h => h.camPos)); });
   const NAMED_MODELS = new Set(['mai', 'ba', 'teo', 'ti', 'bong', 'su', 'jack', 'mit', 'bom', 'ruby', 'lan']); let vmT = 0;
   world.updaters.push(dt => {
     if ((vmT -= dt) > 0) return; vmT = .5;

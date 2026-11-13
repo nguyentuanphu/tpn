@@ -1,0 +1,58 @@
+{
+ "id": "clara-swim",
+ "reference_prefix": "clara-",
+ "source": "auto_joints.py from Meshy rig clara-swim.glb",
+ "top": [
+  300.0,
+  33.3
+ ],
+ "neck": [
+  300.0,
+  272.0
+ ],
+ "hip": [
+  300.0,
+  418.4
+ ],
+ "shoulderL": [
+  370.0,
+  286.4
+ ],
+ "elbowL": [
+  400.7,
+  383.5
+ ],
+ "wristL": [
+  452.8,
+  473.4
+ ],
+ "hipL": [
+  325.7,
+  463.5
+ ],
+ "kneeL": [
+  337.8,
+  644.2
+ ],
+ "ankleL": [
+  344.9,
+  811.4
+ ],
+ "facebox": [
+  [
+   221.2,
+   121.6
+  ],
+  [
+   378.8,
+   250.5
+  ]
+ ],
+ "trim_back_hair": false,
+ "original_skin": true,
+ "keep_meshy_uvs": true,
+ "skin_shift": true,
+ "skin_ref": "#f6c7a5",
+ "ears_hidden": true,
+ "ears_hidden_note": "owner 9 Nov 2026, skin tones: her ears are under her hair; the hair beside her cheeks is not skin"
+}

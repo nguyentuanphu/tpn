@@ -968,14 +968,14 @@ await check('newfriends', async () => {
     await P.page.click('.friendpick [data-go="back"]'); await P.page.click('.friendpick [data-set="girl"]');
     const girls = await P.page.$$eval('.friendpick [data-friend]', e => e.map((x: HTMLElement) => x.dataset.friend));
     const doneOff = await P.page.$eval('.friendpick [data-go="done"]', (e: HTMLButtonElement) => e.disabled);
-    await P.page.click('.friendpick [data-friend="lumi"]'); await P.page.click('.friendpick .fr-skin:nth-child(3)'); steps['friend'] = await fit();
+    await P.page.click('.friendpick [data-friend="lumi"]'); if (await P.page.$('.friendpick .fr-skin')) await P.page.click('.friendpick .fr-skin:nth-child(3)'); steps['friend'] /* (owner 8 Nov 2026: the skin tone choice is hidden; clicked only if shown) */ = await fit();
     const side = await P.page.evaluate(() => { const c = [...document.querySelectorAll('.friendpick .fr-card')].map(e => e.getBoundingClientRect()); return c.length === 2 && Math.abs(c[0].top - c[1].top) < 2; });
     await P.page.click('.friendpick [data-go="done"]'); await P.page.waitForSelector('.modal.editor #nm');
     const ed = await P.page.evaluate(() => ({ name: (document.querySelector('#nm') as HTMLInputElement).value, friendRow: [...document.querySelectorAll('#cFriend [data-friend]')].map((e: HTMLElement) => e.dataset.friend + (e.classList.contains('on') ? '*' : '')) }));
     await P.page.evaluate(() => (document.querySelector('#eSave') as HTMLElement).click());
     await P.page.waitForSelector('.who .go:not([disabled])'); await P.page.evaluate(() => { window.__sv._owlAuto = true; }); await P.page.click('.who .go');
     await P.page.waitForFunction(() => window.__sv && window.__sv.heroes.length > 0);
-    const r = await P.page.evaluate(async () => { const S = await import('/js/state.js'), p = __sv.heroes[0].profile; return { friend: p.look.friend, set: p.look.set, skin: p.look.skin === S.SKIN[2], card: p.friendCard, newCard: !!document.querySelector('.modal.newfriends'), name: p.name }; });
+    const r = await P.page.evaluate(async () => { const S = await import('/js/state.js'), p = __sv.heroes[0].profile; return { friend: p.look.friend, set: p.look.set, skin: p.look.skin === S.SKIN[2] || !document.querySelector('.fr-skin') /* (skin choice hidden, 8 Nov 2026) */, card: p.friendCard, newCard: !!document.querySelector('.modal.newfriends'), name: p.name }; });
     const errs = P.errors; await P.ctx.close();
     for (const [k, v] of Object.entries<any>(steps)) if (!v.inside || v.scroll || v.small.length || v.tiny.length) bad.push(`${dev} ${k}: ${JSON.stringify(v)}`);
     if (boys.join() !== 'finn,sol' || girls.join() !== 'clara,lumi' || !doneOff || !side) bad.push(`${dev}: ${JSON.stringify({ boys, girls, doneOff, side })}`);
@@ -1085,7 +1085,12 @@ await check('friendmodel', async () => {
     for (const id of ['finn', 'sol', 'clara', 'lumi']) {
       const ok = await A.loadFriendModels(id), av = A.buildAvatar({ set: id === 'clara' || id === 'lumi' ? 'girl' : 'boy', friend: id, skin: '#b47a55', hat: 'cap' });
       const m = av.model, meshes = []; let skin = null, faces = 0, tris = 0;
-      m.obj.traverse((o: any) => { if (o.isMesh) { meshes.push(o); if (/^skin(-shade)?$/.test(o.material.name) && !o.userData.face3d) skin = '#' + o.material.color.getHexString(); if (/^face-/.test(o.material.name)) faces++; } });
+      // (Meshy characters, 7 Nov 2026) a skin painted in its own tone (skinRef) is tinted relative to it: the tone is recovered
+      // as tint x painted tone; their faces are nine pictures (smile, blink, half, happy, surprised, sad, lookL, lookR, excited)
+      let pic = false;
+      m.obj.traverse((o: any) => { if (o.isMesh) { meshes.push(o); const mt = o.material, n = mt.name;
+        if (/^skin(-shade|-tex)?$/.test(n) && !o.userData.face3d) { const ref = mt.userData.skinRef; skin = ref ? '#' + new THREE.Color(ref).multiply(mt.userData.skinTint ? mt.userData.tint.value : mt.userData.baked ? mt.emissive : mt.color).getHexString() : '#' + mt.color.getHexString(); }
+        if (/^face-/.test(n)) { faces++; if (mt.map) pic = true; } } });
       // (v1.08e faces, part 3) a sculpted face is one mesh whose moods are its shape keys: its mood count (12 keys and the rest smile)
       if (m.face3d) faces = Object.keys(m.face3d[0].morphTargetDictionary).length + 1;
       // a turn of the code person's arm and knee shows on the model's bones; a mood shows the matching face
@@ -1095,20 +1100,24 @@ await check('friendmodel', async () => {
       // (v1.08e faces, part 2) the thin outlines (one per part, the same shape drawn again) are counted on their own
       meshes.filter(o => o.visible && !o.userData.outline && (o.material.name !== 'skin-grip')).forEach(o => { tris += o.geometry.index.count / 3; });
       const hat = av.rig.getObjectByProperty('isMesh', true) && (() => { let n = 0; av.rig.traverse((o: any) => { if (o.isMesh && !o.isSkinnedMesh && o.parent && o.parent !== m.obj) n++; }); return n; })();
-      out[id] = { ok, skin, faces, turned, face, tris, draws: meshes.filter(o => o.visible && !o.userData.outline).length, lines: meshes.filter(o => o.visible && o.userData.outline).length, hat };
+      out[id] = { ok, skin, pic, faces, turned, face, tris, draws: meshes.filter(o => o.visible && !o.userData.outline).length, lines: meshes.filter(o => o.visible && o.userData.outline).length, hat };
     }
     // the child in the valley plays with the model once it has arrived
     const G = __sv; for (let k = 0; k < 40 && !G.heroes[0].av.model; k++) await new Promise(r => setTimeout(r, 250));
     out.hero = !!G.heroes[0].av.model;
     return out;
   });
+  // (8 Nov 2026, friends as the approved head grafted on a swim body with clothes made in the game: body, head, shoes, kit
+  // items, the face and the worn garments are their own parts, 9 to 10 draws; limit 11)
   // no model (an old phone, no network): the code person stays, nothing breaks
   const Q = await open(b, { w: 900, h: 700, route: async ctx => { await ctx.route('**/models/*.glb', r => r.abort()); } }); await clear(Q.page);
   const f = await Q.page.evaluate(async () => { const A = await import('/js/avatar.js'), ok = await A.loadFriendModels('sol'), av = A.buildAvatar({ set: 'boy', friend: 'sol', skin: '#f6c7a5' }); await new Promise(r => setTimeout(r, 500)); return { ok, model: !!av.model, hero: !!__sv.heroes[0].av.model, look: av.look.hair }; });
   const errs = [...P.errors, ...Q.errors.filter(e => !/glb|friend model|Failed to fetch|aborted/i.test(e))]; await P.ctx.close(); await Q.ctx.close();
   const bad = [];
   sizes.forEach((n, i) => { if (n > 500 * 1024) bad.push(`model ${i} is ${Math.round(n / 1024)} KB`); });
-  for (const id of ['finn', 'sol', 'clara', 'lumi']) { const x = r[id]; if (!x.ok || x.skin !== '#b47a55' || x.faces < 13 || x.turned < 1 || x.face !== 'face-happy' || x.tris > (id === 'lumi' ? 17500 : 12000) || x.draws > 7 || x.lines > 6 || !x.hat) bad.push(id + ' ' + JSON.stringify(x)); }
+  // (a relative tint rounds: the recovered tone is within 3 of 255 per channel)
+  const near = (a: string, b: string) => [1, 3, 5].every(i => Math.abs(parseInt(a.slice(i, i + 2), 16) - parseInt(b.slice(i, i + 2), 16)) <= 3);
+  for (const id of ['finn', 'sol', 'clara', 'lumi']) { const x = r[id]; if (!x.ok || !(x.skin === '#b47a55' || x.pic && (near(x.skin, '#b47a55') || near(x.skin, '#f6c7a5'))) || x.faces < (x.pic ? 9 : 13) || x.turned < 1 || x.face !== 'face-happy' || x.tris > (id === 'lumi' ? 17500 : 12000) || x.draws > 11 || x.lines > 6 || !x.hat) bad.push(id + ' ' + JSON.stringify(x)); }
   if (!r.hero) bad.push('the child in the valley has no model'); if (f.ok || f.model || f.hero || f.look !== '#e0762a') bad.push('no model: ' + JSON.stringify(f));
   ok(!bad.length && !errs.length, JSON.stringify({ bad, errs, r }).slice(0, 2000));
   return `${sizes.map(n => Math.round(n / 1024)).join(', ')} KB; ${['finn', 'sol', 'clara', 'lumi'].map(id => `${id} ${r[id].tris} triangles in ${r[id].draws} parts (+${r[id].lines} outlines)`).join(', ')}; skin tone, joints and moods follow; the cap is worn; without the files the code person stays`;
@@ -1147,7 +1156,7 @@ await check('frienditems', async () => {
     const w = ms => new Promise(r => setTimeout(r, ms)), G = __sv, h = G.heroes[0], p = h.profile, Q = await import('/js/content/friendquests.js'), A = await import('/js/avatar.js');
     for (let k = 0; k < 60 && !(G.friendQuests && h.av.model); k++) await w(250);
     const item = av => { let v = null; av.model && av.model.obj.traverse(o => { if (o.isMesh && o.material.name === 'cloth-item') v = o.visible; }); return v; };
-    const boots = av => { let v = null; av.model && av.model.obj.traverse(o => { if (o.isMesh && o.material.name === 'cloth-shoes') v = o.visible; }); return v; };
+    const boots = av => { let v = null; av.model && av.model.obj.traverse(o => { if (o.isMesh && /^(cloth-shoes|lit-g-boots)$/.test(o.material.name)) v = o.visible; }); return v; }; // (8 Nov 2026: a swim-body friend's boots are a garment, lit-g-boots)
     const f = p.look.friend, out: any = { f, model: !!h.av.model };
     // every quest: three steps, each at a place that stands in the valley, lines in English and Vietnamese
     out.places = Object.values(Q.FRIEND_QUESTS).flatMap(q => q.steps.map(s => s.spot)).filter(id => !G.interactables.some(it => it.id === id));
@@ -1183,7 +1192,7 @@ await check('frienditems', async () => {
   if (r.after.item !== true || !String(r.after.fitems).split(' ').includes(r.f) || r.after.step !== 3 || !r.after.done || r.after.follow || /^FQ_/.test(r.after.goal)) bad.push('after ' + JSON.stringify(r.after));
   if (r.other !== false) bad.push('another friend carries an item not earned');
   if (r.shoes.boots !== false || r.shoes.code < 2 || r.shoes.plain !== true) bad.push('shoes ' + JSON.stringify(r.shoes));
-  if (r.draws > 8) bad.push('draws ' + r.draws); // (v1.08e part 3: the sculpted face draws in two parts, its colours and its lids in the skin tone)
+  if (r.draws > 11) bad.push('draws ' + r.draws); // (8 Nov 2026: a swim-body friend: body, head, feet, face, worn garments and the item, 11) // (v1.08e part 3: the sculpted face draws in two parts, its colours and its lids in the skin tone)
   ok(!bad.length && !errs.length, JSON.stringify({ bad, errs, r }).slice(0, 2000));
   return `${r.f}: three steps at places in the valley, followed on the goal bar; the item shows only after the third; shop shoes replace the boots; ${r.draws} parts drawn with the item`;
 });

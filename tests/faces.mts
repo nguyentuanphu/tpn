@@ -37,6 +37,8 @@ export async function facesCheck(b) {
     // how much eye white a face shows: the friend's face mesh corners of the eye-white colour, or the villager's pixels
     const whiteOf = (av: any, m: string) => {
       if (av.model && av.model.face3d) return (window as any).__rayWhite(av, want(av, m));
+      // (Meshy characters, 7 Nov 2026) a face picture per mood: the eye white seen in that picture, drawn from the front
+      if (av.model && (window as any).__isPic(av.model)) return (window as any).__picWhite(av, want(av, m));
       if (av.model) { let n = 0; av.model.obj.traverse((o: any) => { if (o.isMesh && o.material.name === 'face-' + want(av, m)) { const c = o.geometry.attributes.color; for (let i = 0; i < c.count; i++) if (c.getX(i) > .9 && c.getY(i) > .9 && c.getZ(i) > .88) n++; } }); return n; }
       const img = av.faceMat.map.image as HTMLCanvasElement, i = A.MOODS.indexOf(m), S = img.width / 4, x = img.getContext('2d');
       const d = x.getImageData((i % 4) * S, Math.floor(i / 4) * S, S, S).data; let n = 0;
@@ -67,6 +69,40 @@ export async function facesCheck(b) {
       let n = 0; for (let k = 0; k < px.length; k += 4) if (px[k] > 225 && px[k + 1] > 225 && px[k + 2] > 210) n++;
       return n;
     };
+    // (Meshy characters) a model whose faces are pictures (one "face-<mood>" mesh each, its own painted face)
+    (window as any).__isPic = (M: any) => { let p = false; M.obj.traverse((o: any) => { if (o.isMesh && /^face-/.test(o.material.name) && o.material.map) p = true; }); return p; };
+    (window as any).__picWhite = (av: any, key: string) => {
+      if (av.life) { av.life.mood = key === 'surprised' ? 'o' : key; av.life.blink = av.life.t + 60; }
+      av.model.follow(av.life ? av.life.mood : key); av.root.updateMatrixWorld(true);
+      let face: any = null; av.model.obj.traverse((o: any) => { if (o.isMesh && o.material.name === 'face-' + key) face = o; });
+      if (!face) return -1;
+      const box = new THREE.Box3().expandByObject(face, true), sc = new THREE.Scene(), parent = av.root.parent; sc.add(av.root);
+      const own = !!face.material.userData.ownFace, swap: [any, any][] = [];
+      // (owner 8 Nov 2026, Meshy's own face) the mood piece is see-through except over the eyes and mouth it changes: the
+      // eye white is seen on the model's own painted face under it, so the model's parts are drawn with their pictures
+      const flat = new THREE.MeshBasicMaterial({ map: face.material.map, transparent: own, depthWrite: !own });
+      const own3 = (o: any) => o.material.map && o.visible && !/^face-/.test(o.material.name) ? new THREE.MeshBasicMaterial({ map: o.material.map, side: THREE.DoubleSide }) : flatK;
+      av.root.traverse((o: any) => { if (o.isMesh) { swap.push([o, o.material]); o.material = o === face ? flat : own && av.model.obj.getObjectById(o.id) ? own3(o) : flatK; if (o === face && own) o.renderOrder = 2; } });
+      const c = box.getCenter(new THREE.Vector3()), h = (box.max.y - box.min.y) * .55;
+      const cam = new THREE.OrthographicCamera(-h, h, h, -h, .01, 10); cam.position.set(c.x, c.y, box.max.z + 2); cam.lookAt(c.x, c.y, 0);
+      const was = rr.getRenderTarget(); rr.setRenderTarget(rt); rr.setClearColor('#000', 1); rr.clear(); rr.render(sc, cam); rr.readRenderTargetPixels(rt, 0, 0, 160, 160, px); rr.setRenderTarget(was);
+      swap.forEach(([o, m]) => { o.material = m; }); if (parent) parent.add(av.root); else sc.remove(av.root);
+      // eye white: bright and nearly grey (Sol's and Lumi's painted whites are warmer or greener than Clara's; skin is
+      // never this grey, so it is not counted)
+      (window as any).__lastPx = px.slice(); (window as any).__lastOwn = own;
+      let n = 0; for (let k = 0; k < px.length; k += 4) { const lo = Math.min(px[k], px[k + 1], px[k + 2]), hi = Math.max(px[k], px[k + 1], px[k + 2]); if (lo > 180 && hi - lo < 40) n++; }
+      return n;
+    };
+    // (owner 8 Nov 2026, Meshy's own painted faces) the painted eye whites are cream, yellow or green and small (Sol's are
+    // a thin rim round a big amber iris), so open eyes are measured as the area that changes when the lids close: the
+    // open face differs from the closed one over the eyes, the half-closed one over less of them. Closed eyes must still
+    // show no grey-white eye white.
+    (window as any).__picOpen = (av: any) => {
+      const W = window as any, get = (k: string) => { const n = W.__picWhite(av, k); return { n, px: W.__lastPx as Uint8Array, own: W.__lastOwn }; };
+      const s = get('smile'), b = get('blink'), hf = get('half'), hp = get('happy');
+      const diff = (a: Uint8Array, c: Uint8Array) => { let d = 0; for (let k = 0; k < a.length; k += 4) if (Math.abs(a[k] - c[k]) + Math.abs(a[k + 1] - c[k + 1]) + Math.abs(a[k + 2] - c[k + 2]) > 60) d++; return d; };
+      return { own: s.own, open: diff(s.px, b.px), half: diff(hf.px, b.px), blinkWhite: b.n, happyWhite: hp.n };
+    };
     for (const [id, look] of people) {
       const av: any = A.buildAvatar(look); sc.add(av.root); av.root.position.set(0, 0, 0); av.root.rotation.y = 0;
       const seen = new Set<string>(); let first = -1, run: string[] = [];
@@ -86,7 +122,9 @@ export async function facesCheck(b) {
       if (looks.left !== 'lookL' || looks.right !== 'lookR' || looks.ahead !== 'smile') bad.push(`${id}: eyes ${JSON.stringify(looks)}`);
       // the lids close fully on the blink; the open eye shows some white
       const wb = whiteOf(av, 'blink'), ws = whiteOf(av, 'smile'), wh = whiteOf(av, 'half');
-      if (wb > 0 || ws < 1 || wh >= ws) bad.push(`${id}: eye white open ${ws}, half ${wh}, closed ${wb}`);
+      const po = av.model && (window as any).__isPic(av.model) ? (window as any).__picOpen(av) : null;
+      if (po && po.own) { if (!(po.open > 40) || !(po.half < po.open) || po.blinkWhite > 5) bad.push(`${id}: own face lids ${JSON.stringify(po)}`); } // (Meshy's own painted face)
+      else if (wb > 0 || ws < 1 || wh >= ws) bad.push(`${id}: eye white open ${ws}, half ${wh}, closed ${wb}`);
       const lid = av.model ? null : lidOf(av); if (lid && !(lid.top > .49)) bad.push(`${id}: no lid (the white starts at ${lid.top} of the square, the eye's top is ${lid.eyeTop})`);
       out[id] = { blinkAt: +first.toFixed(2), run: run.join(' '), moods, looks, white: [ws, wh, wb], lid };
       sc.remove(av.root);
@@ -115,6 +153,18 @@ export async function facesCheck(b) {
       const av: any = A.buildAvatar({ set: LOOK[id][0], friend: id, skin: LOOK[id][1] }, null, { hd }), M = hd ? av.modelHD : av.model, tag = id + (hd ? '-hd' : '');
       if (!M) { bad.push(tag + ': no model'); continue; }
       if (hd) A.showHD(av, true);
+      // (Meshy characters, owner 7 Nov 2026: their own painted faces, a picture per mood) the lids close in the pictures
+      if (!M.face3d && W.__isPic(M)) {
+        A.animate(av, 'idle', 1); av.root.rotation.y = 0; av.root.updateMatrixWorld(true);
+        const m = { ...av, model: M }, white: Record<string, number> = {};
+        for (const k of ['smile', 'half', 'blink', 'happy']) white[k] = W.__picWhite(m, k);
+        const po = W.__picOpen(m);
+        if (po.own) { // (Meshy's own painted face: the area the lids close over, see __picOpen)
+          if (!(po.open > 40) || !(po.half < po.open) || po.blinkWhite > 5 || po.happyWhite > 5) bad.push(`${tag}: own face lids ${JSON.stringify(po)}`);
+        } // (open: clearly some white; Lumi's big green irises leave little of it, about 15 of the 160 px square's pixels)
+        else if (!(white.smile > 4) || !(white.half < white.smile) || white.blink > 5 || white.happy > 5) bad.push(`${tag}: picture face eye white ${JSON.stringify(white)}`);
+        out[tag] = { pictureFace: true, white, lids: po }; continue;
+      }
       if (!M.face3d) { bad.push(tag + ': no sculpted face (face3d)'); continue; }
       A.animate(av, 'idle', 1); av.root.rotation.y = 0; av.root.updateMatrixWorld(true);
       const m = { ...av, model: M };
@@ -163,5 +213,5 @@ export async function facesCheck(b) {
   ok(!r.bad.length && !errs.length, JSON.stringify({ bad: r.bad, errs, out: r.out }).slice(0, 2500));
   const o = r.out as Record<string, { blinkAt: number }>;
   const so = sculpt.out as Record<string, { white: Record<string, number>, head: number[] }>;
-  return `${Object.entries(o).map(([k, v]) => `${k} blinks at ${v.blinkAt} s`).join(', ')}; half, closed, half; lids close fully; happy, surprised and sad faces; the eyes turn to a child on either side; the high-detail ${hd.f} only, near (light far away, light when blocked); sculpted faces (light and high-detail): lids close (eye white open ${Object.values(so).map(v => v.white.smile).join('/')}, closed 0), 8 mouth shapes, heads not spheres (${Object.entries(so).filter(([k]) => !k.endsWith('-hd')).map(([k, v]) => `${k} ${v.head.join('x')}`).join(', ')})`;
+  return `${Object.entries(o).map(([k, v]) => `${k} blinks at ${v.blinkAt} s`).join(', ')}; half, closed, half; lids close fully; happy, surprised and sad faces; the eyes turn to a child on either side; the high-detail ${hd.f} only, near (light far away, light when blocked); sculpted faces (light and high-detail): lids close (eye white open ${Object.values(so).map(v => v.white.smile).join('/')}, closed 0), 8 mouth shapes, heads not spheres (${Object.entries(so).filter(([k, v]) => !k.endsWith('-hd') && v.head).map(([k, v]) => `${k} ${v.head.join('x')}`).join(', ')})`;
 }

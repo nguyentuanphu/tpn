@@ -11,6 +11,8 @@ import { friendsOf, friendOf, defaultFriend, type FriendId } from '../content/fr
 import { friendPic, friendCard, sayHello, setFriend } from './friends-row.js';
 import { setOf } from '../content/shop.js';
 
+// (owner 8 Nov 2026, Meshy friends) each friend keeps the skin Meshy painted: the skin tone choice is hidden (kept, off)
+export const SKIN_CHOICE = false;
 const skinRow = (skin: string) => `<div class="fr-skins" role="group" aria-label="${T('Skin tone', 'Màu da')}">${SKIN.map((s, i) => `<button class="fr-skin${s === skin ? ' on' : ''}" data-skin="${s}" style="background:${s}" aria-label="${T('Skin tone', 'Màu da')} ${i + 1}" aria-pressed="${s === skin}"></button>`).join('')}</div>`;
 
 /** The Welcome steps for a new player: name → boy or girl → friend and skin tone. done(null) when cancelled. */
@@ -42,7 +44,7 @@ export function welcomeFriend(start: { name?: string, set?: string, friend?: str
     } else {
       body.innerHTML = `<h2>${T('Choose your friend', 'Chọn bạn của con')}</h2>
         <div class="fr-cards">${friendsOf(set).map(id => friendCard(id, friend === id)).join('')}</div>
-        <p class="fr-label">${T('Skin tone', 'Màu da')}</p>${skinRow(skin)}
+        ${SKIN_CHOICE ? `<p class="fr-label">${T('Skin tone', 'Màu da')}</p>${skinRow(skin)}` : ''}
         <div class="fr-nav"><button class="btn" data-go="back">◀ ${T('Back', 'Quay lại')}</button><button class="btn primary" data-go="done" ${friend ? '' : 'disabled'}>${T("That's me!", 'Đây là con!')} ▶</button></div>`;
       body.querySelectorAll<HTMLElement>('[data-friend]').forEach(b => b.onclick = () => { friend = b.dataset.friend as FriendId; SFX.pop(1); sayHello(friend); draw(); body.querySelector(`[data-friend="${friend}"]`)?.classList.add('wave'); });
       body.querySelectorAll<HTMLElement>('[data-skin]').forEach(b => b.onclick = () => { skin = b.dataset.skin; SFX.tap(); draw(); });

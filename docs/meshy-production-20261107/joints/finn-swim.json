@@ -1,0 +1,56 @@
+{
+ "id": "finn-swim",
+ "reference_prefix": "finn-",
+ "source": "auto_joints.py from Meshy rig finn-swim.glb",
+ "top": [
+  300.0,
+  33.3
+ ],
+ "neck": [
+  300.0,
+  294.3
+ ],
+ "hip": [
+  300.0,
+  438.1
+ ],
+ "shoulderL": [
+  366.5,
+  311.6
+ ],
+ "elbowL": [
+  402.5,
+  403.3
+ ],
+ "wristL": [
+  454.6,
+  487.8
+ ],
+ "hipL": [
+  332.3,
+  481.5
+ ],
+ "kneeL": [
+  346.7,
+  654.9
+ ],
+ "ankleL": [
+  356.2,
+  819.8
+ ],
+ "facebox": [
+  [
+   213.9,
+   129.9
+  ],
+  [
+   386.1,
+   270.8
+  ]
+ ],
+ "trim_back_hair": false,
+ "original_skin": true,
+ "keep_meshy_uvs": true,
+ "skin_shift": true,
+ "skin_ref": "#f6c7a5"
+}

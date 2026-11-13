@@ -1,0 +1,56 @@
+{
+ "id": "teo",
+ "reference_prefix": "villager-",
+ "source": "auto_joints.py from Meshy rig teo.glb",
+ "top": [
+  300.0,
+  33.3
+ ],
+ "neck": [
+  300.0,
+  302.2
+ ],
+ "hip": [
+  300.0,
+  447.1
+ ],
+ "shoulderL": [
+  364.7,
+  318.8
+ ],
+ "elbowL": [
+  402.5,
+  406.9
+ ],
+ "wristL": [
+  449.2,
+  482.4
+ ],
+ "hipL": [
+  333.4,
+  488.3
+ ],
+ "kneeL": [
+  348.5,
+  653.2
+ ],
+ "ankleL": [
+  352.7,
+  796.0
+ ],
+ "facebox": [
+  [
+   211.3,
+   132.8
+  ],
+  [
+   388.7,
+   278.0
+  ]
+ ],
+ "trim_back_hair": false,
+ "original_skin": true,
+ "keep_meshy_uvs": true,
+ "skin_shift": true,
+ "skin_ref": "#f6c7a5"
+}

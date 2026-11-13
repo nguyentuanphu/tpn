@@ -1,0 +1,3177 @@
+{
+  "schemaVersion": 1,
+  "planSource": "OWNER-PRODUCTION-PLAN.md",
+  "planSHA256": "9110d8da5ab91d901597403d36c6232228aef7737ced5ba6bc412b94c9ad7e38",
+  "reviewedIntegrationSource": "d51e062e5894a2229bd62e7b429dec87a9787a8f",
+  "phase": "references_technically_reviewed",
+  "styleReferenceAvailable": true,
+  "creditsAvailableInOwnerPlan": 1000,
+  "plannedCredits": 990,
+  "reserveCredits": 10,
+  "generationServicesCalled": true,
+  "MeshySpend": 70,
+  "assets": [
+    {
+      "number": 1,
+      "id": "clara",
+      "name": "Clara",
+      "group": "A",
+      "description": "Clara: 8-year-old girl, peach-pink hair in two long braids with small white flowers, cream blouse with puffy sleeves, lavender layered dress with leaf embroidery and petal-shaped hem, brown leather harness and one satchel, sage-green tights, brown lace-up boots, a small leaf pendant. (Redo in 7.1 using our young-Clara picture as the front view.)",
+      "kind": "humanoid",
+      "pose": "Relaxed standing A-pose, hands empty/open and clear of torso, feet flat.",
+      "views": [
+        "front",
+        "left-side",
+        "back"
+      ],
+      "modelInOwnerPlan": "Meshy 7.1",
+      "plannedCredits": 30,
+      "pricingVerified": true,
+      "runtimeModelPath": "models/clara.glb",
+      "conceptReference": null,
+      "requiredStyleReference": "reference-images/style/clara-generated-style-anchor.png",
+      "prompt": "prompts/01-clara.txt",
+      "turnaround": "reference-images/01-clara/turnaround.png",
+      "separateViews": [
+        "reference-images/01-clara/front.png",
+        "reference-images/01-clara/left-side.png",
+        "reference-images/01-clara/back.png"
+      ],
+      "referenceStatus": "generated",
+      "reviewStatus": "technical_pass",
+      "meshyTaskId": "01a1b551-4e41-7544-a5da-564f88acc6f3",
+      "modelStatus": "raw_downloaded_pilot_under_review",
+      "reviewNotes": "Owner correction: both braids drape forward over the shoulders; rear view shows no hanging braids. Front, left profile, back and unchanged identity/outfit visually checked.",
+      "ownerReviewStatus": "pending",
+      "cropBoundaries": [
+        0,
+        576,
+        960,
+        1536
+      ],
+      "viewCrops": [
+        {
+          "path": "reference-images/01-clara/front.png",
+          "box": [
+            0,
+            0,
+            576,
+            1024
+          ],
+          "sha256": "be7dece239591e22363aae132c0b4c891c861df0731f6d30d32605c475643037"
+        },
+        {
+          "path": "reference-images/01-clara/left-side.png",
+          "box": [
+            576,
+            0,
+            960,
+            1024
+          ],
+          "sha256": "90fa844d9a839d96fa866cec8bc90063c8110b47048d218b4a1ec418aaa2c606"
+        },
+        {
+          "path": "reference-images/01-clara/back.png",
+          "box": [
+            960,
+            0,
+            1536,
+            1024
+          ],
+          "sha256": "6e51c52f0669a093037e73e1fbaaf39879c6789f1552a7ea731e22b51a89dd93"
+        }
+      ],
+      "turnaroundSHA256": "c238e20dac0bc194d7cf57eaf45884f3f7a5d062fb3ccf6ff6353ca2c0905a4c",
+      "sourceGenerationFile": "/workspace/generated_images/exec-3ec0edf6-35cc-4f49-8619-6af97d081721.png",
+      "pilot": {
+        "submittedAt": "2026-11-07T20:22+11:00",
+        "finishedAt": "2026-11-07T20:24+11:00",
+        "chargedCredits": 30,
+        "rawBytes": 56560796,
+        "rawSHA256": "1fd03261ff453d6ddd687172f0bfd1636ea6519f46d27b5cf8ca24efe1fc9162",
+        "rawLocation": "outside the repository (owner PC D:/WorkSpace/meshy/raw-models/A/clara.glb)",
+        "triangles": 1840250,
+        "texture": "one 2048x2048 base colour (plus Meshy detail maps)",
+        "review": "Outfit, face, satchel, petal skirt, boots and pendant match the reviewed sheet. Four braids: the reviewed back view puts the braids down the back while the front/side put them in front, and Meshy built both; tools/meshy/fit_people.py trim_back_hair removes the back pair in fitting. Owner acceptance pending.",
+        "claraPilotAccepted": false,
+        "submittedReferenceSHA256": "03492f7f5480c99b4bebc5549b63af9624300a2a5d44f841c420ea9a656654c2",
+        "submittedInputImages": [
+          {
+            "view": "front",
+            "localPath": "reference-images/01-clara/front.png",
+            "sha256": "dcb41577591597bf702ba504895abfc7410b8d911334a2f5b2e62de063b515b5"
+          },
+          {
+            "view": "left-side",
+            "localPath": "reference-images/01-clara/left-side.png",
+            "sha256": "65b062b10bda3a92a11e1e349eb9e082bb20be0a46091dc9a54aee33d6798e5d"
+          },
+          {
+            "view": "back",
+            "localPath": "reference-images/01-clara/back.png",
+            "sha256": "d92118b821f2f4d3b604ab27bc01760b084c3b694cd1279fc55a22bafefe5f71"
+          }
+        ],
+        "currentCorrectedReferenceNotSubmitted": true,
+        "referenceCorrectionNote": "OWNER-CORRECTIONS-20261107.md; existing pilot/task history preserved, corrected views require a separately authorized revision."
+      },
+      "separateViewStatus": "current",
+      "latestOwnerCorrection": "2026-11-07"
+    },
+    {
+      "number": 2,
+      "id": "finn",
+      "name": "Finn",
+      "group": "A",
+      "description": "Finn, sky explorer: 8-year-old boy, messy dark navy-blue hair, teal explorer jacket with gold trim and rolled sleeves, cream shirt, brown leather belts with a small brass compass on the belt, loose cream trousers, chunky brown boots, a small brown backpack.",
+      "kind": "humanoid",
+      "pose": "Relaxed standing A-pose, hands empty/open and clear of torso, feet flat.",
+      "views": [
+        "front",
+        "left-side",
+        "back"
+      ],
+      "modelInOwnerPlan": "Meshy 7.1",
+      "plannedCredits": 30,
+      "pricingVerified": true,
+      "runtimeModelPath": "models/finn.glb",
+      "conceptReference": "docs/characters-v108/concept-finn.png",
+      "requiredStyleReference": "reference-images/style/clara-generated-style-anchor.png",
+      "prompt": "prompts/02-finn.txt",
+      "turnaround": "reference-images/02-finn/turnaround.png",
+      "separateViews": [
+        "reference-images/02-finn/front.png",
+        "reference-images/02-finn/left-side.png",
+        "reference-images/02-finn/back.png"
+      ],
+      "referenceStatus": "generated",
+      "reviewStatus": "technical_pass",
+      "meshyTaskId": null,
+      "modelStatus": "not_submitted",
+      "reviewNotes": "Visual reference review: full-body views, left-facing profile (firefly front/dorsal top), empty hands, no labels, consistent outfit/species and grey background. Crops use individually checked gaps. This is technical reference review, not owner approval or 3D model validation.",
+      "sourceGenerationFile": "/workspace/generated_images/exec-fd14e9da-9a91-4de2-9a50-b5f458e21fce.png",
+      "turnaroundSHA256": "c550fa47d3f5f4578dd9acde20b4a9141f787f8c8981564abbdf581a7943e800",
+      "ownerReviewStatus": "pending",
+      "cropBoundaries": [
+        0,
+        576,
+        980,
+        1536
+      ],
+      "viewCrops": [
+        {
+          "path": "reference-images/02-finn/front.png",
+          "box": [
+            0,
+            0,
+            576,
+            1024
+          ],
+          "sha256": "3fd16c236bc2f5cd5f729db05d1b968cf75e3189573da15a2a416125123d6971"
+        },
+        {
+          "path": "reference-images/02-finn/left-side.png",
+          "box": [
+            576,
+            0,
+            980,
+            1024
+          ],
+          "sha256": "3faeb1a30697f146208dd69276d2416fcd95a8b41a6995e8d44b673326bd4dd4"
+        },
+        {
+          "path": "reference-images/02-finn/back.png",
+          "box": [
+            980,
+            0,
+            1536,
+            1024
+          ],
+          "sha256": "413395ad4332ce42af4a44a751dcedd750e0ec6892096181532b1d3a29ece589"
+        }
+      ]
+    },
+    {
+      "number": 3,
+      "id": "sol",
+      "name": "Sol",
+      "group": "A",
+      "description": "Sol, twilight twin: 8-year-old boy, curly copper-orange hair, golden-yellow short cape with sun embroidery, cream tunic with a sun emblem, brown leather belt and bracers, dark brown trousers, brown boots.",
+      "kind": "humanoid",
+      "pose": "Relaxed standing A-pose, hands empty/open and clear of torso, feet flat.",
+      "views": [
+        "front",
+        "left-side",
+        "back"
+      ],
+      "modelInOwnerPlan": "Meshy 7.1",
+      "plannedCredits": 30,
+      "pricingVerified": true,
+      "runtimeModelPath": "models/sol.glb",
+      "conceptReference": "docs/characters-v108/concept-sol.png",
+      "requiredStyleReference": "reference-images/style/clara-generated-style-anchor.png",
+      "prompt": "prompts/03-sol.txt",
+      "turnaround": "reference-images/03-sol/turnaround.png",
+      "separateViews": [
+        "reference-images/03-sol/front.png",
+        "reference-images/03-sol/left-side.png",
+        "reference-images/03-sol/back.png"
+      ],
+      "referenceStatus": "generated",
+      "reviewStatus": "technical_pass",
+      "meshyTaskId": null,
+      "modelStatus": "not_submitted",
+      "reviewNotes": "Visual reference review: full-body views, left-facing profile (firefly front/dorsal top), empty hands, no labels, consistent outfit/species and grey background. Crops use individually checked gaps. This is technical reference review, not owner approval or 3D model validation.",
+      "sourceGenerationFile": "/workspace/generated_images/exec-e534ad86-1e62-4d68-a6ef-a24c5b400e34.png",
+      "turnaroundSHA256": "4029cb21450c4cf558c815aa267392a53ab4121e600b8da47ab5ba210ccd3a9a",
+      "ownerReviewStatus": "pending",
+      "cropBoundaries": [
+        0,
+        576,
+        960,
+        1536
+      ],
+      "viewCrops": [
+        {
+          "path": "reference-images/03-sol/front.png",
+          "box": [
+            0,
+            0,
+            576,
+            1024
+          ],
+          "sha256": "a826921131bdb0da0e053a91d5e417a5e8268acad90e57d32aba072637328f4a"
+        },
+        {
+          "path": "reference-images/03-sol/left-side.png",
+          "box": [
+            576,
+            0,
+            960,
+            1024
+          ],
+          "sha256": "de6516c000f0385a8b1bedaf383fcdbd4f3554c7ba3bf3a42a71fc79b1d20cb4"
+        },
+        {
+          "path": "reference-images/03-sol/back.png",
+          "box": [
+            960,
+            0,
+            1536,
+            1024
+          ],
+          "sha256": "311b5b8361a780eb4c3dc25dc08cd9be1dcc09104bf1397d0bf7c0c3ad1f5187"
+        }
+      ]
+    },
+    {
+      "number": 4,
+      "id": "lumi",
+      "name": "Lumi",
+      "group": "A",
+      "description": "Lumi, star gardener: small leaf sprite child, hair made of soft green leaves with a tiny flower, cream shirt, green overalls with a leaf pocket, a small brown satchel, brown sandals. (Her star lantern is left out: we add it as a separate prop.)",
+      "kind": "humanoid",
+      "pose": "Relaxed standing A-pose, hands empty/open and clear of torso, feet flat.",
+      "views": [
+        "front",
+        "left-side",
+        "back"
+      ],
+      "modelInOwnerPlan": "Meshy 7.1",
+      "plannedCredits": 30,
+      "pricingVerified": true,
+      "runtimeModelPath": "models/lumi.glb",
+      "conceptReference": "docs/characters-v108/concept-lumi.png",
+      "requiredStyleReference": "reference-images/style/clara-generated-style-anchor.png",
+      "prompt": "prompts/04-lumi.txt",
+      "turnaround": "reference-images/04-lumi/turnaround.png",
+      "separateViews": [
+        "reference-images/04-lumi/front.png",
+        "reference-images/04-lumi/left-side.png",
+        "reference-images/04-lumi/back.png"
+      ],
+      "referenceStatus": "generated",
+      "reviewStatus": "technical_pass",
+      "meshyTaskId": null,
+      "modelStatus": "not_submitted",
+      "reviewNotes": "Visual reference review: full-body views, left-facing profile (firefly front/dorsal top), empty hands, no labels, consistent outfit/species and grey background. Crops use individually checked gaps. This is technical reference review, not owner approval or 3D model validation.",
+      "sourceGenerationFile": "/workspace/generated_images/exec-f4796c06-e5b4-4329-b5f4-62744f5f733e.png",
+      "turnaroundSHA256": "fa091e3e9bc0bbe2421d61ff1a907eee09ed5ca4c635a42267dc496abe0e736d",
+      "ownerReviewStatus": "pending",
+      "cropBoundaries": [
+        0,
+        576,
+        980,
+        1536
+      ],
+      "viewCrops": [
+        {
+          "path": "reference-images/04-lumi/front.png",
+          "box": [
+            0,
+            0,
+            576,
+            1024
+          ],
+          "sha256": "d697b7708f5411da92702ce5735f8613069b403861a2544b07922f7417228c9a"
+        },
+        {
+          "path": "reference-images/04-lumi/left-side.png",
+          "box": [
+            576,
+            0,
+            980,
+            1024
+          ],
+          "sha256": "b137486491441d34256a87a0104ba5f525089eda1a161c3485b80bd6fcb9bcd9"
+        },
+        {
+          "path": "reference-images/04-lumi/back.png",
+          "box": [
+            980,
+            0,
+            1536,
+            1024
+          ],
+          "sha256": "1263bc37612aa3e7e16ec95a2a396fbc01f9f791b1d46f770de1d29a8b92e851"
+        }
+      ]
+    },
+    {
+      "number": 5,
+      "id": "mai",
+      "name": "Auntie Mai",
+      "group": "B",
+      "description": "Auntie Mai: kind Vietnamese woman in her thirties, long straight black hair, small earrings, red áo dài over loose white trousers, tan sandals, woven conical nón lá hat.",
+      "kind": "humanoid",
+      "pose": "Relaxed standing A-pose, hands empty/open and clear of torso, feet flat.",
+      "views": [
+        "front",
+        "left-side",
+        "back"
+      ],
+      "modelInOwnerPlan": "Meshy 7.1",
+      "plannedCredits": 30,
+      "pricingVerified": true,
+      "runtimeModelPath": "models/villager-mai.glb",
+      "conceptReference": null,
+      "requiredStyleReference": "reference-images/style/clara-generated-style-anchor.png",
+      "prompt": "prompts/05-mai.txt",
+      "turnaround": "reference-images/05-mai/turnaround.png",
+      "separateViews": [
+        "reference-images/05-mai/front.png",
+        "reference-images/05-mai/left-side.png",
+        "reference-images/05-mai/back.png"
+      ],
+      "referenceStatus": "generated",
+      "reviewStatus": "technical_pass",
+      "meshyTaskId": null,
+      "modelStatus": "not_submitted",
+      "sourceGenerationFile": "/workspace/generated_images/exec-41077843-c60a-4784-bb37-68e63997d3a0.png",
+      "turnaroundSHA256": "c7545a75d546d8d01dfe5e75852c479da6fcfa3d2e1d9f89e274684f9812e64b",
+      "ownerReviewStatus": "pending",
+      "cropBoundaries": [
+        0,
+        576,
+        960,
+        1536
+      ],
+      "reviewNotes": "Visual reference review: full-body views, left-facing profile (firefly front/dorsal top), empty hands, no labels, consistent outfit/species and grey background. Crops use individually checked gaps. This is technical reference review, not owner approval or 3D model validation.",
+      "viewCrops": [
+        {
+          "path": "reference-images/05-mai/front.png",
+          "box": [
+            0,
+            0,
+            576,
+            1024
+          ],
+          "sha256": "b68f24a4c46f3e18e19ff1a84461be29f5975ba6bc09342b9333d9d513543a68"
+        },
+        {
+          "path": "reference-images/05-mai/left-side.png",
+          "box": [
+            576,
+            0,
+            960,
+            1024
+          ],
+          "sha256": "3bb00bcb15df1228a41896c02365b62a5e8764ff83d2be65ff46a5f28dba7fc7"
+        },
+        {
+          "path": "reference-images/05-mai/back.png",
+          "box": [
+            960,
+            0,
+            1536,
+            1024
+          ],
+          "sha256": "777c8e866a86958459c8c8fd66a22e6a8916603ff582b9c47657e7ffec6634b7"
+        }
+      ]
+    },
+    {
+      "number": 6,
+      "id": "ba",
+      "name": "Uncle Ba",
+      "group": "B",
+      "description": "Uncle Ba: cheerful elderly Vietnamese man, short tuft of grey-white hair, grey moustache, blue áo bà ba shirt, wide dark navy trousers, sandals; a little shorter and rounder than an adult.",
+      "kind": "humanoid",
+      "pose": "Relaxed standing A-pose, hands empty/open and clear of torso, feet flat.",
+      "views": [
+        "front",
+        "left-side",
+        "back"
+      ],
+      "modelInOwnerPlan": "Meshy 7.1",
+      "plannedCredits": 30,
+      "pricingVerified": true,
+      "runtimeModelPath": "models/villager-ba.glb",
+      "conceptReference": null,
+      "requiredStyleReference": "reference-images/style/clara-generated-style-anchor.png",
+      "prompt": "prompts/06-ba.txt",
+      "turnaround": "reference-images/06-ba/turnaround.png",
+      "separateViews": [
+        "reference-images/06-ba/front.png",
+        "reference-images/06-ba/left-side.png",
+        "reference-images/06-ba/back.png"
+      ],
+      "referenceStatus": "generated",
+      "reviewStatus": "technical_pass",
+      "meshyTaskId": null,
+      "modelStatus": "not_submitted",
+      "sourceGenerationFile": "/workspace/generated_images/exec-36768bda-ca5b-497d-80e9-7c0522f321d4.png",
+      "turnaroundSHA256": "22e2987f7b92f18be2de66caa7f3e1b612a3c03d3e7afda1099bcf7172693def",
+      "ownerReviewStatus": "pending",
+      "cropBoundaries": [
+        0,
+        576,
+        960,
+        1536
+      ],
+      "reviewNotes": "Visual reference review: full-body views, left-facing profile (firefly front/dorsal top), empty hands, no labels, consistent outfit/species and grey background. Crops use individually checked gaps. This is technical reference review, not owner approval or 3D model validation.",
+      "viewCrops": [
+        {
+          "path": "reference-images/06-ba/front.png",
+          "box": [
+            0,
+            0,
+            576,
+            1024
+          ],
+          "sha256": "72a1996e50a06773a477d0f9ba745ec957f2e3ec41bc1b4dc1177a1261c05223"
+        },
+        {
+          "path": "reference-images/06-ba/left-side.png",
+          "box": [
+            576,
+            0,
+            960,
+            1024
+          ],
+          "sha256": "d7bcd71a2aeeeac1af5b09f5b4c27f414f20ae0345f5bbebfa9702273912a92a"
+        },
+        {
+          "path": "reference-images/06-ba/back.png",
+          "box": [
+            960,
+            0,
+            1536,
+            1024
+          ],
+          "sha256": "8ee32a6b865474293ab061c0c050c832880e7c4242bf00c8167801096292b2ef"
+        }
+      ]
+    },
+    {
+      "number": 7,
+      "id": "teo",
+      "name": "Tèo",
+      "group": "B",
+      "description": "Tèo: 8-year-old Vietnamese boy, short spiky black hair, orange-yellow button shirt, navy shorts, sneakers.",
+      "kind": "humanoid",
+      "pose": "Relaxed standing A-pose, hands empty/open and clear of torso, feet flat.",
+      "views": [
+        "front",
+        "left-side",
+        "back"
+      ],
+      "modelInOwnerPlan": "Meshy 7.1",
+      "plannedCredits": 30,
+      "pricingVerified": true,
+      "runtimeModelPath": "models/villager-teo.glb",
+      "conceptReference": null,
+      "requiredStyleReference": "reference-images/style/clara-generated-style-anchor.png",
+      "prompt": "prompts/07-teo.txt",
+      "turnaround": "reference-images/07-teo/turnaround.png",
+      "separateViews": [
+        "reference-images/07-teo/front.png",
+        "reference-images/07-teo/left-side.png",
+        "reference-images/07-teo/back.png"
+      ],
+      "referenceStatus": "generated",
+      "reviewStatus": "technical_pass",
+      "meshyTaskId": null,
+      "modelStatus": "not_submitted",
+      "sourceGenerationFile": "/workspace/generated_images/exec-4ee339d1-ae88-4d67-8d2e-b0ff8e2e3ac7.png",
+      "turnaroundSHA256": "adb15640480a392f923c4c95e274e37bd8708f4dbb389530f29b68c2afcdf247",
+      "ownerReviewStatus": "pending",
+      "cropBoundaries": [
+        0,
+        576,
+        960,
+        1536
+      ],
+      "reviewNotes": "Visual reference review: full-body views, left-facing profile (firefly front/dorsal top), empty hands, no labels, consistent outfit/species and grey background. Crops use individually checked gaps. This is technical reference review, not owner approval or 3D model validation.",
+      "viewCrops": [
+        {
+          "path": "reference-images/07-teo/front.png",
+          "box": [
+            0,
+            0,
+            576,
+            1024
+          ],
+          "sha256": "ffa976a36e796f564a052c130fc9b1432db6a94948f0bc507996b7a333c3e8a3"
+        },
+        {
+          "path": "reference-images/07-teo/left-side.png",
+          "box": [
+            576,
+            0,
+            960,
+            1024
+          ],
+          "sha256": "0f3935437a7e2749332585bdaa8d9d727fe641c3efdf7b9b70fd9292b84f28f4"
+        },
+        {
+          "path": "reference-images/07-teo/back.png",
+          "box": [
+            960,
+            0,
+            1536,
+            1024
+          ],
+          "sha256": "b6c2d611e8ab8d15d9a54ed8c0f5f5edfd72a0152aee6a1eb965dcc9bb670207"
+        }
+      ]
+    },
+    {
+      "number": 8,
+      "id": "ti",
+      "name": "Tí",
+      "group": "B",
+      "description": "Tí: 7-year-old Vietnamese girl, dark brown hair in two short pigtails, flower hair clip, bright pink dress, white sandals.",
+      "kind": "humanoid",
+      "pose": "Relaxed standing A-pose, hands empty/open and clear of torso, feet flat.",
+      "views": [
+        "front",
+        "left-side",
+        "back"
+      ],
+      "modelInOwnerPlan": "Meshy 7.1",
+      "plannedCredits": 30,
+      "pricingVerified": true,
+      "runtimeModelPath": "models/villager-ti.glb",
+      "conceptReference": null,
+      "requiredStyleReference": "reference-images/style/clara-generated-style-anchor.png",
+      "prompt": "prompts/08-ti.txt",
+      "turnaround": "reference-images/08-ti/turnaround.png",
+      "separateViews": [
+        "reference-images/08-ti/front.png",
+        "reference-images/08-ti/left-side.png",
+        "reference-images/08-ti/back.png"
+      ],
+      "referenceStatus": "generated",
+      "reviewStatus": "technical_pass",
+      "meshyTaskId": null,
+      "modelStatus": "not_submitted",
+      "sourceGenerationFile": "/workspace/generated_images/exec-b44580a6-0d31-461c-9379-ede12c15f629.png",
+      "turnaroundSHA256": "98670f6384eccdcef44171b7cf6eb348c59a5d5f19ef2848ffc029ef757319c1",
+      "ownerReviewStatus": "pending",
+      "cropBoundaries": [
+        0,
+        576,
+        960,
+        1536
+      ],
+      "reviewNotes": "Visual reference review: full-body views, left-facing profile (firefly front/dorsal top), empty hands, no labels, consistent outfit/species and grey background. Crops use individually checked gaps. This is technical reference review, not owner approval or 3D model validation.",
+      "viewCrops": [
+        {
+          "path": "reference-images/08-ti/front.png",
+          "box": [
+            0,
+            0,
+            576,
+            1024
+          ],
+          "sha256": "a02018c4a7d9875c7e03ffb668cf19132c6b93724469de6eaff3173dcdc002f8"
+        },
+        {
+          "path": "reference-images/08-ti/left-side.png",
+          "box": [
+            576,
+            0,
+            960,
+            1024
+          ],
+          "sha256": "ef10430295e73961b0feca2dcc2165e99d61a170c35fea9c8ad619c5bdf7840b"
+        },
+        {
+          "path": "reference-images/08-ti/back.png",
+          "box": [
+            960,
+            0,
+            1536,
+            1024
+          ],
+          "sha256": "124cd8ecc2f023a9358ffe96b6b065cc1e182520d33eb9cf4ef36cf9a1cf729c"
+        }
+      ]
+    },
+    {
+      "number": 9,
+      "id": "bong",
+      "name": "Bông",
+      "group": "B",
+      "description": "Bông: 8-year-old Vietnamese girl, black high ponytail, headband with small white bunny ears, purple t-shirt, dark purple shorts, white sandals.",
+      "kind": "humanoid",
+      "pose": "Relaxed standing A-pose, hands empty/open and clear of torso, feet flat.",
+      "views": [
+        "front",
+        "left-side",
+        "back"
+      ],
+      "modelInOwnerPlan": "Meshy 7.1",
+      "plannedCredits": 30,
+      "pricingVerified": true,
+      "runtimeModelPath": "models/villager-bong.glb",
+      "conceptReference": null,
+      "requiredStyleReference": "reference-images/style/clara-generated-style-anchor.png",
+      "prompt": "prompts/09-bong.txt",
+      "turnaround": "reference-images/09-bong/turnaround.png",
+      "separateViews": [
+        "reference-images/09-bong/front.png",
+        "reference-images/09-bong/left-side.png",
+        "reference-images/09-bong/back.png"
+      ],
+      "referenceStatus": "generated",
+      "reviewStatus": "technical_pass",
+      "meshyTaskId": null,
+      "modelStatus": "not_submitted",
+      "sourceGenerationFile": "/workspace/generated_images/exec-bc899545-274a-425b-a7df-494714066620.png",
+      "turnaroundSHA256": "584f687d347eea1cd86e7e40f787e051c5badc9c42b4ae7a7ca664357b8b2875",
+      "ownerReviewStatus": "pending",
+      "cropBoundaries": [
+        0,
+        576,
+        960,
+        1536
+      ],
+      "reviewNotes": "Visual reference review: full-body views, left-facing profile (firefly front/dorsal top), empty hands, no labels, consistent outfit/species and grey background. Crops use individually checked gaps. This is technical reference review, not owner approval or 3D model validation.",
+      "viewCrops": [
+        {
+          "path": "reference-images/09-bong/front.png",
+          "box": [
+            0,
+            0,
+            576,
+            1024
+          ],
+          "sha256": "d2f254bcd8fc49c2e4c86759422c669258735b373faff407e5ba2711fbb64215"
+        },
+        {
+          "path": "reference-images/09-bong/left-side.png",
+          "box": [
+            576,
+            0,
+            960,
+            1024
+          ],
+          "sha256": "78f96388e545c59ea5b38e4ddd8d734bd3f8dc5740e722292b86ba0a36c31467"
+        },
+        {
+          "path": "reference-images/09-bong/back.png",
+          "box": [
+            960,
+            0,
+            1536,
+            1024
+          ],
+          "sha256": "532eb162d73bf9f030932924d2f48d2c11d080c320b22d7de3396270f2acc2e8"
+        }
+      ]
+    },
+    {
+      "number": 10,
+      "id": "su",
+      "name": "Su",
+      "group": "B",
+      "description": "Su: 8-year-old Vietnamese boy, short dark brown hair, green bucket hat, green t-shirt, dark green shorts, sneakers.",
+      "kind": "humanoid",
+      "pose": "Relaxed standing A-pose, hands empty/open and clear of torso, feet flat.",
+      "views": [
+        "front",
+        "left-side",
+        "back"
+      ],
+      "modelInOwnerPlan": "Meshy 7.1",
+      "plannedCredits": 30,
+      "pricingVerified": true,
+      "runtimeModelPath": "models/villager-su.glb",
+      "conceptReference": null,
+      "requiredStyleReference": "reference-images/style/clara-generated-style-anchor.png",
+      "prompt": "prompts/10-su.txt",
+      "turnaround": "reference-images/10-su/turnaround.png",
+      "separateViews": [
+        "reference-images/10-su/front.png",
+        "reference-images/10-su/left-side.png",
+        "reference-images/10-su/back.png"
+      ],
+      "referenceStatus": "generated",
+      "reviewStatus": "technical_pass",
+      "meshyTaskId": null,
+      "modelStatus": "not_submitted",
+      "sourceGenerationFile": "/workspace/generated_images/exec-6c6e41e4-ae50-43c6-9dd8-487292630370.png",
+      "turnaroundSHA256": "11ace66029537b9c00bbd8c69d62682acc5cb73559d4ee1b4102b514a356ccf1",
+      "ownerReviewStatus": "pending",
+      "cropBoundaries": [
+        0,
+        576,
+        960,
+        1536
+      ],
+      "reviewNotes": "Visual reference review: full-body views, left-facing profile (firefly front/dorsal top), empty hands, no labels, consistent outfit/species and grey background. Crops use individually checked gaps. This is technical reference review, not owner approval or 3D model validation.",
+      "viewCrops": [
+        {
+          "path": "reference-images/10-su/front.png",
+          "box": [
+            0,
+            0,
+            576,
+            1024
+          ],
+          "sha256": "3ba35ba782f43bdaa0ef5b60c1065548f3cf9a47e0e989a201bb09fb58efd60d"
+        },
+        {
+          "path": "reference-images/10-su/left-side.png",
+          "box": [
+            576,
+            0,
+            960,
+            1024
+          ],
+          "sha256": "1fd90cf82f9fb6daffc7fe1c47da3ac66910af0e5263afe41857f82c943f7715"
+        },
+        {
+          "path": "reference-images/10-su/back.png",
+          "box": [
+            960,
+            0,
+            1536,
+            1024
+          ],
+          "sha256": "3f3b5eda7fc2df21e265b517e60aa3b8742a6d364e28880f4c9a3f15e3df0e04"
+        }
+      ]
+    },
+    {
+      "number": 11,
+      "id": "jack",
+      "name": "Jack",
+      "group": "B",
+      "description": "Jack: 8-year-old Australian boy, sandy-blond hair, freckles, royal blue bucket hat, blue t-shirt, khaki shorts, flip-flops.",
+      "kind": "humanoid",
+      "pose": "Relaxed standing A-pose, hands empty/open and clear of torso, feet flat.",
+      "views": [
+        "front",
+        "left-side",
+        "back"
+      ],
+      "modelInOwnerPlan": "Meshy 7.1",
+      "plannedCredits": 30,
+      "pricingVerified": true,
+      "runtimeModelPath": "models/villager-jack.glb",
+      "conceptReference": null,
+      "requiredStyleReference": "reference-images/style/clara-generated-style-anchor.png",
+      "prompt": "prompts/11-jack.txt",
+      "turnaround": "reference-images/11-jack/turnaround.png",
+      "separateViews": [
+        "reference-images/11-jack/front.png",
+        "reference-images/11-jack/left-side.png",
+        "reference-images/11-jack/back.png"
+      ],
+      "referenceStatus": "generated",
+      "reviewStatus": "technical_pass",
+      "meshyTaskId": null,
+      "modelStatus": "not_submitted",
+      "sourceGenerationFile": "/workspace/generated_images/exec-2c645f17-cd61-4b52-bdb7-4ce98df14cf2.png",
+      "turnaroundSHA256": "c9c0b900c7319554e6a664de2caaa8d0885b5ae2e72c67bf57292c3b7bcf10f0",
+      "ownerReviewStatus": "pending",
+      "cropBoundaries": [
+        0,
+        576,
+        960,
+        1536
+      ],
+      "reviewNotes": "Visual reference review: full-body views, left-facing profile (firefly front/dorsal top), empty hands, no labels, consistent outfit/species and grey background. Crops use individually checked gaps. This is technical reference review, not owner approval or 3D model validation.",
+      "viewCrops": [
+        {
+          "path": "reference-images/11-jack/front.png",
+          "box": [
+            0,
+            0,
+            576,
+            1024
+          ],
+          "sha256": "2c7a4d87802d39738333e1d17efaf18035922cf636501afef79bbc87c5d9c591"
+        },
+        {
+          "path": "reference-images/11-jack/left-side.png",
+          "box": [
+            576,
+            0,
+            960,
+            1024
+          ],
+          "sha256": "c6bffec63b3a39b94b760894779ef230df83f1bd4c8dcdc68a17bacb9f18e139"
+        },
+        {
+          "path": "reference-images/11-jack/back.png",
+          "box": [
+            960,
+            0,
+            1536,
+            1024
+          ],
+          "sha256": "c5b6100fd69c7f34a1f8112ead6432f213c018276de99b9948963f4977cf0a53"
+        }
+      ]
+    },
+    {
+      "number": 12,
+      "id": "mit",
+      "name": "Mít",
+      "group": "B",
+      "description": "Mít: 6-year-old Vietnamese girl, black hair in two short pigtails, flower clip, sunny yellow dress, white sandals.",
+      "kind": "humanoid",
+      "pose": "Relaxed standing A-pose, hands empty/open and clear of torso, feet flat.",
+      "views": [
+        "front",
+        "left-side",
+        "back"
+      ],
+      "modelInOwnerPlan": "Meshy 7.1",
+      "plannedCredits": 30,
+      "pricingVerified": true,
+      "runtimeModelPath": "models/villager-mit.glb",
+      "conceptReference": null,
+      "requiredStyleReference": "reference-images/style/clara-generated-style-anchor.png",
+      "prompt": "prompts/12-mit.txt",
+      "turnaround": "reference-images/12-mit/turnaround.png",
+      "separateViews": [
+        "reference-images/12-mit/front.png",
+        "reference-images/12-mit/left-side.png",
+        "reference-images/12-mit/back.png"
+      ],
+      "referenceStatus": "generated",
+      "reviewStatus": "technical_pass",
+      "meshyTaskId": null,
+      "modelStatus": "not_submitted",
+      "sourceGenerationFile": "/workspace/generated_images/exec-0ebc2ea4-d74d-4069-beb8-184b176a0a57.png",
+      "turnaroundSHA256": "266400d652b00ad9a9e7262167837550d6bb9ca04a68a5e9d8702c61af1504b1",
+      "ownerReviewStatus": "pending",
+      "cropBoundaries": [
+        0,
+        576,
+        960,
+        1536
+      ],
+      "reviewNotes": "Visual reference review: full-body views, left-facing profile (firefly front/dorsal top), empty hands, no labels, consistent outfit/species and grey background. Crops use individually checked gaps. This is technical reference review, not owner approval or 3D model validation.",
+      "viewCrops": [
+        {
+          "path": "reference-images/12-mit/front.png",
+          "box": [
+            0,
+            0,
+            576,
+            1024
+          ],
+          "sha256": "3e79398b5aaa30e4cd0470eac819a7f61f173886b99ffb38b934a75f14f127d9"
+        },
+        {
+          "path": "reference-images/12-mit/left-side.png",
+          "box": [
+            576,
+            0,
+            960,
+            1024
+          ],
+          "sha256": "d0884f835bf8e9facc792b2f7a7f0cd93d153c6d228ce501785da36fb1ac69aa"
+        },
+        {
+          "path": "reference-images/12-mit/back.png",
+          "box": [
+            960,
+            0,
+            1536,
+            1024
+          ],
+          "sha256": "496bca8bfbdd4cc852b76907b1ccb6321bed9285f957322db01b17f1940542b2"
+        }
+      ]
+    },
+    {
+      "number": 13,
+      "id": "bom",
+      "name": "Bờm",
+      "group": "B",
+      "description": "Bờm: 8-year-old Vietnamese boy, short tousled black hair, bright red button shirt, navy shorts, sneakers.",
+      "kind": "humanoid",
+      "pose": "Relaxed standing A-pose, hands empty/open and clear of torso, feet flat.",
+      "views": [
+        "front",
+        "left-side",
+        "back"
+      ],
+      "modelInOwnerPlan": "Meshy 7.1",
+      "plannedCredits": 30,
+      "pricingVerified": true,
+      "runtimeModelPath": "models/villager-bom.glb",
+      "conceptReference": null,
+      "requiredStyleReference": "reference-images/style/clara-generated-style-anchor.png",
+      "prompt": "prompts/13-bom.txt",
+      "turnaround": "reference-images/13-bom/turnaround.png",
+      "separateViews": [
+        "reference-images/13-bom/front.png",
+        "reference-images/13-bom/left-side.png",
+        "reference-images/13-bom/back.png"
+      ],
+      "referenceStatus": "generated",
+      "reviewStatus": "technical_pass",
+      "meshyTaskId": null,
+      "modelStatus": "not_submitted",
+      "sourceGenerationFile": "/workspace/generated_images/exec-ffb1bbb5-b09c-4091-a0cc-0e10be7f577f.png",
+      "turnaroundSHA256": "2fff9aae117258d9374da309fdfe4471ca0f415702486b14324f97d23198ffa7",
+      "ownerReviewStatus": "pending",
+      "cropBoundaries": [
+        0,
+        576,
+        960,
+        1536
+      ],
+      "reviewNotes": "Visual reference review: full-body views, left-facing profile (firefly front/dorsal top), empty hands, no labels, consistent outfit/species and grey background. Crops use individually checked gaps. This is technical reference review, not owner approval or 3D model validation.",
+      "viewCrops": [
+        {
+          "path": "reference-images/13-bom/front.png",
+          "box": [
+            0,
+            0,
+            576,
+            1024
+          ],
+          "sha256": "c4d56412108679bfc6bbe894a574b475843d5a868a379e21be1fe7b6f7755908"
+        },
+        {
+          "path": "reference-images/13-bom/left-side.png",
+          "box": [
+            576,
+            0,
+            960,
+            1024
+          ],
+          "sha256": "bfb16232c65ba20b06d7435020ada68f1445360409636596ff8c280e19a864d6"
+        },
+        {
+          "path": "reference-images/13-bom/back.png",
+          "box": [
+            960,
+            0,
+            1536,
+            1024
+          ],
+          "sha256": "b6da856fa61ade05ced9625926958aaab2109cbf74cb2d176a0dcac46a2f6550"
+        }
+      ]
+    },
+    {
+      "number": 14,
+      "id": "ruby",
+      "name": "Ruby",
+      "group": "B",
+      "description": "Ruby: 8-year-old Australian girl, auburn red hair in two pigtails with a purple bow, a few freckles, violet dress, black sneakers.",
+      "kind": "humanoid",
+      "pose": "Relaxed standing A-pose, hands empty/open and clear of torso, feet flat.",
+      "views": [
+        "front",
+        "left-side",
+        "back"
+      ],
+      "modelInOwnerPlan": "Meshy 7.1",
+      "plannedCredits": 30,
+      "pricingVerified": true,
+      "runtimeModelPath": "models/villager-ruby.glb",
+      "conceptReference": null,
+      "requiredStyleReference": "reference-images/style/clara-generated-style-anchor.png",
+      "prompt": "prompts/14-ruby.txt",
+      "turnaround": "reference-images/14-ruby/turnaround.png",
+      "separateViews": [
+        "reference-images/14-ruby/front.png",
+        "reference-images/14-ruby/left-side.png",
+        "reference-images/14-ruby/back.png"
+      ],
+      "referenceStatus": "generated",
+      "reviewStatus": "technical_pass",
+      "meshyTaskId": null,
+      "modelStatus": "not_submitted",
+      "sourceGenerationFile": "/workspace/generated_images/exec-fe9de628-d35f-4ace-85c8-3ba3dcbdde13.png",
+      "turnaroundSHA256": "3f48883ac72acd9452c46505714a1ee4ec7cabe9a6c98f39e4b33eec308ec920",
+      "ownerReviewStatus": "pending",
+      "cropBoundaries": [
+        0,
+        576,
+        960,
+        1536
+      ],
+      "reviewNotes": "Visual reference review: full-body views, left-facing profile (firefly front/dorsal top), empty hands, no labels, consistent outfit/species and grey background. Crops use individually checked gaps. This is technical reference review, not owner approval or 3D model validation.",
+      "viewCrops": [
+        {
+          "path": "reference-images/14-ruby/front.png",
+          "box": [
+            0,
+            0,
+            576,
+            1024
+          ],
+          "sha256": "d65e4a64e92bba5e8a7d3ad99c2549cb8c7775d4ce1e35093bcd09b4b011dbfa"
+        },
+        {
+          "path": "reference-images/14-ruby/left-side.png",
+          "box": [
+            576,
+            0,
+            960,
+            1024
+          ],
+          "sha256": "071b7a7f7eac8c3103fa903c18892396d29ec4bf58dd117be2bede40b4835ee8"
+        },
+        {
+          "path": "reference-images/14-ruby/back.png",
+          "box": [
+            960,
+            0,
+            1536,
+            1024
+          ],
+          "sha256": "73ed05fc0181d37076f45fb6ab9dd2ac92002686f4d65add91d4fa04a9f03817"
+        }
+      ]
+    },
+    {
+      "number": 15,
+      "id": "lan",
+      "name": "Lan",
+      "group": "B",
+      "description": "Lan: 9-year-old Vietnamese girl, dark brown ponytail, mint-green children's áo dài over loose white trousers, white sandals.",
+      "kind": "humanoid",
+      "pose": "Relaxed standing A-pose, hands empty/open and clear of torso, feet flat.",
+      "views": [
+        "front",
+        "left-side",
+        "back"
+      ],
+      "modelInOwnerPlan": "Meshy 7.1",
+      "plannedCredits": 30,
+      "pricingVerified": true,
+      "runtimeModelPath": "models/villager-lan.glb",
+      "conceptReference": null,
+      "requiredStyleReference": "reference-images/style/clara-generated-style-anchor.png",
+      "prompt": "prompts/15-lan.txt",
+      "turnaround": "reference-images/15-lan/turnaround.png",
+      "separateViews": [
+        "reference-images/15-lan/front.png",
+        "reference-images/15-lan/left-side.png",
+        "reference-images/15-lan/back.png"
+      ],
+      "referenceStatus": "generated",
+      "reviewStatus": "technical_pass",
+      "meshyTaskId": null,
+      "modelStatus": "not_submitted",
+      "sourceGenerationFile": "/workspace/generated_images/exec-c914fb23-105d-4993-9b33-faef299a576b.png",
+      "turnaroundSHA256": "5e9d75506b440921e63fec209515dd15bc158ea7e9d4d3912f4cfa3bb111eda9",
+      "ownerReviewStatus": "pending",
+      "cropBoundaries": [
+        0,
+        576,
+        960,
+        1536
+      ],
+      "reviewNotes": "Visual reference review: full-body views, left-facing profile (firefly front/dorsal top), empty hands, no labels, consistent outfit/species and grey background. Crops use individually checked gaps. This is technical reference review, not owner approval or 3D model validation.",
+      "viewCrops": [
+        {
+          "path": "reference-images/15-lan/front.png",
+          "box": [
+            0,
+            0,
+            576,
+            1024
+          ],
+          "sha256": "dfd5cb9ed782692cbd202c48062ab1104991edd164f3908aa54c53e757d905d6"
+        },
+        {
+          "path": "reference-images/15-lan/left-side.png",
+          "box": [
+            576,
+            0,
+            960,
+            1024
+          ],
+          "sha256": "0d978a36eb9f2627fe7345b79882883336345c4aeb1d75a8d5ea6f182e261c31"
+        },
+        {
+          "path": "reference-images/15-lan/back.png",
+          "box": [
+            960,
+            0,
+            1536,
+            1024
+          ],
+          "sha256": "6637d75edefa2045904195295895688d8bba2a4666765686aafb5872be7dcaa8"
+        }
+      ]
+    },
+    {
+      "number": 16,
+      "id": "puppy",
+      "name": "Puppy",
+      "group": "C",
+      "description": "Puppy: a small golden-brown puppy with floppy ears, a white chest patch, a short wagging tail and a red collar.",
+      "kind": "creature",
+      "pose": "Neutral quadruped stance; all four legs, paws and tail visible and separated.",
+      "views": [
+        "front",
+        "left-side",
+        "back"
+      ],
+      "modelInOwnerPlan": "Meshy 7.1",
+      "plannedCredits": 30,
+      "pricingVerified": true,
+      "runtimeModelPath": "models/world/creature-puppy.glb",
+      "conceptReference": null,
+      "requiredStyleReference": "reference-images/style/clara-generated-style-anchor.png",
+      "prompt": "prompts/16-puppy.txt",
+      "turnaround": "reference-images/16-puppy/turnaround.png",
+      "separateViews": [
+        "reference-images/16-puppy/front.png",
+        "reference-images/16-puppy/left-side.png",
+        "reference-images/16-puppy/back.png"
+      ],
+      "referenceStatus": "generated",
+      "reviewStatus": "technical_pass",
+      "meshyTaskId": null,
+      "modelStatus": "not_submitted",
+      "sourceGenerationFile": "/workspace/generated_images/exec-6e2ff858-eaac-4c85-b385-182944c762b5.png",
+      "turnaroundSHA256": "ef6d8f0d067fb5025ac192d7482365a512463c15831f4edd49a2ccbabe0d853b",
+      "ownerReviewStatus": "pending",
+      "cropBoundaries": [
+        0,
+        450,
+        1090,
+        1536
+      ],
+      "reviewNotes": "Visual reference review: full-body views, left-facing profile (firefly front/dorsal top), empty hands, no labels, consistent outfit/species and grey background. Crops use individually checked gaps. This is technical reference review, not owner approval or 3D model validation.",
+      "viewCrops": [
+        {
+          "path": "reference-images/16-puppy/front.png",
+          "box": [
+            0,
+            0,
+            450,
+            1024
+          ],
+          "sha256": "c402cd8b2325054d9724831900a46102724c298ebfb8a5368bc43f31ff9ca828"
+        },
+        {
+          "path": "reference-images/16-puppy/left-side.png",
+          "box": [
+            450,
+            0,
+            1090,
+            1024
+          ],
+          "sha256": "d426c55b0241fab35b77cae14aa6640995b3688cdef3dbdee5a39ea0a6754a54"
+        },
+        {
+          "path": "reference-images/16-puppy/back.png",
+          "box": [
+            1090,
+            0,
+            1536,
+            1024
+          ],
+          "sha256": "a139bd4aca005876beaa62213aebf2516198bdd25f722f3e5c9a0ed16fa9f35a"
+        }
+      ]
+    },
+    {
+      "number": 17,
+      "id": "kitty",
+      "name": "Kitty",
+      "group": "C",
+      "description": "Kitty: a slim little orange tabby kitten with pointed ears, white paws, a tail held up, and a blue collar with a tiny bell.",
+      "kind": "creature",
+      "pose": "Neutral quadruped stance; all four legs, paws and tail visible and separated.",
+      "views": [
+        "front",
+        "left-side",
+        "back"
+      ],
+      "modelInOwnerPlan": "Meshy 7.1",
+      "plannedCredits": 30,
+      "pricingVerified": true,
+      "runtimeModelPath": "models/world/creature-kitty.glb",
+      "conceptReference": null,
+      "requiredStyleReference": "reference-images/style/clara-generated-style-anchor.png",
+      "prompt": "prompts/17-kitty.txt",
+      "turnaround": "reference-images/17-kitty/turnaround.png",
+      "separateViews": [
+        "reference-images/17-kitty/front.png",
+        "reference-images/17-kitty/left-side.png",
+        "reference-images/17-kitty/back.png"
+      ],
+      "referenceStatus": "generated",
+      "reviewStatus": "technical_pass",
+      "meshyTaskId": null,
+      "modelStatus": "not_submitted",
+      "sourceGenerationFile": "/workspace/generated_images/exec-037a6993-49c0-4bf8-b7b0-88b5c41ef5c9.png",
+      "turnaroundSHA256": "8ac8b7d9fa7a6815e30d18aa07eecabf9b66b0daae4784f2ca5621b7c1207c6f",
+      "ownerReviewStatus": "pending",
+      "cropBoundaries": [
+        0,
+        440,
+        1075,
+        1536
+      ],
+      "reviewNotes": "Visual reference review: full-body views, left-facing profile (firefly front/dorsal top), empty hands, no labels, consistent outfit/species and grey background. Crops use individually checked gaps. This is technical reference review, not owner approval or 3D model validation.",
+      "viewCrops": [
+        {
+          "path": "reference-images/17-kitty/front.png",
+          "box": [
+            0,
+            0,
+            440,
+            1024
+          ],
+          "sha256": "ff6446ede1df8e08f66fcb182ebfbb1b79f112a5df1d888531f80049db78904c"
+        },
+        {
+          "path": "reference-images/17-kitty/left-side.png",
+          "box": [
+            440,
+            0,
+            1075,
+            1024
+          ],
+          "sha256": "5984908d079e8360a7ebd17e258b2040d50dea6acff25a03e471b39d29780a4e"
+        },
+        {
+          "path": "reference-images/17-kitty/back.png",
+          "box": [
+            1075,
+            0,
+            1536,
+            1024
+          ],
+          "sha256": "81b1b4bb0a1d7a9c0a1ad0797b52ba6ff7b611660a89786181251ac6db64dc3b"
+        }
+      ]
+    },
+    {
+      "number": 18,
+      "id": "bunny",
+      "name": "Bunny",
+      "group": "C",
+      "description": "Bunny: a round fluffy white bunny with long upright ears with pink insides, a pink nose and a cotton-ball tail.",
+      "kind": "creature",
+      "pose": "Neutral quadruped stance; all four legs, paws and tail visible and separated.",
+      "views": [
+        "front",
+        "left-side",
+        "back"
+      ],
+      "modelInOwnerPlan": "Meshy 7.1",
+      "plannedCredits": 30,
+      "pricingVerified": true,
+      "runtimeModelPath": "models/world/creature-bunny.glb",
+      "conceptReference": null,
+      "requiredStyleReference": "reference-images/style/clara-generated-style-anchor.png",
+      "prompt": "prompts/18-bunny.txt",
+      "turnaround": "reference-images/18-bunny/turnaround.png",
+      "separateViews": [
+        "reference-images/18-bunny/front.png",
+        "reference-images/18-bunny/left-side.png",
+        "reference-images/18-bunny/back.png"
+      ],
+      "referenceStatus": "generated",
+      "reviewStatus": "technical_pass",
+      "meshyTaskId": null,
+      "modelStatus": "not_submitted",
+      "sourceGenerationFile": "/workspace/generated_images/exec-974237e3-9c4b-4354-a301-4106ae984519.png",
+      "turnaroundSHA256": "473e57cdb39c82f0df3d5babbdcc155528b05f3e1f1e37eafa3ca774404e4813",
+      "ownerReviewStatus": "pending",
+      "cropBoundaries": [
+        0,
+        470,
+        1060,
+        1536
+      ],
+      "reviewNotes": "Visual reference review: full-body views, left-facing profile (firefly front/dorsal top), empty hands, no labels, consistent outfit/species and grey background. Crops use individually checked gaps. This is technical reference review, not owner approval or 3D model validation.",
+      "viewCrops": [
+        {
+          "path": "reference-images/18-bunny/front.png",
+          "box": [
+            0,
+            0,
+            470,
+            1024
+          ],
+          "sha256": "3f656a3baf26671b26d5ed008059f319dd7d67639bec70c4272919fe4b96977a"
+        },
+        {
+          "path": "reference-images/18-bunny/left-side.png",
+          "box": [
+            470,
+            0,
+            1060,
+            1024
+          ],
+          "sha256": "d3eb54c98847daca74897145f45936cd94c7c31ffa5f25a3db6f7090f5fa1f64"
+        },
+        {
+          "path": "reference-images/18-bunny/back.png",
+          "box": [
+            1060,
+            0,
+            1536,
+            1024
+          ],
+          "sha256": "e4ac5f33e59743a4bc3ecc8f9239a90ad3193cabca8e194f0dab732f906464af"
+        }
+      ]
+    },
+    {
+      "number": 19,
+      "id": "panda",
+      "name": "Panda",
+      "group": "C",
+      "description": "Panda: a chubby baby panda cub, black and white, round ears, sitting-ready short legs, standing on all fours.",
+      "kind": "creature",
+      "pose": "Neutral quadruped stance; all four legs, paws and tail visible and separated.",
+      "views": [
+        "front",
+        "left-side",
+        "back"
+      ],
+      "modelInOwnerPlan": "Meshy 7.1",
+      "plannedCredits": 30,
+      "pricingVerified": true,
+      "runtimeModelPath": "models/world/creature-panda.glb",
+      "conceptReference": null,
+      "requiredStyleReference": "reference-images/style/clara-generated-style-anchor.png",
+      "prompt": "prompts/19-panda.txt",
+      "turnaround": "reference-images/19-panda/turnaround.png",
+      "separateViews": [
+        "reference-images/19-panda/front.png",
+        "reference-images/19-panda/left-side.png",
+        "reference-images/19-panda/back.png"
+      ],
+      "referenceStatus": "generated",
+      "reviewStatus": "technical_pass",
+      "meshyTaskId": null,
+      "modelStatus": "not_submitted",
+      "sourceGenerationFile": "/workspace/generated_images/exec-0d2e7ba6-3da0-4d8f-b476-54c4463ccbdc.png",
+      "turnaroundSHA256": "641e12486e438e940fd1bb5cae91704b4760a49d37b76413ccf41b95ddfcecd5",
+      "ownerReviewStatus": "pending",
+      "cropBoundaries": [
+        0,
+        460,
+        1060,
+        1536
+      ],
+      "reviewNotes": "Visual reference review: full-body views, left-facing profile (firefly front/dorsal top), empty hands, no labels, consistent outfit/species and grey background. Crops use individually checked gaps. This is technical reference review, not owner approval or 3D model validation.",
+      "viewCrops": [
+        {
+          "path": "reference-images/19-panda/front.png",
+          "box": [
+            0,
+            0,
+            460,
+            1024
+          ],
+          "sha256": "07300a6dc1c2ca4bd2636e32b1a7100eb2a6b3d23b87f8a117e4bb626fa8edfe"
+        },
+        {
+          "path": "reference-images/19-panda/left-side.png",
+          "box": [
+            460,
+            0,
+            1060,
+            1024
+          ],
+          "sha256": "30b6a8d65a9f764d8b10eef7f54d3a6b77e1995088e7e7dfa6f53f4226498eaf"
+        },
+        {
+          "path": "reference-images/19-panda/back.png",
+          "box": [
+            1060,
+            0,
+            1536,
+            1024
+          ],
+          "sha256": "03ac138a6e3f1b7f30e19c48a1424e1f0c267bc07616f4f75b40db30c9b9d7a4"
+        }
+      ]
+    },
+    {
+      "number": 20,
+      "id": "joey",
+      "name": "Joey",
+      "group": "C",
+      "description": "Joey: a young grey-brown kangaroo joey standing upright on its hind legs, small front paws held in front of its chest, long tail touching the ground, big ears.",
+      "kind": "creature",
+      "pose": "Upright on hind legs; forepaws separate and visible; tail on ground.",
+      "views": [
+        "front",
+        "left-side",
+        "back"
+      ],
+      "modelInOwnerPlan": "Meshy 7.1",
+      "plannedCredits": 30,
+      "pricingVerified": true,
+      "runtimeModelPath": "models/world/creature-joey.glb",
+      "conceptReference": null,
+      "requiredStyleReference": "reference-images/style/clara-generated-style-anchor.png",
+      "prompt": "prompts/20-joey.txt",
+      "turnaround": "reference-images/20-joey/turnaround.png",
+      "separateViews": [
+        "reference-images/20-joey/front.png",
+        "reference-images/20-joey/left-side.png",
+        "reference-images/20-joey/back.png"
+      ],
+      "referenceStatus": "generated",
+      "reviewStatus": "technical_pass",
+      "meshyTaskId": null,
+      "modelStatus": "not_submitted",
+      "sourceGenerationFile": "/workspace/generated_images/exec-242e855f-1b2e-457c-9124-f8835214ca9d.png",
+      "turnaroundSHA256": "d6ec738270ee81d693de8614472e2b9eedd3df0e90b085fde2d5689891bd3675",
+      "ownerReviewStatus": "pending",
+      "cropBoundaries": [
+        0,
+        510,
+        1070,
+        1536
+      ],
+      "reviewNotes": "Visual reference review: full-body views, left-facing profile (firefly front/dorsal top), empty hands, no labels, consistent outfit/species and grey background. Crops use individually checked gaps. This is technical reference review, not owner approval or 3D model validation.",
+      "viewCrops": [
+        {
+          "path": "reference-images/20-joey/front.png",
+          "box": [
+            0,
+            0,
+            510,
+            1024
+          ],
+          "sha256": "cc96f9375297554141c47c8202bcad6fd9dda3b37df6ac6eed6c22c7d5fd7582"
+        },
+        {
+          "path": "reference-images/20-joey/left-side.png",
+          "box": [
+            510,
+            0,
+            1070,
+            1024
+          ],
+          "sha256": "12ea73c6ff45d6bb2e4c9c8f6cc44de8d28e9be3f8fff8f3c4dc5fb56fbd9e36"
+        },
+        {
+          "path": "reference-images/20-joey/back.png",
+          "box": [
+            1070,
+            0,
+            1536,
+            1024
+          ],
+          "sha256": "183cb1f386f9ec0411d9ccea41a40beeacfbe2bbbc6b82ba9f5a444de04d7809"
+        }
+      ]
+    },
+    {
+      "number": 21,
+      "id": "calf",
+      "name": "Calf",
+      "group": "C",
+      "description": "Calf: a small light-brown calf with a white face patch, little nubs where horns will grow, a short tail with a tuft, a small bell on a ribbon.",
+      "kind": "creature",
+      "pose": "Neutral quadruped stance; all four legs, paws and tail visible and separated.",
+      "views": [
+        "front",
+        "left-side",
+        "back"
+      ],
+      "modelInOwnerPlan": "Meshy 7.1",
+      "plannedCredits": 30,
+      "pricingVerified": true,
+      "runtimeModelPath": "models/world/creature-calf.glb",
+      "conceptReference": null,
+      "requiredStyleReference": "reference-images/style/clara-generated-style-anchor.png",
+      "prompt": "prompts/21-calf.txt",
+      "turnaround": "reference-images/21-calf/turnaround.png",
+      "separateViews": [
+        "reference-images/21-calf/front.png",
+        "reference-images/21-calf/left-side.png",
+        "reference-images/21-calf/back.png"
+      ],
+      "referenceStatus": "generated",
+      "reviewStatus": "technical_pass",
+      "meshyTaskId": null,
+      "modelStatus": "not_submitted",
+      "sourceGenerationFile": "/workspace/generated_images/exec-d705dfb4-1517-4be2-816b-7844f118fabd.png",
+      "turnaroundSHA256": "2676ce6dfd41013a3f3ccdad675ef7d07f2362e804b6b96f0824ff216b009d71",
+      "ownerReviewStatus": "pending",
+      "cropBoundaries": [
+        0,
+        450,
+        1070,
+        1536
+      ],
+      "reviewNotes": "Visual reference review: full-body views, left-facing profile (firefly front/dorsal top), empty hands, no labels, consistent outfit/species and grey background. Crops use individually checked gaps. This is technical reference review, not owner approval or 3D model validation.",
+      "viewCrops": [
+        {
+          "path": "reference-images/21-calf/front.png",
+          "box": [
+            0,
+            0,
+            450,
+            1024
+          ],
+          "sha256": "775a5d33fe0e06568c113f904889aacf5421f82abf0c3acb7ba3de7b3dd038dc"
+        },
+        {
+          "path": "reference-images/21-calf/left-side.png",
+          "box": [
+            450,
+            0,
+            1070,
+            1024
+          ],
+          "sha256": "1fc6c3edcece5b5366ca6692ca4bedc2c2a500e2d6de932de12c37378bfa6ef8"
+        },
+        {
+          "path": "reference-images/21-calf/back.png",
+          "box": [
+            1070,
+            0,
+            1536,
+            1024
+          ],
+          "sha256": "b771aa49e59e762da73f48d47804d87dfe5b34a26cfb2be66b5b219ddc805607"
+        }
+      ]
+    },
+    {
+      "number": 22,
+      "id": "dragon",
+      "name": "Little Dragon",
+      "group": "D",
+      "description": "Little Dragon: a tiny friendly baby dragon, soft mint-green scales, a cream belly, small rounded wings folded at the sides, two little nub horns, big kind eyes, a short tail with a leaf-shaped tip, standing on its back legs.",
+      "kind": "creature",
+      "pose": "Standing on hind legs; empty forepaws visible; folded wings clearly separate from torso.",
+      "views": [
+        "front",
+        "left-side",
+        "back"
+      ],
+      "modelInOwnerPlan": "Meshy 7.1",
+      "plannedCredits": 30,
+      "pricingVerified": true,
+      "runtimeModelPath": "models/world/creature-dragon.glb",
+      "conceptReference": null,
+      "requiredStyleReference": "reference-images/style/clara-generated-style-anchor.png",
+      "prompt": "prompts/22-dragon.txt",
+      "turnaround": "reference-images/22-dragon/turnaround.png",
+      "separateViews": [
+        "reference-images/22-dragon/front.png",
+        "reference-images/22-dragon/left-side.png",
+        "reference-images/22-dragon/back.png"
+      ],
+      "referenceStatus": "generated",
+      "reviewStatus": "technical_pass",
+      "meshyTaskId": null,
+      "modelStatus": "not_submitted",
+      "sourceGenerationFile": "/workspace/generated_images/exec-827a39d8-bf52-43cb-b08c-8527c3d79f60.png",
+      "turnaroundSHA256": "39b014da9e4490e4add9d44a248dc2ebd2327281461bfe7a8b0b9a023fd53bf3",
+      "ownerReviewStatus": "pending",
+      "cropBoundaries": [
+        0,
+        480,
+        1040,
+        1536
+      ],
+      "reviewNotes": "Visual reference review: full-body views, left-facing profile (firefly front/dorsal top), empty hands, no labels, consistent outfit/species and grey background. Crops use individually checked gaps. This is technical reference review, not owner approval or 3D model validation.",
+      "viewCrops": [
+        {
+          "path": "reference-images/22-dragon/front.png",
+          "box": [
+            0,
+            0,
+            480,
+            1024
+          ],
+          "sha256": "bcf2807c2820a2556322c370c3d8d51a0b4d053ee7183ec6592572af2ec2f080"
+        },
+        {
+          "path": "reference-images/22-dragon/left-side.png",
+          "box": [
+            480,
+            0,
+            1040,
+            1024
+          ],
+          "sha256": "f202fc8e730b141a3a29a5046bb406c545d78147d337ed2b095ded5be1298ee3"
+        },
+        {
+          "path": "reference-images/22-dragon/back.png",
+          "box": [
+            1040,
+            0,
+            1536,
+            1024
+          ],
+          "sha256": "cff95a8a8deced7125fff9c65fe9578a3509bff62520dd3f62fc08040c00f692"
+        }
+      ]
+    },
+    {
+      "number": 23,
+      "id": "firefly",
+      "name": "Sparkle the firefly",
+      "group": "D",
+      "description": "Sparkle the firefly: a cute round firefly about the size of a cat, a soft yellow glowing tail-light, a dark blue body, big friendly eyes, small antennae with round tips, two pairs of translucent wings spread open. (One front + top view instead of the turnaround.)",
+      "kind": "creature",
+      "pose": "Only front and top views, at matching scale; all four translucent wings and antennae visible. Floating neutral pose; no ground shadow.",
+      "views": [
+        "front",
+        "top"
+      ],
+      "modelInOwnerPlan": "Meshy 7.1",
+      "plannedCredits": 30,
+      "pricingVerified": true,
+      "runtimeModelPath": "models/world/creature-firefly.glb",
+      "conceptReference": null,
+      "requiredStyleReference": "reference-images/style/clara-generated-style-anchor.png",
+      "prompt": "prompts/23-firefly.txt",
+      "turnaround": "reference-images/23-firefly/turnaround.png",
+      "separateViews": [
+        "reference-images/23-firefly/front.png",
+        "reference-images/23-firefly/top.png"
+      ],
+      "referenceStatus": "generated",
+      "reviewStatus": "technical_pass",
+      "meshyTaskId": null,
+      "modelStatus": "not_submitted",
+      "sourceGenerationFile": "/workspace/generated_images/exec-9df3828e-9617-4b29-8d04-fc3eda179eac.png",
+      "turnaroundSHA256": "ceae76d0a348728f840de47dd9db9c4dd5ad4aa15f99d4f47cf333068c52498b",
+      "ownerReviewStatus": "pending",
+      "cropBoundaries": [
+        0,
+        887,
+        1774
+      ],
+      "reviewNotes": "Visual reference review: full-body views, left-facing profile (firefly front/dorsal top), empty hands, no labels, consistent outfit/species and grey background. Crops use individually checked gaps. This is technical reference review, not owner approval or 3D model validation.",
+      "viewCrops": [
+        {
+          "path": "reference-images/23-firefly/front.png",
+          "box": [
+            0,
+            0,
+            887,
+            887
+          ],
+          "sha256": "eb5ea8cc9b32a35cf381fad1facfdb957d5db3ac37c36f9824be7683712e227f"
+        },
+        {
+          "path": "reference-images/23-firefly/top.png",
+          "box": [
+            887,
+            0,
+            1774,
+            887
+          ],
+          "sha256": "c367a6f908cdaa1c9198919f3678f738c10d0710a52fdfe9e19b6cef18d8e861"
+        }
+      ]
+    },
+    {
+      "number": 24,
+      "id": "chicken",
+      "name": "Chicken",
+      "group": "E",
+      "description": "Chicken: a plump white hen with a red comb, yellow beak and legs.",
+      "kind": "creature",
+      "pose": "Standing on two legs; wings folded, beak closed; both legs and feet visible.",
+      "views": [
+        "front",
+        "left-side",
+        "back"
+      ],
+      "modelInOwnerPlan": "Meshy 6 Lite",
+      "plannedCredits": 15,
+      "pricingVerified": true,
+      "runtimeModelPath": "models/world/creature-chicken.glb",
+      "conceptReference": null,
+      "requiredStyleReference": "reference-images/style/clara-generated-style-anchor.png",
+      "prompt": "prompts/24-chicken.txt",
+      "turnaround": "reference-images/24-chicken/turnaround.png",
+      "separateViews": [
+        "reference-images/24-chicken/front.png",
+        "reference-images/24-chicken/left-side.png",
+        "reference-images/24-chicken/back.png"
+      ],
+      "referenceStatus": "generated",
+      "reviewStatus": "technical_pass",
+      "meshyTaskId": null,
+      "modelStatus": "not_submitted",
+      "sourceGenerationFile": "/workspace/generated_images/exec-f9e13e58-0172-4a0f-a468-0b961a9b5f0e.png",
+      "turnaroundSHA256": "4cabb164b151c6cce864ff8692910caa3156479d6c389b5038321df08cfc87b1",
+      "ownerReviewStatus": "pending",
+      "cropBoundaries": [
+        0,
+        490,
+        1040,
+        1536
+      ],
+      "reviewNotes": "Visual reference review: full-body views, left-facing profile (firefly front/dorsal top), empty hands, no labels, consistent outfit/species and grey background. Crops use individually checked gaps. This is technical reference review, not owner approval or 3D model validation.",
+      "viewCrops": [
+        {
+          "path": "reference-images/24-chicken/front.png",
+          "box": [
+            0,
+            0,
+            490,
+            1024
+          ],
+          "sha256": "f0e63579ce1c19207800d2c78c444ae3cc31990ffd07e50d54d3aafdc9ac8f42"
+        },
+        {
+          "path": "reference-images/24-chicken/left-side.png",
+          "box": [
+            490,
+            0,
+            1040,
+            1024
+          ],
+          "sha256": "a2bf0e9e2d0eeeaceef40eb76be6807cfef57f0cbc29a64ce59c07bd67e5fb6a"
+        },
+        {
+          "path": "reference-images/24-chicken/back.png",
+          "box": [
+            1040,
+            0,
+            1536,
+            1024
+          ],
+          "sha256": "a4e877fad277cb50b5e8e2344e505ec690de60bd790b3c1c591d8e22bf331c33"
+        }
+      ]
+    },
+    {
+      "number": 25,
+      "id": "cow",
+      "name": "Cow",
+      "group": "E",
+      "description": "Cow: a friendly black-and-white dairy cow with small horns and a bell.",
+      "kind": "creature",
+      "pose": "Neutral quadruped stance; all four legs, paws and tail visible and separated.",
+      "views": [
+        "front",
+        "left-side",
+        "back"
+      ],
+      "modelInOwnerPlan": "Meshy 6 Lite",
+      "plannedCredits": 15,
+      "pricingVerified": true,
+      "runtimeModelPath": "models/world/creature-cow.glb",
+      "conceptReference": null,
+      "requiredStyleReference": "reference-images/style/clara-generated-style-anchor.png",
+      "prompt": "prompts/25-cow.txt",
+      "turnaround": "reference-images/25-cow/turnaround.png",
+      "separateViews": [
+        "reference-images/25-cow/front.png",
+        "reference-images/25-cow/left-side.png",
+        "reference-images/25-cow/back.png"
+      ],
+      "referenceStatus": "generated",
+      "reviewStatus": "technical_pass",
+      "meshyTaskId": null,
+      "modelStatus": "not_submitted",
+      "sourceGenerationFile": "/workspace/generated_images/exec-3e75e886-3e66-4a47-a431-29c81db5ca61.png",
+      "turnaroundSHA256": "9c21ee89eda38dbdf91387fd35c1697c96b49bafe376ab6306a159042d7e1f47",
+      "ownerReviewStatus": "pending",
+      "cropBoundaries": [
+        0,
+        415,
+        1100,
+        1536
+      ],
+      "reviewNotes": "Visual reference review: full-body views, left-facing profile (firefly front/dorsal top), empty hands, no labels, consistent outfit/species and grey background. Crops use individually checked gaps. This is technical reference review, not owner approval or 3D model validation.",
+      "viewCrops": [
+        {
+          "path": "reference-images/25-cow/front.png",
+          "box": [
+            0,
+            0,
+            415,
+            1024
+          ],
+          "sha256": "0b2a7c3a7d82784222e7bbbd32f3e46e133079b9cc0a23f9ab981fb80761b900"
+        },
+        {
+          "path": "reference-images/25-cow/left-side.png",
+          "box": [
+            415,
+            0,
+            1100,
+            1024
+          ],
+          "sha256": "7d37b2bfec97d2e9d27ffede734a6ce2630c9cb7de238e67bb3d779274bbcc76"
+        },
+        {
+          "path": "reference-images/25-cow/back.png",
+          "box": [
+            1100,
+            0,
+            1536,
+            1024
+          ],
+          "sha256": "b5cc61cc5e60845baba2166963ce32d37b99556581e812efaed8d75591e5b426"
+        }
+      ]
+    },
+    {
+      "number": 26,
+      "id": "sheep",
+      "name": "Sheep",
+      "group": "E",
+      "description": "Sheep: a fluffy cream sheep with a round woolly body, black face and legs.",
+      "kind": "creature",
+      "pose": "Neutral quadruped stance; all four legs, paws and tail visible and separated.",
+      "views": [
+        "front",
+        "left-side",
+        "back"
+      ],
+      "modelInOwnerPlan": "Meshy 6 Lite",
+      "plannedCredits": 15,
+      "pricingVerified": true,
+      "runtimeModelPath": "models/world/creature-sheep.glb",
+      "conceptReference": null,
+      "requiredStyleReference": "reference-images/style/clara-generated-style-anchor.png",
+      "prompt": "prompts/26-sheep.txt",
+      "turnaround": "reference-images/26-sheep/turnaround.png",
+      "separateViews": [
+        "reference-images/26-sheep/front.png",
+        "reference-images/26-sheep/left-side.png",
+        "reference-images/26-sheep/back.png"
+      ],
+      "referenceStatus": "generated",
+      "reviewStatus": "technical_pass",
+      "meshyTaskId": null,
+      "modelStatus": "not_submitted",
+      "sourceGenerationFile": "/workspace/generated_images/exec-e3fa47aa-1075-4dd6-af35-5f87e1083bd3.png",
+      "turnaroundSHA256": "e543b08ff17b224f600eec7ca66717cbcfc19397179350b377fab0ea91cdbd55",
+      "ownerReviewStatus": "pending",
+      "cropBoundaries": [
+        0,
+        470,
+        1060,
+        1536
+      ],
+      "reviewNotes": "Visual reference review: full-body views, left-facing profile (firefly front/dorsal top), empty hands, no labels, consistent outfit/species and grey background. Crops use individually checked gaps. This is technical reference review, not owner approval or 3D model validation.",
+      "viewCrops": [
+        {
+          "path": "reference-images/26-sheep/front.png",
+          "box": [
+            0,
+            0,
+            470,
+            1024
+          ],
+          "sha256": "a99bed64bc714296445e569a8159e56bdfefd255e26abfa88e025f8c3945820c"
+        },
+        {
+          "path": "reference-images/26-sheep/left-side.png",
+          "box": [
+            470,
+            0,
+            1060,
+            1024
+          ],
+          "sha256": "d3cea3c7aaa8228fb65ece51c0182cbae80079b0d42a2a236363c36ee5c48aa8"
+        },
+        {
+          "path": "reference-images/26-sheep/back.png",
+          "box": [
+            1060,
+            0,
+            1536,
+            1024
+          ],
+          "sha256": "567fdb976512fa0f2a36a24bc76c8a98e948745a0c23d82fb053b7e0f56d4f91"
+        }
+      ]
+    },
+    {
+      "number": 27,
+      "id": "pig",
+      "name": "Pig",
+      "group": "E",
+      "description": "Pig: a round pink pig with a curly tail and floppy ears.",
+      "kind": "creature",
+      "pose": "Neutral quadruped stance; all four legs, paws and tail visible and separated.",
+      "views": [
+        "front",
+        "left-side",
+        "back"
+      ],
+      "modelInOwnerPlan": "Meshy 6 Lite",
+      "plannedCredits": 15,
+      "pricingVerified": true,
+      "runtimeModelPath": "models/world/creature-pig.glb",
+      "conceptReference": null,
+      "requiredStyleReference": "reference-images/style/clara-generated-style-anchor.png",
+      "prompt": "prompts/27-pig.txt",
+      "turnaround": "reference-images/27-pig/turnaround.png",
+      "separateViews": [
+        "reference-images/27-pig/front.png",
+        "reference-images/27-pig/left-side.png",
+        "reference-images/27-pig/back.png"
+      ],
+      "referenceStatus": "generated",
+      "reviewStatus": "technical_pass",
+      "meshyTaskId": null,
+      "modelStatus": "not_submitted",
+      "sourceGenerationFile": "/workspace/generated_images/exec-dcc757d3-ae4c-4fbd-a03c-cb0e0bc7a4cd.png",
+      "turnaroundSHA256": "331ae98cae9420c8a225b353b3162305acf6adad9b13665262d192e2c41c53d7",
+      "ownerReviewStatus": "pending",
+      "cropBoundaries": [
+        0,
+        470,
+        1060,
+        1536
+      ],
+      "reviewNotes": "Visual reference review: full-body views, left-facing profile (firefly front/dorsal top), empty hands, no labels, consistent outfit/species and grey background. Crops use individually checked gaps. This is technical reference review, not owner approval or 3D model validation.",
+      "viewCrops": [
+        {
+          "path": "reference-images/27-pig/front.png",
+          "box": [
+            0,
+            0,
+            470,
+            1024
+          ],
+          "sha256": "c9487b3b768b5465a50c6a06814cbe3a6b86c511f3f53799426dd148f99e3f83"
+        },
+        {
+          "path": "reference-images/27-pig/left-side.png",
+          "box": [
+            470,
+            0,
+            1060,
+            1024
+          ],
+          "sha256": "1ab53aa0e052c103a073212a3bedcda643e3f5b7f7afb796145884816adb7e1e"
+        },
+        {
+          "path": "reference-images/27-pig/back.png",
+          "box": [
+            1060,
+            0,
+            1536,
+            1024
+          ],
+          "sha256": "04fc925cee8b82a1b6b173b05cface2168a10ff7665f28ea74930cce13a86395"
+        }
+      ]
+    },
+    {
+      "number": 28,
+      "id": "buffalo",
+      "name": "Water buffalo",
+      "group": "E",
+      "description": "Water buffalo: a calm grey Vietnamese water buffalo with wide curved horns.",
+      "kind": "creature",
+      "pose": "Neutral quadruped stance; all four legs, paws and tail visible and separated.",
+      "views": [
+        "front",
+        "left-side",
+        "back"
+      ],
+      "modelInOwnerPlan": "Meshy 6 Lite",
+      "plannedCredits": 15,
+      "pricingVerified": true,
+      "runtimeModelPath": "models/world/creature-buffalo.glb",
+      "conceptReference": null,
+      "requiredStyleReference": "reference-images/style/clara-generated-style-anchor.png",
+      "prompt": "prompts/28-buffalo.txt",
+      "turnaround": "reference-images/28-buffalo/turnaround.png",
+      "separateViews": [
+        "reference-images/28-buffalo/front.png",
+        "reference-images/28-buffalo/left-side.png",
+        "reference-images/28-buffalo/back.png"
+      ],
+      "referenceStatus": "generated",
+      "reviewStatus": "technical_pass",
+      "meshyTaskId": null,
+      "modelStatus": "not_submitted",
+      "sourceGenerationFile": "/workspace/generated_images/exec-c00cd96e-2f10-4868-b955-4f6cc4bd062c.png",
+      "turnaroundSHA256": "681a0cb3b5088be2cf026472d0e8fc43141d42104b94430d2aae91eae08d0c1f",
+      "ownerReviewStatus": "pending",
+      "cropBoundaries": [
+        0,
+        435,
+        1110,
+        1536
+      ],
+      "reviewNotes": "Visual reference review: full-body views, left-facing profile (firefly front/dorsal top), empty hands, no labels, consistent outfit/species and grey background. Crops use individually checked gaps. This is technical reference review, not owner approval or 3D model validation.",
+      "viewCrops": [
+        {
+          "path": "reference-images/28-buffalo/front.png",
+          "box": [
+            0,
+            0,
+            435,
+            1024
+          ],
+          "sha256": "a5268832da4deb00f3f5a1bfe089abf07e419038fd7f31c7dd73c86ac565efdb"
+        },
+        {
+          "path": "reference-images/28-buffalo/left-side.png",
+          "box": [
+            435,
+            0,
+            1110,
+            1024
+          ],
+          "sha256": "04c77c950f5b07cc13d5a0067bb9f9250cdccdbeaeac6b494eeaa0597d06c9d2"
+        },
+        {
+          "path": "reference-images/28-buffalo/back.png",
+          "box": [
+            1110,
+            0,
+            1536,
+            1024
+          ],
+          "sha256": "be3a121daaeac73b7db186118476c5fa6da503fe4a11e6a0d7e1364a8183b7fe"
+        }
+      ]
+    },
+    {
+      "number": 29,
+      "id": "bull",
+      "name": "Bull",
+      "group": "E",
+      "description": "Bull: a sturdy brown bull with short curved horns and a nose ring.",
+      "kind": "creature",
+      "pose": "Neutral quadruped stance; all four legs, paws and tail visible and separated.",
+      "views": [
+        "front",
+        "left-side",
+        "back"
+      ],
+      "modelInOwnerPlan": "Meshy 6 Lite",
+      "plannedCredits": 15,
+      "pricingVerified": true,
+      "runtimeModelPath": "models/world/creature-bull.glb",
+      "conceptReference": null,
+      "requiredStyleReference": "reference-images/style/clara-generated-style-anchor.png",
+      "prompt": "prompts/29-bull.txt",
+      "turnaround": "reference-images/29-bull/turnaround.png",
+      "separateViews": [
+        "reference-images/29-bull/front.png",
+        "reference-images/29-bull/left-side.png",
+        "reference-images/29-bull/back.png"
+      ],
+      "referenceStatus": "generated",
+      "reviewStatus": "technical_pass",
+      "meshyTaskId": null,
+      "modelStatus": "not_submitted",
+      "sourceGenerationFile": "/workspace/generated_images/exec-db0b3d19-08cb-490f-b05e-048ea5902c80.png",
+      "turnaroundSHA256": "c63820867c1cf2e0b15eb623a646f6b9def6038d6f8e34029c26ee5cf0bfb9ff",
+      "ownerReviewStatus": "pending",
+      "cropBoundaries": [
+        0,
+        395,
+        1100,
+        1536
+      ],
+      "reviewNotes": "Visual reference review: full-body views, left-facing profile (firefly front/dorsal top), empty hands, no labels, consistent outfit/species and grey background. Crops use individually checked gaps. This is technical reference review, not owner approval or 3D model validation.",
+      "viewCrops": [
+        {
+          "path": "reference-images/29-bull/front.png",
+          "box": [
+            0,
+            0,
+            395,
+            1024
+          ],
+          "sha256": "86c4cee475756770d88bf99af86956e4e98f28df7baf4de231ba79662e7af86e"
+        },
+        {
+          "path": "reference-images/29-bull/left-side.png",
+          "box": [
+            395,
+            0,
+            1100,
+            1024
+          ],
+          "sha256": "0106f64e04f661db4aaa5170fd5259e782f76ce324f4e483415ee8e806c7d595"
+        },
+        {
+          "path": "reference-images/29-bull/back.png",
+          "box": [
+            1100,
+            0,
+            1536,
+            1024
+          ],
+          "sha256": "a41a772104a4a423f360c28fcc9690ba7f8618ca2ad5e7f5b24a381da5b754a9"
+        }
+      ]
+    },
+    {
+      "number": 30,
+      "id": "bear",
+      "name": "Mr. Bear",
+      "group": "F",
+      "description": "Mr. Bear, the shopkeeper: a big friendly brown bear standing upright, a green apron, small round glasses (hands empty and open, in an A-pose like the people).",
+      "kind": "creature",
+      "pose": "Upright relaxed A-pose; open empty paws, glasses and apron worn; no held props.",
+      "views": [
+        "front",
+        "left-side",
+        "back"
+      ],
+      "modelInOwnerPlan": "Meshy 6 Lite",
+      "plannedCredits": 15,
+      "pricingVerified": true,
+      "runtimeModelPath": "models/world/creature-bear.glb",
+      "conceptReference": null,
+      "requiredStyleReference": "reference-images/style/clara-generated-style-anchor.png",
+      "prompt": "prompts/30-bear.txt",
+      "turnaround": "reference-images/30-bear/turnaround.png",
+      "separateViews": [
+        "reference-images/30-bear/front.png",
+        "reference-images/30-bear/left-side.png",
+        "reference-images/30-bear/back.png"
+      ],
+      "referenceStatus": "generated",
+      "reviewStatus": "technical_pass",
+      "meshyTaskId": null,
+      "modelStatus": "not_submitted",
+      "sourceGenerationFile": "/workspace/generated_images/exec-0dcb60b2-b28f-4ab0-a196-a7d5e30ee078.png",
+      "turnaroundSHA256": "00b820cf18757a299c964b85ac378d5fafb1088de1bf87ef6caa24c84a882e7b",
+      "ownerReviewStatus": "pending",
+      "cropBoundaries": [
+        0,
+        690,
+        1190,
+        1881
+      ],
+      "reviewNotes": "Visual reference review: full-body views, left-facing profile (firefly front/dorsal top), empty hands, no labels, consistent outfit/species and grey background. Crops use individually checked gaps. This is technical reference review, not owner approval or 3D model validation.",
+      "viewCrops": [
+        {
+          "path": "reference-images/30-bear/front.png",
+          "box": [
+            0,
+            0,
+            690,
+            836
+          ],
+          "sha256": "6c9c55f547424bfa1b8aaa6c3bc66c0d3bb729e778d19581e8426319e3f6f1f7"
+        },
+        {
+          "path": "reference-images/30-bear/left-side.png",
+          "box": [
+            690,
+            0,
+            1190,
+            836
+          ],
+          "sha256": "136c5fc8e8999ea874ae44b0c948294ae5d3f8eb7e01db61aa3c94db4ea11cc7"
+        },
+        {
+          "path": "reference-images/30-bear/back.png",
+          "box": [
+            1190,
+            0,
+            1881,
+            836
+          ],
+          "sha256": "1f282c8015e24573f5d9c82154337254c852c574c3b923b656ec6f14c0695a82"
+        }
+      ]
+    },
+    {
+      "number": 31,
+      "id": "unicorn",
+      "name": "Unicorn",
+      "group": "F",
+      "description": "Unicorn: a small white unicorn with a pastel rainbow mane and tail and a golden spiral horn.",
+      "kind": "creature",
+      "pose": "Neutral quadruped stance; all four legs, paws and tail visible and separated.",
+      "views": [
+        "front",
+        "left-side",
+        "back"
+      ],
+      "modelInOwnerPlan": "Meshy 6 Lite",
+      "plannedCredits": 15,
+      "pricingVerified": true,
+      "runtimeModelPath": "models/world/creature-unicorn.glb",
+      "conceptReference": null,
+      "requiredStyleReference": "reference-images/style/clara-generated-style-anchor.png",
+      "prompt": "prompts/31-unicorn.txt",
+      "turnaround": "reference-images/31-unicorn/turnaround.png",
+      "separateViews": [
+        "reference-images/31-unicorn/front.png",
+        "reference-images/31-unicorn/left-side.png",
+        "reference-images/31-unicorn/back.png"
+      ],
+      "referenceStatus": "generated",
+      "reviewStatus": "technical_pass",
+      "meshyTaskId": null,
+      "modelStatus": "not_submitted",
+      "sourceGenerationFile": "/workspace/generated_images/exec-a5f1a234-fe07-448b-a50f-5f6f9b95ca70.png",
+      "turnaroundSHA256": "052c53263a72cbeba17e8ffd1c7972fbec9063a4db4cc60d012abe44aa8ef0d8",
+      "ownerReviewStatus": "pending",
+      "cropBoundaries": [
+        0,
+        540,
+        1320,
+        1881
+      ],
+      "reviewNotes": "Visual reference review: full-body views, left-facing profile (firefly front/dorsal top), empty hands, no labels, consistent outfit/species and grey background. Crops use individually checked gaps. This is technical reference review, not owner approval or 3D model validation.",
+      "viewCrops": [
+        {
+          "path": "reference-images/31-unicorn/front.png",
+          "box": [
+            0,
+            0,
+            540,
+            836
+          ],
+          "sha256": "da024d280f61926a830efc925bbc6a0b406d196a586ca2b151b8848e04cbbc79"
+        },
+        {
+          "path": "reference-images/31-unicorn/left-side.png",
+          "box": [
+            540,
+            0,
+            1320,
+            836
+          ],
+          "sha256": "989824927ab0e60778f330fdec6c53276be04e2242315b0957b98eedae597d38"
+        },
+        {
+          "path": "reference-images/31-unicorn/back.png",
+          "box": [
+            1320,
+            0,
+            1881,
+            836
+          ],
+          "sha256": "d5c2008024745de91cda618cf76e9fe05cd2417c52073136e84d3dee4e4f4594"
+        }
+      ]
+    },
+    {
+      "number": 32,
+      "id": "koala",
+      "name": "Koala",
+      "group": "F",
+      "description": "Koala: a chubby grey koala standing on all fours, big fluffy ears, a large dark nose.",
+      "kind": "creature",
+      "pose": "Neutral quadruped stance; all four legs, paws and tail visible and separated.",
+      "views": [
+        "front",
+        "left-side",
+        "back"
+      ],
+      "modelInOwnerPlan": "Meshy 6 Lite",
+      "plannedCredits": 15,
+      "pricingVerified": true,
+      "runtimeModelPath": "models/world/creature-koala.glb",
+      "conceptReference": null,
+      "requiredStyleReference": "reference-images/style/clara-generated-style-anchor.png",
+      "prompt": "prompts/32-koala.txt",
+      "turnaround": "reference-images/32-koala/turnaround.png",
+      "separateViews": [
+        "reference-images/32-koala/front.png",
+        "reference-images/32-koala/left-side.png",
+        "reference-images/32-koala/back.png"
+      ],
+      "referenceStatus": "generated",
+      "reviewStatus": "technical_pass",
+      "meshyTaskId": null,
+      "modelStatus": "not_submitted",
+      "sourceGenerationFile": "/workspace/generated_images/exec-053d285d-e7f3-4681-af29-fd8199f17e98.png",
+      "turnaroundSHA256": "58c4379028ca46c488ade70645ef24b2743d172b952f9229294dc7e1a8c74dc4",
+      "ownerReviewStatus": "pending",
+      "cropBoundaries": [
+        0,
+        724,
+        1448,
+        2172
+      ],
+      "reviewNotes": "Visual reference review: full-body views, left-facing profile (firefly front/dorsal top), empty hands, no labels, consistent outfit/species and grey background. Crops use individually checked gaps. This is technical reference review, not owner approval or 3D model validation.",
+      "viewCrops": [
+        {
+          "path": "reference-images/32-koala/front.png",
+          "box": [
+            0,
+            0,
+            724,
+            724
+          ],
+          "sha256": "82e70b423500f52437082bbd0f4101f2ccece851cb84cf5053a9557daad227cc"
+        },
+        {
+          "path": "reference-images/32-koala/left-side.png",
+          "box": [
+            724,
+            0,
+            1448,
+            724
+          ],
+          "sha256": "eb1f4dc1b501f26790424ee5a41146c111b8ed1652c4cc02f76fe74239f1912d"
+        },
+        {
+          "path": "reference-images/32-koala/back.png",
+          "box": [
+            1448,
+            0,
+            2172,
+            724
+          ],
+          "sha256": "dd9290bdcc89e088931f34acad3d405e1e08ad7942df9db5cefa0d84c9a0f77b"
+        }
+      ]
+    },
+    {
+      "number": 33,
+      "id": "emu",
+      "name": "Emu",
+      "group": "F",
+      "description": "Emu: a tall brown emu with shaggy feathers and long legs.",
+      "kind": "creature",
+      "pose": "Standing on two legs; wings folded, beak closed; both legs and feet visible.",
+      "views": [
+        "front",
+        "left-side",
+        "back"
+      ],
+      "modelInOwnerPlan": "Meshy 6 Lite",
+      "plannedCredits": 15,
+      "pricingVerified": true,
+      "runtimeModelPath": "models/world/creature-emu.glb",
+      "conceptReference": null,
+      "requiredStyleReference": "reference-images/style/clara-generated-style-anchor.png",
+      "prompt": "prompts/33-emu.txt",
+      "turnaround": "reference-images/33-emu/turnaround.png",
+      "separateViews": [
+        "reference-images/33-emu/front.png",
+        "reference-images/33-emu/left-side.png",
+        "reference-images/33-emu/back.png"
+      ],
+      "referenceStatus": "generated",
+      "reviewStatus": "technical_pass",
+      "meshyTaskId": null,
+      "modelStatus": "not_submitted",
+      "sourceGenerationFile": "/workspace/generated_images/exec-b70ac67e-8d5c-4302-85f3-7731d98fe4f6.png",
+      "turnaroundSHA256": "40ae364ecb5a542afbc77793b905e0ff76bda5cdec1afba53c7eca3e3dfd8186",
+      "ownerReviewStatus": "pending",
+      "cropBoundaries": [
+        0,
+        460,
+        1050,
+        1536
+      ],
+      "reviewNotes": "Visual reference review: full-body views, left-facing profile (firefly front/dorsal top), empty hands, no labels, consistent outfit/species and grey background. Crops use individually checked gaps. This is technical reference review, not owner approval or 3D model validation.",
+      "viewCrops": [
+        {
+          "path": "reference-images/33-emu/front.png",
+          "box": [
+            0,
+            0,
+            460,
+            1024
+          ],
+          "sha256": "6a940911bfa9991083a246167d8ee4a5eb73a0e00f8b52688b5ae6b82c74f753"
+        },
+        {
+          "path": "reference-images/33-emu/left-side.png",
+          "box": [
+            460,
+            0,
+            1050,
+            1024
+          ],
+          "sha256": "67b1d5ea78b2f86100686f805f9533c099c24ec24fb7d848ac85940a70f3df7a"
+        },
+        {
+          "path": "reference-images/33-emu/back.png",
+          "box": [
+            1050,
+            0,
+            1536,
+            1024
+          ],
+          "sha256": "88e928d8142b55dfd7b395d37a4d0d77ddeb485da61b0f43e9659bd1a72fce86"
+        }
+      ]
+    },
+    {
+      "number": 34,
+      "id": "platypus",
+      "name": "Platypus",
+      "group": "F",
+      "description": "Platypus: a brown platypus with a flat duck-like bill, a flat tail and webbed feet.",
+      "kind": "creature",
+      "pose": "Neutral quadruped stance; all four legs, paws and tail visible and separated.",
+      "views": [
+        "front",
+        "left-side",
+        "back"
+      ],
+      "modelInOwnerPlan": "Meshy 6 Lite",
+      "plannedCredits": 15,
+      "pricingVerified": true,
+      "runtimeModelPath": "models/world/creature-platypus.glb",
+      "conceptReference": null,
+      "requiredStyleReference": "reference-images/style/clara-generated-style-anchor.png",
+      "prompt": "prompts/34-platypus.txt",
+      "turnaround": "reference-images/34-platypus/turnaround.png",
+      "separateViews": [
+        "reference-images/34-platypus/front.png",
+        "reference-images/34-platypus/left-side.png",
+        "reference-images/34-platypus/back.png"
+      ],
+      "referenceStatus": "generated",
+      "reviewStatus": "technical_pass",
+      "meshyTaskId": null,
+      "modelStatus": "not_submitted",
+      "sourceGenerationFile": "/workspace/generated_images/exec-011d35ac-a567-4753-98d5-3154b59a41b3.png",
+      "turnaroundSHA256": "e2a443efa552a08024bedd20b3fc36c2a547f19f8190bd426644e9ab734c9dac",
+      "ownerReviewStatus": "pending",
+      "cropBoundaries": [
+        0,
+        610,
+        1550,
+        2172
+      ],
+      "reviewNotes": "Visual reference review: full-body views, left-facing profile (firefly front/dorsal top), empty hands, no labels, consistent outfit/species and grey background. Crops use individually checked gaps. This is technical reference review, not owner approval or 3D model validation.",
+      "viewCrops": [
+        {
+          "path": "reference-images/34-platypus/front.png",
+          "box": [
+            0,
+            0,
+            610,
+            724
+          ],
+          "sha256": "ffc01611bdedc11a78de4482fde845ed805994ef806b5db9e068dbd9917755a4"
+        },
+        {
+          "path": "reference-images/34-platypus/left-side.png",
+          "box": [
+            610,
+            0,
+            1550,
+            724
+          ],
+          "sha256": "78795653198f1b3b4606b11e3623d307f091a26a816183664a731b3d0afef2c7"
+        },
+        {
+          "path": "reference-images/34-platypus/back.png",
+          "box": [
+            1550,
+            0,
+            2172,
+            724
+          ],
+          "sha256": "171050d8d2924b01b80a20ada41b8a13ddb64dda963bf1beb88803e53e45b7f6"
+        }
+      ]
+    },
+    {
+      "number": 35,
+      "id": "elephant",
+      "name": "Elephant",
+      "group": "F",
+      "description": "Elephant: a baby grey elephant with big ears and a short curled trunk.",
+      "kind": "creature",
+      "pose": "Neutral quadruped stance; all four legs, paws and tail visible and separated.",
+      "views": [
+        "front",
+        "left-side",
+        "back"
+      ],
+      "modelInOwnerPlan": "Meshy 6 Lite",
+      "plannedCredits": 15,
+      "pricingVerified": true,
+      "runtimeModelPath": "models/world/creature-elephant.glb",
+      "conceptReference": null,
+      "requiredStyleReference": "reference-images/style/clara-generated-style-anchor.png",
+      "prompt": "prompts/35-elephant.txt",
+      "turnaround": "reference-images/35-elephant/turnaround.png",
+      "separateViews": [
+        "reference-images/35-elephant/front.png",
+        "reference-images/35-elephant/left-side.png",
+        "reference-images/35-elephant/back.png"
+      ],
+      "referenceStatus": "generated",
+      "reviewStatus": "technical_pass",
+      "meshyTaskId": null,
+      "modelStatus": "not_submitted",
+      "sourceGenerationFile": "/workspace/generated_images/exec-e408dc7c-ee7f-4e64-b20a-ffefa01846a7.png",
+      "turnaroundSHA256": "0f4744ecad570f392a7e73f2bbf783224fa5ed3f1c2092d9f7d1c9f473d30a25",
+      "ownerReviewStatus": "pending",
+      "cropBoundaries": [
+        0,
+        700,
+        1470,
+        2172
+      ],
+      "reviewNotes": "Visual reference review: full-body views, left-facing profile (firefly front/dorsal top), empty hands, no labels, consistent outfit/species and grey background. Crops use individually checked gaps. This is technical reference review, not owner approval or 3D model validation.",
+      "viewCrops": [
+        {
+          "path": "reference-images/35-elephant/front.png",
+          "box": [
+            0,
+            0,
+            700,
+            724
+          ],
+          "sha256": "5e50e81b4eeab1bb3091a257b2dca4ddb920633a48cf2b4fa7e13bd8748653b2"
+        },
+        {
+          "path": "reference-images/35-elephant/left-side.png",
+          "box": [
+            700,
+            0,
+            1470,
+            724
+          ],
+          "sha256": "657e8285aac82e3ffdc63ccfd7be558cd8aac3ceede32c8ddd616cd1e3e389b8"
+        },
+        {
+          "path": "reference-images/35-elephant/back.png",
+          "box": [
+            1470,
+            0,
+            2172,
+            724
+          ],
+          "sha256": "6dcf419f724774b22028c09010155d99fbdd53416626de1317c989c0da67f4b1"
+        }
+      ]
+    },
+    {
+      "number": 36,
+      "id": "penguin",
+      "name": "Penguin",
+      "group": "F",
+      "description": "Penguin: a small chubby black-and-white penguin with orange feet and beak.",
+      "kind": "creature",
+      "pose": "Standing upright on two feet; flippers clearly separated from torso.",
+      "views": [
+        "front",
+        "left-side",
+        "back"
+      ],
+      "modelInOwnerPlan": "Meshy 6 Lite",
+      "plannedCredits": 15,
+      "pricingVerified": true,
+      "runtimeModelPath": "models/world/creature-penguin.glb",
+      "conceptReference": null,
+      "requiredStyleReference": "reference-images/style/clara-generated-style-anchor.png",
+      "prompt": "prompts/36-penguin.txt",
+      "turnaround": "reference-images/36-penguin/turnaround.png",
+      "separateViews": [
+        "reference-images/36-penguin/front.png",
+        "reference-images/36-penguin/left-side.png",
+        "reference-images/36-penguin/back.png"
+      ],
+      "referenceStatus": "generated",
+      "reviewStatus": "technical_pass",
+      "meshyTaskId": null,
+      "modelStatus": "not_submitted",
+      "sourceGenerationFile": "/workspace/generated_images/exec-fbf849a3-99f9-4f37-a633-6a2f131f0213.png",
+      "turnaroundSHA256": "ae0e699de5bcb9353cbe0bbf0437f7cf88907e8891db199f7cfff973b07b9573",
+      "ownerReviewStatus": "pending",
+      "cropBoundaries": [
+        0,
+        724,
+        1448,
+        2172
+      ],
+      "reviewNotes": "Visual reference review: full-body views, left-facing profile (firefly front/dorsal top), empty hands, no labels, consistent outfit/species and grey background. Crops use individually checked gaps. This is technical reference review, not owner approval or 3D model validation.",
+      "viewCrops": [
+        {
+          "path": "reference-images/36-penguin/front.png",
+          "box": [
+            0,
+            0,
+            724,
+            724
+          ],
+          "sha256": "a504782d1e62884a0157c24cb6e43f4da750f0a0fdc45a462fb9899adb93624f"
+        },
+        {
+          "path": "reference-images/36-penguin/left-side.png",
+          "box": [
+            724,
+            0,
+            1448,
+            724
+          ],
+          "sha256": "531563843b95795e07eee3968a8496dfd729e6cd4a7e93534b4876d5611a61f4"
+        },
+        {
+          "path": "reference-images/36-penguin/back.png",
+          "box": [
+            1448,
+            0,
+            2172,
+            724
+          ],
+          "sha256": "c2afe0d66b90cf0bc2346adb6d1ade26d31d10ae33fc509981f6efce2cf9e055"
+        }
+      ]
+    },
+    {
+      "number": 37,
+      "id": "turtle",
+      "name": "Turtle",
+      "group": "F",
+      "description": "Turtle: a green sea turtle with a domed patterned shell and flippers.",
+      "kind": "creature",
+      "pose": "Neutral sea-turtle pose, all four flippers and tail visible; no mammal paws.",
+      "views": [
+        "front",
+        "left-side",
+        "back"
+      ],
+      "modelInOwnerPlan": "Meshy 6 Lite",
+      "plannedCredits": 15,
+      "pricingVerified": true,
+      "runtimeModelPath": "models/world/creature-turtle.glb",
+      "conceptReference": null,
+      "requiredStyleReference": "reference-images/style/clara-generated-style-anchor.png",
+      "prompt": "prompts/37-turtle.txt",
+      "turnaround": "reference-images/37-turtle/turnaround.png",
+      "separateViews": [
+        "reference-images/37-turtle/front.png",
+        "reference-images/37-turtle/left-side.png",
+        "reference-images/37-turtle/back.png"
+      ],
+      "referenceStatus": "generated",
+      "reviewStatus": "technical_pass",
+      "meshyTaskId": null,
+      "modelStatus": "not_submitted",
+      "sourceGenerationFile": "/workspace/generated_images/exec-08ab8a76-500c-4fe9-a108-76b9c1ae380c.png",
+      "turnaroundSHA256": "56284c678aa7def32bf52869404fd1a2b7766ad66c5a68938a6de2c0d2cc24be",
+      "ownerReviewStatus": "pending",
+      "cropBoundaries": [
+        0,
+        724,
+        1448,
+        2172
+      ],
+      "reviewNotes": "Visual reference review: full-body views, left-facing profile (firefly front/dorsal top), empty hands, no labels, consistent outfit/species and grey background. Crops use individually checked gaps. This is technical reference review, not owner approval or 3D model validation.",
+      "viewCrops": [
+        {
+          "path": "reference-images/37-turtle/front.png",
+          "box": [
+            0,
+            0,
+            724,
+            724
+          ],
+          "sha256": "174a932896bc2d09e79d1eb7b95b92ee12ecb453f614f869c2a9654602075c5e"
+        },
+        {
+          "path": "reference-images/37-turtle/left-side.png",
+          "box": [
+            724,
+            0,
+            1448,
+            724
+          ],
+          "sha256": "f181fc1373a62df6c35fa76748db099c9a88ddfb2a32ce451ba98469dc1f5cf8"
+        },
+        {
+          "path": "reference-images/37-turtle/back.png",
+          "box": [
+            1448,
+            0,
+            2172,
+            724
+          ],
+          "sha256": "313df258335ed520718f2e8728f9dcee6e2eabc4141862787f00ad2e19eb7fdb"
+        }
+      ]
+    },
+    {
+      "number": 38,
+      "id": "peacock",
+      "name": "Peacock",
+      "group": "F",
+      "description": "Peacock: a blue-green peacock with its tail feathers folded behind it.",
+      "kind": "creature",
+      "pose": "Standing on two legs; tail feathers folded but fully visible.",
+      "views": [
+        "front",
+        "left-side",
+        "back"
+      ],
+      "modelInOwnerPlan": "Meshy 6 Lite",
+      "plannedCredits": 15,
+      "pricingVerified": true,
+      "runtimeModelPath": "models/world/creature-peacock.glb",
+      "conceptReference": null,
+      "requiredStyleReference": "reference-images/style/clara-generated-style-anchor.png",
+      "prompt": "prompts/38-peacock.txt",
+      "turnaround": "reference-images/38-peacock/turnaround.png",
+      "separateViews": [
+        "reference-images/38-peacock/front.png",
+        "reference-images/38-peacock/left-side.png",
+        "reference-images/38-peacock/back.png"
+      ],
+      "referenceStatus": "generated",
+      "reviewStatus": "technical_pass",
+      "meshyTaskId": null,
+      "modelStatus": "not_submitted",
+      "sourceGenerationFile": "/workspace/generated_images/exec-ca53ec4f-e855-491a-a9e2-cc823f9ffbed.png",
+      "turnaroundSHA256": "237cba63abafd4493ca8d85b1a0560f4df4445d345455924a01ad0e08b6be757",
+      "ownerReviewStatus": "pending",
+      "cropBoundaries": [
+        0,
+        724,
+        1448,
+        2172
+      ],
+      "reviewNotes": "Visual reference review: full-body views, left-facing profile (firefly front/dorsal top), empty hands, no labels, consistent outfit/species and grey background. Crops use individually checked gaps. This is technical reference review, not owner approval or 3D model validation.",
+      "viewCrops": [
+        {
+          "path": "reference-images/38-peacock/front.png",
+          "box": [
+            0,
+            0,
+            724,
+            724
+          ],
+          "sha256": "485e1b7e3779c622a0aa2af8fa5c5e3be6beb0074824540fd744f700bf569df1"
+        },
+        {
+          "path": "reference-images/38-peacock/left-side.png",
+          "box": [
+            724,
+            0,
+            1448,
+            724
+          ],
+          "sha256": "ea88bdc46f51fb2542c89505760c1458e7179e3f1308c5728881554a2882f258"
+        },
+        {
+          "path": "reference-images/38-peacock/back.png",
+          "box": [
+            1448,
+            0,
+            2172,
+            724
+          ],
+          "sha256": "2d0f1188ff56cd85662276260e88b725c744d2d02b69828607f77836e0bb5717"
+        }
+      ]
+    },
+    {
+      "number": 39,
+      "id": "crane",
+      "name": "Crane",
+      "group": "F",
+      "description": "Crane: a white red-crowned crane standing tall on one straight pair of legs, wings folded.",
+      "kind": "creature",
+      "pose": "Standing on two straight legs; wings folded, beak closed.",
+      "views": [
+        "front",
+        "left-side",
+        "back"
+      ],
+      "modelInOwnerPlan": "Meshy 6 Lite",
+      "plannedCredits": 15,
+      "pricingVerified": true,
+      "runtimeModelPath": "models/world/creature-crane.glb",
+      "conceptReference": null,
+      "requiredStyleReference": "reference-images/style/clara-generated-style-anchor.png",
+      "prompt": "prompts/39-crane.txt",
+      "turnaround": "reference-images/39-crane/turnaround.png",
+      "separateViews": [
+        "reference-images/39-crane/front.png",
+        "reference-images/39-crane/left-side.png",
+        "reference-images/39-crane/back.png"
+      ],
+      "referenceStatus": "generated",
+      "reviewStatus": "technical_pass",
+      "meshyTaskId": null,
+      "modelStatus": "not_submitted",
+      "sourceGenerationFile": "/workspace/generated_images/exec-099f7dd1-8151-43c8-854c-ee2fa887f736.png",
+      "turnaroundSHA256": "85ebb432d60884f05ee65b9dba12c63ef445baa53de767dcbd9a5cbad2f8ac36",
+      "ownerReviewStatus": "pending",
+      "cropBoundaries": [
+        0,
+        480,
+        1040,
+        1536
+      ],
+      "reviewNotes": "Visual reference review: full-body views, left-facing profile (firefly front/dorsal top), empty hands, no labels, consistent outfit/species and grey background. Crops use individually checked gaps. This is technical reference review, not owner approval or 3D model validation.",
+      "viewCrops": [
+        {
+          "path": "reference-images/39-crane/front.png",
+          "box": [
+            0,
+            0,
+            480,
+            1024
+          ],
+          "sha256": "49b62154bcb9f025f99870871459b87c99d3070b3578b631723b45c7124f9acc"
+        },
+        {
+          "path": "reference-images/39-crane/left-side.png",
+          "box": [
+            480,
+            0,
+            1040,
+            1024
+          ],
+          "sha256": "3f2d7009e12e913eb50465e9807107c4357ce2ef9485b6319ab3329fe865b1a6"
+        },
+        {
+          "path": "reference-images/39-crane/back.png",
+          "box": [
+            1040,
+            0,
+            1536,
+            1024
+          ],
+          "sha256": "b50e83a3de20db32e3cde20da60ea2b51cf6f53dcca89b12d0e81a0bb1629a04"
+        }
+      ]
+    },
+    {
+      "number": 40,
+      "id": "vn-aodai",
+      "name": "Vietnamese mum in áo dài",
+      "group": "G",
+      "description": "Vietnamese mum in áo dài: woman, long black hair, earrings, light blue áo dài over white trousers, nón lá, tan sandals.",
+      "kind": "humanoid",
+      "pose": "Relaxed standing A-pose, hands empty/open and clear of torso, feet flat.",
+      "views": [
+        "front",
+        "left-side",
+        "back"
+      ],
+      "modelInOwnerPlan": "Meshy 6 Lite",
+      "plannedCredits": 15,
+      "pricingVerified": true,
+      "runtimeModelPath": "models/villager-vn-aodai.glb",
+      "conceptReference": null,
+      "requiredStyleReference": "reference-images/style/clara-generated-style-anchor.png",
+      "prompt": "prompts/40-vn-aodai.txt",
+      "turnaround": "reference-images/40-vn-aodai/turnaround.png",
+      "separateViews": [
+        "reference-images/40-vn-aodai/front.png",
+        "reference-images/40-vn-aodai/left-side.png",
+        "reference-images/40-vn-aodai/back.png"
+      ],
+      "referenceStatus": "generated",
+      "reviewStatus": "technical_pass",
+      "meshyTaskId": null,
+      "modelStatus": "not_submitted",
+      "sourceGenerationFile": "/workspace/generated_images/exec-71ef9357-895e-4797-a5d6-08df97966740.png",
+      "turnaroundSHA256": "a36a5defebaf8a7c72ebd43cda8ca2f99ff2e838c53c809c14f177a50c269929",
+      "ownerReviewStatus": "pending",
+      "cropBoundaries": [
+        0,
+        576,
+        960,
+        1536
+      ],
+      "reviewNotes": "Visual reference review: full-body views, left-facing profile (firefly front/dorsal top), empty hands, no labels, consistent outfit/species and grey background. Crops use individually checked gaps. This is technical reference review, not owner approval or 3D model validation.",
+      "viewCrops": [
+        {
+          "path": "reference-images/40-vn-aodai/front.png",
+          "box": [
+            0,
+            0,
+            576,
+            1024
+          ],
+          "sha256": "70693e488326240d4969cbf92f6f7b140c1422de26042dccc483e3e8b9a82407"
+        },
+        {
+          "path": "reference-images/40-vn-aodai/left-side.png",
+          "box": [
+            576,
+            0,
+            960,
+            1024
+          ],
+          "sha256": "2ef52a96cf22d9ea72b442c40a2d93b4363e9ef302e46617df90f6008fafaf35"
+        },
+        {
+          "path": "reference-images/40-vn-aodai/back.png",
+          "box": [
+            960,
+            0,
+            1536,
+            1024
+          ],
+          "sha256": "12ece32f49a263034ec0daf0f47e2b58b6342a7105e2315c52fda76d6a9f0744"
+        }
+      ]
+    },
+    {
+      "number": 41,
+      "id": "vn-dad",
+      "name": "Vietnamese dad",
+      "group": "G",
+      "description": "Vietnamese dad: man, short black hair, light blue polo shirt, dark grey trousers, a wristwatch, sandals, a motorbike helmet on his head.",
+      "kind": "humanoid",
+      "pose": "Relaxed standing A-pose, hands empty/open and clear of torso, feet flat.",
+      "views": [
+        "front",
+        "left-side",
+        "back"
+      ],
+      "modelInOwnerPlan": "Meshy 6 Lite",
+      "plannedCredits": 15,
+      "pricingVerified": true,
+      "runtimeModelPath": "models/villager-vn-dad.glb",
+      "conceptReference": null,
+      "requiredStyleReference": "reference-images/style/clara-generated-style-anchor.png",
+      "prompt": "prompts/41-vn-dad.txt",
+      "turnaround": "reference-images/41-vn-dad/turnaround.png",
+      "separateViews": [
+        "reference-images/41-vn-dad/front.png",
+        "reference-images/41-vn-dad/left-side.png",
+        "reference-images/41-vn-dad/back.png"
+      ],
+      "referenceStatus": "generated",
+      "reviewStatus": "technical_pass",
+      "meshyTaskId": null,
+      "modelStatus": "not_submitted",
+      "sourceGenerationFile": "/workspace/generated_images/exec-f211e6b0-c8ca-43cb-83f7-a7344e110b31.png",
+      "turnaroundSHA256": "be8c3f31f8b313bb9db34826991129fcba83d2d37267f7bbf458ce3d5f541354",
+      "ownerReviewStatus": "pending",
+      "cropBoundaries": [
+        0,
+        576,
+        960,
+        1536
+      ],
+      "reviewNotes": "Visual reference review: full-body views, left-facing profile (firefly front/dorsal top), empty hands, no labels, consistent outfit/species and grey background. Crops use individually checked gaps. This is technical reference review, not owner approval or 3D model validation.",
+      "viewCrops": [
+        {
+          "path": "reference-images/41-vn-dad/front.png",
+          "box": [
+            0,
+            0,
+            576,
+            1024
+          ],
+          "sha256": "ee766b9931fd1fbbcbcd44158424cc8f55c9a4d4c44fd5d1932886e5fb74df19"
+        },
+        {
+          "path": "reference-images/41-vn-dad/left-side.png",
+          "box": [
+            576,
+            0,
+            960,
+            1024
+          ],
+          "sha256": "2003383cfab90575c6f4606431dba08c3e7b9ed3275ef027b8fe36f3e1eaf07a"
+        },
+        {
+          "path": "reference-images/41-vn-dad/back.png",
+          "box": [
+            960,
+            0,
+            1536,
+            1024
+          ],
+          "sha256": "ba4aaf9134882a4aafdf419cf4535c545751521797a8c0dde568216f76907d21"
+        }
+      ]
+    },
+    {
+      "number": 42,
+      "id": "au-dad",
+      "name": "Australian dad",
+      "group": "G",
+      "description": "Australian dad: man, short brown hair, sunglasses, a wide-brimmed bush hat, blue short-sleeved shirt, khaki shorts, brown boots.",
+      "kind": "humanoid",
+      "pose": "Relaxed standing A-pose, hands empty/open and clear of torso, feet flat.",
+      "views": [
+        "front",
+        "left-side",
+        "back"
+      ],
+      "modelInOwnerPlan": "Meshy 6 Lite",
+      "plannedCredits": 15,
+      "pricingVerified": true,
+      "runtimeModelPath": "models/villager-au-dad.glb",
+      "conceptReference": null,
+      "requiredStyleReference": "reference-images/style/clara-generated-style-anchor.png",
+      "prompt": "prompts/42-au-dad.txt",
+      "turnaround": "reference-images/42-au-dad/turnaround.png",
+      "separateViews": [
+        "reference-images/42-au-dad/front.png",
+        "reference-images/42-au-dad/left-side.png",
+        "reference-images/42-au-dad/back.png"
+      ],
+      "referenceStatus": "generated",
+      "reviewStatus": "technical_pass",
+      "meshyTaskId": null,
+      "modelStatus": "not_submitted",
+      "sourceGenerationFile": "/workspace/generated_images/exec-b90f2fb1-6ba7-46ed-a5c9-fdc04d50a0b4.png",
+      "turnaroundSHA256": "20733355f1473d1786c2873d8f3df6c839b78fd339310fc96808830d58bbf56b",
+      "ownerReviewStatus": "pending",
+      "cropBoundaries": [
+        0,
+        576,
+        960,
+        1536
+      ],
+      "reviewNotes": "Visual reference review: full-body views, left-facing profile (firefly front/dorsal top), empty hands, no labels, consistent outfit/species and grey background. Crops use individually checked gaps. This is technical reference review, not owner approval or 3D model validation.",
+      "viewCrops": [
+        {
+          "path": "reference-images/42-au-dad/front.png",
+          "box": [
+            0,
+            0,
+            576,
+            1024
+          ],
+          "sha256": "70cd44e38a55f73f37ac8c765342403c2f4060930db767b2e1f5a8abf480171e"
+        },
+        {
+          "path": "reference-images/42-au-dad/left-side.png",
+          "box": [
+            576,
+            0,
+            960,
+            1024
+          ],
+          "sha256": "2bab2ddadf219cddbddd603093075a1fc74d4ae5f09a66020ebebf5fe29d3931"
+        },
+        {
+          "path": "reference-images/42-au-dad/back.png",
+          "box": [
+            960,
+            0,
+            1536,
+            1024
+          ],
+          "sha256": "2ee70b60857434a5c427e4f03da69c9570b801203d2cc99d04a72f936a178096"
+        }
+      ]
+    },
+    {
+      "number": 43,
+      "id": "au-mum",
+      "name": "Australian mum",
+      "group": "G",
+      "description": "Australian mum: woman, blonde ponytail, straw hat, a sunny yellow dress, orange sandals, earrings and a necklace.",
+      "kind": "humanoid",
+      "pose": "Relaxed standing A-pose, hands empty/open and clear of torso, feet flat.",
+      "views": [
+        "front",
+        "left-side",
+        "back"
+      ],
+      "modelInOwnerPlan": "Meshy 6 Lite",
+      "plannedCredits": 15,
+      "pricingVerified": true,
+      "runtimeModelPath": "models/villager-au-mum.glb",
+      "conceptReference": null,
+      "requiredStyleReference": "reference-images/style/clara-generated-style-anchor.png",
+      "prompt": "prompts/43-au-mum.txt",
+      "turnaround": "reference-images/43-au-mum/turnaround.png",
+      "separateViews": [
+        "reference-images/43-au-mum/front.png",
+        "reference-images/43-au-mum/left-side.png",
+        "reference-images/43-au-mum/back.png"
+      ],
+      "referenceStatus": "generated",
+      "reviewStatus": "technical_pass",
+      "meshyTaskId": null,
+      "modelStatus": "not_submitted",
+      "sourceGenerationFile": "/workspace/generated_images/exec-6facc1bd-6f2f-4827-be57-a67aabb1a7bc.png",
+      "turnaroundSHA256": "ce50beec7a4c8b4a2da7922f5cedc2bb0cfe7d3b0aec50b16fa6b43f54e19fb3",
+      "ownerReviewStatus": "pending",
+      "cropBoundaries": [
+        0,
+        576,
+        960,
+        1536
+      ],
+      "reviewNotes": "Visual reference review: full-body views, left-facing profile (firefly front/dorsal top), empty hands, no labels, consistent outfit/species and grey background. Crops use individually checked gaps. This is technical reference review, not owner approval or 3D model validation.",
+      "viewCrops": [
+        {
+          "path": "reference-images/43-au-mum/front.png",
+          "box": [
+            0,
+            0,
+            576,
+            1024
+          ],
+          "sha256": "15ad3c4863f47a2cc55017d26f23ef9e608693ddf01861b1bf229920f1113bb1"
+        },
+        {
+          "path": "reference-images/43-au-mum/left-side.png",
+          "box": [
+            576,
+            0,
+            960,
+            1024
+          ],
+          "sha256": "c68bbed9e275f535bb5bfd7e8507eb56cac83813092a3fd97a8fc98990f62c9a"
+        },
+        {
+          "path": "reference-images/43-au-mum/back.png",
+          "box": [
+            960,
+            0,
+            1536,
+            1024
+          ],
+          "sha256": "fba25b5c6a386d8c3e4078b9ebb86fee2ace14145f817a69af07d378a4871783"
+        }
+      ]
+    }
+  ],
+  "styleReferenceProvenance": "REFERENCE-PROVENANCE.json",
+  "officialDocumentationVerification": "OFFICIAL-MESHY-VERIFICATION.md"
+}

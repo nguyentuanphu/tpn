@@ -1,0 +1,56 @@
+{
+ "id": "jack",
+ "reference_prefix": "villager-",
+ "source": "auto_joints.py from Meshy rig jack.glb",
+ "top": [
+  300.0,
+  33.3
+ ],
+ "neck": [
+  300.0,
+  303.5
+ ],
+ "hip": [
+  300.0,
+  438.1
+ ],
+ "shoulderL": [
+  368.3,
+  322.4
+ ],
+ "elbowL": [
+  409.7,
+  415.8
+ ],
+ "wristL": [
+  458.2,
+  484.2
+ ],
+ "hipL": [
+  331.7,
+  481.5
+ ],
+ "kneeL": [
+  346.7,
+  654.9
+ ],
+ "ankleL": [
+  355.9,
+  814.7
+ ],
+ "facebox": [
+  [
+   210.8,
+   133.3
+  ],
+  [
+   389.2,
+   279.2
+  ]
+ ],
+ "trim_back_hair": false,
+ "original_skin": true,
+ "keep_meshy_uvs": true,
+ "skin_shift": true,
+ "skin_ref": "#f6c7a5"
+}
