@@ -146,7 +146,7 @@ const res: any = await P.page.evaluate(async ([LIST, QUICK, LIMIT]) => {
             const my = (g: number[]) => { let t = 0; for (const j of g) t += (j / W) | 0; return t / g.length; }; const gm = g1.filter(g => g.length > 6 && wd(g) > 3).sort((a, b2) => my(a) - my(b2))[0];   // (round 26: the lowest patch on screen (the buffer runs upwards), not the widest: the cheek blush (Lan, Jack) and Bác Ba's nose were wider than the mouth)
             if (gm && gm.length > 6) { let x0 = W, x1 = 0, y0 = H, y1 = 0; for (const j of gm) { const x = j % W, y = (j / W) | 0; x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); }
               const mw = x1 - x0 + 1, mh = Math.max(y1 - y0 + 1, mw * .3), cy = (y0 + y1) / 2, old = mbox; mb0 = [x0, y0, x1, y1];
-              mbox = (i: number) => { const x = i % W, y = (i / W) | 0; return old(i) && x >= x0 - mw * .3 && x <= x1 + mw * .3 && Math.abs(y - cy) <= mh * 1.6; }; } }
+              mbox = (i: number) => { const x = i % W, y = (i / W) | 0; return old(i) && x >= x0 - mw * .3 && x <= x1 + mw * .3 && y <= cy + mh * 1.6 && y >= cy - mh * 3.2; }; } }   // (round 29: the round and excited mouths hang lower than the smile: Jack's o was cut, buffer rows run upwards)
           const SM = lips(C0), mArea: Record<string, number> = {}, mCase: Record<string, any> = {};
           // (14 Nov 2026, audit.mts's 'stray', ported) the eye zone: each eye's box round its whites and the dark iris, pupil and lashes joined to them, 35 % wider each way (6 px at least)
           let eyeZ: Uint8Array | null = null; { const seen = new Uint8Array(N), st: number[] = [];
@@ -172,7 +172,7 @@ const res: any = await P.page.evaluate(async ([LIST, QUICK, LIMIT]) => {
             // stray: a mood may change only the eyes and the mouth: a pixel of the villager outside the eye zone and the mouth box (3 px wider) that differs from the smile by .08 from every pixel within 1 px is a stray change (a flat skin patch over the brows or fringe, a mouth on a nostril); groups under 4 px left out
             const fsx = new Uint8Array(N); let ks = 0;
             if (m !== 'smile' && eyeZ && mb0) { for (let i = 0; i < N; i++) { if (eyeZ[i] || !mine(i) || i >= N - W * 10) continue; const x = i % W, y = (i / W) | 0;
-                if (x >= mb0[0] - 3 && x <= mb0[2] + 3 && y >= mb0[1] - 3 - (mb0[3] - mb0[1]) && y <= mb0[3] + 3 + (mb0[3] - mb0[1])) continue;   // (the mouth box, a mouth's height more up and down: the round and sad mouths sit lower or taller)
+                { const mw_ = mb0[2] - mb0[0], mh_ = Math.max(mb0[3] - mb0[1], mw_ * .3); if (x >= mb0[0] - 3 - mw_ * .3 && x <= mb0[2] + 3 + mw_ * .3 && y >= mb0[1] - 3 - mh_ * 3 && y <= mb0[3] + 3 + mh_) continue; }   // (round 29: Bác Ba's excited mouth is bigger and lower than his smile)   // (the mouth box, a mouth's height more up and down: the round and sad mouths sit lower or taller)
                 let best = 9; for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) { const xx = x + dx, yy = y + dy; if (xx < 0 || yy < 0 || xx >= W || yy >= H) continue; const q = (yy * W + xx) * 4; best = Math.min(best, Math.hypot(C[i * 4] - C0[q], C[i * 4 + 1] - C0[q + 1], C[i * 4 + 2] - C0[q + 2]) / 255); }
                 if (best > .08) { fsx[i] = 1; ks++; } }
               for (const g of groups(fsx)) if (g.length < 4) for (const j of g) { fsx[j] = 0; ks--; } }

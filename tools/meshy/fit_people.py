@@ -1400,7 +1400,7 @@ if TEX and KEEP and SHIFT:
             # the far eye's outer corner still open from three-quarters: out towards the temple a quarter more there. (The dark
             # band across Tí's eyes, first blamed on these, was a lid shade, removed.)
             _po = 18 + (W_ * .08 if W_ < 400 else 0); _left = (b[0] + b[2]) / 2 < W_ / 2
-            _eb += [fx0 + (b[0] - (_po if _left else 18)) / W_ * (fx1 - fx0), fx0 + (b[2] + (18 if _left else _po)) / W_ * (fx1 - fx0), fz1 - (b[3] + 10) / H_ * (fz1 - fz0), fz1 - (b[1] - 10) / H_ * (fz1 - fz0)]
+            _eb += [fx0 + (b[0] - (_po if _left else 18)) / W_ * (fx1 - fx0), fx0 + (b[2] + (18 if _left else _po)) / W_ * (fx1 - fx0), fz1 - (b[3] + (6 if REFP == 'villager-' else 10)) / H_ * (fz1 - fz0), fz1 - (b[1] - (4 if REFP == 'villager-' else 10)) / H_ * (fz1 - fz0)]   # (13 Nov 2026, round 29, the auditor's stray check: 10 px above a villager's eye the game's shut paint took Jack's brow; 4 px)
         while len(_eb) < 8: _eb += _eb[:4]
         # (auditor 10 Nov 2026: Clara's far eye, three-quarters: its inner corner, past the nose, lay between the two areas)
         # each area reaches the face's middle on its inner side
