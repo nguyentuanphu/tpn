@@ -250,6 +250,18 @@ Record: `docs/meshy-regional-40-100/PILOT-1.md`. Ids `r<nnn>` (sheet number), jo
     smudge) keeps light warm colour round the hole as it is and runs the smoothing about 3 times the hole's size squared
     (700 passes reach only about 25 px). Tried first and no change: `-SmoothPieces` (piece normals), holding at the rim's
     median. Read the numbers in the preview before guessing at lights.
+  - *The open eye beside every shut lid at three-quarters (13 Nov 2026, all six regional villagers).* The game's shut-eye
+    paint (`js/friend-model.ts`, eye areas `eye_boxes`) lived only in the code-clothes branch, and a villager's positions
+    were never dequantized (`deq` was set only with `cover`): for villagers it never ran. Shot with `HIDE=face` (pieces
+    hidden) a shut villager still had open eyes. Now a model with eye areas and no code clothes gets it too, painting only
+    eye whites (very light, unsaturated) and strongly coloured irises, judged near screen colour (`sqrt` of the linear
+    texel: in linear colour rosy skin is .74 saturated and was painted as "iris", flattening the blush), inside the eye
+    areas less their top quarter and outer fifth. Tried and dropped: the friends' "not skin" test (painted blush and
+    freckles flat, a hard band at three-quarters), dark texels (r084's curly hair and brows turned skin-coloured), scaling
+    a dark texel up to the skin (coloured noise: the output is mixed to the skin colour outright, diffuse and emissive).
+  - *r074's blush under a shut eye (13 Nov 2026).* `-EyeDark` grows the eye box through what is not skin, and her flushed
+    cheeks are not: the lid hole took them. With `-LidLocal`, warm colour below the eye white's lowest row is no part of
+    the hole. Removing warm colour round the eye itself instead left the iris and the socket's shade as smudges.
   - *The villager auditor's `lid` and `mshape` (13 Nov 2026, from audit.mts).* Ported as they were, they failed on things
     that are not faults: earrings, the white patch at r064's ear and r045's hat lay under the face grid and passed as eye
     whites (only whites the shut eye covers count now); the friends' lips box (nose tip to chin) took grown-ups' pink
