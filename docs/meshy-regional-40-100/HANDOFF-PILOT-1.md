@@ -3,6 +3,18 @@
 Branch `meshy-regional-cloud` (never `main`, no deploy, no version bump, draft pull requests only). Written 12 Nov 2026,
 about 16:30 AEDT, when the owner stopped this chat so that another Claude account takes over.
 
+## Where it stands (14 Nov 2026, about 10:00 AEDT; stopped at the usage limit)
+
+- Gate p (`D:\WorkSpace\meshyittedegional-gate-20261114p`, models 4e116cadd): auditor eyes 4 / lid 3 / mshape 10 /
+  stray 13 (r064's eyes = her earring, r074's stray = her own "o" at -.7: false). Second reviewers found r045's fringe and
+  r064's temple hair turned skin on shut eyes: hair painted on the face's own triangles inside the wider oval. Fixed in
+  the shader after gate p (outside each eye's own box only light grey and white is painted): seen fixed on r045 and r064
+  front blink (`regional-core1`). **Next:** rerun the full gate (q) on the current build, second reviewers, then work
+  through what is left: pale socket arcs from above (r057 r074 r084), the lid drawn as a V at the near profile (r057
+  r084), far-eye black shards at tq / above .5 (r084: likely a gap in the geometry, check with `HIDE=face`), sad lash
+  stubs at the outer corners (r074 r084), lookL and lookR alike, faint smile-corner marks on "o" (r074). Not approved; no
+  approval question asked.
+
 ## Where it stands (14 Nov 2026, about 08:30 AEDT)
 
 - Gates k to o since the last status, each with the auditor, 129 pictures at 1024 px per person and three second
