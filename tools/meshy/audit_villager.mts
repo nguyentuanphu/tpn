@@ -69,6 +69,7 @@ const res: any = await P.page.evaluate(async ([LIST, QUICK, LIMIT]) => {
     const stage = new THREE.Scene(); stage.fog = top.fog; stage.environment = top.environment; top.updateMatrixWorld(true);
     top.traverse((o: any) => { if (!o.isLight || !o.visible) return; const c = o.clone(false); o.getWorldPosition(c.position); stage.add(c); if (o.target) { c.target = new THREE.Object3D(); o.target.getWorldPosition(c.target.position); stage.add(c.target); } });
     const home = av.root.parent; stage.attach(av.root);
+    G.paused = true;   // (13 Nov 2026, round 25: paused before the front is measured: the valley kept turning the villager to the child afterwards, so "front" pictures came out three-quarters and the lips check failed at random)
     av.life = null; A.animate(av, 'idle', 1); av.root.updateMatrixWorld(true);   // (the idle pose first: it turns the body back, and a front taken before it was three-quarters)
     const fd = new THREE.Vector3(0, 0, 1).applyQuaternion((av.rig || av.root).getWorldQuaternion(new THREE.Quaternion()));
     const faceDir = (M: any, fb: any) => { M.obj.updateMatrixWorld(true); let hb: any = null, fm: any = null; M.obj.traverse((o: any) => { if (o.isBone && o.name === 'head') hb = o; if (o.isMesh && /^face-smile/.test(o.material && o.material.name || '')) fm = o; }); if (!hb || !fm) return fb; const c = new THREE.Box3().setFromObject(fm, true).getCenter(new THREE.Vector3()), h = hb.getWorldPosition(new THREE.Vector3()), d = c.sub(h); d.y = 0; return d.lengthSq() > 1e-6 ? Math.atan2(d.x, d.z) : fb; };   // (11 Nov 2026: the face's own front, from the head to its face pieces: the body and its root turn to the child while the review waits)
@@ -129,7 +130,7 @@ const res: any = await P.page.evaluate(async ([LIST, QUICK, LIMIT]) => {
         // lips, 'o' and 'excited' a roundish oval that is not the smile's (excited the larger), 'sad' corners lower than its middle
         if (Math.abs(s) < 1) {
           let mx0 = W, mx1 = -1, my1 = -1; for (let i = 0; i < N; i++) if (white[i]) { const x = i % W, y = (i / W) | 0; mx0 = Math.min(mx0, x); mx1 = Math.max(mx1, x); my1 = my1 < 0 ? y : Math.min(my1, y); }
-          const ew = mx1 - mx0, mcx = (mx0 + mx1) / 2, mbox = (i: number) => { const x = i % W, y = (i / W) | 0; return ew > 8 && Math.abs(x - mcx) <= ew * .27 && y < my1 - ew * .3 && y > my1 - ew * .52; };   // (round 24: from .3 below the whites, not .22: Bác Ba's and Mai's nose tips lay in the box)   // (villagers .52, not .62: their eyes sit higher and wider, and .62 reached the chin's edge and the neck's shade, Lan's front o and sad)
+          const ew = mx1 - mx0, mcx = (mx0 + mx1) / 2; let mbox = (i: number) => { const x = i % W, y = (i / W) | 0; return ew > 8 && Math.abs(x - mcx) <= ew * .27 && y < my1 - ew * .22 && y > my1 - ew * .52; };   // (villagers .52, not .62: their eyes sit higher and wider, and .62 reached the chin's edge and the neck's shade, Lan's front o and sad)
           const pk = (px: Uint8Array, i: number) => (px[i * 4 + 2] - px[i * 4 + 1]) / Math.max(1, px[i * 4]), vv = (px: Uint8Array, i: number) => Math.max(px[i * 4], px[i * 4 + 1], px[i * 4 + 2]) / 255, rd = (px: Uint8Array, i: number) => (px[i * 4] - px[i * 4 + 1]) / Math.max(1, px[i * 4]);
           let skPk = 0, skV = 0, skRd = 0;
           const lips = (px: Uint8Array) => { const L = new Uint8Array(N); let n = 0; if (ew <= 8) return { L, n }; for (let i = 0; i < N; i++) { if (!mbox(i) || !mine(i)) continue; if (pk(px, i) > skPk + .09 || (vv(px, i) < skV - .2 && rd(px, i) > skRd - .02) || rd(px, i) > skRd + .08) { L[i] = 1; n++; } } return { L, n }; };   // (round 24: darker counts only if not less red than the skin: Bác Ba's grey moustache lay in the box)
@@ -140,11 +141,19 @@ const res: any = await P.page.evaluate(async ([LIST, QUICK, LIMIT]) => {
               out.push(g); } return out.sort((a, b) => b.length - a.length); };
           setMood('smile'); const C0 = read(stage, cam);
           { const ps: number[] = [], vs: number[] = [], rs: number[] = []; for (let i = 0; i < N; i++) if (mbox(i) && mine(i)) { ps.push(pk(C0, i)); vs.push(vv(C0, i)); rs.push(rd(C0, i)); } const md = (a: number[]) => a.sort((x, y) => x - y)[a.length >> 1] || 0; skPk = md(ps); skV = md(vs); skRd = md(rs); }
+          { const S1 = lips(C0); const g1 = groups(S1.L); const wd = (g: number[]) => { let a = W, b2 = 0; for (const j of g) { a = Math.min(a, j % W); b2 = Math.max(b2, j % W); } return b2 - a; };   // (round 25: at ±.4/.7 the box's top corners took the cheek blush, and Bác Ba's nose: the smile's own mouth, its widest red patch, is found first, and every mood is judged in a box round it)
+            const my = (g: number[]) => { let t = 0; for (const j of g) t += (j / W) | 0; return t / g.length; }; const gm = g1.filter(g => g.length > 6 && wd(g) > 3).sort((a, b2) => my(a) - my(b2))[0];   // (round 26: the lowest patch on screen (the buffer runs upwards), not the widest: the cheek blush (Lan, Jack) and Bác Ba's nose were wider than the mouth)
+            if (gm && gm.length > 6) { let x0 = W, x1 = 0, y0 = H, y1 = 0; for (const j of gm) { const x = j % W, y = (j / W) | 0; x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); }
+              const mw = x1 - x0 + 1, mh = Math.max(y1 - y0 + 1, mw * .3), cy = (y0 + y1) / 2, old = mbox;
+              mbox = (i: number) => { const x = i % W, y = (i / W) | 0; return old(i) && x >= x0 - mw * .3 && x <= x1 + mw * .3 && Math.abs(y - cy) <= mh * 1.6; }; } }
           const SM = lips(C0), mArea: Record<string, number> = {}, mCase: Record<string, any> = {};
           if (SM.n) for (const m of ['blink', 'half', 'happy', 'sad', 'smile', 'o', 'excited', 'lookL', 'lookR']) {
             setMood(m); const C = read(stage, cam), ML = lips(C), fm = new Uint8Array(N); let km = 0;
             if (['blink', 'half', 'happy', 'lookL', 'lookR', 'smile'].includes(m)) { for (let i = 0; i < N; i++) if ((ML.L[i] && !near(SM.L, i, 1)) || (SM.L[i] && !near(ML.L, i, 1))) { fm[i] = 1; km++; } }
-            else { const gs = groups(ML.L), g0 = gs[0] || []; let bad = !g0.length;
+            else { const gs = groups(ML.L); let sx = 0, sy = 0, sn = 0; for (let i = 0; i < N; i++) if (SM.L[i]) { sx += i % W; sy += (i / W) | 0; sn++; }
+              const cd = (g: number[]) => { let gx = 0, gy = 0; for (const j of g) { gx += j % W; gy += (j / W) | 0; } return Math.hypot(gx / g.length - sx / sn, gy / g.length - sy / sn) - Math.sqrt(g.length); };
+              gs.sort((a, b2) => cd(a) - cd(b2));   // (round 25: the mood's mouth is the patch nearest the smile's own mouth, not the largest: Bác Ba's nose above the moustache and Mai's pink nose tip lay in the box)
+              const g0 = gs[0] || []; let bad = !g0.length;
               for (const g of gs.slice(1)) for (const j of g) { fm[j] = 1; km++; }
               let same = 0; for (const j of g0) if (near(SM.L, j, 1)) same++; let gx0 = W, gx1 = 0, gy0 = H, gy1 = 0; for (const j of g0) { const x = j % W, y = (j / W) | 0; gx0 = Math.min(gx0, x); gx1 = Math.max(gx1, x); gy0 = Math.min(gy0, y); gy1 = Math.max(gy1, y); }
               const w = gx1 - gx0 + 1, hh = gy1 - gy0 + 1;
