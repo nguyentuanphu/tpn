@@ -7,6 +7,8 @@
   "lie_back_knee": 0.3,
   "smooth": 5,
   "repack": 0.004,
+  "socket_lift": 1.0,
+  "socket_both": true,
   "jump_spring": 0.8,
   "tex_near": 1280,
   "leg_top": 0.8,
