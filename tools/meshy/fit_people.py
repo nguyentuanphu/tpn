@@ -656,7 +656,8 @@ for b in eyes.values(): shut(im, grow(b)); _pre = im.copy(); stroke(im, lash_arc
 M['happy'] = im
 def gmouth():   # (12 Nov 2026, owner circled the old smile's corners beside the sad and round mouths) a villager's old mouth is erased a little past its box
     if REFP != 'villager-': return mouth
-    mw_, mh_ = mouth[2] - mouth[0], mouth[3] - mouth[1]; return [max(0, int(mouth[0] - mw_ * .3)), max(0, int(mouth[1] - mh_ * .45)), min(W_, int(mouth[2] + mw_ * .3)), min(H_, int(mouth[3] + mh_ * .5))]   # (13 Nov 2026, round 24: .3 and .45/.5, was .18 and .3/.4: the auditor's lips check and the second reviewer still saw the old smile's corners beside Ruby's sad mouth and round Teo's and Ba's o)
+    mw_, mh_ = mouth[2] - mouth[0], mouth[3] - mouth[1]; mh_ = max(mh_, mw_ * .35)   # (14 Nov 2026, round 31: Bác Ba's open smile was found as a thin box over the teeth, and its lower lip stayed beside the round mouth)
+    return [max(0, int(mouth[0] - mw_ * .7)), max(0, int(mouth[1] - mh_ * .45)), min(W_, int(mouth[2] + mw_ * .7)), min(H_, int(mouth[3] + mh_ * .5))]   # (round 31: .7 each side, was .3: the old smile line ran on past both sides of the round and sad mouths, Lan, Mai, Mit, Teo, Ti; the mouth box found is the reddest middle of the lips)   # (13 Nov 2026, round 24: .3 and .45/.5, was .18 and .3/.4: the auditor's lips check and the second reviewer still saw the old smile's corners beside Ruby's sad mouth and round Teo's and Ba's o)
 def mouth_o(im, big):
     if not mouth: return im
     erase(im, gmouth()); cx, cy = (mouth[0] + mouth[2]) / 2, (mouth[1] + mouth[3]) / 2; mw = mouth[2] - mouth[0]
