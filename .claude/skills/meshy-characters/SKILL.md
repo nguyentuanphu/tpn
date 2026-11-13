@@ -235,6 +235,11 @@ Lessons about the checking itself (each hid a fault or showed a false one):
   named with a literal `$k` and four pets wrote into one folder: build Windows paths with forward slashes,
   `"D:/WorkSpace/meshy/pets/$k-jump"`.)
 
+### Owner's feedback list (13 Nov 2026: "Đọc lại hết tất cả feedbacks tao gửi đi")
+Every owner remark on the pets is a line in `docs/meshy-pets-20261110/FEEDBACK.md` with its status. Add each new remark
+the moment it arrives; before sending any film or picture, check it against every open line, frame by frame. All six
+views of `pet_film.mts` are drawn on an open stage of flat grass (the farm plots and fences hid the feet).
+
 ### Owner's standing rule on legs (13 Nov 2026, said many times)
 Feet and legs must never turn pointed ("nhọn") or drawn out in a run, a jump or any move. Before showing the owner any
 pet, look at its feet yourself, frame by frame at full size, in the films of every run and jump, filmed on open flat

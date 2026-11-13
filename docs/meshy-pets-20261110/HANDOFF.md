@@ -7,6 +7,8 @@ print the key; after a paid run `python tools/meshy/ledger_sync.py`. Back up (co
 
 Read first: `.claude/skills/meshy-characters/SKILL.md` (section "Animals"), `docs/meshy-pets-20261110/PLAN.md`.
 
+**Read `docs/meshy-pets-20261110/FEEDBACK.md` first: every owner remark on the pets and its status.**
+
 ## Takeover summary (13 Nov 2026 AEDT, early morning)
 
 **Approved by the owner and committed:** puppy (11 Nov), dragon and firefly companions, near and light models

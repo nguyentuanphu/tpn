@@ -68,9 +68,12 @@ for (const [title, secs, speed, move] of PARTS.filter(p => !ONLY || ONLY.include
       const par = o.parent, st = F.stage; F.ground.position.set(o.position.x, o.position.y - .002, o.position.z); st.add(o); o.updateMatrixWorld(true);
       shot(near(0), 0, 0, 'gần: trước', st); shot(near(.8), 1, 0, 'gần: nghiêng', st); shot(near(Math.PI / 2), 2, 0, 'gần: cạnh', st);
       shot(near(Math.PI), 0, 1, 'gần: sau', st);
-      par.add(o); o.updateMatrixWorld(true);
-      const gc = new THREE.PerspectiveCamera(50, 1, .1, 400); gc.position.set(h.pos.x - Math.sin(h.yaw) * 6, h.pos.y + 3.2, h.pos.z - Math.cos(h.yaw) * 6); gc.lookAt(h.pos.x, h.pos.y + 1.4, h.pos.z); shot(gc, 1, 1, 'sau bé 6 m (như game)');
-      const far = new THREE.PerspectiveCamera(30, 1, .1, 400); far.position.set(h.pos.x + Math.cos(h.yaw) * 12, h.pos.y + 3, h.pos.z - Math.sin(h.yaw) * 12); far.lookAt(cc.x, cc.y - .3, cc.z); shot(far, 2, 1, 'xa 12 m');
+      // (13 Nov 2026, owner: "Chuyển mấy con thú này sang chỗ nào trống mà chụp, chụp ngay cái ruộng nó che hết chân": the game's
+      // camera and the far view on the open stage too, the child with the pet on flat grass; nothing in front of the feet)
+      const kid = h.av.root, kpar = kid.parent; st.add(kid); kid.updateMatrixWorld(true);
+      const gc = new THREE.PerspectiveCamera(50, 1, .1, 400); gc.position.set(h.pos.x - Math.sin(h.yaw) * 6, h.pos.y + 3.2, h.pos.z - Math.cos(h.yaw) * 6); gc.lookAt(h.pos.x, h.pos.y + 1.4, h.pos.z); shot(gc, 1, 1, 'sau bé 6 m (như game)', st);
+      const far = new THREE.PerspectiveCamera(30, 1, .1, 400); far.position.set(h.pos.x + Math.cos(h.yaw) * 12, h.pos.y + 3, h.pos.z - Math.sin(h.yaw) * 12); far.lookAt(cc.x, cc.y - .3, cc.z); shot(far, 2, 1, 'xa 12 m', st);
+      kpar.add(kid); kid.updateMatrixWorld(true); par.add(o); o.updateMatrixWorld(true);
       hid.forEach(q => { q.visible = true; });
       x.fillStyle = '#222'; x.font = 'bold 18px sans-serif'; x.fillText(`${r.kind}: ${title}  (clip ${r.clip || '?'}, ${r.hd ? 'HD' : 'nhẹ'})`, 8, 20);
       return cv.toDataURL('image/jpeg', .85);
