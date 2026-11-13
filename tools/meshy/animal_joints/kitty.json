@@ -39,12 +39,13 @@
   "leg_amp": 0.5,
   "audit": {
     "tear": 25,
-    "why": "12 Nov 2026, looked at the marked pictures (idle, bounce, carry, from the side and level): 7-21 px of background between the little bell hanging on the collar and the chest; not a hole in the skin."
+    "why": "12 Nov 2026, looked at the marked pictures (idle, bounce, carry, from the side and level): 7-21 px of background between the little bell hanging on the collar and the chest; not a hole in the skin. 14 Nov 2026 (approval gate): lid 161 at worst (near sleep, -0.4): looked at the marks and the 1024 px boards: 1-3 px slivers along the lid's inner edge against the pale stripe between the eyes, seen at a slant; on the boards the shut eyes blend into the fur.",
+    "lid": 180
   },
   "jump_knee": 1,
   "jump_legs": 0.6,
   "lash_dark": 0.2,
   "lash_spot": 0.06,
   "fill_near": 0.25,
-  "lid_lift": 0.002
+  "lid_lift": 0.004
 }
