@@ -537,7 +537,7 @@ def lid(img, b, top=0., bot=1.):   # (original_skin) a closed lid painted over t
         # eye pixel, grey rim included, 3 px wider, is lid (never above the eye's upper part, where the brows are)
         _eg = _em.copy()
         for _ in range(3): _eg = _eg | np.roll(_eg, 1, 0) | np.roll(_eg, -1, 0) | np.roll(_eg, 1, 1) | np.roll(_eg, -1, 1)
-        hole |= _eg & _far & (yy >= cy_ - ry * .7) & ~(HAIRISH & (yy < b[1] + h_ * .15))
+        hole |= _eg & _far & (yy >= b[1] + h_ * .2) & ~HAIRISH   # (below the eye box's top fifth, never hair: the brows' lower edge and fringe strands were wiped, the auditor's stray check)
         if _em.any():
             _cols = np.where(_em.any(0), H_ - 1 - np.argmax(_em[::-1], 0), -1).astype(np.float32)
             _xs = np.nonzero(_cols >= 0)[0]
@@ -686,6 +686,23 @@ if OWN:
         d = np.hypot((xx - cx_) / (w_ / 2 * gx_), (yy - cy_) / (h_ / 2 * gy_)); return np.clip((1 - d) / .25, 0, 1)
     EYE_A = np.zeros((H_, W_), np.float32)
     for b in eyes.values(): EYE_A = np.maximum(EYE_A, soft_oval(grow(b), 1.3, 1.8) * np.clip((grow(b)[3] + 3 - yy) / 6, 0, 1))   # (13 Nov 2026, Lumi's and Finn's closed eyes at three-quarters: the lid piece reached down over the cheek as a lighter flat patch with a hard edge across the blush; it ends softly just below the eye's grown box)   # (10 Nov 2026: 1.3 wide, was 1.7: on Finn's narrow face the blink piece reached the cheek's side and drew dark streaks before his ears)
+    # (14 Nov 2026, the auditor's stray check: a thin line along the lower edge of every brow on closed eyes, Sol's, Clara's,
+    # Finn's) the piece never reaches the brow: in each column above the eye's white, past the lash and the skin under the
+    # brow, the next dark run is the brow, and the piece ends 2 px below it
+    _dk_ = (V < .55) | HAIRISH
+    for b in eyes.values():
+        _wh = (yy >= b[1]) & (yy < b[3]) & (xx >= b[0]) & (xx < b[2]) & (V > .78) & (S_ < .22)
+        if not _wh.any(): continue
+        _wt = int(np.nonzero(_wh)[0].min()); g_ = grow(b)
+        for x_ in range(max(0, g_[0] - (g_[2] - g_[0]) // 3), min(W_, g_[2] + (g_[2] - g_[0]) // 3)):
+            y_ = _wt; st_ = 0
+            while y_ > 0 and y_ > _wt - (b[3] - b[1]) * 1.2:
+                d_ = bool(_dk_[y_, x_])
+                if st_ == 0 and d_: st_ = 1          # the lash
+                elif st_ == 1 and not d_: st_ = 2    # skin under the brow
+                elif st_ == 2 and d_:   # the brow: nothing over it and its soft lower edge, then a 4 px ramp
+                    _e0 = max(0, y_ + 5); EYE_A[:_e0, x_] = 0; EYE_A[_e0:_e0 + 4, x_] *= np.linspace(.25, 1, 4)[:max(0, min(4, H_ - _e0))]; break
+                y_ -= 1
     MOUTH_A = np.maximum(soft_oval(mouth, 1.7, 2.6), soft_oval(mouth_er, 1.4, 1.6)) if mouth else np.zeros((H_, W_), np.float32)
     # (hair in front stays the 3D hair; but never inside the eyes: Sol's amber irises are hair-coloured and stayed open)
     _ineyes = np.zeros((H_, W_), bool)
