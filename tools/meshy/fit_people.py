@@ -1574,10 +1574,11 @@ if TEX and KEEP and SHIFT:
         # width, half height), is painted skin outright while the eyes are shut
         _eo = []
         for b in list(eyes.values())[:2]:
-            _w, _h = b[2] - b[0], b[3] - b[1]; _x0, _x1, _y0, _y1 = b[0] - _w * .14, b[2] + _w * .14, b[1] - _h * .22, b[3] + _h * .28
+            _w, _h = b[2] - b[0], b[3] - b[1]; _x0, _x1, _y0, _y1 = b[0] - _w * .24, b[2] + _w * .24, b[1] - _h * .28, b[3] + _h * .32   # (14 Nov 2026, gate k: the socket's pale outline just outside .14 / .22 / .28 showed round shut eyes, r045, r064, r057, r050)
             _eo += [fx0 + (_x0 + _x1) / 2 / W_ * (fx1 - fx0), fz1 - (_y0 + _y1) / 2 / H_ * (fz1 - fz0), (_x1 - _x0) / 2 / W_ * abs(fx1 - fx0), (_y1 - _y0) / 2 / H_ * abs(fz1 - fz0)]
         while len(_eo) < 8: _eo += _eo[:4]
         for m_ in (clothm, skinm): m_['eye_ovals'] = [float(x) for x in _eo[:8]]
+        for m_ in (clothm, skinm): m_['lid_half'] = float(-.25 + float(os.environ.get('FIT_HALF') or .55) * 1.55); m_['lid_sad'] = float(_sb)   # (14 Nov 2026) how far down the eye's box the half and sad lids come (grow()'s box for half), for the game's paint above them
         # (the paint is the skin right round the eyes, from the face picture (sRGB): the body's flat skin colour was lighter than
         # the socket's shade, a pale ring round every shut lid)
         _rk = np.zeros(F.shape[:2], bool)

@@ -26,7 +26,7 @@ k = (X[1] - X[0]) / (P[1] - P[0]); fx0 = X[0] - P[0] * k
 B = eb[0:4]; bb = eyes[0]; m = (B[3] - B[2]) / ((bb[3] + 10) - (bb[1] - 10)); fz1 = B[3] + (bb[1] - 10) * m
 eo = []
 for bb in eyes:
-    w, h = bb[2] - bb[0], bb[3] - bb[1]; x0, x1, y0, y1 = bb[0] - w * .14, bb[2] + w * .14, bb[1] - h * .22, bb[3] + h * .28
+    w, h = bb[2] - bb[0], bb[3] - bb[1]; x0, x1, y0, y1 = bb[0] - w * .24, bb[2] + w * .24, bb[1] - h * .28, bb[3] + h * .32
     eo += [fx0 + (x0 + x1) / 2 * k, fz1 - (y0 + y1) / 2 * m, (x1 - x0) / 2 * abs(k), (y1 - y0) / 2 * abs(m)]
 print('eyes', eyes, 'ovals', eo)
 xx, yy, Fm = g['xx'], g['yy'], g['F']
