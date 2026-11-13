@@ -199,7 +199,7 @@ const res: any = await P.page.evaluate(async ([LIST, QUICK, LIMIT]) => {
         const stray = (C: Uint8Array, ML: Uint8Array) => { const fs = new Uint8Array(N); let ks = 0; if (!eyeZ) return { fs, ks };
           for (let i = 0; i < N; i++) { if (eyeZ[i] || !mine(i) || i >= N - W * 10) continue; const x = i % W, y = (i / W) | 0;
             if (near(ML, i, 3) || near(SM.L, i, 3)) continue;   // (the mood's own mouth, bigger than the smile's: the excited "o")
-            if (mtop < 1e8 && x >= mxl - ew * .15 - 3 && x <= mxr + ew * .15 + 3 && y <= mtop + 3 && y >= mbot - 3) continue;
+            if (mtop < 1e8 && x >= mxl - ew * .5 && x <= mxr + ew * .5 && y <= mtop + ew * .5 && y >= mbot - ew * .5) continue;   // (the mood mouths are bigger than the smile's lips, and on a dark host their lips are not found: half an eye's width round the smile's mouth)
             let best = 9; for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) { const xx = x + dx, yy = y + dy; if (xx < 0 || yy < 0 || xx >= W || yy >= H) continue; const q = (yy * W + xx) * 4; best = Math.min(best, Math.hypot(C[i * 4] - C0[q], C[i * 4 + 1] - C0[q + 1], C[i * 4 + 2] - C0[q + 2]) / 255); }
             if (best > .08) { fs[i] = 1; ks++; } }
           for (const g of groups(fs)) if (g.length < 4) for (const j of g) { fs[j] = 0; ks--; }
