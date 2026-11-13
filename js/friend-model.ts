@@ -42,7 +42,7 @@ function skinTint(m, paintHex: string) {
   m.userData.skinTint = true; m.userData.paintHex = paintHex; const lax = /^(skin|face-)/.test(m.name || ''); // (parts marked skin: blush, shine and shade follow the tone too; clothes only their skin-coloured texels)
   m.userData.tint = { value: new THREE.Color(1, 1, 1) }; m.userData.paint = { value: new THREE.Color(paintHex) };
   const cover = !!m.userData.cover; m.userData.coverU = { value: 0 };
-  const kit = cover && m.userData.kit_waist != null; m.userData.kitU = { top: { value: new THREE.Color(1, 1, 1) }, bot: { value: new THREE.Color(1, 1, 1) }, on: { value: 0 }, waist: { value: m.userData.kit_waist || 0 }, neck: { value: m.userData.kit_neck || 0 }, grey: { value: m.userData.kit_grey || .7 }, shut: { value: 0 }, eyeA: { value: new THREE.Vector4(...((m.userData.eye_boxes || [0, 0, 0, 0]).slice(0, 4))) }, eyeB: { value: new THREE.Vector4(...((m.userData.eye_boxes || [0, 0, 0, 0, 0, 0, 0, 0]).slice(4, 8))) }, deq: { value: new THREE.Matrix4().fromArray(m.userData.deq || [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]) }, covCol: { value: Array.from({ length: 8 }, () => new THREE.Color(1, 1, 1)) }, covRank: { value: new Array(8).fill(99) } };
+  const kit = cover && m.userData.kit_waist != null, eyes = !cover && Array.isArray(m.userData.eye_boxes) && !!m.userData.deq; m.userData.kitU = { top: { value: new THREE.Color(1, 1, 1) }, bot: { value: new THREE.Color(1, 1, 1) }, on: { value: 0 }, waist: { value: m.userData.kit_waist || 0 }, neck: { value: m.userData.kit_neck || 0 }, grey: { value: m.userData.kit_grey || .7 }, shut: { value: 0 }, eyeA: { value: new THREE.Vector4(...((m.userData.eye_boxes || [0, 0, 0, 0]).slice(0, 4))) }, eyeB: { value: new THREE.Vector4(...((m.userData.eye_boxes || [0, 0, 0, 0, 0, 0, 0, 0]).slice(4, 8))) }, deq: { value: new THREE.Matrix4().fromArray(m.userData.deq || [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]) }, covCol: { value: Array.from({ length: 8 }, () => new THREE.Color(1, 1, 1)) }, covRank: { value: new Array(8).fill(99) } };
   m.onBeforeCompile = sh => { sh.uniforms.uTint = m.userData.tint; sh.uniforms.uPaint = m.userData.paint;
     // (owner 9 Nov 2026: the swim kit and skin showed through the tops in spots) a body point covered by a garment being
     // worn (its bits, from tools/meshy/make_clothes.py, in the alpha of the skin mark; the worn garments' bits in uCover) is
@@ -58,7 +58,16 @@ if (uKitOn > .5 && color.r < .5 && color.a * 255.0 < .5 && vKitY < uKitNeck) { m
       sh.fragmentShader = 'varying float vCov;\nvarying vec3 vCovCol;\nvarying float vKitY;\nuniform vec3 uKitTop;\nuniform vec3 uKitBot;\nuniform float uKitOn;\nuniform float uKitWaist;\nuniform float uKitGrey;\nuniform float uKitNeck;\nuniform float uShut;\nuniform vec4 uEyeA;\nuniform vec4 uEyeB;\nvarying float vKitX;\n' + sh.fragmentShader;
       Object.assign(sh.uniforms, { uKitTop: m.userData.kitU.top, uKitBot: m.userData.kitU.bot, uKitOn: m.userData.kitU.on, uKitWaist: m.userData.kitU.waist, uKitNeck: m.userData.kitU.neck, uKitGrey: m.userData.kitU.grey, uShut: m.userData.kitU.shut, uEyeA: m.userData.kitU.eyeA, uEyeB: m.userData.kitU.eyeB, uDeq: m.userData.kitU.deq, uCovCol: m.userData.kitU.covCol, uCovRank: m.userData.kitU.covRank });
     }
-    sh.fragmentShader = 'uniform vec3 uTint;\nuniform vec3 uPaint;\n' + sh.fragmentShader
+    // (13 Nov 2026, regional villagers at three-quarters: the open eye showed beside every shut lid, on the socket's sides the
+    // front-laid mood pieces do not reach) a model with eye areas but no code-made clothes (a villager) gets the shut-eye paint
+    // too: it lived only in the clothes' branch above, and a villager's positions were never turned into metres (uDeq)
+    if (eyes) {
+      sh.vertexShader = sh.vertexShader.replace('void main() {', 'varying float vKitY;\nvarying float vKitX;\nuniform mat4 uDeq;\nvoid main() {').replace('#include <begin_vertex>', `#include <begin_vertex>
+vec3 kp_ = (uDeq * vec4(position, 1.0)).xyz; vKitY = kp_.y; vKitX = kp_.x;`);
+      sh.fragmentShader = 'varying float vKitY;\nvarying float vKitX;\nuniform float uShut;\nuniform vec4 uEyeA;\nuniform vec4 uEyeB;\n' + sh.fragmentShader;
+      Object.assign(sh.uniforms, { uShut: m.userData.kitU.shut, uEyeA: m.userData.kitU.eyeA, uEyeB: m.userData.kitU.eyeB, uDeq: m.userData.kitU.deq });
+    }
+    sh.fragmentShader = 'uniform vec3 uTint;\nuniform vec3 uPaint;\n' + (eyes ? 'float eyeK_ = 0.0;\n' : '') + sh.fragmentShader
       .replace('#include <map_fragment>', `#include <map_fragment>
 vec3 pc_ = uPaint / (uPaint.r + uPaint.g + uPaint.b); vec3 tx_ = sampledDiffuseColor.rgb; float sm_ = tx_.r + tx_.g + tx_.b + 1e-4;
 #ifdef USE_COLOR
@@ -87,16 +96,21 @@ if (uShut > .5 && vColor.r > .5 && inEye_) k_ = mix(uTint * uPaint / max(tx_, ve
 if (uShut > .5 && vColor.r > .5 && vKitY > uKitNeck && max(tx_.r, max(tx_.g, tx_.b)) > .78 && (max(tx_.r, max(tx_.g, tx_.b)) - min(tx_.r, min(tx_.g, tx_.b))) < .2 * max(tx_.r, max(tx_.g, tx_.b))) k_ = uTint * uPaint / max(tx_, vec3(.02));
 if (uKitOn > .5 && vColor.r < .5 && vColor.a * 255.0 > .5 && vKitY > uKitWaist - .40) k_ = (vCov > .5 ? vCovCol : (vKitY > uKitWaist ? uKitTop : uKitBot)) * .95 / max(tx_, vec3(.02));   // (flat: the kit's own painted trims and folds showed as dark streaks in the cloth's colour) (10 Nov 2026, the auditor's new bite count: discarded, the kit left see-through holes where no cloth lay behind it, Clara's armpit as she cheered; it is painted in the innermost worn garment's colour over it, or the top's above the waist and the trousers' below)   // (10 Nov 2026: .40 now that the height is in metres: the swim shorts reach 28 cm below the waist, they showed under trousers when climbing)   // (the swimsuit's own height only, trunk and thigh tops: at the ankles a non-skin point under a trouser cuff left a hole, the auditor)   // (owner 9 Nov 2026, circled dark patches in shirts' sides and the auditor's gaps at armpits and crotches: the swim kit is always under the clothes, so while dressed it is not drawn at all; a gap shows the inside of the clothes, never the swimsuit, painted or not)
 #endif` : ''}
+${eyes ? `#ifdef USE_COLOR
+bool inEye_ = (vKitX > uEyeA.x && vKitX < uEyeA.y && vKitY > uEyeA.z && vKitY < uEyeA.w) || (vKitX > uEyeB.x && vKitX < uEyeB.y && vKitY > uEyeB.z && vKitY < uEyeB.w);
+vec3 sx_ = sqrt(tx_); float emx_ = max(sx_.r, max(sx_.g, sx_.b)), esat_ = (emx_ - min(sx_.r, min(sx_.g, sx_.b))) / max(emx_, 1e-4);   // (near the screen's colours: in linear colour her rosy skin is .74 saturated)
+eyeK_ = (uShut > .5 && vColor.r > .5 && inEye_) ? max(max((1.0 - smoothstep(.12, .2, esat_)) * smoothstep(.72, .82, emx_), 1.0 - smoothstep(.3, .45, emx_)), smoothstep(.72, .82, esat_)) : 0.0;   // (and strongly coloured, past any skin: an amber or green iris; r084's dark skin is .58)   // (the eye's own texels only, whites and grey lines (pale) or lashes and pupil (dark), in linear colour: the friends' skin test painted blush and freckles flat too, a hard-edged band across a villager's cheeks)
+#endif` : ''}
 ${cover ? `// (10 Nov 2026, owner circled bites out of the legs: the back of a bent knee, a calf under Lumi's skirt) the body under worn
 // clothes is no longer hidden: where it bulged past them as a joint bent it was a see-through bite. It is painted in the
 // colour of the innermost worn garment over it, keeping the painted light and shade, so it looks like that cloth
 #ifdef USE_COLOR
 if (vCov > ${BODY_CUT} && vColor.r > .5) k_ = vCovCol * clamp(sm_ / (uPaint.r + uPaint.g + uPaint.b + 1e-4), .85, 1.05) / max(tx_, vec3(.02));   // (skin only: the swim kit has its own flat paint above)
 #endif` : ''}
-diffuseColor.rgb *= k_;`)
-      .replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\ntotalEmissiveRadiance *= k_;')
+diffuseColor.rgb *= k_;${eyes ? '\ndiffuseColor.rgb = mix(diffuseColor.rgb, uTint * uPaint, eyeK_);' : ''}`)
+      .replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\ntotalEmissiveRadiance *= k_;' + (eyes ? '\ntotalEmissiveRadiance = mix(totalEmissiveRadiance, emissive * uTint * uPaint, eyeK_);' : ''))   // (13 Nov 2026: a shut villager eye takes the skin's colour outright: scaling a lash's near-black texel up gave coloured noise)
       .replace('#include <color_fragment>', ''); }; // (the corner colour is the skin mark, not a colour)
-  m.customProgramCacheKey = () => 'meshy-skintint' + (lax ? '-lax' : '') + (m.vertexColors ? '-mark' : '') + (cover ? '-cover' : '') + (kit ? '-kit' : ''); m.needsUpdate = true; return m;
+  m.customProgramCacheKey = () => 'meshy-skintint' + (lax ? '-lax' : '') + (m.vertexColors ? '-mark' : '') + (cover ? '-cover' : '') + (kit ? '-kit' : '') + (eyes ? '-eyes' : ''); m.needsUpdate = true; return m;
 }
 /** a child's own copy of a skin-tinted material (a clone loses the shader change and turns the colours into plain data) */
 function tintCopy(m) { const c = m.clone(); return skinTint(c, m.userData.paintHex); }
@@ -141,7 +155,8 @@ export function loadFriendModel(id: FriendId | `${FriendId}-hd`): Promise<boolea
           const own = name.startsWith('face-') && m.userData && m.userData.own_face;
           if (own) { t.transparent = true; t.depthWrite = false; t.userData.ownFace = true; o.renderOrder = 2; t.polygonOffset = true; t.polygonOffsetFactor = -6; t.polygonOffsetUnits = -24; } // (owner 8 Nov 2026: the curved cheek poked through the piece between its grid points as stripes and patches: the piece is drawn just on top)
           if (ref && (name.startsWith('skin-tex') || name.startsWith('face-'))) { t.userData.skinRef = ref; if (name.startsWith('face-') && !own) faceTint(t); }
-          if (t.userData.cover) { g.scene.updateMatrixWorld(true); t.userData.deq = g.scene.matrixWorld.clone().invert().multiply(o.matrixWorld).elements.slice(); }   // (the file's quantized positions to the model's metres: skinTint's eye areas, waist and neck)
+          if (!t.userData.cover && t.vertexColors && m.userData && Array.isArray(m.userData.eye_boxes)) t.userData.eye_boxes = m.userData.eye_boxes;   // (13 Nov 2026: a villager's eye areas too, for the shut-eye paint)
+          if (t.userData.cover || t.userData.eye_boxes) { g.scene.updateMatrixWorld(true); t.userData.deq = g.scene.matrixWorld.clone().invert().multiply(o.matrixWorld).elements.slice(); }   // (the file's quantized positions to the model's metres: skinTint's eye areas, waist and neck)
           mats.set(m, t);
         }
       });

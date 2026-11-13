@@ -641,6 +641,12 @@ def lid(img, b, top=0., bot=1.):   # (original_skin) a closed lid painted over t
         # the blush is not "skin" to skin_mask, so it was held at the painted skin too) only what is dark or grey (lashes, brows,
         # hair, the eye white) is held; light warm colour round the hole (blush, the socket's shade) keeps its own colour
         _hsv0 = hsv_np(img[ya:yb, xa:xb, :3]); _warm0 = (_hsv0[2] > .62) & (_hsv0[1] > .18)
+        # (r074, preview: the blush and freckles under her shut eyes filled flat: -EyeDark grows the eye box through what is
+        # not skin, and her flushed cheeks are not) light warm colour below the eye (lower than its white's lowest row and a
+        # tenth of its height: taking warm colour out round the eye itself left the iris and the socket's shade as smudges)
+        # is no part of the lid hole
+        _wr = np.nonzero(((_hsv0[2] > .78) & (_hsv0[1] < .22) & hm).any(1))[0]
+        if len(_wr): hm = hm & ~(_warm0 & (_hsv0[1] < .7) & (np.arange(hm.shape[0])[:, None] > _wr.max() + h_ * .1))
         sub[~hm & ~_sm & _warm0] = img[ya:yb, xa:xb, :3][~hm & ~_sm & _warm0]
     # (owner 8 Nov 2026: the closed lid was paler than the cheek round it) the fill starts from the skin right round the
     # hole, not her lightest skin, and runs until it has settled
