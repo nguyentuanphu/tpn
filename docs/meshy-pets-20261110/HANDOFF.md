@@ -77,7 +77,7 @@ nhảy tại chỗ còn cứng quá" plus pictures of legs (kitty beg and dig, c
 (`bounce`) is springier for all (`hop_spring`, deeper crouch, bigger squash and stretch, a turn each hop, head/ears/tail
 lag; the tail lift capped, the kitty's swung over its back); sitting, begging, digging lay the lower hind leg flat
 (`legs(..., level=)`); kitty `sit_fold` 0.6. All four rebuilt (quick audits 0 failing), films
-`D:\WorkSpace\meshy\petsilm22\` sent. No pet approved yet; full audits not run since these changes.
+`D:\WorkSpace\meshy\pets\film22\` sent. No pet approved yet; full audits not run since these changes.
 
 `tests/check-times.json` (suite timing) is left uncommitted on purpose. Nothing is running.
 
