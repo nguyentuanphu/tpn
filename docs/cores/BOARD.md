@@ -1,6 +1,6 @@
 ## Cow cloud — 13/11/2026 AEDT: R16 chờ chủ duyệt hình thức
 
-Nhánh `meshy-farm-cloud`. Chỉ cow; sheep/chicken dừng. R16: audit 120 ca / 0 lỗi vượt ngưỡng, selftest bắt đủ 6 lỗi giả, TypeScript PASS; đã xem ảnh game điện thoại/tablet/máy tính, đổi gần → xa → gần đạt. Phim hai LOD và file Blender đã pack ở [trang duyệt](../meshy-farm-cloud/cow/review/index.html); [handoff](../meshy-farm-cloud/HANDOFF.md) có task ID, tiền và giới hạn kiểm tra. Chi 40 credit, số dư GET lại 1574; không POST thêm. CI toàn repo đang chạy/đối chứng nhánh nguồn, không tuyên bố xanh. **Chưa owner-approved, chưa ready for Release; không merge main/deploy/tăng version.**
+Nhánh `meshy-farm-cloud`. Chỉ cow; sheep/chicken dừng. R16: audit 120 ca / 0 lỗi vượt ngưỡng, selftest bắt đủ 6 lỗi giả, TypeScript PASS; đã xem ảnh game điện thoại/tablet/máy tính, đổi gần → xa → gần đạt. Phim hai LOD và file Blender đã pack ở [trang duyệt](../meshy-farm-cloud/cow/review/index.html); [handoff](../meshy-farm-cloud/HANDOFF.md) có task ID, tiền và giới hạn kiểm tra. Chi 40 credit, số dư GET lại 1574; không POST thêm. CI toàn repo và đối chứng đã kết thúc, đều không đạt; handoff có kết quả, phân biệt lỗi trùng với nguồn và lỗi chưa đối chứng. Không tuyên bố xanh. **Chưa owner-approved, chưa ready for Release; không merge main/deploy/tăng version.**
 
 ## Meshy pets and companions — 12 November 2026 AEDT: ready for Release
 

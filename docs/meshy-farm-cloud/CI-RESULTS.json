@@ -1,0 +1,1991 @@
+{
+  "farmRun": 43360155840,
+  "runtimeCommit": "a27a31a3b",
+  "baselineRun": 43360999514,
+  "farmResults": {
+    "two-players": {
+      "ok": true,
+      "secs": 47,
+      "note": ""
+    },
+    "offscreenpanels": {
+      "ok": true,
+      "secs": 159,
+      "note": "Grown-ups, Settings, Play and the Pad on 5 screens (phone to computer): every button can be reached"
+    },
+    "simplereturnfruit": {
+      "ok": true,
+      "secs": 123,
+      "note": "all three invited fruit previews; consent/global/mode gates and late Studio refresh; game/story return keeps both scroll axes in 8 device/language layouts; intentional tabs reset"
+    },
+    "owneractivityshell": {
+      "ok": true,
+      "secs": 21,
+      "note": "Small activity header stays visible while body scrolls; reward counter cannot cover guidance; queued valley captions are hidden on entry"
+    },
+    "walkaway": {
+      "ok": true,
+      "secs": 29,
+      "note": "3 m away the talk box and the chat stay; 9 m away both have closed by themselves"
+    },
+    "ownertransportpov": {
+      "ok": true,
+      "secs": 86,
+      "note": "[{\"age\":\"little\",\"kind\":\"bus\",\"seen\":24252,\"pov\":true,\"restored\":true,\"insideWindow\":true},{\"age\":\"little\",\"kind\":\"busAU\",\"seen\":24400,\"pov\":true,\"restored\":true,\"insideWindow\":true},{\"age\":\"little\",\"kind\":\"touristCart\",\"seen\":22913,\"pov\":true,\"restored\":true,\"insideWindow\":true},{\"age\":\"little\",\"kind\":\"tramModern\",\"seen\":27447,\"pov\":true,\"restored\":true,\"insideWindow\":true},{\"age\":\"little\",\"kind\":\"xichlo\",\"seen\":34276,\"pov\":true,\"restored\":true,\"insideWindow\":true},{\"age\":\"big\",\"kind\":\"bus\",\"seen\":27109,\"pov\":true,\"restored\":true,\"insideWindow\":true},{\"age\":\"big\",\"kind\":\"busAU\",\"seen\":27376,\"pov\":true,\"restored\":true,\"insideWindow\":true},{\"age\":\"big\",\"kind\":\"touristCart\",\"seen\":25377,\"pov\":true,\"restored\":true,\"insideWindow\":true},{\"age\":\"big\",\"kind\":\"tramModern\",\"seen\":26791,\"pov\":true,\"restored\":true,\"insideWindow\":true},{\"age\":\"big\",\"kind\":\"xichlo\",\"seen\":34654,\"pov\":true,\"restored\":true,\"insideWindow\":true}]"
+    },
+    "ownerdecoroverlap": {
+      "ok": true,
+      "secs": 27,
+      "note": "[{\"key\":\"village\",\"firstAmount\":5,\"secondAmount\":5,\"stages\":[4,4],\"amounts\":[{\"planned\":140,\"drawn\":140},{\"planned\":140,\"drawn\":140}],\"counts\":[129,140],\"overlap\":[],\"onSupport\":[]},{\"key\":\"village\",\"firstAmount\":5,\"secondAmount\":5,\"stages\":[4,1],\"amounts\":[{\"planned\":140,\"drawn\":140},{\"planned\":70,\"drawn\":70}],\"counts\":[129,70],\"overlap\":[],\"onSupport\":[]},{\"key\":\"village\",\"firstAmount\":5,\"secondAmount\":1,\"stages\":[4,4],\"amounts\":[{\"planned\":140,\"drawn\":140},{\"planned\":28,\"drawn\":28}],\"counts\":[129,28],\"overlap\":[],\"onSupport\":[]},{\"key\":\"village\",\"firstAmount\":3,\"secondAmount\":7,\"stages\":[4,4],\"amounts\":[{\"planned\":84,\"drawn\":84},{\"planned\":196,\"drawn\":196}],\"counts\":[73,195],\"overlap\":[],\"onSupport\":[]}]"
+    },
+    "realrides": {
+      "ok": true,
+      "secs": 39,
+      "note": "a bus to the farthest stop (Brisbane, 422 m along the roads) drives there with the child on board, planned 64.9 s; 6.8 m along the road in the first moments, on the road; the child gets off at the stop and the bus goes back to its route"
+    },
+    "ridingcamera": {
+      "ok": true,
+      "secs": 160,
+      "note": "24 model/age combinations: every vehicle with a mount action plus buffalo, forward view and windscreens, actual High up control, Street view and POV zoom; phone/tablet/computer photos saved"
+    },
+    "areastream": {
+      "ok": false,
+      "note": "the graphics memory kept growing: [{\"geo\":2473,\"tex\":967,\"sleepy\":6,\"stillAsleepAtHome\":[]},{\"geo\":2594,\"tex\":1015,\"sleepy\":6,\"stillAsleepAtHome\":[]},{\"geo\":2639,\"tex\":1069,\"sleepy\":6,\"stillAsleepAtHome\":[]}]",
+      "secs": 88,
+      "alone": true,
+      "first": "the graphics memory kept growing: [{\"geo\":2452,\"tex\":979,\"sleepy\":6,\"stillAsleepAtHome\":[]},{\"geo\":2627,\"tex\":1038,\"sleepy\":6,\"stillAsleepAtHome\":[]},{\"geo\":2692,\"tex\":1079,\"sleepy\":6,\"stillAsleepAtHome\":[]}]"
+    },
+    "parents": {
+      "ok": true,
+      "secs": 65,
+      "note": "mission written, shown, ticked with a hold (+10); weekly note; certificate picture saved, and printed on its own page (only the card, not the game); dance break with a 64 px Skip; bedtime dims, lullaby, goodnight, hold for 10 more; birthday surprise; switches off"
+    },
+    "currency": {
+      "ok": true,
+      "secs": 24,
+      "note": "English AUD $2.50, Vietnamese VND 20.000đ, a grown-up's AUD stays AUD in Vietnamese"
+    },
+    "wearfit": {
+      "ok": true,
+      "secs": 5,
+      "note": "on Finn, Sol, Clara and Lumi: 23 hats, 6 glasses and masks, 8 neck things, 12 backs and 8 shoes, all drawn and in place"
+    },
+    "joins": {
+      "ok": true,
+      "secs": 21,
+      "note": "11566 steps along every road and into every junction and bridge: no step over 6 cm (ROAD-017)"
+    },
+    "meet": {
+      "ok": true,
+      "secs": 86,
+      "note": "\"Na đang chơi! Mời bạnĐể sau…\"; nobody moved for 10 s; 📨 Invite → Join: room 766084, names shown"
+    },
+    "hanoivoice": {
+      "ok": true,
+      "secs": 41,
+      "note": "Lê Minh and the male voices put aside (owner, 3 Nov 2026 AEDT): files kept in voices-aside/, not in voices/; lists name only the female English and Vietnamese voices; a device that had chosen them moved to female with its other settings kept; no male or Lê Minh choice and no Chinese/Hindi \"Also learn\" buttons in Grown-ups on phone, tablet and computer (en, vi); nothing put aside fetched"
+    },
+    "reportdetectors": {
+      "ok": true,
+      "secs": 1,
+      "note": "scroll/background/hidden controls excluded; real offscreen and failed opens retained; successful quick close and cancellation do not report"
+    },
+    "ownerfestplacement": {
+      "ok": true,
+      "secs": 28,
+      "note": "130 planned town decorations respect the actual shifted town-road bounds, independent of their own mask"
+    },
+    "fivescreens": {
+      "ok": true,
+      "secs": 2042,
+      "note": "370 games at phoneport 390x844, phoneportlittle 390x844, phoneland 844x390, phonelandlittle 844x390: inside the screen, no scrolling, text at least 16 px, touch targets at least 44/64 px, no overlaps"
+    },
+    "s2au": {
+      "ok": true,
+      "secs": 35,
+      "note": "3 regions shut before their day (sign, no pin, games hidden) and open on it; friend, food, landmark and 3 game stands each on dry open ground; food once from the friend, once a day from the stand; islands 2.6, 2 m; the coast boat melbourne → gbr → tasmania → perth → rottnest on water; built only when a child comes near, nothing in the first download"
+    },
+    "s2auperth": {
+      "ok": true,
+      "secs": 116,
+      "note": "s2a_quokka, s2a_swan, s2a_beach: won by real taps at Easy and Talent (s2a_quokka 7→26 taps, s2a_swan 17→55 taps, s2a_beach 5→8 taps); one screen on 5 sizes; pictures in tests/out/s2au"
+    },
+    "testertryagain": {
+      "ok": true,
+      "secs": 44,
+      "note": "Try again: a game opens at the report's level, a screen on its tab, a quest step walks to its goal with the ring, a thing is faced and ringed, a place-only report says Action unknown; new reports save the thing and the screen"
+    },
+    "bilingual": {
+      "ok": true,
+      "secs": 0,
+      "note": "every English line is English (names, songs and sayings on the allow list)"
+    },
+    "festgameids": {
+      "ok": true,
+      "secs": 8,
+      "note": "24 festival games, the same in both lists"
+    },
+    "saves": {
+      "ok": false,
+      "note": "{\"coins\":30,\"orbs\":0,\"pc\":false,\"restored\":true,\"kept\":true,\"device\":\"savecheck123\"}",
+      "secs": 51,
+      "alone": true,
+      "first": "{\"coins\":30,\"orbs\":0,\"pc\":false,\"restored\":true,\"kept\":true,\"device\":\"savecheck123\"}"
+    },
+    "language": {
+      "ok": true,
+      "secs": 45,
+      "note": ""
+    },
+    "gameplace": {
+      "ok": true,
+      "secs": 65,
+      "note": "328 switched-on games, each with a place and a host; 420 games already open counted as known; a host told about a new game once (name on screen: true); Bà Năm told about a new story"
+    },
+    "r79bagtiles": {
+      "ok": true,
+      "secs": 124,
+      "note": "phone: 14 tiles, bigphone: 14 tiles, computer: 14 tiles; pictures centred and clear of names, names at most two lines, voices note hidden behind the Pad"
+    },
+    "familyquizprivate": {
+      "ok": true,
+      "secs": 122,
+      "note": "Parent edits/saves/cancels with named keyboard-contained dialog, long-text/answer-removal/empty-save recovery without changing child progress; questions round-trip in save copy; real confirmed old-copy restore clears private questions while declined restore preserves them; actual separate-identity encrypted invitation works with no guest copy, gentle misses/reveal/finish/device-only speech, no plaintext/provider/missing-report leak,12 bilingual parent/game device captures"
+    },
+    "familyquizcrypto": {
+      "ok": true,
+      "secs": 1,
+      "note": "Actual Net ECDH/AES-GCM round works only for the intended separate browser identity; no plaintext question packet, outsider/wrong round/tamper/recipient rejected, active-game/key/room changes stop late publication"
+    },
+    "goatcircle": {
+      "ok": true,
+      "secs": 104,
+      "note": "Blindfold Tag circle game: eight EN/VI device layouts all on one screen, 64px controls, nearby-only catches, three-round completion and plan cleanup; goat is the haystack game; five EN/VI device layouts, 64px controls, nearby-only catches, three-round completion and plan cleanup"
+    },
+    "ladybugunified": {
+      "ok": true,
+      "secs": 89,
+      "note": "solo: one floating ladybug, autoplay accessible inside it; both mount orders and remount, 6 device/language layouts"
+    },
+    "kidplay": {
+      "ok": true,
+      "secs": 67,
+      "note": "fed once a day, grew to size 3 with a trick, bought the party hat (100 → 70 coins), opened today's gift (+15), Skip on story films; every switch turns its part off"
+    },
+    "gamewinlayout": {
+      "ok": true,
+      "secs": 32,
+      "note": "10 EN/VI phone/full and phone/tablet/computer split panes, down to 320 px; both choices and finish instruction visible, choices hittable and at least 64 px"
+    },
+    "ridecowswim": {
+      "ok": true,
+      "secs": 48,
+      "note": "cow: 14.4 s in the lake's water, head above it, out again; buffalo: 14.4 s in the lake's water, head above it, out again"
+    },
+    "talkonce": {
+      "ok": true,
+      "secs": 49,
+      "note": "a second ask while Tèo is talking is ignored; Play! leaves nothing under the game; he talks again afterwards"
+    },
+    "newfriends": {
+      "ok": true,
+      "secs": 197,
+      "note": "phone, phone-land, tablet, computer: name, boy or girl (Finn and Sol, Clara and Lumi side by side), Lumi with the third skin tone, then the editor; every step on one screen"
+    },
+    "multiplayer": {
+      "ok": true,
+      "secs": 216,
+      "note": "knocked with the microphone off, let in, then met at 1.0 m, talk bubble received",
+      "alone": true,
+      "first": "page.waitForFunction: Timeout 15000ms exceeded."
+    },
+    "report": {
+      "ok": true,
+      "secs": 47,
+      "note": "3 games and 2 minutes counted today for the child who played; the report shows the week (7 days), the favourite games and what was collected"
+    },
+    "ownerreporteddesktop": {
+      "ok": true,
+      "secs": 268,
+      "note": "desktop 1260x1337 en modal grownups: 17/24 controls matched desktop 1260x1337 en modal hub: 14/14 controls matched desktop 1256x1332 vi modal qsettings: 1/1 controls matched desktop 1256x1332 vi modal grownups: 0/1 controls matched desktop 1256x1332 vi modal tpanel: 0/1 controls matched desktop 1258x1335 en modal hub: 3/3 controls matched desktop 1258x1335 en modal pad: 3/3 controls matched {\"reports\":47,\"reachable\":38,\"unresolved\":9,\"blocked\":0}"
+    },
+    "roundvariety": {
+      "ok": false,
+      "note": "did not finish within 45 min (stopped so the later checks still run)",
+      "secs": 2700,
+      "alone": true,
+      "first": "did not finish within 45 min (stopped so the later checks still run)"
+    },
+    "villagermodels": {
+      "ok": true,
+      "secs": 284,
+      "note": "the crowd wears villager-vn-aodai; 11 villagers wear their models with the head at the code person's head (mai 1.68 m, ba 1.51 m, teo 1.35 m, ti 1.35 m, bong 1.35 m, su 1.35 m, jack 1.35 m, mit 1.35 m, bom 1.35 m, ruby 1.35 m, lan 1.35 m), blink and look at the child; blocked, the code people stay"
+    },
+    "noemoji": {
+      "ok": true,
+      "secs": 342,
+      "note": "no phone emoji on Who's playing, the valley, Vui chơi, 8 Pad tabs, Grown-ups, a speech box and 372 games; painted labels use the drawings"
+    },
+    "features": {
+      "ok": true,
+      "secs": 52,
+      "note": "{\"cities\":8,\"roads\":42,\"landmarks\":55,\"kiosks\":28,\"hosts\":8,\"house8\":true,\"tales\":92,\"vnTales\":40,\"deck\":4.5,\"river\":-0.6,\"pets\":\"kitty+puppy\",\"petsVisible\":true,\"dialogClosed\":true,\"keyMap\":true,\"keyTab\":\"bag\",\"zoom\":true,\"theatre\":true,\"flewToHost\":true,\"chatter\":true}"
+    },
+    "contract": {
+      "ok": false,
+      "note": "UI structure changed: {\"hud\":[\"chip.c-money\",\"chip.c-orbs\",\"chip.c-leafy\",\"simplesw\",\"chip.c-pet\",\"chip.c-goal\",\"chip.c-box\",\"chip.c-fetch\",\"chip.c-lead\",\"q-say\",\"q-go\",\"q-fam\",\"adv-open\",\"adv-walk\",\"adv-hear\",\"friendchip\",\"dk.snd\",\"dk.chat\",\"dk.call\",\"dk.mus\",\"z-tray\",\"z-in\",\"z-out\",\"z-view\",\"z-where\",\"dk.games\",\"dk.map\",\"dk.bag\",\"dk.voicecmd\",\"act\",\"mv.run\",\"mv.jump\",\"em\",\"em\",\"em\",\"em\",\"em\",\"em\",\"em\",\"em\",\"bigprompt\"],\"tabs\":[\"map\",\"bag\",\"pals\",\"shop\",\"log\",\"album\",\"passport\",\"games\",\"cam\",\"cal\",\"friend\"],\"hubSections\":1}",
+      "secs": 39,
+      "alone": true,
+      "first": "UI structure changed: {\"hud\":[\"chip.c-money\",\"chip.c-orbs\",\"chip.c-leafy\",\"simplesw\",\"chip.c-pet\",\"chip.c-goal\",\"chip.c-box\",\"chip.c-fetch\",\"chip.c-lead\",\"q-say\",\"q-go\",\"q-fam\",\"adv-open\",\"adv-walk\",\"adv-hear\",\"friendchip\",\"dk.snd\",\"dk.chat\",\"dk.call\",\"dk.mus\",\"z-tray\",\"z-in\",\"z-out\",\"z-view\",\"z-where\",\"dk.games\",\"dk.map\",\"dk.bag\",\"dk.voicecmd\",\"act\",\"mv.run\",\"mv.jump\",\"em\",\"em\",\"em\",\"em\",\"em\",\"em\",\"em\",\"em\",\"bigprompt\"],\"tabs\":[\"map\",\"bag\",\"pals\",\"shop\",\"log\",\"album\",\"passport\",\"games\",\"cam\",\"cal\",\"friend\"],\"hubSections\":1}"
+    },
+    "festivalgames": {
+      "ok": true,
+      "secs": 50,
+      "note": "24 festivals, each with its own game at its table; open with the decorations until 3 days after, testers 7 days early, put away with the day it comes back; fg_tet, fg_christmas, fg_diwali played to a win"
+    },
+    "chips": {
+      "ok": true,
+      "secs": 85,
+      "note": "coins, Sparkle Orbs and Leafies: a name to hover and a card on tap, top bar and Backpack, English and Vietnamese"
+    },
+    "boxes": {
+      "ok": false,
+      "note": "the Studio switches did not turn it off",
+      "secs": 43,
+      "alone": true,
+      "first": "the Studio switches did not turn it off"
+    },
+    "levelsa": {
+      "ok": true,
+      "secs": 110,
+      "note": "26 games show more at Talent than at Easy: letters 3→6, memory 6→20, minichess 1→2, whosits 3→5, hanoi 2→5, robot 16→36, goat 9→36, eggs 12→16, opposites 3→5, days 3→5, oantuti 3→5, rulefinder 3→5, steppingpath 16→25, sayfind 4→8, numline 3→4, tiles 9→20, foldbox 4→5, whichgroup 3→5, guesswhat 3→6, pricetags 2→4, sharefair 2→4, cheaper 2→4, tangram 3→5, rangoli 4→6, mx_sprint 3→4, mx_patterns 3→4"
+    },
+    "camera": {
+      "ok": true,
+      "secs": 36,
+      "note": "219/220 clear (grazing: nhatron@4.71)"
+    },
+    "rememberedhomes": {
+      "ok": true,
+      "secs": 45,
+      "note": "remembered plot becomes a named, visitable home with its owner; invalid/empty plots stay gardens; stable anchors beat stale coordinates"
+    },
+    "rigidmodels": {
+      "ok": true,
+      "secs": 0,
+      "note": "[{\"kind\":\"owl\",\"oldPieces\":13,\"newPieces\":1,\"triangles\":2696,\"maxError\":1.4901161193847656e-8},{\"kind\":\"gourd\",\"oldPieces\":7,\"newPieces\":1,\"triangles\":1344,\"maxError\":0}]"
+    },
+    "surprises": {
+      "ok": false,
+      "note": "the Studio switch does not take it away",
+      "secs": 86,
+      "alone": true,
+      "first": "the Studio switch does not take it away"
+    },
+    "friendswap": {
+      "ok": true,
+      "secs": 34,
+      "note": "the Bag shows clara,lumi; one tap changed friend, drew the new hair and saved it; the other set cannot be chosen there"
+    },
+    "onlineoff": {
+      "ok": true,
+      "secs": 31,
+      "note": "a fresh device: \"Playing with friends is off. Ask a grown-up to turn it on.\", no Start or Join; a grown-ups' note names Internet and playing online → Use the internet (EN and VI, no Studio) and its press-and-hold button opens that section (a tap does not); host, join and friends make no connection"
+    },
+    "ownervoicerefresh": {
+      "ok": true,
+      "secs": 40,
+      "note": "Older cached manifest returns immediately; delayed fresh index reaches the running game without reload and remains available offline"
+    },
+    "voiceopus": {
+      "ok": true,
+      "secs": 103,
+      "note": "20703 recordings with an Opus copy; one line 25056 -> 11693 bytes; a new Opus device plays the Opus copy (6.3 s), a device keeping MP3 stays on MP3, a browser without Opus gets MP3"
+    },
+    "halves": {
+      "ok": true,
+      "secs": 127,
+      "note": "side by side and face to face: each window opens in its own child's half and pauses only that child; both can have one open"
+    },
+    "chapter2": {
+      "ok": true,
+      "secs": 247,
+      "note": "under-5: 6 steps (3 turtles, the companion lit the way); big kid: 8 steps (Ô ăn quan, bún chả by hand, 5 turtles and a question, clues); rope, film (2 pages), Cầu Thê Húc lit, parade, keepsake, new trick, golden turtle for the big kid; then \"L_c3_fly\""
+    },
+    "storyquestflow": {
+      "ok": true,
+      "secs": 199,
+      "note": "actual VI leaf/carry narration uses recordings; rope drag hangs chapter-one lantern; under-5 three-turtle and older-child five-turtle quests finish through legal autoplay controls"
+    },
+    "fivescreensfilmscomputer": {
+      "ok": true,
+      "secs": 1212,
+      "note": "92 tales (437 pages over the sizes) and 372 guide films at computer 1440x900: inside the screen, no scrolling, no overlaps, words at least 16 px, buttons at least 44 px"
+    },
+    "websitenews": {
+      "ok": true,
+      "secs": 10,
+      "note": "strip under the hero (3 parts) and the Calendar part inside Discover, EN and VI: phone 31 rows; phone sideways 31 rows; tablet 31 rows; tablet sideways 31 rows; computer 31 rows"
+    },
+    "chapter11": {
+      "ok": true,
+      "secs": 169,
+      "note": "little 4 steps, big 5 steps; ch11: closed before its calendar day, open on it; played to the film, the place lit, the keepsake and the trick, as an under-5 and as a big kid; nothing on a road or in the water"
+    },
+    "festivalpack": {
+      "ok": true,
+      "secs": 61,
+      "note": "christmas: nothing a month ahead; 3 days before its decorations it waits on mobile data and downloads its 6 recordings on Wi-Fi; Light keeps it while due and removes it after; Full keeps it"
+    },
+    "worldcreatures": {
+      "ok": false,
+      "note": "calf: z size 0.76 vs code 1.20",
+      "secs": 68,
+      "alone": true,
+      "first": "calf: z size 0.76 vs code 1.20"
+    },
+    "faces": {
+      "ok": true,
+      "secs": 101,
+      "note": "finn blinks at 1.7 s, sol blinks at 1.37 s, clara blinks at 1.57 s, lumi blinks at 1.1 s, villager blinks at 3.27 s; half, closed, half; lids close fully; happy, surprised and sad faces; the eyes turn to a child on either side; the high-detail clara only, near (light far away, light when blocked); sculpted faces (light and high-detail): lids close (eye white open 200/353/0/237/149/574/103/337, closed 0), 8 mouth shapes, heads not spheres ()"
+    },
+    "wading": {
+      "ok": true,
+      "secs": 45,
+      "note": "tet, midautumn, quockhanh: no decoration past the valley edge, the child walks up to all 18 near Làng Sen (232, -12) (#797); 22 waters (every river, the lake, every pond, the sea by Hạ Long, the Reef, Rottnest and Tasmania): walked in and out, wading at most 0.8 m deep, never swimming or sinking, splash rings, the camera at least 3.88 m over the water; a steep bank climbed at hoian_canal, yarra, hoguom"
+    },
+    "preload": {
+      "ok": true,
+      "secs": 0,
+      "note": "up to date: 163 scripts"
+    },
+    "contentpair": {
+      "ok": true,
+      "secs": 68,
+      "note": "22 art completions, gates, album cap, keyboard/pointer and exit checks"
+    },
+    "ownertabclaim": {
+      "ok": true,
+      "secs": 73,
+      "note": "a page loading state.js and Studio's hidden game copy leave the child's game playing; a second game tab still takes over"
+    },
+    "spill": {
+      "ok": true,
+      "secs": 264,
+      "note": ""
+    },
+    "dialogtap": {
+      "ok": true,
+      "secs": 52,
+      "note": "no repeat or OK buttons for under-5s or older children; tapping the box goes on and closes it"
+    },
+    "folkplay": {
+      "ok": true,
+      "secs": 265,
+      "note": "Six contextual folk games complete through real controls in both age modes, misses keep one board, called runners/gates enforced, rhythm/rowing finish, all progress dots,36 EN/VI device layouts: {\"meochuot-gentle\":4,\"meochuot-older\":4,\"cuopco-gentle\":12,\"cuopco-older\":12,\"keocua-gentle\":20,\"keocua-older\":20,\"danhdao-gentle\":6,\"danhdao-older\":10,\"nemcon-gentle\":9,\"nemcon-older\":13,\"duathuyen-gentle\":12,\"duathuyen-older\":12}"
+    },
+    "snakesplay": {
+      "ok": true,
+      "secs": 117,
+      "note": "Actual four-seat invited board completes in3 host taps; every peer agrees after every move, all4 gentle pieces finish,25 cells/four tokens and64px visible Roll in12 EN/VI device layouts"
+    },
+    "horseplay": {
+      "ok": true,
+      "secs": 136,
+      "note": "Real human/helper gentle match finished in 28 actions; 16/56-cell boards, all four classic seats, real movement and 64px controls in12 bilingual/device layouts"
+    },
+    "feel": {
+      "ok": true,
+      "secs": 116,
+      "note": "computer: 12/12 buttons sink, one sound a tap, window still, coins fly, tap sounds off, calm still, under-5 breathing; phone: 12/12 buttons sink, one sound a tap, window still, coins fly, tap sounds off, calm still, under-5 breathing"
+    },
+    "ownerlearningprogression": {
+      "ok": true,
+      "secs": 175,
+      "note": "[{\"id\":\"patternpicnic\",\"lang\":\"en\",\"mode\":\"under-5\",\"won\":true,\"wrong\":true,\"taps\":4,\"ready\":0,\"stars\":3,\"sideways\":false,\"small\":[]},{\"id\":\"patternpicnic\",\"lang\":\"en\",\"mode\":\"Easy\",\"won\":true,\"wrong\":true,\"taps\":5,\"ready\":0,\"stars\":3,\"sideways\":false,\"small\":[]},{\"id\":\"patternpicnic\",\"lang\":\"en\",\"mode\":\"Medium\",\"won\":true,\"wrong\":true,\"taps\":5,\"ready\":0,\"stars\":3,\"sideways\":false,\"small\":[]},{\"id\":\"patternpicnic\",\"lang\":\"en\",\"mode\":\"Hard\",\"won\":true,\"wrong\":true,\"taps\":5,\"ready\":0,\"stars\":3,\"sideways\":false,\"small\":[]},{\"id\":\"shapebuilders\",\"lang\":\"en\",\"mode\":\"under-5\",\"won\":true,\"wrong\":true,\"taps\":7,\"ready\":0,\"stars\":3,\"sideways\":false,\"small\":[]},{\"id\":\"shapebuilders\",\"lang\":\"en\",\"mode\":\"Easy\",\"won\":true,\"wrong\":true,\"taps\":9,\"ready\":0,\"stars\":3,\"sideways\":false,\"small\":[]},{\"id\":\"shapebuilders\",\"lang\":\"en\",\"mode\":\"Medium\",\"won\":true,\"wrong\":true,\"taps\":11,\"ready\":0,\"stars\":3,\"sideways\":false,\"small\":[]},{\"id\":\"shapebuilders\",\"lang\":\"en\",\"mode\":\"Hard\",\"won\":true,\"wrong\":true,\"taps\":13,\"ready\":0,\"stars\":3,\"sideways\":false,\"small\":[]},{\"id\":\"remembergarden\",\"lang\":\"en\",\"mode\":\"under-5\",\"won\":true,\"wrong\":true,\"taps\":7,\"ready\":0,\"stars\":3,\"sideways\":false,\"small\":[]},{\"id\":\"remembergarden\",\"lang\":\"en\",\"mode\":\"Easy\",\"won\":true,\"wrong\":true,\"taps\":15,\"ready\":3,\"stars\":3,\"sideways\":false,\"small\":[]},{\"id\":\"remembergarden\",\"lang\":\"en\",\"mode\":\"Medium\",\"won\":true,\"wrong\":true,\"taps\":20,\"ready\":3,\"stars\":3,\"sideways\":false,\"small\":[]},{\"id\":\"remembergarden\",\"lang\":\"en\",\"mode\":\"Hard\",\"won\":true,\"wrong\":true,\"taps\":22,\"ready\":3,\"stars\":3,\"sideways\":false,\"small\":[]},{\"id\":\"patternpicnic\",\"lang\":\"vi\",\"mode\":\"under-5\",\"won\":true,\"wrong\":true,\"taps\":4,\"ready\":0,\"stars\":3,\"sideways\":false,\"small\":[]},{\"id\":\"patternpicnic\",\"lang\":\"vi\",\"mode\":\"Easy\",\"won\":true,\"wrong\":true,\"taps\":5,\"ready\":0,\"stars\":3,\"sideways\":false,\"small\":[]},{\"id\":\"patternpicnic\",\"lang\":\"vi\",\"mode\":\"Medium\",\"won\":true,\"wrong\":true,\"taps\":5,\"ready\":0,\"stars\":3,\"sideways\":false,\"small\":[]},{\"id\":\"patternpicnic\",\"lang\":\"vi\",\"mode\":\"Hard\",\"won\":true,\"wrong\":true,\"taps\":5,\"ready\":0,\"stars\":3,\"sideways\":false,\"small\":[]},{\"id\":\"shapebuilders\",\"lang\":\"vi\",\"mode\":\"under-5\",\"won\":true,\"wrong\":true,\"taps\":7,\"ready\":0,\"stars\":3,\"sideways\":false,\"small\":[]},{\"id\":\"shapebuilders\",\"lang\":\"vi\",\"mode\":\"Easy\",\"won\":true,\"wrong\":true,\"taps\":9,\"ready\":0,\"stars\":3,\"sideways\":false,\"small\":[]},{\"id\":\"shapebuilders\",\"lang\":\"vi\",\"mode\":\"Medium\",\"won\":true,\"wrong\":true,\"taps\":11,\"ready\":0,\"stars\":3,\"sideways\":false,\"small\":[]},{\"id\":\"shapebuilders\",\"lang\":\"vi\",\"mode\":\"Hard\",\"won\":true,\"wrong\":true,\"taps\":13,\"ready\":0,\"stars\":3,\"sideways\":false,\"small\":[]},{\"id\":\"remembergarden\",\"lang\":\"vi\",\"mode\":\"under-5\",\"won\":true,\"wrong\":true,\"taps\":7,\"ready\":0,\"stars\":3,\"sideways\":false,\"small\":[]},{\"id\":\"remembergarden\",\"lang\":\"vi\",\"mode\":\"Easy\",\"won\":true,\"wrong\":true,\"taps\":15,\"ready\":3,\"stars\":3,\"sideways\":false,\"small\":[]},{\"id\":\"remembergarden\",\"lang\":\"vi\",\"mode\":\"Medium\",\"won\":true,\"wrong\":true,\"taps\":20,\"ready\":3,\"stars\":3,\"sideways\":false,\"small\":[]},{\"id\":\"remembergarden\",\"lang\":\"vi\",\"mode\":\"Hard\",\"won\":true,\"wrong\":true,\"taps\":22,\"ready\":3,\"stars\":3,\"sideways\":false,\"small\":[]}]"
+    },
+    "r79learning": {
+      "ok": true,
+      "secs": 642,
+      "note": "games 32 runs; I1 Easy tiers 1112, Medium with two misses 222112; E1 E3 E4 I1 I2 I4 G2 mic pass"
+    },
+    "vehicles": {
+      "ok": true,
+      "secs": 59,
+      "note": "28 models; 85 vehicles in the valley; riders' hands on the grips; traffic moves; a child rides a bicycle and gets off"
+    },
+    "shop": {
+      "ok": true,
+      "secs": 59,
+      "note": "the shop at 215,107 by the market, off the road; the Bag opens the backpack and the Shop tab right after Backpack opens the shop without travel; 9 picture tabs, coin prices, 64 px for under-5s; bought tiara, could not buy without coins; the wardrobe; worn things kept; every piece drawn in 3D (at most 4 extra parts); the switch puts the old Bag back"
+    },
+    "talk": {
+      "ok": true,
+      "secs": 93,
+      "note": "every person in the valley answers a tap; the villagers without their own words tell a fact or a saying of their region, in English or Vietnamese; a child whose character is rebuilt gets no \"Say hello\" and no job picture"
+    },
+    "r79clothes": {
+      "ok": true,
+      "secs": 106,
+      "note": "phone, computer: mirror (big picture, 7 tabs, own set only, tap on/off, no Remove, Done keeps the Shop's place); boys' collection marked as gifts; gift box given to a brother; small \"Eat it?\"; Bag things explain themselves; Pad game returns to the Pad"
+    },
+    "welcomevoice": {
+      "ok": true,
+      "secs": 57,
+      "note": "Ông Cú's welcome shows the child's name (\"Who will fly with you, Kiwi?…\") and every spoken line (5) has a recording"
+    },
+    "ownerspeechcancel": {
+      "ok": true,
+      "secs": 24,
+      "note": "iPhone fallback cancellation pauses audio and releases the music bed immediately; stale timeout/late completion cannot stop or uncount the next line"
+    },
+    "festhunt": {
+      "ok": true,
+      "secs": 110,
+      "note": "52 festival places at 5x by default (as before at 1x, more at 7x), none on a road; build-up 70 → 105 → 140 → 140 in Lotus Village for Tết; Tết on: 461 patches, 201 outside its places, 192 spots by the valley's roads, the nearest drawn within the budget; 24 festivals hide 5 things each; Tết's five found: keepsake for the house and the Passport badge"
+    },
+    "storyposes": {
+      "ok": true,
+      "secs": 59,
+      "note": "195 connected elephant poses; 3 crow sips reach water with feet on jug rim; six bilingual/device captures"
+    },
+    "ownerautoplaynormal": {
+      "ok": true,
+      "secs": 403,
+      "note": "[{\"id\":\"robot\",\"lang\":\"en\",\"speed\":\"x1\",\"g\":\"games\",\"key\":\"game:robot\",\"name\":\"Robot Planner\",\"ok\":true,\"skipped\":false,\"problems\":[],\"notes\":[],\"said\":\"won: 0 ✓, 0 ✗, 17 taps\",\"secs\":61,\"fps\":55},{\"id\":\"sortout\",\"lang\":\"en\",\"speed\":\"x1\",\"g\":\"games\",\"key\":\"game:sortout\",\"name\":\"Sort It Out\",\"ok\":true,\"skipped\":false,\"problems\":[],\"notes\":[],\"said\":\"won: 18 ✓, 0 ✗, 36 taps\",\"secs\":104.1,\"fps\":59},{\"id\":\"robot\",\"lang\":\"vi\",\"speed\":\"x1\",\"g\":\"games\",\"key\":\"game:robot\",\"name\":\"Lập Trình Rô-bốt\",\"ok\":true,\"skipped\":false,\"problems\":[],\"notes\":[],\"said\":\"thắng: 0 ✓, 0 ✗, 19 lần chạm\",\"secs\":61.8,\"fps\":58},{\"id\":\"sortout\",\"lang\":\"vi\",\"speed\":\"x1\",\"g\":\"games\",\"key\":\"game:sortout\",\"name\":\"Phân Loại Nào\",\"ok\":true,\"skipped\":false,\"problems\":[],\"notes\":[],\"said\":\"thắng: 18 ✓, 0 ✗, 36 lần chạm\",\"secs\":106.9,\"fps\":58}]"
+    },
+    "ownerautoplaynormalduck": {
+      "ok": true,
+      "secs": 336,
+      "note": "[{\"id\":\"duckmaze\",\"lang\":\"en\",\"speed\":\"x1\",\"g\":\"games\",\"key\":\"game:duckmaze\",\"name\":\"Duckling Maze\",\"ok\":true,\"skipped\":false,\"problems\":[],\"notes\":[],\"said\":\"won: 0 ✓, 0 ✗, 44 taps\",\"secs\":128.7,\"fps\":59},{\"id\":\"duckmaze\",\"lang\":\"vi\",\"speed\":\"x1\",\"g\":\"games\",\"key\":\"game:duckmaze\",\"name\":\"Vịt Con Tìm Mẹ\",\"ok\":true,\"skipped\":false,\"problems\":[],\"notes\":[],\"said\":\"thắng: 0 ✓, 0 ✗, 46 lần chạm\",\"secs\":136.5,\"fps\":59}]"
+    },
+    "ownerhearts": {
+      "ok": true,
+      "secs": 33,
+      "note": "fall-damage handler protects under-5/easy/medium; older Hard loses hearts; zero-heart rescue returns to lastSafe and restores hearts/stamina (emulated runtime, not a physical fall/device test)"
+    },
+    "freezewhy": {
+      "ok": true,
+      "secs": 63,
+      "note": "without a long-task observer (Safari): \"longest script not measured; page busy 2654 ms; window: no change; focus yes\" and \"longest script not measured; page busy 0 ms (free, not drawn); window: no change; focus yes\"; device graphics \"software: Vulkan 1.3.0 (SwiftShader Devi\""
+    },
+    "s2vnfit": {
+      "ok": true,
+      "secs": 1363,
+      "note": "12 games; roundvariety: 12 games, no round repeats and the right answer moves, at every level; gamefit: 12 games at phone 390x844: every answer and button inside the screen, no scrolling, level and stars on the title row, answers side by side on landscape, game text at least 16px / 12 games at phonelittle 390x844: every answer and button inside the screen, no scrolling, level and stars on the title row, answers side by side on landscape, game text at least 16px / 12 games at land 1280x800: every answer and button inside the screen, no scrolling, level and stars on the title row, answers side by side on landscape, game text at least 16px / 12 games at land2 1340x800: every answer and button inside the screen, no scrolling, level and stars on the title row, answers side by side on landscape, game text at least 16px / 12 games at port 800x1280: every answer and button inside the screen, no scrolling, level and stars on the title row, answers side by side on landscape, game text at least 16px / 12 games at computer 1440x900: every answer and button inside the screen, no scrolling, level and stars on the title row, answers side by side on landscape, game text at least 16px"
+    },
+    "grownupsrow": {
+      "ok": true,
+      "secs": 251,
+      "note": "Two players, Fit the screen and Money on one row (390 px EN and VI, tablet, computer), ≥ 44 px; scroll kept on 4 taps; captions off at start; no AI chat offer; TURN relay still used, its text and field hidden"
+    },
+    "lighterload": {
+      "ok": true,
+      "secs": 78,
+      "note": "cold startup defers game/tale/how-to implementations; closing a loading game cancels it; a warm game opens; tale identity/pages survive; EN-only and VI switching fetch only needed indexes"
+    },
+    "facetoface": {
+      "ok": true,
+      "secs": 395,
+      "note": "tablet tall and wide: the far half, its buttons, joystick and windows face the far child; a computer stays side by side; children choose face to face or side by side on Who's playing? and with the switch on the line"
+    },
+    "quiet": {
+      "ok": true,
+      "secs": 43,
+      "note": "in the background: audio asleep, no music scheduled, videos paused (a sound effect does not wake it); back on screen: sound again"
+    },
+    "stickers": {
+      "ok": true,
+      "secs": 188,
+      "note": "earning (animal, talking, place, an older system), New! badges, 3 x 3 page, hints, both names, full page prize, welcome sticker, shiny; under-5 phone EN: tabs 64 px, tiles 92 px; big kid computer VI: tabs 61 px, tiles 128 px; first minutes: owl, hen, place_plateau"
+    },
+    "ownerthinkinglevels": {
+      "ok": true,
+      "secs": 401,
+      "note": ""
+    },
+    "roads": {
+      "ok": true,
+      "secs": 52,
+      "note": "13 welcome gates, one per village and city (on its main road), every city on a road, nothing standing on a road; 26 side-road junctions all 60–120° (smallest 86°) and straight ≥ 6 m before any bend (shortest 9 m; short straight stubs into a gate aside); 2916 grass tufts and flowers, none on a road; roadDist ×8.2 faster, same answers at 20,000 points"
+    },
+    "ground": {
+      "ok": true,
+      "secs": 56,
+      "note": "106 buildings and 42 roads checked, build v1.07, shown as v1.07"
+    },
+    "friendoutfits": {
+      "ok": true,
+      "secs": 52,
+      "note": "clara: 4 outfits; the áo dài bought on the second tap (120 coins) and drawn; back to everyday free; 3 glasses and masks in the shop"
+    },
+    "cloud": {
+      "ok": false,
+      "note": "page.waitForSelector: Timeout 45000ms exceeded. Call log: - waiting for locator('.knockpop [data-in]') to be visible",
+      "secs": 452,
+      "alone": true,
+      "first": "page.waitForSelector: Timeout 45000ms exceeded. Call log: - waiting for locator('.knockpop [data-in]') to be visible"
+    },
+    "ownerstudiofailures": {
+      "ok": true,
+      "secs": 3,
+      "note": "Failed device lookup preserves unseen policies/levels with explicit error; late Analytics response cannot overwrite Releases; unrelated traffic retained"
+    },
+    "ownerstudioperms": {
+      "ok": true,
+      "secs": 9,
+      "note": "[{\"view\":\"desktop\",\"newList\":{\"shown\":true,\"count\":21,\"visible\":21},\"saved\":{\"role\":\"custom\",\"on\":[\"analytics\",\"releases\"]},\"existing\":{\"role\":\"custom\",\"open\":true,\"shown\":21,\"count\":21},\"errors\":[]},{\"view\":\"phone\",\"newList\":{\"shown\":true,\"count\":21,\"visible\":21},\"saved\":{\"role\":\"custom\",\"on\":[\"analytics\",\"releases\"]},\"existing\":{\"role\":\"custom\",\"open\":true,\"shown\":21,\"count\":21},\"errors\":[]}]"
+    },
+    "voicebackground": {
+      "ok": true,
+      "secs": 61,
+      "note": "female voices only (owner, 3 Nov 2026 AEDT): both previews play the female MP3, no male or Lê Minh choice in Grown-ups, a device that had chosen them moved to female with its other settings kept; the explicit offline download continues with shared progress after Save & close"
+    },
+    "soundsw": {
+      "ok": false,
+      "note": "valley: the Sound button opens no switches[]",
+      "secs": 114,
+      "alone": true,
+      "first": "valley: the Sound button opens no switches[]"
+    },
+    "testerrewards": {
+      "ok": true,
+      "secs": 280,
+      "note": "on phone, tablet and computer: counted fixed list and quiet coins (more for a spoken note), the Silver Ladybird on the shirt (and in the look friends see), the tester hat, backpack and cape, five stickers, the week's star by the name, and the Tester's Corner"
+    },
+    "reportcollision": {
+      "ok": true,
+      "secs": 69,
+      "note": ""
+    },
+    "reportingflow": {
+      "ok": true,
+      "secs": 122,
+      "note": "12 EN/VI device layouts, 64px little controls, keyboard-visible footer, full picture viewer, world/interface capture, bounded/coalesced retry, offline/invalid/503 recovery and receipt-backed queue"
+    },
+    "festivals": {
+      "ok": true,
+      "secs": 70,
+      "note": "halloween out of season: told the days, not started by a child; on when an admin schedules it, and a tap on its day only tells (nobody travels), off again after; 11 places decorated along their streets (week 1 → day: village 37→107, hanoi 47→93, saigon 43→85, market 31→76, hoian 31→86, vungtau 49→97, town 42→122, aussie 28→68, sydney 34→78, melbourne 36→71, brisbane 32→63), none on a road or street"
+    },
+    "story": {
+      "ok": true,
+      "secs": 101,
+      "note": "prologue and chapter 1 played through (8 steps; ribbons caught, 1 lotus leaves lifted, rope pulled); đình lit, keepsake home, then \"tower1\" (chapter 2 switched on: \"L_c2_fly\"); nearest building 22.0 m away"
+    },
+    "legacyplans": {
+      "ok": true,
+      "secs": 136,
+      "note": "Legal visible-input plans complete bunny, Mr Wolf, tug, shuttlecock, marbles and balloon: [{\"id\":\"bunny\",\"won\":true,\"taps\":41},{\"id\":\"mrwolf\",\"won\":true,\"taps\":49},{\"id\":\"tug\",\"won\":true,\"taps\":28},{\"id\":\"dacau\",\"won\":true,\"taps\":8},{\"id\":\"marbles\",\"won\":true,\"taps\":2},{\"id\":\"balloon\",\"won\":true,\"taps\":39}]"
+    },
+    "ownerautoplaystrategy": {
+      "ok": true,
+      "secs": 55,
+      "note": "Real autoplay solves the4-disc Hanoi activity through legal UI taps and records won, independent of the random fallback"
+    },
+    "ownertheatreapproach": {
+      "ok": true,
+      "secs": 124,
+      "note": "{\"spot\":{\"x\":230,\"z\":-59,\"r\":3},\"runs\":[\"ok\",\"ok\",\"ok\",\"ok\"]}"
+    },
+    "softgraphics": {
+      "ok": true,
+      "secs": 66,
+      "note": "software: Vulkan 1.3.0 (SwiftShader Devi: Auto draws the light picture (no shadows) on a 16-core computer; very slow frames lower the pixels to 0.5x (never under 0.5x)"
+    },
+    "fivescreensfilmstablet": {
+      "ok": true,
+      "secs": 1088,
+      "note": "92 tales (874 pages over the sizes) and 744 guide films at tabletport 820x1180, tabletland 1280x800: inside the screen, no scrolling, no overlaps, words at least 16 px, buttons at least 44 px"
+    },
+    "lumiguide": {
+      "ok": true,
+      "secs": 38,
+      "note": "Lumi welcomes a new child, then the week's news once a week, as the Simple screen's guide; 9/9 of her lines recorded"
+    },
+    "storypics": {
+      "ok": true,
+      "secs": 70,
+      "note": "a drawn tale shows its own picture on the picture stage (no actors over it), keeps its 4 pictures for offline and reads with them offline; with no picture the painted stage plays"
+    },
+    "names": {
+      "ok": true,
+      "secs": 9,
+      "note": "493 game files: every name is defined or imported"
+    },
+    "stability": {
+      "ok": true,
+      "secs": 117,
+      "note": "{\"windows\":30,\"games\":20,\"growth\":{\"lazyStillGeometries\":27,\"nodes\":-2979,\"heapMB\":1.997161865234375,\"dom\":0,\"canvases\":0,\"geometries\":3,\"textures\":3,\"programs\":0},\"contextLosses\":0,\"navigations\":0}"
+    },
+    "questbar": {
+      "ok": true,
+      "secs": 65,
+      "note": "a tap folds the quest to a small chip and hides the arrow; a tap opens it again; a started family mission shows under the quest (44 px), on a phone and a computer"
+    },
+    "tugplay": {
+      "ok": true,
+      "secs": 74,
+      "note": "Six accepted players share one rope; actual human/peer cooperative completion, everybody contributes,12 EN/VI device layouts with six drawn children and64px visible Pull"
+    },
+    "ownerlearninglayout": {
+      "ok": true,
+      "secs": 240,
+      "note": "[{\"id\":\"patternpicnic\",\"w\":320,\"h\":640,\"lang\":\"en\",\"controls\":3},{\"id\":\"shapebuilders\",\"w\":320,\"h\":640,\"lang\":\"en\",\"controls\":5},{\"id\":\"remembergarden\",\"w\":320,\"h\":640,\"lang\":\"en\",\"controls\":5},{\"id\":\"patternpicnic\",\"w\":320,\"h\":640,\"lang\":\"vi\",\"controls\":3},{\"id\":\"shapebuilders\",\"w\":320,\"h\":640,\"lang\":\"vi\",\"controls\":5},{\"id\":\"remembergarden\",\"w\":320,\"h\":640,\"lang\":\"vi\",\"controls\":5},{\"id\":\"patternpicnic\",\"w\":390,\"h\":844,\"lang\":\"en\",\"controls\":3},{\"id\":\"shapebuilders\",\"w\":390,\"h\":844,\"lang\":\"en\",\"controls\":5},{\"id\":\"remembergarden\",\"w\":390,\"h\":844,\"lang\":\"en\",\"controls\":5},{\"id\":\"patternpicnic\",\"w\":844,\"h\":390,\"lang\":\"vi\",\"controls\":3},{\"id\":\"shapebuilders\",\"w\":844,\"h\":390,\"lang\":\"vi\",\"controls\":5},{\"id\":\"remembergarden\",\"w\":844,\"h\":390,\"lang\":\"vi\",\"controls\":5},{\"id\":\"patternpicnic\",\"w\":820,\"h\":1180,\"lang\":\"en\",\"controls\":3},{\"id\":\"shapebuilders\",\"w\":820,\"h\":1180,\"lang\":\"en\",\"controls\":5},{\"id\":\"remembergarden\",\"w\":820,\"h\":1180,\"lang\":\"en\",\"controls\":5},{\"id\":\"patternpicnic\",\"w\":1280,\"h\":800,\"lang\":\"en\",\"controls\":3},{\"id\":\"shapebuilders\",\"w\":1280,\"h\":800,\"lang\":\"en\",\"controls\":5},{\"id\":\"remembergarden\",\"w\":1280,\"h\":800,\"lang\":\"en\",\"controls\":5}]"
+    },
+    "roadshape": {
+      "ok": true,
+      "secs": 22,
+      "note": "2462 m of road: straight or smoothly curved, never steeper than 8 % (dirt 12 %), rounded"
+    },
+    "solid": {
+      "ok": true,
+      "secs": 131,
+      "note": "45150 solid cells from 1045 objects (1489 ms work); 250 walk-ins stopped on desktop and phone; saved map reused"
+    },
+    "yard": {
+      "ok": true,
+      "secs": 95,
+      "note": "the yard 50 m from the shop, 10 m of room; a side story (goal bar stays on the lantern story until Follow); coach, jobs (a wrong one turned down), dump truck (load, hold the pedal, pull the lever), excavator (drag the arm), bricks and roof by hand, and the meal played through; free play after"
+    },
+    "bridges": {
+      "ok": true,
+      "secs": 31,
+      "note": "13 bridges each over its water, ends on land, decks walkable; landmarks on their bridges: dragonbridge, longbien, chuacau, harbour, storybridge, princes; no road in water"
+    },
+    "roadtone": {
+      "ok": true,
+      "secs": 31,
+      "note": "17 asphalt roads in 4 colours, 6 road materials; the ring road is closed; a yellow centre dash in Vietnam, kerbs in Australia"
+    },
+    "wearbag": {
+      "ok": true,
+      "secs": 35,
+      "note": "Bag help never wears an item; explicit confirmation wears/removes it; cancellation preserves it; both collection filters match their items"
+    },
+    "chests": {
+      "ok": true,
+      "secs": 65,
+      "note": "6 chests; one child alone: shut; two on the stones: open for both (+40 coins, a treat each, the best-friends sticker)"
+    },
+    "coop": {
+      "ok": true,
+      "secs": 34,
+      "note": "room 4321's quest: village, market, home; a place counts only with the friend near (40 m away: no, 5 m: yes); all 3 gave coins and a new quest"
+    },
+    "nostudio": {
+      "ok": true,
+      "secs": 45,
+      "note": "Grown-ups (every group open), the parents' pages and every Pad tab, English and Vietnamese: Studio never named"
+    },
+    "ownerlearningvoice": {
+      "ok": true,
+      "secs": 127,
+      "note": "[{\"id\":\"patternpicnic\",\"lang\":\"en\",\"asleep\":false,\"recordedEvents\":2,\"replayed\":true},{\"id\":\"shapebuilders\",\"lang\":\"en\",\"asleep\":false,\"recordedEvents\":3,\"replayed\":true},{\"id\":\"remembergarden\",\"lang\":\"en\",\"asleep\":false,\"recordedEvents\":2,\"replayed\":true},{\"id\":\"patternpicnic\",\"lang\":\"en\",\"asleep\":true,\"recordedEvents\":2,\"replayed\":true},{\"id\":\"shapebuilders\",\"lang\":\"en\",\"asleep\":true,\"recordedEvents\":3,\"replayed\":true},{\"id\":\"remembergarden\",\"lang\":\"en\",\"asleep\":true,\"recordedEvents\":2,\"replayed\":true},{\"id\":\"patternpicnic\",\"lang\":\"vi\",\"asleep\":false,\"recordedEvents\":2,\"replayed\":true},{\"id\":\"shapebuilders\",\"lang\":\"vi\",\"asleep\":false,\"recordedEvents\":3,\"replayed\":true},{\"id\":\"remembergarden\",\"lang\":\"vi\",\"asleep\":false,\"recordedEvents\":2,\"replayed\":true},{\"id\":\"patternpicnic\",\"lang\":\"vi\",\"asleep\":true,\"recordedEvents\":2,\"replayed\":true},{\"id\":\"shapebuilders\",\"lang\":\"vi\",\"asleep\":true,\"recordedEvents\":3,\"replayed\":true},{\"id\":\"remembergarden\",\"lang\":\"vi\",\"asleep\":true,\"recordedEvents\":2,\"replayed\":true}]"
+    },
+    "ownerautoplaytransport": {
+      "ok": true,
+      "secs": 45,
+      "note": "Actual bus passenger exits through normal Jump before purposeful on-foot navigation; arrives within2m without flying"
+    },
+    "ownerfamily": {
+      "ok": true,
+      "secs": 243,
+      "note": "Family fixture: switched off: hidden, no service calls Family fixture: family created Family fixture: joining device awaits approval Family fixture: approval accepted Family fixture: photo saved Family fixture: photo transferred without base64 metadata Family fixture: stale rejection returned Family fixture: cold offline cache and backup verified Family fixture: replacement device revoked PASS: pairing approval, photo transfer, postcard, offline cache and backup, revocation clears cached photos and restores connection/recovery controls"
+    },
+    "ownercapture": {
+      "ok": true,
+      "secs": 29,
+      "note": "PASS: composed report includes the visible panel; scene-only capture excludes it"
+    },
+    "fivescreenswide": {
+      "ok": true,
+      "secs": 2167,
+      "note": "370 games at tabletport 820x1180, tabletland 1280x800, tabletlandlittle 1280x800, computer 1440x900: inside the screen, no scrolling, text at least 16 px, touch targets at least 44/64 px, no overlaps"
+    },
+    "s2vnregions": {
+      "ok": true,
+      "secs": 48,
+      "note": "4 region(s): closed before their day, open on it with their games; fly and bus land on open ground; landmark, friend, seller, dish and 3 game places, off roads and water: {\"mekong\":{\"closed\":false,\"hidden\":true,\"openNow\":true,\"shown\":true,\"parts\":19,\"stop\":[176,154]},\"halong\":{\"closed\":false,\"hidden\":true,\"openNow\":true,\"shown\":true,\"parts\":19,\"stop\":[198,151]},\"sapa\":{\"closed\":false,\"hidden\":true,\"openNow\":true,\"shown\":true,\"parts\":15,\"stop\":[158,-86]},\"taynguyen\":{\"closed\":false,\"hidden\":true,\"openNow\":true,\"shown\":true,\"parts\":15,\"stop\":[159,58]}}"
+    },
+    "blenderfilms": {
+      "ok": true,
+      "secs": 91,
+      "note": "5 films (banhchung, chucuoi, tamcam, thanhgiong, rainbowserpent): play, stop for help with the tap ring, go on after the tap, kept for offline and played from the kept copy, the game's film with no internet; none in the first download. A sixth (sontinh) plays its video only on a tester with \"Blender films for testers\" on, or for everyone with its own switch. Download all: 5 films, about 15 MB, 64 px button, progress, Stop and Go on, done, all five play offline after, Light frees them, asks first on mobile data"
+    },
+    "enwords": {
+      "ok": true,
+      "secs": 56,
+      "note": "9 lines and 48 slang words cut right; 184 Vietnamese lines with English words recorded with the English voice for those words; the phone says them with its English voice"
+    },
+    "arch": {
+      "ok": true,
+      "secs": 0,
+      "note": "493 files, 2088 imports; 0 circle groups (0 files in them); allowed: 0 groups, 0 files"
+    },
+    "resumerecovery": {
+      "ok": true,
+      "secs": 74,
+      "note": "installed-window return restarts lost frame callbacks and buffer; real GPU loss restores without reload; saves retained; graphics and packed import errors retain visible bilingual recovery"
+    },
+    "gamefit": {
+      "ok": true,
+      "secs": 2420,
+      "note": "370 games at phone 390x844, phonelittle 390x844, land 1280x800, land2 1340x800, port 800x1280, computer 1440x900: every answer and button inside the screen, no scrolling, level and stars on the title row, answers side by side on landscape, game text at least 16px"
+    },
+    "tienlen": {
+      "ok": true,
+      "secs": 45,
+      "note": "a deck in the middle, cards flying (up to 6 at once), the hand filled in 14 steps to 13; each player has 13"
+    },
+    "gameflow": {
+      "ok": true,
+      "secs": 244,
+      "note": "real shrine and folk wins return without choices; difficulty restart retains shrine/orb, two-player rewards exactly once; Play replay returns to hub; Simple Next retains origin and cancellation preserves progress"
+    },
+    "regions": {
+      "ok": true,
+      "secs": 45,
+      "note": "24 areas all in the valley; home, Lotus Village, Phố Hai Quê, Chợ Ba Miền and Aussie Corner read as themselves"
+    },
+    "bridgeunderpass": {
+      "ok": true,
+      "secs": 123,
+      "note": "13 bridge water crossings remain open below their walkable decks; a child wades under each one (never swims or sinks)"
+    },
+    "rain": {
+      "ok": true,
+      "secs": 47,
+      "note": "rain hush on while it rains, off under a game and back after it, off with Sound effects off, off when the rain stops"
+    },
+    "houseguide": {
+      "ok": true,
+      "secs": 63,
+      "note": "6 steps the first time in the house, not again on the next visit; the ❓ sign repeats them"
+    },
+    "dailyadventure": {
+      "ok": true,
+      "secs": 227,
+      "note": ""
+    },
+    "friendmodel": {
+      "ok": true,
+      "secs": 158,
+      "note": "417, 372, 444, 386 KB; finn 10260 triangles in 7 parts (+0 outlines), sol 10072 triangles in 7 parts (+0 outlines), clara 10184 triangles in 8 parts (+0 outlines), lumi 10329 triangles in 8 parts (+0 outlines); skin tone, joints and moods follow; the cap is worn; without the files the code person stays"
+    },
+    "managementbudget": {
+      "ok": true,
+      "secs": 135,
+      "note": "4 alternating cold contexts: optional client/upload absent Off and present On; local transfer, payload, heap and animation observations recorded; no production/battery/cost claim"
+    },
+    "managementstudio": {
+      "ok": true,
+      "secs": 80,
+      "note": "EN/VI: authenticated summary, child/device linkage, activity lookup and same-page filters at phone/tablet/desktop sizes; private draft save/resume/review/publication; 36 captures; finance setup, preview/save/correction/history/CSV duplicate checks; bounded operation submission, durable results and provider-run reconciliation"
+    },
+    "sparklelab": {
+      "ok": true,
+      "secs": 10,
+      "note": "desktop: first page 608 ms (7 reads), again in the same tab 92 ms (1 reads), Releases 432 ms, Back 70 ms (0 reads, scroll 900->900); phone: first page 591 ms (7 reads), again in the same tab 80 ms (1 reads), Releases 420 ms, Back 62 ms (0 reads, scroll 900->900)"
+    },
+    "mictest": {
+      "ok": true,
+      "secs": 34,
+      "note": ""
+    },
+    "ownertalesync": {
+      "ok": true,
+      "secs": 36,
+      "note": "Opening sends nothing; received page changes survive the asynchronous draw without being rebroadcast; rapid remote changes settle, local Next broadcasts once"
+    },
+    "autoplaycover": {
+      "ok": true,
+      "secs": 49,
+      "note": "a button under something else is reported; under the tester's own report window or ladybird it is not"
+    },
+    "autoplayhidden": {
+      "ok": true,
+      "secs": 51,
+      "note": "walking with the page hidden for 8 s (the child stood still, 0.00 m) went on when it came back and arrived with no \"stuck\""
+    },
+    "spawnview": {
+      "ok": true,
+      "secs": 149,
+      "note": "phone, tablet, computer, at the start: the child faces Ông Cú with the camera behind; both on the screen, the owl in front, nothing large covering the child"
+    },
+    "chapter9": {
+      "ok": true,
+      "secs": 232,
+      "note": "little 5 steps, big 6 steps; ch9: closed before its calendar day, open on it; played to the film, the place lit, the keepsake and the trick, as an under-5 and as a big kid; nothing on a road or in the water"
+    },
+    "types": {
+      "ok": true,
+      "secs": 50,
+      "note": "360 explicit files type-checked; detector/outbox/family-backup modules additionally strict-checked; 108 TypeScript files of the server, Studio and tools; no errors; the test code and marketing/source checked too: 1741 known findings left (types-baseline.json, none new)"
+    },
+    "simple": {
+      "ok": true,
+      "secs": 207,
+      "note": "Home floats the website over this screen and Back to game closes it; under 5 starts on one page of sections, each a title and its own road, scrolling down (like Khám phá); a game and a story each two taps away, the road comes back after; Valley remembered; the “Big pictures” switch reopens it; on its side a rail and a sideways path; big kid and two players start in the valley"
+    },
+    "hscroll": {
+      "ok": true,
+      "secs": 140,
+      "note": "the Backpack row moves by finger (phone, tablet, also as strict as Safari), by mouse drag and by wheel; the Map page moves down on every size",
+      "alone": true,
+      "first": "computer: the Backpack row did not move ({\"jn\":0,\"jnMax\":137,\"body\":0,\"bodyMax\":501})"
+    },
+    "hoilang": {
+      "ok": true,
+      "secs": 81,
+      "note": "9 villages; games board free; 09:00 parade (4) and crowd (5); under-5 prize for joining, once; big kid needs a win; 17:30/19:00; next time told; carried like the kite; switch off"
+    },
+    "gameends": {
+      "ok": true,
+      "secs": 132,
+      "note": "a note while playing (plateau, 273 MB, v1.07; no name), cleared on a normal close; a game the browser ended and a reload after the 3D picture was lost are each noted for Studio's report with where they happened"
+    },
+    "oanquanrules": {
+      "ok": true,
+      "secs": 1,
+      "note": "a two-player game finishes through 18 legal square/direction taps; autoplay waits while seeds move"
+    },
+    "flat": {
+      "ok": true,
+      "secs": 40,
+      "note": "6457 spots in 15 villages and cities, all level"
+    },
+    "surface": {
+      "ok": true,
+      "secs": 9,
+      "note": "road road, town road, dirt dirt, sand sand, water water, wood wood, pier wood, grass grass"
+    },
+    "prices": {
+      "ok": true,
+      "secs": 55,
+      "note": "39 food stalls and kiosks have a coin-picture price; change counted on (\"That is 60c. You gave me $1. Let's count your change: 70c, 80c, 90c, $…\"); the seller greets Kiwi by name on screen, not out loud"
+    },
+    "ownerdesk": {
+      "ok": true,
+      "secs": 35,
+      "note": "Owner’s Desk: 5 areas, shared game palette/art, 58 EN/VI captures at 3 sizes; function policy save/review/publication and server shutoff; item proposal save/resume/review/publish and actual game/story boundary checks, real device/problem links, restored filter, kind:id navigation and summary-only privacy"
+    },
+    "voiceonline": {
+      "ok": true,
+      "secs": 70,
+      "note": "the Welcome says the voices play online and how to keep them; a new device downloaded 11 recordings by itself; 6 heard kept; offline a grown-up is told \"Offline voices → Light or Full\" (v1.08c: the offline levels replaced \"Keep all voices\") (buttons 48/48 px)"
+    },
+    "ownerwificard": {
+      "ok": true,
+      "secs": 99,
+      "note": "Bounded two-file fixture: Wi-Fi automatically completes remaining voices, dismisses the old mobile permission card and rejects delayed prompts without granting mobile consent; with Studio's explain_voiceAsk off, no question and nothing past the core on mobile data"
+    },
+    "musicaudio": {
+      "ok": true,
+      "secs": 45,
+      "note": "4 instruments × 8 pads have 64 px targets and produce valid frequencies; recorded notes replay once, repeated taps/tab changes cannot overlap tunes, close cancels future notes"
+    },
+    "testerretest": {
+      "ok": true,
+      "secs": 57,
+      "note": "a fixed auto play problem filed as \"game:memory\" is replayed in Memory Match itself and told as still fixed, with no \"did not open\""
+    },
+    "reportstorage": {
+      "ok": true,
+      "secs": 44,
+      "note": "PASS: denied storage preserves report draft and old queue; retry persists with stable identity"
+    },
+    "renderaudit": {
+      "ok": true,
+      "secs": 75,
+      "note": "{\"home\":{\"static\":76,\"moving\":31,\"plants\":35,\"outline\":3,\"avatar\":14,\"sprite\":17},\"village\":{\"static\":100,\"plants\":27,\"outline\":30,\"moving\":26,\"avatar\":52,\"sprite\":34}}"
+    },
+    "levelsall": {
+      "ok": true,
+      "secs": 2641,
+      "note": "349 games play differently at Easy, Medium, Hard and Talent (each writes its level numbers; Easy is never Talent; at least three levels differ); under-5s play gently with no Talent; 24 games exempt with a reason (free pads, family quiz, Fruit Bar)"
+    },
+    "subjectlevel": {
+      "ok": true,
+      "secs": 44,
+      "note": "subjects math, en, sci, money, vi; Medium child strong in Maths plays Maths at Hard (the game opens at Hard ▾), new to English plays Easy; a grown-up's subject level wins"
+    },
+    "playtogether": {
+      "ok": true,
+      "secs": 170,
+      "note": "phone, tablet, computer: \"Chơi cùng bố mẹ\" lists 7 games for two on one device with a guide for the grown-up; Play opens the game"
+    },
+    "chapter10": {
+      "ok": true,
+      "secs": 214,
+      "note": "little 4 steps, big 5 steps; ch10: closed before its calendar day, open on it; played to the film, the place lit, the keepsake and the trick, as an under-5 and as a big kid; nothing on a road or in the water"
+    },
+    "propsfit": {
+      "ok": true,
+      "secs": 61,
+      "note": "152 props swapped in (22 models): each within 20 % of its code shape's box on every side, standing at its height and turned its way"
+    },
+    "contentvoice": {
+      "ok": true,
+      "secs": 0,
+      "note": "38 shipped guidance recordings fetched and decoded; 12 lines still need recording; physical listening separate"
+    },
+    "launchbanner": {
+      "ok": true,
+      "secs": 5,
+      "note": "no date: no banner; 10 days before: Coming soon (EN/VI); from the day: Open now with a 44 px Play now"
+    },
+    "firstplayer": {
+      "ok": true,
+      "secs": 24,
+      "note": "a new device shows “Make my character” and no ready-made players; the child made “Mai” and plays as Mai"
+    },
+    "offline": {
+      "ok": true,
+      "secs": 41,
+      "note": "first screen: saved 3.1 s, offline 2.9 s (played into the valley), connection that never answers 3.7 s"
+    },
+    "fruitbarfamily": {
+      "ok": true,
+      "secs": 123,
+      "note": "Public non-tester entry, no adult gate, 64px counter taps, online cleanup and six EN/VI allocation/result layouts"
+    },
+    "worldplacement": {
+      "ok": true,
+      "secs": 40,
+      "note": "9 heritage sites in correct districts; Hanoi pagoda; 37 saved home indices preserved; Hoan Kiem turtle stays in its lake over 125 simulated seconds; raised trees/rocks fade without fading people"
+    },
+    "mapnames": {
+      "ok": true,
+      "secs": 119,
+      "note": "map names apart on phone 26, tablet 26, computer 26; Hội An in the Vietnam list and on the Places road; the speech box slides in from the middle"
+    },
+    "myhouse": {
+      "ok": true,
+      "secs": 63,
+      "note": "8 spots; a free teddy, a 12-coin clock (refused with 5, bought with 50), grandma's postcard on a wall (not on the floor); all still there after going out and back in"
+    },
+    "animalhomes": {
+      "ok": true,
+      "secs": 35,
+      "note": "4 hens and 5 little hens into the coop at night and out in the morning; ducks together on the lake at night; the village dog follows a visiting child and goes home"
+    },
+    "ownerdecorworld": {
+      "ok": true,
+      "secs": 58,
+      "note": "tet: string 145, piece 1088, table 1, road 156; 0 shared ground; 14 street plans all placed (501 relocated); China Town ring 84 pieces/16 strings; rings without streets: china tet 99/110 | tet+ramthang1: string 145, piece 1338, table 2, road 154; 0 shared ground; 16 street plans all placed (751 relocated); China Town ring 84 pieces/16 strings; rings without streets: china tet 99/110 | halloween: string 171, piece 909, table 1, pumpkin 6, road 161; 0 shared ground; 14 street plans all placed (512 relocated); China Town ring 0 pieces/0 strings; rings without streets: home halloween 110/110"
+    },
+    "ownerroadsafety": {
+      "ok": true,
+      "secs": 424,
+      "note": "{\"cases\":20,\"views\":5,\"scope\":\"two existing crossings,20 actual sign taps; Chromium emulation, no physical-device or map-wide claim\"}"
+    },
+    "guide": {
+      "ok": true,
+      "secs": 58,
+      "note": "8 things Ông Cú explains, one per visit in order (money, house, bus, signs, family, jobs, talk, sound), each with a drawn picture; then he starts again"
+    },
+    "secondset": {
+      "ok": true,
+      "secs": 49,
+      "note": "held: one Coming soon tile (games and stories), no new game in the menu, the Simple screen or the story list, none can be opened; on: the games to unlock fold into one padlock tile (7 shown on a tap), the stories too (20)"
+    },
+    "ownertogetherstart": {
+      "ok": true,
+      "secs": 135,
+      "note": "An accepted delayed story start retains earlier page moves: both real relay peers stay on the inviter’s chosen page; no late initial-page rollback"
+    },
+    "voiceroutes": {
+      "ok": true,
+      "secs": 0,
+      "note": "{\"counts\":{\"azure:en-AU-NatashaNeural\":10354,\"azure:vi-VN-HoaiMyNeural\":9402,\"azure:zh-CN-YunxiNeural\":22,\"azure:hi-IN-MadhurNeural\":22},\"missing\":0,\"optionalEncodingMatches\":true,\"privacyHeld\":19}"
+    },
+    "owneraudiobounds": {
+      "ok": true,
+      "secs": 219,
+      "note": "EN/VI phone and VI landscape keep12px margins through font/layout/viewport changes,64px switches and independent audio states"
+    },
+    "ownervoiceindex": {
+      "ok": true,
+      "secs": 46,
+      "note": "Held older download restarts against refreshed areas, preserves cached core/nearby, completes new English area and keeps Vietnamese excluded"
+    },
+    "festivalsync": {
+      "ok": true,
+      "secs": 56,
+      "note": "Real Studio off/on/off updates public website, related guides, game selection/preview and open notices; dates, decorations and other releases preserved"
+    },
+    "films": {
+      "ok": true,
+      "secs": 400,
+      "note": "duahau 6 pages, thanhgiong 6 pages, lantern_prologue 3 pages, lantern_ch1 2 pages, banhchung 5 pages, caykhe 6 pages, hoguom 6 pages, oanquan 7 pages, counting 4 pages, marbles 7 pages, memory 4 pages; the child helps at least twice in each story; the real game plays by itself (marbles: 2 moves with the hand, the child's go, memory: 4 moves with the hand, the child's go)"
+    },
+    "filmtails": {
+      "ok": true,
+      "secs": 233,
+      "note": "230 film pages in 42 films: no silence over 1.5 s before a line or after the narrator (3 s right after the child's tap), English and Vietnamese recordings"
+    },
+    "ownerallquestapproaches": {
+      "ok": true,
+      "secs": 45,
+      "note": "282 chapter/yard/classic targets have dry collision-free approaches within interaction range for child ages and light/dark predicates; static approach proof only, full route traversal and timed NPC availability remain pending"
+    },
+    "ownerautoplay3x": {
+      "ok": true,
+      "secs": 445,
+      "note": "[{\"id\":\"robot\",\"lang\":\"en\",\"speed\":\"x3\",\"g\":\"games\",\"key\":\"game:robot\",\"name\":\"Robot Planner\",\"ok\":true,\"skipped\":false,\"problems\":[],\"notes\":[],\"said\":\"won: 0 ✓, 0 ✗, 12 taps\",\"secs\":22.8,\"fps\":55},{\"id\":\"maze\",\"lang\":\"en\",\"speed\":\"x3\",\"g\":\"games\",\"key\":\"game:maze\",\"name\":\"Mountain Maze\",\"ok\":true,\"skipped\":false,\"problems\":[],\"notes\":[],\"said\":\"won: 0 ✓, 0 ✗, 72 taps\",\"secs\":82.1,\"fps\":58},{\"id\":\"duckmaze\",\"lang\":\"en\",\"speed\":\"x3\",\"g\":\"games\",\"key\":\"game:duckmaze\",\"name\":\"Duckling Maze\",\"ok\":true,\"skipped\":false,\"problems\":[],\"notes\":[],\"said\":\"won: 0 ✓, 0 ✗, 58 taps\",\"secs\":64,\"fps\":60},{\"id\":\"sortout\",\"lang\":\"en\",\"speed\":\"x3\",\"g\":\"games\",\"key\":\"game:sortout\",\"name\":\"Sort It Out\",\"ok\":true,\"skipped\":false,\"problems\":[],\"notes\":[],\"said\":\"won: 18 ✓, 0 ✗, 36 taps\",\"secs\":40.3,\"fps\":59},{\"id\":\"robot\",\"lang\":\"vi\",\"speed\":\"x3\",\"g\":\"games\",\"key\":\"game:robot\",\"name\":\"Lập Trình Rô-bốt\",\"ok\":true,\"skipped\":false,\"problems\":[],\"notes\":[],\"said\":\"thắng: 0 ✓, 0 ✗, 15 lần chạm\",\"secs\":28.9,\"fps\":51},{\"id\":\"maze\",\"lang\":\"vi\",\"speed\":\"x3\",\"g\":\"games\",\"key\":\"game:maze\",\"name\":\"Mê Cung Trên Núi\",\"ok\":true,\"skipped\":false,\"problems\":[],\"notes\":[],\"said\":\"thắng: 0 ✓, 0 ✗, 54 lần chạm\",\"secs\":59.4,\"fps\":60},{\"id\":\"duckmaze\",\"lang\":\"vi\",\"speed\":\"x3\",\"g\":\"games\",\"key\":\"game:duckmaze\",\"name\":\"Vịt Con Tìm Mẹ\",\"ok\":true,\"skipped\":false,\"problems\":[],\"notes\":[],\"said\":\"thắng: 0 ✓, 0 ✗, 54 lần chạm\",\"secs\":60.1,\"fps\":60},{\"id\":\"sortout\",\"lang\":\"vi\",\"speed\":\"x3\",\"g\":\"games\",\"key\":\"game:sortout\",\"name\":\"Phân Loại Nào\",\"ok\":true,\"skipped\":false,\"problems\":[],\"notes\":[],\"said\":\"thắng: 18 ✓, 0 ✗, 36 lần chạm\",\"secs\":41.8,\"fps\":60}]"
+    },
+    "ownerreportedphoneen": {
+      "ok": true,
+      "secs": 102,
+      "note": "phone-en 430x873 en modal hub: 24/27 controls matched phone-en 430x873 en modal pad: 1/2 controls matched phone-en 430x873 en modal tpanel: 2/12 controls matched phone-en 430x873 en modal qsettings: 12/12 controls matched phone-en 428x879 en modal pad: 7/14 controls matched phone-en 428x879 en modal grownups: 1/2 controls matched phone-en 428x879 en modal qsettings: 3/3 controls matched {\"reports\":73,\"reachable\":50,\"unresolved\":23,\"blocked\":0}"
+    },
+    "r87ui": {
+      "ok": true,
+      "secs": 84,
+      "note": "EN/VI phone/tablet/computer: photo credits clear, 64 px Ô Ăn Quan targets; Studio live-save help agrees with its live badge"
+    },
+    "familycodejourney": {
+      "ok": true,
+      "secs": 149,
+      "note": "A (phone) made a code and showed \"Purple Duck 20\"; B (tablet, Vietnamese) typed it and showed the same family; B's copy loaded on a wiped computer gave the same family, progress and device number after one question; leaving kept the progress; a wrong code is refused; 11 screenshots in out/family-code"
+    },
+    "simplefirst": {
+      "ok": true,
+      "secs": 26,
+      "note": "tablet speed: Welcome at 1.1 s, Go at 7.2 s, the Simple screen 320 ms later, game \"words\" open 966 ms after its tap, the valley built at 22.9 s (after both); can play 7.5 s after the page opened; the valley button waited with the progress bar, then the valley opened"
+    },
+    "worldnature": {
+      "ok": true,
+      "secs": 301,
+      "note": "51 models and 20 close-up ones, close up by a tree 241 draws (tree-round-hd 6, rock-hd 2, flower-meadow-hd 1, grass-hd 22, reeds-hd 5, flower-roadside-hd 0, bush-hd 2, hyacinth-hd 8), 135 marked shapes; draws home 183 -> 176, village 273 -> 272; models near the child: home 20, village 14; blocked: 12 failed loads, code shapes kept; screenshots in tests/out/worldnature/"
+    },
+    "unit": {
+      "ok": true,
+      "secs": 36,
+      "note": "528 unit tests passed"
+    },
+    "swupdate": {
+      "ok": true,
+      "secs": 82,
+      "note": "the new version's files after an update (not the copy kept beside it); a stopped update kept 543 files and fetched only the rest; start screens: took over and reloaded by itself; playing: no reload, the notice offered it; back on screen: asked the website again"
+    },
+    "learningquests": {
+      "ok": true,
+      "secs": 63,
+      "note": "8 journeys of 9 steps at the top of Học vui; today's step (counting) in the adventure, marked in the hub and starred on the Simple screen; 9 wins give 9 stickers and the badge; pictures in tests/out/learningquests/"
+    },
+    "ages": {
+      "ok": true,
+      "secs": 50,
+      "note": "under 5: big buttons, the right answer wiggles after two misses (or 10 s), and stops once tapped; 5 and up: no hint"
+    },
+    "a11y": {
+      "ok": true,
+      "secs": 73,
+      "note": "touch targets ≥ 44 px on 12 screens, ≥ 64 px for under-5 answers and the Simple screen; captions 16 px, contrast 10.8:1, still up at 2.4 s; Reduce motion → Calm, nothing loops; all 372 games speak their instruction to an under-5"
+    },
+    "ownerhudocclusion": {
+      "ok": true,
+      "secs": 354,
+      "note": "[{\"go\":{\"x\":137.46128845214844,\"y\":62.622501373291016,\"width\":61.577423095703125,\"height\":45.536251068115234},\"mini\":{\"x\":218,\"y\":6,\"width\":96,\"height\":96},\"quest\":{\"x\":6,\"y\":54,\"width\":198,\"height\":195.28125},\"hits\":[true,true,true,true,true,true,true,true,true],\"audio\":{\"x\":166,\"y\":257.28125,\"width\":150,\"height\":64},\"w\":320,\"h\":640,\"lang\":\"en\"},{\"go\":{\"x\":208.45599365234375,\"y\":59.96745300292969,\"width\":59.5880126953125,\"height\":44.065093994140625},\"mini\":{\"x\":288,\"y\":6,\"width\":96,\"height\":96},\"quest\":{\"x\":6,\"y\":54,\"width\":268,\"height\":136.5},\"hits\":[true,true,true,true,true,true,true,true,true],\"audio\":{\"x\":236,\"y\":231.21875,\"width\":150,\"height\":64},\"w\":390,\"h\":844,\"lang\":\"en\"},{\"go\":{\"x\":141.6747589111328,\"y\":58.52640914916992,\"width\":58.15049743652344,\"height\":46.94717788696289},\"mini\":{\"x\":218,\"y\":6,\"width\":96,\"height\":96},\"quest\":{\"x\":6,\"y\":54,\"width\":198,\"height\":188.5},\"hits\":[true,true,true,true,true,true,true,true,true],\"audio\":{\"x\":166,\"y\":250.5,\"width\":150,\"height\":64},\"w\":320,\"h\":640,\"lang\":\"vi\"},{\"go\":{\"x\":211.8404998779297,\"y\":58.660221099853516,\"width\":57.81898498535156,\"height\":46.679561614990234},\"mini\":{\"x\":288,\"y\":6,\"width\":96,\"height\":96},\"quest\":{\"x\":6,\"y\":54,\"width\":268,\"height\":136.5},\"hits\":[true,true,true,true,true,true,true,true,true],\"audio\":{\"x\":236,\"y\":233,\"width\":150,\"height\":64},\"w\":390,\"h\":844,\"lang\":\"vi\"},{\"go\":{\"x\":323.70068359375,\"y\":58.54734802246094,\"width\":58.0986328125,\"height\":46.905303955078125},\"mini\":{\"x\":742,\"y\":6,\"width\":96,\"height\":96},\"quest\":{\"x\":6,\"y\":54,\"width\":380,\"height\":128},\"hits\":[true,true,true,true,true,true,true,true,true],\"audio\":{\"x\":690,\"y\":215,\"width\":150,\"height\":64},\"w\":844,\"h\":390,\"lang\":\"vi\"},{\"go\":{\"x\":528.2188720703125,\"y\":17.095840454101562,\"width\":81.765380859375,\"height\":49.808319091796875},\"mini\":{\"x\":642.34375,\"y\":12,\"width\":150,\"height\":150},\"quest\":{\"x\":207.5,\"y\":12,\"width\":407,\"height\":140},\"hits\":[true,true,true,true,true,true,true,true,true],\"audio\":{\"x\":617.34375,\"y\":259.21875,\"width\":150,\"height\":64},\"w\":820,\"h\":1180,\"lang\":\"en\"},{\"go\":{\"x\":813.4286499023438,\"y\":16.91905975341797,\"width\":82.3458251953125,\"height\":50.16188049316406},\"mini\":{\"x\":1102.34375,\"y\":12,\"width\":150,\"height\":150},\"quest\":{\"x\":380,\"y\":12,\"width\":520,\"height\":140},\"hits\":[true,true,true,true,true,true,true,true,true],\"audio\":{\"x\":1077.34375,\"y\":259.21875,\"width\":150,\"height\":64},\"w\":1280,\"h\":800,\"lang\":\"en\"}]"
+    },
+    "horsestability": {
+      "ok": true,
+      "secs": 125,
+      "note": "board and die stay fixed through108 real roll/move actions in six EN/VI layouts; two/four-seat rosters and larger horses show team colours"
+    },
+    "hocvui": {
+      "ok": true,
+      "secs": 1151,
+      "note": "one Fun learning tab, its corners in order (181 games, no links; a card opens its game); the same corners on the Simple screen, each game once; 65 new games won by real taps at Easy and Talent (sci_float 1→3, sci_magnet 1→3, sci_ramp 2→4, sci_seesaw 2→5, sci_shadow 1→4, sci_sound 2→5, vi_tones 3→6, vi_build 2→5, sci_plant 1→3, sci_water 1→3, sci_daynight 1→3, sci_seasons 1→3, sci_homes 1→3, sci_body 1→3, sci_colours 1→3, sci_ice 1→3, sci_rainbow 1→3, sci_bulb 1→3, sci_gears 1→3, sci_recycle 1→3, en_words 3→6, en_listen 3→6, en_say 0→4, en_abc 3→5, en_count 0→5, en_sentence 3→6, en_greet 3→4, en_colshape 3→6, vi_tonemean 2→4, vi_rhyme 2→5, vi_letters 2→5, vi_opposite 4→10, vi_cadao 2→5, vi_tucngu 2→5, vi_readalong 3→5, vi_sentence 3→7, vi_dictation 3→8, vi_riddle 2→5, en_animalsay 3→4, en_opposite 3→4, en_feel 3→4, en_weather 3→4, en_routine 3→4, en_where 3→4, en_verbs 3→4, en_shop 3→4, en_teens 3→4, en_body 3→4, en_wh 3→4, en_mydaystory 3→4, me_tree 3→4, me_wash 3→4, me_safe 3→4, me_help 3→4, me_calm 3→4, me_table 3→4, th_balance 3→4, th_clues 3→4, th_robot 3→4, th_changed 3→4, th_count 3→4, th_belong 3→4, vi_poem 3→4, vi_tulay 3→4, vi_sx 3→4); pictures in tests/out/hocvui"
+    },
+    "plots": {
+      "ok": true,
+      "secs": 48,
+      "note": "67 plots (memory_e 32, memory_w 24, hanoi 1, bacninh 2, danang 3, brisbane 2, melbourne 3): each level, dry, off the roads, its front by a road, a unique address, nothing on it; one garden mesh"
+    },
+    "articentre": {
+      "ok": true,
+      "secs": 115,
+      "note": "phone: 11 tabs and the games hub, computer: 11 tabs and the games hub; every drawn picture centred in its place"
+    },
+    "friendmigrate": {
+      "ok": true,
+      "secs": 71,
+      "note": "girls to Clara, boys to Finn, no set guessed from a dress; old fields, hats and stickers kept; an old top became a free outfit; the card once; old online looks as the default friend"
+    },
+    "netgames": {
+      "ok": true,
+      "secs": 164,
+      "note": "Caro on two devices: \" Host Demo muốn chơi Cờ Caro với con! ()…\", every move on both boards, \"Host Demo wins!\" / \"Host Demo thắng!\"; Oẳn tù tì: both hands shown (✊ ✌️), \"Oẳn tù tì champion!\" / \"Host Demo thắng! Chơi vui lắm!\""
+    },
+    "together": {
+      "ok": true,
+      "secs": 193,
+      "note": "story page turned on both (\"The youngest prince, Lang Liêu, was poor…\"); side by side: \"Bé Na ⭐3Bé Na ⭐0\"; following ended 0 m behind; pickup g0 gone for B (\"Bé Na got it first\"); the real place opens in the game straight away (Use the internet is on: owner, 10 Oct; the gate itself is checked by realphotos)"
+    },
+    "roomstartup": {
+      "ok": true,
+      "secs": 51,
+      "note": "Unavailable relay, close during startup and repeated Start leave no crashed or resurrected room; microphone stays muted"
+    },
+    "voicefirstchoice": {
+      "ok": true,
+      "secs": 8,
+      "note": "choosing Vietnamese on the first click downloads only the Vietnamese index"
+    },
+    "micoff": {
+      "ok": true,
+      "secs": 50,
+      "note": "a room starts with the microphone off and asks for nothing; Mic off → one tap asks and turns it on → off → on"
+    },
+    "festivalbootstrap": {
+      "ok": true,
+      "secs": 0,
+      "note": "Shared initial live settings avoid duplicate public requests; failed bootstrap keeps cached settings, focus refreshes, late initial responses cannot replace newer public state; standalone website behavior preserved"
+    },
+    "tales": {
+      "ok": true,
+      "secs": 225,
+      "note": "92 tales, 529 pages: every picture drawn, no phone emoji (the tale shelf too)"
+    },
+    "guides": {
+      "ok": true,
+      "secs": 48,
+      "note": "372 games, each with a How to play of two or more steps in both languages, pictures drawn"
+    },
+    "ownerautoplaynormalmaze": {
+      "ok": true,
+      "secs": 409,
+      "note": "[{\"id\":\"maze\",\"lang\":\"en\",\"speed\":\"x1\",\"g\":\"games\",\"key\":\"game:maze\",\"name\":\"Mountain Maze\",\"ok\":true,\"skipped\":false,\"problems\":[],\"notes\":[],\"said\":\"won: 0 ✓, 0 ✗, 50 taps\",\"secs\":150.7,\"fps\":58},{\"id\":\"maze\",\"lang\":\"vi\",\"speed\":\"x1\",\"g\":\"games\",\"key\":\"game:maze\",\"name\":\"Mê Cung Trên Núi\",\"ok\":true,\"skipped\":false,\"problems\":[],\"notes\":[],\"said\":\"thắng: 0 ✓, 0 ✗, 66 lần chạm\",\"secs\":191.7,\"fps\":58}]"
+    },
+    "ownerround": {
+      "ok": true,
+      "secs": 559,
+      "note": "[{\"w\":390,\"h\":844,\"lang\":\"en\",\"passed\":true},{\"w\":390,\"h\":844,\"lang\":\"vi\",\"passed\":true},{\"w\":820,\"h\":1180,\"lang\":\"en\",\"passed\":true},{\"w\":1280,\"h\":800,\"lang\":\"en\",\"passed\":true},{\"w\":844,\"h\":390,\"lang\":\"en\",\"passed\":true},{\"w\":844,\"h\":390,\"lang\":\"vi\",\"passed\":true},{\"who\":390,\"passed\":true},{\"who\":844,\"passed\":true},{\"game\":\"rulefinder\",\"passed\":true},{\"game\":\"gardenorder\",\"passed\":true},{\"game\":\"steppingpath\",\"passed\":true},{\"game\":\"rd_listentouch\",\"passed\":true},{\"game\":\"rd_storychoice\",\"passed\":true}]"
+    },
+    "terrainmath": {
+      "ok": true,
+      "secs": 3,
+      "note": "104859 exact terrain-stage heights; timings [{\"beforeMs\":259.6106879999861,\"afterMs\":151.34396299999207},{\"beforeMs\":250.98782099969685,\"afterMs\":150.93343200022355},{\"beforeMs\":250.62868600012735,\"afterMs\":154.08729300042614},{\"beforeMs\":250.59366000024602,\"afterMs\":150.04491400020197},{\"beforeMs\":250.4359940001741,\"afterMs\":150.80739500001073}]"
+    },
+    "flyaudit": {
+      "ok": true,
+      "secs": 82,
+      "note": "669 landings (place 25, tap 630, busstop 7, busride 7): every one on open ground, at least 4 ways out, the camera's view of the child clear"
+    },
+    "chapter5": {
+      "ok": true,
+      "secs": 204,
+      "note": "little 5 steps, big 6 steps; ch5: closed before its calendar day, open on it; played to the film, the place lit, the keepsake and the trick, as an under-5 and as a big kid; nothing on a road or in the water"
+    },
+    "worldplaces": {
+      "ok": true,
+      "secs": 108,
+      "note": "139 places models (Season 2 Australia's three included): on the ground, the code shape's size and facing, one draw each; every name sign in front of a model shows; 8 festival props in the Tet patches; The Huc bridge and the market gate walk through; a blocked model keeps its code shape"
+    },
+    "resume": {
+      "ok": true,
+      "secs": 91,
+      "note": "came back at 153, -63 with \"Welcome back, Little Na! You were in Breezy Meadows.\"; a spot in the lake and one inside a building both started at home"
+    },
+    "installflow": {
+      "ok": true,
+      "secs": 114,
+      "note": "guide stays until explicit Hide or installation; Hide remembered and Settings retained; native acceptance unconfirmed; appinstalled/standalone proofs use existing opt-in hello; Analytics off sends nothing; six EN/VI guide layouts"
+    },
+    "installstudio": {
+      "ok": true,
+      "secs": 4,
+      "note": "synthetic opt-in installation counters and native/app/unconfirmed device indicators; six EN/VI Studio layouts, no horizontal overflow"
+    },
+    "r79albumwords": {
+      "ok": true,
+      "secs": 59,
+      "note": "phone: 6 rows, computer: 6 rows; pictures and 44 px hear buttons inside each row, lined up, no empty circles"
+    },
+    "gamespace": {
+      "ok": true,
+      "secs": 1662,
+      "note": "345 games, big kid and under-5, phone 390x844: top band at most 130/150 px, playing area at least 78% of the screen, guide at most two lines; on a tablet every game fills at least 60% of its playing area"
+    },
+    "ladybugsplit": {
+      "ok": true,
+      "secs": 125,
+      "note": "split: one floating ladybug, autoplay accessible inside it; both mount orders and remount, 2 device/language layouts"
+    },
+    "school": {
+      "ok": true,
+      "secs": 37,
+      "note": "on dry level ground by Two Homes Street, off the roads (483 spots); walkable from the street to Cô Tam; she stands at the door (the cart keeps hers); on the map and in Where is; 996 triangles; a tap on the phone says her greeting and opens the Fun learning tab"
+    },
+    "ownerlearningcomposition": {
+      "ok": true,
+      "secs": 35,
+      "note": "Real game entrance:64px header controls, complete picture and palette visible; landscape stars clear; long guidance scrolls without hiding play"
+    },
+    "shallowrivers": {
+      "ok": true,
+      "secs": 36,
+      "note": "14 rivers 0.4-0.8 m deep along every in-world segment; 42646 m2 of water in the valley, none deeper than 0.8 m; no sudden drop in any bed (0.75 m per metre at most)"
+    },
+    "boats": {
+      "ok": true,
+      "secs": 31,
+      "note": "lake ferry 2 stops, raft line 4 stops, harbour ferry 2 stops, Vũng Tàu boat 2 stops, harbour ferry 5 stops; every boat floating flat and high, its hull clear of the bed on every route, under high enough decks, every pier on a road or path, level with its bank and walkable to its end; every bridge landmark sign on land by its bridge"
+    },
+    "gates": {
+      "ok": true,
+      "secs": 33,
+      "note": "19 gates walked through, nothing in the way, the biggest step 5 cm"
+    },
+    "ride": {
+      "ok": true,
+      "secs": 126,
+      "note": "43 parked cars and motorbikes to drive, 13 bicycles, 6 buses, trams and taxis to ride (big kid paid 2, under-5 free), 7 bus stops, each stop a choice of 5 places and the child arrives there; the camera rides at the child's eyes; a car left behind waits where it was left and goes back to its spot once every child is far away; a buffalo runs home; a bicycle rides over all 13 bridges; no lifts from strangers"
+    },
+    "gateview": {
+      "ok": true,
+      "secs": 48,
+      "note": "real Hanoi gate fades from the reported 150,-130 position at 430x517, tablet and computer sizes; collision data stays intact and materials restore"
+    },
+    "allphotos": {
+      "ok": true,
+      "secs": 37,
+      "note": "55 landmarks, 10 symbol animals and every kind of house have real photos"
+    },
+    "familyphotos": {
+      "ok": true,
+      "secs": 58,
+      "note": "no code: no family photos; with the code: fetched with x-family-code, kept in sv-family (never the game cache), a changed code clears them"
+    },
+    "friendgames": {
+      "ok": true,
+      "secs": 83,
+      "note": "Tiến Lên with one friend: 2 children, no computer players; Caro 15 × 15: 225 squares of 64 px in a scrolling board; the invitation offers 5 levels and 6 board sizes"
+    },
+    "tradeclothes": {
+      "ok": true,
+      "secs": 37,
+      "note": "to a boy a girl can give boys' clothes as a gift only (asking for something back is refused); with a girl friend clothes trade both ways"
+    },
+    "voicepack": {
+      "ok": true,
+      "secs": 92,
+      "note": "first open downloads with a small bar (\"Giọng đọc: đã lưu 0 / 24 · 0%\" → \"Giọng đọc: đã lưu 5 / 24 · 20%\" … \"Giọng đọc đã sẵn sàng ✓\"), the next open shows and downloads nothing, and files the phone lost are fetched again"
+    },
+    "tester": {
+      "ok": true,
+      "secs": 194,
+      "note": "only on tester devices (none of it downloaded elsewhere); the agreement once in English and Vietnamese, nothing kept or sent before \"I accept\"; then the tester mark with the version and a 44 px ladybird (none at \"auto reports only\"); Stop being a tester stops it at once"
+    },
+    "reportfloating": {
+      "ok": true,
+      "secs": 170,
+      "note": "checking phone en checking phone vi checking tablet en checking tablet vi checking computer en checking computer vi [{\"device\":\"phone\",\"lang\":\"en\",\"aboveModal\":true,\"dragWithoutReport\":true,\"doubleTapResets\":true,\"reportOpens\":true,\"target64\":true},{\"device\":\"phone\",\"lang\":\"vi\",\"aboveModal\":true,\"dragWithoutReport\":true,\"doubleTapResets\":true,\"reportOpens\":true,\"target64\":true},{\"device\":\"tablet\",\"lang\":\"en\",\"aboveModal\":true,\"dragWithoutReport\":true,\"doubleTapResets\":true,\"reportOpens\":true,\"target64\":true},{\"device\":\"tablet\",\"lang\":\"vi\",\"aboveModal\":true,\"dragWithoutReport\":true,\"doubleTapResets\":true,\"reportOpens\":true,\"target64\":true},{\"device\":\"computer\",\"lang\":\"en\",\"aboveModal\":true,\"dragWithoutReport\":true,\"doubleTapResets\":true,\"reportOpens\":true,\"target64\":true},{\"device\":\"computer\",\"lang\":\"vi\",\"aboveModal\":true,\"dragWithoutReport\":true,\"doubleTapResets\":true,\"reportOpens\":true,\"target64\":true},{\"reportDuringActualGame\":true,\"dragClampedToScreen\":true,\"positionRestoredOnRemount\":true},{\"duplicateBrisbaneRemoved\":true,\"physicalStopsPreserved\":true}]"
+    },
+    "reportburst": {
+      "ok": true,
+      "secs": 3,
+      "note": "12 distinct reports and one duplicate share one capture (1 encodes); a later event gets a fresh capture; 3066 ms"
+    },
+    "ownerautoplayplans": {
+      "ok": true,
+      "secs": 312,
+      "note": "[{\"id\":\"robot\",\"lang\":\"en\",\"speed\":\"x5\",\"g\":\"games\",\"key\":\"game:robot\",\"name\":\"Robot Planner\",\"ok\":true,\"skipped\":false,\"problems\":[],\"notes\":[],\"said\":\"won: 0 ✓, 0 ✗, 17 taps\",\"secs\":24.1,\"fps\":57},{\"id\":\"maze\",\"lang\":\"en\",\"speed\":\"x5\",\"g\":\"games\",\"key\":\"game:maze\",\"name\":\"Mountain Maze\",\"ok\":true,\"skipped\":false,\"problems\":[],\"notes\":[],\"said\":\"won: 0 ✓, 0 ✗, 36 taps\",\"secs\":27.9,\"fps\":59},{\"id\":\"duckmaze\",\"lang\":\"en\",\"speed\":\"x5\",\"g\":\"games\",\"key\":\"game:duckmaze\",\"name\":\"Duckling Maze\",\"ok\":true,\"skipped\":false,\"problems\":[],\"notes\":[],\"said\":\"won: 0 ✓, 0 ✗, 48 taps\",\"secs\":36.5,\"fps\":59},{\"id\":\"sortout\",\"lang\":\"en\",\"speed\":\"x5\",\"g\":\"games\",\"key\":\"game:sortout\",\"name\":\"Sort It Out\",\"ok\":true,\"skipped\":false,\"problems\":[],\"notes\":[],\"said\":\"won: 18 ✓, 0 ✗, 36 taps\",\"secs\":28.7,\"fps\":59},{\"id\":\"robot\",\"lang\":\"vi\",\"speed\":\"x5\",\"g\":\"games\",\"key\":\"game:robot\",\"name\":\"Lập Trình Rô-bốt\",\"ok\":true,\"skipped\":false,\"problems\":[],\"notes\":[],\"said\":\"thắng: 0 ✓, 0 ✗, 15 lần chạm\",\"secs\":22.4,\"fps\":55},{\"id\":\"maze\",\"lang\":\"vi\",\"speed\":\"x5\",\"g\":\"games\",\"key\":\"game:maze\",\"name\":\"Mê Cung Trên Núi\",\"ok\":true,\"skipped\":false,\"problems\":[],\"notes\":[],\"said\":\"thắng: 0 ✓, 0 ✗, 74 lần chạm\",\"secs\":52.9,\"fps\":60},{\"id\":\"duckmaze\",\"lang\":\"vi\",\"speed\":\"x5\",\"g\":\"games\",\"key\":\"game:duckmaze\",\"name\":\"Vịt Con Tìm Mẹ\",\"ok\":true,\"skipped\":false,\"problems\":[],\"notes\":[],\"said\":\"thắng: 0 ✓, 0 ✗, 46 lần chạm\",\"secs\":33.8,\"fps\":60},{\"id\":\"sortout\",\"lang\":\"vi\",\"speed\":\"x5\",\"g\":\"games\",\"key\":\"game:sortout\",\"name\":\"Phân Loại Nào\",\"ok\":true,\"skipped\":false,\"problems\":[],\"notes\":[],\"said\":\"thắng: 18 ✓, 0 ✗, 36 lần chạm\",\"secs\":28.5,\"fps\":59}]"
+    },
+    "s2autas": {
+      "ok": true,
+      "secs": 127,
+      "note": "s2a_wombat, s2a_devil, s2a_cradle: won by real taps at Easy and Talent (s2a_wombat 19→53 taps, s2a_devil 7→26 taps, s2a_cradle 5→8 taps); one screen on 5 sizes; pictures in tests/out/s2au"
+    },
+    "contentprogress": {
+      "ok": true,
+      "secs": 49,
+      "note": "actual game orchestration: one win and five coins once, album persistence, exit without reward, reload preserves save"
+    },
+    "contentwebsite": {
+      "ok": true,
+      "secs": 4,
+      "note": "8 website language/layout/deep-link checks"
+    },
+    "hubmap": {
+      "ok": true,
+      "secs": 70,
+      "note": "231 games, each in one tab, no link tiles; 327 games once each on the Simple screen; the map's Vietnam cities run north to south, each with its landmarks (9 cities)"
+    },
+    "capturefreeze": {
+      "ok": true,
+      "secs": 48,
+      "note": "a report's picture over \"Con Gì Kêu Thế?\" at 1600x960: 464 ms in all, the longest pause between frames 50 ms (was about 1.3 s here and 3.0 s on the tester's tablet)"
+    },
+    "ownerhudmic": {
+      "ok": true,
+      "secs": 76,
+      "note": "[{\"lang\":\"en\",\"questClear\":true,\"audioClear\":true,\"micBelow\":true},{\"lang\":\"vi\",\"questClear\":true,\"audioClear\":true,\"micBelow\":true}]"
+    },
+    "r79hudtrays": {
+      "ok": false,
+      "note": "phone: a top button is not level with the player card (251 px); a top button is not level with the player card (315 px)",
+      "secs": 50,
+      "alone": true,
+      "first": "phone: a top button is not level with the player card (251 px); a top button is not level with the player card (315 px)"
+    },
+    "levelsb": {
+      "ok": true,
+      "secs": 121,
+      "note": "24 group B games play differently at Easy and at Talent (e.g. hideseek 4,4, → 6,6,sneak; simon 5,1,2 → 10,4,5; redgreen 5,2400,1600,1 → 10,1000,900,2); Caro 3 × 3 → 7 × 7; Tiến Lên has no Hint on Talent"
+    },
+    "bottlevariety": {
+      "ok": true,
+      "secs": 103,
+      "note": "Bottle Music: no two rounds the same (little: 3 rounds, 2 questions; big: 3 rounds, 2 questions); the under-5s are asked for the highest and the lowest note"
+    },
+    "stalls": {
+      "ok": true,
+      "secs": 48,
+      "note": "43 stalls, kiosks and shop fronts in 14 places, 5 walking sellers: STALL-001…004 hold"
+    },
+    "water": {
+      "ok": true,
+      "secs": 41,
+      "note": "one water plane, map 256 px painted then from the cache; Sông Hồng rgb 165,110,75, sea 45,140,195, lake 60,170,190, foam by the shore; 232 reeds and 110 hyacinth in 2 meshes, none on a road, deck, pier or boat route"
+    },
+    "wayfind": {
+      "ok": true,
+      "secs": 68,
+      "note": "21 pictures to choose from; to Hà Nội: 28 sparkles at a time on the roads (about 772 m), moving on ahead, gone on arrival; Fly or Walk after choosing (flown to the market); every place reachable from home"
+    },
+    "frienditems": {
+      "ok": true,
+      "secs": 60,
+      "note": "clara: three steps at places in the valley, followed on the goal bar; the item shows only after the third; shop shoes replace the boots; 9 parts drawn with the item"
+    },
+    "togetheragain": {
+      "ok": true,
+      "secs": 218,
+      "note": "Friends page: no game buttons outside Play together (347 inside, caro, oantuti, memory, tienlen, tienlenbac among them); \"Đi theo\" on the friend's row (45 px) follows; a yes to Tiến Lên miền Bắc leaves no Friends page in front; Play again tapped first by one, then by both at once: two more Caro rounds together; B sees A on the honda67 (moved 7.8 m, rider 0.24 m up) and on the buffalo (1.6 m up), each left where A got off"
+    },
+    "mixedhanoivoice": {
+      "ok": true,
+      "secs": 3,
+      "note": "Lê Minh and the male voices put aside (owner, 3 Nov 2026 AEDT): every mode, with Lê Minh saved as the choice, plays the whole female recording with no Lê Minh fragment or male file fetched; private on-device speech and the English spoken language are still checked"
+    },
+    "voicecover": {
+      "ok": false,
+      "note": "10 lines not covered: not recorded (en f): From China | not recorded (vi f): Từ Trung Quốc | not recorded (en f): From India | not recorded (vi f): Từ Ấn Độ | not recorded (en f): Here we are! | not recorded (vi f): Tới nơi rồi! | not recorded (en f, a part): knows the way! Follow | not recorded (vi f, a part): biết đường! Đi theo | not recorded (en f, a part): brought the ball back! Throw it again? | not recorded (vi f, a part): mang bóng về rồi! Ném nữa không con?",
+      "secs": 3,
+      "alone": true,
+      "first": "10 lines not covered: not recorded (en f): From China | not recorded (vi f): Từ Trung Quốc | not recorded (en f): From India | not recorded (vi f): Từ Ấn Độ | not recorded (en f): Here we are! | not recorded (vi f): Tới nơi rồi! | not recorded (en f, a part): knows the way! Follow | not recorded (vi f, a part): biết đường! Đi theo | not recorded (en f, a part): brought the ball back! Throw it again? | not recorded (vi f, a part): mang bóng về rồi! Ném nữa không con?"
+    },
+    "familyreportprivacy": {
+      "ok": true,
+      "secs": 46,
+      "note": "Actual private quiz tap/automatic report/replay uses a generic label; foreign-object and canvas fallback redact question/answers; parent draft capture redacts too, with useful screenshots retained"
+    },
+    "autoplayreleasegates": {
+      "ok": true,
+      "secs": 107,
+      "note": "Studio-off fruit games skipped; all three enabled games really open; exact observer delivery notice ignored while a genuine error is retained"
+    },
+    "ownerreportedphonevi": {
+      "ok": true,
+      "secs": 147,
+      "note": "phone-vi 430x873 vi modal pad: 15/31 controls matched phone-vi 430x873 vi modal qsettings: 14/14 controls matched phone-vi 430x873 vi modal tpanel: 0/1 controls matched phone-vi 430x873 vi modal grownups: 1/1 controls matched phone-vi 428x879 vi modal qsettings: 3/3 controls matched phone-vi 428x581 vi modal tpanel: 0/1 controls matched {\"reports\":51,\"reachable\":33,\"unresolved\":18,\"blocked\":0}"
+    },
+    "fivescreensfilms": {
+      "ok": true,
+      "secs": 1689,
+      "note": "92 tales (874 pages over the sizes) and 744 guide films at phoneport 390x844, phoneland 844x390: inside the screen, no scrolling, no overlaps, words at least 16 px, buttons at least 44 px"
+    },
+    "calendartab": {
+      "ok": true,
+      "secs": 266,
+      "note": "phone 4 of 12 rows; phone sideways 4 of 12 rows; tablet 4 of 12 rows; tablet sideways 4 of 12 rows; computer 4 of 12 rows; one chip and a bar per row, details on tap (one at a time), See more; the festival that is on comes first and a step that is on takes the child there"
+    },
+    "chapter7": {
+      "ok": true,
+      "secs": 212,
+      "note": "little 5 steps, big 6 steps; ch7: closed before its calendar day, open on it; played to the film, the place lit, the keepsake and the trick, as an under-5 and as a big kid; nothing on a road or in the water"
+    },
+    "offlinelevels": {
+      "ok": true,
+      "secs": 361,
+      "note": "the three levels fit on a phone (portrait and landscape), a tablet and a computer, in English and Vietnamese; Light: an MP3 device moved to Opus and freed space at once (\"Voices on this device now: 0 MB. Freed 2 MB.\"), then kept only the core and the child's area (18 files); a new area on Light downloads when the child goes there, and the old one makes room; Full: all 54 recordings; Automatic from Full freed the game lines and kept the core and the places visited, and did not download them again"
+    },
+    "worldvehicles": {
+      "ok": false,
+      "note": "lumi in the sedan: legs 0.27 m out under the car; clara in the taxi: legs 0.23 m out under the car; finn in the suv: legs 0.22 m out under the car; lumi in the ute: legs 0.29 m out under the car; clara in the tamTruck: legs 0.14 m out under the car",
+      "secs": 70,
+      "alone": true,
+      "first": "lumi in the sedan: legs 0.27 m out under the car; clara in the taxi: legs 0.23 m out under the car; finn in the suv: legs 0.22 m out under the car; lumi in the ute: legs 0.29 m out under the car; clara in the tamTruck: legs 0.14 m out under the car"
+    },
+    "flocks": {
+      "ok": true,
+      "secs": 145,
+      "note": "kinds hen 3, rooster 2, duck 7, fish 3, clownfish 3, butterfly 14, bird 9; 9 draws for all the flocks; blocked: pictures kept (25/25 showing)"
+    },
+    "viwords": {
+      "ok": true,
+      "secs": 36,
+      "note": "8 lines cut right; the phone says the Vietnamese words with its Vietnamese voice; recorded lines use the female voice (Cô Tam 47 KB)"
+    },
+    "rules": {
+      "ok": true,
+      "secs": 0,
+      "note": "112 rules, the same in the document and the code; 34 rule ids named by the checks, all known"
+    },
+    "contentcaptures": {
+      "ok": true,
+      "secs": 77,
+      "note": "24 art completions, gates, album cap, keyboard/pointer and exit checks"
+    },
+    "boot": {
+      "ok": true,
+      "secs": 102,
+      "note": ""
+    },
+    "mapver": {
+      "ok": true,
+      "secs": 134,
+      "note": "starter on an older map: the knocker sees \"Ask a grown-up to update\" (VI) and is not let in, no knock card for the starter; guest on an older map: turned away the same way; no map version (r56): knock card and Let in as before; friends list: \"Different valley\" instead of Join for a friend on another map"
+    },
+    "ownerupdatenotice": {
+      "ok": true,
+      "secs": 159,
+      "note": "{\"firstTabHeld\":\"Sparkle Valley is open in another tab or window, so this one has stopped to keep your progress safe.Play here\",\"heldTabWroteNothing\":[],\"secondTabHeld\":true,\"keptAfterSwitch\":[],\"notice\":{\"text\":\"A new update is available. Your progress stays saved.Update now×\",\"h\":56,\"w\":358,\"top\":612,\"coversHud\":false,\"buttons\":[44,44]},\"duringActivity\":{\"stayed\":true,\"shown\":false},\"backInValley\":true,\"afterA\":{\"reloaded\":true,\"caches\":[\"sv-photos\",\"sv-world\",\"sv-save\",\"sv-2026-11-02-v1.07\",\"sv-voices\",\"sv-2026-11-02-v1.07-next\",\"sv-models-sv-2026-11-02-v1.07-next\"]},\"lostInUpdate\":[],\"savedKeys\":[\"sv2_profiles\",\"sv2_farm\"],\"otherTab\":{\"held\":true,\"lazy\":\"ok\",\"stayed\":true},\"afterB\":{\"reloaded\":true,\"caches\":[\"sv-photos\",\"sv-world\",\"sv-save\",\"sv-2026-11-02-v1.07\",\"sv-voices\",\"sv-2026-11-02-v1.07-next\",\"sv-models-sv-2026-11-02-v1.07-next\"],\"controller\":\"activated\"},\"firstTabHeldAgain\":true,\"moduleGone\":{\"before\":false,\"caught\":true,\"uncaught\":true,\"message\":\"Failed to fetch dynamically imported module: http://127.0.0.2:8842/js/gone-1794541671196.js\"},\"versions\":[\"sv-2026-11-02-v1.07\",\"sv-2026-11-02-v1.07-next\"]}"
+    },
+    "phone": {
+      "ok": true,
+      "secs": 279,
+      "note": "10 screens checked on desktop, phone and tablet; a friend's Join button clear of the status"
+    },
+    "oaqplay": {
+      "ok": true,
+      "secs": 74,
+      "note": "Real invited two-seat sow/capture/refill match completed through10 host taps; both states agree after every click, score70 at end, wrong-side/empty choices rejected,12 bilingual/device64px layouts"
+    },
+    "village": {
+      "ok": true,
+      "secs": 53,
+      "note": "footpaths 1.6 m, the pond path's edge 1.9–2.2 m from the water, ending at a bench; well, shrine, bench, boat, hens, dog, bicycle and cart all speak both languages; animals stayed ≥ 15.3 m off the paths; riders ≤ 0.28 m/s; the bicycle waited for a child in front of it"
+    },
+    "nametags": {
+      "ok": true,
+      "secs": 103,
+      "note": "at most 4, apart, none in calm mode: phone 2 (Three Regions Market, Hội An); tablet 2 (Three Regions Market, Hội An); computer 3 (Three Regions Market, Hội An, Hội An Covered Bridge)"
+    },
+    "realphotos": {
+      "ok": true,
+      "secs": 31,
+      "note": "3 photos from photos/index.json (Wikimedia, Flickr and a copy Studio kept; other web addresses left out), credit “Photo: Photographer · CC BY 2.0 · Wikipedia” as words; nothing asked of any other site; no internet: “Real photos need the internet. Try again when you are online!”; a place with none says they are on their way; 360° asks a grown-up (says it opens Google) while Use the internet is off, then opens on top of the photos; with it on, opens straight away"
+    },
+    "dayplan": {
+      "ok": true,
+      "secs": 32,
+      "note": "32 villagers with a job picture; at night 2 go home through their door, 30 light a lantern, 43 stall lanterns; all back out in the morning; umbrellas in the rain; nobody on a road or in a house"
+    },
+    "familynote": {
+      "ok": true,
+      "secs": 26,
+      "note": "the note shows once a day (\"From your family\"), the Vietnamese words when the English is empty; seen today is saved and it does not come back"
+    },
+    "handson": {
+      "ok": true,
+      "secs": 110,
+      "note": "fg_tet: 1,0,, / 1,1,, / 2,1,, / 2,2,pairs,words; mazebuild: 4,3,2, / 5,6,2, / 5,8,3, / 6,11,3,budget; won at every level; one screen on phone, tablet and computer (out/handson)"
+    },
+    "photo": {
+      "ok": true,
+      "secs": 58,
+      "note": "computer: sparkle-valley-20261113-040020.jpg downloaded (18 KB), Album ⬇ downloads too; iPhone: the share sheet got sparkle-valley-20261113-040047.jpg (9 KB) for \"Save Image\""
+    },
+    "studioreleases": {
+      "ok": true,
+      "secs": 12,
+      "note": "desktop: first page 594 ms (7 reads), again in the same tab 71 ms (1 reads), Releases 398 ms, Back 50 ms (0 reads, scroll 900->900); phone: first page 573 ms (7 reads), again in the same tab 77 ms (1 reads), Releases 368 ms, Back 48 ms (0 reads, scroll 900->900)"
+    },
+    "ownervoicewifi": {
+      "ok": true,
+      "secs": 45,
+      "note": "Bounded six-file fixture: Wi-Fi automatically starts core then nearby; changing language during a held area request completes every selected-language file, stops remaining old-language areas, preserves cache and bounded progress (not full asset/audio/device proof)"
+    },
+    "testernews": {
+      "ok": true,
+      "secs": 75,
+      "note": "no Tester preview pop-up at the start (9 s, EN and VI); the ladybird has a dot; its panel lists the sneak peek (with Play) and the batch in 3 days; the dot goes once seen"
+    },
+    "storyhelp": {
+      "ok": true,
+      "secs": 362,
+      "note": "6 stories played through (3 by a 5 to 8 year old in English on a phone, 3 by an under-5 in Vietnamese on a tablet): every page read, then put, find or order done; wrong places refused; a drag works; buttons 44 px (64 px for under-5s) or more"
+    },
+    "autoplay": {
+      "ok": true,
+      "secs": 273,
+      "note": "hidden where not allowed; button under the ladybird (56px); walked round water or a wall on foot; 7 steps at Quick with a finger (counting won: 4 ✓, 1 ✗, 6 taps; oddone won: 4 ✓, 3 ✗, 11 taps), stamina kept full, no restart; this device's run put back; Stop at once, no restart; rewards kept when progress goes back"
+    },
+    "ownerautoplaynavigation": {
+      "ok": true,
+      "secs": 32,
+      "note": "Unavailable landing/path produces a navigation problem; a non-advancing quest is explicitly incomplete after bounded attempts"
+    },
+    "pushnotify": {
+      "ok": true,
+      "secs": 396,
+      "note": "Grown-ups → Notifications on phone, tablet and computer in English and Vietnamese (11 switches, 44 px, nothing off screen; off with no keys); turning on and every change reach the website with nothing about a child; one Saturday and one Sunday message, none in quiet hours, decrypted and shown by the service worker with the device's own lines (= compose()), in Vietnamese too; ?open= opens the game of the week, the festival calendar and the play report; taps counted. Screenshots: out/pushnotify-phone-en.png, out/pushnotify-phone-vi.png, out/pushnotify-tablet-en.png, out/pushnotify-tablet-vi.png, out/pushnotify-computer-en.png, out/pushnotify-computer-vi.png"
+    },
+    "chapter4": {
+      "ok": true,
+      "secs": 150,
+      "note": "little 5 steps, big 6 steps; ch4: closed before its calendar day, open on it; played to the film, the place lit, the keepsake and the trick, as an under-5 and as a big kid; nothing on a road or in the water"
+    },
+    "chapter8": {
+      "ok": true,
+      "secs": 167,
+      "note": "little 5 steps, big 6 steps; ch8: closed before its calendar day, open on it; played to the film, the place lit, the keepsake and the trick, as an under-5 and as a big kid; nothing on a road or in the water"
+    },
+    "festmodels": {
+      "ok": true,
+      "secs": 641,
+      "note": "themes: tet 8/8, pumpkins 16/16, xmas 7/7, hearts 8/8, diyas 8/8, colours 7/7, poppies 7/7, ochre 7/7, harmony 7/7, clean 7/7, kitchen 8/8, dragonboat 7/7, teacher 8/8, flags-vn 8/8, flags-au 7/7; Lotus Village on Tet 276 draws; single models: fe-hoilang-pole 9, fe-folk-stage 9, fe-folk-post 9; blocked: code pieces drawn (753 patch meshes) for halloween; screenshots in tests/out/festmodels/"
+    },
+    "mapcoords": {
+      "ok": true,
+      "secs": 0,
+      "note": "no world positions outside js/content/map.js in 53 files"
+    },
+    "familyuiart": {
+      "ok": true,
+      "secs": 126,
+      "note": "English/Vietnamese phone, tablet and computer: no set-aside voice buttons, 44px voice preview, styled selector, questions under family quests, My Home map destination"
+    },
+    "website": {
+      "ok": true,
+      "secs": 479,
+      "note": "Welcome (computer, Vietnamese): Website opens the website in Vietnamese without starting the game; Close, Escape in the website, Escape on the page and Back to game each close it, the focus back on Website; messages from another window or asking anything else are ignored. phone: no Home button in the corner; Settings → Website (64 px) floats over Settings three times, the game paused, Close and Back to game come back to Settings with the focus on Website; the child, the goal and the tab unchanged. the website on its own (phone): no review controls, no Close, no sideways scrolling, Play goes to the game. the goal row clear of the player card, buttons, companion row and map, folded and open, with and without companions, Go and the goal shown when open (top: phone 54px, narrow 54px, landscape 54px, tablet 12px, computer 12px, two 50px, face 50px)"
+    },
+    "welcomesteady": {
+      "ok": true,
+      "secs": 117,
+      "note": "Welcome screen still within 2 px (Start button, cover, logo, language panel) opening, after both language taps, no Chinese/Hindi buttons, one Start size in both languages: phone en, phone vi, tablet en, tablet vi, computer en, computer vi"
+    },
+    "settingsgc": {
+      "ok": true,
+      "secs": 82,
+      "note": "three closed settings windows collected; no stale voice/window callbacks"
+    },
+    "twoplayerpick": {
+      "ok": true,
+      "secs": 38,
+      "note": "two friends: \"Play with whom?\" lists both and invites the one chosen; one friend: invited straight away"
+    },
+    "adventure": {
+      "ok": true,
+      "secs": 119,
+      "note": "372 games in 11 areas; under-5: one page of 17 sections, each a title and its own road (329 stops), every one drawn, China and India last in places; Discover 26 areas; double tap starts once; big kid: two taps, ✨ new, search; Ông Cú cheers; still in Calm; 25 opens: +0 listeners, +0 elements"
+    },
+    "grownupsui": {
+      "ok": true,
+      "secs": 40,
+      "note": "action button on the right above Jump/Run (206,526,384,588), words at the top (162–200 px); Grown-ups: 12 groups (players, sound, screen, time, money, online, names, data, together, family, notify, note), the privacy notice first (6 lines), no voice engine or voice key, no credits editor"
+    },
+    "playhub": {
+      "ok": true,
+      "secs": 42,
+      "note": "“Vui chơi” with 🎵 4 song groups (lullabies open the night page), none in Settings; phone draws 3.5/s, none behind the Songs page or the Simple screen"
+    },
+    "bagitems": {
+      "ok": true,
+      "secs": 79,
+      "note": "the three counters in one row of cards; every item has its words on hover; an ingredient tap says which dishes it makes; food asks \"Eat it?\" (Not now keeps it, Yes eats it), on a phone and a computer"
+    },
+    "signs": {
+      "ok": true,
+      "secs": 48,
+      "note": "16 signposts at 16 junctions, 39 boards, each naming a real place; off the road, solid; 2 meshes, one 1024 px picture"
+    },
+    "bagpals": {
+      "ok": true,
+      "secs": 184,
+      "note": "The Companions tab after the Backpack (tester-phone 430x517, phone 390x844, tablet 820x1180, computer 1366x800): companion, Feed and the coin goal, 2 pets and adopting, tiles 64 px+, none left in the Bag; a hat bought only with Buy (100 to 70), moved from the companion to a pet and off again, the 3D hat following; screenshots out/bagpals-*.png"
+    },
+    "postcards": {
+      "ok": true,
+      "secs": 71,
+      "note": "a family photo for Lotus Village arrived once as a postcard, shows in the album and opens big; a photo from outside the game folder is ignored; Studio offers the same 21 places"
+    },
+    "friendstab": {
+      "ok": true,
+      "secs": 38,
+      "note": "\"My friends\" folds and stays folded; a friend coming into the room closes the Friends page; a game starting closes it; Play together lists the games for friends (Tiến Lên miền Bắc too) and every game to race side by side"
+    },
+    "studiolive": {
+      "ok": true,
+      "secs": 86,
+      "note": "live Message shown, Mission, Quiz question and Defaults in English and Vietnamese with no Publish; live wins over custom.json, names fall back to it; offline the kept copy; a kept live update-notice switch reaches js/launch.js: [[\"en\",\"Live hello from Mum\",\"Live question?\",false],[\"vi\",\"Mẹ chào con yêu\",\"Câu hỏi mới?\",false]]"
+    },
+    "voice": {
+      "ok": true,
+      "secs": 72,
+      "note": "\"Giỏi quá!\" plays from the recording on a phone, and still does with Web Audio asleep (plain player); the phone's voice is never used for it"
+    },
+    "filmstart": {
+      "ok": true,
+      "secs": 1890,
+      "note": "42 films started and played all 231 pages to the end with no tap (computer, 6x speed); the first page started by itself on a phone (42) and a tablet (42)"
+    },
+    "filmmusic": {
+      "ok": true,
+      "secs": 15,
+      "note": "the story bed plays under the film, lowered while the narrator speaks, the valley's music back after; none with the music off"
+    },
+    "ownerstoryinitial": {
+      "ok": true,
+      "secs": 158,
+      "note": "Initial rendering sends no stale page-zero reset; two host Next taps survive delayed guest startup and the guest’s first real Back taps still synchronize"
+    },
+    "longplaymem": {
+      "ok": true,
+      "secs": 63,
+      "note": "6 places and 3 games: the graphics hold 1045 shapes (1037 of the valley's 4175 in use) and 563 pictures (561 of 1054 in use), from 261 and 125"
+    },
+    "chapter6": {
+      "ok": true,
+      "secs": 200,
+      "note": "little 5 steps, big 6 steps; ch6: closed before its calendar day, open on it; played to the film, the place lit, the keepsake and the trick, as an under-5 and as a big kid; nothing on a road or in the water"
+    },
+    "installgift": {
+      "ok": true,
+      "secs": 90,
+      "note": "installed: Home hat, +100 coins, a sticker, told in a reward card, once; in a browser tab nothing is given; Grown-ups chip: \"Install on the home screen to play faster, play offline, and get a gift for your\""
+    },
+    "validate": {
+      "ok": true,
+      "secs": 31,
+      "note": "ROAD-001/002/003/004/011, VEH-001 and STALL-001…004 hold"
+    },
+    "contentart": {
+      "ok": true,
+      "secs": 334,
+      "note": "110 art completions, gates, album cap, keyboard/pointer and exit checks"
+    },
+    "rollout": {
+      "ok": true,
+      "secs": 117,
+      "note": "27 switches: explicit off hides each before and after use, progress stays intact, future schedules retain used access, on brings it back; an old save counts; the New! card on the start day; testers 7 days early"
+    },
+    "padmap": {
+      "ok": true,
+      "secs": 93,
+      "note": "drawn from the map data: 390px 26 names, 20 clouds; 1180px 26 names, 20 clouds; 1366px 26 names, 20 clouds; a cloud lifts with one puff after a visit"
+    },
+    "drawinggames": {
+      "ok": true,
+      "secs": 314,
+      "note": "10 drawing games: auto play finished each on a phone (dotdot won, trace won, mirror won, colournum won, lanternart won, card won, sand won, drawpath won, shapedraw won, copygrid won); each opens on a phone for little ones (64 px), a tablet in Vietnamese and a computer (44 px), no page errors"
+    },
+    "reading": {
+      "ok": true,
+      "secs": 1101,
+      "note": "switch off: nothing loads or shows; on: 12 games in the Reading corner (9 for under-5s), all finish at Easy, Medium, Hard and for under-5s in English and Vietnamese; 254 English and 287 Vietnamese lines"
+    },
+    "events": {
+      "ok": true,
+      "secs": 44,
+      "note": "events seen: PlayerEnteredVillage, PlayerLeftVillage, StickerEarned, ActivityStarted, ActivityAbandoned, LanguageChanged; Lotus Village sticker given once (a second visit gives none)"
+    },
+    "familymissions": {
+      "ok": true,
+      "secs": 29,
+      "note": "15 ready-made missions (5 day, 5 week, 5 bedtime) with switches, 3 on to start, the family-play guide for grown-ups and the child (?), a day mission back the next day"
+    },
+    "companionhats": {
+      "ok": true,
+      "secs": 27,
+      "note": "the shop sells the next hat (45 coins), later hats wait locked; the mirror takes a hat off and puts another on"
+    },
+    "ownerstudiofolds": {
+      "ok": true,
+      "secs": 439,
+      "note": "{\"thin\":[],\"tabs\":90,\"folds\":1372,\"toggledOk\":1142,\"loose\":[],\"stuck\":[],\"keep\":[],\"errs\":[]}"
+    },
+    "studioback": {
+      "ok": true,
+      "secs": 11,
+      "note": "desktop: first page 586 ms (7 reads), again in the same tab 73 ms (1 reads), Releases 386 ms, Back 46 ms (0 reads, scroll 900->900); phone: first page 570 ms (7 reads), again in the same tab 64 ms (1 reads), Releases 382 ms, Back 43 ms (0 reads, scroll 900->900)"
+    },
+    "animalvoices": {
+      "ok": true,
+      "secs": 36,
+      "note": "10 animals play their real recordings (moo 2.2 s, baa 0.91 s, oink 0.72 s, woof 1.4 s, meow 2 s, quack 1.8 s, cluck 2 s, neigh 1.67 s, ribbit 2 s, hoot 2.6 s), exact buffer identities, none drawn as tones; \"Who Says That?\" starts with a recording; all 10 files in the offline list"
+    },
+    "testerreport": {
+      "ok": true,
+      "secs": 77,
+      "note": "9 reports: an error, a game that did not open and a frozen screen by themselves, each with a picture, the last 30 seconds, the players and the device; the ladybird (picture first, then a kind and a note), a long-press quick report, offline reports waiting with a number and sending when back online, and \"already reported → add to it\"; the retest of a fixed problem, and the auto play check's findings sent once"
+    },
+    "festcal": {
+      "ok": true,
+      "secs": 43,
+      "note": "build-up from 3 weeks before (stage 1→4), Halloween and Diwali at once, quiet days 3 days before, 12 festivals coming up on the calendar, 6 pumpkin doors, a pumpkin lantern after 5 treats"
+    },
+    "chapter3": {
+      "ok": true,
+      "secs": 246,
+      "note": "under-5: 6 steps (2 picture words, the companion flew high to lead); big kid: 8 steps (4 Aussie words, ferries, cricket, clues); rope, film (2 pages, the child starts the fireworks), Opera House lit, fireworks, keepsake, new trick, koala for the big kid; Studio can change Chi, Jack and Ruby's looks; then \"owl\""
+    },
+    "autoplayfruitbar": {
+      "ok": true,
+      "secs": 132,
+      "note": "auto play played the Fruit Bar to the end (played: 0 ✓, 0 ✗, 62 taps) and closed it with its own ✕, no problems"
+    },
+    "ownerquesttargets": {
+      "ok": true,
+      "secs": 36,
+      "note": "9 chapter ribbons/lights, including all3 Sydney targets, remain outside house boxes and collision solids"
+    },
+    "ownerkidgoal": {
+      "ok": true,
+      "secs": 87,
+      "note": "EN/VI phone: target tap explains companion hat saving without spending; Cancel keeps coins; explicit Buy spends exactly30; stale balance cannot overdraw"
+    },
+    "ownerheartstap": {
+      "ok": true,
+      "secs": 60,
+      "note": "hearts: own 44 px tap target; a short note (54 px, clear of every button) and a short spoken line, each switched by Studio on its own, never a caption box; the picture (with its gear) still opens Settings"
+    },
+    "ownerexplainswitches": {
+      "ok": true,
+      "secs": 71,
+      "note": "7 Studio switches (each says what Off does, EN/VI); switched off: no gift note or voice, no update notice, a game's question line hidden with its space kept; on: all shown"
+    },
+    "autoplayheld": {
+      "ok": true,
+      "secs": 78,
+      "note": "the game opened in a second tab during auto play: the first tab stopped auto play in 1.1 s, recorded and sent no problem (0 step(s) done before), drew no more frames (0 in 2.5 s) and says why; a stored v1.04 run is sent as v1.04"
+    },
+    "releasecalendar": {
+      "ok": true,
+      "secs": 38,
+      "note": "194 items in 41 weeks (177 held back, every one placed, chapters 4, 5 and finale on their days); moves win; opens on its day (testers 7 days early); a held game whose day came is open with no wins; the Coming soon tile says \"Next week: 2 new games\""
+    },
+    "chapter12": {
+      "ok": true,
+      "secs": 167,
+      "note": "little 4 steps, big 5 steps; ch12: closed before its calendar day, open on it; played to the film, the place lit, the keepsake and the trick, as an under-5 and as a big kid; nothing on a road or in the water"
+    },
+    "petskills": {
+      "ok": true,
+      "secs": 74,
+      "note": ""
+    },
+    "emoji": {
+      "ok": true,
+      "secs": 0,
+      "note": "840 different emoji in the game, 839 drawn, 0 not drawn (0 uses); left as they are: 🇬🇧 (flags drawn by icons.js, and text symbols); no emoji in the docs"
+    },
+    "migrate": {
+      "ok": true,
+      "secs": 132,
+      "note": "map D3: a spot is saved with its layout; with no stamp it starts at home; from an older layout the child starts at home once with \"The valley has grown!\" (postcards kept); Studio villagers from an older layout are parked, from this one placed"
+    },
+    "memoryfps": {
+      "ok": true,
+      "secs": 23,
+      "note": "Talent, 20 cards, CPU 4x slower: 60.2 frames a second, no moving stars on face-down cards"
+    },
+    "iphone": {
+      "ok": true,
+      "secs": 28,
+      "note": "microphone: \"tap 🎙️ Microphone on\" (not \"no microphone\"), not asked again on every tap, on from the button and put into the open call; real \"no microphone\" still said; #55: a hung try does not block a tap (asks afresh, \"Asking…\" then on, the late answer stopped), blocked after a tap says how to allow it (also in the Friends panel), an iPhone older than 14.3 is told so; Friends: 6 buttons fit, no word broken; the friend bar touches no button"
+    },
+    "games": {
+      "ok": true,
+      "secs": 433,
+      "note": "372 games"
+    },
+    "gamelevel": {
+      "ok": true,
+      "secs": 24,
+      "note": "Easy · Medium · Hard in the game bar (44 px, on screen at 390 px); Hard starts it again at Hard and is remembered; the festival calendar is only a calendar (nothing to visit, no decorations choice)"
+    },
+    "soundgames": {
+      "ok": true,
+      "secs": 57,
+      "note": "all 10 real calls, no synthetic substitution; delayed pig can be cancelled; replay serialises and close stops it; unavailable clip holds quiz with 64 px retry and recovers; Story Helpers praise waits for its animal call"
+    },
+    "englishmode": {
+      "ok": true,
+      "secs": 50,
+      "note": "English mode: First Sounds from the English corner plays in English with a Vietnamese hint (speaker 44 px), Opposites from Chữ và đọc in Vietnamese; the language comes back and is never saved as English; Picture Words is English wherever it opens; the English corner shows its badge; First Words is in Going places; pictures in tests/out/englishmode/"
+    },
+    "cairangwalk": {
+      "ok": true,
+      "secs": 25,
+      "note": "from the meadow into Sài Gòn past the floating market; only its boats are solid"
+    },
+    "camcalm": {
+      "ok": true,
+      "secs": 19,
+      "note": "the view turns at most 0.38 rad/s when the child turns round, and tips at most 0.15/s on a jump"
+    },
+    "jobs": {
+      "ok": true,
+      "secs": 31,
+      "note": "14 job boards off the roads; find the hen near the farm, then take eggs to a market stall: +3 coins each, and what the place is for"
+    },
+    "netmsg": {
+      "ok": true,
+      "secs": 4,
+      "note": "unknown kinds dropped (a stranger can no longer fake a knock or a status), bad moves and trades dropped, unknown fields removed, a flood of 100 moves cut to 40 a second"
+    },
+    "knock": {
+      "ok": true,
+      "secs": 137,
+      "note": "code 901224 shown as digits and 6 animals (no QR code); typed on the animal pad, knocked with the microphone off and nothing heard; \"No thanks\" sent them away; a stranger's moves without knocking ignored; another child typed the numbers and was let in"
+    },
+    "studio": {
+      "ok": true,
+      "secs": 340,
+      "note": "99 server messages, each shown in Vietnamese too; a trusted browser stays signed in for a year while it is on the list; Forget ends it; admins: viewer reads analytics only, editor cannot manage admins, password change and removal sign out; two-step or password only chosen by the owner for each admin, the owner by password only; access log; online now: 🟢 while playing (with the child), ⚪ after leaving; voice relay: short-lived details from Cloudflare, the key never sent; a page change online: 4 small GitHub calls; online: password; saves wait on the website (0 GitHub writes per save), one Publish sends them all (keeps the exe's change); drop waiting changes; players: 3 reporting devices counted, reported names scoped to their installations; inbox has 2 lines; report per device and child: name, games, places, town, system and browser, errors, stuck spots, 6 suggestions; offline play waits in an outbox and is counted on its own days; a re-sent batch counts once; the exe updates itself from GitHub (checksum checked, rebuilds of the same version too); exe: saves to its folder with a backup, players via the website, same version; GitHub in two steps (draft, then Publish); exe: gets the newest game by itself, keeps changes not published, refuses a draft from an older folder; exe: with no game folder, downloads the newest game next to itself; real photos: 4 kinds of saved photo open online and in the exe (a Vietnamese-named folder, a PNG, one not yet published); a 5 MB one is marked online; one whose file is gone is taken off the list; a fetched photo over 1.5 MB is skipped for the next one; a Wikimedia or Flickr photo is listed by its address (nothing saved), one that does not answer is skipped, and ✕ takes a linked one off; Sparkle Lab: one card per device, Tester and Auto play chips open their own settings; Memory Villages: 56 plots, 16 spare ones by the cities; Simple screen: 25 reading games listed; Simple screen: Group in each game's panel; Moved to … with Undo, no jump; 20 pages open online and in the exe on a computer, a tablet and a phone; 25 pages with every button and box 44 px or more on a tablet and a phone; leaving with changes not saved asks; save and Publish say what happened; the game's names follow Studio's language"
+    },
+    "voicearea": {
+      "ok": true,
+      "secs": 330,
+      "note": "core 7.0 MB (English) / 6.7 MB (Vietnamese) of 276 MB; mobile data: 469 core files in English only, then \"Download the other voices on mobile data? About 14…\" (hold for yes); Wi-Fi: hanoi first; the next start downloads nothing; a computer goes on by itself"
+    },
+    "songs": {
+      "ok": true,
+      "secs": 31,
+      "note": "Trung Thu → trungthu1; Lotus Village → village; family recordings first; Songs page: lullaby words, night, sleep timer, valley music left alone; Simple screen Music group starts with Songs; reef and Hạ Long inside the lake; star counter clear of the top bar"
+    },
+    "ownerroadvoice": {
+      "ok": true,
+      "secs": 54,
+      "note": "[{\"lang\":\"en\",\"decoded\":[{\"url\":\"/voices/en/f/92c829b74a9b3c8a.mp3\",\"duration\":10.151995464852607,\"samples\":447703},{\"url\":\"/voices/en/f/f7337bbf-67da81be.mp3\",\"duration\":2.231995464852608,\"samples\":98431}],\"playback\":{\"sources\":1,\"native\":0,\"deviceLines\":[],\"diag\":{\"pack\":\"ok\",\"lastMiss\":\"\",\"audio\":\"running\",\"recording\":\"Default recorded voices\"},\"log\":[{\"lang\":\"en\",\"text\":\"Stop at the kerb. Look and listen both ways. Cross with a grown-up when the road is clear. Keep looking as you cross.\",\"recorded\":true},{\"lang\":\"en\",\"text\":\"Five flowers for the teachers are hidden in town. Can you find them?\",\"recorded\":true}]}},{\"lang\":\"vi\",\"decoded\":[{\"url\":\"/voices/vi/f/5e0a902f-6caedd14.mp3\",\"duration\":1.7279818594104308,\"samples\":76204},{\"url\":\"/voices/vi/f/46230ceb1cab2f71.mp3\",\"duration\":10.331995464852607,\"samples\":455641}],\"playback\":{\"sources\":1,\"native\":0,\"deviceLines\":[],\"diag\":{\"pack\":\"ok\",\"lastMiss\":\"\",\"audio\":\"running\",\"recording\":\"Default recorded voices\"},\"log\":[{\"lang\":\"vi\",\"text\":\"Dừng ở mép đường. Nhìn và lắng nghe cả hai phía. Đi cùng người lớn khi đường đã vắng xe. Tiếp tục quan sát khi sang đường.\",\"recorded\":true},{\"lang\":\"vi\",\"text\":\"Có năm bông hoa tặng thầy cô giấu trong phố. Con tìm được không?\",\"recorded\":true},{\"lang\":\"vi\",\"text\":\"Một hình dán mới cho sổ của con!\",\"recorded\":true}]}}]"
+    },
+    "ownerautoplay2x": {
+      "ok": true,
+      "secs": 565,
+      "note": "[{\"id\":\"robot\",\"lang\":\"en\",\"speed\":\"x2\",\"g\":\"games\",\"key\":\"game:robot\",\"name\":\"Robot Planner\",\"ok\":true,\"skipped\":false,\"problems\":[],\"notes\":[],\"said\":\"won: 0 ✓, 0 ✗, 12 taps\",\"secs\":27,\"fps\":58},{\"id\":\"maze\",\"lang\":\"en\",\"speed\":\"x2\",\"g\":\"games\",\"key\":\"game:maze\",\"name\":\"Mountain Maze\",\"ok\":true,\"skipped\":false,\"problems\":[],\"notes\":[],\"said\":\"won: 0 ✓, 0 ✗, 70 taps\",\"secs\":107.2,\"fps\":60},{\"id\":\"duckmaze\",\"lang\":\"en\",\"speed\":\"x2\",\"g\":\"games\",\"key\":\"game:duckmaze\",\"name\":\"Duckling Maze\",\"ok\":true,\"skipped\":false,\"problems\":[],\"notes\":[],\"said\":\"won: 0 ✓, 0 ✗, 62 taps\",\"secs\":97.6,\"fps\":59},{\"id\":\"sortout\",\"lang\":\"en\",\"speed\":\"x2\",\"g\":\"games\",\"key\":\"game:sortout\",\"name\":\"Sort It Out\",\"ok\":true,\"skipped\":false,\"problems\":[],\"notes\":[],\"said\":\"won: 18 ✓, 0 ✗, 36 taps\",\"secs\":58.7,\"fps\":59},{\"id\":\"robot\",\"lang\":\"vi\",\"speed\":\"x2\",\"g\":\"games\",\"key\":\"game:robot\",\"name\":\"Lập Trình Rô-bốt\",\"ok\":true,\"skipped\":false,\"problems\":[],\"notes\":[],\"said\":\"thắng: 0 ✓, 0 ✗, 16 lần chạm\",\"secs\":33.7,\"fps\":57},{\"id\":\"maze\",\"lang\":\"vi\",\"speed\":\"x2\",\"g\":\"games\",\"key\":\"game:maze\",\"name\":\"Mê Cung Trên Núi\",\"ok\":true,\"skipped\":false,\"problems\":[],\"notes\":[],\"said\":\"thắng: 0 ✓, 0 ✗, 42 lần chạm\",\"secs\":70,\"fps\":59},{\"id\":\"duckmaze\",\"lang\":\"vi\",\"speed\":\"x2\",\"g\":\"games\",\"key\":\"game:duckmaze\",\"name\":\"Vịt Con Tìm Mẹ\",\"ok\":true,\"skipped\":false,\"problems\":[],\"notes\":[],\"said\":\"thắng: 0 ✓, 0 ✗, 48 lần chạm\",\"secs\":74.1,\"fps\":59},{\"id\":\"sortout\",\"lang\":\"vi\",\"speed\":\"x2\",\"g\":\"games\",\"key\":\"game:sortout\",\"name\":\"Phân Loại Nào\",\"ok\":true,\"skipped\":false,\"problems\":[],\"notes\":[],\"said\":\"thắng: 18 ✓, 0 ✗, 36 lần chạm\",\"secs\":59.3,\"fps\":59}]"
+    },
+    "autoplayshrine": {
+      "ok": true,
+      "secs": 48,
+      "note": "actual autoplay enters and wins the counting shrine from the stalled plateau approach; planner positions agree with real child collisions"
+    },
+    "companiongoal": {
+      "ok": true,
+      "secs": 88,
+      "note": "the coin goal chip with no hat (party hat 0/30), some hats (after the crown: the beanie, /100) and all 8 (All hats!, opens the Companions tab) on phone 390x844, tablet 820x1180, computer 1366x800; none without a companion; 4 new hats, each its own drawing and 3D hat; screenshots out/companiongoal-*.png"
+    },
+    "learningreport": {
+      "ok": true,
+      "secs": 80,
+      "note": "phone, tablet, computer: 5 subjects (Ă, A, 1, Khoa, $), what went well, \"Tuần sau thử: Từ Chỉ Hoạt Động\", the level by subject saved, a 1080x1350 picture to share"
+    },
+    "playtime": {
+      "ok": true,
+      "secs": 46,
+      "note": "a grown-up set 30 minutes: at 28 Lumi says two minutes are left; time up during a game waits for it to end, then her goodbye \"Hẹn mai chơi tiếp nhé!\""
+    },
+    "finale": {
+      "ok": true,
+      "secs": 128,
+      "note": "little 5 steps, big 6 steps; finale: closed before its calendar day, open on it; played to the film, the place lit, the keepsake and the trick, as an under-5 and as a big kid; nothing on a road or in the water"
+    },
+    "s2vngames": {
+      "ok": true,
+      "secs": 496,
+      "note": "12 games won at every level and as an under-5 (60 plays); levelsall: 12 games play differently at Easy, Medium, Hard and Talent (each writes its level numbers; Easy is never Talent; at least three levels differ); under-5s play gently with no Talent; 24 games exempt with a reason (free pads, family quiz, Fruit Bar)"
+    },
+    "talecostume": {
+      "ok": true,
+      "secs": 0,
+      "note": "38 tale films: everyone in a costume of the kit (18 costumes, the same as the Blender kit), no T-shirts, hoodies, overalls or caps, and no friend, child or companion inside a tale"
+    },
+    "s2aureef": {
+      "ok": true,
+      "secs": 114,
+      "note": "s2a_snorkel, s2a_turtle, s2a_reefquiz: won by real taps at Easy and Talent (s2a_snorkel 7→26 taps, s2a_turtle 16→52 taps, s2a_reefquiz 5→8 taps); one screen on 5 sizes; pictures in tests/out/s2au"
+    },
+    "managementpostgres": {
+      "ok": true,
+      "note": "22 real PostgreSQL transaction/migration/finance checks passed"
+    }
+  },
+  "selectedBaselineResults": {
+    "surprises": {
+      "ok": false,
+      "note": "the Studio switch does not take it away",
+      "secs": 78,
+      "alone": true,
+      "first": "the Studio switch does not take it away"
+    },
+    "voicearea": {
+      "ok": true,
+      "secs": 329,
+      "note": "core 7.0 MB (English) / 6.7 MB (Vietnamese) of 276 MB; mobile data: 469 core files in English only, then \"Download the other voices on mobile data? About 14…\" (hold for yes); Wi-Fi: hanoi first; the next start downloads nothing; a computer goes on by itself"
+    },
+    "boxes": {
+      "ok": false,
+      "note": "the Studio switches did not turn it off",
+      "secs": 36,
+      "alone": true,
+      "first": "the Studio switches did not turn it off"
+    },
+    "contract": {
+      "ok": false,
+      "note": "UI structure changed: {\"hud\":[\"chip.c-money\",\"chip.c-orbs\",\"chip.c-leafy\",\"simplesw\",\"chip.c-fetch\",\"chip.c-lead\",\"chip.c-pet\",\"chip.c-goal\",\"chip.c-box\",\"q-say\",\"q-go\",\"q-fam\",\"adv-open\",\"adv-walk\",\"adv-hear\",\"friendchip\",\"dk.snd\",\"dk.chat\",\"dk.call\",\"dk.mus\",\"z-tray\",\"z-in\",\"z-out\",\"z-view\",\"z-where\",\"dk.games\",\"dk.map\",\"dk.bag\",\"dk.voicecmd\",\"act\",\"mv.run\",\"mv.jump\",\"em\",\"em\",\"em\",\"em\",\"em\",\"em\",\"em\",\"em\",\"bigprompt\"],\"tabs\":[\"map\",\"bag\",\"pals\",\"shop\",\"log\",\"album\",\"passport\",\"games\",\"cam\",\"cal\",\"friend\"],\"hubSections\":1}",
+      "secs": 31,
+      "alone": true,
+      "first": "UI structure changed: {\"hud\":[\"chip.c-money\",\"chip.c-orbs\",\"chip.c-leafy\",\"simplesw\",\"chip.c-pet\",\"chip.c-goal\",\"chip.c-fetch\",\"chip.c-lead\",\"chip.c-box\",\"q-say\",\"q-go\",\"q-fam\",\"adv-open\",\"adv-walk\",\"adv-hear\",\"friendchip\",\"dk.snd\",\"dk.chat\",\"dk.call\",\"dk.mus\",\"z-tray\",\"z-in\",\"z-out\",\"z-view\",\"z-where\",\"dk.games\",\"dk.map\",\"dk.bag\",\"dk.voicecmd\",\"act\",\"mv.run\",\"mv.jump\",\"em\",\"em\",\"em\",\"em\",\"em\",\"em\",\"em\",\"em\",\"bigprompt\"],\"tabs\":[\"map\",\"bag\",\"pals\",\"shop\",\"log\",\"album\",\"passport\",\"games\",\"cam\",\"cal\",\"friend\"],\"hubSections\":1}"
+    },
+    "worldvehicles": {
+      "ok": false,
+      "note": "lumi in the sedan: legs 0.27 m out under the car; clara in the taxi: legs 0.23 m out under the car; finn in the suv: legs 0.22 m out under the car; lumi in the ute: legs 0.29 m out under the car; clara in the tamTruck: legs 0.14 m out under the car",
+      "secs": 52,
+      "alone": true,
+      "first": "lumi in the sedan: legs 0.27 m out under the car; clara in the taxi: legs 0.23 m out under the car; finn in the suv: legs 0.22 m out under the car; lumi in the ute: legs 0.29 m out under the car; clara in the tamTruck: legs 0.14 m out under the car"
+    },
+    "areastream": {
+      "ok": true,
+      "secs": 87,
+      "note": "120 villagers waited as stand-ins (built on landing near them); 13 parts after the start: 4 near home built at once, 4 far ones built when the child flew there; every part reachable; far parts sleep (6 on the last flight out) and wake at home; graphics 2330/911, 2523/978, 2606/1002 shapes/pictures over 3 rounds"
+    },
+    "r79hudtrays": {
+      "ok": false,
+      "note": "phone: a top button is not level with the player card (251 px); a top button is not level with the player card (315 px)",
+      "secs": 28,
+      "alone": true,
+      "first": "phone: a top button is not level with the player card (251 px); a top button is not level with the player card (315 px)"
+    },
+    "worldcreatures": {
+      "ok": false,
+      "note": "calf: z size 0.76 vs code 1.20",
+      "secs": 90,
+      "alone": true,
+      "first": "calf: z size 0.76 vs code 1.20"
+    },
+    "voicecover": {
+      "ok": false,
+      "note": "10 lines not covered: not recorded (en f): From China | not recorded (vi f): Từ Trung Quốc | not recorded (en f): From India | not recorded (vi f): Từ Ấn Độ | not recorded (en f): Here we are! | not recorded (vi f): Tới nơi rồi! | not recorded (en f, a part): knows the way! Follow | not recorded (vi f, a part): biết đường! Đi theo | not recorded (en f, a part): brought the ball back! Throw it again? | not recorded (vi f, a part): mang bóng về rồi! Ném nữa không con?",
+      "secs": 1,
+      "alone": true,
+      "first": "10 lines not covered: not recorded (en f): From China | not recorded (vi f): Từ Trung Quốc | not recorded (en f): From India | not recorded (vi f): Từ Ấn Độ | not recorded (en f): Here we are! | not recorded (vi f): Tới nơi rồi! | not recorded (en f, a part): knows the way! Follow | not recorded (vi f, a part): biết đường! Đi theo | not recorded (en f, a part): brought the ball back! Throw it again? | not recorded (vi f, a part): mang bóng về rồi! Ném nữa không con?"
+    },
+    "meet": {
+      "ok": false,
+      "note": "page.click: Timeout 30000ms exceeded. Call log: - waiting for locator('.friendnote [data-inv]') - locator resolved to <button data-inv=\"\" class=\"btn primary\">…</button> - attempting click action - waiting for element to be visible, enabled and stable - element is visible, enabled and stable - scrolling into view if needed - done scrolling - element is not visible - retrying click action - waiting for element to be visible, enabled and stable - element was detached from the DOM, retrying",
+      "secs": 165,
+      "alone": true,
+      "first": "page.click: Timeout 30000ms exceeded. Call log: - waiting for locator('.friendnote [data-inv]') - locator resolved to <button data-inv=\"\" class=\"btn primary\">…</button> - attempting click action - waiting for element to be visible, enabled and stable - element was detached from the DOM, retrying"
+    },
+    "managementpostgres": {
+      "ok": true,
+      "note": "22 real PostgreSQL transaction/migration/finance checks passed"
+    }
+  }
+}
