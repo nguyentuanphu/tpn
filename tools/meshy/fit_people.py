@@ -526,6 +526,17 @@ def lid(img, b, top=0., bot=1.):   # (original_skin) a closed lid painted over t
         _esh = ((V < .55) | ((V > .78) & (S_ < .22))) & (np.hypot((xx - cx_) / (rx * 1.2), (yy - cy_) / (ry * 1.1)) < 1)   # (the eye's own dark and white pixels, and 4 px round them: their soft edge, half white and half skin, passed as blush and showed as a pale ring round every closed eye)
         for _ in range(4): _esh = _esh | np.roll(_esh, 1, 0) | np.roll(_esh, -1, 0) | np.roll(_esh, 1, 1) | np.roll(_esh, -1, 1)
         hole &= ~(~_esh & (d > .7) & (yy > cy_) & (V > .82) & (S_ > .3) & (_R > _G * 1.2) & (_R > _B * 1.3))   # (bright: Sol's amber iris, red but darker, passed at .6 and showed through his closed lids; a blue-near-green test instead broke Lumi's orange-red blush into specks)   # (inside the eye's box too: Lumi's box reaches down over her blush)
+    if OWN:   # (13 Nov 2026, owner's gate, seen in the game: Sol's, Lumi's and Finn's closed eyes were tall flat ovals of the upper
+        # lid's colour reaching down over the blush) the lid ends just below the painted eye's own lowest dark or white pixels
+        # along the eye's own lower curve, column by column (one straight row left a straight edge across the cheek)
+        _em = (_eye | (S_ < .3)) & _far & ~(HAIRISH & ~_inb)   # (_far, and grey or far-from-skin pixels too: the pale grey rim at the inner corners lay below the cut as a grey streak, Sol)
+        for _ in range(2): _em = _em | np.roll(_em, 1, 0) | np.roll(_em, -1, 0)
+        if _em.any():
+            _cols = np.where(_em.any(0), H_ - 1 - np.argmax(_em[::-1], 0), -1).astype(np.float32)
+            _xs = np.nonzero(_cols >= 0)[0]
+            _bot = np.interp(np.arange(W_), _xs, _cols[_xs])   # (beyond the eye's ends: its end rows)
+            _k = max(1, int(w_ * .04)); _bot = np.convolve(np.pad(_bot, _k, mode='edge'), np.ones(2 * _k + 1) / (2 * _k + 1), 'valid')
+            hole &= yy <= _bot[None, :] + max(3, h_ * .08)
     if top > 0: hole &= yy >= y0
     if PART: hole &= yy < lidline(xx)
     # her own skin flows in from all round the eye (a smooth fill, no disc edge): the eye pixels are repeatedly
