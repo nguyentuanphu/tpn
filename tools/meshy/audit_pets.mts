@@ -36,7 +36,7 @@ const { chromium } = createRequire(new URL('../../tests/package.json', import.me
 import { writeFileSync, mkdirSync, statSync, readFileSync } from 'node:fs';
 const [OUT, LIST = 'puppy', MODE = ''] = process.argv.slice(2);
 mkdirSync(OUT, { recursive: true });
-const LIMIT = { stretch: 300, tear: 6, sink: 0, float: 0, eyes: 6, hat: 0, flicker: 12, mouth: 0, lid: 8 };   // (tear 6: the Meshy puppy's own 4 px gap where an ear meets the cheek, in the rest pose too)
+const LIMIT = { stretch: 300, tear: 6, sink: 0, float: 0, eyes: 6, hat: 0, flicker: 12, mouth: 0, lid: 8, stray: 12 };   // (tear 6: the Meshy puppy's own 4 px gap where an ear meets the cheek, in the rest pose too)
 const SIZE = { near: 800, far: 400 };
 const b = await chromium.launch({ args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'] });
 const _nc = b.newContext.bind(b); b.newContext = async (o: any) => { const c = await _nc(o); c.setDefaultNavigationTimeout(240000); c.setDefaultTimeout(600000); return c; };
@@ -134,7 +134,7 @@ const res: any = await P.page.evaluate(async ([kinds, MODE, LIMIT]) => {
         const hidden: any[] = []; if (plant === 'eyes') obj.traverse((o: any) => { if (o.isMesh && /-(shut|joy)\d$/.test(o.material.name)) { o.visible = false; hidden.push(o); } });
         PLANT.value = plant === 'tear' ? 1 : 0; if (plant === 'tear') {   // (a torn ear: a hole through its flap where it hangs out beyond the cheek, seen from the front)
           const e = bone('ear0'); obj.updateMatrixWorld(true); e.getWorldPosition(PLANTAT.value); PLANTAT.value.x += Math.sign(PLANTAT.value.x || -1) * Hh * .07; PLANTAT.value.y -= Hh * .12; }
-        const cs: any = { kind, lod, clip, t: +f.toFixed(2), plant, stretch: 0, tear: 0, sink: 0, float: 0, eyes: 0, hat: 0, flicker: 0, mouth: 0, lid: 0, worst: '' };
+        const cs: any = { kind, lod, clip, t: +f.toFixed(2), plant, stretch: 0, tear: 0, sink: 0, float: 0, eyes: 0, hat: 0, flicker: 0, mouth: 0, lid: 0, stray: 0, worst: '' };
         // stretch and the ground
         skinned(body, now); let minY = 1e9; const strK: number[] = [];
         for (let i = 1; i < now.length; i += 3) minY = Math.min(minY, now[i]);
@@ -225,6 +225,24 @@ const res: any = await P.page.evaluate(async ([kinds, MODE, LIMIT]) => {
               for (let j = 0; j < S * S; j++) { if (!fl[j] || seen[j]) continue; const g: number[] = []; st.push(j); seen[j] = 1;
                 while (st.length) { const q = st.pop()!; g.push(q); const x = q % S, y = (q / S) | 0; for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) { const xx = x + dx, yy = y + dy; if (xx < 0 || yy < 0 || xx >= S || yy >= S) continue; const w2 = yy * S + xx; if (fl[w2] && !seen[w2]) { seen[w2] = 1; st.push(w2); } } }
                 if (g.length < 4) for (const q of g) fl[q] = 0; else kl += g.length; }
+              /* (14 Nov 2026, from the friends' auditor: a mood may change only the eyes and the mouth) 'stray': a pixel of the
+                 lid piece outside the eye (1.25 eye radii round each eye's middle) that differs from the picture with the lids
+                 hidden by .08 from every pixel within 1 px: the lid's patch showing on the cheek, the brow or the blaze.
+                 Groups under 4 px left out */
+              const eyeZ = new Uint8Array(S * S); for (const e of [e0, e1]) {   // (both eyes: at a slant the far eye's lid is seen too)
+                const p = e.clone().project(cam), q = e.clone().add(new THREE.Vector3(er * 1.25, 0, 0).applyQuaternion(cam.quaternion)).project(cam);
+                const cx = (p.x + 1) / 2 * S, cy = (p.y + 1) / 2 * S, rr = Math.abs(q.x - p.x) / 2 * S;
+                for (let y = Math.max(0, Math.floor(cy - rr)); y < Math.min(S, cy + rr); y++) for (let x = Math.max(0, Math.floor(cx - rr)); x < Math.min(S, cx + rr); x++) if ((x - cx) ** 2 + (y - cy) ** 2 <= rr * rr) eyeZ[y * S + x] = 1; }
+              const fsx = new Uint8Array(S * S);
+              for (let j = 0; j < S * S; j++) { if (eyeZ[j] || !(pm[j * 4 + 3] && pm[j * 4] > 200 && pm[j * 4 + 1] < 40 && pm[j * 4 + 2] > 200)) continue;
+                const x = j % S, y = (j / S) | 0; let best = 9; for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) { const xx = x + dx, yy = y + dy; if (xx < 0 || yy < 0 || xx >= S || yy >= S) continue; const q = (yy * S + xx) * 4; best = Math.min(best, Math.hypot(px[j * 4] - po[q], px[j * 4 + 1] - po[q + 1], px[j * 4 + 2] - po[q + 2]) / 255); }
+                if (best > .08) fsx[j] = 1; }
+              let ksx = 0; { const seen2 = new Uint8Array(S * S), st2: number[] = [];
+                for (let j = 0; j < S * S; j++) { if (!fsx[j] || seen2[j]) continue; const g: number[] = []; st2.push(j); seen2[j] = 1;
+                  while (st2.length) { const q = st2.pop()!; g.push(q); const x = q % S, y = (q / S) | 0; for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) { const xx = x + dx, yy = y + dy; if (xx < 0 || yy < 0 || xx >= S || yy >= S) continue; const w2 = yy * S + xx; if (fsx[w2] && !seen2[w2]) { seen2[w2] = 1; st2.push(w2); } } }
+                  if (g.length < 4) for (const q of g) fsx[q] = 0; else ksx += g.length; } }
+              if (ksx > cs.stray) { cs.stray = ksx; cs.strayAt = yaw + '/' + pitch; }
+              if (ksx > (LIMIT as any).stray) out.pics[`${kind}-${lod}-${clip}-${cs.t}-${plant}-stray-${yaw}-${pitch}`] = png(px, fsx);
               if (kl > cs.lid) { cs.lid = kl; cs.lidAt = yaw + '/' + pitch; }
               if (kl > (LIMIT as any).lid) out.pics[`${kind}-${lod}-${clip}-${cs.t}-${plant}-lid-${yaw}-${pitch}`] = png(px, fl); }
             const cam2 = cam.clone(); cam2.near = .013; cam2.far = 23; cam2.updateProjectionMatrix(); cam2.updateMatrixWorld(true);   // (the same picture, the depth spread differently: only depth fights change)
@@ -336,7 +354,7 @@ for (const kind of kinds) for (const lod of ['near', 'far']) {
 }
 if (MODE === 'selftest') {
   const caught = (p: string, k: string) => cs.some((c: any) => c.plant === p && c[k] > LIMIT[k]);
-  const r = { stretch: caught('stretch', 'stretch'), tear: caught('tear', 'tear'), eyes: caught('eyes', 'eyes'), sink: caught('sink', 'sink'), hat: caught('hat', 'hat'), mouth: caught('mouth', 'mouth'), lid: caught('lid', 'lid') };
+  const r = { stretch: caught('stretch', 'stretch'), tear: caught('tear', 'tear'), eyes: caught('eyes', 'eyes'), sink: caught('sink', 'sink'), hat: caught('hat', 'hat'), mouth: caught('mouth', 'mouth'), lid: caught('lid', 'lid'), stray: caught('lid', 'stray') };   // (the pale lid plant covers the cheek round the eye too: 'stray' must catch it)
   lines.push('selftest ' + Object.entries(r).map(([k, v]) => `${k} ${v ? 'caught' : 'MISSED'}`).join(', '));
   if (Object.values(r).some(v => !v)) process.exitCode = 3;
 }

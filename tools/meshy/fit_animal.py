@@ -636,15 +636,28 @@ def extra_moves(J, M, bones):
         for i in back: legs(P, i, -1.1 * sf, 0., level=bp_)
         for i in front: legs(P, i, -pitch, 0)
         put(P, 'tail', -.45)
+    def lying(P):   # (14 Nov 2026, a calf does not sit like a dog: it lies with all four legs folded under it (sit_lie), the head up)
+        put(P, 'body', 0, loc=(0, -M['belly'] * FIX.get('lie_drop', .92), 0))
+        for i in front: legs(P, i, FIX.get('lie_front', -1.45), FIX.get('lie_front_knee', 0))
+        for i in back: legs(P, i, FIX.get('lie_back', -1.3), FIX.get('lie_back_knee', .25))
+        put(P, 'tail', -.2)
     def sit(t):
-        L = 6.; w = TAU / L; P = R(); sitting(P)
+        L = 6.; w = TAU / L; P = R()
+        if FIX.get('sit_lie'):
+            lying(P); put(P, 'head', -.1 + math.sin(2 * w * t) * .03, math.sin(w * t) * .4)
+            for k, e in enumerate(ears): put(P, e, math.sin(2 * w * t + k) * .05)
+            face(P, None, eye=blink(t, (1.4, 4.1)), smile=1.05, look=math.sin(w * t) * .15)
+            return P
+        sitting(P)
         put(P, 'head', .5 + math.sin(2 * w * t) * .03, math.sin(w * t) * .4)
         P['tail'] = ((-.45, math.sin(3 * w * t) * .25, 0), Z3, O3)
         for k, e in enumerate(ears): put(P, e, math.sin(2 * w * t + k) * .05)
         face(P, None, eye=blink(t, (1.4, 4.1)), smile=1.05, look=math.sin(w * t) * .15)
         return P
     def beg(t):
-        bpt = FIX.get('beg_pitch', -1.0); L = 2.4; w = TAU / L; P = R(); sitting(P, bpt)   # (13 Nov 2026, owner circled the kitty's neck and hind legs begging: sat bolt upright its rump took the ground and its short hind legs hung in the air, the head bent down hard at the nape: beg_pitch, a lower sit)
+        bpt = FIX.get('beg_pitch', -1.0); L = 2.4; w = TAU / L; P = R()
+        if FIX.get('beg_stand'): put(P, 'body', -.08)   # (14 Nov 2026: the calf begs standing, head up and nodding, its legs as they stand: sat back, its hooves showed flattened and long)
+        else: sitting(P, bpt)   # (13 Nov 2026, owner circled the kitty's neck and hind legs begging: sat bolt upright its rump took the ground and its short hind legs hung in the air, the head bent down hard at the nape: beg_pitch, a lower sit)
         if FIX.get('beg_paws_down'):   # (13 Nov 2026: the calf's raised front hooves hung down as points; it begs sitting with its front hooves on the ground, the head up and nodding)
             put(P, 'head', -.6 * bpt - .35 + math.sin(2 * w * t) * .08, 0, math.sin(w * t) * .2)
             P['tail'] = ((-.4, math.sin(4 * w * t) * .4, 0), Z3, O3)

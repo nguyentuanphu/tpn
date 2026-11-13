@@ -256,6 +256,13 @@ level (`legs(..., cap=KC, bp=pitch)` in `extra_moves`), and the legs swing less.
 bounce at 2x: crop the legs (`pet_film.mts <out> <kind> run,jump,bounce`, then crop x 600-900 of each frame).
 
 ### Lessons from the panda, calf and joey (13 Nov 2026)
+- (14 Nov) Shut lids that read as a disc: Meshy paints a darker (calf, panda) or lighter (kitty) socket round the eye;
+  `socket_lift` brings darker fur in the lid up to the fur at its rim, `socket_both` also brings lighter fur down (at
+  most 12 %: more turned the kitty's cream stripe grey), `socket_dark` (panda) brings dark fur to the black patch's own
+  black (`socket_lift` there whitened the patch, the rim being white face). Lids are lit with the head's normals.
+- (14 Nov) `audit_pets.mts` has `lid` (lid pixels over the eye paler than the fur round it) and `stray` (lid pixels
+  outside both eyes that change the face); the eye zone must cover both eyes, at a slant the far eye's lid shows too.
+- (14 Nov) A calf does not sit like a dog: `sit_lie` (lying, legs folded under), `beg_stand`, `nuzzle_scratch`.
 - White specks or lines on dark fur (owner, panda): Meshy packs its picture's pieces edge to edge with no gap, a black
   piece touching a white one; when the game blurs or shrinks the picture (mipmaps, far away) the next piece's colour
   bleeds in along every seam. `repack` in the animal's json: the points welded where they share both place AND picture
