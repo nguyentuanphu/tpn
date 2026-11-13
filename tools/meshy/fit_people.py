@@ -827,7 +827,10 @@ def mouth_o(im, big):
 M['surprised'] = mouth_o(base.copy(), False)
 im = base.copy()
 if mouth: erase_mouth(im, mouth); mb = [mouth[0] + (mouth[2] - mouth[0]) * .15, mouth[1], mouth[2] - (mouth[2] - mouth[0]) * .15, mouth[3]]; stroke(im, arc(mb, .75, -.45), lip * .8, lw * 1.1)
-for b in eyes.values(): erase(im, b, 0, .18)
+for b in eyes.values():
+    if os.environ.get('FIT_SAD_TALL'):   # (13 Nov 2026, r064's sad face at 1024 px: two lash lines, the old one above the drooped lid) her thick upper lash sat above the eye's box, so the part lid (top .18 of the box) never reached it: the box is taken a quarter higher, the lid's edge kept where it was
+        _h = b[3] - b[1]; erase(im, [b[0], max(0, int(b[1] - _h * .25)), b[2], b[3]], 0, (.25 + .18) / 1.25)
+    else: erase(im, b, 0, .18)
 M['sad'] = im
 im = base.copy()
 for b in eyes.values(): im = shift_iris(im, b, .16)
@@ -1541,6 +1544,24 @@ if TEX and KEEP and SHIFT:
             if _eb[_k + 1] < 0: _eb[_k + 1] = 0.
             elif _eb[_k] > 0: _eb[_k] = 0.
         for m_ in (clothm, skinm): m_['eye_boxes'] = [float(x) for x in _eb[:8]]
+        # (13 Nov 2026, second reviewers, all six regional villagers: the open eye's iris, lashes and pale rim showed round every
+        # shut lid from the side, above and below, and the far eye past the nose) the per-texel colour test in the game caught
+        # only the whites: each eye's own oval, out to its lashes (grow()), in model space (centre x, centre height, half
+        # width, half height), is painted skin outright while the eyes are shut
+        _eo = []
+        for b in list(eyes.values())[:2]:
+            _w, _h = b[2] - b[0], b[3] - b[1]; _x0, _x1, _y0, _y1 = b[0] - _w * .14, b[2] + _w * .14, b[1] - _h * .22, b[3] + _h * .28
+            _eo += [fx0 + (_x0 + _x1) / 2 / W_ * (fx1 - fx0), fz1 - (_y0 + _y1) / 2 / H_ * (fz1 - fz0), (_x1 - _x0) / 2 / W_ * abs(fx1 - fx0), (_y1 - _y0) / 2 / H_ * abs(fz1 - fz0)]
+        while len(_eo) < 8: _eo += _eo[:4]
+        for m_ in (clothm, skinm): m_['eye_ovals'] = [float(x) for x in _eo[:8]]
+        # (the paint is the skin right round the eyes, from the face picture (sRGB): the body's flat skin colour was lighter than
+        # the socket's shade, a pale ring round every shut lid)
+        _rk = np.zeros(F.shape[:2], bool)
+        for b in list(eyes.values())[:2]:
+            _w, _h = b[2] - b[0], b[3] - b[1]; _d = np.hypot((xx - (b[0] + b[2]) / 2) / (_w * .64 + 1), (yy - (b[1] + b[3]) / 2) / (_h * .75 + 1)); _rk |= (_d > 1) & (_d < 1.35)
+        _rk &= skin_mask(F) & ~HAIRISH
+        if _rk.sum() > 10:
+            for m_ in (clothm, skinm): m_['eye_skin'] = [float(x) for x in np.median(F[_rk][:, :3], axis=0)]
         # (auditor 10 Nov 2026: Clara's far eye, three-quarters, kept its open lashes while shut) the eye's own triangles,
         # dark lashes and iris, were not marked skin, so the game never painted them over: every non-hair head triangle in
         # an eye area is marked skin now (open eyes keep their paint: the game's per-texel test keeps dark lines)

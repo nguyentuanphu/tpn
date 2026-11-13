@@ -18,7 +18,7 @@ const b = await chromium.launch({ args: ['--use-angle=swiftshader', '--enable-un
 // (10 Nov 2026: on a busy machine the page took over 30 s to load: 3 min limits)
 const nc = b.newContext.bind(b); b.newContext = async (o: any) => { const c = await nc(o); c.setDefaultNavigationTimeout(180000); c.setDefaultTimeout(180000); return c; };
 const P = await open(b, { w: 900, h: 700, fast: false }); await clear(P.page);
-const shots: Record<string, string> = await P.page.evaluate(async ([MODE, LIST, BARE, HIDE, process_linear, SZ, DIST, UP, GATE]) => {
+const shots: Record<string, string> = await P.page.evaluate(async ([MODE, LIST, BARE, HIDE, process_linear, SZ, DIST, UP, GATE, ONLY]) => {
   const G = (window as any).__sv, A = await import(String('/js/avatar.js')), FM = await import(String('/js/friend-model.js')), { THREE } = await import(String('/js/gfx.js'));
   const h = G.heroes[0], R = G.renderer, out: Record<string, string> = {};
   const w = (ms: number) => { dispatchEvent(new Event('pointermove')); document.querySelectorAll('.storybook, .dialog, .modal, .reward').forEach(e => e.remove()); G.paused = false; G.world.time = .42; return new Promise(res => setTimeout(res, ms)); };
@@ -217,24 +217,25 @@ const shots: Record<string, string> = await P.page.evaluate(async ([MODE, LIST, 
     // (10 Nov 2026, the 11 villagers on their own Meshy faces) every mood front and three-quarter, the eye moods from both
     // sides, the back from three sides, and the whole villager front, three-quarter and back in the valley's light
     mood(n.A, n.A.model, 'smile'); const hy = role ? headYaw(n.A.model, yaw) : yaw;
-    for (const m of MOODS) { mood(n.A, n.A.model, m); for (const s of [0, .7]) headShot(`v-${id}-${m}-${s ? 'tq' : 'front'}`, n.A.root, n.A.model, hy, s, true); }
-    for (const m of ['smile', 'blink', 'lookL']) { mood(n.A, n.A.model, m); for (const s of [1.2, -1.2]) headShot(`v-${id}-${m}-side${s > 0 ? 'L' : 'R'}`, n.A.root, n.A.model, hy, s, true); }
+    const ONLY_ = ONLY ? String(ONLY).split(',') : null;
+    if (!ONLY_) for (const m of MOODS) { mood(n.A, n.A.model, m); for (const s of [0, .7]) headShot(`v-${id}-${m}-${s ? 'tq' : 'front'}`, n.A.root, n.A.model, hy, s, true); }
+    if (!ONLY_) for (const m of ['smile', 'blink', 'lookL']) { mood(n.A, n.A.model, m); for (const s of [1.2, -1.2]) headShot(`v-${id}-${m}-side${s > 0 ? 'L' : 'R'}`, n.A.root, n.A.model, hy, s, true); }
     // (12 Nov 2026, owner's review gate: "chỉ đưa bản tốt nhất") SHOT_GATE=1 adds every mood at -.7, -.4 and .4, both sides
     // (1.2) for every mood, and from above and below (pitch .45) front and .5 to either side: the far eye past the nose,
     // hair round a shut eye, the nose and the chin and neck
-    if (GATE) for (const m of MOODS) { mood(n.A, n.A.model, m);
-      for (const s of [-.7, -.4, .4, 1.2, -1.2]) headShot(`v-${id}-${m}-y${s}`, n.A.root, n.A.model, hy, s, true);
-      for (const p of [.45, -.45]) for (const s of [0, .5, -.5]) headShot(`v-${id}-${m}-${p > 0 ? 'above' : 'below'}${s}`, n.A.root, n.A.model, hy, s, true, p); }
+    if (GATE) for (const m of (ONLY_ || MOODS)) { mood(n.A, n.A.model, m);
+      for (const s of (ONLY_ ? [-1.2, -.7, -.4, 0, .4, .7, 1.2] : [-.7, -.4, .4, 1.2, -1.2])) headShot(`v-${id}-${m}-y${s}`, n.A.root, n.A.model, hy, s, true);
+      if (!ONLY_) for (const p of [.45, -.45]) for (const s of [0, .5, -.5]) headShot(`v-${id}-${m}-${p > 0 ? 'above' : 'below'}${s}`, n.A.root, n.A.model, hy, s, true, p); }
     mood(n.A, n.A.model, 'smile');
-    for (const s of [Math.PI, 2.2, -2.2]) headShot(`v-${id}-neck-back-${s.toFixed(1)}`, n.A.root, n.A.model, hy, s, true);
-    { n.A.root.updateMatrixWorld(true); const box = new THREE.Box3().setFromObject(n.A.model.obj, true), c = box.getCenter(new THREE.Vector3()), Hh = box.max.y - box.min.y;
+    if (!ONLY_) for (const s of [Math.PI, 2.2, -2.2]) headShot(`v-${id}-neck-back-${s.toFixed(1)}`, n.A.root, n.A.model, hy, s, true);
+    if (!ONLY_) { n.A.root.updateMatrixWorld(true); const box = new THREE.Box3().setFromObject(n.A.model.obj, true), c = box.getCenter(new THREE.Vector3()), Hh = box.max.y - box.min.y;
       for (const [nm, s] of [['front', 0], ['tq', .7], ['back', Math.PI]] as [string, number][]) {
         const dir = new THREE.Vector3(Math.sin(yaw), 0, Math.cos(yaw)).applyAxisAngle(new THREE.Vector3(0, 1, 0), s);
         const cf = new THREE.PerspectiveCamera(28, 360 / 480, .05, 200); cf.position.copy(c).addScaledVector(dir, Hh * 2.1); cf.lookAt(c); grab(`v-${id}-full-${nm}`, cf, 360, 480); } }
     par.attach(n.A.root); SCN = null; G.paused = false;
   }
   return out;
-}, [MODE, LIST, !!process.env.BARE, process.env.HIDE || '', !!process.env.LINEAR, Number(process.env.SHOT_SIZE || 480), Number(process.env.SHOT_DIST || .75), Number(process.env.SHOT_UP || 0), !!process.env.SHOT_GATE] as any);   // (11 Nov 2026: SHOT_SIZE=1024 SHOT_DIST=.45 SHOT_UP=.06 for the face at full size: the owner's eyes and mouth review)   // (LINEAR=1: the old linear pictures)   // (HIDE=shorts: that garment hidden in the poses, to tell which layer shows)
+}, [MODE, LIST, !!process.env.BARE, process.env.HIDE || '', !!process.env.LINEAR, Number(process.env.SHOT_SIZE || 480), Number(process.env.SHOT_DIST || .75), Number(process.env.SHOT_UP || 0), !!process.env.SHOT_GATE, process.env.SHOT_ONLY || ''] as any);   // (13 Nov 2026: SHOT_ONLY=blink,happy with SHOT_GATE=1: only those moods at the gate's side angles, no other picture; a quick look at one fix)   // (11 Nov 2026: SHOT_SIZE=1024 SHOT_DIST=.45 SHOT_UP=.06 for the face at full size: the owner's eyes and mouth review)   // (LINEAR=1: the old linear pictures)   // (HIDE=shorts: that garment hidden in the poses, to tell which layer shows)
 if (MODE === 'cover' || MODE === 'skirt') for (const [k, v] of Object.entries(shots)) if (!String(v).startsWith('data:')) console.log(k, v);
 for (const [k, v] of Object.entries(shots)) { if (v) writeFileSync(`${OUT}/${k}.png`, Buffer.from(v.split(',')[1], 'base64')); else console.log('missing', k); }
 console.log('shots', Object.keys(shots).length, 'in', OUT);

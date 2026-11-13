@@ -259,6 +259,21 @@ Record: `docs/meshy-regional-40-100/PILOT-1.md`. Ids `r<nnn>` (sheet number), jo
     areas less their top quarter and outer fifth. Tried and dropped: the friends' "not skin" test (painted blush and
     freckles flat, a hard band at three-quarters), dark texels (r084's curly hair and brows turned skin-coloured), scaling
     a dark texel up to the skin (coloured noise: the output is mixed to the skin colour outright, diffuse and emissive).
+  - *The colour test was not enough: each eye's own oval (13 Nov 2026, second reviewers, all six).* A debug colouring
+    (a temporary line in the shader: inside the eye areas magenta, painted texels green; shot with `HIDE=face`) showed the
+    colour test caught only the whites: the iris, the lashes and the pale rim round the eye stayed, and showed past the lid
+    piece from the side, above, below and on the far eye. The fit now also writes `eye_ovals` (each eye out to its lashes,
+    `grow()`-sized: .14 of its width each side, .22 of its height above, .28 below, in model space) and `eye_skin` (the
+    face picture's skin in a ring right round the eyes, sRGB); while shut, every skin-marked texel inside an oval takes that
+    skin outright (soft edge .85-1), lit as if facing the head's forward (`vEyeN_` from the skin matrix: the eyeball's dome
+    was lit lighter above and below and darker at the side, a ring). Three things made the paint a lighter ring until
+    found: the flat skin `uTint * uPaint` is not the skin by the eyes; the eye's texels are not skin-weighted, so `k_` is 1
+    there, not the tone (paint `uEyeSkin * uTint`); and the baked material's dark colour (`diffuse`, #262524) multiplies
+    every texel's diffuse, so the paint must be `diffuse * skin`, not the skin alone. Older models get the ovals without a
+    refit with `tools/meshy/patch_eye_ovals.py` (the eyes found again on `F.png`, written into the glb's material extras).
+  - *Two lash lines on the sad face (13 Nov 2026, r064, r050).* The sad lid is the box's top .18 (a part lid); a thick upper
+    lash above the box stayed above the drooped lid. `-SadTall` takes the box a quarter higher and keeps the lid's edge where
+    it was. Only where the double line shows: on r045 and r084 it hooked the lid's ends (looked angry).
   - *r074's blush under a shut eye (13 Nov 2026).* `-EyeDark` grows the eye box through what is not skin, and her flushed
     cheeks are not: the lid hole took them. With `-LidLocal`, warm colour below the eye white's lowest row is no part of
     the hole. Removing warm colour round the eye itself instead left the iris and the socket's shade as smudges.
