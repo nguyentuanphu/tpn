@@ -38,6 +38,7 @@ FIX = json.load(open(JOINTS)) if os.path.exists(JOINTS) else {}
 def load(path):
     """the Meshy model, one mesh, turned to face -y (three's +z), standing on z 0, as tall as the game's animal"""
     bpy.ops.wm.read_factory_settings(use_empty=True)
+    bpy.context.scene.render.image_settings.color_mode = 'RGBA'   # keep generated eyelid feather alpha when packing PNGs
     bpy.context.scene.render.fps = wc.FPS   # (the clips' frames are 30 a second, as world-creatures.py makes them)
     bpy.ops.import_scene.gltf(filepath=path)
     ms = [o for o in bpy.context.scene.objects if o.type == 'MESH']
@@ -254,6 +255,7 @@ def debug_picture(o, J, path):
 
 PARENT = {'body': None, 'head': 'body', 'wing0': 'body', 'wing1': 'body', 'ear0': 'head', 'ear1': 'head', 'tail': 'body', 'leg0': 'body', 'leg1': 'body', 'leg2': 'body', 'leg3': 'body',
           'knee0': 'leg0', 'knee1': 'leg1', 'knee2': 'leg2', 'knee3': 'leg3'}
+if FIX.get('eye_retract'): PARENT.update({'retract0':'head','retract1':'head'})
 
 def smooth01(x): x = np.clip(x, 0, 1); return x * x * (3 - 2 * x)
 
@@ -342,6 +344,16 @@ def weights(o, J, M):
     for _ in range(FIX.get('smooth', 3)):
         Wg = np.array([(Wg[i] + Wg[nb[i]].mean(0)) / 2 if len(nb[i]) else Wg[i] for i in range(ng)])
     W = Wg[grp]
+    if FIX.get('eye_retract'):
+        # The original painted eyeball moves under its lid during a blink. The
+        # surrounding skin blends back to the head, and the open eye stays unchanged.
+        rx, rz = FIX['surface_eye_radii']
+        for i in (0,1):
+            center=np.array(Fc['eye%d' % i])
+            distance=np.hypot((V[:,0]-center[0])/rx,(V[:,2]-center[2])/rz)
+            strength=(1-smooth01((distance-1.2)/.5))*(np.abs(V[:,1]-center[1])<.09)
+            transfer=W[:,ix['head']]*strength
+            W[:,ix['head']]-=transfer;W[:,ix['retract%d' % i]]+=transfer
     W /= np.maximum(1e-6, W.sum(1, keepdims=True))
     for b in names:
         g = o.vertex_groups.new(name=b); col = W[:, ix[b]]
@@ -701,6 +713,8 @@ def face(P, F_, eye=1.0, big=1.0, brow_y=0.0, brow_tilt=0.0, smile=1.0, frown=Fa
     for i in (0, 1):
         P['shut%d' % i] = ((0, 0, 0), (0, 0, 0), one if closed else tiny)
         P['joy%d' % i] = ((0, 0, 0), (0, 0, 0), one if happy else tiny)
+        if FIX.get('eye_retract'):
+            P['retract%d' % i] = ((0,0,0),(0,0,-FIX['eye_retract'] if closed or happy else 0),one)
     s = max(.001, jaw); P['jaw'] = ((0, 0, 0), (0, 0, 0), (s, s, s) if jaw > .05 else tiny)
 wc.face = face   # (animal_moves calls the module's face)
 
@@ -773,6 +787,80 @@ def find_face(o, J, M):
         if name == 'mouth': out['mouth_n'] = np.array(nor[:])
     return out
 
+def surface_lid(o, arm, name, center, side, up, picture, picture_radius, eye_index, bone_name):
+    """Face triangles with compact per-triangle UV tiles, painted in surface coordinates.
+    UV-island padding is evaluated from each triangle's edge (not transparent pixels),
+    so even tiny Meshy UV islands remain closed without projecting black fur onto cheeks.
+    """
+    me=o.data;uvl=me.uv_layers.active.data;c=np.array(center);side=np.array(side);up=np.array(up)
+    radii=np.array(FIX['surface_eye_radii']);V=np.array([v.co[:] for v in me.vertices])
+    close=((((V[:,[0,2]]-c[[0,2]])/radii)**2).sum(1)<FIX.get('surface_eye_selection',2.6)**2)&(np.abs(V[:,1]-c[1])<.09)
+    selected=[t for t in me.loop_triangles if close[list(t.vertices)].any()]
+    _,source=tex_of(o);density=FIX.get('surface_texels_per_m',512);TP=len(picture);tiles=[];padding=4
+    for t in selected:
+        uv=np.array([uvl[k].uv[:] for k in t.loops])
+        # Support zero-area UV triangles as well. Give every surface
+        # triangle a nondegenerate local map, including those flat-colour triangles.
+        points=V[list(t.vertices)];ab=points[1]-points[0];ac=points[2]-points[0];length=np.linalg.norm(ab)
+        if length<1e-9:continue
+        edge=ab/length;along=float(ac@edge);height3=math.sqrt(max(0.,float(ac@ac)-along*along))
+        if height3<1e-9:continue
+        xy=np.array(((0.,0.),(length,0.),(along,height3)))*density
+        origin=np.floor(xy.min(0)).astype(int)-padding;end=np.ceil(xy.max(0)).astype(int)+padding+1
+        width,height=(end-origin).tolist()
+        yy,xx=np.mgrid[0:height,0:width];at=np.stack((xx+origin[0]+.5,yy+origin[1]+.5),-1)
+        a,b,d=xy;den=(b[1]-d[1])*(a[0]-d[0])+(d[0]-b[0])*(a[1]-d[1])
+        if abs(den)<1e-9:continue
+        w0=((b[1]-d[1])*(at[...,0]-d[0])+(d[0]-b[0])*(at[...,1]-d[1]))/den
+        w1=((d[1]-a[1])*(at[...,0]-d[0])+(a[0]-d[0])*(at[...,1]-d[1]))/den
+        weights=np.maximum(np.stack((w0,w1,1-w0-w1),-1),0)
+        weights/=np.maximum(weights.sum(-1,keepdims=True),1e-9)
+        pos=weights@V[list(t.vertices)];original_uv=weights@uv
+        distance=np.sqrt((((pos[...,[0,2]]-c[[0,2]])/radii)**2).sum(-1))
+        paint=np.clip((1.4-distance)/.25,0,1)
+        cover_inner,cover_outer=FIX.get('surface_eye_cover',(1.65,2.2))
+        alpha=np.clip((cover_outer-distance)/(cover_outer-cover_inner),0,1)*(np.abs(pos[...,1]-c[1])<.08)
+        if not (alpha>0).any():continue
+        projected=np.stack(((pos-c)@side,(pos-c)@up),-1)
+        pixel=np.clip((projected/picture_radius+1)*.5*TP-.5,0,TP-1)
+        ij=np.floor(pixel).astype(int);hi=np.minimum(ij+1,TP-1);mix=pixel-ij
+        fill=(picture[ij[...,1],ij[...,0]]*(1-mix[...,0,None])*(1-mix[...,1,None])+
+              picture[ij[...,1],hi[...,0]]*mix[...,0,None]*(1-mix[...,1,None])+
+              picture[hi[...,1],ij[...,0]]*(1-mix[...,0,None])*mix[...,1,None]+
+              picture[hi[...,1],hi[...,0]]*mix[...,0,None]*mix[...,1,None])
+        original=sample(source,original_uv)
+        rgb=original*(1-paint[...,None])+fill*paint[...,None]
+        tiles.append(dict(triangle=t,xy=xy,origin=origin,width=width,height=height,pixels=np.concatenate((rgb,alpha[...,None]),-1)))
+    if not tiles:raise ValueError('Empty anatomical eyelid atlas')
+    atlas_width=max(512,2**math.ceil(math.log2(max(t['width']+2 for t in tiles))))
+    x=y=2;row_height=0
+    for tile in sorted(tiles,key=lambda t:-t['height']):
+        if x+tile['width']+2>atlas_width:x=2;y+=row_height+2;row_height=0
+        tile['at']=(x,y);x+=tile['width']+2;row_height=max(row_height,tile['height'])
+    atlas_height=2**math.ceil(math.log2(y+row_height+2))
+    atlas=np.zeros((atlas_height,atlas_width,4),dtype=np.float32)
+    for tile in tiles:
+        x,y=tile['at'];atlas[y:y+tile['height'],x:x+tile['width']]=tile['pixels']
+    image=bpy.data.images.new(name+'-surface',atlas_width,atlas_height,alpha=True)
+    image.file_format='PNG';image.pixels[:]=atlas.ravel();image.pack()
+    if DEBUG:image.filepath_raw=os.path.join(OUT,name+'-surface.png');image.save()
+    bm=bmesh.new();uv_layer=bm.loops.layers.uv.new('UVMap');verts={}
+    for tile in tiles:
+        t=tile['triangle']
+        for vi in t.vertices:
+            if vi not in verts:verts[vi]=bm.verts.new(me.vertices[vi].co+Vector((0,-FIX.get('surface_lid_forward',.004),0)))
+        face=bm.faces.new([verts[vi] for vi in t.vertices]);face.smooth=True
+        for loop,li in zip(face.loops,t.loops):
+            uv=uvl[li].uv;at=tile['at'];origin=tile['origin']
+            loop[uv_layer].uv=((tile['xy'][list(t.loops).index(li),0]-origin[0]+at[0])/atlas_width,(tile['xy'][list(t.loops).index(li),1]-origin[1]+at[1])/atlas_height)
+    mesh=bpy.data.meshes.new(name);bm.to_mesh(mesh);bm.free()
+    obj=bpy.data.objects.new(name,mesh);bpy.context.collection.objects.link(obj)
+    mat=bpy.data.materials.new(name);mat.use_nodes=True;mat.surface_render_method='DITHERED'
+    nodes=mat.node_tree;tex=nodes.nodes.new('ShaderNodeTexImage');tex.image=image;tex.extension='CLIP'
+    bsdf=nodes.nodes['Principled BSDF'];nodes.links.new(tex.outputs['Color'],bsdf.inputs['Base Color']);nodes.links.new(tex.outputs['Alpha'],bsdf.inputs['Alpha'])
+    mesh.materials.append(mat);group=obj.vertex_groups.new(name=bone_name);group.add(list(range(len(mesh.vertices))),1.,'REPLACE')
+    obj.parent=arm;mod=obj.modifiers.new('rig','ARMATURE');mod.object=arm
+
 def face_pieces(o, arm, J, Fc):
     """the lids: the head's own surface over each eye (a little in front of it), with its own small picture: the
     painted fur round the eye filled in over the eye, and a lash line ("◡" shut, "^" happy); the open mouth: a soft
@@ -787,7 +875,11 @@ def face_pieces(o, arm, J, Fc):
         tris = [t for t in me.loop_triangles if np.linalg.norm(V[list(t.vertices)].mean(0) - c) < R]
         if not tris: continue
         # the eye's own frame: out of the face (the patch's mean normal), sideways and up
-        vi_all = sorted({vi for t in tris for vi in t.vertices}); nrm = N[vi_all].mean(0); nrm /= np.linalg.norm(nrm)
+        frame_tris = tris
+        if FIX.get('lid_normal_radius'):
+            core = [t for t in tris if np.linalg.norm(V[list(t.vertices)].mean(0) - c) < r * FIX['lid_normal_radius']]
+            if core: frame_tris = core   # orient from the eyeball, not surrounding cheek/nose curvature
+        vi_all = sorted({vi for t in frame_tris for vi in t.vertices}); nrm = N[vi_all].mean(0); nrm /= np.linalg.norm(nrm)
         side = np.cross((0, 0, 1.0), nrm); side /= np.linalg.norm(side); up = np.cross(nrm, side)
         # the picture: the face seen straight on over the eye (rays along -normal), TP x TP texels over 2P x 2P
         img0 = np.zeros((TP, TP, 3)); Pp = np.full((TP, TP, 3), np.nan)
@@ -815,7 +907,7 @@ def face_pieces(o, arm, J, Fc):
                 u, v = a + da, b + db
                 if 0 <= u < TP and 0 <= v < TP and odd[u, v] and not eye[u, v]: eye[u, v] = True; st.append((u, v))
         for _ in range(3): eye = eye | np.roll(eye, 1, 0) | np.roll(eye, -1, 0) | np.roll(eye, 1, 1) | np.roll(eye, -1, 1)   # (a little wider)
-        inside = eye | (rr < r * 1.05); known = ~inside & hit
+        inside = eye | (rr < r * FIX.get('lid_force_fill', 1.05)); known = ~inside & hit
         ys, xs = np.nonzero(eye); ew = (xx[eye].max() - xx[eye].min()) / 2 if eye.any() else r; ecx = xx[eye].mean() if eye.any() else 0; ecy = yy[eye].mean() if eye.any() else 0
         print('EYE', i, 'width', round(float(ew), 4), 'centre off', round(float(ecx), 4), round(float(ecy), 4), flush=True)
         gx, gy = (float(ecx), float(ecy)) if FIX.get('lid_on_eye') else (0., 0.)   # (the lid's middle)
@@ -853,9 +945,12 @@ def face_pieces(o, arm, J, Fc):
             if FIX.get('lid_feather'):
                 mask_r = r * FIX.get('lid_fill_radius', R / r)
                 alpha = np.clip((.98 - np.hypot((xx-gx)/mask_r, (yy-gy)/(mask_r*1.1))) / FIX['lid_feather'], 0, 1)[...,None]
-            pim = bpy.data.images.new(name, TP, TP); pim.pixels[:] = np.concatenate([img, alpha], 2).astype(np.float32).ravel()
+            pim = bpy.data.images.new(name, TP, TP, alpha=True); pim.pixels[:] = np.concatenate([img, alpha], 2).astype(np.float32).ravel()
             pim.pack()
             if DEBUG: pim.filepath_raw = os.path.join(OUT, name + '.png'); pim.file_format = 'PNG'; pim.save()
+            if FIX.get('surface_lids'):
+                surface_lid(o, arm, name, c, side, up, img, P, i, f'{kind}{i}')
+                continue
             # the piece: a fine grid laid on the head's surface over the eye (rays along -normal), a little in front, its
             # picture straight on; no gaps (the head's own triangles, copied, showed the eye through cracks at their edges)
             bm = bmesh.new(); uvL = bm.loops.layers.uv.new('UVMap'); GN = FIX.get('lid_grid', 28) if not FARLOD else FIX.get('lid_grid_far', 20); grid = {}
@@ -915,7 +1010,7 @@ def face_pieces(o, arm, J, Fc):
         mouth = np.where(((yy < -ry * .15) & ((xx / (rx * .7)) ** 2 + ((yy + ry * .55) / (ry * .55)) ** 2 < 1))[..., None], np.array((.95, .45, .5)), np.array((.22, .05, .07)))
         img = img * (1 - inside) + mouth * inside
         name = f'meshy-{KIND}-mouth'
-        pim = bpy.data.images.new(name, TP, TP); pim.pixels[:] = np.concatenate([img, np.ones((TP, TP, 1))], 2).astype(np.float32).ravel(); pim.pack()
+        pim = bpy.data.images.new(name, TP, TP, alpha=True); pim.pixels[:] = np.concatenate([img, np.ones((TP, TP, 1))], 2).astype(np.float32).ravel(); pim.pack()
         if DEBUG: pim.filepath_raw = os.path.join(OUT, name + '.png'); pim.file_format = 'PNG'; pim.save()
         bm = bmesh.new(); uvL = bm.loops.layers.uv.new('UVMap'); grid = {}; lift = FIX.get('mouth_lift', .0025)
         for a in range(GN + 1):
@@ -946,6 +1041,7 @@ Fc = find_face(o, J, M)
 print('FACE', json.dumps({k: (np.round(v, 3).tolist() if hasattr(v, '__len__') else round(v, 4)) for k, v in Fc.items()}), flush=True)
 for i in (0, 1):
     J['shut%d' % i] = J['joy%d' % i] = tuple(Fc['eye%d' % i])
+    if FIX.get('eye_retract'): J['retract%d' % i] = tuple(Fc['eye%d' % i])
 if 'mouth' in Fc: J['jaw'] = tuple(Fc['mouth'])
 print('JOINTS', json.dumps({k: [round(x, 3) for x in v] for k, v in J.items()}), json.dumps({k: (np.round(v, 3).tolist() if hasattr(v, '__len__') else round(float(v), 3)) for k, v in M.items()}), flush=True)
 if DEBUG: debug_picture(o, J, os.path.join(OUT, KIND + '-joints.png'))

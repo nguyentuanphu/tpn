@@ -1,3 +1,9 @@
+# Current cow work — 13/11/2026 14:36 AEDT
+
+Cow only; owner explicitly requested continuing through all fixes before final approval. Current R16: 60 quick cases and 120 full cases, zero failing, including zero eye leaks. All six planted selftest faults caught. True source-eye retraction under surface-fitted lids; packed PNG alpha endpoints preserved; sampler verified after packing. Current game models about 754/370 KiB. Device integration and final films are being completed. **Work in progress; not owner-approved, do not merge/deploy.**
+
+Total Meshy charge remains **40 credits**; no further paid POST during fitting. Sheep/chicken remain paused. Original task IDs, source models and previous work record follow.
+
 # Sparkle Valley — cow trên cloud
 
 Cập nhật 13/11/2026 08:41 AEDT (Sydney). Nhánh `meshy-farm-cloud`, bắt đầu từ `origin/meshy-pets` (`a89a0b877`), đã đối chiếu và hợp nhất phần chuẩn bị có sẵn trên nhánh farm. **Chỉ làm cow; sheep/chicken tạm dừng theo chủ.**

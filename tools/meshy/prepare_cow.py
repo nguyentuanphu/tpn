@@ -1,7 +1,7 @@
 """Local cow source repair, no API: blender -b -t 4 -P tools/meshy/prepare_cow.py -- RAW_30K_GLB OUT_DIR.
 Keeps raw inputs intact. Welds UV-split positions, smooths normals, bakes surface AO into
 base colour (so nostrils remain visible under the game's baked material), and makes a
-14k local far source. Follow with fit_animal.py using animal_joints/cow.json.
+12k local far source. Follow with fit_animal.py using animal_joints/cow.json.
 """
 import sys
 from pathlib import Path
@@ -37,7 +37,7 @@ pixels[:, :, :3] *= .25 + .75*np.clip(aopx[:, :, :3], 0, 1)
 base.image.pixels[:] = pixels.astype(np.float32).ravel(); base.image.pack(); nt.nodes.remove(target)
 bpy.ops.export_scene.gltf(filepath=str(out/'cow-quality.glb'), export_format='GLB', export_animations=False)
 o.data.calc_loop_triangles()
-mod = o.modifiers.new('local_far', 'DECIMATE'); mod.ratio = min(1., 14000/len(o.data.loop_triangles))
+mod = o.modifiers.new('local_far', 'DECIMATE'); mod.ratio = min(1., 12000/len(o.data.loop_triangles))
 mod.use_collapse_triangulate = True; bpy.ops.object.modifier_apply(modifier=mod.name)
 for face in o.data.polygons: face.use_smooth = True
 if o.data.has_custom_normals: bpy.ops.mesh.customdata_custom_splitnormals_clear()

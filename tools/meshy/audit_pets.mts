@@ -128,15 +128,17 @@ const res: any = await P.page.evaluate(async ([kinds, MODE, LIMIT, EYE_PROBES]) 
     skinned(body, rest);
     // Patterned fur can be as black as a pupil. Probe actual eye-surface visibility instead:
     // closed lid meshes must occlude the original eye surface, independent of coat colour.
-    const probe = EYE_PROBES[kind]; let eyeMask: any = null;
+    const probe = EYE_PROBES[kind]; let eyeMask: any = null; let probeCenters: any[] = [];
     if (probe) {
       const eyes = [bone('shut0'), bone('shut1')].map(e => e.getWorldPosition(new THREE.Vector3()));
+      probeCenters = eyes;
       const colors = new Float32Array(nv * 3);
       for (let i = 0; i < nv; i++) for (const e of eyes) {
         const dx = (rest[i * 3] - e.x) / probe[0], dy = (rest[i * 3 + 1] - e.y) / probe[1];
         if (dx * dx + dy * dy <= 1 && Math.abs(rest[i * 3 + 2] - e.z) < probe[2]) colors[i * 3] = 1;
       }
-      eyeMask = new THREE.BufferAttribute(colors, 3);
+      if (!colors.some(v => v > 0)) throw new Error('Eye probe misses the anatomical eye');
+      eyeMask = new THREE.BufferAttribute(rest.slice(), 3);
     }
 
     let lo = 1e9, hi = -1e9; for (let i = 1; i < rest.length; i += 3) { lo = Math.min(lo, rest[i]); hi = Math.max(hi, rest[i]); }
@@ -223,10 +225,27 @@ const res: any = await P.page.evaluate(async ([kinds, MODE, LIMIT, EYE_PROBES]) 
               const materials: any[] = [], oldColor = body.geometry.getAttribute('color');
               const black = new THREE.MeshBasicMaterial({color: 0, side: THREE.DoubleSide});
               const mask = new THREE.MeshBasicMaterial({vertexColors: true, side: THREE.DoubleSide});
+              // Interpolate reference positions, then test the oval per fragment.
+              // Boolean vertex colours spill the probe across coarse face triangles.
+              mask.onBeforeCompile = (sh: any) => {
+                sh.uniforms.svProbe0={value:probeCenters[0]}; sh.uniforms.svProbe1={value:probeCenters[1]};
+                sh.uniforms.svProbeRadius={value:new THREE.Vector3(...probe)};
+                sh.fragmentShader='uniform vec3 svProbe0; uniform vec3 svProbe1; uniform vec3 svProbeRadius;\n'+sh.fragmentShader;
+                sh.fragmentShader=sh.fragmentShader.replace('#include <color_fragment>', `#include <color_fragment>
+                  vec3 svD0=(vColor.xyz-svProbe0)/svProbeRadius;
+                  vec3 svD1=(vColor.xyz-svProbe1)/svProbeRadius;
+                  bool svEye=(dot(svD0.xy,svD0.xy)<1.0 && abs(svD0.z)<1.0) || (dot(svD1.xy,svD1.xy)<1.0 && abs(svD1.z)<1.0);
+                  diffuseColor.rgb=svEye?vec3(1.0,0.0,0.0):vec3(0.0);`);
+              };
+
               const alphaMasks: any[] = [];
               obj.traverse((m: any) => { if (m.isMesh) { materials.push([m,m.material]);
-                if (m.material.transparent && m.material.map) { const a = new THREE.MeshBasicMaterial({color:0,map:m.material.map,alphaTest:.95,side:THREE.DoubleSide}); alphaMasks.push(a); m.material=a; }
-                else m.material=black;
+                if ((m.material.transparent && m.material.map) || m.material.polygonOffset) {
+                  const original=m.material;
+                  const a = new THREE.MeshBasicMaterial({color:0,map:original.transparent?original.map:null,alphaTest:original.transparent?.95:0,side:original.side,
+                    polygonOffset:original.polygonOffset,polygonOffsetFactor:original.polygonOffsetFactor,polygonOffsetUnits:original.polygonOffsetUnits});
+                  alphaMasks.push(a);m.material=a;
+                } else m.material=black;
               } });
               body.geometry.setAttribute('color', eyeMask); body.material = mask;
               const visibleEye = read(cam);
@@ -338,7 +357,7 @@ const val = (c: any, k: string) => { const O = OWN[c.kind] || {};
   return k === 'hat' && (O.hatLoose != null || O.hatPoke != null) && !c.hatFloat && (c.hatPoke || 0) <= (O.hatPoke || 0) && (c.hatLoose || 0) <= (O.hatLoose || 0) ? 0 : c[k]; };
 const lim = (c: any, k: string) => (OWN[c.kind] && OWN[c.kind][k] != null) ? OWN[c.kind][k] : k === 'stretch' && FOLDED.includes(c.clip) ? 900 : LIMIT[k];
 const fail = real.filter((c: any) => keys.some(k => val(c, k) > lim(c, k)) || c.missing);
-const lines = [`pets audit ${new Date().toISOString()} cases ${real.length} failing ${fail.length}`];
+const lines = [`pets audit ${new Intl.DateTimeFormat('en-AU', {dateStyle:'short', timeStyle:'long', timeZone:'Australia/Sydney'}).format(new Date())} cases ${real.length} failing ${fail.length}`];
 for (const k of keys) lines.push(`${k}: ${real.filter((c: any) => val(c, k) > lim(c, k)).length} cases over ${LIMIT[k]}${k === 'stretch' ? ' (folded poses 900)' : ''}, worst ${Math.max(0, ...real.map((c: any) => c[k] || 0))}`);
 for (const kind of kinds) for (const lod of ['near', 'far']) {
   const f = `../models/world/creature-${kind}${lod === 'near' ? '-hd' : ''}.glb`; let kb = 0; try { kb = Math.round(statSync(f).size / 1024); } catch { }

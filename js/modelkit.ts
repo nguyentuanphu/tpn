@@ -33,8 +33,14 @@ const toon = (name: string, skin = false) => {
 // little smooth valley light on top (no toon bands: they drew hard stripes across the fur), both sides
 // The shut and happy eyelids (meshy-<kind>-shut0, -joy1 ...) lie just over the painted eyes: drawn on top of the face
 // (polygon offset), as the friends' mood pieces are
-const meshyMat = (name: string, map: THREE.Texture, transparent = false) => { const lid = /-(shut\d|joy\d|mouth)$/.test(name);   // (the open mouth piece too, 11 Nov 2026)
-  return new THREE.MeshLambertMaterial({ name, map, transparent, alphaTest: transparent ? .01 : 0, depthWrite: !transparent, emissiveMap: map, emissive: '#ffffff', emissiveIntensity: .95, color: '#262524', side: lid ? THREE.FrontSide : THREE.DoubleSide, polygonOffset: lid, polygonOffsetFactor: lid ? -2 : 0, polygonOffsetUnits: lid ? -4 : 0 }); };
+const meshyMat = (name: string, map: THREE.Texture, transparent = false) => {
+  const lid = /-(shut\d|joy\d|mouth)$/.test(name);
+  if (transparent && /^meshy-cow-(shut|joy)/.test(name)) {
+    // Per-face eyelid atlas: mip averaging crosses tile gutters on grazing triangles
+    // and makes an opaque lid translucent. Keep the authored alpha at base level.
+    map.generateMipmaps = false; map.minFilter = THREE.LinearFilter; map.needsUpdate = true;
+  }   // (the open mouth piece too, 11 Nov 2026)
+  return new THREE.MeshLambertMaterial({ name, map, transparent, alphaTest: transparent ? .01 : 0, depthWrite: !transparent, emissiveMap: map, emissive: '#ffffff', emissiveIntensity: .95, color: '#262524', side: lid && !/^meshy-cow-(shut|joy)/.test(name) ? THREE.FrontSide : THREE.DoubleSide, polygonOffset: lid, polygonOffsetFactor: lid ? -2 : 0, polygonOffsetUnits: lid ? -4 : 0 }); };
 /** load a model once; resolves null when it cannot load (the fallback stays) */
 export function loadWorldModel(name: string): Promise<Template | null> {
   if (ready.has(name)) return Promise.resolve(ready.get(name));

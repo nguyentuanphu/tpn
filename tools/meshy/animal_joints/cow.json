@@ -18,17 +18,17 @@
   "tail_gap": 0.005,
   "jump_legs": 0.55,
   "tex_near": 1024,
-  "tex_far": 360,
+  "tex_far": 512,
   "lid_grid_far": 30,
   "face_hints": {
     "eye0": [
-      -0.105,
-      1.065,
+      -0.085,
+      1.075,
       0.042
     ],
     "eye1": [
       0.105,
-      1.065,
+      1.075,
       0.042
     ],
     "nose": [
@@ -41,13 +41,13 @@
       0.902
     ]
   },
-  "lid_size": 2.2,
+  "lid_size": 2.6,
   "head_turn": 0.6,
   "ear_amp": 0.35,
   "auditEyeProbe": [
-    0.044,
-    0.057,
-    0.05
+    0.038,
+    0.047,
+    0.035
   ],
   "lid_rim": 0.002,
   "belly": 0.44,
@@ -88,5 +88,22 @@
       0.35
     ]
   ],
-  "lid_fill_radius": 1.65
+  "lid_fill_radius": 2.6,
+  "lid_normal_radius": 0.8,
+  "lid_grid": 40,
+  "surface_lids": true,
+  "surface_eye_radii": [
+    0.038,
+    0.047
+  ],
+  "surface_lid_lift": 0.002,
+  "lid_force_fill": 1.6,
+  "surface_texels_per_m": 384,
+  "surface_lid_forward": 0.004,
+  "eye_retract": 0.012,
+  "surface_eye_cover": [
+    1.65,
+    2.2
+  ],
+  "surface_eye_selection": 2.6
 }
