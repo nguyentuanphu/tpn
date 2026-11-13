@@ -9,6 +9,22 @@ Read first: `.claude/skills/meshy-characters/SKILL.md` (section "Animals"), `doc
 
 **Read `docs/meshy-pets-20261110/FEEDBACK.md` first: every owner remark on the pets and its status.**
 
+## Approval gate (owner, 12 Nov 2026 evening AEDT, relayed by the Release chat 13 Nov)
+"Tất cả dân làng và thú đều đa số bị ở mặt, mắt, hốc mắt và mũi ... rất nhiều trường hợp hỏi approve trong khi có nhiều
+vấn đề ở mặt cổ và áo etc nên phải nghiêm túc xem sét ... và chỉ đưa bản tốt nhất". Do NOT ask the owner to approve a pet
+until all five pass:
+1. Our auditor at 0 failing (face: eyes open, shut and every mood; eyes at +-.4 and +-.7, both sides, from above and
+   below; muzzle and nose; ears; neck and the head-neck joint; in jump and run), no worse than the round before.
+   `audit_pets.mts` now has `lid` (a shut eye paler than the fur round it: the friends' auditor's check) and eye views at
+   +-.4 and from above and below.
+2. A 1024 px board per pet, every picture looked at full size: face straight, +-.4, +-.7, both sides, from above and
+   below, every mood, the neck, the back of the head, the whole body in a few poses.
+3. A second reviewer who does not know what was fixed: a subagent (Agent) given only the boards' paths and the check
+   list, looking at full size and listing faults. Each fault it finds is fixed or written down with why it is not one.
+4. Every fault the owner ever circled (FEEDBACK.md) checked again, one by one, on the new pictures.
+5. Only then ask, once for the whole group, with the boards and the list of what was fixed and what is left. If not
+   clean, keep working, do not ask.
+
 ## Takeover summary (13 Nov 2026 AEDT, early morning)
 
 **Approved by the owner and committed:** puppy (11 Nov), dragon and firefly companions, near and light models

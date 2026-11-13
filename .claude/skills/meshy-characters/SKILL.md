@@ -235,6 +235,11 @@ Lessons about the checking itself (each hid a fault or showed a false one):
   named with a literal `$k` and four pets wrote into one folder: build Windows paths with forward slashes,
   `"D:/WorkSpace/meshy/pets/$k-jump"`.)
 
+### Approval gate (owner, 12 Nov 2026 evening)
+No approval question until: auditor 0 failing (incl. `lid` and eyes at +-.4/+-.7/above/below), 1024 px boards looked at
+in full, a second reviewer subagent that does not know the fixes, every owner-circled fault rechecked; then one question
+for the whole group. Full text: `docs/meshy-pets-20261110/HANDOFF.md` "Approval gate".
+
 ### Owner's feedback list (13 Nov 2026: "Đọc lại hết tất cả feedbacks tao gửi đi")
 Every owner remark on the pets is a line in `docs/meshy-pets-20261110/FEEDBACK.md` with its status. Add each new remark
 the moment it arrives; before sending any film or picture, check it against every open line, frame by frame. All six
