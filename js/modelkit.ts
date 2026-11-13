@@ -106,7 +106,13 @@ export async function worldModelParts(name: string): Promise<{ geometry: THREE.B
   return out;
 }
 /** the moves of every model with clips (js/main.ts world updater) */
-export function tickWorldModels(dt: number) { for (const m of mixers) m.update(dt); }
+// (13 Nov 2026, Meshy pets: for a frame or two of a blink the shut lid showed as a ring round the eye) a Meshy animal's
+// shut and happy lids are shown by their bone's scale, tiny or whole (tools/meshy/fit_animal.py face()); the clips are
+// sampled every other frame, so between two samples the lid grew through half its size and the eye showed round it. A
+// lid bone is snapped to tiny or whole after every update.
+const _lids = new WeakMap<any, any[]>();
+const lidBones = (m: any) => { let L = _lids.get(m); if (!L) { L = []; const root = m.getRoot && m.getRoot(); if (root && root.traverse) root.traverse((o: any) => { if (o.isBone && /^(shut|joy)\d$/.test(o.name)) L.push(o); }); _lids.set(m, L); } return L; };
+export function tickWorldModels(dt: number) { for (const m of mixers) { m.update(dt); for (const b of lidBones(m)) { const s = b.scale.x; if (s > .002 && s < .998) b.scale.setScalar(s < .5 ? .001 : 1); } } }
 /** js/main.ts: start the kit after the start */
 export function startWorldModels(G: { heroes: { pos: { x: number, z: number } }[], world?: { updaters: ((dt: number) => void)[] } }, updaters: ((dt: number) => void)[]) {
   let acc = 0;

@@ -36,7 +36,7 @@ const { chromium } = createRequire(new URL('../../tests/package.json', import.me
 import { writeFileSync, mkdirSync, statSync, readFileSync } from 'node:fs';
 const [OUT, LIST = 'puppy', MODE = ''] = process.argv.slice(2);
 mkdirSync(OUT, { recursive: true });
-const LIMIT = { stretch: 300, tear: 6, sink: 0, float: 0, eyes: 6, hat: 0, flicker: 12, mouth: 0 };   // (tear 6: the Meshy puppy's own 4 px gap where an ear meets the cheek, in the rest pose too)
+const LIMIT = { stretch: 300, tear: 6, sink: 0, float: 0, eyes: 6, hat: 0, flicker: 12, mouth: 0, lid: 8 };   // (tear 6: the Meshy puppy's own 4 px gap where an ear meets the cheek, in the rest pose too)
 const SIZE = { near: 800, far: 400 };
 const b = await chromium.launch({ args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'] });
 const _nc = b.newContext.bind(b); b.newContext = async (o: any) => { const c = await _nc(o); c.setDefaultNavigationTimeout(240000); c.setDefaultTimeout(600000); return c; };
@@ -121,8 +121,8 @@ const res: any = await P.page.evaluate(async ([kinds, MODE, LIMIT]) => {
     const views: [string, number, number][] = (quick ? [['front', 0, .1], ['side', Math.PI / 2, .1], ['back', Math.PI, .1], ['tq', .8, .3]] as [string, number, number][]
       : [...[0, 1, 2, 3, 4, 5, 6, 7].map(k => ['y' + k * 45, k * Math.PI / 4, .12] as [string, number, number]), ['above', .3, 2.5], ['below', .3, -2.5]] as [string, number, number][])
       .concat([['levelR', Math.PI / 2, 0], ['levelL', -Math.PI / 2, 0]]);   // (level from each side too: a hole right through the trunk, seen a little from above, has a rim on both of its walls, far apart in depth, and reads as a gap)
-    const plants = self ? (kind === kinds[0] && lod === 'near' ? ['stretch', 'tear', 'eyes', 'sink', 'mouth'] : []) : ['none'];   // (selftest: the plants only)
-    for (const plant of plants) for (const clip of (plant === 'none' ? clips : plant === 'eyes' ? ['sleep'] : plant === 'mouth' ? ['wag'] : ['idle'])) {
+    const plants = self ? (kind === kinds[0] && lod === 'near' ? ['stretch', 'tear', 'eyes', 'sink', 'mouth', 'lid'] : []) : ['none'];   // (selftest: the plants only)
+    for (const plant of plants) for (const clip of (plant === 'none' ? clips : plant === 'eyes' || plant === 'lid' ? ['sleep'] : plant === 'mouth' ? ['wag'] : ['idle'])) {
       const c = t.clips.find((x: any) => x.name === clip); mixer.stopAllAction(); const a = mixer.clipAction(c); a.reset().play();
       const moments = quick || plant !== 'none' ? [.15, .5, .85] : [0, .17, .33, .5, .67, .83];
       for (const f of moments) {
@@ -130,10 +130,11 @@ const res: any = await P.page.evaluate(async ([kinds, MODE, LIMIT]) => {
         if (plant === 'stretch') { bone('knee0').scale.setScalar(2.6); obj.updateMatrixWorld(true); }
         if (plant === 'sink') { bone('body').position.y -= Hh * .08; obj.updateMatrixWorld(true); }
         if (plant === 'mouth' && bone('jaw')) { bone('jaw').scale.multiplyScalar(2.5); bone('jaw').position.z += Hh * .02; obj.updateMatrixWorld(true); }   // (an open mouth too big for the face, standing off it)
+        const paled: any[] = []; if (plant === 'lid') obj.traverse((o: any) => { if (o.isMesh && /-shut\d$/.test(o.material.name)) { paled.push([o, o.material]); const m = o.material.clone(); m.map = null; m.color.setRGB(.8, .74, .68); m.name = o.material.name; o.material = m; } });   // (a pale cream lid over a shut eye: the friends' Sol's rim; first try, an emissive grey, drew it darker)
         const hidden: any[] = []; if (plant === 'eyes') obj.traverse((o: any) => { if (o.isMesh && /-(shut|joy)\d$/.test(o.material.name)) { o.visible = false; hidden.push(o); } });
         PLANT.value = plant === 'tear' ? 1 : 0; if (plant === 'tear') {   // (a torn ear: a hole through its flap where it hangs out beyond the cheek, seen from the front)
           const e = bone('ear0'); obj.updateMatrixWorld(true); e.getWorldPosition(PLANTAT.value); PLANTAT.value.x += Math.sign(PLANTAT.value.x || -1) * Hh * .07; PLANTAT.value.y -= Hh * .12; }
-        const cs: any = { kind, lod, clip, t: +f.toFixed(2), plant, stretch: 0, tear: 0, sink: 0, float: 0, eyes: 0, hat: 0, flicker: 0, mouth: 0, worst: '' };
+        const cs: any = { kind, lod, clip, t: +f.toFixed(2), plant, stretch: 0, tear: 0, sink: 0, float: 0, eyes: 0, hat: 0, flicker: 0, mouth: 0, lid: 0, worst: '' };
         // stretch and the ground
         skinned(body, now); let minY = 1e9; const strK: number[] = [];
         for (let i = 1; i < now.length; i += 3) minY = Math.min(minY, now[i]);
@@ -187,16 +188,42 @@ const res: any = await P.page.evaluate(async ([kinds, MODE, LIMIT]) => {
           const disc = (cam: any, e: any, fn: (i: number, x: number, y: number) => void) => { const p = e.clone().project(cam), q = e.clone().add(new THREE.Vector3(er, 0, 0).applyQuaternion(cam.quaternion)).project(cam);
             const cx = (p.x + 1) / 2 * S, cy = (p.y + 1) / 2 * S, rr = Math.abs(q.x - p.x) / 2 * S;
             for (let y = Math.max(0, Math.floor(cy - rr)); y < Math.min(S, cy + rr); y++) for (let x = Math.max(0, Math.floor(cx - rr)); x < Math.min(S, cx + rr); x++) if ((x - cx) ** 2 + (y - cy) ** 2 <= rr * rr) fn((y * S + x) * 4, x, y); };
-          for (const yaw of [0, .7, -.7, 1.2, -1.2]) {
-            const dir = fwd.clone().applyAxisAngle(new THREE.Vector3(0, 1, 0), yaw), cam = new THREE.PerspectiveCamera(30, 1, .01, 20);
+          // (13 Nov 2026, owner's approval gate: eyes from the front, +-.4 and +-.7, the sides, and from above and below)
+          for (const [yaw, pitch] of [[0, 0], [.4, 0], [-.4, 0], [.7, 0], [-.7, 0], [1.2, 0], [-1.2, 0], [0, .4], [0, -.4]] as [number, number][]) {
+            const dir = fwd.clone().applyAxisAngle(new THREE.Vector3(0, 1, 0), yaw); dir.applyAxisAngle(new THREE.Vector3().crossVectors(dir, new THREE.Vector3(0, 1, 0)).normalize(), pitch); const cam = new THREE.PerspectiveCamera(30, 1, .01, 20);
             cam.position.copy(mid).addScaledVector(dir, er * 9); cam.lookAt(mid); cam.updateMatrixWorld(true);
             const px = read(cam), flags = new Uint8Array(S * S); let n = 0;
             const eyes = yaw === 0 ? [e0, e1] : [e0.distanceTo(cam.position) < e1.distanceTo(cam.position) ? e0 : e1];
             for (const e of eyes) disc(cam, e, (i, x, y) => { if (!px[i + 3]) return;
               const L = (.3 * px[i] + .59 * px[i + 1] + .11 * px[i + 2]) / 255, sat = Math.max(px[i], px[i + 1], px[i + 2]) - Math.min(px[i], px[i + 1], px[i + 2]);
               if (L < .012 || (L > .8 && sat < 25)) { n++; flags[y * S + x] = 1; } });   // (linear light: .012 is the pupil's near-black)
-            if (n > cs.eyes) { cs.eyes = n; cs.eyesAt = yaw; }
-            if (n > (LIMIT as any).eyes) out.pics[`${kind}-${lod}-${clip}-${cs.t}-${plant}-eyes-${yaw}`] = png(px, flags);
+            if (n > cs.eyes) { cs.eyes = n; cs.eyesAt = yaw + '/' + pitch; }
+            if (n > (LIMIT as any).eyes) out.pics[`${kind}-${lod}-${clip}-${cs.t}-${plant}-eyes-${yaw}-${pitch}`] = png(px, flags);
+            /* (13 Nov 2026, from the friends' auditor, seen there on Sol, Clara, Lumi) 'lid': a shut eye must be the fur round
+               it, its lash line apart: a pale rim under the lash or a lighter flat lid patch is a pixel of the lid piece as it is
+               seen (the same picture with the lids drawn flat magenta marks them, hidden parts left out) about as bright as the
+               fur (not .1 darker: the lash is) but paler (.12 less saturated) than the fur's median in a ring 2 to 10 px outside
+               the lid (dark pixels, the lash and a panda's black patch, left out of both); specks under 4 touching pixels are
+               the lash's soft edge. (First run: judged over a whole disc round the eye, the kitty's own cream cheeks counted.) */
+            { const lids: any[] = []; obj.traverse((o: any) => { if (o.isMesh && o.visible && /-(shut|joy)\d$/.test(o.material.name)) lids.push([o, o.material]); });
+              // (second run: a Meshy pet's lid piece is a patch of the face's own picture 2-3 times the eye, the cheek's cream fur
+              // with it; only what the lid paints over the eye counts: the lid's pixels that differ from the same picture with the
+              // lids hidden, the painted open eye)
+              const mag = new THREE.MeshBasicMaterial({ color: 0xff00ff }); lids.forEach(([o]: any) => { o.material = mag; }); const pm = read(cam); lids.forEach(([o, m]: any) => { o.material = m; }); mag.dispose();
+              lids.forEach(([o]: any) => { o.visible = false; }); const po = read(cam); lids.forEach(([o]: any) => { o.visible = true; });
+              const lm = new Uint8Array(S * S); let any = 0; for (let j = 0; j < S * S; j++) if (pm[j * 4 + 3] && pm[j * 4] > 200 && pm[j * 4 + 1] < 40 && pm[j * 4 + 2] > 200 && Math.abs(px[j * 4] - po[j * 4]) + Math.abs(px[j * 4 + 1] - po[j * 4 + 1]) + Math.abs(px[j * 4 + 2] - po[j * 4 + 2]) > 40) { lm[j] = 1; any++; }
+              const hs = (i: number) => { const mx = Math.max(px[i], px[i + 1], px[i + 2]); return [mx / 255, mx ? (mx - Math.min(px[i], px[i + 1], px[i + 2])) / mx : 0]; };
+              const dist = new Uint8Array(S * S).fill(255); { const q: number[] = []; for (let j = 0; j < S * S; j++) if (lm[j]) { dist[j] = 0; q.push(j); }
+                for (let h = 0; h < q.length; h++) { const j = q[h], x = j % S, y = (j / S) | 0, d = dist[j]; if (d >= 10) continue; for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { const xx = x + dx, yy = y + dy; if (xx < 0 || yy < 0 || xx >= S || yy >= S) continue; const w2 = yy * S + xx; if (dist[w2] > d + 1) { dist[w2] = d + 1; q.push(w2); } } } }
+              const rv: number[] = [], rs: number[] = []; for (let j = 0; j < S * S; j++) if (dist[j] >= 2 && dist[j] <= 10 && px[j * 4 + 3]) { const [v, sa] = hs(j * 4); if (v > .35) { rv.push(v); rs.push(sa); } }
+              rv.sort((a, b) => a - b); rs.sort((a, b) => a - b); const skv = rv[rv.length >> 1] || 1, sks = rs[rs.length >> 1] || 0;
+              const fl = new Uint8Array(S * S); if (any) for (let j = 0; j < S * S; j++) { if (!lm[j] || !px[j * 4 + 3]) continue; const [v, sa] = hs(j * 4); if (v > .35 && v > skv - .1 && sa < sks - .12) fl[j] = 1; }
+              let kl = 0; const seen = new Uint8Array(S * S), st: number[] = [];
+              for (let j = 0; j < S * S; j++) { if (!fl[j] || seen[j]) continue; const g: number[] = []; st.push(j); seen[j] = 1;
+                while (st.length) { const q = st.pop()!; g.push(q); const x = q % S, y = (q / S) | 0; for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) { const xx = x + dx, yy = y + dy; if (xx < 0 || yy < 0 || xx >= S || yy >= S) continue; const w2 = yy * S + xx; if (fl[w2] && !seen[w2]) { seen[w2] = 1; st.push(w2); } } }
+                if (g.length < 4) for (const q of g) fl[q] = 0; else kl += g.length; }
+              if (kl > cs.lid) { cs.lid = kl; cs.lidAt = yaw + '/' + pitch; }
+              if (kl > (LIMIT as any).lid) out.pics[`${kind}-${lod}-${clip}-${cs.t}-${plant}-lid-${yaw}-${pitch}`] = png(px, fl); }
             const cam2 = cam.clone(); cam2.near = .013; cam2.far = 23; cam2.updateProjectionMatrix(); cam2.updateMatrixWorld(true);   // (the same picture, the depth spread differently: only depth fights change)
             const px2 = read(cam2), fl2 = new Uint8Array(S * S); let fk = 0;
             for (const e of eyes) disc(cam, e, (i, x, y) => { if (!px[i + 3] || !px2[i + 3]) return; const d = Math.abs(px[i] - px2[i]) + Math.abs(px[i + 1] - px2[i + 1]) + Math.abs(px[i + 2] - px2[i + 2]);
@@ -205,7 +232,7 @@ const res: any = await P.page.evaluate(async ([kinds, MODE, LIMIT]) => {
             if (fk > (LIMIT as any).flicker) out.pics[`${kind}-${lod}-${clip}-${cs.t}-${plant}-flicker-${yaw}`] = png(px, fl2);
           }
         }
-        hidden.forEach(o => { o.visible = true; });
+        hidden.forEach(o => { o.visible = true; }); paled.forEach(([o, m]: any) => { o.material.dispose(); o.material = m; });
         if (plant === 'tear' && !worstPic) { const cam = new THREE.PerspectiveCamera(30, 1, .02, 50); cam.position.copy(cc).add(new THREE.Vector3(r * 1.9, 0, 0)); cam.lookAt(cc); out.pics[`${kind}-${lod}-${clip}-${cs.t}-plant-tear-none`] = png(read(cam, depthMat), null); }
         if (worstPic && (cs.tear > (LIMIT as any).tear || plant === 'tear')) { const px = read(worstPic.cam); out.pics[`${kind}-${lod}-${clip}-${cs.t}-${plant}-tear-${cs.worst}`] = png(px, worstPic.flags); }
         if (cs.stretch > (LIMIT as any).stretch && !out.pics[`${kind}-${lod}-${clip}-stretch`]) {
@@ -306,7 +333,7 @@ for (const kind of kinds) for (const lod of ['near', 'far']) {
 }
 if (MODE === 'selftest') {
   const caught = (p: string, k: string) => cs.some((c: any) => c.plant === p && c[k] > LIMIT[k]);
-  const r = { stretch: caught('stretch', 'stretch'), tear: caught('tear', 'tear'), eyes: caught('eyes', 'eyes'), sink: caught('sink', 'sink'), hat: caught('hat', 'hat'), mouth: caught('mouth', 'mouth') };
+  const r = { stretch: caught('stretch', 'stretch'), tear: caught('tear', 'tear'), eyes: caught('eyes', 'eyes'), sink: caught('sink', 'sink'), hat: caught('hat', 'hat'), mouth: caught('mouth', 'mouth'), lid: caught('lid', 'lid') };
   lines.push('selftest ' + Object.entries(r).map(([k, v]) => `${k} ${v ? 'caught' : 'MISSED'}`).join(', '));
   if (Object.values(r).some(v => !v)) process.exitCode = 3;
 }

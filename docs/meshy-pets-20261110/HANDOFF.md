@@ -25,6 +25,19 @@ until all five pass:
 5. Only then ask, once for the whole group, with the boards and the list of what was fixed and what is left. If not
    clean, keep working, do not ask.
 
+## State at stop (13 Nov 2026, 23:30 AEDT, usage limit)
+- Gate step 1 in progress. `audit_pets.mts` has `lid` (pixels the shut lid paints over the eye that are paler than the
+  fur 2-10 px round them) and eye views at +-.4 and from above/below. Quick audits: panda 0, bunny 0 failing; kitty
+  (lid up to 1068) and calf (up to 3504) fail: marks lie along the lid patch's edge where brown meets the cream blaze
+  (calf) or the pale stripe between the eyes (kitty), pictures `D:\WorkSpace\meshy\pets\lid-<kind>\`. Decide by eye
+  whether the lid patch edge really shows a seam there (likely: fix the lid fill or its edge) or the check needs the
+  patch edge left out.
+- Selftest: the `lid` plant was fixed (a pale cream lid) but not rerun; `tear` plant MISSED, already so on 12 Nov.
+- `js/modelkit.ts`: lid bones snapped to tiny or whole after each mixer update (the ring round the eye mid-blink); built,
+  not yet checked in films.
+- `tools/meshy/pet_board.mts` (1024 px face boards: 6 moods x 9 views, body poses, neck, back of head) written, never run.
+- Gate steps 2-5 not started. Do not ask the owner to approve until all pass.
+
 ## Takeover summary (13 Nov 2026 AEDT, early morning)
 
 **Approved by the owner and committed:** puppy (11 Nov), dragon and firefly companions, near and light models
