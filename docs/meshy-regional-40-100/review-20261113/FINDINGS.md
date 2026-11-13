@@ -46,3 +46,27 @@ I. The far eye past the nose was already on the board as another chat's work.
 ## Next
 
 Not for an approval question yet (owner's gate). Next steps are in `HANDOFF-PILOT-1.md`.
+
+## Gate i (13 Nov 2026, about 17:00 AEDT) and what followed
+
+Gate i (`regional-gate-20261113i`, after commit 64b63c4bc): auditor eyes 2 (r064 at -1.2), lid 10, mshape 14 (mostly
+r074 at -.7 and r045's big "o", sad and excited mouths; looked at: mostly false), everything else 0. Three second-reviewer
+subagents (2 people each, full size, the same checklist) found, all six:
+
+1. **The open eye round every shut lid** (iris, lashes, pale rim) from the side, above, below and on the far eye past the
+   nose. Cause (debug colouring with the pieces hidden): the game's colour test caught only the whites. **Fixed in
+   e303428c1**: each eye's own oval (`eye_ovals`, `eye_skin` from the fit) painted skin while shut, lit as facing the head's
+   forward, keeping texels already like the skin (blush, shade). Seen clean on r084 (front, .4, -.7, 1.2) and r057 front;
+   the full gate (j) checks the rest.
+2. **Two lash lines on the sad face** (r064, r050): `-SadTall`, r050 and r064 refitted (e303428c1). Not used on r045 and
+   r084 (the lid's ends hooked).
+3. **Left for the next steps**:
+   - the shut lid drawn as a "V" at the near profile (1.2): the lid piece is a flat drawing on the curved face;
+   - a faint pale crescent at the far eye's inner corner next to the nose (r084 at .4);
+   - r057's brows cut flat in the shut moods;
+   - irises cut by a hard vertical edge in lookL and lookR (r057, r064);
+   - r045's shards over the upper lid in smile, "o" and sad;
+   - r084's skin shard across the left iris in every open mood;
+   - r064's skin slab over a lock in lid moods.
+4. **Meshy's own geometry, left unless a cheap fix shows**: shattered ears (r045, r074, r084, r064), forehead shards
+   (r050, r064), r057's spiky chin strap, faceted hat brims and necks.
