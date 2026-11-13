@@ -326,6 +326,7 @@ def skin_wide(arr):   # (10 Nov 2026) skin for filling closed lids: skin hues, c
 # ---- 3. the moods, drawn from her own eyes and mouth
 Image_save = bpy.data.images.new(ID + '-front', F.shape[1], F.shape[0], alpha=True); Image_save.pixels.foreach_set(np.concatenate([F[::-1, :, :3], np.ones(F.shape[:2] + (1,), np.float32)], -1).reshape(-1)); Image_save.filepath_raw = os.path.join(RDIR, 'face-front.png'); Image_save.file_format = 'PNG'; Image_save.save()   # (10 Nov 2026: the face picture the moods are cut from, to measure it, not face-bake.png)
 H_, W_ = F.shape[:2]; D = dist(F); V = F[..., :3].max(-1); S_ = (F[..., :3].max(-1) - F[..., :3].min(-1)) / np.maximum(V, 1e-4)
+_bh = hsv_np(F[..., :3])[0]; BLUSH = (((_bh < .05) | (_bh > .95)) & (S_ > .25) & (V > .55)) if REFP == 'villager-' else np.zeros(F.shape[:2], bool)   # (13 Nov 2026, round 24: Jack's and Lan's blush under the eyes went pale when shut, the lid fill took the strong blush, far from the skin colour, for eye) a villager's bright red-pink is blush, never eye
 yy, xx = np.mgrid[0:H_, 0:W_]
 def box_of(mask):
     ys, xs = np.nonzero(mask)
@@ -491,14 +492,14 @@ def lid(img, b, top=0., bot=1.):   # (original_skin) a closed lid painted over t
         # eye itself closes: its white, iris and lash pixels (not skin), a little wider, and a small core; the cheek stays
         # (the eye: dark, white-grey, or far from her own skin colour; Clara's saturated skin failed the generic skin test,
         # so her whole lid area closed flat with a straight top edge)
-        _eye = (V < .55) | ((V > .78) & (S_ < .22)) | (D > .3)
+        _eye = (V < .55) | ((V > .78) & (S_ < .22)) | ((D > .3) & ~BLUSH)
         _near = np.hypot((xx - cx_) / (rx * 1.15), (yy - cy_) / (ry * .95)) < 1
         _h = _eye & _near & ~(HAIRISH & ~_inb)
         for _ in range(3): _h = _h | np.roll(_h, 1, 0) | np.roll(_h, -1, 0) | np.roll(_h, 1, 1) | np.roll(_h, -1, 1)
         # the eye's own outline (grey or dark, not skin) reaches a little further out: it closes too, so only skin is
         # round the lid and the fill takes the true colours there (blush below, shading above), not one pale skin colour
         _far = np.hypot((xx - cx_) / (rx * 1.5), (yy - cy_) / (ry * 1.3)) < 1
-        _ol = _far & ((V < .6) | ((V > .7) & (S_ < .22)) | (D > .3)) & ~(HAIRISH & ~_inb)   # (grey, dark or not her skin colour: the eye's outline)   # (grey or dark outline only: Clara's saturated cheeks are not outline)
+        _ol = _far & ((V < .6) | ((V > .7) & (S_ < .22)) | ((D > .3) & ~BLUSH)) & ~(HAIRISH & ~_inb)   # (grey, dark or not her skin colour: the eye's outline)   # (grey or dark outline only: Clara's saturated cheeks are not outline)
         _h2 = _h & _near
         for _ in range(int(max(rx, ry))):
             _n = _h2 | (_ol & (np.roll(_h2, 1, 0) | np.roll(_h2, -1, 0) | np.roll(_h2, 1, 1) | np.roll(_h2, -1, 1)))
@@ -640,7 +641,7 @@ for b in eyes.values(): shut(im, grow(b)); _pre = im.copy(); stroke(im, lash_arc
 M['happy'] = im
 def gmouth():   # (12 Nov 2026, owner circled the old smile's corners beside the sad and round mouths) a villager's old mouth is erased a little past its box
     if REFP != 'villager-': return mouth
-    mw_, mh_ = mouth[2] - mouth[0], mouth[3] - mouth[1]; return [max(0, int(mouth[0] - mw_ * .18)), max(0, int(mouth[1] - mh_ * .3)), min(W_, int(mouth[2] + mw_ * .18)), min(H_, int(mouth[3] + mh_ * .4))]
+    mw_, mh_ = mouth[2] - mouth[0], mouth[3] - mouth[1]; return [max(0, int(mouth[0] - mw_ * .3)), max(0, int(mouth[1] - mh_ * .45)), min(W_, int(mouth[2] + mw_ * .3)), min(H_, int(mouth[3] + mh_ * .5))]   # (13 Nov 2026, round 24: .3 and .45/.5, was .18 and .3/.4: the auditor's lips check and the second reviewer still saw the old smile's corners beside Ruby's sad mouth and round Teo's and Ba's o)
 def mouth_o(im, big):
     if not mouth: return im
     erase(im, gmouth()); cx, cy = (mouth[0] + mouth[2]) / 2, (mouth[1] + mouth[3]) / 2; mw = mouth[2] - mouth[0]
@@ -720,7 +721,7 @@ if OWN:
         # painted eye lies deep in it: from three-quarters the far eye's pupil showed through the sheet's see-through edge by
         # the nose (parallax), wherever the shut lid was not opaque. A villager's shut lid is opaque further out, towards the
         # nose and below the eye, with the face's own front picture there (skin, blush), never over the brows
-        if REFP == 'villager-' and k in ('blink', 'happy', 'excited'):
+        if REFP == 'villager-' and k in ('blink', 'happy', 'excited') and os.environ.get('FIT_WIDE', '0') == '1':   # (13 Nov 2026, round 24: off by default (FIT_WIDE=1 puts it back): the second reviewer saw it as a flat skin patch with straight edges cutting brows and fringe, freckles and blush gone; the body's own shut paint reaches skin since the texel floor of round 23)
             _wide = np.zeros((H_, W_), np.float32)
             for b in eyes.values():
                 g_ = grow(b); w_, h_ = g_[2] - g_[0], g_[3] - g_[1]; _l = (b[0] + b[2]) / 2 < W_ / 2
@@ -735,6 +736,24 @@ if OWN:
                 _rg = (_wide > .05) & _same & ~_mark & skin_wide(F)
                 M[k][_mark, :3] = np.median(F[_rg][:, :3], axis=0) if _rg.sum() > 8 else REF[:3]
             M[k][..., 3] = np.maximum(M[k][..., 3], _wide * NOHAIR)
+        if REFP == 'villager-' and k in ('blink', 'happy', 'excited') and os.environ.get('FIT_NOSESIDE', '1') != '0':   # (13 Nov 2026, round 24: with the wide band off, Su's far pupil showed past the nose from -.7) a narrow soft cover between the eye and the nose only, over the eye's own rows: no straight edge, never over brows or temple
+            _ns_ = np.zeros((H_, W_), np.float32)
+            for b in eyes.values():
+                w_, h_ = b[2] - b[0], b[3] - b[1]; _l = (b[0] + b[2]) / 2 < W_ / 2
+                cx_ = (b[2] - w_ * .1) if _l else (b[0] + w_ * .1); cy_ = (b[1] + b[3]) / 2 + h_ * .1
+                _ns_ = np.maximum(_ns_, np.clip((1 - np.hypot((xx - cx_) / (w_ * .42), (yy - cy_) / (h_ * .48))) / .35, 0, 1))
+                ox_ = (b[0] + w_ * .05) if _l else (b[2] - w_ * .05); oy_ = b[1] + h_ * .2   # (and the outer upper corner, small and soft, under the brow line: Mít's, Ruby's and Su's red lash flick from three-quarters)
+                _ns_ = np.maximum(_ns_, np.clip((1 - np.hypot((xx - ox_) / (w_ * .26), (yy - oy_) / (h_ * .34))) / .35, 0, 1) * np.clip((yy - (b[1] - h_ * .2)) / (h_ * .2), 0, 1))
+            M[k][..., 3] = np.maximum(M[k][..., 3], _ns_ * NOHAIR)
+        if REFP == 'villager-' and k == 'half' and os.environ.get('FIT_HALFWIDE', '1') != '0':   # (13 Nov 2026, round 24, second reviewer: Bom's and Bong's far eye stayed fully open in 'half' from -.7 to .4: the game paints the body's eye shut only in shut moods, and the body's open eye showed past the half lid's edge by the nose, parallax) the half piece is opaque over the eye's own rows and a little further towards the nose, softly, never over hair
+            _hw_ = np.zeros((H_, W_), np.float32)
+            for b in eyes.values():
+                w_, h_ = b[2] - b[0], b[3] - b[1]; _l = (b[0] + b[2]) / 2 < W_ / 2
+                x0_, x1_ = (b[0], b[2] + w_ * .35) if _l else (b[0] - w_ * .35, b[2])
+                _in = (xx >= x0_) & (xx <= x1_) & (yy >= b[1] + h_ * .1) & (yy <= b[3])
+                _hw_ = np.maximum(_hw_, _in.astype(np.float32))
+            for _ in range(max(2, _g)): _hw_ = (_hw_ + np.roll(_hw_, 1, 0) + np.roll(_hw_, -1, 0) + np.roll(_hw_, 1, 1) + np.roll(_hw_, -1, 1)) / 5
+            M[k][..., 3] = np.maximum(M[k][..., 3], np.clip(_hw_ * 1.5, 0, 1) * NOHAIR)
         _band = M[k][..., 3] >= .01
         for _ in range(4): _band = _band | np.roll(_band, 1, 0) | np.roll(_band, -1, 0) | np.roll(_band, 1, 1) | np.roll(_band, -1, 1)
         M[k][~_band, :3] = REF[:3]
@@ -901,6 +920,9 @@ for p in me.polygons:
     # below the face, cream and ivory cloth (sleeves, collars) can sit in the skin hue range: skin there needs more colour
     isskin = ((not ORIGINAL) or SHIFT) and (infaceregion or (zone and bool(skin_mask(avg[None])[0]) and (pc.z > L['neck'].z + .02 or hsv(avg)[1] > .2)))
     if not isskin and REFP == 'villager-' and ((not ORIGINAL) or SHIFT) and neckzone and pc.z > L['neck'].z - .03 and bool(skin_mask(avg[None])[0]) and hsv(avg)[1] > .1: isskin = True   # (12 Nov 2026, owner chose to fix Ruby's neck: its pale front, under .2 saturation, was not skin, and the neck showed two-tone triangles; the upper neck, away from the collar line, is skin when skin-coloured)
+    if not isskin and REFP == 'villager-' and ((not ORIGINAL) or SHIFT) and neckzone and pc.z > L['neck'].z - .06:   # (13 Nov 2026, round 24, second reviewer: Ruby's neck still two-tone, a pale left half and a zigzag down to the collar: its pale skin is under .1 saturated and lies lower) skin hue, bright, a little coloured, down to the collar line
+        _nh, _ns, _nv = hsv(avg)
+        if (_nh < .1 or _nh > .94) and _nv > .55 and .06 < _ns < .55: isskin = True
     p.material_index = 1 if isskin else 0; nskin += isskin
     for li, cv in zip(p.loop_indices, cs):
         if isskin:
@@ -1416,7 +1438,8 @@ if TEX and KEEP and SHIFT:
                 for _i, _vs in enumerate(_pv):
                     for _v in _vs: _v2p.setdefault(_v, []).append(_i)
                 _Vm = _mc.max(-1); _side = (np.abs(_pc3[:, 0] - _hcx) > _hw * .7) & (np.abs(_pc3[:, 0] - _hcx) < _hw * 1.4) & (_pc3[:, 2] > fz0 - (fz1 - fz0) * .35) & (_pc3[:, 2] < fz1) & (_fcy < _ear_y) & _hz & ~_ine
-                _dkh = bool(np.median(_Vm[_hreg]) < .35) if _hreg.any() else True; _side &= _dkh; print('FIT dark hair (strand rules on)', _dkh, round(float(np.median(_Vm[_hreg])) if _hreg.any() else -1, 2))   # (13 Nov 2026, round 23: on Ruby's auburn curls, Jack's blond and Bác Ba's grey hair the strand rules took real hair for skin-painted strands and painted it black; a skin-coloured strand only stands out against dark hair)
+                _dkh = (bool(np.median(_Vm[_hreg]) < .35) if _hreg.any() else True) and ID in os.environ.get('FIT_STRANDS', 'lan').split(','); _side &= _dkh;   # (13 Nov 2026, round 24: only where the owner asked (Lan): on Ti, Mit, Bom and Teo the rules painted cards fused to the cheek and jaw dark, hard-edged black shards the second reviewer saw; a card lying on the cheek in skin colour blends in)
+                print('FIT dark hair (strand rules on)', _dkh, round(float(np.median(_Vm[_hreg])) if _hreg.any() else -1, 2))   # (13 Nov 2026, round 23: on Ruby's auburn curls, Jack's blond and Bác Ba's grey hair the strand rules took real hair for skin-painted strands and painted it black; a skin-coloured strand only stands out against dark hair)
                 _cand = np.nonzero(_side & (_Vm > .45))[0]; _rec = []
                 for _i in _cand:
                     _nb = {j for v in _pv[_i] for j in _v2p[v] if j != _i}
@@ -1438,7 +1461,7 @@ if TEX and KEEP and SHIFT:
                 _mk = np.array([_b3[p.loop_indices[0], 0] > .5 for p in me.polygons]); _cc = np.array([p.center[:] for p in me.polygons])
                 _skc = skin_wide(_mc[:, :3]) & (_Vm > .45)
                 _band = (np.abs(_cc[:, 0] - _hcx) > _hw * .55) & (_cc[:, 2] > L['neck'].z - .03) & (_cc[:, 2] < fz1 - (fz1 - fz0) * .35)
-                _ok_ = ~_mk & _skc & _band & ~_ine & _dkh; _ok_[_rec] = False
+                _ok_ = ~_mk & _skc & _band & ~_ine & _dkh & (os.environ.get('FIT_GROW', '0') == '1'); _ok_[_rec] = False   # (round 24: off by default: Lan's black triangle on the cheek in front of the ear)
                 _dark = _Vm < .3; _seen = np.zeros(len(_pv), bool); _st_ = [i for i in np.nonzero(_ok_)[0] if any(_dark[j] for v in _pv[i] for j in _v2p[v])]
                 for i in _st_: _seen[i] = True
                 while _st_:
