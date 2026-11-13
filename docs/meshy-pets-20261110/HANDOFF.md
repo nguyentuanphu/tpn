@@ -25,6 +25,18 @@ until all five pass:
 5. Only then ask, once for the whole group, with the boards and the list of what was fixed and what is left. If not
    clean, keep working, do not ask.
 
+## State 14 Nov 2026, morning AEDT (gate step 1, the shut lids)
+- Selftest: every plant caught except `tear` (missed since 12 Nov). `lid` plant caught.
+- `lid` check now looks only at what the lid paints over the eye (pixels unlike everything within 3 px with lids hidden).
+- Shut lids: lit with the head's normals and a matte material; `socket_lift` (Meshy's darker painted socket brought up
+  to the fur at the lid's rim inside the lid, the fill's edge blurred), `socket_both` (a lighter lid brought down, at
+  most 12 % lighter; more darkened the kitty's cream stripe to grey). Calf: `lid_size` 2.1, `lid_out` .45 (1.8 showed the
+  eye white at the outer corner). Calf, kitty `lid_lift` .002 being tried (the lid's edge shifted against the blaze
+  seen at a slant). Panda, bunny: lid 0.
+- Boards (`tools/meshy/pet_board.mts`, 1024 px, open grass): `D:\WorkSpace\meshy\petsoard\<kind>\`. Looked at: panda and
+  bunny clean; calf and kitty shut eyes being fixed. Body side views now follow the body bone.
+- Not done: gate steps 3 (second reviewer subagent) and 4 (owner-circled faults rechecked), full audits.
+
 ## State at stop (13 Nov 2026, 23:30 AEDT, usage limit)
 - Gate step 1 in progress. `audit_pets.mts` has `lid` (pixels the shut lid paints over the eye that are paler than the
   fur 2-10 px round them) and eye views at +-.4 and from above/below. Quick audits: panda 0, bunny 0 failing; kitty

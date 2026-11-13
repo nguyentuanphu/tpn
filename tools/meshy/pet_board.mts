@@ -54,7 +54,7 @@ async function shot(clip: string, at: number, views: [string, number, number, st
       x.putImageData(im, 0, 0); return cv.toDataURL('image/jpeg', .92); };
     const model = r.model.obj, head = model.getObjectByName('head'), box = new THREE.Box3().setFromObject(model, true), cc = box.getCenter(new THREE.Vector3()), size = box.getSize(new THREE.Vector3()).length();
     const hq = head.getWorldQuaternion(new THREE.Quaternion()), fwd = new THREE.Vector3(0, 0, 1).applyQuaternion(hq); fwd.y = 0; fwd.normalize();
-    const bfwd = new THREE.Vector3(Math.sin(o.rotation.y), 0, Math.cos(o.rotation.y));
+    const bb = model.getObjectByName('body') || model, bfwd = new THREE.Vector3(0, 0, 1).applyQuaternion(bb.getWorldQuaternion(new THREE.Quaternion())); bfwd.y = 0; bfwd.normalize();   // (the body bone's own front: the pet's group turned as it followed, and side views showed its back)
     // (the face: the middle of the two eyes when the model has them as bones, else in front of the head bone)
     const e0 = model.getObjectByName('shut0'), e1 = model.getObjectByName('shut1');
     const fc = e0 && e1 ? e0.getWorldPosition(new THREE.Vector3()).add(e1.getWorldPosition(new THREE.Vector3())).multiplyScalar(.5) : head.getWorldPosition(new THREE.Vector3());

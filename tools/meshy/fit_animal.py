@@ -961,7 +961,7 @@ def face_pieces(o, arm, J, Fc):
             rim = hit & (ell > .85) & (ell < 1.0); Lt = float(np.median(Lf[rim])) if rim.any() else float(Lf.mean())
             k = 3; Lb = sum(np.roll(Lf, (d0, d1), (0, 1)) for d0 in range(-k, k + 1) for d1 in range(-k, k + 1)) / (2 * k + 1) ** 2
             tt = np.clip((1.02 - ell) / FIX.get('socket_fade', .5), 0, 1); tt = tt * tt * (3 - 2 * tt) * FIX['socket_lift']
-            gain = np.where(Lb < Lt, 1 + tt * (Lt / np.maximum(Lb, 1e-3) - 1), 1.0)
+            gain = np.where((Lb < Lt) | (FIX.get('socket_both', False) & (Lb < Lt * FIX.get('socket_both_max', 1.12))), 1 + tt * (Lt / np.maximum(Lb, 1e-3) - 1), 1.0)   # (socket_both: a lid lighter than the fur round it (the kitty's) brought down too; much lighter fur (a cream blaze) kept)
             fill = np.clip(fill * gain[..., None], 0, 1)
             # (and the edge of the eye's fill, a smooth disc in textured fur, softened: a few passes of a 3x3 blur on a band round it)
             band = (np.abs(ell - .75) < .12) & hit
