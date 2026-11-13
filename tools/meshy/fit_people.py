@@ -1588,10 +1588,14 @@ if TEX and KEEP and SHIFT:
         # (auditor 10 Nov 2026: Clara's far eye, three-quarters, kept its open lashes while shut) the eye's own triangles,
         # dark lashes and iris, were not marked skin, so the game never painted them over: every non-hair head triangle in
         # an eye area is marked skin now (open eyes keep their paint: the game's per-texel test keeps dark lines)
-        if 'swim' in ID and '_pc3' in dir():
+        _vov = bool(os.environ.get('FIT_EYE_SKIN')) and 'swim' not in ID and '_eo' in dir()   # (13 Nov 2026, second reviewers, r045 at the near profile: the far eye's iris and lash triangles showed past the nose while shut; a villager's eye triangles were never marked skin, so the game's shut-eye paint skipped them) a villager: the triangles inside each eye's own oval
+        if ('swim' in ID or _vov) and '_pc3' in dir():
             _fcx = np.array([p.center.x for p in me.polygons]); _fcz = np.array([p.center.z for p in me.polygons]); _fcy = np.array([p.center.y for p in me.polygons])
             _ine = np.zeros(len(me.polygons), bool)
-            for _k in range(0, 8, 4): _ine |= (_fcx > _eb[_k]) & (_fcx < _eb[_k + 1]) & (_fcz > _eb[_k + 2]) & (_fcz < _eb[_k + 3])
+            if _vov:
+                for _k in range(0, 8, 4): _ine |= np.hypot((_fcx - _eo[_k]) / max(_eo[_k + 2], 1e-6), (_fcz - _eo[_k + 1]) / max(_eo[_k + 3], 1e-6)) < 1.05
+            else:
+                for _k in range(0, 8, 4): _ine |= (_fcx > _eb[_k]) & (_fcx < _eb[_k + 1]) & (_fcz > _eb[_k + 2]) & (_fcz < _eb[_k + 3])
             _add = _ine & ~_skp & _hz & (~_hreg | ~_hairlike | ((_mc.max(-1) < .35) & (_mc.max(-1) > 0))) & (_fcy < _ear_y)   # (and dark: Lumi's green irises are coloured like her hair)   # (the face side only: the back of the head has the same x and height, Finn's black hair there was marked)   # (Lumi's far eye, three-quarters, lay in her hair region: a triangle there not coloured like hair is the eye)
             if _add.any():
                 _cd = body.data.color_attributes['skinw'].data; _b2 = np.zeros(len(_cd) * 4, np.float32); _cd.foreach_get('color', _b2)

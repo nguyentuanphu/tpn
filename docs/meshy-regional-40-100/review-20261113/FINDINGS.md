@@ -70,3 +70,23 @@ subagents (2 people each, full size, the same checklist) found, all six:
    - r064's skin slab over a lock in lid moods.
 4. **Meshy's own geometry, left unless a cheap fix shows**: shattered ears (r045, r074, r084, r064), forehead shards
    (r050, r064), r057's spiky chin strap, faceted hat brims and necks.
+
+## Gate j (13 Nov 2026, about 19:15 AEDT, after e303428c1)
+
+Auditor: lid 0 (was 10), eyes 2 (r064's earring at -1.2: false), mshape 9 (r074 at -.7: her sad face, see below; r050's
+"o" at -.7), the rest 0. Second reviewers (three subagents, all six, about 80 pictures each at full size), grouped:
+
+1. **Far eye past the nose still broken while shut** (r045 at 1.2, r084 at -.7, above -.5 and tq, r057, r050 crescents
+   at +-.4). Cause: a villager's eye triangles were never marked skin (the fit did it only for friends, `'swim' in ID`),
+   and the game paints only skin-marked texels. Fix: `-EyeSkin` (triangles inside each eye's oval marked skin), refit.
+2. **Double lid on sad** (r074 every view, r084 every view, r057 small): the drawn lid sits above the person's own lash.
+   Fix: `-SadBot .42` (r074; r084 checked in the preview), refit.
+3. **Shards over the lids and through the iris** (r045's upper lids, r084's vertical iris seam, r074's black wedge):
+   3D folds; `-EyeDespike` on all six, refit.
+4. **Pale outline arcs above and below shut eyes** (all, from above0 and below0): the old eye's crease and lower rim
+   beyond the oval; to look at after the refit (1 may already cover part of it).
+5. **Lid drawn as a V at the near profile** (r057, r084 at +-1.2); **half lids with olive wedges at the inner corners
+   from below** (r057, r084); **lookL and lookR the same** at side views (r064, r074, r050); **irises cut by a vertical
+   edge** in look moods (r057, r064, r074). Not fixed yet.
+6. **Meshy's geometry** (left unless a cheap fix shows): shattered ears (r045, r064, r074, r084), forehead shards (r050,
+   r064), r057's chin strap edge, r084's neck-back views see only the hat (camera framing).
