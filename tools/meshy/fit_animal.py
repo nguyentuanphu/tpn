@@ -644,9 +644,9 @@ def extra_moves(J, M, bones):
         face(P, None, eye=blink(t, (1.4, 4.1)), smile=1.05, look=math.sin(w * t) * .15)
         return P
     def beg(t):
-        L = 2.4; w = TAU / L; P = R(); sitting(P, -1.0)
+        bpt = FIX.get('beg_pitch', -1.0); L = 2.4; w = TAU / L; P = R(); sitting(P, bpt)   # (13 Nov 2026, owner circled the kitty's neck and hind legs begging: sat bolt upright its rump took the ground and its short hind legs hung in the air, the head bent down hard at the nape: beg_pitch, a lower sit)
         for n, i in enumerate(front): legs(P, i, .1 + math.sin(2 * w * t + n * math.pi) * .18, 1.35 * FIX.get('sit_fold', 1.0))   # (the raised front paws curl less on thin-legged animals: the calf's hooves hung down as points)
-        put(P, 'head', .6 + math.sin(w * t) * .05, 0, math.sin(w * t) * .18)
+        put(P, 'head', -.6 * bpt + math.sin(w * t) * .05, 0, math.sin(w * t) * .18)
         P['tail'] = ((-.4, math.sin(4 * w * t) * .4, 0), Z3, O3)
         for e in ears: put(P, e, .15)
         face(P, None, eye=blink(t, (1.6,)), big=1.08, smile=1.2, jaw=.15)
@@ -669,7 +669,7 @@ def extra_moves(J, M, bones):
             for k, e in enumerate(ears): put(P, e, -.2 + rub * .1)
             face(P, None, eye=.35, smile=1.15, jaw=.1)
             return P
-        sf = .5 + .5 * FIX.get('sit_fold', 1.0); legs(P, sc, -1.45 * sf + math.sin(TAU * t * 6) * .12, 1.55 * sf + math.sin(TAU * t * 6) * .2)   # (sit_fold: a thin-legged animal lifts and folds the leg less)
+        sf = .5 + .5 * FIX.get('sit_fold', 1.0); legs(P, sc, -1.45 * sf + math.sin(TAU * t * 6) * .12, FIX.get('scratch_knee', 1.55 * sf) + math.sin(TAU * t * 6) * .2)   # (sit_fold: a thin-legged animal lifts and folds the leg less)
         hk = FIX.get('head_turn', 1.0); put(P, 'head', .35 * hk, -.12 * hk, .3 * hk + math.sin(TAU * t * 3) * .03)   # (and the head turned less far: it looked twisted round)
         face(P, None, eye=.35, smile=1.15, jaw=.1)
         return P

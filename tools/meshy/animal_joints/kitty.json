@@ -8,6 +8,8 @@
   "smooth": 5,
   "repack": 0.004,
   "sit_fold": 0.6,
+  "beg_pitch": -0.65,
+  "scratch_knee": 0.6,
   "tex_near": 1280,
   "leg_top": 0.8,
   "spatial_r": 0.03,
