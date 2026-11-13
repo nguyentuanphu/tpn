@@ -38,3 +38,18 @@ Older (10-12 Nov): see PLAN.md "Owner's decisions" (puppy, dragon, firefly appro
 - Mid-blink or turning to happy eyes, for a frame or two the shut lid shows as a ring round the eye (panda, calf, kitty).
 - Kitty scratch: the lifted hind paw stays a little bunched under the belly.
 - Full audits (`make_animal.ps1` without `-Quick`) not run since these changes; no pet approved yet.
+
+## Gate step 3: second reviewer (subagent, 14 Nov 2026 morning AEDT), boards `D:\WorkSpace\meshy\petsoard\<kind>\`
+Verdict: all four NOT clean. It opened 52 of 264 pictures. Each line must be fixed or answered with why it is not a fault.
+- All four, shut eyes: the lid still reads as a disc with an edge (kitty paler, panda brown-grey inside the black patch,
+  bunny smooth unfurred disc with a grey outline; calf lash specks at the inner corner of the left lid). -> socket fix
+  for panda and bunny too; lash specks: `lash_spot`/`lid_out`.
+- Calf: sleep front hooves long spikes and the folded legs off the ground; run/sit/beg front hooves flattened long; far
+  eye looks open at right.7 while shut (check); cheer-sideL neck stretched (subtle).
+- Kitty: surprised-sideL eye sticks out as a flat white disc; beg hind leg a blunt block; white specks on the fur and a
+  ragged white belly edge (subtle); shut-sideR lash line broken.
+- Panda: white sliver down the edge of the black shoulder; beg front paws in the air, legs tangled; white specks on black
+  fur (subtle); eyebrow knob from the side (subtle).
+- Bunny: beg bottom narrows to a ragged point with no hind feet; scratch ragged fringe at the rear bottom; side views the
+  eye reads as a flat white plate (subtle).
+- Picture problems (not model faults): some side/neck views see the back of the head; `pet_board.mts` body cameras to fix.
