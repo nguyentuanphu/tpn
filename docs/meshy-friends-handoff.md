@@ -79,6 +79,18 @@ The auditor branch (meshy-audit-coverage) is adding a mouth check, then eye sock
   - Steps (3b) sleeve-on-arm weights and the helper exclusion for sleeves are switched off (`if False`): no effect.
 - **Sleeve and shorts hems still ragged in the game** (skin-coloured teeth). Ruled out, each with game shots: helper bones (`HELP_T=0` and `1` in game_shots: no change), shoulder smoothing, sleeve weights, the body painted past the hem, the 6 mm cover rule, hem offset, the 4-bone limit. In Blender, posed with arms down (scratchpad `pose_render.py`: body red, chosen garments yellow), the hems are clean. `HIDE=body` in game_shots poses shows the clothes alone: the real short sleeves are short and their edge is jagged in the game.
 
+## Merging with the regional villagers' branch (for Release; checked 14 Nov 2026 AEDT)
+
+`git merge-tree` of this branch (at 1c5e7d8c9 and later) with `origin/meshy-regional-cloud` (9879d1acb, after e303428c1) conflicts in four files. Both branches changed the same lines for different people: the friends (code-made clothes, `cover`/`kit` materials) and the villagers (no clothes, the new `eyes` branch). Keep both sides in every hunk:
+- **js/friend-model.ts**, three hunks.
+  - `const kit = ...`: take theirs (it adds `eyes = !cover && ...` and their kitU fields), keeping our `armX` is not needed (dropped).
+  - The last lines of the fragment code: ours replaces shut-eye texels outright on the friends (`diffuseColor.rgb = mix(diffuseColor.rgb * k_, uTint * uPaint * diffuse, shA_);` and the same for the emissive); theirs adds the villagers' `eyeK_` mix after `*= k_`. Merged: `diffuseColor.rgb = mix(diffuseColor.rgb * k_, uTint * uPaint * diffuse, shA_);${eyes ? '...their eyeK_ line...' : ''}` and `totalEmissiveRadiance = mix(totalEmissiveRadiance * k_, emissive * uTint * uPaint, shA_);' + (eyes ? '...their line...' : '')`. `shA_` is declared on the `vec3 k_ = ...` line for every material, so it is 0 for villagers.
+  - The dress block: keep our `bootTop` lines and their `&& dressed.cov` guard.
+- **tools/meshy/fit_people.py**, four hunks: `TILE` (theirs: `FIT_TILE` and `TRIS > 20000`, a villager budget; friends keep 512/256 because they have `TRIS` over 20000 and TEX 2048/512); `shift_iris` (theirs adds the `FIT_LOOK_SOLID` warp, off by default: take theirs, our opening line stays as the default branch); the mouth moods (ours wipes `mouth_er`, theirs `mouth`, and adds `FIT_SAD_BOT`/`FIT_SAD_TALL`: take ours for the wiped box plus their sad-lid switches); `EYE_A`/`MOUTH_A` (take ours; check their side for an extra switch).
+- **tools/meshy/game_shots.mts**: theirs adds size, distance, pitch and gate switches; ours adds `HELP_T`, `HIDE=<material>` in faces and the `arms` mode. Keep both argument lists (append `HELP_T` to theirs) and our HIDE regex.
+- **tools/meshy/make_character.ps1**: take theirs (villager audit, `-Jobs`, `SV_URL`); ours only had the 40 s stagger, which `-Jobs` replaces.
+After merging, run `node tools/build.mts`, the faces audit of the four friends (`audit-cov.mts ... poses:face,pics`: eyes 0, lid at most 19 px, mouth 0 from the front) and a villager's shots, before the full suite.
+
 ## Next
 
 (13 Nov, 8:20 am) Next, in order: the lighter closed-eye ovals over the blush (see above); Lumi's sleeve teeth (cause 2); round 86 (all four, parts a minute apart, then `audit.mts <out> merge`, compare with 85: 561); the standard 1024 px sheets and a second-reviewer subagent; only then ask the owner, once, for all four.
