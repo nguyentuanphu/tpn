@@ -595,13 +595,16 @@ def extra_moves(J, M, bones):
     def jump(t):
         L = 1.2; u = t / L; P = R()
         up, pitch, fl, fk, bl, bk, hd, tl, er, sq = jump_at(u)
-        lag = jump_at(max(0., u - .06))   # (head, ears and tail a beat behind)
-        P['body'] = ((pitch, 0, 0), (0, up * H, .08 * H * (1 - math.cos(math.pi * min(1, max(0, (u - .2) / .57)))) / 2), (1 + (1 - sq) * .4, sq, 1 + (1 - sq) * .4))
-        jl, jk = FIX.get('jump_legs', 1.0), FIX.get('jump_knee', 1.0)   # (a kitty's long thin legs: reaching out and folding less in the air, or its paws stretched)
+        sp = FIX.get('jump_spring', 0.)   # (13 Nov 2026, owner: the bunny "khi nhảy bằng 4 chân nhìn hơi cứng": a springier leap for soft round-footed animals: the body stretches long in the air and squashes round on landing, the back arches more, the legs reach further, the ears stream behind)
+        lag = jump_at(max(0., u - .06 - .05 * sp))   # (head, ears and tail a beat behind)
+        air = max(0., up / .45); pitch *= 1 + .6 * sp; sq = 1 - (1 - sq) * (1 + 1.2 * sp)
+        P['body'] = ((pitch, 0, 0), (0, up * H * (1 + .25 * sp), .08 * H * (1 + sp) * (1 - math.cos(math.pi * min(1, max(0, (u - .2) / .57)))) / 2),
+                     (1 + (1 - sq) * .4 - .05 * sp * air, sq - .04 * sp * air, (1 + (1 - sq) * .4) * (1 + .16 * sp * air)))
+        jl, jk = FIX.get('jump_legs', 1.0) * (1 + .7 * sp), FIX.get('jump_knee', 1.0)   # (a kitty's long thin legs: reaching out and folding less in the air, or its paws stretched)
         for i in front: legs(P, i, fl * jl, fk * jk, cap=KC, bp=pitch)
         for i in back: legs(P, i, bl * jl, bk * jk, cap=KC, bp=pitch)
         put(P, 'head', -lag[1] * .55 + hd); put(P, 'tail', .3 + lag[7], math.sin(TAU * t * 2) * .2)
-        for e in ears: put(P, e, lag[8])
+        for e in ears: put(P, e, lag[8] * (1 + 1.2 * sp))
         air = .25 < u < .74
         face(P, None, big=1.1 if air else 1., smile=1.3, jaw=.6 if air else .15)   # (eyes wide in the air: a lid growing mid-leap showed the eye under it)
         return P
