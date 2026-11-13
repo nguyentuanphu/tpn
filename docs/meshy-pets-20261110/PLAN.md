@@ -124,6 +124,11 @@ pilot. Farm and wild animals (cow, sheep, pig, buffalo ...) are not in this plan
 - **13 Nov 2026 AEDT, owner (screenshot of the chat):** the panda and bunny feedback "above" was these two messages: the
   panda's white specks and dented feet (fixed: repack, sit_fold) and the bunny's stiff four-leg jump (fixed: jump_spring).
   Nothing else is owed on those two.
+- **13 Nov 2026 AEDT, afternoon (pictures of kitty beg and dig, calf sit and run):** "Bê mèo thỏ nhảy tại chỗ còn cứng
+  quá, mấy con này có vấn đề ở chân như hình vẽ": the standing hop of calf, kitty, bunny still too stiff; legs wrong
+  where circled (kitty: neck and hind legs when begging, hind leg when digging; calf: hind hooves when sitting, hooves
+  when running). Fix: sitting, begging and digging lay the lower hind leg flat (`legs(..., level=)`), the standing hop is
+  springier for all (`hop_spring`).
 
 ## Dog pilot: progress (10 Nov 2026 AEDT, no credits spent)
 

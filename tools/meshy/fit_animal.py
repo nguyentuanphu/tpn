@@ -554,8 +554,10 @@ def extra_moves(J, M, bones):
     def R(): return {b: (Z3, Z3, O3) for b in bones}
     def put(P, b, rx=0., ry=0., rz=0., loc=Z3):
         if b in P: P[b] = ((rx, ry, rz), loc, O3)
-    def legs(P, i, a, k=0., cap=None, bp=0.):
-        if cap is not None:   # (13 Nov 2026, owner: the feet turned pointed in run and jump. Looked at 2x: a front leg reaching forward with the knee straight pointed its hoof forward like a spike, a hind leg pushing back laid its hoof flat like a long slipper. The knee now turns against the hip, so the hoof stays near level under the leg, and folds less)
+    def legs(P, i, a, k=0., cap=None, bp=0., level=None):
+        if level is not None:   # (13 Nov 2026, owner: feet pointed or flattened into slabs when sitting, begging, digging: the lower leg laid flat on the ground (hock to toe), as a sitting cat or calf does, whatever the thigh and the body's tilt)
+            k = max(-1.5, min(1.5, -(a + level) + k))
+        elif cap is not None:   # (13 Nov 2026, owner: the feet turned pointed in run and jump. Looked at 2x: a front leg reaching forward with the knee straight pointed its hoof forward like a spike, a hind leg pushing back laid its hoof flat like a long slipper. The knee now turns against the hip, so the hoof stays near level under the leg, and folds less)
             k = k * .45 - (a + bp) * FIX.get('foot_level', 1.0); k = max(-cap, min(cap, k))   # (bp: the body's own pitch, so a hoof stays level when the body tips up or down in the jump)
         put(P, 'leg%d' % i, a); put(P, 'knee%d' % i, k)
     KC = FIX.get('knee_max', .95)   # (the most a knee turns in run, jump and the standing hop)
@@ -611,21 +613,27 @@ def extra_moves(J, M, bones):
     def bounce(t):
         # (13 Nov 2026, owner: "bước nhảy đứng" still stiff) two happy hops in place, each the jump's own poses made smaller:
         # a crouch, the spring up, legs tucked in the air, a squash on landing; head, ears and tail a beat behind
-        L = 1.6; p = (t % (L / 2)) / (L / 2); P = R(); hop = max(0., jump_at(p)[0]) / .45
-        up, pitch, fl, fk, bl, bk, hd, tl, er, sq = jump_at(p); lag = jump_at(max(0., p - .08))
-        jl, jk = FIX.get('jump_legs', 1.0) * .8, FIX.get('jump_knee', 1.0)
-        P['body'] = ((pitch * .45, 0, 0), (0, up * .5 * H, 0), (1 + (1 - sq) * .4, sq, 1 + (1 - sq) * .4))
-        for i in front: legs(P, i, fl * jl * .7, fk * jk, cap=KC, bp=pitch * .45)
-        for i in back: legs(P, i, bl * jl * .7, bk * jk, cap=KC, bp=pitch * .45)
-        put(P, 'head', -lag[1] * .4 + hd * .8, 0, math.sin(TAU * t / L) * .15)
-        for e in ears: put(P, e, lag[8] * 1.2)
-        put(P, 'tail', .3 + lag[7] * .6, math.sin(TAU * t / L * 6) * .55)
+        # (13 Nov 2026, owner again: "Bê mèo thỏ nhảy tại chỗ còn cứng quá") springier: higher, a deep crouch and a big
+        # squash, the body stretched tall in the air, turning a little left then right hop by hop, the head, ears and tail
+        # lagging further and overshooting (hop_spring, 1 by default)
+        hs = FIX.get('hop_spring', 1.0)
+        L = 1.6; p = (t % (L / 2)) / (L / 2); side = 1 if (t % L) < L / 2 else -1; P = R(); hop = max(0., jump_at(p)[0]) / .45
+        up, pitch, fl, fk, bl, bk, hd, tl, er, sq = jump_at(p); lag = jump_at(max(0., p - .08 - .07 * hs))
+        sq = 1 - (1 - sq) * (1 + 1.6 * hs); bp_ = pitch * (.45 + .45 * hs)
+        jl, jk = FIX.get('jump_legs', 1.0) * (.8 + .3 * hs), FIX.get('jump_knee', 1.0)
+        P['body'] = ((bp_, side * .14 * hs * hop, -side * .05 * hs * hop), (0, up * (.5 + .4 * hs) * H, 0),
+                     (1 + (1 - sq) * .4 - .04 * hs * hop, sq + .07 * hs * hop, 1 + (1 - sq) * .4 - .04 * hs * hop))
+        for i in front: legs(P, i, fl * jl * .7, fk * jk, cap=KC, bp=bp_)
+        for i in back: legs(P, i, bl * jl * .7, bk * jk, cap=KC, bp=bp_)
+        put(P, 'head', -lag[1] * (.4 + .3 * hs) + hd * .8, -side * .1 * hs * hop, math.sin(TAU * t / L) * .15)
+        for e in ears: put(P, e, lag[8] * (1.2 + 1.3 * hs))
+        put(P, 'tail', .3 + lag[7] * (.6 + .8 * hs), math.sin(TAU * t / L * 6) * .55)
         face(P, None, joy=True, smile=1.35, jaw=.5 + .3 * hop)
         return P
     def sitting(P, pitch=-.55):
         sf = FIX.get('sit_fold', 1.0)   # (13 Nov 2026, owner: the panda's hind feet looked dented when it sat up and begged: its short thick hind legs folded as far as the puppy's opened a jagged gap at the foot)
-        put(P, 'body', pitch * (.5 + .5 * sf), loc=(0, 0, -.06 * H))
-        for i in back: legs(P, i, -1.1 * sf, 1.25 * sf)
+        bp_ = pitch * (.5 + .5 * sf); put(P, 'body', bp_, loc=(0, 0, -.06 * H))
+        for i in back: legs(P, i, -1.1 * sf, 0., level=bp_)
         for i in front: legs(P, i, -pitch, 0)
         put(P, 'tail', -.45)
     def sit(t):
@@ -672,7 +680,7 @@ def extra_moves(J, M, bones):
         L = 1.2; ph = TAU * t / L * 2; P = R()
         put(P, 'body', .22, loc=(0, -.02 * H, .03 * H))
         for n, i in enumerate(front): legs(P, i, -.2 + math.sin(ph + n * math.pi) * .6, .4 + max(0, math.sin(ph + n * math.pi)) * .6)
-        for i in back: legs(P, i, -.15, .1)
+        for i in back: legs(P, i, -.15, 0., level=.22)   # (the hind feet flat: the kitty's was dragged out behind)
         put(P, 'head', .35 + math.sin(ph) * .05)
         for e in ears: put(P, e, -.25)
         put(P, 'tail', .5, math.sin(ph * 1.5) * .5)
