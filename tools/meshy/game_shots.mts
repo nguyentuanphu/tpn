@@ -28,14 +28,14 @@ const shots: Record<string, string> = await P.page.evaluate(async ([MODE, LIST, 
     for (let y = 0; y < H; y++) im.data.set(px.subarray((H - 1 - y) * W * 4, (H - y) * W * 4), y * W * 4); x.putImageData(im, 0, 0);
     out[name] = cv.toDataURL('image/png');
   };
-  const headShot = (name: string, root: any, model: any, yaw: number, side: number, villager = false) => {
+  const headShot = (name: string, root: any, model: any, yaw: number, side: number, villager = false, pitch = 0, SZ = 480) => {   // (14 Nov 2026: pitch, the camera above (+) or below (-), and the picture's size, for the gate sheets)
     root.updateMatrixWorld(true); let head: any = null; model.obj.traverse((o: any) => { if (o.isBone && o.name === 'head') head = o; });
     const box = new THREE.Box3().setFromObject(model.obj, true), Hh = box.max.y - box.min.y, bc = box.getCenter(new THREE.Vector3());
     const at = head && !villager ? head.getWorldPosition(new THREE.Vector3()).add(new THREE.Vector3(0, .12, 0)) : new THREE.Vector3(bc.x, box.min.y + Hh * .86, bc.z);
-    const fwd = new THREE.Vector3(Math.sin(yaw), 0, Math.cos(yaw)).applyAxisAngle(new THREE.Vector3(0, 1, 0), side);
+    const fwd = new THREE.Vector3(Math.sin(yaw) * Math.cos(pitch), Math.sin(pitch), Math.cos(yaw) * Math.cos(pitch)).applyAxisAngle(new THREE.Vector3(0, 1, 0), side);
     const cam = new THREE.PerspectiveCamera(28, 1, .05, 200); cam.position.copy(at).addScaledVector(fwd, Hh * .75); cam.lookAt(at);
     const hid: any[] = []; if (HIDE) model.obj.traverse((o: any) => { if (o.isMesh && o.visible && (HIDE === 'face' ? /^face-/ : new RegExp('^(face-|' + HIDE + ')')).test(o.material && o.material.name || '')) { hid.push(o); o.visible = false; } });   // (HIDE=<material>: that material hidden too, with the mood pieces, e.g. HIDE=cloth-body)   // (HIDE=face: the mood pieces hidden, to tell what the body shows under them)
-    grab(name, cam); hid.forEach(o => { o.visible = true; });
+    grab(name, cam, SZ, SZ); hid.forEach(o => { o.visible = true; });
   };
   const mood = (av: any, M: any, m: string) => { if (av.life) { av.life.mood = m; av.life.blink = av.life.t + 60; av.life.glance = av.life.t + 60; av.life.feel = ''; } M.follow(m); };
   const MOODS = ['smile', 'blink', 'half', 'happy', 'o', 'sad', 'lookL', 'lookR', 'excited'];
@@ -52,6 +52,30 @@ const shots: Record<string, string> = await P.page.evaluate(async ([MODE, LIST, 
     // (owner 8 Nov 2026: "check the eyes from the side") each mood from both sides, close
     for (const m of ['smile', 'blink', 'half', 'happy', 'sad', 'lookL', 'lookR']) { mood(av, M, m); for (const s of [1.2, -1.2]) headShot(`${t}-${m}-side${s > 0 ? 'L' : 'R'}`, av.root, M, 0, s); }
     top.remove(av.root);
+  }
+  // gate (owner 12 Nov 2026: no approval request before the gate): the standard sheets at 1024 px, high detail. Every mood at
+  // -.7, -.4, 0, .4, .7; smile and blink from both sides and from above and below (front and +-.5); the neck and nape from
+  // three sides; the whole child in each outfit front, three-quarter and back. Writes <id>-gate-<what>.png
+  if (MODE === 'gate') for (const id of ids) {
+    await A.loadFriendModels(id); await A.loadFriendModels(id + '-hd');
+    const av: any = A.buildAvatar({ set: LOOK[id] || 'girl', friend: id, skin: '#f6c7a5' }, null, { hd: true }), M = av.modelHD; if (!M) continue;
+    A.showHD(av, true); top.add(av.root); av.root.position.set(h.pos.x + 3, h.av.root.position.y, h.pos.z + 3); av.root.rotation.y = 0; A.animate(av, 'idle', 1);
+    for (const m of MOODS) { mood(av, M, m); for (const s of [-.7, -.4, 0, .4, .7]) headShot(`${id}-gate-${m}-y${s}`, av.root, M, 0, s, false, 0, 1024); }
+    for (const m of ['smile', 'blink']) { mood(av, M, m);
+      for (const s of [1.2, -1.2]) headShot(`${id}-gate-${m}-side${s > 0 ? 'L' : 'R'}`, av.root, M, 0, s, false, 0, 1024);
+      for (const p of [.45, -.45]) for (const s of [0, .5, -.5]) headShot(`${id}-gate-${m}-${p > 0 ? 'above' : 'below'}${s}`, av.root, M, 0, s, false, p, 1024); }
+    mood(av, M, 'smile'); for (const s of [Math.PI, 2.2, -2.2]) headShot(`${id}-gate-neck-${s.toFixed(1)}`, av.root, M, 0, s, false, 0, 1024);
+    top.remove(av.root);
+    for (const kind of ['everyday', 'aodai', 'festival', 'rain']) {
+      const aw: any = A.buildAvatar({ set: LOOK[id] || 'girl', friend: id, skin: '#f6c7a5', suit: `${id}-${kind}` }, null, { hd: true }); A.showHD(aw, true);
+      top.add(aw.root); aw.root.position.set(h.pos.x + 3, h.av.root.position.y, h.pos.z + 3); aw.root.rotation.y = 0; A.animate(aw, 'idle', 1); aw.root.updateMatrixWorld(true);
+      const box = new THREE.Box3().setFromObject(aw.modelHD.obj, true), c = box.getCenter(new THREE.Vector3()), Hh = box.max.y - box.min.y;
+      for (const [s, nm] of [[0, 'front'], [.75, 'tq'], [Math.PI, 'back']] as [number, string][]) {
+        const cam = new THREE.PerspectiveCamera(30, .75, .05, 100), dir = new THREE.Vector3(Math.sin(s), 0, Math.cos(s));
+        cam.position.copy(c).addScaledVector(dir, Hh * 2.1); cam.position.y += Hh * .05; cam.lookAt(c); grab(`${id}-gate-body-${kind}-${nm}`, cam, 768, 1024);
+      }
+      top.remove(aw.root);
+    }
   }
   // outfits: each of a friend's shop outfits (js/content/friends.ts SUIT_KINDS), full length, front, three-quarter, back
   if (MODE === 'outfits') for (const id of ids) {

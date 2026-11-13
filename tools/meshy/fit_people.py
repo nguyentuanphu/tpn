@@ -523,14 +523,21 @@ def lid(img, b, top=0., bot=1.):   # (original_skin) a closed lid painted over t
         # specks of Sol's amber iris stayed on his closed and happy lids)
         _R, _G, _B = F[..., 0], F[..., 1], F[..., 2]
         for _ in range(2): hole = hole | (_far & (np.roll(hole, 1, 0) | np.roll(hole, -1, 0) | np.roll(hole, 1, 1) | np.roll(hole, -1, 1)))   # (12 Nov 2026: a faint ring stayed round one closed eye of Sol and Lumi, the eye white's soft outer edge just outside the lid: 2 px more)
+        # (14 Nov 2026: off by default. The lid now ends along the eye's lower curve, above the blush; inside it, the blush pixels
+        # kept by this hard test showed as steps where Lumi's blush met the filled lid)
         _esh = ((V < .55) | ((V > .78) & (S_ < .22))) & (np.hypot((xx - cx_) / (rx * 1.2), (yy - cy_) / (ry * 1.1)) < 1)   # (the eye's own dark and white pixels, and 4 px round them: their soft edge, half white and half skin, passed as blush and showed as a pale ring round every closed eye)
         for _ in range(4): _esh = _esh | np.roll(_esh, 1, 0) | np.roll(_esh, -1, 0) | np.roll(_esh, 1, 1) | np.roll(_esh, -1, 1)
-        hole &= ~(~_esh & (d > .7) & (yy > cy_) & (V > .82) & (S_ > .3) & (_R > _G * 1.2) & (_R > _B * 1.3))   # (bright: Sol's amber iris, red but darker, passed at .6 and showed through his closed lids; a blue-near-green test instead broke Lumi's orange-red blush into specks)   # (inside the eye's box too: Lumi's box reaches down over her blush)
+        if os.environ.get('FIT_KEEP_BLUSH'): hole &= ~(~_esh & (d > .7) & (yy > cy_) & (V > .82) & (S_ > .3) & (_R > _G * 1.2) & (_R > _B * 1.3))   # (bright: Sol's amber iris, red but darker, passed at .6 and showed through his closed lids; a blue-near-green test instead broke Lumi's orange-red blush into specks)   # (inside the eye's box too: Lumi's box reaches down over her blush)
     if OWN:   # (13 Nov 2026, owner's gate, seen in the game: Sol's, Lumi's and Finn's closed eyes were tall flat ovals of the upper
         # lid's colour reaching down over the blush) the lid ends just below the painted eye's own lowest dark or white pixels
         # along the eye's own lower curve, column by column (one straight row left a straight edge across the cheek)
-        _em = (_eye | (S_ < .3)) & _far & ~(HAIRISH & ~_inb)   # (_far, and grey or far-from-skin pixels too: the pale grey rim at the inner corners lay below the cut as a grey streak, Sol)
+        _em = ((V < .55) | ((V > .78) & (S_ < .22)) | (S_ < .18)) & _far & ~(HAIRISH & ~_inb)   # (_far, and grey (saturation under .18; .3 took Lumi's pale cheek, and the cut stepped down into the blush) (not far-from-skin: that is Lumi's blush, and the lid stepped down into it): the pale grey rim at the inner corners lay below the cut as a grey streak, Sol)
         for _ in range(2): _em = _em | np.roll(_em, 1, 0) | np.roll(_em, -1, 0)
+        # (14 Nov 2026, the auditor's lid check: pale or grey specks at the lash ends, Clara's and Sol's inner corners) every
+        # eye pixel, grey rim included, 3 px wider, is lid (never above the eye's upper part, where the brows are)
+        _eg = _em.copy()
+        for _ in range(3): _eg = _eg | np.roll(_eg, 1, 0) | np.roll(_eg, -1, 0) | np.roll(_eg, 1, 1) | np.roll(_eg, -1, 1)
+        hole |= _eg & _far & (yy >= cy_ - ry * .7) & ~(HAIRISH & (yy < b[1] + h_ * .15))
         if _em.any():
             _cols = np.where(_em.any(0), H_ - 1 - np.argmax(_em[::-1], 0), -1).astype(np.float32)
             _xs = np.nonzero(_cols >= 0)[0]
