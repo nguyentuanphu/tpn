@@ -35,6 +35,7 @@
   "head_turn": 0.6,
   "jump_legs": 0.7,
   "repack": 0.004,
+  "socket_dark": 0.35,
   "tex_near": 1280,
   "sit_fold": 0.6
 }

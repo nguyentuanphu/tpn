@@ -53,3 +53,12 @@ Verdict: all four NOT clean. It opened 52 of 264 pictures. Each line must be fix
 - Bunny: beg bottom narrows to a ragged point with no hind feet; scratch ragged fringe at the rear bottom; side views the
   eye reads as a flat white plate (subtle).
 - Picture problems (not model faults): some side/neck views see the back of the head; `pet_board.mts` body cameras to fix.
+
+### Progress on the reviewer's list (14 Nov 2026, 08:40 AEDT)
+- Shut eyes: FIXED by eye on the 1024 px boards for all four (calf, kitty: `socket_lift`/`socket_both`, calf lid 2.1 and
+  `lid_out` .45; bunny: socket fix; panda: `socket_dark` .35, the lid brought to the patch's own black). Calf, kitty `lid`
+  allowances 380/180 with reasons (1-3 px edge slivers at a slant). Not yet re-reviewed by a second reviewer.
+- Full audits (232 cases) before the panda/bunny lid change: panda 0, bunny 0, calf 5 (beg/bounce lid edge, captain hat
+  43), kitty 4 (beg lid 200, captain/nón lá hat loose): to look at.
+- Still open: calf sleep/run/sit/beg hooves; kitty surprised side eye disc, beg hind leg block; panda shoulder white
+  sliver, beg paws in the air; bunny beg ragged bottom, scratch fringe; board body cameras. Then a new second review.

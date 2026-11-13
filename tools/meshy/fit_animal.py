@@ -967,6 +967,13 @@ def face_pieces(o, arm, J, Fc):
             band = (np.abs(ell - .75) < .12) & hit
             for _ in range(FIX.get('socket_soften', 3)):
                 bl = sum(np.roll(fill, (d0, d1), (0, 1)) for d0 in (-1, 0, 1) for d1 in (-1, 0, 1)) / 9; fill = np.where(band[..., None], bl, fill)
+        if FIX.get('socket_dark', 0):   # (14 Nov 2026, second reviewer: the panda's shut lid a brown-grey disc inside its black eye patch. Inside the lid, fur already darker than socket_dark is brought to the patch's own black (the darkest quarter of the dark fur at the lid's rim), fading out to the rim; the white face is left alone)
+            ell = np.hypot((xx - gx) / Rx, (yy - gy) / R); Lf = fill @ np.array([.3, .59, .11])
+            rimd = hit & (ell > .8) & (ell < 1.05) & (Lf < FIX['socket_dark'])
+            if rimd.any():
+                tgt = np.median(fill[rimd & (Lf <= np.percentile(Lf[rimd], 50))], 0)
+                tt = np.clip((1.02 - ell) / .35, 0, 1); tt = tt * tt * (3 - 2 * tt) * smooth01((FIX['socket_dark'] - Lf) / .08)
+                fill = fill * (1 - tt[..., None]) + tgt * tt[..., None]
         lash = np.array(FIX.get('lash', (.22, .14, .1)))
         for kind, curve in (('shut', lambda u: -.1 * r + .3 * r * (u / ew) ** 2), ('joy', lambda u: .1 * r - .45 * r * (u / ew) ** 2)):
             img = fill.copy()
