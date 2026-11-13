@@ -381,7 +381,8 @@ if mouthm.any():
             if (_n == _m).all(): break
             _m = _n
         _left &= ~_m
-        if _m.sum() >= 5 and np.ptp(np.nonzero(_m)[1]) < W_ * .3 and np.nonzero(_m)[0].max() < H_ * .95:   # (10 Nov 2026: Bom's red collar comes up from the picture's foot, darker than his faint lips: the sad and excited mouths were drawn on his neck; lips never touch the edge)
+        _eb_low = max([b_[3] + (b_[3] - b_[1]) * .35 for b_ in eyes.values()], default=0) if REFP == 'villager-' else 0   # (14 Nov 2026, round 32: Teo's nostrils, just under the eyes, were taken for his faint smile and every mood mouth was drawn on his nose) a villager's lips lie well below the eyes
+        if _m.sum() >= 5 and np.ptp(np.nonzero(_m)[1]) < W_ * .3 and np.nonzero(_m)[0].max() < H_ * .95 and np.nonzero(_m)[0].min() > _eb_low:   # (10 Nov 2026: Bom's red collar comes up from the picture's foot, darker than his faint lips: the sad and excited mouths were drawn on his neck; lips never touch the edge)
             _pats.append((float(V[_m].mean()), _m))
     # (10 Nov 2026: Bông's nostril, 4 x 3 px, was a shade darker than her lips: the darkest of the patches at least a quarter the size of the largest)
     _big = max([int(p_[1].sum()) for p_ in _pats], default=0)
@@ -390,7 +391,7 @@ if mouthm.any():
     if _best is not None: mouthm = _best[1]
     else:   # (10 Nov 2026: Bom's and Bông's lips are barely redder than their skin, so no patch lay in the middle and every red patch, the collar too, became "the mouth": the sad and surprised mouths were drawn on the neck) the faint lips: the reddest pixels in the face's middle, below the nose and above the chin
         _red = F[..., 0] - F[..., 1]; _band = (np.abs(xx - W_ / 2) < W_ * .12) & (yy > H_ * .6) & (yy < H_ * .86)
-        _cand = _band & (_red > np.median(_red[_band]) + .08); mouthm = np.zeros_like(mouthm)
+        _cand = _band & (_red > np.median(_red[_band]) + .08) & (yy > (max([b_[3] + (b_[3] - b_[1]) * .35 for b_ in eyes.values()], default=0) if REFP == 'villager-' else 0)); mouthm = np.zeros_like(mouthm)
         if _cand.sum() >= 5:
             ys_, xs_ = np.nonzero(_cand); _k = int(np.argmax(_red[ys_, xs_])); _m = np.zeros_like(_cand); _m[ys_[_k], xs_[_k]] = True
             for _ in range(W_):
@@ -658,13 +659,26 @@ def gmouth():   # (12 Nov 2026, owner circled the old smile's corners beside the
     if REFP != 'villager-': return mouth
     mw_, mh_ = mouth[2] - mouth[0], mouth[3] - mouth[1]; mh_ = max(mh_, mw_ * .35)   # (14 Nov 2026, round 31: Bác Ba's open smile was found as a thin box over the teeth, and its lower lip stayed beside the round mouth)
     return [max(0, int(mouth[0] - mw_ * .7)), max(0, int(mouth[1] - mh_ * .45)), min(W_, int(mouth[2] + mw_ * .7)), min(H_, int(mouth[3] + mh_ * .5))]   # (round 31: .7 each side, was .3: the old smile line ran on past both sides of the round and sad mouths, Lan, Mai, Mit, Teo, Ti; the mouth box found is the reddest middle of the lips)   # (13 Nov 2026, round 24: .3 and .45/.5, was .18 and .3/.4: the auditor's lips check and the second reviewer still saw the old smile's corners beside Ruby's sad mouth and round Teo's and Ba's o)
+def erase_mouth(img, b):   # (14 Nov 2026, round 32: the old smile line stayed beside the round and sad mouths of Lan, Mai, Mit, Teo and Ti however wide the box: the eyelid fill closes only eye-like pixels, and the faint line is not) a villager's old mouth: the whole oval of the box is filled with the skin round it, softly
+    if REFP != 'villager-': return erase(img, b)
+    cx_, cy_ = (b[0] + b[2]) / 2, (b[1] + b[3]) / 2; rx, ry = max(2, (b[2] - b[0]) / 2), max(2, (b[3] - b[1]) / 2)
+    ya, yb = max(0, int(cy_ - ry * 1.5) - 3), min(H_, int(cy_ + ry * 1.5) + 4); xa, xb = max(0, int(cx_ - rx * 1.5) - 3), min(W_, int(cx_ + rx * 1.5) + 4)
+    d = np.hypot((xx[ya:yb, xa:xb] - cx_) / rx, (yy[ya:yb, xa:xb] - cy_) / ry); hm = d < 1
+    sub = img[ya:yb, xa:xb, :3].copy(); _sk = skin_wide(sub) & ~hm
+    _rim = _sk & (d < 1.4)
+    sub[hm] = np.median(sub[_rim], axis=0) if _rim.sum() > 8 else REF[:3]
+    for _ in range(500):
+        P = np.pad(sub, ((1, 1), (1, 1), (0, 0)), mode='edge'); av = (P[:-2, 1:-1] + P[2:, 1:-1] + P[1:-1, :-2] + P[1:-1, 2:]) / 4; sub[hm] = av[hm]
+    _a = np.clip((1 - d) / .25, 0, 1)[..., None]   # (soft edge)
+    img[ya:yb, xa:xb, :3] = img[ya:yb, xa:xb, :3] * (1 - _a) + sub * _a
+    img[ya:yb, xa:xb, 3] = np.maximum(img[ya:yb, xa:xb, 3], _a[..., 0])
 def mouth_o(im, big):
     if not mouth: return im
-    erase(im, gmouth()); cx, cy = (mouth[0] + mouth[2]) / 2, (mouth[1] + mouth[3]) / 2; mw = mouth[2] - mouth[0]
+    erase_mouth(im, gmouth()); cx, cy = (mouth[0] + mouth[2]) / 2, (mouth[1] + mouth[3]) / 2; mw = mouth[2] - mouth[0]
     ellipse(im, cx, cy + (mouth[3] - mouth[1]) * .2, mw * (.17 if not big else .24), mw * (.15 if not big else .19), np.array([.80, .42, .45]), np.clip(lip * .95, 0, 1)); return im   # (owner: no black lips) a soft rose mouth, like the game's own faces
 M['surprised'] = mouth_o(base.copy(), False)
 im = base.copy()
-if mouth: erase(im, gmouth()); mb = [mouth[0] + (mouth[2] - mouth[0]) * .15, mouth[1], mouth[2] - (mouth[2] - mouth[0]) * .15, mouth[3]]; stroke(im, arc(mb, .75, -.45), lip * .8, lw * 1.1)
+if mouth: erase_mouth(im, gmouth()); mb = [mouth[0] + (mouth[2] - mouth[0]) * .15, mouth[1], mouth[2] - (mouth[2] - mouth[0]) * .15, mouth[3]]; stroke(im, arc(mb, .75, -.45), lip * .8, lw * 1.1)
 for b in eyes.values(): erase(im, b, 0, .18)
 M['sad'] = im
 im = base.copy()
