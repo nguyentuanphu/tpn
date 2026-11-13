@@ -106,3 +106,16 @@ with the pieces hidden: the body's hair was intact), fixed by `-LidClip` (refit 
 ported (a mood may change only the eyes and the mouth), first run 47 cases, mostly r045 (the brow and hairline above),
 r064 (the flap), r074 at -.7; the mood's own big mouth was counted as stray in the first port (fixed).
 Left and not a fault: r084's far pupil below a half lid seen from above (a half-open eye shows its iris).
+
+## Gates m to q (14 Nov 2026 AEDT)
+
+- m/n: `-LidClip` (shut, then half and sad pieces only round each eye); n: r064's skin flap at .4 found to be the piece grid
+  lifted onto a lock of hair: `-SnapCap .006` (o, p). p: r045's fringe and r064's temple hair (painted on the face's own
+  triangles) turned skin on shut eyes: outside each eye's box only light grey and white is painted (f5b3cca75).
+- Gate q (current models 4e116cadd + f5b3cca75): auditor eyes 0, lid 0 (first time both), stray 13 (r045 a few pixels at
+  the hair's edge by a brow; r074 her own "o" at -.7), mshape 15 (the red nose on dark hosts, looked at: false).
+- Second reviewers on q, left: sad lids sloping to the nose read angry (r045 r050 r074 r084: `-SadTilt .15`, refit running);
+  r084's old rim at the inner corners light tan on his dark skin, not grey, so not painted (now: outside the box anything
+  lighter than the skin round the eyes is painted); r045's grey hair highlights by her temples turned to skin flecks on
+  blink and happy by the wide eye areas' old colour test (now off where the ovals are); still left: lids as a V at the
+  near profile, small lash stubs at sad outer corners, lookL and lookR alike, r050's socket dome (the lid piece's shading).
