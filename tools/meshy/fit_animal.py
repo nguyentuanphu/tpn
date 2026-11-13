@@ -627,7 +627,7 @@ def extra_moves(J, M, bones):
         for i in back: legs(P, i, bl * jl * .7, bk * jk, cap=KC, bp=bp_)
         put(P, 'head', -lag[1] * (.4 + .3 * hs) + hd * .8, -side * .1 * hs * hop, math.sin(TAU * t / L) * .15)
         for e in ears: put(P, e, lag[8] * (1.2 + 1.3 * hs))
-        put(P, 'tail', .3 + lag[7] * (.6 + .8 * hs), math.sin(TAU * t / L * 6) * .55)
+        put(P, 'tail', min(.45, .3 + lag[7] * (.6 + .3 * hs)), math.sin(TAU * t / L * 6) * .55)   # (a kitty's tall tail lifted further swung forward over its back)
         face(P, None, joy=True, smile=1.35, jaw=.5 + .3 * hop)
         return P
     def sitting(P, pitch=-.55):
