@@ -392,7 +392,7 @@ gl_FragColor = vec4(code_ / 255.0, floor(dm_ / 256.0) / 255.0, mod(dm_, 256.0) /
          The same picture with the head and body drawn 4 mm further back is what it should look like; a pixel of the piece
          that differs from it (colour .1) is a fault, unless something lies well in front of the piece there (4 mm or more:
          hair, a hand). (Drawing the piece over everything instead drew its far side over the nose: false alarms.) */
-      saved.forEach(([o, m, v]: any) => { o.visible = v && !/^face-/.test(m.name || ''); if (o.visible) o.material = idMat(m, 1, false); });
+      saved.forEach(([o, m, v]: any) => { o.visible = v && !/^face-/.test(m.name || ''); if (o.visible) { const n = m.name || ''; o.material = idMat(m, 1, !n.startsWith('lit-g-') && !n.startsWith('cloth-item')); } });   // (14 Nov: the body with its own codes, 3 hair, 5 bare skin: 'stray' leaves out the hair's edge)
       solo.add(av.root); av.root.updateMatrixWorld(true); const Pb = read(solo, cam); top.add(av.root); av.root.updateMatrixWorld(true);
       saved.forEach(([o, m, v]: any) => { o.material = m; o.visible = v; });
       const dep = (px: Uint8Array, i: number) => (px[i * 4 + 1] * 256 + px[i * 4 + 2]) / 1000;
@@ -512,8 +512,25 @@ gl_FragColor = vec4(code_ / 255.0, floor(dm_ / 256.0) / 255.0, mod(dm_, 256.0) /
            (the head moves a little with breathing) is a stray change: the mood mouth drawn on a nostril (Sol, Finn), a lid
            patch lying on the cheek over the blush (Lumi), a flat skin patch over the brows (villagers). Groups under 4 px
            are left out. Not judged on the smile itself, nor where the eyes or mouth were not found. */
+        /* (14 Nov, friends session: what is left of 'stray' is 1-2 px along the hair's edges, far from the eyes too) the
+           noise of a piece being there: the smile again, with this mood's pieces shown but drawing neither colour nor depth,
+           so only the order transparent things are drawn in (and the hair edge's blending) can change; pixels that change
+           so are left out of 'stray' */
+        let noise: Uint8Array | null = null;
+        if (C0 && m !== 'smile' && eyeZ) { const pn = m === 'o' ? 'face-surprised' : 'face-' + m, pcs: any[] = [];
+          setMood('smile'); M.obj.traverse((o: any) => { if (o.isMesh && o.material && o.material.name === pn) pcs.push([o, o.visible, o.material.colorWrite, o.material.depthWrite]); });
+          if (pcs.length) { pcs.forEach(([o]: any) => { o.visible = true; o.material.colorWrite = false; o.material.depthWrite = false; });
+            const Nz = read(top, cam); pcs.forEach(([o, v, cw, dw]: any) => { o.visible = v; o.material.colorWrite = cw; o.material.depthWrite = dw; });
+            noise = new Uint8Array(N); for (let i = 0; i < N; i++) if (Math.hypot(Nz[i * 4] - C0[i * 4], Nz[i * 4 + 1] - C0[i * 4 + 1], Nz[i * 4 + 2] - C0[i * 4 + 2]) / 255 > .04) noise[i] = 1; }
+          setMood(m); }
+        /* (the noise render did not move the count: the hair's edge blends the head under it, which the shut-eye paint
+           lightens, so 1-2 px along every hair edge changed) pixels at a hair/head boundary in the ID picture (codes 3 and 5
+           side by side within 2 px: at 1 px the brows' and fringes' blended edges still showed) are left out; a skin patch replacing hair is wider than that and still counts */
+        const cd = (j: number) => Math.round(Pb[j * 4] ), hairEdge = (i: number) => { const x = i % W, y = (i / W) | 0; let h = false, k2 = false;
+          for (let dy = -2; dy <= 2; dy++) for (let dx = -2; dx <= 2; dx++) { const xx = x + dx, yy = y + dy; if (xx < 0 || yy < 0 || xx >= W || yy >= H) continue; const j = yy * W + xx; if (!Pb[j * 4 + 3]) continue; const c = cd(j); if (c === 3) h = true; else k2 = true; }
+          return h && k2; };
         const fs = new Uint8Array(N); let ks = 0;
-        if (C0 && m !== 'smile' && eyeZ) { for (let i = 0; i < N; i++) { if (!Pb[i * 4 + 3] || eyeZ[i] || !mine(i) || i >= N - W * 10) continue;   // (on the head and body, not only the mood piece: the game's shut-eye paint changes the head itself)
+        if (C0 && m !== 'smile' && eyeZ) { for (let i = 0; i < N; i++) { if (!Pb[i * 4 + 3] || eyeZ[i] || !mine(i) || i >= N - W * 10 || (noise && near(noise, i, 1)) || hairEdge(i)) continue;   // (on the head and body, not only the mood piece: the game's shut-eye paint changes the head itself)
             const x = i % W, y = (i / W) | 0; if (bx1 > bx0 && x >= bx0 - 3 && x <= bx1 + 3 && y >= by0 - 3 && y <= by1 + 3) continue;
             let best = 9; for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) { const xx = x + dx, yy = y + dy; if (xx < 0 || yy < 0 || xx >= W || yy >= H) continue; const q = (yy * W + xx) * 4; best = Math.min(best, Math.hypot(C[i * 4] - C0[q], C[i * 4 + 1] - C0[q + 1], C[i * 4 + 2] - C0[q + 2]) / 255); }
             if (best > .08) { fs[i] = 1; ks++; } }
