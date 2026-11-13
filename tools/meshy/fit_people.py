@@ -1007,7 +1007,7 @@ if OWN:   # (own face) after the smoothing, every point is again just in front o
                 # up and up to either side, or lash bits stayed over r045's shut eyes)
                 for _ox, _oz in ((-_dx_ * .5, 0), (_dx_ * .5, 0), (0, _dz_), (-_dx_, _dz_), (_dx_, _dz_)):
                     _hh = _btree.ray_cast(Vector((x_ + _ox, -2, z_ + _oz)), Vector((0, 1, 0)))
-                    if _hh[0] is not None: _ys_.append(_hh[0].y)
+                    if _hh[0] is not None and not (os.environ.get('FIT_SNAP_CAP') and h_[0].y - _hh[0].y > float(os.environ['FIT_SNAP_CAP'])): _ys_.append(_hh[0].y)   # (14 Nov 2026, r064 at .4 and tq: a lock of hair in front of her outer eye corner lifted the shut piece's grid onto it, a skin flap standing off the face over the hair) a point beside it further in front than FIT_SNAP_CAP (6 mm) is not the lid's bulge
                 h_ = (Vector((x_, min(_ys_), z_)),) + tuple(h_[1:])
             if h_[0] is not None and not np.isnan(Yg[i_, j_]): Yg[i_, j_] = min(Yg[i_, j_], h_[0].y + .001)
             # (owner 11 Nov 2026: the sad and "o" mouths were drawn under a smile that still showed, the far eye showed past
