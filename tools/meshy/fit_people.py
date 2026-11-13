@@ -667,6 +667,8 @@ def lid(img, b, top=0., bot=1.):   # (original_skin) a closed lid painted over t
         if _os.sum() > 12 and hm.sum() > 4:
             _k = np.clip(np.median(_of[_os], axis=0) / np.maximum(np.median(sub[hm], axis=0), 1e-3), .85, 1.15); sub[hm] = np.clip(sub[hm] * _k, 0, 1)
             print('FIT lid fill matched to the skin round the eye', np.round(_k, 3))
+    if os.environ.get('FIT_LID_CLIP') and not PART and OWN:   # (14 Nov 2026, gate l: r045's brow cut into dashes and her hairline turned to skin on every shut eye, from the side; the lid's dark ring (1.6 of its width) reached the brows and the hair's edge) a shut lid changes only its own oval and the eye's box: the game's paint covers the rest of the eye from the side
+        hm = hm & ((d[ya:yb, xa:xb] < 1.08) | _inb[ya:yb, xa:xb])
     _w = img[ya:yb, xa:xb, :3]; _w[hm] = sub[hm]   # (only the lid itself: the brows, lashes and hair held at skin colour above were written back too, and vanished on every blink)
     img[ya:yb, xa:xb, 3] = np.maximum(img[ya:yb, xa:xb, 3], hm.astype(np.float32))
     if os.environ.get('FIT_LID_SOFT') and OWN:
@@ -881,6 +883,12 @@ if OWN:
         if os.environ.get('FIT_LID_HAIR') and k in ('blink', 'half', 'happy', 'sad', 'excited'):   # (13 Nov 2026, r045 at 1024 px: grey ticks at the inner corners of her shut eyes) the lid had erased the iris's rim there, but the eye box's soft hair guard (NOHAIR) made the piece see-through at the box's edge and the old rim showed: inside the eyes' wide box a strong change is always drawn
             _st = (np.abs(M[k][..., :3] - F[..., :3]).max(-1) > .12).astype(np.float32) * (_ie > .02) * (PARTS[k] > .5)
             M[k][..., 3] = np.maximum(M[k][..., 3], np.minimum(soften(_st, 1, 1) * 1.6, 1) * PARTS[k])
+        if os.environ.get('FIT_LID_CLIP') and k in ('blink', 'happy', 'excited') and eyes:   # (14 Nov 2026, gate l: r045's brows dashed and her hairline skin on every shut eye from the side) the shut pieces were opaque above and outside the eyes up to the brows and the hair's edge (the soft lid band's small changes there), and from the side that copy of the face picture lay over the 3D hair: their eye part is each eye's oval (the eye's box, 1.3 wide and 1.2 tall, soft); the game paints the rest of the eye
+            _cl = np.zeros_like(M[k][..., 3])
+            for b in eyes.values():
+                _gb = b; _d = np.hypot((xx - (_gb[0] + _gb[2]) / 2) / max(1, (_gb[2] - _gb[0]) / 2 * 1.3), (yy - (_gb[1] + _gb[3]) / 2) / max(1, (_gb[3] - _gb[1]) / 2 * 1.2))
+                _cl = np.maximum(_cl, np.clip((1.15 - _d) / .15, 0, 1))
+            M[k][..., 3] = M[k][..., 3] * np.maximum(_cl, (MOUTH_A > .02).astype(np.float32))
         if k in ('lookL', 'lookR') and os.environ.get('FIT_LOOK_SOLID') and LOOK_A.any():
             # (owner 11 Nov 2026: the looking eyes were streaked, rings of the old iris round the moved one) the piece drew
             # only the pixels that changed, with soft edges, so the painted iris under it showed through: it now covers the

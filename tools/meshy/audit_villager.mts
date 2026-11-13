@@ -25,7 +25,7 @@ const { chromium } = createRequire(new URL('../../tests/package.json', import.me
 import { writeFileSync, mkdirSync, readdirSync, readFileSync, copyFileSync, existsSync, statSync } from 'node:fs';
 const [OUT, LIST = 'ba', QUICK = ''] = process.argv.slice(2);
 mkdirSync(OUT, { recursive: true });
-const LIMIT = { worn: 0, unseen: 0, eyes: 6, mouth: 100, oldmouth: 20, lookstill: 0, lid: 8, mshape: 12, size: 500 };   // (13 Nov 2026, from audit.mts's face pass, meshy-audit-coverage 6f0f226ee: 'lid' a shut eye paler than the skin round it; 'mshape' each mood's mouth shape)   // (unseen: the face pieces cover under 400 px of a head picture: nothing was looked at, 10 Nov)
+const LIMIT = { worn: 0, unseen: 0, eyes: 6, mouth: 100, oldmouth: 20, lookstill: 0, lid: 8, mshape: 12, stray: 12, size: 500 };   // (13 Nov 2026, from audit.mts's face pass, meshy-audit-coverage 6f0f226ee: 'lid' a shut eye paler than the skin round it; 'mshape' each mood's mouth shape)   // (unseen: the face pieces cover under 400 px of a head picture: nothing was looked at, 10 Nov)
 function summarize(cs: any[]) { const keys = Object.keys(LIMIT), fail = cs.filter(c => keys.some(k => c[k] > LIMIT[k]));
   const lines = [`audit ${new Date().toISOString()} cases ${cs.length} failing ${fail.length}`];
   for (const k of keys) lines.push(`${k}: ${cs.filter(c => c[k] > LIMIT[k]).length} cases over ${LIMIT[k]}, worst ${Math.max(0, ...cs.map(c => c[k] || 0))}`);
@@ -185,6 +185,25 @@ const res: any = await P.page.evaluate(async ([LIST, QUICK, LIMIT]) => {
         // r074) and took the chin's shadow and r064's hair below it) the foot is .3 of the span under the smile's lips, and
         // only the face grid's own pixels count
         const mbox0 = mbox; mbox = (i: number) => { if (mtop > 1e8) return mbox0(i); const y = (i / W) | 0; const x = i % W; return ew > 8 && x >= mxl - ew * .15 && x <= mxr + ew * .15 && y < mtop && y > mbot && !!Pf[i * 4 + 3]; };   // (third run: at three-quarters the mouth is not half way between the eyes' outer edges: the box cut the "o" in half; it is the smile's lips, .15 of the span wider either side)   // (the buffer's rows run upwards: above on screen is a larger row)
+        // (14 Nov 2026, audit.mts's 'stray', meshy-audit-coverage 24815e71d) a mood may change only the eyes and the mouth: a
+        // pixel of the villager outside the eye zone (each eye's box round its whites, joined through the iris, pupil and
+        // lashes, wider by 35% each way, at least 6 px) and the mouth box (3 px wider), that differs from the smile picture
+        // by .08 from every pixel within 1 px, is a stray change (a skin patch over hair or a brow while shut, a lash piece on
+        // the cheek, a dot on the nose); groups under 4 px left out
+        let eyeZ: Uint8Array | null = null; { const seen = new Uint8Array(N), st: number[] = [];
+          for (let i = 0; i < N; i++) { if (!white[i] || seen[i]) continue; let x0 = W, x1 = 0, y0 = H, y1 = 0, n = 0; st.push(i); seen[i] = 1;
+            while (st.length) { const q = st.pop()!; n++; const x = q % W, y = (q / W) | 0; x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y);
+              for (let dy = -3; dy <= 3; dy++) for (let dx = -3; dx <= 3; dx++) { const xx = x + dx, yy = y + dy; if (xx < 0 || yy < 0 || xx >= W || yy >= H) continue; const r2 = yy * W + xx; if ((white[r2] || (dark[r2] && Math.abs(xx - (i % W)) < 60 && Math.abs(yy - ((i / W) | 0)) < 50)) && !seen[r2]) { seen[r2] = 1; st.push(r2); } } }
+            if (n < 6) continue; if (!eyeZ) eyeZ = new Uint8Array(N); const mx = Math.max(6, (x1 - x0) * .35), my = Math.max(6, (y1 - y0) * .35);
+            for (let y = Math.max(0, Math.floor(y0 - my)); y <= Math.min(H - 1, Math.ceil(y1 + my)); y++) for (let x = Math.max(0, Math.floor(x0 - mx)); x <= Math.min(W - 1, Math.ceil(x1 + mx)); x++) eyeZ[y * W + x] = 1; } }
+        const stray = (C: Uint8Array, ML: Uint8Array) => { const fs = new Uint8Array(N); let ks = 0; if (!eyeZ) return { fs, ks };
+          for (let i = 0; i < N; i++) { if (eyeZ[i] || !mine(i) || i >= N - W * 10) continue; const x = i % W, y = (i / W) | 0;
+            if (near(ML, i, 3) || near(SM.L, i, 3)) continue;   // (the mood's own mouth, bigger than the smile's: the excited "o")
+            if (mtop < 1e8 && x >= mxl - ew * .15 - 3 && x <= mxr + ew * .15 + 3 && y <= mtop + 3 && y >= mbot - 3) continue;
+            let best = 9; for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) { const xx = x + dx, yy = y + dy; if (xx < 0 || yy < 0 || xx >= W || yy >= H) continue; const q = (yy * W + xx) * 4; best = Math.min(best, Math.hypot(C[i * 4] - C0[q], C[i * 4 + 1] - C0[q + 1], C[i * 4 + 2] - C0[q + 2]) / 255); }
+            if (best > .08) { fs[i] = 1; ks++; } }
+          for (const g of groups(fs)) if (g.length < 4) for (const j of g) { fs[j] = 0; ks--; }
+          return { fs, ks }; };
         const SM = lips(C0), mArea: Record<string, number> = {}, mCase: Record<string, any> = {};
         if (SM.n) for (const m of ['blink', 'half', 'happy', 'lookL', 'lookR', 'o', 'excited', 'sad']) {
           setMood(m); const C = read(stage, cam), ML = lips(C), fm = new Uint8Array(N); let km = 0;
@@ -200,7 +219,9 @@ const res: any = await P.page.evaluate(async ([LIST, QUICK, LIMIT]) => {
             if (m === 'sad' && g0.length) { const col = (a: number, b2: number) => { let sy = 0, c = 0; for (const j of g0) { const x = j % W; if (x >= gx0 + w * a && x <= gx0 + w * b2) { sy += (j / W) | 0; c++; } } return c ? sy / c : 0; };
               if ((col(0, .2) + col(.8, 1)) / 2 >= col(.4, .6)) bad = true; }   // (the buffer's rows run upwards: a corner lower on screen has the smaller row)
             if (bad) for (const j of g0) { if (!fm[j]) { fm[j] = 1; km++; } } }
-          const r: any = { id, pose: m, view: String(s), worn: 0, eyes: 0, mshape: km }; cases.push(r); mCase[m] = [r, C, fm, ML.L];
+          const ST = stray(C, ML.L);
+          const r: any = { id, pose: m, view: String(s), worn: 0, eyes: 0, mshape: km, stray: ST.ks }; cases.push(r); mCase[m] = [r, C, fm, ML.L];
+          if (ST.ks > LIMIT.stray || QUICK) pics[`${id}-face-${m}-${s}-stray`] = png(C, ST.fs);
           if (km > LIMIT.mshape || QUICK) pics[`${id}-face-mshape-${m}-${s}`] = png(C, fm);
         }
         if (mArea.o && mArea.excited && mArea.excited < mArea.o * 1.15 && mCase.excited) { const [r, C, fm, EL] = mCase.excited; for (let i = 0; i < N; i++) if (EL[i] && !fm[i]) { fm[i] = 1; r.mshape++; } pics[`${id}-face-mshape-excited-${s}`] = png(C, fm); }   // (excited: as open as 'o' or less)
