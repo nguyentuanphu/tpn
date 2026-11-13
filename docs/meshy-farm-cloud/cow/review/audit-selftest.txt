@@ -1,4 +1,4 @@
-pets audit 13/11/2026 09:05:16 AEDT cases 0 failing 0
+pets audit 13/11/26, 2:25:42 pm AEDT cases 0 failing 0
 stretch: 0 cases over 300 (folded poses 900), worst 0
 tear: 0 cases over 6, worst 0
 sink: 0 cases over 0, worst 0
@@ -7,6 +7,6 @@ eyes: 0 cases over 6, worst 0
 hat: 0 cases over 0, worst 0
 flicker: 0 cases over 12, worst 0
 mouth: 0 cases over 0, worst 0
-size cow near: 681 KB (limit 800)
-size cow far: 393 KB (limit 400)
+size cow near: 754 KB (limit 800)
+size cow far: 370 KB (limit 400)
 selftest stretch caught, tear caught, eyes caught, sink caught, hat caught, mouth caught

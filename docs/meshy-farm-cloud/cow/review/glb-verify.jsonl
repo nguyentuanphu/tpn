@@ -1,0 +1,2 @@
+{"file": "/workspace/tpn-farm/models/world/creature-cow-hd.glb", "bytes": 772492, "triangles": 33523, "clips": ["cheer", "follow", "idle", "jump", "run", "sad", "sleep", "surprised", "wag", "walk"], "featherRGBA": "PASS"}
+{"file": "/workspace/tpn-farm/models/world/creature-cow.glb", "bytes": 378608, "triangles": 12967, "clips": ["cheer", "follow", "idle", "jump", "run", "sad", "sleep", "surprised", "wag", "walk"], "featherRGBA": "PASS"}

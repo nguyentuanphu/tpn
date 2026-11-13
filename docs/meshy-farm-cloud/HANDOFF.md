@@ -1,77 +1,85 @@
-# Current cow work — 13/11/2026 14:36 AEDT
+# Sparkle Valley — cow, bản chờ chủ duyệt
 
-Cow only; owner explicitly requested continuing through all fixes before final approval. Current R16: 60 quick cases and 120 full cases, zero failing, including zero eye leaks. All six planted selftest faults caught. True source-eye retraction under surface-fitted lids; packed PNG alpha endpoints preserved; sampler verified after packing. Current game models about 754/370 KiB. Device integration and final films are being completed. **Work in progress; not owner-approved, do not merge/deploy.**
+Cập nhật 13/11/2026 14:46 AEDT. Nhánh `meshy-farm-cloud`, tách từ `origin/meshy-pets` (`a89a0b877`); đã hợp nhất phần chuẩn bị có sẵn của nhánh farm. **Chỉ cow; sheep/chicken tạm dừng.** Chủ đã yêu cầu tiếp tục sửa bằng Blender và kiểm tra trong game đến bản hoàn chỉnh; chỉ thị này thay phạm vi ban đầu cấm fit/sửa runtime cho riêng cow. Chưa được chủ duyệt hình thức cuối; không merge main, deploy hoặc tăng version.
 
-Total Meshy charge remains **40 credits**; no further paid POST during fitting. Sheep/chicken remain paused. Original task IDs, source models and previous work record follow.
+## Xem và tải bản cuối R16
 
-# Sparkle Valley — cow trên cloud
+- [Trang duyệt: phim, ảnh game và ảnh cận mặt](cow/review/index.html).
+- Phim bốn góc, đủ 10 động tác: [gần](cow/review/cow-near-review.mp4), [xa](cow/review/cow-far-review.mp4). Dùng loader/vật liệu/renderer của game trong cảnh kiểm tra nền trung tính.
+- Ảnh thung lũng thật: [điện thoại](cow/review/devices/cow-phone.png), [tablet](cow/review/devices/cow-tablet.png), [máy tính](cow/review/devices/cow-computer.png). Camera đặt gần cow để kiểm tra hình thức; đã xem trực tiếp cả ba.
+- [File Blender đã fit/rig](cow/review/cow-fitted.blend): 20 bone, 10 action, 6 ảnh được sử dụng đều đã pack. Đã mở lại bằng Blender 4.3.2: [kết quả](cow/review/blender-verify.json).
+- GLB dùng trong game: [gần](cow/review/creature-cow-hd.glb), [xa](cow/review/creature-cow.glb), giống byte với `models/world/creature-cow{-hd,}.glb`.
 
-Cập nhật 13/11/2026 08:41 AEDT (Sydney). Nhánh `meshy-farm-cloud`, bắt đầu từ `origin/meshy-pets` (`a89a0b877`), đã đối chiếu và hợp nhất phần chuẩn bị có sẵn trên nhánh farm. **Chỉ làm cow; sheep/chicken tạm dừng theo chủ.**
+| Bản runtime | Byte | Tam giác | Nguồn |
+| --- | ---: | ---: | --- |
+| Gần | 772492 | 33523 | Bản Meshy 30k, sửa cục bộ và thêm mặt/rig |
+| Xa | 378608 | 12967 | Giảm cục bộ thân xuống khoảng 12k từ nguồn 30k đã sửa, thêm mặt/rig |
 
-## Kết quả và tiền
+Bản xa runtime **không dùng bản Meshy 9k** vì bản trả về bị góc cạnh ở má/mõm. Giảm bằng Blender không tốn credit. Cả hai có `cheer, follow, idle, jump, run, sad, sleep, surprised, wag, walk`. Kích thước khoảng 0,724 × 1,330 × 1,368 m; chân chạm đất. Game đổi gần/xa với ngưỡng 16/24 m và có fallback hình gốc khi model chưa tải.
 
-Cow đã xong phần tạo model và hai remesh Meshy. Mỗi POST được chủ duyệt, reserve trước vào SQLite mới, gửi đúng một lần. Tải ngay sau SUCCEEDED. Không trả tiền rigging hoặc làm thêm con nào.
+## Tiền và task Meshy
+
+Mỗi POST được reserve trong SQLite riêng trước khi gửi, gửi một lần, tải ngay sau SUCCEEDED. Không gửi lại 35 model cũ; không trả tiền rigging. Việc chỉnh sửa Blender phía sau không gọi API trả tiền.
 
 | Bước | Task ID | Credit | Số dư trước → sau |
-| --- | --- | --- | --- |
-| Gốc: Meshy 7.1 standard, texture 2k, front/left-side/back | `01a1d19a-7a61-7711-9f5a-8687a2c45778` | 30 | 1614 → 1584 |
+| --- | --- | ---: | --- |
+| Gốc: multi-image-to-3d Meshy 7.1, standard, texture 2k, ba ảnh | `01a1d19a-7a61-7711-9f5a-8687a2c45778` | 30 | 1614 → 1584 |
 | Remesh target 30k từ gốc | `01a1d1ae-6111-76ee-b081-82919b93869b` | 5 | 1584 → 1579 |
-| Remesh target 9k **từ task 30k** | `01a1d1b3-61f1-7650-a8ad-27d29117a9cf` | 5 | 1579 → 1574 |
+| Remesh target 9k từ task 30k | `01a1d1b3-61f1-7650-a8ad-27d29117a9cf` | 5 | 1579 → 1574 |
 
-**Tổng chi cow 40 credit**, số dư cuối đã GET xác nhận **1574**. Sheep/chicken chưa gửi, chi 0. Không gửi lại bất kỳ model/task nào đã trả tiền (kể cả 35 model cũ). Không có bước Meshy trả tiền tiếp theo cho cow.
+**Cow đã chi 40 credit.** Sheep/chicken: 0, chưa gửi. GET balance miễn phí kiểm tra lại lúc 13/11/2026 14:43 AEDT: **1574**. Không có bước trả tiền nào còn cần cho bản cow này. Trần ban đầu ba con là 120; hiện chỉ cow hoạt động theo chỉ thị sau của chủ.
 
-## File đã lưu trên repo
+## Bản gốc và file làm việc lưu lâu dài trên repo
 
-Thư mục [cow/](cow/), thuộc nhánh này:
-
-| File | Byte | Tam giác thực tế |
+| Bản Meshy giữ nguyên | Byte | Tam giác thực tế |
 | --- | ---: | ---: |
 | [original.glb](cow/original.glb) | 39939624 | 1293114 |
 | [remesh-30000.glb](cow/remesh-30000.glb) | 11503348 | 31273 |
 | [remesh-9000.glb](cow/remesh-9000.glb) | 9594340 | 9423 |
 
-Target Meshy là 30000/9000, số tam giác trả về không đúng tuyệt đối. SHA256 xem [ARTIFACTS.json](ARTIFACTS.json).
-
-Ảnh đã nhìn trực tiếp bằng viewer Three.js + Chromium, không sửa model:
-
 | Bản | Trước | Trái | Sau | Phải |
 | --- | --- | --- | --- | --- |
-| Gốc | [front](cow/original-front.png) | [left](cow/original-left.png) | [back](cow/original-back.png) | [right](cow/original-right.png) |
-| 30k | [front](cow/remesh-30000-front.png) | [left](cow/remesh-30000-left.png) | [back](cow/remesh-30000-back.png) | [right](cow/remesh-30000-right.png) |
-| 9k | [front](cow/remesh-9000-front.png) | [left](cow/remesh-9000-left.png) | [back](cow/remesh-9000-back.png) | [right](cow/remesh-9000-right.png) |
+| Gốc | [ảnh](cow/original-front.png) | [ảnh](cow/original-left.png) | [ảnh](cow/original-back.png) | [ảnh](cow/original-right.png) |
+| 30k | [ảnh](cow/remesh-30000-front.png) | [ảnh](cow/remesh-30000-left.png) | [ảnh](cow/remesh-30000-back.png) | [ảnh](cow/remesh-30000-right.png) |
+| 9k | [ảnh](cow/remesh-9000-front.png) | [ảnh](cow/remesh-9000-left.png) | [ảnh](cow/remesh-9000-back.png) | [ảnh](cow/remesh-9000-right.png) |
 
-File làm việc Blender: [cow-work.blend.tar.xz](cow/cow-work.blend.tar.xz). `.blend` vượt 50 MB nên nén tar.xz; giải nén được `cow-work.blend`. Có ba collection gốc/30k/9k, texture đã pack (7 image datablock); mặc định chỉ hiện 30k. Đã mở lại bằng Blender 4.3.2 và kiểm đủ ba collection. Script dựng lại: [save_cow_workspace.py](save_cow_workspace.py).
+[Workspace ba bản gốc](cow/cow-work.blend.tar.xz) (82977008 byte) đã nén tar.xz vì file làm việc vượt 50 MB; giải nén thành `cow-work.blend`, ba collection, texture đóng gói. Đã mở lại kiểm tra trước đó; script tái tạo [save_cow_workspace.py](save_cow_workspace.py). File **đã sửa và rig cuối cùng** là `cow/review/cow-fitted.blend` ở trên, dưới 50 MB nên lưu trực tiếp. Repo là bản lưu bàn giao; không cần giữ cloud để mở lại model. [ARTIFACTS.json](ARTIFACTS.json) ghi byte/SHA256.
 
-## Nhận xét chất lượng
+## Nhận xét hình thức và các sửa đã hoàn tất
 
-- Gốc: mắt nâu rõ, viền trắng và hai mắt giữ được; mõm hồng, hai lỗ mũi và đường miệng nhìn rõ. Bốn chân/móng chẻ còn nguyên. Lông ngắn đen trắng và chỏm lông đầu/đuôi có chi tiết. Không thấy lỗ/vỡ lớn qua bốn góc tĩnh.
-- 30k: giữ mắt, chân, lông và đuôi; vành lỗ mũi, mép chuông hơi góc cạnh hơn bản gốc. Chưa thấy lỗ/vỡ lớn qua bốn góc.
-- 9k: giảm chất lượng rõ ở mõm/lỗ mũi, sừng, tai, chỏm lông và chuông; hình khối góc cạnh. Có vệt tối nhỏ ở má cần kiểm tra gần bằng Blender để phân biệt texture, mặt chồng hay khe mesh. Chân vẫn đủ bốn; chi tiết lông phần lớn còn trong texture, silhouette đuôi thô hơn. Không thấy thiếu bộ phận lớn, **chưa chứng minh mesh kín hoặc không có lỗi nhỏ**. Không coi bản 9k là đạt chất lượng dùng trong game.
+- Mắt: giữ mắt nâu to của nguồn; chỉnh vị trí khớp mặt, mí bám bề mặt thật. Khi nhắm/cười, bone thu phần mắt nguồn vào trong để không xuyên qua mí; atlas có alpha và không dùng mipmap trộn giữa các ô tam giác. Xem cận mặt trong [102 ảnh](cow/review/shots/) và bốn contact sheet trên trang duyệt. Không thấy lộ con ngươi ở ảnh nhắm và audit cuối.
+- Mõm/mũi: mõm hồng, hai lỗ mũi và nét miệng rõ; bake AO vào màu giúp giữ độ lõm dưới ánh sáng game. Bản gần và xa cuối giữ hình tròn hơn bản Meshy 9k; chuông/sừng vẫn có ít mặt phẳng ở mức zoom rất gần.
+- Chân: đủ bốn chân/móng, sửa phân vùng bụng để bầu vú không kéo sai trọng số; đứng, đi, chạy, nhảy, gập ngủ đã kiểm tra. Chân không chìm hoặc nổi trong audit tư thế chạm đất.
+- Lông: giữ texture đen/trắng, chỏm đầu và đuôi; smoothing và giảm mesh cục bộ, không tạo thêm lông hình học. Bản runtime dùng texture màu 1k để đáp ứng dung lượng; bản Meshy gốc vẫn giữ texture 2k.
+- Lỗ/vỡ: không thấy khe vỡ thân lớn hoặc mặt xuyên rõ trong các ảnh/phim đã kiểm. Vòng nối chuông/cổ có lỗ cấu tạo thật; không tuyên bố toàn bộ mesh kín về topology. Ngưỡng `tear:30` riêng cow có chú thích cho chi tiết này, không che một lỗi thân chưa sửa. Bản Meshy 9k thô được giữ nguyên để đối chiếu, không trình là bản runtime đạt.
 
-## Blender và phần còn lại
+## Kiểm tra và giới hạn
 
-Cloud thực tế có `/usr/bin/blender` 4.3.2. Báo trước đó rằng cloud không có Blender là sai do chưa kiểm tra. Đã import GLB gốc và render Cycles CPU thành công: [ảnh smoke](cow/blender-smoke.png). Bản cài thiếu OpenImageDenoise; phải tắt `scene.cycles.use_denoising`.
+- Audit cow R16: **120 ca, 0 ca vượt ngưỡng**, hai LOD, chuyển động và biểu cảm; [summary](cow/review/audit-summary.txt), [cases](cow/review/audit-cases.json). Eye leak worst 0; sink/float/mouth 0. Stretch worst 750 trong tư thế gập (ngưỡng 900); tear worst 20 dưới ngoại lệ vòng chuông 30; flicker worst 1 dưới 12. Tiêu đề summary in ngưỡng chung; ngưỡng riêng thực tế nằm trong config cow và cases.
+- [Selftest](cow/review/audit-selftest.txt): phát hiện đủ 6 lỗi cố ý chèn (stretch, tear, eyes, sink, hat, mouth). Cow không có mũ/trò chó trong gameplay; selftest vẫn kiểm detector mũ.
+- [Kiểm tra GLB](cow/review/glb-verify.jsonl): header/size, 20 bone, 10 clip, alpha mí và sampler sau đóng gói đều đạt; gần <800 KiB, xa <400 KiB.
+- [Tích hợp ba thiết bị](cow/review/devices/integration.json): kích thước/chân, gần → xa → gần, ẩn fallback khi model tải xong, 10 clip, không lỗi trình duyệt. [Fallback khi chặn cả hai GLB](cow/review/fallback.json) cũng PASS: hình gốc vẫn hiện, không gắn model hỏng.
+- TypeScript cuối R16 PASS (360 file explicit + server/tools); boot và phone suite đã PASS trong vòng này. Các test batch/farm offline đã PASS trước khi gửi API.
+- CI toàn repo: đang đối chiếu run [`43360155840`](https://github.com/nguyentuanphu/tpn/actions/runs/43360155840) trên runtime commit `a27a31a3b`. Run trước `43317276203` có 367/377 kiểm tra đạt, 10 không đạt, gồm `worldcreatures` dừng ở **calf** (z 0,76 so với 1,20), UI/voice/streaming khác. Chưa được xem các lỗi này là đã chứng minh có sẵn; đã xếp chạy đối chứng [`43360999514`](https://github.com/nguyentuanphu/tpn/actions/runs/43360999514) trên nhánh nguồn `meshy-pets` cho đúng 10 check này; còn chờ GitHub cấp máy. CI nền không thay model hoặc tiêu credit. Không tuyên bố CI toàn repo xanh, không phát hành.
 
-**Chưa fit, chưa rig, chưa animation/audit trong game, chưa thay js/ hay models/.** File Blender hiện là nguồn chỉnh sửa, chưa phải model sẵn dùng trong game. Quy trình fit_animal.py trên Linux chưa được chạy kiểm chứng. Bước kỹ thuật tiếp theo để đưa vào game là xử lý/đánh giá bản nhẹ, fit khớp, rig và kiểm tra chuyển động; phạm vi ban đầu cấm fit/rig nên cần chỉ thị tiếp của chủ cho giai đoạn này. Không merge main, deploy hoặc tăng version.
+## Tái tạo cục bộ, không gọi Meshy
 
-## Riêng tư và cơ chế an toàn
+Dùng Blender 4.3.2 CPU (tắt denoising vì bản cloud thiếu OpenImageDenoise), Python có numpy/Pillow, gltfpack 0.20.0. Không sửa ba GLB đầu vào.
 
-- API key chỉ từ biến cloud `MESHY_API_KEY`, không in/commit/truyền trên command line.
-- SQLite: `/workspace/meshy-jobs-farm.sqlite3`; metadata `/workspace/meshy-farm-account.json`. Không commit/upload. Metadata allowlist hiện chỉ cow; trần ban đầu 120, chi thực tế 40.
-- Bản tải gốc cũng còn ở `/workspace/meshy-farm-raw/`; bản làm việc chưa nén ở `/workspace/meshy-farm-viewer/cow-complete.blend`. Repo là bản bàn giao lâu dài; không dựa vào cloud để lưu bền.
-- Exception tier chỉ ba asset nhóm E đã nêu, job spec có tierOverride/approval/plannedCredits=30; submit còn cần approvedTierOverrides trong metadata. Không thay tier nhóm khác. Chung trần jobs+remesh, chặn lỗi/ambiguous, không POST lại.
-- 14 test_batch + test_farm offline PASS trước chạy; ba check ảnh/hash PASS. GLB kiểm header đầy đủ khi download; ảnh 12 góc đã xem, workspace mở lại đủ collection/texture. Không chạy suite game vì chưa thay runtime; lần chọn suite trước yêu cầu full do chênh nhánh nguồn với main, không chạy local full suite.
+```sh
+blender -b -t 4 -P tools/meshy/prepare_cow.py -- docs/meshy-farm-cloud/cow/remesh-30000.glb /workspace/cow-rebuild/source
+blender -b -t 4 -P tools/meshy/fit_animal.py -- cow /workspace/cow-rebuild/source/cow-quality.glb /workspace/cow-rebuild/source/cow-quality-light.glb /workspace/cow-rebuild/fitted debug
+# Với mỗi GLB fitted: compact_cow_lids.py INPUT OUTPUT, rồi gltfpack -cc -kn -km -ke.
+# Giữ sampler mí minFilter=9729 sau đóng gói, kiểm tra bằng:
+python tools/meshy/verify_cow.py models/world/creature-cow-hd.glb models/world/creature-cow.glb
+# Sau khi build/serve repo, quay lại bằng loader game:
+SV_URL=http://127.0.0.1:PORT node --experimental-strip-types tools/meshy/film_cow_review.mts /workspace/cow-review near
+```
 
-## Cow game fitting in progress — 13/11/2026 09:09 AEDT
+Các sửa mặc định chung giữ tương thích thú trước; ngoại lệ giải phẫu/mí/config chỉ cow. Runner vẫn chỉ cho tierOverride Meshy 7.1 khi spec có plannedCredits=30, approval và assetId nằm trong metadata allowlist; không đổi tier nhóm khác.
 
-Owner explicitly instructed to continue fixing cow through Blender/game checks until a complete review candidate, without stopping between iterations. This supersedes the initial no-fit/no-runtime-edit scope **for cow only**. No further Meshy paid POST; total remains 40.
+## Dữ liệu riêng và quyết định của chủ
 
-Six local iterations: repaired/welded/smoothed 30k source, baked surface AO into base colour so the nostrils remain visible in the game's emissive material, rebuilt a 14k far source locally because the paid 9k has visible cheek/facet faults. All three paid originals are preserved unchanged above. Config fixes eye landmarks, trunk height (the udder confused automatic detection), hanging tail silhouette/weights and folded sleep. Cow has the eight farm clips plus run/jump; dog-only tricks/accessory cases are not gameplay for a farm cow.
+API key chỉ từ biến cloud `MESHY_API_KEY`. SQLite `/workspace/meshy-jobs-farm.sqlite3`, backup `/workspace/meshy-jobs-farm-final.sqlite3`, metadata `/workspace/meshy-farm-account.json`: **ngoài repo, không commit/upload**. Allowlist hiện chỉ cow. Không đưa signed download URL vào bàn giao.
 
-Current candidate installed only on this working branch for review: `models/world/creature-cow-hd.glb` (about 681 KB), `creature-cow.glb` (about 393 KB). Packed with gltfpack 0.20 (`-cc -kn -km -ke -vp 14 -vt 14 -vn 8`). `MESHY_CREATURES` includes cow for actual near/far loading. Soft eyelid alpha is preserved by the shared loader; existing opaque animal textures retain their material behavior.
-
-Checks so far: quick 60 cases / 0 failing; full 120 cases / 0 failing; selftest catches all six deliberately planted defects (stretch, tear, eyes, sink, hat, mouth). Patterned cow eyes use surface-occlusion probes, so black fur is not misclassified as a pupil. Probe honours alpha, and the planted missing-lid defect is caught. No eye/stretch thresholds raised. Tear allowance 30 records the physically open bell/collar ring, inspected across 72 marked samples; worst final full count 21. Cow is not equipped with pet hats; the hat detector is still exercised as an artificial fault in selftest.
-
-Artifacts so far under [cow/review/](cow/review/): four-view animation film, packed editable fitted blend, full audit and selftest results. Further game/device integration and repository checks are running. **Work in progress, not owner-approved and not ready to merge/deploy.**
-
-The first repository `types` check found an existing compile error at avatar.ts:562: the late HD attachment's skin field is typed by a broad look dictionary. A string assertion now aligns that call with its constructor; type-only, stripped JavaScript behavior is unchanged. It will be rechecked.
+Chủ đã duyệt chi 40 cho ba bước cow và yêu cầu làm tiếp Blender/game đến bản đẹp, sạch để duyệt cuối. Những việc này đã hoàn thành tới bản R16 cùng bằng chứng trên. Chờ **duyệt hình thức cow cuối**; sheep/chicken vẫn dừng, không merge/deploy/tăng version, không tự chi thêm credit.

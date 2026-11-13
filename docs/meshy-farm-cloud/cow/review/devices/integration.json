@@ -1,0 +1,122 @@
+[
+  {
+    "device": "phone",
+    "dimensions": [
+      {
+        "tier": "-hd",
+        "size": [
+          0.724012826209619,
+          1.3300018728923046,
+          1.3684243357063242
+        ],
+        "feet": 1.7172246957741777e-10
+      },
+      {
+        "tier": "far",
+        "size": [
+          0.7239708229531874,
+          1.3300082453427087,
+          1.368094380429058
+        ],
+        "feet": -9.511955390006934e-9
+      }
+    ],
+    "nearLoaded": true,
+    "farSwapped": true,
+    "nearRestored": true,
+    "fallbackHidden": true,
+    "clips": [
+      "cheer",
+      "follow",
+      "idle",
+      "jump",
+      "run",
+      "sad",
+      "sleep",
+      "surprised",
+      "wag",
+      "walk"
+    ],
+    "errors": []
+  },
+  {
+    "device": "tablet",
+    "dimensions": [
+      {
+        "tier": "-hd",
+        "size": [
+          0.724012826209619,
+          1.3300018728923046,
+          1.3684243357063242
+        ],
+        "feet": 1.7172246957741777e-10
+      },
+      {
+        "tier": "far",
+        "size": [
+          0.7239708229531874,
+          1.3300082453427087,
+          1.368094380429058
+        ],
+        "feet": -9.511955390006934e-9
+      }
+    ],
+    "nearLoaded": true,
+    "farSwapped": true,
+    "nearRestored": true,
+    "fallbackHidden": true,
+    "clips": [
+      "cheer",
+      "follow",
+      "idle",
+      "jump",
+      "run",
+      "sad",
+      "sleep",
+      "surprised",
+      "wag",
+      "walk"
+    ],
+    "errors": []
+  },
+  {
+    "device": "computer",
+    "dimensions": [
+      {
+        "tier": "-hd",
+        "size": [
+          0.724012826209619,
+          1.3300018728923046,
+          1.3684243357063242
+        ],
+        "feet": 1.7172246957741777e-10
+      },
+      {
+        "tier": "far",
+        "size": [
+          0.7239708229531874,
+          1.3300082453427087,
+          1.368094380429058
+        ],
+        "feet": -9.511955390006934e-9
+      }
+    ],
+    "nearLoaded": true,
+    "farSwapped": true,
+    "nearRestored": true,
+    "fallbackHidden": true,
+    "clips": [
+      "cheer",
+      "follow",
+      "idle",
+      "jump",
+      "run",
+      "sad",
+      "sleep",
+      "surprised",
+      "wag",
+      "walk"
+    ],
+    "errors": []
+  }
+]

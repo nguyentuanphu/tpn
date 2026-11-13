@@ -1,0 +1,11 @@
+Management catalogue exported to content/management-catalogue.json
+(node:57814) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+build: 517 TypeScript files, 0 made
+warning: exhaustive rename detection was skipped due to too many files.
+warning: you may want to set your diff.renameLimit variable to at least 53705 and retry the command.
+only: types
+1 checks: group 1 1 (~1 min)
+[1] ✅ types (35s) 360 explicit files type-checked; detector/outbox/family-backup modules additionally strict-checked; 108 TypeScript files of the server, Studio and
+
+1/1 checks passed in 1 min (1 at a time)

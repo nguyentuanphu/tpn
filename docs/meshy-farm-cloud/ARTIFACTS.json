@@ -1,5 +1,6 @@
 {
   "asset": "cow",
+  "revision": "R16",
   "creditsSpent": 40,
   "finalBalanceConfirmed": 1574,
   "artifacts": [
@@ -87,6 +88,621 @@
       "path": "cow/remesh-9000.glb",
       "bytes": 9594340,
       "sha256": "4eca7af228de857ef797237943c12d9dd3d0778f8aa5afbc8b7b7a1f5cb65212"
+    },
+    {
+      "path": "cow/review/audit-cases.json",
+      "bytes": 19373,
+      "sha256": "b71adf194d95fb953ee51a953ea7499866fd343d6a7fb480bd037036c7baf8cf"
+    },
+    {
+      "path": "cow/review/audit-selftest.txt",
+      "bytes": 480,
+      "sha256": "11be192dfa03774fcb196e35e2a4370389d3b62da7f99c290e3baf10d28387cd"
+    },
+    {
+      "path": "cow/review/audit-summary.txt",
+      "bytes": 396,
+      "sha256": "196c07fbf5ca18336a14cd4859122b2d3349c3d94e5712958af520d0550b3633"
+    },
+    {
+      "path": "cow/review/blender-verify.json",
+      "bytes": 224,
+      "sha256": "4a720928568098fa80c160f7e6af067a6b818fb29b5bc21db1f405c4515a8ed1"
+    },
+    {
+      "path": "cow/review/contact-0.jpg",
+      "bytes": 142793,
+      "sha256": "860cf5d480ccd84270159fa8743a584c7ce8af7f417328b8951c3eb4b8abbb2e"
+    },
+    {
+      "path": "cow/review/contact-1.jpg",
+      "bytes": 144883,
+      "sha256": "4ee5d0ad2316208cc406e5d1b96e6bf8b07bfa9b9c0c7319d7de46d2a1c5edbe"
+    },
+    {
+      "path": "cow/review/contact-2.jpg",
+      "bytes": 139242,
+      "sha256": "05fa753177dc180bdb9c1d5fe2c7f713159e8deabd1d2555a79185796a10e5bb"
+    },
+    {
+      "path": "cow/review/contact-3.jpg",
+      "bytes": 58089,
+      "sha256": "3e2d79ec7d2ae96e23afec326e63a3a7594b747875f9633ad0b7b304dbc316f7"
+    },
+    {
+      "path": "cow/review/cow-far-review.mp4",
+      "bytes": 1675822,
+      "sha256": "08cd5e5d70cf48afae0c2221e5e551e463d5b6c5f4df0418490ec9955d5ce0d7"
+    },
+    {
+      "path": "cow/review/cow-fitted.blend",
+      "bytes": 17580553,
+      "sha256": "d23fb0f8aa34af789d58b15e2cd95deb10de11cf52f982dde6cdde13a5428f18"
+    },
+    {
+      "path": "cow/review/cow-near-review.mp4",
+      "bytes": 1712971,
+      "sha256": "76745c8ccddf085da314dc39adc477c3a64f049e1a95bbb0a317026e91ffd2bb"
+    },
+    {
+      "path": "cow/review/creature-cow-hd.glb",
+      "bytes": 772492,
+      "sha256": "bb63ac7e48ffdefabf30612c9a6d896e44bf8a15a2a4fcea4bbda858f11dba74"
+    },
+    {
+      "path": "cow/review/creature-cow.glb",
+      "bytes": 378608,
+      "sha256": "7808ef0e32fbe6a0d1dea70d30acd9d517b1cd09271233359693749ca8b17184"
+    },
+    {
+      "path": "cow/review/devices/cow-computer.png",
+      "bytes": 514481,
+      "sha256": "3b063fa763495c11d7854af1453a0b732fd59b9a277e896bca01f0f0206ce0e3"
+    },
+    {
+      "path": "cow/review/devices/cow-phone.png",
+      "bytes": 236027,
+      "sha256": "9f7e60d76ff0203fb29c2e5bac38881e2e576d9afcdb46e26874437b9226ba1a"
+    },
+    {
+      "path": "cow/review/devices/cow-tablet.png",
+      "bytes": 487160,
+      "sha256": "def84fc4e30e7822f85243f0eac7e2478097cd511c67804171e4ec2cb163f55f"
+    },
+    {
+      "path": "cow/review/devices/integration.json",
+      "bytes": 2212,
+      "sha256": "42f15638fdc63289dce68629ed2fe07d3de1b02f91ae5ddec1bc31c58738e7ca"
+    },
+    {
+      "path": "cow/review/fallback.json",
+      "bytes": 115,
+      "sha256": "816d3b385baefab059afc2d3e252e315dbbb6fc908b2f722b821a4470246f227"
+    },
+    {
+      "path": "cow/review/glb-verify.jsonl",
+      "bytes": 441,
+      "sha256": "12dc51444c307f6a2a1f1a819602063e38527fe9deb9b303957e3e31166d71bc"
+    },
+    {
+      "path": "cow/review/index.html",
+      "bytes": 2770,
+      "sha256": "f398867b538d389553291f44911aa540528b5080ba7f1b1c16fdb6f2c3cc3471"
+    },
+    {
+      "path": "cow/review/shots/cow-cheer-face.png",
+      "bytes": 163197,
+      "sha256": "bc7aa34b871d685232433845d3264eebea3748c33ddd3c201cb1680482551c54"
+    },
+    {
+      "path": "cow/review/shots/cow-cheer-facetq.png",
+      "bytes": 176956,
+      "sha256": "b657b41945584db9be3ff933fff94fbf1c9369fcdb41489ea4317da9a359405c"
+    },
+    {
+      "path": "cow/review/shots/cow-cheer-front.png",
+      "bytes": 79118,
+      "sha256": "87358622e84ebc93b375d096374660047e6b729425c09e477798cedb4d9bacef"
+    },
+    {
+      "path": "cow/review/shots/cow-cheer-side.png",
+      "bytes": 101693,
+      "sha256": "336414bbb2d4fb9c08ebc996d05e0a8b7890d2ebd1ec6b29227a7cf3faecc2ca"
+    },
+    {
+      "path": "cow/review/shots/cow-cheer-tq.png",
+      "bytes": 102684,
+      "sha256": "ca803126c2bf2eac373311913a91332995d967d3b64efd7bb8cffe4cbc1ab50d"
+    },
+    {
+      "path": "cow/review/shots/cow-follow-face.png",
+      "bytes": 166262,
+      "sha256": "9818c8299b9f519062b338bf4649455306dcc6d00b1f9509f2b7129a7a45e2a3"
+    },
+    {
+      "path": "cow/review/shots/cow-follow-facetq.png",
+      "bytes": 175178,
+      "sha256": "21e9e5106b76f07d159f74db02ea5e75adb1b00effc68b01b6af4a4a1fb613c2"
+    },
+    {
+      "path": "cow/review/shots/cow-follow-front.png",
+      "bytes": 83765,
+      "sha256": "100290620126e7c5a4d33d90f6e6680d0fc796a97a9b36b7befdaacc98b6d793"
+    },
+    {
+      "path": "cow/review/shots/cow-follow-side.png",
+      "bytes": 113884,
+      "sha256": "451327e88d51f777bf43eb88a24864113c1f422f56192fa4e6ea9b560f50d7ee"
+    },
+    {
+      "path": "cow/review/shots/cow-follow-tq.png",
+      "bytes": 102129,
+      "sha256": "16866c288c517124022c435ee4e363a517b142a03931307231a18bf55a51c3a6"
+    },
+    {
+      "path": "cow/review/shots/cow-hd-cheer-face.png",
+      "bytes": 172151,
+      "sha256": "f57093c1757464dee3a3f6c62217b4ee563ecae43269fae9cded44435d849eaa"
+    },
+    {
+      "path": "cow/review/shots/cow-hd-cheer-facetq.png",
+      "bytes": 190751,
+      "sha256": "65cf6a964f8af91565a19ba44f15447844510d94e29f97b5f1ec891ef98870f0"
+    },
+    {
+      "path": "cow/review/shots/cow-hd-cheer-front.png",
+      "bytes": 78875,
+      "sha256": "e8bf34be3a103596ad764c8171e2549e7df0f2ad101e591d46029ae052006a3b"
+    },
+    {
+      "path": "cow/review/shots/cow-hd-cheer-side.png",
+      "bytes": 102135,
+      "sha256": "c94dc983cd10a407dbab6826573d925528a6be908d095c7147afb2875b3b8d20"
+    },
+    {
+      "path": "cow/review/shots/cow-hd-cheer-tq.png",
+      "bytes": 102711,
+      "sha256": "64eab8249b4915bb1df9fecd8406268e366c64b787564deac078a64b4fae1969"
+    },
+    {
+      "path": "cow/review/shots/cow-hd-follow-face.png",
+      "bytes": 177074,
+      "sha256": "9a18fbb589b30ed9ab4f845bf515181f0e3b2773eb42a6f8c725555a924eb733"
+    },
+    {
+      "path": "cow/review/shots/cow-hd-follow-facetq.png",
+      "bytes": 192915,
+      "sha256": "35a7b58a3d829b058fddb4197341fda653aef4beb9912e8346d4e43727c0480d"
+    },
+    {
+      "path": "cow/review/shots/cow-hd-follow-front.png",
+      "bytes": 83780,
+      "sha256": "2c647a4f5af025945679a460cfba42a6bcf75b8df9b8dd4d81ab2a452518a819"
+    },
+    {
+      "path": "cow/review/shots/cow-hd-follow-side.png",
+      "bytes": 114835,
+      "sha256": "53c5848a55192ec024e054e4e95d20dd09a371d387278baf2c19eb4e430e39a4"
+    },
+    {
+      "path": "cow/review/shots/cow-hd-follow-tq.png",
+      "bytes": 102345,
+      "sha256": "c0e4d27a1a0a9b48f243f289f6af07973573070eeea8fc993388aef76c57e5d0"
+    },
+    {
+      "path": "cow/review/shots/cow-hd-idle-back.png",
+      "bytes": 78553,
+      "sha256": "e47bb96c6f7994d16a573df98380862742809da574bb5e541c1aca6d26e1611f"
+    },
+    {
+      "path": "cow/review/shots/cow-hd-idle-face.png",
+      "bytes": 182199,
+      "sha256": "2bc00de1ac953273b49061006e7e5cdcfb910501d55b795b3f6369d225f30cd6"
+    },
+    {
+      "path": "cow/review/shots/cow-hd-idle-front.png",
+      "bytes": 81259,
+      "sha256": "113696b0454437b2c393c30f5476d8c2fea443f8d2bd6365711827366af627e9"
+    },
+    {
+      "path": "cow/review/shots/cow-hd-idle-side.png",
+      "bytes": 104830,
+      "sha256": "b8e1907b551e43d8ae63173310ad8827684fb5cd2da346eca4291149e26ca2ae"
+    },
+    {
+      "path": "cow/review/shots/cow-hd-idle-top.png",
+      "bytes": 73731,
+      "sha256": "1a790e62123615cbd8af9de7a9c083511670fab3f206a9c2b8041635c9618a98"
+    },
+    {
+      "path": "cow/review/shots/cow-hd-idle-tq.png",
+      "bytes": 104334,
+      "sha256": "6434c8b2174449250cdf6ba45003ac1208def8e1172e59cf97ef427c13ef0bbc"
+    },
+    {
+      "path": "cow/review/shots/cow-hd-jump-face.png",
+      "bytes": 170120,
+      "sha256": "7f81fb71a02d2041ab5c09e97b3684d1f1cc4a9e3aab7d954fe27b00dcdddb33"
+    },
+    {
+      "path": "cow/review/shots/cow-hd-jump-facetq.png",
+      "bytes": 189557,
+      "sha256": "1b074b185502c23e619385b5c7f6ccd64901a0d3b9f3f34c90d02c4185b682f3"
+    },
+    {
+      "path": "cow/review/shots/cow-hd-jump-front.png",
+      "bytes": 75036,
+      "sha256": "d716b746b30c6cba78b65e7920c91650bd80838aa16a3dd074065a4be7104d91"
+    },
+    {
+      "path": "cow/review/shots/cow-hd-jump-side.png",
+      "bytes": 94175,
+      "sha256": "d1c8e71eed4680f839c69c7d4e24883aebe5f45adc1fbf6b5467fdf05b39c549"
+    },
+    {
+      "path": "cow/review/shots/cow-hd-jump-tq.png",
+      "bytes": 95662,
+      "sha256": "7420a93c056cfa598879c1a070c9447c756392d4f063e939fa50302e35fb2724"
+    },
+    {
+      "path": "cow/review/shots/cow-hd-run-face.png",
+      "bytes": 155746,
+      "sha256": "134ec98c44e2e29eff3843207b1f165bcac228df16f4661dc03d3f7074fedf21"
+    },
+    {
+      "path": "cow/review/shots/cow-hd-run-facetq.png",
+      "bytes": 175583,
+      "sha256": "0d255a7f90508590e21651af5fb1383a92ad296c0edf018f63e25fc781d5347c"
+    },
+    {
+      "path": "cow/review/shots/cow-hd-run-front.png",
+      "bytes": 69720,
+      "sha256": "c659af17a669e98acc681b0ecd043f62017ec99320470c5c04e0a9c0acebae36"
+    },
+    {
+      "path": "cow/review/shots/cow-hd-run-side.png",
+      "bytes": 92930,
+      "sha256": "2d5ebbd491505f96520d162270d4f36cb5120debb7dabaa52413e32803ed76b8"
+    },
+    {
+      "path": "cow/review/shots/cow-hd-run-tq.png",
+      "bytes": 88775,
+      "sha256": "73569b876b98c8c049525022e140cfc06566b38974700693bf10c010619aac86"
+    },
+    {
+      "path": "cow/review/shots/cow-hd-sad-face.png",
+      "bytes": 203556,
+      "sha256": "4ac9a6d51b06cea35d6f9a62454ac31c1ce2acaeef5075ce365a0dc91a93481a"
+    },
+    {
+      "path": "cow/review/shots/cow-hd-sad-facetq.png",
+      "bytes": 212787,
+      "sha256": "2b1b276cd0882df61eb15c0d08e0fa83094b4e0c0886b95d37a82fdef995fbb8"
+    },
+    {
+      "path": "cow/review/shots/cow-hd-sad-front.png",
+      "bytes": 90109,
+      "sha256": "9faeb113bf1020c201a55ca94f38c6d57863b1adaa20b54e6b9767588ffad00b"
+    },
+    {
+      "path": "cow/review/shots/cow-hd-sad-side.png",
+      "bytes": 120127,
+      "sha256": "a704744ce587ff98d0dcc9f7f74f548f996d2070d95741eb8ad5ded183051aa0"
+    },
+    {
+      "path": "cow/review/shots/cow-hd-sad-tq.png",
+      "bytes": 117191,
+      "sha256": "7d594b6ea3f16f5ec1fa528b943ffc0a19ec437ba38baf4d837f941189c5ec37"
+    },
+    {
+      "path": "cow/review/shots/cow-hd-sleep-face.png",
+      "bytes": 183411,
+      "sha256": "3ec381920c6c527f2be2f5d1472b0d20d8fa2b3a86ca845f5a4f39d8d583c681"
+    },
+    {
+      "path": "cow/review/shots/cow-hd-sleep-facetq.png",
+      "bytes": 185397,
+      "sha256": "9db241504edd5e3698279582f4048023dfe7b3b90b122362a14abe59ffe1b29c"
+    },
+    {
+      "path": "cow/review/shots/cow-hd-sleep-front.png",
+      "bytes": 79267,
+      "sha256": "105b69e6b498da2c852a20bd7c9bcd41b4561861026049bd939a3c0ff1f0079b"
+    },
+    {
+      "path": "cow/review/shots/cow-hd-sleep-side.png",
+      "bytes": 110040,
+      "sha256": "91b2a8491ae1030488e34019d847aa1dd7cfbae81f4bd0811a641ed8c87357f6"
+    },
+    {
+      "path": "cow/review/shots/cow-hd-sleep-tq.png",
+      "bytes": 99186,
+      "sha256": "0e9854eaa1974696f500659302dc8d11b5153fe506413d5f76f5d43c9e49ec26"
+    },
+    {
+      "path": "cow/review/shots/cow-hd-surprised-face.png",
+      "bytes": 166901,
+      "sha256": "1145d3f6793f80cb5bbc3f2b1eea9e5e18c6964b026b76750e2f032585e1154d"
+    },
+    {
+      "path": "cow/review/shots/cow-hd-surprised-facetq.png",
+      "bytes": 186427,
+      "sha256": "8cca266bd06758e6d6e569e4d7c548255b6da7358a194f3b93ecb0488870c8c4"
+    },
+    {
+      "path": "cow/review/shots/cow-hd-surprised-front.png",
+      "bytes": 75488,
+      "sha256": "2419cb620f87c019caf8499b4f045acb65581623cbbeb21f4fd86a8eb3edb1b4"
+    },
+    {
+      "path": "cow/review/shots/cow-hd-surprised-side.png",
+      "bytes": 95921,
+      "sha256": "2eea879e140cdbc992150b123ef5463d2c57be90cd283f9a80d67bee692a7094"
+    },
+    {
+      "path": "cow/review/shots/cow-hd-surprised-tq.png",
+      "bytes": 96162,
+      "sha256": "c519565a2999c0ca2c90aaec52351050598ecf6abda79ab2514aeee1cebf8b7b"
+    },
+    {
+      "path": "cow/review/shots/cow-hd-wag-face.png",
+      "bytes": 172525,
+      "sha256": "a92f72fcd91d5221434be8933ac428b59932a087bf25af3b83249b9c4553ef99"
+    },
+    {
+      "path": "cow/review/shots/cow-hd-wag-facetq.png",
+      "bytes": 188914,
+      "sha256": "4b5ad78b13e6923b218cd0a099910fda91ba88fd92a0f171343f982e3c8cefbf"
+    },
+    {
+      "path": "cow/review/shots/cow-hd-wag-front.png",
+      "bytes": 82838,
+      "sha256": "a2fb7ac1de4988e84131edc2a3652b9230e59e56e76c081d89ed78d15c68e17c"
+    },
+    {
+      "path": "cow/review/shots/cow-hd-wag-side.png",
+      "bytes": 107070,
+      "sha256": "00632424f6b1d66dc79b9915c68987d279627fc393fff0305d080b440664a845"
+    },
+    {
+      "path": "cow/review/shots/cow-hd-wag-tq.png",
+      "bytes": 103926,
+      "sha256": "2ed4b47f4da797a920e970bdd4a645ff3f22b155e5dc48c94e2d06e937ae7644"
+    },
+    {
+      "path": "cow/review/shots/cow-hd-walk-face.png",
+      "bytes": 178145,
+      "sha256": "f53dcbddeca579340754a9cc5c2afa2dbe1498cc2d7ce37febbcbc72dd858409"
+    },
+    {
+      "path": "cow/review/shots/cow-hd-walk-facetq.png",
+      "bytes": 192557,
+      "sha256": "54163c9a00a52cb5b1b77f22ea987f04d335c5a4314e48852a70d6d8120c138f"
+    },
+    {
+      "path": "cow/review/shots/cow-hd-walk-front.png",
+      "bytes": 82789,
+      "sha256": "e3f69ea279f3c8a3d382bf3fee9befcdc33bf4a27b18d74707a998610d76bba1"
+    },
+    {
+      "path": "cow/review/shots/cow-hd-walk-side.png",
+      "bytes": 113545,
+      "sha256": "71a00f92995b6a8df891d58d3373d60563f7ac66c95111194c1b2c567b2e5568"
+    },
+    {
+      "path": "cow/review/shots/cow-hd-walk-tq.png",
+      "bytes": 100951,
+      "sha256": "c979914ceb5c36801278040aa7a178600e5ff300d3409fb211e260c166555a3c"
+    },
+    {
+      "path": "cow/review/shots/cow-idle-back.png",
+      "bytes": 77668,
+      "sha256": "86df60a5946c9e4f3a4f34f1b1e5fb49a72ad4e27c2a460870d3904af937af9e"
+    },
+    {
+      "path": "cow/review/shots/cow-idle-face.png",
+      "bytes": 170421,
+      "sha256": "c0ce657b5b6b2370531b67a34f0175a8b1eb218d2bfd01a067ed226f96e1dd95"
+    },
+    {
+      "path": "cow/review/shots/cow-idle-front.png",
+      "bytes": 81181,
+      "sha256": "8f185be61ccf0f6ad7a5a16a6837d9389c60511ad292148f6302aa0133ee67b9"
+    },
+    {
+      "path": "cow/review/shots/cow-idle-side.png",
+      "bytes": 104477,
+      "sha256": "b2e53a3a18f27b2419ffdc18c15fa55c4ea1090a6c9a2f10ad13cbcc8a451b05"
+    },
+    {
+      "path": "cow/review/shots/cow-idle-top.png",
+      "bytes": 73795,
+      "sha256": "42c3c72136c4ec20b8e65380af0f9238272794f185d3f85db97ba2e743cd4509"
+    },
+    {
+      "path": "cow/review/shots/cow-idle-tq.png",
+      "bytes": 104501,
+      "sha256": "6db01398d1ff0dabdebe38f3f0665aab8b4de9824e29ed9ed4130a64baee12c4"
+    },
+    {
+      "path": "cow/review/shots/cow-jump-face.png",
+      "bytes": 160161,
+      "sha256": "4efa22e659e20da0be0bcef20e326851aff0e15cda5c1786f460e108297669b7"
+    },
+    {
+      "path": "cow/review/shots/cow-jump-facetq.png",
+      "bytes": 174837,
+      "sha256": "4c10bac099864d69b3df3328dc9aa3f9432e9d71aadf81138a1ba696c8c51c37"
+    },
+    {
+      "path": "cow/review/shots/cow-jump-front.png",
+      "bytes": 75118,
+      "sha256": "210edcb0d35577b4eafa99832bc7bcf13787590180cee3ed007c4ed67ce66786"
+    },
+    {
+      "path": "cow/review/shots/cow-jump-side.png",
+      "bytes": 94051,
+      "sha256": "def6320ac88ddf6e5c43635a1fbd6db34c26dd49f75d5c6e7e55c44f06d044bf"
+    },
+    {
+      "path": "cow/review/shots/cow-jump-tq.png",
+      "bytes": 95902,
+      "sha256": "10892da7a59d770a903b3784aa9d1e215f66ea895e5941dee6eb9543fb2ce08b"
+    },
+    {
+      "path": "cow/review/shots/cow-run-face.png",
+      "bytes": 148587,
+      "sha256": "a74a0d56d12c54b1026123df3bb901d98c9263d46dc850973f51dd9428349bcc"
+    },
+    {
+      "path": "cow/review/shots/cow-run-facetq.png",
+      "bytes": 164362,
+      "sha256": "3d246a9ea5bb67a31e620922e8ed32f237448bb8841f48b360ba84a91fd1bac6"
+    },
+    {
+      "path": "cow/review/shots/cow-run-front.png",
+      "bytes": 69775,
+      "sha256": "ebf891273ae2992ab5d225781f094c5e0a2997d419aef2e580b9e2c0c67dadb1"
+    },
+    {
+      "path": "cow/review/shots/cow-run-side.png",
+      "bytes": 93050,
+      "sha256": "7a69467467f63f08ba546643e4bce7fd331e3fa3fe3d5e2e375eec743c58a5b0"
+    },
+    {
+      "path": "cow/review/shots/cow-run-tq.png",
+      "bytes": 89314,
+      "sha256": "ec7f12cf60d6640c824b330a2d20f8030e1ff7e83429879ed897d52be5ce67d6"
+    },
+    {
+      "path": "cow/review/shots/cow-sad-face.png",
+      "bytes": 186555,
+      "sha256": "0dd52f7c70c061c91a9ee05e6ee28af1a86ddf2938ede49059592f930e2932a7"
+    },
+    {
+      "path": "cow/review/shots/cow-sad-facetq.png",
+      "bytes": 192161,
+      "sha256": "8082abf00c4a37bb4287201719398afa6557ab701d4b1cf4e100a9e761a31af5"
+    },
+    {
+      "path": "cow/review/shots/cow-sad-front.png",
+      "bytes": 89528,
+      "sha256": "4343cba4d38a49875397a0e9e698249a6133584c15d8fc342ae3bdef651b7d63"
+    },
+    {
+      "path": "cow/review/shots/cow-sad-side.png",
+      "bytes": 118850,
+      "sha256": "4e1ee1f67403257827e60f9c1c5dcf8094cadc10fdcbfa6b7ff12859758ea53e"
+    },
+    {
+      "path": "cow/review/shots/cow-sad-tq.png",
+      "bytes": 116539,
+      "sha256": "4c4664145a46b404f599b74656c989824ac7f2c84d44d0cab01e041818751727"
+    },
+    {
+      "path": "cow/review/shots/cow-sleep-face.png",
+      "bytes": 172057,
+      "sha256": "ea0d53dd7e4973c724e33bf254141e71316f3e35067f9518decf42bcb61cc9c1"
+    },
+    {
+      "path": "cow/review/shots/cow-sleep-facetq.png",
+      "bytes": 169622,
+      "sha256": "e8b0783c20b257d3115281f38c5e303f782108e878785b5d13472fbc5ec38cb8"
+    },
+    {
+      "path": "cow/review/shots/cow-sleep-front.png",
+      "bytes": 78946,
+      "sha256": "82c09e87b2609672d29b789536712636f2b328b1e8f06417bf0542c553633c33"
+    },
+    {
+      "path": "cow/review/shots/cow-sleep-side.png",
+      "bytes": 108186,
+      "sha256": "6176cffc750585b2dc4eb9b08d1dd174051ed9c2881fb50ba20b515698900f82"
+    },
+    {
+      "path": "cow/review/shots/cow-sleep-tq.png",
+      "bytes": 98327,
+      "sha256": "f13e33d292223a6dcb87f0730c7c561201f1b9f585185881cb719f7e281ebe29"
+    },
+    {
+      "path": "cow/review/shots/cow-surprised-face.png",
+      "bytes": 157017,
+      "sha256": "a76ae45df23b6b307cb3451f192e2b938c2e6b6c10fc52687269883ee39cdb03"
+    },
+    {
+      "path": "cow/review/shots/cow-surprised-facetq.png",
+      "bytes": 171193,
+      "sha256": "f9f9a13c9611b5f19213c668df2449e0804b6d887ddd5b999a4504e5c044467c"
+    },
+    {
+      "path": "cow/review/shots/cow-surprised-front.png",
+      "bytes": 75569,
+      "sha256": "462f7db0a2a1f7742f7867848e793a10bd844f06675756b08f079922d07e7b11"
+    },
+    {
+      "path": "cow/review/shots/cow-surprised-side.png",
+      "bytes": 95610,
+      "sha256": "2110f49a5102c8daf91cb2c81c1ec3ba636ea633a1c42656ce1e4f7e1cf5d925"
+    },
+    {
+      "path": "cow/review/shots/cow-surprised-tq.png",
+      "bytes": 96538,
+      "sha256": "4851b908b596d08be479418a048410c8b37d31ddec304c8014b341f731c47c9d"
+    },
+    {
+      "path": "cow/review/shots/cow-wag-face.png",
+      "bytes": 162769,
+      "sha256": "10e762a59fbf62e23868b2487b3445c5ff329c48695e4af2e3a5107abb50ebb9"
+    },
+    {
+      "path": "cow/review/shots/cow-wag-facetq.png",
+      "bytes": 173381,
+      "sha256": "05ef681f72acc3b428fab8d0e1fa56ddca522477ad711d78c8f223fe70d8b2e9"
+    },
+    {
+      "path": "cow/review/shots/cow-wag-front.png",
+      "bytes": 82769,
+      "sha256": "39bc7dd2139155fca83012e146beb78cd329866eddcc0cc9f87a285b16532108"
+    },
+    {
+      "path": "cow/review/shots/cow-wag-side.png",
+      "bytes": 106297,
+      "sha256": "bbcd53d0e242451a45e94a362a2762347d43858bbb64d2d4fb165497558265ff"
+    },
+    {
+      "path": "cow/review/shots/cow-wag-tq.png",
+      "bytes": 103579,
+      "sha256": "a31be49eda4a35defad15821977e8d5e22bd336dc61cf3709364f33d99325202"
+    },
+    {
+      "path": "cow/review/shots/cow-walk-face.png",
+      "bytes": 166955,
+      "sha256": "aaf1d02df26ad239852e9fa1d3069d7ab5265f06f68448a8ab70e1cfd5c19471"
+    },
+    {
+      "path": "cow/review/shots/cow-walk-facetq.png",
+      "bytes": 175538,
+      "sha256": "4ee65bd0bfb757af085b5485a458cca3f33610434fc2d3761e1fec4dcc1774f7"
+    },
+    {
+      "path": "cow/review/shots/cow-walk-front.png",
+      "bytes": 82880,
+      "sha256": "5f966d73479720cd87cf2efc5e98fd162b14cca89b5dfbd8d52fd1a8a749eaaf"
+    },
+    {
+      "path": "cow/review/shots/cow-walk-side.png",
+      "bytes": 112836,
+      "sha256": "86280df006c8c3cff16ede25a6f15d1c6d37c7e47d11c73f1a9ef620fd08b431"
+    },
+    {
+      "path": "cow/review/shots/cow-walk-tq.png",
+      "bytes": 100744,
+      "sha256": "1e7607bedeafca098f5630eacf88eb636485d1c423b5a30a75fbacfaaec67453"
+    },
+    {
+      "path": "cow/review/types.txt",
+      "bytes": 709,
+      "sha256": "a0673cfedc87ce10401eaba528fbf947e42ec8dc00308713376a854d23bc57a3"
     }
   ]
 }
