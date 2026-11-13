@@ -513,6 +513,7 @@ if ORIGINAL:   # the skin is not recoloured: the face layer covers the face's sk
     al = keep.astype(np.float32)
     for _ in range(2): al = (al + np.roll(al, 1, 0) + np.roll(al, -1, 0) + np.roll(al, 1, 1) + np.roll(al, -1, 1)) / 5
     base[..., 3] = al
+_SAD_NOW = [False]
 def lid(img, b, top=0., bot=1.):   # (original_skin) a closed lid painted over the eye: her own skin from round the eye
     w_, h_ = b[2] - b[0], b[3] - b[1]; y0 = b[1] + h_ * top; y1 = b[1] + h_ * bot
     # (owner 8 Nov 2026: "a straight streak across the eyes" on the sad face) a lid that comes only part way down is the
@@ -520,6 +521,9 @@ def lid(img, b, top=0., bot=1.):   # (original_skin) a closed lid painted over t
     # straight band across the top of the eye
     PART = OWN and top == 0 and bot < 1
     if PART: lidline = lambda x: b[1] + h_ * bot + h_ * .14 * (1 - np.clip((x - (b[0] + b[2]) / 2) / (w_ / 2), -1, 1) ** 2); y1 = b[3]
+    if PART and _SAD_NOW[0] and os.environ.get('FIT_SAD_TILT'):   # (14 Nov 2026, gate p: r074's and r045's sad lids sloped down to the nose, an angry look) a sad lid droops at its outer corner: the edge tilts, lower outside
+        _sg = -1. if (b[0] + b[2]) / 2 < W_ / 2 else 1.; _tl = float(os.environ['FIT_SAD_TILT']); _ll0 = lidline
+        lidline = lambda x, _ll0=_ll0: _ll0(x) + _sg * _tl * h_ * np.clip((x - (b[0] + b[2]) / 2) / (w_ / 2), -1, 1)
     ring = (xx > b[0] - w_ * .3) & (xx < b[2] + w_ * .3) & (yy > b[1] - h_ * .2) & (yy < b[3] + h_ * .5) & ~((xx > b[0]) & (xx < b[2]) & (yy > b[1]) & (yy < b[3]))
     ring &= skin_mask(F) & (V > .55) & (S_ > .14)   # (not grey brows or hair: Bác Ba's lids came out grey)
     sk = np.median(F[ring][:, :3], axis=0) if ring.any() else REF
@@ -830,10 +834,12 @@ M['surprised'] = mouth_o(base.copy(), False)
 im = base.copy()
 if mouth: erase_mouth(im, mouth); mb = [mouth[0] + (mouth[2] - mouth[0]) * .15, mouth[1], mouth[2] - (mouth[2] - mouth[0]) * .15, mouth[3]]; stroke(im, arc(mb, .75, -.45), lip * .8, lw * 1.1)
 _sb = float(os.environ.get('FIT_SAD_BOT') or .18)   # (13 Nov 2026, r074's sad face: her lash sat below the box's top .18, so the drawn lid lay above it and closed nothing, a second line like a frown) how far down the box the sad lid comes
+_SAD_NOW[0] = True
 for b in eyes.values():
     if os.environ.get('FIT_SAD_TALL'):   # (13 Nov 2026, r064's sad face at 1024 px: two lash lines, the old one above the drooped lid) her thick upper lash sat above the eye's box, so the part lid (top .18 of the box) never reached it: the box is taken a quarter higher, the lid's edge kept where it was
         _h = b[3] - b[1]; erase(im, [b[0], max(0, int(b[1] - _h * .25)), b[2], b[3]], 0, (.25 + _sb) / 1.25)
     else: erase(im, b, 0, _sb)
+_SAD_NOW[0] = False
 M['sad'] = im
 im = base.copy()
 for b in eyes.values(): im = shift_iris(im, b, .16)

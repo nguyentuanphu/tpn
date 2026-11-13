@@ -5,7 +5,7 @@
 # (8 Nov 2026) -Villager: a villager has one model, seen close and far (js/main.ts wears models/villager-<id>.glb):
 # one fit of the 30k remesh with a 1024 px picture (8 Nov: Meshy's own face is seen, 512 px blurred the eyes); the 288 px light picture showed
 # specks and broken hair up close. The reference is lumi.py's villager role=<id> build; its parts are named villager-.
-param([string]$Id, [string]$Ref = '', [string]$Prefix = '', [switch]$Villager, [string]$VMesh = '9000', [string]$VTex = '1024', [string]$VTile = '192', [string]$VQ = '70', [string]$VGrid = '26', [switch]$NoLimbTint, [string]$SkinSMax = '', [switch]$EyeDark, [switch]$SmoothPieces, [switch]$LidMatch, [string]$FaceUV = '', [string]$PieceSnap = '', [switch]$MouthFind, [switch]$LookSolid, [switch]$LidSoft, [switch]$PieceSink, [switch]$LidHair, [switch]$MouthSoft, [switch]$LidLocal, [switch]$SadTall, [switch]$EyeDespike, [string]$SadBot = '', [switch]$EyeSkin, [switch]$LidClip, [string]$SnapCap = '')   # -Prefix: the reference's part names, default <id>-
+param([string]$Id, [string]$Ref = '', [string]$Prefix = '', [switch]$Villager, [string]$VMesh = '9000', [string]$VTex = '1024', [string]$VTile = '192', [string]$VQ = '70', [string]$VGrid = '26', [switch]$NoLimbTint, [string]$SkinSMax = '', [switch]$EyeDark, [switch]$SmoothPieces, [switch]$LidMatch, [string]$FaceUV = '', [string]$PieceSnap = '', [switch]$MouthFind, [switch]$LookSolid, [switch]$LidSoft, [switch]$PieceSink, [switch]$LidHair, [switch]$MouthSoft, [switch]$LidLocal, [switch]$SadTall, [switch]$EyeDespike, [string]$SadBot = '', [switch]$EyeSkin, [switch]$LidClip, [string]$SnapCap = '', [string]$SadTilt = '')   # -Prefix: the reference's part names, default <id>-
 # (10 Nov 2026, cloud pilot) the tools also run on Linux: SV_MESHY_ROOT (default D:\WorkSpace\meshy), SV_BLENDER, SV_NPX
 $root = if ($env:SV_MESHY_ROOT) { $env:SV_MESHY_ROOT } else { 'D:\WorkSpace\meshy' }
 if (-not $Ref) { $Ref = Join-Path $root "work-v108/$Id-game-hd.glb" }
@@ -53,6 +53,8 @@ if ($EyeSkin) { $env:FIT_EYE_SKIN = '1' } else { $env:FIT_EYE_SKIN = '' }
 if ($LidClip) { $env:FIT_LID_CLIP = '1' } else { $env:FIT_LID_CLIP = '' }
 # (14 Nov 2026, r064's skin flap over the hair at .4) -SnapCap .006: the piece grid is not lifted by a surface beside a point that lies more than that in front of it (a lock of hair)
 $env:FIT_SNAP_CAP = $SnapCap
+# (14 Nov 2026, gate p: the sad lids sloped down to the nose, angry) -SadTilt .15: the sad lid droops at its outer corner
+$env:FIT_SAD_TILT = $SadTilt
 $B = if ($env:SV_BLENDER) { $env:SV_BLENDER } else { 'C:\Users\nguye\tools\blender-4.2.23-windows-x64\blender.exe' }
 $npx = if ($env:SV_NPX) { $env:SV_NPX } elseif ($IsLinux -or $IsMacOS) { Join-Path (Split-Path (Split-Path (Get-Command node).Source)) 'lib/node_modules/npm/bin/npx-cli.js' } else { 'C:\Program Files\nodejs\node_modules\npm\bin\npx-cli.js' }
 $repo = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent; Set-Location $repo
