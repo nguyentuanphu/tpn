@@ -121,6 +121,9 @@ pilot. Farm and wild animals (cow, sheep, pig, buffalo ...) are not in this plan
   feet. Never send a pet for approval before looking at its feet, frame by frame, at full size, in every run and jump.
 - **13 Nov 2026 AEDT, afternoon (after the film20 films):** "Thỏ oke, nhưng khi nhảy bằng 4 chân nhìn hơi cứng": the
   bunny is fine except its four-leg jump looks a little stiff. Panda, kitty, calf: no answer yet.
+- **13 Nov 2026 AEDT, owner (screenshot of the chat):** the panda and bunny feedback "above" was these two messages: the
+  panda's white specks and dented feet (fixed: repack, sit_fold) and the bunny's stiff four-leg jump (fixed: jump_spring).
+  Nothing else is owed on those two.
 
 ## Dog pilot: progress (10 Nov 2026 AEDT, no credits spent)
 
