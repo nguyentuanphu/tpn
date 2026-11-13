@@ -949,9 +949,9 @@ SKIN_TEX = TEX > 0 and (not ORIGINAL or SHIFT)   # (original_skin alone: no skin
 CLEAR_FACE = TEX > 0 and not ORIGINAL   # (an opaque face layer needs no clearing underneath; an own face's open eyes ARE the painted ones under it, 9 Nov)
 # the high-detail model keeps Meshy's painted skin ("skin-tex"); the light one its corner colours
 def uv_texels(polys, shape, m=-.05):   # texels covered by these faces' UV triangles (m: the barycentric margin, negative reaches a little past the edges)
-    hh, ww = shape; out = np.zeros((hh, ww), bool)
+    hh, ww = shape; out = np.zeros((hh, ww), bool); _uvd = me.uv_layers[0].data   # (14 Nov 2026: a fresh UV handle every call: the mesh is rebuilt after the global one was taken (flat hair locks removed), and reading the old one was the "flaky" EXCEPTION_ACCESS_VIOLATION in Vector_subscript)
     for p in polys:
-        uvs = np.array([uv[li].uv[:] for li in p.loop_indices], np.float32)
+        uvs = np.array([_uvd[li].uv[:] for li in p.loop_indices], np.float32)
         if len(uvs) != 3 or not np.isfinite(uvs).all(): continue
         P_ = uvs * [ww, hh]; x0, y0 = np.floor(P_.min(0)).astype(int) - 1; x1, y1 = np.ceil(P_.max(0)).astype(int) + 1
         x0, y0 = max(0, x0), max(0, y0); x1, y1 = min(ww, x1), min(hh, y1)
