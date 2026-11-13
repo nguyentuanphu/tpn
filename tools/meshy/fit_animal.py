@@ -956,6 +956,17 @@ def face_pieces(o, arm, J, Fc):
             avg = (np.roll(fill, 1, 0) + np.roll(fill, -1, 0) + np.roll(fill, 1, 1) + np.roll(fill, -1, 1)) / 4
             fill = np.where(src[..., None], img0, avg)
         fill = np.where(known[..., None], img0, fill)
+        if FIX.get('socket_lift', 0):   # (14 Nov 2026, owner's gate: "mặt, mắt, hốc mắt": Meshy paints a darker socket round the eye; open, the eye fills it, shut it showed as a dark bruise with a hard edge. Inside the lid, fur darker than the fur at the lid's rim is brought up towards it, fading out at the rim; lighter fur (the calf's cream blaze) is kept)
+            ell = np.hypot((xx - gx) / Rx, (yy - gy) / R); Lf = fill @ np.array([.3, .59, .11])
+            rim = hit & (ell > .85) & (ell < 1.0); Lt = float(np.median(Lf[rim])) if rim.any() else float(Lf.mean())
+            k = 3; Lb = sum(np.roll(Lf, (d0, d1), (0, 1)) for d0 in range(-k, k + 1) for d1 in range(-k, k + 1)) / (2 * k + 1) ** 2
+            tt = np.clip((1.02 - ell) / FIX.get('socket_fade', .5), 0, 1); tt = tt * tt * (3 - 2 * tt) * FIX['socket_lift']
+            gain = np.where(Lb < Lt, 1 + tt * (Lt / np.maximum(Lb, 1e-3) - 1), 1.0)
+            fill = np.clip(fill * gain[..., None], 0, 1)
+            # (and the edge of the eye's fill, a smooth disc in textured fur, softened: a few passes of a 3x3 blur on a band round it)
+            band = (np.abs(ell - .75) < .12) & hit
+            for _ in range(FIX.get('socket_soften', 3)):
+                bl = sum(np.roll(fill, (d0, d1), (0, 1)) for d0 in (-1, 0, 1) for d1 in (-1, 0, 1)) / 9; fill = np.where(band[..., None], bl, fill)
         lash = np.array(FIX.get('lash', (.22, .14, .1)))
         for kind, curve in (('shut', lambda u: -.1 * r + .3 * r * (u / ew) ** 2), ('joy', lambda u: .1 * r - .45 * r * (u / ew) ** 2)):
             img = fill.copy()
@@ -970,7 +981,7 @@ def face_pieces(o, arm, J, Fc):
             # the piece: a fine grid laid on the head's surface over the eye (rays along -normal), a little in front, its
             # picture straight on; no gaps (the head's own triangles, copied, showed the eye through cracks at their edges)
             bm = bmesh.new(); uvL = bm.loops.layers.uv.new('UVMap'); GN = FIX.get('lid_grid', 28) if not FARLOD else FIX.get('lid_grid_far', 20); grid = {}
-            lift = FIX.get('lid_lift', .003); hits = {}
+            lift = FIX.get('lid_lift', .003); hits = {}; gnor = []
             for a in range(GN + 1):
                 for b in range(GN + 1):
                     x = gx + (b / GN * 2 - 1) * Rx; y = gy + (a / GN * 2 - 1) * R
@@ -985,7 +996,7 @@ def face_pieces(o, arm, J, Fc):
                 if True:
                     k = 1 - smooth01((math.hypot((x - gx) / Rx, (y - gy) / R) - .82) / .18)   # (down to the surface at its rim)
                     off = (Vector(nrm) * (lift * k + .0004)) if not FIX.get("lid_rim") else (Vector(nrm) * lift * k + nor.normalized() * FIX["lid_rim"])   # (lid_rim: the rim held off the surface along the surface's own normal: where the head turns away the lid's flat squares dipped under it and its painted lashes showed through)
-                    grid[a, b] = bm.verts.new(loc + off)
+                    grid[a, b] = bm.verts.new(loc + off); gnor.append(nor.normalized())
             for a in range(GN):
                 for b in range(GN):
                     q = [(a, b), (a, b + 1), (a + 1, b + 1), (a + 1, b)]
@@ -993,9 +1004,18 @@ def face_pieces(o, arm, J, Fc):
                     f = bm.faces.new([grid[k] for k in q])
                     for lp, (ga, gb) in zip(f.loops, q): lp[uvL].uv = ((gx + (gb / GN * 2 - 1) * Rx + P) / (2 * P), (gy + (ga / GN * 2 - 1) * R + P) / (2 * P))
             pm = bpy.data.meshes.new(name); bm.to_mesh(pm); bm.free()
+            # (14 Nov 2026, the owner's gate boards at 1024 px: every shut lid showed as a darker patch with a hard edge, on
+            # the calf across its cream blaze, on the puppy too: the piece was lit by its own flat grid's normals and a
+            # rougher-shiny default material. It takes the head's surface normal at each point (smooth) and the body's
+            # matte material, so it is lit as the face under it)
+            if FIX.get('lid_head_normals', True):
+                for poly in pm.polygons: poly.use_smooth = True
+                try: pm.normals_split_custom_set_from_vertices([tuple(n_) for n_ in gnor])
+                except Exception as e_: print('LIDNORMALS', e_, flush=True)
             po = bpy.data.objects.new(name, pm); bpy.context.collection.objects.link(po)
             mat = bpy.data.materials.new(name); mat.use_nodes = True; nt = mat.node_tree; tn = nt.nodes.new('ShaderNodeTexImage'); tn.image = pim
             nt.links.new(tn.outputs['Color'], nt.nodes['Principled BSDF'].inputs['Base Color']); pm.materials.append(mat)
+            nt.nodes['Principled BSDF'].inputs['Roughness'].default_value = 1; nt.nodes['Principled BSDF'].inputs['Metallic'].default_value = 0
             g = po.vertex_groups.new(name=f'{kind}{i}'); g.add(list(range(len(pm.vertices))), 1.0, 'REPLACE')
             po.parent = arm; md = po.modifiers.new('rig', 'ARMATURE'); md.object = arm
     # the open mouth (owner, 11 Nov 2026: "có thử khi há miệng chưa"): a piece laid on the muzzle's own surface, as the

@@ -10,6 +10,7 @@
   "nuzzle_scratch": true,
   "beg_paws_down": true,
   "beg_pitch": -0.55,
+  "socket_lift": 1.0,
   "leg_top": 0.8,
   "spatial_r": 0.03,
   "mouth_w": 0.8,
