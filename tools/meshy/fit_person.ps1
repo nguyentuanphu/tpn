@@ -5,7 +5,7 @@
 # (8 Nov 2026) -Villager: a villager has one model, seen close and far (js/main.ts wears models/villager-<id>.glb):
 # one fit of the 30k remesh with a 1024 px picture (8 Nov: Meshy's own face is seen, 512 px blurred the eyes); the 288 px light picture showed
 # specks and broken hair up close. The reference is lumi.py's villager role=<id> build; its parts are named villager-.
-param([string]$Id, [string]$Ref = '', [string]$Prefix = '', [switch]$Villager, [string]$VMesh = '9000', [string]$VTex = '1024', [string]$VTile = '192', [string]$VQ = '90', [string]$VGrid = '26', [switch]$HD, [switch]$HDOnly)   # -Prefix: the reference's part names, default <id>-
+param([string]$Id, [string]$Ref = '', [string]$Prefix = '', [switch]$Villager, [string]$VMesh = '9000', [string]$VTex = '1024', [string]$VTile = '256', [string]$VQ = '90', [string]$VGrid = '26', [switch]$HD, [switch]$HDOnly)   # -Prefix: the reference's part names, default <id>-
 if (-not $Ref) { $Ref = "D:\WorkSpace\meshy\work-v108\$Id-game-hd.glb" }
 # (10 Nov 2026) a villager's reference is lumi.py's villager-<id>-<role>-hd.glb (game, elder, adult ...), never <id>-game-hd.glb
 if ($Villager -and -not (Test-Path $Ref)) { $c = @(Get-ChildItem "D:\WorkSpace\meshy\work-v108\villager-$Id-*-hd.glb"); if ($c.Count -ne 1) { throw "villager reference for ${Id}: found $($c.Count)" }; $Ref = $c[0].FullName }
@@ -26,7 +26,7 @@ if ($Villager) {
   # (11 Nov 2026, owner: "Chỉ tập trung làm bản thường cho thiệt đẹp") the pictures go in as WebP ($env:FIT_WEBP, transfer_rig.py),
   # far sharper than JPEG at the same size (JPEG 50-60 smeared colour across the UV seams: pale streaks over the faces);
   # the colour picture is kept at JPEG 95 on the way. Over 490 KB: fit again with a lower WebP quality, then a smaller face tile.
-  foreach ($step in $(if ($HDOnly) { @() } else { @(@($VQ, $VTile, $VTex), @('82', $VTile, $VTex), @('75', $VTile, $VTex), @('75', '160', $VTex), @('70', '160', '896')) })) {
+  foreach ($step in $(if ($HDOnly) { @() } else { @(@($VQ, $VTile, $VTex), @('82', $VTile, $VTex), @('75', $VTile, $VTex), @('75', $VTile, '896'), @('68', $VTile, '896'), @('60', $VTile, '896'))   # (14 Nov 2026, owner: "Ảnh mặt 256 px" (freckles kept when shut): the face tile is never lowered, the WebP quality and the body picture are) })) {
     $env:FIT_TILE = $step[1]; $env:FIT_JPGQ = '95'; $env:FIT_GN = $VGrid
     $fl = Run 'tools\meshy\fit_people.py' @($vm, $Ref, "$o\$Id-mid-pre.glb", "$o\mid", $vt, $step[2], '1.0', '-1', $j)
     ($fl -split "`n" | Where-Object { $_ -match '^FIT' }) | Out-File -Encoding utf8 "$o\fit-log.txt"   # (10 Nov 2026: the eyes and mouth found, to check without guessing)
