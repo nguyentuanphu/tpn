@@ -319,7 +319,9 @@ def _move_with_body(bm, o, name):
             return (k[-1] == 'L') == ((x > 0) == (J['armL'].x > 0)) or abs(x) < .02
         return True
     _n4 = 0
-    for _pass in range(3):
+    # (13 Nov 2026, round 86: off. It did not change the ragged hems (they were the painted body's edge, see the cover step),
+    # and dropping the other side's limb bones opened a gap at Sol's back when sitting: bites 12 -> 6 cases without it)
+    for _pass in range(0):
         cur = {}
         for v in bm.verts:
             w = {k: x for k, x in getw(v).items() if _side_ok(k, v.co.x)}
