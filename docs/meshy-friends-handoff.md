@@ -49,6 +49,22 @@ The auditor branch (meshy-audit-coverage) is adding a mouth check, then eye sock
 
 ## Where it stands
 
+**14 Nov 2026 (AEDT), afternoon: stopped on the usage limit.** Nothing running. Models committed with this note.
+
+- Gate pictures: `node ../tools/meshy/game_shots.mts <dir> gate <id>` (new mode, 76 pictures per friend at 1024 px: every mood at yaw -.7..-.7, sides, above, below, neck, bodies in four outfits). Round 1: `D:\WorkSpace\meshy\fitted\gate-1` (taken before the last Lumi/Clara refit), overview sheets `gate-1-sheets` (scratchpad `gate_sheets.py`).
+- **Second reviewer (subagent, gate-1), faults to fix, worst first:**
+  1. Glances (lookL/lookR) broken on all four: ghost iris ring beside the iris, black streaks in the white, cut highlights, jagged white edges, white spilling past the outline (Lumi y0.7), skin wedge in Lumi's eye.
+  2. Closed eyes (blink, half, happy, excited) on lighter flat patches with hard edges cutting the blush: Finn and Sol big, Clara and Lumi medium.
+  3. Sol blink/half y0: lower half of both brows painted skin (a flat edge on the left brow, the right brow's tail gone); grey streak at an inner corner, a white crescent, light specks on the nose.
+  4. Clara: half y-0.4 the far eye open (iris above the lid line); half y0/0.7 black outline and white crescent round the far eye; a grey-white arc at the right eye's inner edge on blink/happy y0; blink below-0.5 skin shards on the far outline.
+  5. Lumi: a black vertical tick above the left closed eye (y0, y-0.4, below0): the fringe lock hidden by the mood piece (decal moved to 2.5 mm, f18 audit after it: stray still 565, not fixed); a dark arc above the closed eye from above; a ring round the far eye on blink y0.
+  6. Finn: dark bits of the open eye on the far eye at half ±0.4; shirt-coloured patches on both hands in every body picture; a small orange tear in the shirt's chest; jagged rain shirt hem.
+  7. Clothes: Clara's braid tips over the chest torn (orange shards, green or purple specks), Clara rain top hem and wrist jagged; Sol's shirt hem V notch at the back; Lumi's everyday sleeves, collar, shirt and shorts hems jagged; Lumi rain shirt hem.
+  Clean per the reviewer: every mouth (o, sad, excited, no old smile), open eyes at every angle, necks and napes, trousers, aodai, festival skirts.
+- Face audit after the last refits (auditor branch 24815e71d, stray included): eyes 0 and mouth 0 from the front for all four; lid at most 28; stray Sol up to 188, Clara up to 84, Finn up to 462, Lumi up to 565 (the auditor chat is removing 1-2 px hair-edge noise from stray).
+- fit_people.py now: decal 2.5 mm off the face (`FIT_DECAL_OFF`), closed-eye piece stops below each brow, the lid's widening never touches brows or hair, blush is not an eye pixel for the lid's cut (it stepped down Lumi's cheek), the fresh UV handle (villagers' crash fix).
+
+
 **13 Nov 2026 (AEDT), about 8:20 am.** Nothing of this chat is running. Models committed at 269e98787.
 
 - Face audit (auditor branch meshy-audit-coverage a39af972a, copied as `tools/meshy/audit-cov.mts`, not committed; `cd tests; node ../tools/meshy/audit-cov.mts <out> <id> poses:face,pics` against this branch's server 8765):

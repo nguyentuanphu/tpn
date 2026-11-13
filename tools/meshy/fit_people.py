@@ -308,7 +308,7 @@ activate(decal); dd = decal.modifiers.new('dec', 'DECIMATE'); dd.ratio = min(1, 
 _dbt = _BVH.FromObject(body, bpy.context.evaluated_depsgraph_get())
 for _v in decal.data.vertices:
     _h = _dbt.find_nearest(_v.co)
-    if _h[0] is not None: _v.co = _h[0] + _h[1].normalized() * .0045
+    if _h[0] is not None: _v.co = _h[0] + _h[1].normalized() * float(os.environ.get('FIT_DECAL_OFF', '.0025'))   # (14 Nov 2026: 2.5 mm, was 4.5: further out it lay in front of Lumi's fringe lock on the forehead and hid it on closed eyes)
 print('FIT face layer tris', len(dme.polygons))
 
 # ---- skin colour: the face's typical light skin
