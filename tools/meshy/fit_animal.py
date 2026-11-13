@@ -645,6 +645,12 @@ def extra_moves(J, M, bones):
         return P
     def beg(t):
         bpt = FIX.get('beg_pitch', -1.0); L = 2.4; w = TAU / L; P = R(); sitting(P, bpt)   # (13 Nov 2026, owner circled the kitty's neck and hind legs begging: sat bolt upright its rump took the ground and its short hind legs hung in the air, the head bent down hard at the nape: beg_pitch, a lower sit)
+        if FIX.get('beg_paws_down'):   # (13 Nov 2026: the calf's raised front hooves hung down as points; it begs sitting with its front hooves on the ground, the head up and nodding)
+            put(P, 'head', -.6 * bpt - .35 + math.sin(2 * w * t) * .08, 0, math.sin(w * t) * .2)
+            P['tail'] = ((-.4, math.sin(4 * w * t) * .4, 0), Z3, O3)
+            for e in ears: put(P, e, .15 + math.sin(2 * w * t) * .1)
+            face(P, None, eye=blink(t, (1.6,)), big=1.08, smile=1.2, jaw=.15)
+            return P
         for n, i in enumerate(front): legs(P, i, .1 + math.sin(2 * w * t + n * math.pi) * .18, 1.35 * FIX.get('sit_fold', 1.0))   # (the raised front paws curl less on thin-legged animals: the calf's hooves hung down as points)
         put(P, 'head', -.6 * bpt + math.sin(w * t) * .05, 0, math.sin(w * t) * .18)
         P['tail'] = ((-.4, math.sin(4 * w * t) * .4, 0), Z3, O3)

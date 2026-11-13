@@ -8,6 +8,8 @@
   "smooth": 5,
   "sit_fold": 0.35,
   "nuzzle_scratch": true,
+  "beg_paws_down": true,
+  "beg_pitch": -0.55,
   "leg_top": 0.8,
   "spatial_r": 0.03,
   "mouth_w": 0.8,
