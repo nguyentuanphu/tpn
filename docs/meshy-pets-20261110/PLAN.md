@@ -129,6 +129,10 @@ pilot. Farm and wild animals (cow, sheep, pig, buffalo ...) are not in this plan
   where circled (kitty: neck and hind legs when begging, hind leg when digging; calf: hind hooves when sitting, hooves
   when running). Fix: sitting, begging and digging lay the lower hind leg flat (`legs(..., level=)`), the standing hop is
   springier for all (`hop_spring`).
+- **13 Nov 2026 AEDT, evening:** "Chân bị nhọn khi gãi" (feet pointed when scratching). The calf's lifted hind leg showed
+  as a dark stick or point however it was held (folded, hanging, raised forward). A calf does not scratch its ear with a
+  hind hoof: its scratch is now a nuzzle (`nuzzle_scratch`: sitting, head turned back rubbing its flank, tail swishing,
+  all four feet down). Kitty, panda, bunny keep the paw scratch.
 
 ## Dog pilot: progress (10 Nov 2026 AEDT, no credits spent)
 

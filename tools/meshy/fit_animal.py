@@ -662,7 +662,14 @@ def extra_moves(J, M, bones):
     def scratch(t):
         L = 2.; w = TAU / L; P = R(); sitting(P, -.5)
         sc = back[0] if back else 2
-        sf = .5 + .5 * FIX.get('sit_fold', 1.0); legs(P, sc, -1.45 * sf + math.sin(TAU * t * 6) * .12, 1.55 * sf + math.sin(TAU * t * 6) * .2)   # (sit_fold: a thin-legged calf lifts and folds the leg less, or its hoof hung as a dark stick)   # (13 Nov 2026, owner: the leg in the scratch: the lower leg folded up to the ear, the scratch in the knee; held straight, the calf's long shin hung down as a dark stick)
+        if FIX.get('nuzzle_scratch'):   # (13 Nov 2026, owner: 'chân bị nhọn khi gãi': a calf does not scratch its ear with a hind hoof; lifted, its long thin shin showed as a dark stick or a point. It turns its head back and rubs its flank instead, the tail swishing)
+            rub = math.sin(TAU * t * 2); put(P, 'body', -.25, -.12, .04)
+            hk = FIX.get('head_turn', 1.0); put(P, 'head', .35 * hk, -1.0 * hk + rub * .1, .25 * hk + rub * .06)
+            put(P, 'tail', -.2, math.sin(TAU * t * 3) * .6)
+            for k, e in enumerate(ears): put(P, e, -.2 + rub * .1)
+            face(P, None, eye=.35, smile=1.15, jaw=.1)
+            return P
+        sf = .5 + .5 * FIX.get('sit_fold', 1.0); legs(P, sc, -1.45 * sf + math.sin(TAU * t * 6) * .12, 1.55 * sf + math.sin(TAU * t * 6) * .2)   # (sit_fold: a thin-legged animal lifts and folds the leg less)
         hk = FIX.get('head_turn', 1.0); put(P, 'head', .35 * hk, -.12 * hk, .3 * hk + math.sin(TAU * t * 3) * .03)   # (and the head turned less far: it looked twisted round)
         face(P, None, eye=.35, smile=1.15, jaw=.1)
         return P
