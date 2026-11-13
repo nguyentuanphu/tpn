@@ -293,6 +293,14 @@ Record: `docs/meshy-regional-40-100/PILOT-1.md`. Ids `r<nnn>` (sheet number), jo
     lid band's small changes). `-LidClip` keeps the shut pieces to an oval round each eye (the eye's box 1.3 wide, 1.2
     tall); the game's paint covers the rest. In the preview the outer lash corner then shows (it draws the plain face
     picture under the piece): judge it in the game.
+  - *A skin flap standing off the face over the hair (14 Nov 2026, r064 at .4 and tq, since gate i).* Her alpha was two
+    compact discs, so it was the piece's 3D grid: each grid point is placed by the front-most surface at it and at points
+    round it (for the lid's bulge), and beside her outer eye corner that was a lock of hair centimetres in front of the
+    face. `-SnapCap .006`: a point beside it more than 6 mm further in front is not counted. Nearly gone after the refit.
+  - *The villager auditor's `stray` (14 Nov 2026, ported from audit.mts 24815e71d).* A mood may change only the eyes and
+    the mouth. On the regional hosts the smile's lips box missed the bigger "o" and sad mouths, and on dark hosts the
+    mood's lips are not found: the mouth box is half an eye's width wider round the smile's mouth. `mshape` still reads
+    a red nose as lips on a darker host (r074, r057): look at the picture before counting it.
   - *3D folds in front of an eye (13 Nov 2026).* r084's skin wedge across an iris and r045's shards over the upper lids
     were not in `F.png`: Meshy's lid folded in front of the eye. `-EyeDespike` moves a body point in an eye's area that sits
     2.5 to 30 mm in front of its neighbours' middle depth back to it. Without the 30 mm cap r064's lock of hair, 12 cm in

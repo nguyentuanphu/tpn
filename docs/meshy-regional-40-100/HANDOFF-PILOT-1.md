@@ -3,6 +3,21 @@
 Branch `meshy-regional-cloud` (never `main`, no deploy, no version bump, draft pull requests only). Written 12 Nov 2026,
 about 16:30 AEDT, when the owner stopped this chat so that another Claude account takes over.
 
+## Where it stands (14 Nov 2026, about 08:30 AEDT)
+
+- Gates k to o since the last status, each with the auditor, 129 pictures at 1024 px per person and three second
+  reviewers; what each found and fixed: `review-20261113/FINDINGS.md`. **Not approved; the gate is not clean; no approval
+  question asked.**
+- Fit flags now (all six): `-EyeSkin -LidClip -SnapCap .006`, plus `-EyeDespike` (r045 r057 r074 r084), `-SadBot .42`
+  (r057 r074 r084), `-SadTall` (r050 r064), and the person's `-EyeDark` / `-SkinSMax .65` as before. Refit of the five with
+  `-SnapCap` running at 08:30; r064 done (her skin flap at .4 nearly gone).
+- Auditor `audit_villager.mts` now has `stray`. Gate o: eyes 2, lid 7, stray 14, mshape 18 (mostly a red nose on a dark
+  host: looked at, false), the rest 0.
+- Left, from the reviewers (not yet fixed): lids drawn as a V at the near profile (r057, r084: the flat lid drawing on the
+  curved face); lookL and lookR nearly alike (r050, r074, r084); faint grey socket lines by the far eye at .4; Meshy's
+  geometry: shattered ears (r045 r064 r074 r084), forehead shards (r050 r064), r045's brow dashed in every mood (the hair
+  over it, the smile too), r057's chin strap edge, r084's neck-back views see only the hat.
+
 ## For Release: js/friend-model.ts (14 Nov 2026)
 
 `js/friend-model.ts` is also changed on the friends' branch (`meshy-production-20261107`). This branch's commits to it
