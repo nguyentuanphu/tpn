@@ -26,7 +26,8 @@ if ($Villager) {
   # (11 Nov 2026, owner: "Chỉ tập trung làm bản thường cho thiệt đẹp") the pictures go in as WebP ($env:FIT_WEBP, transfer_rig.py),
   # far sharper than JPEG at the same size (JPEG 50-60 smeared colour across the UV seams: pale streaks over the faces);
   # the colour picture is kept at JPEG 95 on the way. Over 490 KB: fit again with a lower WebP quality, then a smaller face tile.
-  foreach ($step in $(if ($HDOnly) { @() } else { @(@($VQ, $VTile, $VTex), @('82', $VTile, $VTex), @('75', $VTile, $VTex), @('75', $VTile, '896'), @('68', $VTile, '896'), @('60', $VTile, '896'))   # (14 Nov 2026, owner: "Ảnh mặt 256 px" (freckles kept when shut): the face tile is never lowered, the WebP quality and the body picture are) })) {
+  # (14 Nov 2026, owner: "Ảnh mặt 256 px", freckles kept when shut) the face tile is never lowered: the WebP quality and the body picture are
+  foreach ($step in $(if ($HDOnly) { @() } else { @(@($VQ, $VTile, $VTex), @('82', $VTile, $VTex), @('75', $VTile, $VTex), @('75', $VTile, '896'), @('68', $VTile, '896'), @('60', $VTile, '896')) })) {
     $env:FIT_TILE = $step[1]; $env:FIT_JPGQ = '95'; $env:FIT_GN = $VGrid
     $fl = Run 'tools\meshy\fit_people.py' @($vm, $Ref, "$o\$Id-mid-pre.glb", "$o\mid", $vt, $step[2], '1.0', '-1', $j)
     ($fl -split "`n" | Where-Object { $_ -match '^FIT' }) | Out-File -Encoding utf8 "$o\fit-log.txt"   # (10 Nov 2026: the eyes and mouth found, to check without guessing)
