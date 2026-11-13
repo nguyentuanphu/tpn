@@ -1065,7 +1065,8 @@ if OWN and moods and os.environ.get('FIT_PIECE_SINK'):   # (13 Nov 2026, r045 at
 if OWN and eyes and os.environ.get('FIT_EYE_DESPIKE'):   # (13 Nov 2026, second reviewers: r084's skin wedge across the left iris and r045's
     # shards over the upper lid, in every open mood and from every side: not in the face picture (F.png is clean), so 3D,
     # Meshy's lid folded in front of the eye) a body point in an eye's area well in front of the points round it goes
-    # back to their middle depth; the eye's own dome stays (its neighbours share it)
+    # back to their middle depth; the eye's own dome stays (its neighbours share it); not past 30 mm (r064: a lock of hair
+    # 12 cm in front of her eye was pulled onto the face)
     _ev = []
     for b in list(eyes.values())[:2]:
         _w, _h = b[2] - b[0], b[3] - b[1]
@@ -1081,7 +1082,7 @@ if OWN and eyes and os.environ.get('FIT_EYE_DESPIKE'):   # (13 Nov 2026, second 
             _d = np.hypot(_P[:, 0] - _P[i_, 0], _P[:, 2] - _P[i_, 2]); _nb = _P[(_d < _r) & (_d > 0), 1]
             if len(_nb) < 4: continue
             _md = float(np.median(_nb))
-            if _P[i_, 1] < _md - .0025: _mx = max(_mx, _md - _P[i_, 1]); _new[i_] = _md; _ns += 1
+            if .03 > _md - _P[i_, 1] > .0025: _mx = max(_mx, _md - _P[i_, 1]); _new[i_] = _md; _ns += 1
         for j_, i_ in enumerate(_in): body.data.vertices[int(i_)].co.y = float(_new[j_])
     body.data.update(); print('FIT eye areas: points folded in front pushed back', _ns, 'most', round(_mx * 1000, 1), 'mm')
 if KEEP:
@@ -1590,6 +1591,7 @@ if TEX and KEEP and SHIFT:
         # an eye area is marked skin now (open eyes keep their paint: the game's per-texel test keeps dark lines)
         _vov = bool(os.environ.get('FIT_EYE_SKIN')) and 'swim' not in ID and '_eo' in dir()   # (13 Nov 2026, second reviewers, r045 at the near profile: the far eye's iris and lash triangles showed past the nose while shut; a villager's eye triangles were never marked skin, so the game's shut-eye paint skipped them) a villager: the triangles inside each eye's own oval
         if ('swim' in ID or _vov) and '_pc3' in dir():
+            if '_ear_y' not in dir(): _ear_y = float(np.median(_pc3[_skp & _hz, 1])) if (_skp & _hz).any() else 0.   # (a villager: the ears' depth was found only on the friends' path; the head's skin middle instead, the face side in front of it)
             _fcx = np.array([p.center.x for p in me.polygons]); _fcz = np.array([p.center.z for p in me.polygons]); _fcy = np.array([p.center.y for p in me.polygons])
             _ine = np.zeros(len(me.polygons), bool)
             if _vov:

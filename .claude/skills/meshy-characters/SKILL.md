@@ -274,6 +274,18 @@ Record: `docs/meshy-regional-40-100/PILOT-1.md`. Ids `r<nnn>` (sheet number), jo
   - *Two lash lines on the sad face (13 Nov 2026, r064, r050).* The sad lid is the box's top .18 (a part lid); a thick upper
     lash above the box stayed above the drooped lid. `-SadTall` takes the box a quarter higher and keeps the lid's edge where
     it was. Only where the double line shows: on r045 and r084 it hooked the lid's ends (looked angry).
+    The other way round on r074 and r084 (and r057, lighter): their own lash sat lower than the box's top .18, so the drawn
+    lid floated above it and closed nothing, two lines like a frown. `-SadBot .42` brings the lid that far down the box:
+    one drooped lid (previewed before the refit).
+  - *A villager's eye triangles were never marked skin (13 Nov 2026, gate j).* The game paints only skin-marked texels
+    (`vColor.r`), and the fit marked an eye area's triangles skin only for the friends (`'swim' in ID`): a villager's far
+    eye kept its iris and lashes past the nose while shut, whatever the shader did. `-EyeSkin` marks the triangles inside
+    each eye's oval (not hair-like, the face side). On that path `_ear_y` was undefined for villagers (all six fits
+    failed once): the head skin's middle depth stands in.
+  - *3D folds in front of an eye (13 Nov 2026).* r084's skin wedge across an iris and r045's shards over the upper lids
+    were not in `F.png`: Meshy's lid folded in front of the eye. `-EyeDespike` moves a body point in an eye's area that sits
+    2.5 to 30 mm in front of its neighbours' middle depth back to it. Without the 30 mm cap r064's lock of hair, 12 cm in
+    front of her eye, was pulled onto the face: not used on r064 and r050 (no folds there).
   - *r074's blush under a shut eye (13 Nov 2026).* `-EyeDark` grows the eye box through what is not skin, and her flushed
     cheeks are not: the lid hole took them. With `-LidLocal`, warm colour below the eye white's lowest row is no part of
     the hole. Removing warm colour round the eye itself instead left the iris and the socket's shade as smudges.
