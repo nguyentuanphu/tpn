@@ -456,7 +456,9 @@ def shell(name, faces, thick, smooth=6, cuts=()):
     # points next to it stand 6 mm (the edge) and 3 mm (the next ring) further off the body, along the body's own surface
     _hem = {v for e in bm.edges if e.is_boundary for v in e.verts}
     _ring = {u for v in _hem for e in v.link_edges for u in [e.other_vert(v)] if u not in _hem}
-    for _set, _dd in ((_hem, .006), (_ring, .003)):
+    # (13 Nov 2026, round 87: off. With it, Finn's ragged-edge cases on run2, dance and jump were 28; without it 15, failing
+    # 33 -> 23. The skin it was against is now kept out of sight by the 2 cm rule in the cover step)
+    for _set, _dd in ():
         for v in _set:
             if v.co.z > NECKBAND - .03: continue   # (never the neckline: it lies on the neck)
             hb = btree.find_nearest(v.co)
