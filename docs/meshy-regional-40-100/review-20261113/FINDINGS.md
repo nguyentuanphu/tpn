@@ -119,3 +119,15 @@ Left and not a fault: r084's far pupil below a half lid seen from above (a half-
   lighter than the skin round the eyes is painted); r045's grey hair highlights by her temples turned to skin flecks on
   blink and happy by the wide eye areas' old colour test (now off where the ovals are); still left: lids as a V at the
   near profile, small lash stubs at sad outer corners, lookL and lookR alike, r050's socket dome (the lid piece's shading).
+
+## Gates r and s (14 Nov 2026 AEDT)
+
+- r (af8a74e49, `-SadTilt .15` on all six): sad now droops at the outer corner (reviewers: reads sad at most views).
+  Auditor lid rose to 12 at the near profile: turning off the wide areas' colour test let the eye white past the oval
+  show; kept for near-white only (71f203a7e). r064 refitted with `-SnapCap .003`: her thin flap remnant unchanged.
+- s (71f203a7e): auditor eyes 0, lid 4, stray 5, mshape 18 (red nose on dark hosts). Reviewers: dark socket crescents at
+  the inner corners and under shut eyes (r045, r050, r084), outside the eye box where only light colours were painted.
+  Fixed by a box reaching 1.6 times further toward the nose and 30% lower (no hair there); r045 and r050 seen fixed.
+  Left after s: grey upper-rim arcs from above (r074 r084: just above the box, where brows are near), lids as a V at the
+  near profile (r057 r084), r064's thin skin flap at .4/tq/below .5, sad lash ticks at the outer corners, lookL/lookR
+  barely different, r084's neck-back views see only the hat (camera).
