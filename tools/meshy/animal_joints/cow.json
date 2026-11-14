@@ -13,7 +13,7 @@
   "lash_spot": 0.06,
   "fill_near": 0.25,
   "lid_lift": 0.008,
-  "jpeg": 80,
+  "jpeg": 70,
   "tail_drop": 0.55,
   "tail_gap": 0.005,
   "jump_legs": 0.55,
@@ -22,12 +22,12 @@
   "lid_grid_far": 30,
   "face_hints": {
     "eye0": [
-      -0.085,
+      -0.068,
       1.075,
       0.042
     ],
     "eye1": [
-      0.105,
+      0.093,
       1.075,
       0.042
     ],
@@ -98,12 +98,50 @@
   ],
   "surface_lid_lift": 0.002,
   "lid_force_fill": 1.6,
-  "surface_texels_per_m": 384,
-  "surface_lid_forward": 0.004,
-  "eye_retract": 0.012,
+  "surface_texels_per_m": 448,
+  "surface_lid_forward": 0.001,
+  "eye_retract": 0.0001,
   "surface_eye_cover": [
-    1.65,
-    2.2
+    1.25,
+    1.65
   ],
-  "surface_eye_selection": 2.6
+  "surface_eye_selection": 2.6,
+  "eye_socket_inset": {
+    "centers": [
+      [
+        -0.085,
+        1.075
+      ],
+      [
+        0.105,
+        1.075
+      ]
+    ],
+    "radius": [
+      0.043,
+      0.05
+    ],
+    "max_depth": 0.03
+  },
+  "textured_fur_lids": true,
+  "lid_coat": [
+    "light",
+    "dark"
+  ],
+  "eye_paint_inward": [
+    [
+      -0.085,
+      1.075,
+      0.017
+    ],
+    [
+      0.105,
+      1.075,
+      0.012
+    ]
+  ],
+  "socket_atlas_density": 448,
+  "socket_atlas_density_far": 320,
+  "jpeg_near": 60,
+  "jpeg_far": 60
 }

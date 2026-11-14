@@ -1,3 +1,5 @@
+> **14/11/2026: chủ đã từ chối R16. Đang sửa hai lỗi mặt và mở rộng audit; chưa có R17 đạt cổng duyệt. Các bảng/bằng chứng R16 bên dưới là lịch sử, không phải approval.**
+
 # Sparkle Valley — cow, bản chờ chủ duyệt
 
 Cập nhật 13/11/2026 14:46 AEDT. Nhánh `meshy-farm-cloud`, tách từ `origin/meshy-pets` (`a89a0b877`); đã hợp nhất phần chuẩn bị có sẵn của nhánh farm. **Chỉ cow; sheep/chicken tạm dừng.** Chủ đã yêu cầu tiếp tục sửa bằng Blender và kiểm tra trong game đến bản hoàn chỉnh; chỉ thị này thay phạm vi ban đầu cấm fit/sửa runtime cho riêng cow. Chưa được chủ duyệt hình thức cuối; không merge main, deploy hoặc tăng version.
@@ -94,3 +96,18 @@ Còn cần xác minh: hình tam giác vàng phẳng sát mõm bò trong cả ba 
 API key chỉ từ biến cloud `MESHY_API_KEY`. SQLite `/workspace/meshy-jobs-farm.sqlite3`, backup `/workspace/meshy-jobs-farm-final.sqlite3`, metadata `/workspace/meshy-farm-account.json`: **ngoài repo, không commit/upload**. Allowlist hiện chỉ cow. Không đưa signed download URL vào bàn giao.
 
 Chủ đã duyệt chi 40 cho ba bước cow và yêu cầu làm tiếp Blender/game đến bản đẹp, sạch để duyệt cuối. Những việc này đã hoàn thành tới bản R16 cùng bằng chứng trên. Chờ **duyệt hình thức cow cuối**; sheep/chicken vẫn dừng, không merge/deploy/tăng version, không tự chi thêm credit.
+
+
+## Đang sửa theo soát của chủ — 14/11/2026 10:48 AEDT
+
+Chưa có R17 đủ cổng duyệt. Đã pull `883bb005d`, giữ nguyên gốc/30k/9k và bằng chứng R16 bị từ chối. Không gọi Meshy, không chi thêm. Đang sửa trong Blender: giảm độ nhô dựa trên đường cong mặt liên tục, giữ texture mắt nhưng đưa hình mắt vào trong hốc, thay mảng mi khuếch tán phẳng bằng texture lông lấy trên bề mặt thật. Các bản thử đầu còn vệt/rìa nên đã loại, không coi là đạt.
+
+Đã lấy logic lid/mouth/stray từ `origin/meshy-audit-coverage` (`5f13d4b3b`) để thích ứng riêng cow, thêm kiểm mép mi mới. R16 cũ đã bị bộ kiểm này đánh dấu lỗi; vẫn cần hoàn thiện selftest (lỗi được vẽ thật trong renderer), kiểm không lùi và nhìn ảnh cỡ thật. Kiểm mép chỉ đếm cạnh mới xuất hiện; dùng trị tuyệt đối sẽ đánh nhầm cạnh iris cũ vừa được xóa là lỗi mới. Không tăng ngưỡng để qua.
+
+Xác định hình vàng là **mũi tên nhiệm vụ** (`setupGuides`, `js/main/interactables.ts`, ConeGeometry và màu `#ffd23f`), không phải bộ phận cow. Sẽ xác minh bằng ảnh game tắt mũi tên/hướng dẫn và chụp lại ba thiết bị. Chưa hỏi duyệt; còn ảnh mọi góc/cảm xúc 1024px, người soi thứ hai độc lập không biết nội dung sửa, phim phát thật và đối chiếu mọi lỗi chủ khoanh.
+
+### Checkpoint 14/11/2026 11:27 AEDT — đang sửa, chưa R17
+
+Đã thử và loại các bản còn lỗi. Agent độc lập Locke đã xem 15/15 ảnh thử 1024px, không đọc code/lịch sử, kết luận chưa sạch; tiếp tục sửa, chưa hỏi chủ. Các lỗi gồm mi, hình mắt mở và đường ghép. Bộ kiểm mặt mới có bốn plant vẽ bằng renderer thật và bắt đủ bốn; đang bổ sung ID vật liệu để chỉ kiểm mi nhìn thấy (mặt bên kia có thể bị đầu che), giữ stray xét cả đầu. Kết quả quick gần nhất còn 9/18 ca vượt ngưỡng, không phải bản đạt.
+
+Đã chẩn đoán vệt mảnh trên lớp mi bằng cách vẽ riêng lớp: các đỉnh UV trùng vị trí được đẩy theo các pháp tuyến khác nhau, tạo khe thật. Bản thử đang dựng hàn điểm trùng và lấy pháp tuyến chung. Dùng UV 14 bit thay mặc định 12 cho atlas cow để giảm lệch texel; còn kiểm lại dung lượng. Runtime hiện là bản thử, các file R16 bị từ chối vẫn giữ nguyên trong `cow/review/` làm đối chứng. Không có R17 hoàn chỉnh để duyệt/phát hành. Không Meshy/credit mới.

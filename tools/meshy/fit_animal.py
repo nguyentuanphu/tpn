@@ -80,8 +80,85 @@ def load(path):
         c.z = (V[:, 2].min() + V[:, 2].max()) / 2; at.z = (bx['min'][1] + bx['max'][1]) / 2 + FIX.get('lift', 0)
     o.data.transform(Matrix.Translation(at) @ Matrix.Scale(k, 4) @ Matrix.Translation(-c))
     if FIX.get('shift'): o.data.transform(Matrix.Translation(Vector(FIX['shift'])))   # (the box's middle is not the body's: the joey's tail curls off to one side)
+    # Fit the underlying face curvature from fur round the eye. Only reduce the
+    # forward bulge; never translate vertices sideways or cut a hard depth band.
+    inset = FIX.get('eye_socket_inset')
+    if inset:
+        V = np.array([v.co[:] for v in o.data.vertices]); original = V.copy()
+        for cx, cz in inset['centers']:
+            x=(original[:,0]-cx)/inset['radius'][0]; z=(original[:,2]-cz)/inset['radius'][1]
+            d=np.hypot(x,z);loc,_,_,_=bvh_of(o).ray_cast(Vector((cx,-2,cz)),Vector((0,1,0)))
+            if loc is None:raise ValueError('Eye socket misses source')
+            front=np.abs(original[:,1]-loc.y)<.075
+            ring=(d>1.2)&(d<1.85)&front
+            design=np.column_stack((np.ones(len(V)),x,z,x*x,x*z,z*z))
+            co=np.linalg.lstsq(design[ring],original[ring,1],rcond=None)[0]
+            target=design@co
+            t=np.clip((d-.7)/.85,0,1);w=(1-t*t*(3-2*t))
+            t=np.clip((np.abs(original[:,1]-loc.y)-.055)/.025,0,1);w*=1-t*t*(3-2*t)
+            delta=np.clip(target-original[:,1],0,inset['max_depth'])*w
+            V[:,1]+=delta
+            print('SOCKET',cx,'fit',int(ring.sum()),'max inset',float(delta.max()),flush=True)
+        for v,co in zip(o.data.vertices,V):v.co=co
+        o.data.update()
     o.name = 'creature-' + KIND
     return o
+
+def inset_eye_atlas(o):
+    """Extend the body atlas with separately padded socket triangles.
+    Original body texels retain their resolution. Artwork moves on the continuous
+    head, not by translating the head vertices or painting across shared UV gutters.
+    """
+    old,source=tex_of(o);h,w=source.shape[:2];me=o.data;me.calc_loop_triangles()
+    uvl=me.uv_layers.active.data;old_uv=np.array([p.uv[:] for p in uvl]);V=np.array([v.co[:] for v in me.vertices]);bvh=bvh_of(o)
+    from mathutils.geometry import barycentric_transform
+    density=FIX.get('socket_atlas_density_far',512) if FARLOD else FIX.get('socket_atlas_density',768)
+    moves=FIX['eye_paint_inward'];centers=[]
+    for cx,cz,amount in moves:
+        loc,_,_,_=bvh.ray_cast(Vector((cx,-2,cz)),Vector((0,1,0)));centers.append(np.array(loc[:]))
+    tiles=[];pad=4
+    for tri in me.loop_triangles:
+        pts=V[list(tri.vertices)];choices=[]
+        for i,c in enumerate(centers):
+            ds=np.linalg.norm((pts[:,[0,2]]-c[[0,2]])/np.array((.045,.05)),axis=1)
+            if ds.min()<1.8 and np.abs(pts[:,1]-c[1]).min()<.075:choices.append((ds.mean(),i))
+        if not choices:continue
+        _,eye=min(choices);cx,cz,amount=moves[eye];center=centers[eye]
+        ab=pts[1]-pts[0];ac=pts[2]-pts[0];length=np.linalg.norm(ab)
+        if length<1e-9:continue
+        along=float(ac@(ab/length));height=math.sqrt(max(0.,float(ac@ac)-along*along))
+        if height<1e-9:continue
+        xy=np.array(((0,0),(length,0),(along,height)))*density
+        lo=np.floor(xy.min(0)).astype(int)-pad;hi=np.ceil(xy.max(0)).astype(int)+pad+1;tw,th=(hi-lo).tolist()
+        yy,xx=np.mgrid[0:th,0:tw];p=np.stack((xx+lo[0]+.5,yy+lo[1]+.5),-1);a,b,c=xy
+        den=(b[1]-c[1])*(a[0]-c[0])+(c[0]-b[0])*(a[1]-c[1])
+        u=((b[1]-c[1])*(p[...,0]-c[0])+(c[0]-b[0])*(p[...,1]-c[1]))/den
+        v=((c[1]-a[1])*(p[...,0]-c[0])+(a[0]-c[0])*(p[...,1]-c[1]))/den
+        wt=np.maximum(np.stack((u,v,1-u-v),-1),0);wt/=np.maximum(wt.sum(-1,keepdims=True),1e-9)
+        pos=wt@pts;uv=wt@old_uv[list(tri.loops)];pixels=sample(source,uv).copy()
+        distance=np.linalg.norm((pos[...,[0,2]]-center[[0,2]])/np.array((.045,.05)),axis=-1)
+        valid=(distance<1.65)&(np.abs(pos[...,1]-center[1])<.07)
+        for y,x in np.argwhere(valid):
+            q=pos[y,x];t=np.clip((distance[y,x]-1.3)/.35,0,1);strength=1-t*t*(3-2*t)
+            loc,_,fi,_=bvh.ray_cast(Vector((q[0]+math.copysign(amount,cx)*strength,-2,q[2])),Vector((0,1,0)))
+            if loc is None:continue
+            poly=me.polygons[fi];vs=[me.vertices[k].co for k in poly.vertices[:3]];uvs=[old_uv[k] for k in poly.loop_indices[:3]]
+            uvq=barycentric_transform(loc,*vs,*[Vector((*a,0)) for a in uvs]);pixels[y,x]=sample_bilinear(source,np.array((uvq.x,uvq.y)))
+        tiles.append(dict(tri=tri,xy=xy,origin=lo,w=tw,h=th,pixels=pixels))
+    width=2**math.ceil(math.log2(w+max(512,max(t['w']+8 for t in tiles))))
+    x=w+4;y=4;row=0
+    for tile in sorted(tiles,key=lambda t:-t['h']):
+        if x+tile['w']+4>width:x=w+4;y+=row+4;row=0
+        tile['at']=(x,y);x+=tile['w']+4;row=max(row,tile['h'])
+    height=2**math.ceil(math.log2(max(h,y+row+4)));atlas=np.zeros((height,width,4),np.float32);atlas[...,3]=1;atlas[:h,:w,:3]=source
+    for loop,uv in zip(uvl,old_uv):loop.uv=(uv[0]*w/width,uv[1]*h/height)
+    for tile in tiles:
+        x,y=tile['at'];atlas[y:y+tile['h'],x:x+tile['w'],:3]=tile['pixels']
+        for j,li in enumerate(tile['tri'].loops):uvl[li].uv=((tile['xy'][j,0]-tile['origin'][0]+x)/width,(tile['xy'][j,1]-tile['origin'][1]+y)/height)
+    image=bpy.data.images.new('cow-socket-atlas',width,height,alpha=False);image.pixels[:]=atlas.ravel();image.pack()
+    for node in o.data.materials[0].node_tree.nodes:
+        if node.type=='TEX_IMAGE' and node.image==old:node.image=image
+    print('SOCKET_ATLAS',width,height,'triangles',len(tiles),flush=True)
 
 def bvh_of(o): return BVHTree.FromObject(o, bpy.context.evaluated_depsgraph_get())
 
@@ -395,8 +472,10 @@ def make(path, J, M, out, tex_px):
     arm, size = rig(o, J, M, names)
     A['hip'] = M['hip']
     for i, l in enumerate(A['legs']): l['front'] = J['leg%d' % i][1] < 0
-    face_pieces(o, arm, J, Fc)
-    material(o, tex_px)
+    if FIX.get('eye_paint_inward'):
+        material(o, tex_px); inset_eye_atlas(o); face_pieces(o, arm, J, Fc)
+    else:
+        face_pieces(o, arm, J, Fc); material(o, tex_px)
     moves = wc.animal_moves(KIND, A, arm, names + FACE_BONES, F, size)
     moves = [(n_, L_, lie_down(p_, J, M) if n_ == 'sleep' and not FIX.get('upright') else p_) for n_, L_, p_ in moves]
     extra = (upright_moves if FIX.get('upright') else extra_moves)(J, M, names + FACE_BONES)   # (made for Meshy's own legs: not damped)
@@ -408,21 +487,23 @@ def make(path, J, M, out, tex_px):
     for pb in arm.pose.bones: pb.rotation_euler = (0, 0, 0); pb.location = (0, 0, 0); pb.scale = (1, 1, 1)
     bpy.ops.export_scene.gltf(filepath=out, export_format='GLB', export_animations=True, export_animation_mode='ACTIONS', export_lights=False,
                               export_cameras=False, export_apply=False, export_skins=True, export_morph=False, use_selection=False,
-                              export_image_format='JPEG', export_jpeg_quality=FIX.get('jpeg', 80), export_force_sampling=True, export_frame_step=2)
+                              export_image_format='JPEG', export_jpeg_quality=FIX.get('jpeg_far' if FARLOD else 'jpeg_near',FIX.get('jpeg',80)), export_force_sampling=True, export_frame_step=2)
     print('MADE', out, 'tris', sum(len(p.vertices) - 2 for p in o.data.polygons), 'bones', len(arm.data.bones), 'clips', ','.join(m[0] for m in moves), flush=True)
     return o, arm
 
 def make_comp(o, J, M, out, tex_px):
     names = comp_weights(o, J, M)
     arm, size = rig(o, J, M, names)
-    face_pieces(o, arm, J, Fc)
-    material(o, tex_px)
+    if FIX.get('eye_paint_inward'):
+        material(o, tex_px); inset_eye_atlas(o); face_pieces(o, arm, J, Fc)
+    else:
+        face_pieces(o, arm, J, Fc); material(o, tex_px)
     moves = wc.companion_moves(KIND, A, arm, names + FACE_BONES, F, size)
     for name, L, pose in moves: wc.clip(arm, name, L, tail_sway(pose, name))
     for pb in arm.pose.bones: pb.rotation_euler = (0, 0, 0); pb.location = (0, 0, 0); pb.scale = (1, 1, 1)
     bpy.ops.export_scene.gltf(filepath=out, export_format='GLB', export_animations=True, export_animation_mode='ACTIONS', export_lights=False,
                               export_cameras=False, export_apply=False, export_skins=True, export_morph=False, use_selection=False,
-                              export_image_format='JPEG', export_jpeg_quality=FIX.get('jpeg', 80), export_force_sampling=True, export_frame_step=2)
+                              export_image_format='JPEG', export_jpeg_quality=FIX.get('jpeg_far' if FARLOD else 'jpeg_near',FIX.get('jpeg',80)), export_force_sampling=True, export_frame_step=2)
     print('MADE', out, 'tris', sum(len(p.vertices) - 2 for p in o.data.polygons), 'bones', len(arm.data.bones), 'clips', ','.join(m[0] for m in moves), flush=True)
     return o, arm
 
@@ -723,6 +804,10 @@ def tex_of(o):
     im = n.image; w, h = im.size; px = np.array(im.pixels[:], dtype=np.float32).reshape(h, w, 4)[:, :, :3]
     return im, px   # (rows from the bottom, as Blender keeps them)
 
+def sample_bilinear(px, uv):
+    h,w=px.shape[:2];q=np.clip(uv*np.array((w,h))-.5,0,np.array((w-1,h-1)));a=np.floor(q).astype(int);b=np.minimum(a+1,np.array((w-1,h-1)));m=q-a
+    return px[a[1],a[0]]*(1-m[0])*(1-m[1])+px[a[1],b[0]]*m[0]*(1-m[1])+px[b[1],a[0]]*(1-m[0])*m[1]+px[b[1],b[0]]*m[0]*m[1]
+
 def sample(px, uv):
     h, w = px.shape[:2]; x = np.clip((uv[..., 0] % 1) * w, 0, w - 1).astype(int); y = np.clip((uv[..., 1] % 1) * h, 0, h - 1).astype(int)
     return px[y, x]
@@ -787,13 +872,19 @@ def find_face(o, J, M):
         if name == 'mouth': out['mouth_n'] = np.array(nor[:])
     return out
 
-def surface_lid(o, arm, name, center, side, up, picture, picture_radius, eye_index, bone_name):
+def surface_lid(o, arm, name, center, side, up, picture, picture_radius, eye_index, bone_name, mask_picture=None):
     """Face triangles with compact per-triangle UV tiles, painted in surface coordinates.
     UV-island padding is evaluated from each triangle's edge (not transparent pixels),
     so even tiny Meshy UV islands remain closed without projecting black fur onto cheeks.
     """
     me=o.data;uvl=me.uv_layers.active.data;c=np.array(center);side=np.array(side);up=np.array(up)
     radii=np.array(FIX['surface_eye_radii']);V=np.array([v.co[:] for v in me.vertices])
+    # GLB splits vertices at UV seams. Offsetting each split by its separate
+    # normal opens real cracks. Weld coincident points and use their mean normal;
+    # UVs stay per-face so the atlas remains independent across its tile gutters.
+    _,point_group=np.unique(np.rint(V*1e5).astype(np.int64),axis=0,return_inverse=True)
+    normals=np.array([v.normal[:] for v in me.vertices]);shared=np.zeros((point_group.max()+1,3));np.add.at(shared,point_group,normals)
+    shared/=np.maximum(np.linalg.norm(shared,axis=1,keepdims=True),1e-9)
     close=((((V[:,[0,2]]-c[[0,2]])/radii)**2).sum(1)<FIX.get('surface_eye_selection',2.6)**2)&(np.abs(V[:,1]-c[1])<.09)
     selected=[t for t in me.loop_triangles if close[list(t.vertices)].any()]
     _,source=tex_of(o);density=FIX.get('surface_texels_per_m',512);TP=len(picture);tiles=[];padding=4
@@ -817,10 +908,10 @@ def surface_lid(o, arm, name, center, side, up, picture, picture_radius, eye_ind
         weights/=np.maximum(weights.sum(-1,keepdims=True),1e-9)
         pos=weights@V[list(t.vertices)];original_uv=weights@uv
         distance=np.sqrt((((pos[...,[0,2]]-c[[0,2]])/radii)**2).sum(-1))
-        paint=np.clip((1.4-distance)/.25,0,1)
+        paint=np.clip((1.30-distance)/.15,0,1) if FIX.get('textured_fur_lids') else np.clip((1.4-distance)/.25,0,1)
         cover_inner,cover_outer=FIX.get('surface_eye_cover',(1.65,2.2))
         alpha=np.clip((cover_outer-distance)/(cover_outer-cover_inner),0,1)*(np.abs(pos[...,1]-c[1])<.08)
-        if not (alpha>0).any():continue
+        if mask_picture is None and not (alpha>0).any():continue
         projected=np.stack(((pos-c)@side,(pos-c)@up),-1)
         pixel=np.clip((projected/picture_radius+1)*.5*TP-.5,0,TP-1)
         ij=np.floor(pixel).astype(int);hi=np.minimum(ij+1,TP-1);mix=pixel-ij
@@ -830,6 +921,14 @@ def surface_lid(o, arm, name, center, side, up, picture, picture_radius, eye_ind
               picture[hi[...,1],hi[...,0]]*mix[...,0,None]*mix[...,1,None])
         original=sample(source,original_uv)
         rgb=original*(1-paint[...,None])+fill*paint[...,None]
+        if mask_picture is not None:
+            alpha=(mask_picture[ij[...,1],ij[...,0]]*(1-mix[...,0])*(1-mix[...,1])+
+                   mask_picture[ij[...,1],hi[...,0]]*mix[...,0]*(1-mix[...,1])+
+                   mask_picture[hi[...,1],ij[...,0]]*(1-mix[...,0])*mix[...,1]+
+                   mask_picture[hi[...,1],hi[...,0]]*mix[...,0]*mix[...,1])
+            alpha*=np.abs(pos[...,1]-c[1])<.08
+            if not (alpha>0).any():continue
+            rgb=fill
         tiles.append(dict(triangle=t,xy=xy,origin=origin,width=width,height=height,pixels=np.concatenate((rgb,alpha[...,None]),-1)))
     if not tiles:raise ValueError('Empty anatomical eyelid atlas')
     atlas_width=max(512,2**math.ceil(math.log2(max(t['width']+2 for t in tiles))))
@@ -848,8 +947,9 @@ def surface_lid(o, arm, name, center, side, up, picture, picture_radius, eye_ind
     for tile in tiles:
         t=tile['triangle']
         for vi in t.vertices:
-            if vi not in verts:verts[vi]=bm.verts.new(me.vertices[vi].co+Vector((0,-FIX.get('surface_lid_forward',.004),0)))
-        face=bm.faces.new([verts[vi] for vi in t.vertices]);face.smooth=True
+            group=int(point_group[vi])
+            if group not in verts:verts[group]=bm.verts.new(me.vertices[vi].co+(Vector(shared[group])*FIX['surface_lid_forward'] if FIX.get('textured_fur_lids') else Vector((0,-FIX.get('surface_lid_forward',.004),0))))
+        face=bm.faces.new([verts[int(point_group[vi])] for vi in t.vertices]);face.smooth=True
         for loop,li in zip(face.loops,t.loops):
             uv=uvl[li].uv;at=tile['at'];origin=tile['origin']
             loop[uv_layer].uv=((tile['xy'][list(t.loops).index(li),0]-origin[0]+at[0])/atlas_width,(tile['xy'][list(t.loops).index(li),1]-origin[1]+at[1])/atlas_height)
@@ -860,6 +960,84 @@ def surface_lid(o, arm, name, center, side, up, picture, picture_radius, eye_ind
     bsdf=nodes.nodes['Principled BSDF'];nodes.links.new(tex.outputs['Color'],bsdf.inputs['Base Color']);nodes.links.new(tex.outputs['Alpha'],bsdf.inputs['Alpha'])
     mesh.materials.append(mat);group=obj.vertex_groups.new(name=bone_name);group.add(list(range(len(mesh.vertices))),1.,'REPLACE')
     obj.parent=arm;mod=obj.modifiers.new('rig','ARMATURE');mod.object=arm
+
+def fur_lid_fill(img,hit,xx,yy,r,eye):
+    """Inpaint only the actual eye opening, preserving local fur colour + grain.
+    The old dark-pixel flood on a patterned coat swallowed the whole black patch.
+    Here the isolated sclera (dark coat), or iris/outline (white coat), bounds it.
+    """
+    n=len(img);lum=img@np.array((.3,.59,.11));coat=FIX['lid_coat'][eye]
+    protected=np.zeros((n,n),bool)
+    feature=hit & ((lum>.45) if coat=='dark' else (lum<.38));seen=np.zeros((n,n),bool);components=[]
+    for y,x in np.argwhere(feature):
+        if seen[y,x]:continue
+        st=[(y,x)];seen[y,x]=True;cells=[];border=False
+        while st:
+            a,b=st.pop();cells.append((a,b));border|=a==0 or b==0 or a==n-1 or b==n-1
+            for da,db in ((1,0),(-1,0),(0,1),(0,-1)):
+                u,v=a+da,b+db
+                if 0<=u<n and 0<=v<n and feature[u,v] and not seen[u,v]:seen[u,v]=True;st.append((u,v))
+        if border:
+            if coat=='dark':
+                p=np.array(cells);protected[p[:,0],p[:,1]]=True
+            continue
+        if len(cells)<3:continue
+        p=np.array(cells);cx=float(xx[p[:,0],p[:,1]].mean());cy=float(yy[p[:,0],p[:,1]].mean())
+        if math.hypot(cx,cy)<r*1.8:components.append((len(cells),p))
+    if not components:raise ValueError('No isolated eye opening '+str(eye))
+    if coat=='dark':
+        eroded=protected.copy()
+        for _ in range(2):eroded=eroded&np.roll(eroded,1,0)&np.roll(eroded,-1,0)&np.roll(eroded,1,1)&np.roll(eroded,-1,1)
+        for _ in range(2):eroded=eroded|np.roll(eroded,1,0)|np.roll(eroded,-1,0)|np.roll(eroded,1,1)|np.roll(eroded,-1,1)
+        protected=eroded & (np.hypot(xx,yy)>r*1.08)
+    _,cells=max(components,key=lambda x:x[0]);
+    cells=np.concatenate([p for _,p in components if np.hypot(xx[p[:,0],p[:,1]].mean(),yy[p[:,0],p[:,1]].mean())<r*(1.6 if coat=='dark' else 1.4)],axis=0)
+    coords=np.column_stack((xx[cells[:,0],cells[:,1]],yy[cells[:,0],cells[:,1]]))
+    # Reflect the isolated crescent about the iris centre to include the dark iris.
+    points=np.concatenate((coords,-coords),axis=0) if coat=='dark' else coords
+    pts=sorted(set(map(tuple,points.tolist())))
+    def cross(o,a,b):return (a[0]-o[0])*(b[1]-o[1])-(a[1]-o[1])*(b[0]-o[0])
+    lo=[];hi=[]
+    for p in pts:
+        while len(lo)>=2 and cross(lo[-2],lo[-1],p)<=0:lo.pop()
+        lo.append(p)
+    for p in reversed(pts):
+        while len(hi)>=2 and cross(hi[-2],hi[-1],p)<=0:hi.pop()
+        hi.append(p)
+    hull=lo[:-1]+hi[:-1];mask=np.ones((n,n),bool)
+    for a,b in zip(hull,hull[1:]+hull[:1]):mask&=((b[0]-a[0])*(yy-a[1])-(b[1]-a[1])*(xx-a[0]))>=-1e-8
+    def grow(a):return a|np.roll(a,1,0)|np.roll(a,-1,0)|np.roll(a,1,1)|np.roll(a,-1,1)
+    for _ in range(3):mask=grow(mask)
+    mask&=~protected
+    if mask[0].any() or mask[-1].any() or mask[:,0].any() or mask[:,-1].any():raise ValueError('Eye mask reaches picture edge')
+    soft=mask.astype(float);ring=mask.copy()
+    for value in (.75,.35):
+        nxt=grow(ring)&~protected;soft[nxt&~ring]=value;ring=nxt
+    known=hit&~ring&(((lum>.035)&(lum<.20)) if coat=='dark' else (lum>.45));field=img.copy();field[~known]=np.median(img[known],axis=0)
+    for _ in range(n*3):
+        avg=(np.roll(field,1,0)+np.roll(field,-1,0)+np.roll(field,1,1)+np.roll(field,-1,1))/4
+        field=np.where(known[...,None],img,avg)
+    # Preserve native high-frequency fur while the diffusion matches its boundary.
+    blur=sum(np.roll(img,(dy,dx),(0,1)) for dy in range(-2,3) for dx in range(-2,3))/25
+    hp=img-blur;safe=known&((lum<.20)&(lum>.035) if coat=='dark' else lum>.45)
+    patches=[];tile=8
+    for size in (8,4):
+        for y in range(0,n-size,2):
+            for x in range(0,n-size,2):
+                good=safe[y:y+size,x:x+size]
+                if good.all():patches.append(hp[y:y+size,x:x+size].copy())
+        if patches:tile=size;break
+    if not patches:raise ValueError('No native fur grain '+str(eye))
+    rng=np.random.default_rng(1700+eye);acc=np.zeros((n+tile,n+tile,3));den=np.zeros((n+tile,n+tile,1));step=tile//2
+    win=np.outer(np.hanning(tile+2)[1:-1],np.hanning(tile+2)[1:-1])[...,None]
+    for y in range(0,n,step):
+        for x in range(0,n,step):
+            patch=patches[int(rng.integers(len(patches)))];acc[y:y+tile,x:x+tile]+=patch*win;den[y:y+tile,x:x+tile]+=win
+    grain=(acc/np.maximum(den,1e-9))[:n,:n]
+    native=float(np.std(hp[safe]));got=float(np.std(grain));grain*=min(2.,native/max(got,1e-6))
+    fill=np.clip(field+grain,0,1)
+    print('FUR_LID',eye,'opening',len(cells),'mask',int(mask.sum()),'fur donors',len(patches),'grain',round(native,4),flush=True)
+    return fill,soft
 
 def face_pieces(o, arm, J, Fc):
     """the lids: the head's own surface over each eye (a little in front of it), with its own small picture: the
@@ -933,7 +1111,14 @@ def face_pieces(o, arm, J, Fc):
             avg = (np.roll(fill, 1, 0) + np.roll(fill, -1, 0) + np.roll(fill, 1, 1) + np.roll(fill, -1, 1)) / 4
             fill = np.where(src[..., None], img0, avg)
         fill = np.where(known[..., None], img0, fill)
+        fur_mask=None
+        if FIX.get('textured_fur_lids'):
+            fill,fur_mask=fur_lid_fill(img0,hit,xx,yy,r,i)
         lash = np.array(FIX.get('lash', (.22, .14, .1)))
+        if FIX.get('textured_fur_lids'):
+            lash = np.array((.40,.33,.26) if FIX['lid_coat'][i]=='dark' else (.035,.022,.015))
+            ew=r*.78; ecx=ecy=0.
+
         for kind, curve in (('shut', lambda u: -.1 * r + .3 * r * (u / ew) ** 2), ('joy', lambda u: .1 * r - .45 * r * (u / ew) ** 2)):
             img = fill.copy()
             if os.environ.get("LID_DEBUG"): img[:] = (1, 0, 1)   # (debug: the lid painted magenta, to see what it covers in the game)
@@ -949,7 +1134,7 @@ def face_pieces(o, arm, J, Fc):
             pim.pack()
             if DEBUG: pim.filepath_raw = os.path.join(OUT, name + '.png'); pim.file_format = 'PNG'; pim.save()
             if FIX.get('surface_lids'):
-                surface_lid(o, arm, name, c, side, up, img, P, i, f'{kind}{i}')
+                surface_lid(o, arm, name, c, side, up, img, P, i, f'{kind}{i}', fur_mask)
                 continue
             # the piece: a fine grid laid on the head's surface over the eye (rays along -normal), a little in front, its
             # picture straight on; no gaps (the head's own triangles, copied, showed the eye through cracks at their edges)

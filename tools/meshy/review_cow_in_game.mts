@@ -8,7 +8,7 @@ try {for(const [device,w,h] of [['phone',390,844],['tablet',820,1180],['computer
  const P=await open(browser,{w,h,touch:device!=='computer',fast:true});await clear(P.page);
  const result=await P.page.evaluate(async()=>{
   const G=(window as any).__sv,A=await import(String('/js/animals.js')),K=await import(String('/js/modelkit.js'));
-  const hero=G.heroes[0],yard=G.interactables?.find((x:any)=>x.id==='petyard');
+  const hero=G.heroes[0];hero.profile.questFold=true;hero.walkTo=null;const yard=G.interactables?.find((x:any)=>x.id==='petyard');
   if(yard)hero.place(yard.x+6,yard.z+6);
   const cow=A.animalModel('cow');cow.position.set(hero.pos.x+2, G.world.groundAt(hero.pos.x+2,hero.pos.z-1,hero.pos.y+1),hero.pos.z-1);G.scene.add(cow);
   const wait=async(test:()=>boolean)=>{for(let n=0;n<150;n++){G.paused=false;document.querySelectorAll('.storybook,.dialog,.modal,.reward').forEach(e=>e.remove());if(test())return;await new Promise(r=>setTimeout(r,100));}throw Error('cow model/LOD timeout');};
@@ -28,7 +28,8 @@ try {for(const [device,w,h] of [['phone',390,844],['tablet',820,1180],['computer
   await wait(()=>rig.hd===false);hero.place(start.x,start.z);await wait(()=>rig.hd===true);
   (window as any).__cowReview=cow;
   const t=await K.loadWorldModel('creature-cow-hd');
-  return {dimensions,nearLoaded:true,farSwapped:true,nearRestored:true,fallbackHidden:rig.root.visible===false,clips:t.clips.map((c:any)=>c.name)};
+  const arrows=[];G.scene.traverse(o=>{if(o.geometry?.type==='ConeGeometry'&&Math.abs(o.geometry.parameters?.radius-.45)<.001&&Math.abs(o.geometry.parameters?.height-1.1)<.001)arrows.push({visible:o.visible,color:o.material.color.getHexString()});});if(arrows.some(a=>a.visible))throw Error('Quest guide arrow still visible');
+  return {questGuideArrows:arrows,dimensions,nearLoaded:true,farSwapped:true,nearRestored:true,fallbackHidden:rig.root.visible===false,clips:t.clips.map((c:any)=>c.name)};
  });
  await P.page.waitForTimeout(500);await clear(P.page);
  await P.page.evaluate(() => { window.requestAnimationFrame=()=>0; });
