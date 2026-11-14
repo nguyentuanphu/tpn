@@ -3,7 +3,15 @@
 Branch `meshy-regional-cloud` (never `main`, no deploy, no version bump, draft pull requests only). Written 12 Nov 2026,
 about 16:30 AEDT, when the owner stopped this chat so that another Claude account takes over.
 
-## Where it stands (15 Nov 2026, about 05:30 AEDT)
+## Where it stands (15 Nov 2026, about 09:00 AEDT)
+
+- Gate w (`D:\WorkSpace\meshyittedegional-gate-20261115w`, 672f41ddd): auditor eyes 0, lid 4, stray 11. Second
+  reviewers: what is still open is listed in `review-20261113/FINDINGS.md`, "Gates t to w" and "Open fault: the shut lid
+  drawn as a V". **Not approved; gate not clean; no approval question asked.** When asking the owner about the V lid, show
+  the full-size pictures and the four fix options with their cost (FINDINGS).
+- Next: r050's lid fill (dark dome), r064's wedge, r045's broken ^ at above .5, the ghost smile beside "o", look moods.
+
+## Where it stood (15 Nov 2026, about 05:30 AEDT)
 
 - Models af8a74e49 (+ r064 71f203a7e), all six: `-EyeSkin -LidClip -SnapCap .006 -SadTilt .15` plus each person's flags
   (r045 r057 r074 r084 `-EyeDespike`; r057 r074 r084 `-SadBot .42`; r050 r064 `-SadTall`; r064 `-SnapCap .003`).

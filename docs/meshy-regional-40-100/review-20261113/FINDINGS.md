@@ -146,3 +146,21 @@ Possible fixes, for the owner to choose when asked (with full-size pictures):
 3. **Limit the game's camera** so villagers are never seen closer than about 60 degrees to profile at face distance:
    no model change, but it touches the game's camera (another core's file) and does not help the gate's side pictures.
 4. Leave it: it shows only at close range from the side, small on a phone.
+
+## Gates t to w (15 Nov 2026 AEDT)
+
+Shader changes (villager branch only): inside an oval round each eye's own box everything is painted, whatever the colour,
+the skin mark or the facing (r074's pale outlines, r084's unmarked lower eye triangles), soft from half its radius;
+outside it only surfaces facing about forward (r064's side hair inside a flat oval); the excited face counts as shut
+for villagers with ovals (r084's far open eye). Gate w (672f41ddd): auditor eyes 0, lid 4, stray 11, mshape 13 (red nose
+and mouths on dark hosts, as before). Second reviewers on w, still open:
+- **Near-profile V lid** (r057 r084 r045): see the open-fault section above, owner to choose a fix.
+- **r050's dark dome and round rim round shut eyes**: the lid piece's own fill (the body under it is evenly painted with
+  the pieces hidden): a fit change to the lid fill, not yet made.
+- **r064's skin wedge over her hair** at .4, tq, above .5, below .5 in the shut and sad moods: smaller, still visible.
+- **r045's ^ eyes broken** at above .5 and y1.2 (zig-zag, split), half lids with a slanted iris wedge reading angry
+  from below (r057), sad reading stern from some above/below views (all).
+- **Ghost of the smile mouth** beside the "o" (r074, r084): faint.
+- **lookL/lookR** barely different (r050 r064 r074 r084); r084's far eye shows two pupils in look moods at -.7.
+- Small: pale rim lines by the far eye at +-.4, lash flecks at side views.
+- Meshy geometry (same in smile): ears, forehead shards, r045's lid shards in smile, r057's strap, r084's neck-back views.
