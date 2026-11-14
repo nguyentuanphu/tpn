@@ -485,7 +485,7 @@ def make(path, J, M, out, tex_px):
     for pb in arm.pose.bones: pb.rotation_euler = (0, 0, 0); pb.location = (0, 0, 0); pb.scale = (1, 1, 1)
     bpy.ops.export_scene.gltf(filepath=out, export_format='GLB', export_animations=True, export_animation_mode='ACTIONS', export_lights=False,
                               export_cameras=False, export_apply=False, export_skins=True, export_morph=False, use_selection=False,
-                              export_image_format='JPEG', export_jpeg_quality=FIX.get('jpeg', 80), export_force_sampling=True, export_frame_step=2)
+                              export_image_format='JPEG', export_jpeg_quality=FIX.get('jpeg', 80), export_force_sampling=True, export_frame_step=2, **({'export_vertex_color': 'ACTIVE'} if FIX.get('lid_fade') else {}))
     print('MADE', out, 'tris', sum(len(p.vertices) - 2 for p in o.data.polygons), 'bones', len(arm.data.bones), 'clips', ','.join(m[0] for m in moves), flush=True)
     return o, arm
 
@@ -499,7 +499,7 @@ def make_comp(o, J, M, out, tex_px):
     for pb in arm.pose.bones: pb.rotation_euler = (0, 0, 0); pb.location = (0, 0, 0); pb.scale = (1, 1, 1)
     bpy.ops.export_scene.gltf(filepath=out, export_format='GLB', export_animations=True, export_animation_mode='ACTIONS', export_lights=False,
                               export_cameras=False, export_apply=False, export_skins=True, export_morph=False, use_selection=False,
-                              export_image_format='JPEG', export_jpeg_quality=FIX.get('jpeg', 80), export_force_sampling=True, export_frame_step=2)
+                              export_image_format='JPEG', export_jpeg_quality=FIX.get('jpeg', 80), export_force_sampling=True, export_frame_step=2, **({'export_vertex_color': 'ACTIVE'} if FIX.get('lid_fade') else {}))
     print('MADE', out, 'tris', sum(len(p.vertices) - 2 for p in o.data.polygons), 'bones', len(arm.data.bones), 'clips', ','.join(m[0] for m in moves), flush=True)
     return o, arm
 
@@ -974,10 +974,14 @@ def face_pieces(o, arm, J, Fc):
             rim = hit & (ell > .85) & (ell < 1.0); Lt = float(np.median(Lf[rim])) if rim.any() else float(Lf.mean())
             k = 3; Lb = sum(np.roll(Lf, (d0, d1), (0, 1)) for d0 in range(-k, k + 1) for d1 in range(-k, k + 1)) / (2 * k + 1) ** 2
             tt = np.clip((1.02 - ell) / FIX.get('socket_fade', .5), 0, 1); tt = tt * tt * (3 - 2 * tt) * FIX['socket_lift']
+            # (14 Nov 2026, 'stray': a mood may change only the eye: the change kept to the filled eye, grown a few texels for a soft edge; the fur round it stays as painted, as in the open face)
+            ins = (~known & hit).astype(float)
+            for _ in range(FIX.get('socket_grow', 4)): ins = np.maximum(ins, (np.roll(ins, 1, 0) + np.roll(ins, -1, 0) + np.roll(ins, 1, 1) + np.roll(ins, -1, 1)) / 4 * 1.0)
+            tt = tt * np.clip(ins, 0, 1)
             gain = np.where((Lb < Lt) | (FIX.get('socket_both', False) & (Lb < Lt * FIX.get('socket_both_max', 1.12))), 1 + tt * (Lt / np.maximum(Lb, 1e-3) - 1), 1.0)   # (socket_both: a lid lighter than the fur round it (the kitty's) brought down too; much lighter fur (a cream blaze) kept)
             fill = np.clip(fill * gain[..., None], 0, 1)
             # (and the edge of the eye's fill, a smooth disc in textured fur, softened: a few passes of a 3x3 blur on a band round it)
-            band = (np.abs(ell - .75) < .12) & hit
+            band = (ins > .05) & (ins < .95) & hit   # (the soft edge of the filled eye only)
             for _ in range(FIX.get('socket_soften', 3)):
                 bl = sum(np.roll(fill, (d0, d1), (0, 1)) for d0 in (-1, 0, 1) for d1 in (-1, 0, 1)) / 9; fill = np.where(band[..., None], bl, fill)
         if FIX.get('socket_dark', 0):   # (14 Nov 2026, second reviewer: the panda's shut lid a brown-grey disc inside its black eye patch. Inside the lid, fur already darker than socket_dark is brought to the patch's own black (the darkest quarter of the dark fur at the lid's rim), fading out to the rim; the white face is left alone)
@@ -1001,7 +1005,7 @@ def face_pieces(o, arm, J, Fc):
             # the piece: a fine grid laid on the head's surface over the eye (rays along -normal), a little in front, its
             # picture straight on; no gaps (the head's own triangles, copied, showed the eye through cracks at their edges)
             bm = bmesh.new(); uvL = bm.loops.layers.uv.new('UVMap'); GN = FIX.get('lid_grid', 28) if not FARLOD else FIX.get('lid_grid_far', 20); grid = {}
-            lift = FIX.get('lid_lift', .003); hits = {}; gnor = []
+            lift = FIX.get('lid_lift', .003); hits = {}; gnor = []; gal = []
             for a in range(GN + 1):
                 for b in range(GN + 1):
                     x = gx + (b / GN * 2 - 1) * Rx; y = gy + (a / GN * 2 - 1) * R
@@ -1016,7 +1020,7 @@ def face_pieces(o, arm, J, Fc):
                 if True:
                     k = 1 - smooth01((math.hypot((x - gx) / Rx, (y - gy) / R) - .82) / .18)   # (down to the surface at its rim)
                     off = (Vector(nrm) * (lift * k + .0004)) if not FIX.get("lid_rim") else (Vector(nrm) * lift * k + nor.normalized() * FIX["lid_rim"])   # (lid_rim: the rim held off the surface along the surface's own normal: where the head turns away the lid's flat squares dipped under it and its painted lashes showed through)
-                    grid[a, b] = bm.verts.new(loc + off); gnor.append(nor.normalized())
+                    grid[a, b] = bm.verts.new(loc + off); gnor.append(nor.normalized()); gal.append(1 - smooth01((math.hypot((x - gx) / Rx, (y - gy) / R) - (1 - FIX.get('lid_fade', 0))) / max(1e-6, FIX.get('lid_fade', 0))) if FIX.get('lid_fade') else 1.0)
             for a in range(GN):
                 for b in range(GN):
                     q = [(a, b), (a, b + 1), (a + 1, b + 1), (a + 1, b)]
@@ -1032,6 +1036,10 @@ def face_pieces(o, arm, J, Fc):
                 for poly in pm.polygons: poly.use_smooth = True
                 try: pm.normals_split_custom_set_from_vertices([tuple(n_) for n_ in gnor])
                 except Exception as e_: print('LIDNORMALS', e_, flush=True)
+            if FIX.get('lid_fade'):   # (14 Nov 2026, 'stray' and 'lid': the lid's outer ring, a copy of the face lying 4 mm off it, showed its edge shifted against the face at a slant; it fades to see-through (the vertex colour's alpha; js/modelkit.ts draws it blended) so outside the eye only the face itself is seen)
+                ca = pm.color_attributes.new('Col', 'FLOAT_COLOR', 'POINT')
+                for vi, al in enumerate(gal): ca.data[vi].color = (1, 1, 1, al)
+                pm.color_attributes.active_color = ca
             po = bpy.data.objects.new(name, pm); bpy.context.collection.objects.link(po)
             mat = bpy.data.materials.new(name); mat.use_nodes = True; nt = mat.node_tree; tn = nt.nodes.new('ShaderNodeTexImage'); tn.image = pim
             nt.links.new(tn.outputs['Color'], nt.nodes['Principled BSDF'].inputs['Base Color']); pm.materials.append(mat)

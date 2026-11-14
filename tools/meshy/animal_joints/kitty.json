@@ -47,5 +47,8 @@
   "lash_dark": 0.2,
   "lash_spot": 0.06,
   "fill_near": 0.25,
-  "lid_lift": 0.004
+  "lid_lift": 0.004,
+  "lid_fade": 0.45,
+  "lid_on_eye": true,
+  "lid_size": 2.3
 }

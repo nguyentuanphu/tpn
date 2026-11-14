@@ -230,7 +230,7 @@ const res: any = await P.page.evaluate(async ([kinds, MODE, LIMIT]) => {
                  hidden by .08 from every pixel within 1 px: the lid's patch showing on the cheek, the brow or the blaze.
                  Groups under 4 px left out */
               const eyeZ = new Uint8Array(S * S); for (const e of [e0, e1]) {   // (both eyes: at a slant the far eye's lid is seen too)
-                const p = e.clone().project(cam), q = e.clone().add(new THREE.Vector3(er * 1.25, 0, 0).applyQuaternion(cam.quaternion)).project(cam);
+                const p = e.clone().project(cam), q = e.clone().add(new THREE.Vector3(er * 1.5, 0, 0).applyQuaternion(cam.quaternion)).project(cam);   // (1.5: the painted eye with its lashes reaches past 1.25 eye radii on the calf and the kitty)
                 const cx = (p.x + 1) / 2 * S, cy = (p.y + 1) / 2 * S, rr = Math.abs(q.x - p.x) / 2 * S;
                 for (let y = Math.max(0, Math.floor(cy - rr)); y < Math.min(S, cy + rr); y++) for (let x = Math.max(0, Math.floor(cx - rr)); x < Math.min(S, cx + rr); x++) if ((x - cx) ** 2 + (y - cy) ** 2 <= rr * rr) eyeZ[y * S + x] = 1; }
               const fsx = new Uint8Array(S * S);

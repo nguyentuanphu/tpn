@@ -48,7 +48,12 @@ export function loadWorldModel(name: string): Promise<Template | null> {
       // the picture-book look of the friends (js/friend-model.ts): toon bands, colours from the corners
       const mats = new Map();
       g.scene.traverse((o: any) => { if (!o.isMesh) return; const m = o.material, n = (m && m.name) || '';
-        if (!mats.has(m)) mats.set(m, n.startsWith('meshy-') && m.map ? meshyMat(n, m.map) : toon(n, n.startsWith('skin'))); o.material = mats.get(m); });
+        if (!mats.has(m)) { const mm = n.startsWith('meshy-') && m.map ? meshyMat(n, m.map) : toon(n, n.startsWith('skin'));
+          // (14 Nov 2026) a Meshy lid whose rim fades out (its vertex colours' alpha, tools/meshy/fit_animal.py lid_fade): drawn blended, so outside the eye only the face under it is seen
+          const col = o.geometry && o.geometry.attributes && o.geometry.attributes.color;
+          if (/-(shut\d|joy\d)$/.test(n) && col && col.itemSize === 4) { mm.vertexColors = true; mm.transparent = true; mm.depthWrite = false; }
+          mats.set(m, mm); }
+        o.material = mats.get(m); });
       const t = { scene: g.scene, clips: g.animations || [] }; ready.set(name, t); return t;
     } catch (e) { failed.add(name); console.warn('world model', name, e && e.message); return null; }
   })());
