@@ -9,7 +9,7 @@ try{
 const page=await b.newPage({viewport:{width:1024,height:1024}});page.setDefaultTimeout(180000);
 await page.goto((process.env.SV_URL||'http://127.0.0.1:8798')+'/docs/meshy-farm-cloud/model-review.html');await page.waitForSelector('body[data-ready="true"]');
 const records=[];
-for(const tier of quick?['near']:['near','far']){
+for(const tier of process.env.FACE_TIERS?.split(',')||(quick?['near']:['near','far'])){
 const clips=await page.evaluate(async ([tier,debug,baseline])=>{
  const {THREE}=await import(String('/js/gfx.js')),K=await import(String('/js/modelkit.js')),{clone}=await import(String('/vendor/SkeletonUtils.js'));
  const G=(window as any).__sv,t=await K.loadWorldModel((baseline?'../../docs/meshy-farm-cloud/cow/review/':'')+'creature-cow'+(tier==='near'?'-hd':''));if(!t)throw Error('cow not loaded');
@@ -22,7 +22,7 @@ for(const clip of clips){
  if(quick&&!['cheer','sleep','sad','follow','run'].includes(clip))continue;
  const views=quick?[['front',0,0],['p07',.7,0],['m07',-.7,0]]:[['front',0,0],['p04',.4,0],['m04',-.4,0],['p07',.7,0],['m07',-.7,0],['right',Math.PI/2,0],['left',-Math.PI/2,0],['above',0,.7],['below',0,-.5],['neck',.55,-.12],['back',Math.PI,0]];
  for(const [view,yaw,elev] of views){
- const meta=await page.evaluate(({clip,view,yaw,elev})=>{
+ const meta=await page.evaluate(({clip,view,yaw,elev,distance})=>{
   const {G,t,obj,THREE,mixer,blinkAt}=(window as any).review;
   const c=t.clips.find(c=>c.name===(clip==='blink'?'idle':clip));mixer.stopAllAction();mixer.clipAction(c).reset().play();mixer.setTime(clip==='blink'?blinkAt:c.duration*(clip==='sleep'||clip==='sad'?.5:.3));obj.updateMatrixWorld(true);
 
@@ -30,9 +30,9 @@ for(const clip of clips){
   const right=e1.clone().sub(e0).normalize(),up=new THREE.Vector3(0,1,0),front=right.clone().cross(up).normalize();
   if(view==='neck'){at.y-=.16;at.addScaledVector(front,-.03);}
   const dir=front.multiplyScalar(Math.cos(yaw)).addScaledVector(right,Math.sin(yaw)).addScaledVector(up,elev).normalize();
-  const cam=new THREE.PerspectiveCamera(34,1,.01,100);cam.position.copy(at).addScaledVector(dir,1.2);cam.lookAt(at);G.renderer.setScissorTest(false);G.renderer.render(G.scene,cam);
+  const cam=new THREE.PerspectiveCamera(34,1,.01,100);cam.position.copy(at).addScaledVector(dir,distance);cam.lookAt(at);G.renderer.setScissorTest(false);G.renderer.render(G.scene,cam);
   return {camera:cam.position.toArray(),at:at.toArray(),eyes:[e0.toArray(),e1.toArray()]};
- },{clip,view,yaw,elev});
+ },{clip,view,yaw,elev,distance:quick?1.2:1.4});
  const name=`cow-${tier}-${clip}-${view}.png`;await page.screenshot({path:out+'/'+name});records.push({name,tier,clip,view,...meta});
  }console.log(tier,clip);
 }

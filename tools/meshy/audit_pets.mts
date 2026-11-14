@@ -31,6 +31,9 @@
 // its rim on both walls (a gap, by the rule above). The tear check itself caught the real seams opening in sleep (r10,
 // 22-59 px a case) before the weights were welded. Stretch, eyes and sink plants are caught.
 import { createRequire } from 'node:module';
+import { spawnSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
+import { join } from 'node:path';
 import { open, clear } from '../../tests/harness.mts';
 const { chromium } = createRequire(new URL('../../tests/package.json', import.meta.url))('playwright');
 import { writeFileSync, mkdirSync, statSync, readFileSync } from 'node:fs';
@@ -375,3 +378,16 @@ writeFileSync(`${OUT}/summary.txt`, lines.join('\n') + '\n'); writeFileSync(`${O
 console.log(lines.join('\n'));
 if (fail.length && !process.exitCode) process.exitCode = 2;
 await b.close();
+
+// Cow's face phase is mandatory: body counts alone missed R16's real defects.
+// Start only after closing this browser, so review processes do not compete.
+if (kinds.includes('cow')) {
+  let sizeFail=false;
+  for(const [suffix,cap] of [['-hd',800],['',400]] as const){try{if(statSync(new URL(`../../models/world/creature-cow${suffix}.glb`,import.meta.url)).size>cap*1024)sizeFail=true;}catch{sizeFail=true;}}
+  const dir=join(OUT,'cow-face'),run=spawnSync(process.execPath,[fileURLToPath(new URL('./audit_cow_face.mts',import.meta.url)),dir,MODE==='selftest'?'selftest':MODE==='quick'?'quick':''],{env:process.env,encoding:'utf8',maxBuffer:10*1024*1024});
+  let faceSummary='Cow face phase produced no summary';try{faceSummary=readFileSync(join(dir,'summary.txt'),'utf8').trim();}catch{}
+  const ok=run.status===0&&!sizeFail;
+  const appended=`\nMandatory cow face phase:\n${faceSummary}\nCombined cow gate: ${ok&&!process.exitCode?'PASS':'FAIL'}${sizeFail?' (exact GLB byte budget failed)':''}\n`;
+  writeFileSync(`${OUT}/summary.txt`,lines.join('\n')+'\n'+appended);console.log(appended);
+  if(!ok){if(run.stderr)console.error(run.stderr);if(run.error)console.error(run.error.message);if(!process.exitCode)process.exitCode=2;}
+}

@@ -116,6 +116,23 @@ def inset_eye_atlas(o):
     moves=FIX['eye_paint_inward'];centers=[]
     for cx,cz,amount in moves:
         loc,_,_,_=bvh.ray_cast(Vector((cx,-2,cz)),Vector((0,1,0)));centers.append(np.array(loc[:]))
+    def colour_at(x,z):
+        loc,_,fi,_=bvh.ray_cast(Vector((x,-2,z)),Vector((0,1,0)))
+        if loc is None:return None
+        poly=me.polygons[fi];vs=[me.vertices[k].co for k in poly.vertices[:3]];uvs=[old_uv[k] for k in poly.loop_indices[:3]]
+        q=barycentric_transform(loc,*vs,*[Vector((*a,0)) for a in uvs]);return sample_bilinear(source,np.array((q.x,q.y)))
+    def cream(c):
+        L=float(c@np.array((.3,.59,.11)));S=float((c.max()-c.min())/max(c.max(),1e-6))
+        return L>.45 and S>.12 and 0<=c[0]-c[1]<.10 and 0<=c[1]-c[2]<.18
+    # Flattening the old eyeball geometry leaves its baked AO ring behind.
+    # Correct that fur in the base texture, not only in closed moods. Five local
+    # surface samples estimate the shadow, preserving individual fur strokes.
+    ring_colours=[];c0=centers[0]
+    for angle in np.linspace(0,2*math.pi,48,endpoint=False):
+        c=colour_at(c0[0]+.085*math.cos(angle),c0[2]+.09*math.sin(angle))
+        if c is not None and cream(c):ring_colours.append(float(c@np.array((.3,.59,.11))))
+    cream_target=float(np.percentile(ring_colours,60)) if ring_colours else .82
+    print('COW_NATIVE_CREAM',cream_target,flush=True)
     tiles=[];pad=4
     for tri in me.loop_triangles:
         pts=V[list(tri.vertices)];choices=[]
@@ -135,7 +152,7 @@ def inset_eye_atlas(o):
         u=((b[1]-c[1])*(p[...,0]-c[0])+(c[0]-b[0])*(p[...,1]-c[1]))/den
         v=((c[1]-a[1])*(p[...,0]-c[0])+(a[0]-c[0])*(p[...,1]-c[1]))/den
         wt=np.maximum(np.stack((u,v,1-u-v),-1),0);wt/=np.maximum(wt.sum(-1,keepdims=True),1e-9)
-        pos=wt@pts;uv=wt@old_uv[list(tri.loops)];pixels=sample(source,uv).copy()
+        pos=wt@pts;source_pos=pos.copy();uv=wt@old_uv[list(tri.loops)];pixels=sample(source,uv).copy()
         distance=np.linalg.norm((pos[...,[0,2]]-center[[0,2]])/np.array((.045,.05)),axis=-1)
         valid=(distance<1.65)&(np.abs(pos[...,1]-center[1])<.07)
         for y,x in np.argwhere(valid):
@@ -143,7 +160,18 @@ def inset_eye_atlas(o):
             loc,_,fi,_=bvh.ray_cast(Vector((q[0]+math.copysign(amount,cx)*strength,-2,q[2])),Vector((0,1,0)))
             if loc is None:continue
             poly=me.polygons[fi];vs=[me.vertices[k].co for k in poly.vertices[:3]];uvs=[old_uv[k] for k in poly.loop_indices[:3]]
-            uvq=barycentric_transform(loc,*vs,*[Vector((*a,0)) for a in uvs]);pixels[y,x]=sample_bilinear(source,np.array((uvq.x,uvq.y)))
+            uvq=barycentric_transform(loc,*vs,*[Vector((*a,0)) for a in uvs]);pixels[y,x]=sample_bilinear(source,np.array((uvq.x,uvq.y)));source_pos[y,x]=loc[:]
+        if eye==0:
+            for y in range(th):
+                for x in range(tw):
+                    c=pixels[y,x];q=source_pos[y,x];d=float(np.linalg.norm((q[[0,2]]-center[[0,2]])/np.array((.045,.05))))
+                    if d>=1.8 or not cream(c):continue
+                    values=[float(c@np.array((.3,.59,.11)))]
+                    for dx,dz in ((.006,0),(-.006,0),(0,.006),(0,-.006)):
+                        c1=colour_at(q[0]+dx,q[2]+dz)
+                        if c1 is not None and cream(c1):values.append(float(c1@np.array((.3,.59,.11))))
+                    base=float(np.median(values));gain=min(1.8,max(1.,cream_target/max(base,1e-4)));t=np.clip((d-1.65)/.15,0,1);blend=1-t*t*(3-2*t)
+                    c=c*(1+(gain-1)*blend);pixels[y,x]=c/max(1.,float(c.max()))
         tiles.append(dict(tri=tri,xy=xy,origin=lo,w=tw,h=th,pixels=pixels))
     width=2**math.ceil(math.log2(w+max(512,max(t['w']+8 for t in tiles))))
     x=w+4;y=4;row=0
@@ -159,6 +187,18 @@ def inset_eye_atlas(o):
     for node in o.data.materials[0].node_tree.nodes:
         if node.type=='TEX_IMAGE' and node.image==old:node.image=image
     print('SOCKET_ATLAS',width,height,'triangles',len(tiles),flush=True)
+
+def final_cow_body_texture(o):
+    # glTF 4.3 uses export_image_quality, not the legacy export_jpeg_quality.
+    # More importantly, construct lids from the exact final body JPEG, so a
+    # second body-only encode cannot shift the coat hue under a lossless PNG lid.
+    image,_=tex_of(o);path=os.path.join(OUT,'cow-body-'+('far' if FARLOD else 'near')+'.jpg')
+    image.file_format='JPEG';quality=FIX.get('jpeg_far' if FARLOD else 'jpeg_near',65)
+    image.save(filepath=path,quality=quality)
+    encoded=bpy.data.images.load(path,check_existing=False);encoded.pack()
+    for node in o.data.materials[0].node_tree.nodes:
+        if node.type=='TEX_IMAGE' and node.image==image:node.image=encoded
+    print('FINAL_COW_BODY_JPEG',quality,os.path.getsize(path),flush=True)
 
 def bvh_of(o): return BVHTree.FromObject(o, bpy.context.evaluated_depsgraph_get())
 
@@ -473,7 +513,7 @@ def make(path, J, M, out, tex_px):
     A['hip'] = M['hip']
     for i, l in enumerate(A['legs']): l['front'] = J['leg%d' % i][1] < 0
     if FIX.get('eye_paint_inward'):
-        material(o, tex_px); inset_eye_atlas(o); face_pieces(o, arm, J, Fc)
+        material(o, tex_px); inset_eye_atlas(o); final_cow_body_texture(o); face_pieces(o, arm, J, Fc)
     else:
         face_pieces(o, arm, J, Fc); material(o, tex_px)
     moves = wc.animal_moves(KIND, A, arm, names + FACE_BONES, F, size)
@@ -487,7 +527,7 @@ def make(path, J, M, out, tex_px):
     for pb in arm.pose.bones: pb.rotation_euler = (0, 0, 0); pb.location = (0, 0, 0); pb.scale = (1, 1, 1)
     bpy.ops.export_scene.gltf(filepath=out, export_format='GLB', export_animations=True, export_animation_mode='ACTIONS', export_lights=False,
                               export_cameras=False, export_apply=False, export_skins=True, export_morph=False, use_selection=False,
-                              export_image_format='JPEG', export_jpeg_quality=FIX.get('jpeg_far' if FARLOD else 'jpeg_near',FIX.get('jpeg',80)), export_force_sampling=True, export_frame_step=2)
+                              export_image_format='AUTO' if FIX.get('textured_fur_lids') else 'JPEG', export_jpeg_quality=FIX.get('jpeg_far' if FARLOD else 'jpeg_near',FIX.get('jpeg',80)), export_force_sampling=True, export_frame_step=2)
     print('MADE', out, 'tris', sum(len(p.vertices) - 2 for p in o.data.polygons), 'bones', len(arm.data.bones), 'clips', ','.join(m[0] for m in moves), flush=True)
     return o, arm
 
@@ -495,7 +535,7 @@ def make_comp(o, J, M, out, tex_px):
     names = comp_weights(o, J, M)
     arm, size = rig(o, J, M, names)
     if FIX.get('eye_paint_inward'):
-        material(o, tex_px); inset_eye_atlas(o); face_pieces(o, arm, J, Fc)
+        material(o, tex_px); inset_eye_atlas(o); final_cow_body_texture(o); face_pieces(o, arm, J, Fc)
     else:
         face_pieces(o, arm, J, Fc); material(o, tex_px)
     moves = wc.companion_moves(KIND, A, arm, names + FACE_BONES, F, size)
@@ -503,7 +543,7 @@ def make_comp(o, J, M, out, tex_px):
     for pb in arm.pose.bones: pb.rotation_euler = (0, 0, 0); pb.location = (0, 0, 0); pb.scale = (1, 1, 1)
     bpy.ops.export_scene.gltf(filepath=out, export_format='GLB', export_animations=True, export_animation_mode='ACTIONS', export_lights=False,
                               export_cameras=False, export_apply=False, export_skins=True, export_morph=False, use_selection=False,
-                              export_image_format='JPEG', export_jpeg_quality=FIX.get('jpeg_far' if FARLOD else 'jpeg_near',FIX.get('jpeg',80)), export_force_sampling=True, export_frame_step=2)
+                              export_image_format='AUTO' if FIX.get('textured_fur_lids') else 'JPEG', export_jpeg_quality=FIX.get('jpeg_far' if FARLOD else 'jpeg_near',FIX.get('jpeg',80)), export_force_sampling=True, export_frame_step=2)
     print('MADE', out, 'tris', sum(len(p.vertices) - 2 for p in o.data.polygons), 'bones', len(arm.data.bones), 'clips', ','.join(m[0] for m in moves), flush=True)
     return o, arm
 
@@ -887,7 +927,7 @@ def surface_lid(o, arm, name, center, side, up, picture, picture_radius, eye_ind
     shared/=np.maximum(np.linalg.norm(shared,axis=1,keepdims=True),1e-9)
     close=((((V[:,[0,2]]-c[[0,2]])/radii)**2).sum(1)<FIX.get('surface_eye_selection',2.6)**2)&(np.abs(V[:,1]-c[1])<.09)
     selected=[t for t in me.loop_triangles if close[list(t.vertices)].any()]
-    _,source=tex_of(o);density=FIX.get('surface_texels_per_m',512);TP=len(picture);tiles=[];padding=4
+    _,source=tex_of(o);density=FIX.get('surface_texels_per_m_far',FIX.get('surface_texels_per_m',512)) if FARLOD else FIX.get('surface_texels_per_m',512);TP=len(picture);tiles=[];padding=4
     for t in selected:
         uv=np.array([uvl[k].uv[:] for k in t.loops])
         # Support zero-area UV triangles as well. Give every surface
@@ -966,7 +1006,7 @@ def fur_lid_fill(img,hit,xx,yy,r,eye):
     The old dark-pixel flood on a patterned coat swallowed the whole black patch.
     Here the isolated sclera (dark coat), or iris/outline (white coat), bounds it.
     """
-    n=len(img);lum=img@np.array((.3,.59,.11));coat=FIX['lid_coat'][eye]
+    n=len(img);lum=img@np.array((.3,.59,.11));chroma=(img.max(-1)-img.min(-1))/np.maximum(img.max(-1),1e-6);coat=FIX['lid_coat'][eye]
     protected=np.zeros((n,n),bool)
     feature=hit & ((lum>.45) if coat=='dark' else (lum<.38));seen=np.zeros((n,n),bool);components=[]
     for y,x in np.argwhere(feature):
@@ -978,11 +1018,11 @@ def fur_lid_fill(img,hit,xx,yy,r,eye):
                 u,v=a+da,b+db
                 if 0<=u<n and 0<=v<n and feature[u,v] and not seen[u,v]:seen[u,v]=True;st.append((u,v))
         if border:
-            if coat=='dark':
-                p=np.array(cells);protected[p[:,0],p[:,1]]=True
+            p=np.array(cells);protected[p[:,0],p[:,1]]=True
             continue
         if len(cells)<3:continue
         p=np.array(cells);cx=float(xx[p[:,0],p[:,1]].mean());cy=float(yy[p[:,0],p[:,1]].mean())
+        if coat=='light' and math.hypot(cx,cy)>=r*1.4:protected[p[:,0],p[:,1]]=True
         if math.hypot(cx,cy)<r*1.8:components.append((len(cells),p))
     if not components:raise ValueError('No isolated eye opening '+str(eye))
     if coat=='dark':
@@ -1007,19 +1047,27 @@ def fur_lid_fill(img,hit,xx,yy,r,eye):
     hull=lo[:-1]+hi[:-1];mask=np.ones((n,n),bool)
     for a,b in zip(hull,hull[1:]+hull[:1]):mask&=((b[0]-a[0])*(yy-a[1])-(b[1]-a[1])*(xx-a[0]))>=-1e-8
     def grow(a):return a|np.roll(a,1,0)|np.roll(a,-1,0)|np.roll(a,1,1)|np.roll(a,-1,1)
+    # Include pale sclera just outside the dark iris on a light coat. It is not
+    # native cream fur, and leaving it is what makes a grey closed-eye rim.
+    fur_ring=hit&(np.hypot(xx,yy)>r*1.6)&(np.hypot(xx,yy)<r*2.5)&(lum>.55)&(chroma>.12)
+    native_light=float(np.median(lum[fur_ring])) if fur_ring.any() else .78
+    # The baked AO shadow of the open eyeball is not closed-lid fur. Include
+    # that connected pale/dark rim, while preserving separate brows and temple.
+    extra=hit&(np.hypot(xx,yy)<r*1.6)&(((chroma<.14)&(lum>.35)) if coat=='light' else (chroma>.35))&~protected
+    for _ in range(16):mask|=grow(mask)&extra
     for _ in range(3):mask=grow(mask)
     mask&=~protected
     if mask[0].any() or mask[-1].any() or mask[:,0].any() or mask[:,-1].any():raise ValueError('Eye mask reaches picture edge')
     soft=mask.astype(float);ring=mask.copy()
     for value in (.75,.35):
         nxt=grow(ring)&~protected;soft[nxt&~ring]=value;ring=nxt
-    known=hit&~ring&(((lum>.035)&(lum<.20)) if coat=='dark' else (lum>.45));field=img.copy();field[~known]=np.median(img[known],axis=0)
+    known=hit&~ring&(((lum>.035)&(lum<.20)&(chroma<.45)) if coat=='dark' else ((lum>native_light-.055)&(chroma>.12)));field=img.copy();field[~known]=np.median(img[known],axis=0)
     for _ in range(n*3):
         avg=(np.roll(field,1,0)+np.roll(field,-1,0)+np.roll(field,1,1)+np.roll(field,-1,1))/4
         field=np.where(known[...,None],img,avg)
     # Preserve native high-frequency fur while the diffusion matches its boundary.
     blur=sum(np.roll(img,(dy,dx),(0,1)) for dy in range(-2,3) for dx in range(-2,3))/25
-    hp=img-blur;safe=known&((lum<.20)&(lum>.035) if coat=='dark' else lum>.45)
+    low_lum=blur@np.array((.3,.59,.11));hp=(lum/np.maximum(low_lum,.025)-1)[...,None];hp=np.repeat(hp,3,axis=-1);safe=known&((lum<.20)&(lum>.035) if coat=='dark' else lum>.45)
     patches=[];tile=8
     for size in (8,4):
         for y in range(0,n-size,2):
@@ -1035,7 +1083,7 @@ def fur_lid_fill(img,hit,xx,yy,r,eye):
             patch=patches[int(rng.integers(len(patches)))];acc[y:y+tile,x:x+tile]+=patch*win;den[y:y+tile,x:x+tile]+=win
     grain=(acc/np.maximum(den,1e-9))[:n,:n]
     native=float(np.std(hp[safe]));got=float(np.std(grain));grain*=min(2.,native/max(got,1e-6))
-    fill=np.clip(field+grain,0,1)
+    fill=field*np.maximum(.25,1+grain);fill/=np.maximum(1.,fill.max(-1,keepdims=True));fill=np.clip(fill,0,1)
     print('FUR_LID',eye,'opening',len(cells),'mask',int(mask.sum()),'fur donors',len(patches),'grain',round(native,4),flush=True)
     return fill,soft
 

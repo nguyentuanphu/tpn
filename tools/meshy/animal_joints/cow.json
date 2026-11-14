@@ -142,6 +142,7 @@
   ],
   "socket_atlas_density": 448,
   "socket_atlas_density_far": 320,
-  "jpeg_near": 60,
-  "jpeg_far": 60
+  "jpeg_near": 62,
+  "jpeg_far": 65,
+  "surface_texels_per_m_far": 384
 }
