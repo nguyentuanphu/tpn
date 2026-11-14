@@ -131,3 +131,18 @@ Left and not a fault: r084's far pupil below a half lid seen from above (a half-
   Left after s: grey upper-rim arcs from above (r074 r084: just above the box, where brows are near), lids as a V at the
   near profile (r057 r084), r064's thin skin flap at .4/tq/below .5, sad lash ticks at the outer corners, lookL/lookR
   barely different, r084's neck-back views see only the hat (camera).
+
+## Open fault: the shut lid drawn as a "V" at the near profile (r057, r084; r045 smaller) (15 Nov 2026)
+
+**Open, not passed.** At y +-1.2 (near profile) the shut lid shows as a short dark "V" or tick, e.g.
+`D:\WorkSpace\meshy\fitted\regional-gate-20261115w\shots1024\v-r057-blink-y-1.2.png` (eye at about 900,375). The lid is a
+curve painted on a flat face piece; seen almost edge-on, the curve folds into a V. Paint alone does not fix it.
+Possible fixes, for the owner to choose when asked (with full-size pictures):
+1. **A lash line as real 3D geometry** on the shut eye (a thin curved strip following the eyelid's surface, shown in the
+   shut moods): looks right from every side. Cost: new fit code (find the lid curve on the 3D eye, build and skin the
+   strip), a refit of all six, and the same for every later villager; about a day's work and a full review gate.
+2. **Flatten the drawn lid towards a straight line** for shut moods (less curve, so less of a V edge-on): cheap (fit flag
+   and refit, an hour or two), but the shut eye reads less like a closed smiling eye from the front.
+3. **Limit the game's camera** so villagers are never seen closer than about 60 degrees to profile at face distance:
+   no model change, but it touches the game's camera (another core's file) and does not help the gate's side pictures.
+4. Leave it: it shows only at close range from the side, small on a phone.
