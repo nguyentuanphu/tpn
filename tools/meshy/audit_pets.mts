@@ -58,9 +58,10 @@ await P.page.evaluate(() => { window.requestAnimationFrame = () => 0; });
 P.page.on('pageerror', e => console.log('pageerror', e.message));
 const kinds = LIST.split(',');
 const EYE_PROBES: Record<string, number[]> = {};
-for (const k of kinds) { const a = JSON.parse(readFileSync(new URL(`./animal_joints/${k}.json`, import.meta.url), 'utf8')); if (a.auditEyeProbe) EYE_PROBES[k] = a.auditEyeProbe; }
+for (const k of kinds) { const a = JSON.parse(readFileSync(new URL(`./animal_joints/${k}.json`, import.meta.url), 'utf8')); if (a.auditEyeProbe) { if(!Array.isArray(a.auditEyeProbe)||a.auditEyeProbe.length!==3||!a.auditEyeProbe.every((v: number)=>Number.isFinite(v)&&v>0))throw Error('Invalid eye probe: '+k); EYE_PROBES[k] = a.auditEyeProbe; } }
 const res: any = await P.page.evaluate(async ([kinds, MODE, LIMIT, EYE_PROBES]) => {
   const G = (window as any).__sv, MK = await import(String('/js/modelkit.js')), { THREE } = await import(String('/js/gfx.js'));
+  const {validateCowEyeMetadata}=await import(String('/tools/meshy/cow_face_metrics.mjs'));
   const { clone } = await import(String('/vendor/SkeletonUtils.js')), PETS = await import(String('/js/pets.js'));
   const { PETS: PET_KINDS } = await import(String('/js/farm.js'));
   const R = G.renderer, out: any = { cases: [], pics: {} }, S = 360;
@@ -116,10 +117,10 @@ const res: any = await P.page.evaluate(async ([kinds, MODE, LIMIT, EYE_PROBES]) 
     for (let i = 0; i < pos.count; i++) { _v.fromBufferAttribute(pos, i); (m.applyBoneTransform || m.boneTransform).call(m, i, _v); _v.applyMatrix4(m.matrixWorld); outArr[i * 3] = _v.x; outArr[i * 3 + 1] = _v.y; outArr[i * 3 + 2] = _v.z; } };
   for (const kind of kinds) for (const lod of ['near', 'far']) {
     const name = 'creature-' + kind + (lod === 'near' ? '-hd' : ''), t = await MK.loadWorldModel(name);
-    if (!t) { out.cases.push({ kind, lod, clip: '-', missing: 1 }); continue; }
+    if (!t) { out.cases.push({ kind, lod, clip: '-', plant: 'none', missing: 1 }); continue; }
     const obj = clone(t.scene); scene.add(obj); obj.updateMatrixWorld(true); obj.traverse((o: any) => { if (o.isSkinnedMesh) o.frustumCulled = false; });   // (as js/modelkit.ts: a skinned piece's box is its rest pose)
     const body = (() => { let best: any = null; obj.traverse((o: any) => { if (o.isSkinnedMesh && /^meshy-/.test(o.material.name) && !/-(shut|joy)\d$/.test(o.material.name) && (!best || o.geometry.attributes.position.count > best.geometry.attributes.position.count)) best = o; }); return best; })();
-    if (!body) { out.cases.push({ kind, lod, clip: '-', plant: 'none', notMeshy: 1 }); scene.remove(obj); continue; }   // (not a Meshy model: Sparkle's far one is still the Blender one)
+    if (!body) { out.cases.push({ kind, lod, clip: '-', plant: 'none', notMeshy: 1, missing: 1 }); scene.remove(obj); continue; }   // (not a Meshy model: Sparkle's far one is still the Blender one)
     const bone = (n: string) => obj.getObjectByName(n);
     const mixer = new THREE.AnimationMixer(obj);
     const idx = body.geometry.index.array, nv = body.geometry.attributes.position.count;
@@ -132,6 +133,14 @@ const res: any = await P.page.evaluate(async ([kinds, MODE, LIMIT, EYE_PROBES]) 
     // Patterned fur can be as black as a pupil. Probe actual eye-surface visibility instead:
     // closed lid meshes must occlude the original eye surface, independent of coat colour.
     const probe = EYE_PROBES[kind]; let eyeMask: any = null; let probeCenters: any[] = [];
+    let APERTURES:any=null;
+    if(kind==='cow'){
+      let metadata:any=null;obj.traverse((o:any)=>{if(o.userData?.svEye0C)metadata=o.userData;});
+      APERTURES=validateCowEyeMetadata(metadata,[0,1].map(i=>{
+        const eye=bone('shut'+i);if(!eye)throw Error('Missing cow eye bone');return eye.getWorldPosition(new THREE.Vector3()).toArray();
+      }));
+    }
+
     if (probe) {
       const eyes = [bone('shut0'), bone('shut1')].map(e => e.getWorldPosition(new THREE.Vector3()));
       probeCenters = eyes;
@@ -153,12 +162,12 @@ const res: any = await P.page.evaluate(async ([kinds, MODE, LIMIT, EYE_PROBES]) 
     const views: [string, number, number][] = (quick ? [['front', 0, .1], ['side', Math.PI / 2, .1], ['back', Math.PI, .1], ['tq', .8, .3]] as [string, number, number][]
       : [...[0, 1, 2, 3, 4, 5, 6, 7].map(k => ['y' + k * 45, k * Math.PI / 4, .12] as [string, number, number]), ['above', .3, 2.5], ['below', .3, -2.5]] as [string, number, number][])
       .concat([['levelR', Math.PI / 2, 0], ['levelL', -Math.PI / 2, 0]]);   // (level from each side too: a hole right through the trunk, seen a little from above, has a rim on both of its walls, far apart in depth, and reads as a gap)
-    const plants = self ? (kind === kinds[0] && lod === 'near' ? ['stretch', 'tear', 'eyes', 'sink', 'mouth'] : []) : ['none'];   // (selftest: the plants only)
+    const plants = self ? (kind === kinds[0] && lod === 'near' ? ['none', 'stretch', 'tear', 'eyes', 'sink', 'mouth'] : []) : ['none'];   // (selftest: plants and identical-pose controls)
     for (const plant of plants) for (const clip of (plant === 'none' ? clips : plant === 'eyes' ? ['sleep'] : plant === 'mouth' ? ['wag'] : ['idle'])) {
       const c = t.clips.find((x: any) => x.name === clip); mixer.stopAllAction(); const a = mixer.clipAction(c); a.reset().play();
-      const moments = quick || plant !== 'none' ? [.15, .5, .85] : [0, .17, .33, .5, .67, .83];
+      const moments = quick || self || plant !== 'none' ? [.15, .5, .85] : [0, .17, .33, .5, .67, .83];
       for (const f of moments) {
-        mixer.setTime(c.duration * f); obj.position.set(0, 0, 0); obj.updateMatrixWorld(true);
+        toRest(); mixer.setTime(c.duration * f); obj.position.set(0, 0, 0); obj.updateMatrixWorld(true);
         if (plant === 'stretch') { bone('knee0').scale.setScalar(2.6); obj.updateMatrixWorld(true); }
         if (plant === 'sink') { bone('body').position.y -= Hh * .08; obj.updateMatrixWorld(true); }
         if (plant === 'mouth' && bone('jaw')) { bone('jaw').scale.multiplyScalar(2.5); bone('jaw').position.z += Hh * .02; obj.updateMatrixWorld(true); }   // (an open mouth too big for the face, standing off it)
@@ -230,15 +239,39 @@ const res: any = await P.page.evaluate(async ([kinds, MODE, LIMIT, EYE_PROBES]) 
               const mask = new THREE.MeshBasicMaterial({vertexColors: true, side: THREE.DoubleSide});
               // Interpolate reference positions, then test the oval per fragment.
               // Boolean vertex colours spill the probe across coarse face triangles.
+              mask.customProgramCacheKey=()=>APERTURES?'cow-real-aperture-v1':'anatomical-ellipse-v1';
               mask.onBeforeCompile = (sh: any) => {
-                sh.uniforms.svProbe0={value:probeCenters[0]}; sh.uniforms.svProbe1={value:probeCenters[1]};
-                sh.uniforms.svProbeRadius={value:new THREE.Vector3(...probe)};
-                sh.fragmentShader='uniform vec3 svProbe0; uniform vec3 svProbe1; uniform vec3 svProbeRadius;\n'+sh.fragmentShader;
-                sh.fragmentShader=sh.fragmentShader.replace('#include <color_fragment>', `#include <color_fragment>
-                  vec3 svD0=(vColor.xyz-svProbe0)/svProbeRadius;
-                  vec3 svD1=(vColor.xyz-svProbe1)/svProbeRadius;
-                  bool svEye=(dot(svD0.xy,svD0.xy)<1.0 && abs(svD0.z)<1.0) || (dot(svD1.xy,svD1.xy)<1.0 && abs(svD1.z)<1.0);
-                  diffuseColor.rgb=svEye?vec3(1.0,0.0,0.0):vec3(0.0);`);
+                if(APERTURES){
+                  let declarations='',functions='';
+                  for(let eye=0;eye<2;eye++){
+                    const a=APERTURES[eye],count=a.H.length/2;
+                    for(const key of ['C','S','U','N'])sh.uniforms[`svE${eye}${key}`]={value:new THREE.Vector3(...a[key])};
+                    sh.uniforms[`svE${eye}D`]={value:new THREE.Vector2(...a.D)};
+                    sh.uniforms[`svE${eye}Count`]={value:count};
+                    sh.uniforms[`svE${eye}Hull`]={value:Array.from({length:64},(_,j)=>new THREE.Vector2(...a.H.slice((j%count)*2,(j%count)*2+2)))};
+                    declarations+=`uniform vec3 svE${eye}C,svE${eye}S,svE${eye}U,svE${eye}N; uniform vec2 svE${eye}D;
+                      uniform int svE${eye}Count; uniform vec2 svE${eye}Hull[64];\n`;
+                    functions+=`bool svInside${eye}(vec3 p){
+                      vec3 d=p-svE${eye}C;vec2 q=vec2(dot(d,svE${eye}S),dot(d,svE${eye}U));
+                      for(int k=0;k<64;k++){if(k>=svE${eye}Count)break;int j=k+1;if(j>=svE${eye}Count)j=0;
+                        vec2 a=svE${eye}Hull[k],b=svE${eye}Hull[j],edge=b-a;
+                        if(edge.x*(q.y-a.y)-edge.y*(q.x-a.x)<-.001*length(edge))return false;}
+                      float depth=dot(d,svE${eye}N);return depth>svE${eye}D.x&&depth<svE${eye}D.y;}
+                    `;
+                  }
+                  sh.fragmentShader=declarations+functions+sh.fragmentShader;
+                  sh.fragmentShader=sh.fragmentShader.replace('#include <color_fragment>',`#include <color_fragment>
+                    bool svEye=svInside0(vColor.xyz)||svInside1(vColor.xyz);
+                    diffuseColor.rgb=svEye?vec3(1.,0.,0.):vec3(0.);`);
+                }else{
+                  sh.uniforms.svProbe0={value:probeCenters[0]};sh.uniforms.svProbe1={value:probeCenters[1]};
+                  sh.uniforms.svProbeRadius={value:new THREE.Vector3(...probe)};
+                  sh.fragmentShader='uniform vec3 svProbe0;uniform vec3 svProbe1;uniform vec3 svProbeRadius;\n'+sh.fragmentShader;
+                  sh.fragmentShader=sh.fragmentShader.replace('#include <color_fragment>',`#include <color_fragment>
+                    vec3 d0=(vColor.xyz-svProbe0)/svProbeRadius,d1=(vColor.xyz-svProbe1)/svProbeRadius;
+                    bool svEye=(dot(d0.xy,d0.xy)<1.&&abs(d0.z)<1.)||(dot(d1.xy,d1.xy)<1.&&abs(d1.z)<1.);
+                    diffuseColor.rgb=svEye?vec3(1.,0.,0.):vec3(0.);`);
+                }
               };
 
               const alphaMasks: any[] = [];
@@ -302,13 +335,13 @@ const res: any = await P.page.evaluate(async ([kinds, MODE, LIMIT, EYE_PROBES]) 
       let sy0 = 1e9, sy1 = -1e9; for (const k of skull) { sy0 = Math.min(sy0, rest[k * 3 + 1]); sy1 = Math.max(sy1, rest[k * 3 + 1]); } const hH = sy1 - sy0;
       const B = new THREE.Vector3(), U = new THREE.Vector3(), v = new THREE.Vector3(), q4 = new THREE.Quaternion();
       const CLOSED = ['party', 'nonla', 'beanie', 'captain', 'wizard'];
-      for (const H of (self ? KP.HATS.filter((x: any) => x.id === 'beanie') : KP.HATS)) {
+      for (const H of (self ? KP.HATS.filter((x: any) => x.id === 'beanie') : KP.HATS)) for(const hatPlant of self?['none','hat']:['none']) {
         const F = PETS.HAT_FIT[H.id] || { band: .08 }; let worst = 0, worstAt = '', loose = 0, floatMax = 0, poke = 0, measured = 0;
         for (const clip of (self ? ['idle'] : clips)) {
           const c = t.clips.find((x: any) => x.name === clip); mixer.stopAllAction(); mixer.clipAction(c).reset().play();
           for (const f of quick || self ? [.5] : [.2, .5, .8]) {
-            mixer.setTime(c.duration * f); holder.updateMatrixWorld(true);
-            const hat: any = PETS.putHat(holder, H.id); if (!hat) continue; if (self) hat.position.y += hH * .4 / Math.max(1e-4, hb.getWorldScale(new THREE.Vector3()).x); holder.updateMatrixWorld(true);
+            toRest(); mixer.setTime(c.duration * f); holder.updateMatrixWorld(true);
+            const hat: any = PETS.putHat(holder, H.id); if (!hat) continue; if (hatPlant==='hat') hat.position.y += hH * .4 / Math.max(1e-4, hb.getWorldScale(new THREE.Vector3()).x); holder.updateMatrixWorld(true);
             measured++; skinned(body, now); hat.getWorldPosition(B); hat.getWorldQuaternion(q4); U.set(0, 1, 0).applyQuaternion(q4);
             const hs = hat.getWorldScale(new THREE.Vector3()).x, band = F.band * hs, hatTop = (() => { const g = hat.children[0].geometry; g.computeBoundingBox(); return g.boundingBox.max.y * hs; })();   // (in the hat's own frame: a world box grows when the hat tips over)
             let top = -1e9, out = 0;
@@ -335,7 +368,7 @@ const res: any = await P.page.evaluate(async ([kinds, MODE, LIMIT, EYE_PROBES]) 
           }
         }
         if (!measured) { worst = 9999; worstAt = 'the hat was never put on: nothing measured'; }   // (a check that measured nothing has not passed)
-        out.cases.push({ kind, lod, clip: 'hat:' + H.id, t: 0, plant: self ? 'hat' : 'none', stretch: 0, tear: 0, sink: 0, float: 0, eyes: 0, hat: worst, worst: worstAt, hatFloat: floatMax, hatPoke: poke, hatLoose: loose });
+        out.cases.push({ kind, lod, clip: 'hat:' + H.id, t: 0, plant: hatPlant, stretch: 0, tear: 0, sink: 0, float: 0, eyes: 0, hat: worst, worst: worstAt, hatFloat: floatMax, hatPoke: poke, hatLoose: loose });
       }
       PETS.putHat(holder, null); scene.remove(holder);
     } else scene.remove(obj);
@@ -366,17 +399,21 @@ for (const kind of kinds) for (const lod of ['near', 'far']) {
   const f = `../models/world/creature-${kind}${lod === 'near' ? '-hd' : ''}.glb`; let kb = 0; try { kb = Math.round(statSync(f).size / 1024); } catch { }
   lines.push(`size ${kind} ${lod}: ${kb} KB (limit ${SIZE[lod]})${kb > SIZE[lod] || !kb ? '  OVER' : ''}`);
   const ff = fail.filter((c: any) => c.kind === kind && c.lod === lod);
-  if (ff.length) lines.push(`${kind} ${lod}: ` + ff.map((c: any) => `${c.clip}@${c.t} ` + keys.filter(k => val(c, k) > lim(c, k)).map(k => `${k} ${c[k]}`).join(' ')).join('; '));
+  if (ff.length) lines.push(`${kind} ${lod}: ` + ff.map((c: any) => `${c.clip}@${c.t} ${c.missing?'MISSING model/body ':''}` + keys.filter(k => val(c, k) > lim(c, k)).map(k => `${k} ${c[k]}`).join(' ')).join('; '));
 }
 if (MODE === 'selftest') {
-  const caught = (p: string, k: string) => cs.some((c: any) => c.plant === p && c[k] > LIMIT[k]);
+  const caught = (p: string, k: string) => cs.some((c: any) => {
+    if(c.plant!==p)return false;
+    const control=real.find((n: any)=>n.kind===c.kind&&n.lod===c.lod&&n.clip===c.clip&&n.t===c.t);
+    return control&&Number.isFinite(c[k])&&Number.isFinite(control[k])&&c[k]-control[k]>LIMIT[k];
+  });
   const r = { stretch: caught('stretch', 'stretch'), tear: caught('tear', 'tear'), eyes: caught('eyes', 'eyes'), sink: caught('sink', 'sink'), hat: caught('hat', 'hat'), mouth: caught('mouth', 'mouth') };
   lines.push('selftest ' + Object.entries(r).map(([k, v]) => `${k} ${v ? 'caught' : 'MISSED'}`).join(', '));
   if (Object.values(r).some(v => !v)) process.exitCode = 3;
 }
 writeFileSync(`${OUT}/summary.txt`, lines.join('\n') + '\n'); writeFileSync(`${OUT}/cases.json`, JSON.stringify(cs));
 console.log(lines.join('\n'));
-if (fail.length && !process.exitCode) process.exitCode = 2;
+if ((!real.length || fail.length) && !process.exitCode) process.exitCode = 2;
 await b.close();
 
 // Cow's face phase is mandatory: body counts alone missed R16's real defects.
@@ -384,10 +421,12 @@ await b.close();
 if (kinds.includes('cow')) {
   let sizeFail=false;
   for(const [suffix,cap] of [['-hd',800],['',400]] as const){try{if(statSync(new URL(`../../models/world/creature-cow${suffix}.glb`,import.meta.url)).size>cap*1024)sizeFail=true;}catch{sizeFail=true;}}
-  const dir=join(OUT,'cow-face'),run=spawnSync(process.execPath,[fileURLToPath(new URL('./audit_cow_face.mts',import.meta.url)),dir,MODE==='selftest'?'selftest':MODE==='quick'?'quick':''],{env:process.env,encoding:'utf8',maxBuffer:10*1024*1024});
+  const childEnv={...process.env};delete childEnv.COW_FACE_BASELINE;
+  const dir=join(OUT,'cow-face'),run=spawnSync(process.execPath,[fileURLToPath(new URL('./audit_cow_face.mts',import.meta.url)),dir,MODE==='selftest'?'selftest':MODE==='quick'?'quick':''],{env:childEnv,encoding:'utf8',maxBuffer:10*1024*1024});
   let faceSummary='Cow face phase produced no summary';try{faceSummary=readFileSync(join(dir,'summary.txt'),'utf8').trim();}catch{}
-  const ok=run.status===0&&!sizeFail;
-  const appended=`\nMandatory cow face phase:\n${faceSummary}\nCombined cow gate: ${ok&&!process.exitCode?'PASS':'FAIL'}${sizeFail?' (exact GLB byte budget failed)':''}\n`;
+  const parentMissing=real.some((c: any)=>c.missing);
+  const ok=run.status===0&&!run.error&&!sizeFail&&!parentMissing;
+  const appended=`\nMandatory cow face phase:\n${faceSummary}\nCombined cow gate: ${ok&&!process.exitCode?'PASS':'FAIL'}${sizeFail?' (exact GLB byte budget failed)':''}${parentMissing?' (parent model/body missing)':''}\n`;
   writeFileSync(`${OUT}/summary.txt`,lines.join('\n')+'\n'+appended);console.log(appended);
   if(!ok){if(run.stderr)console.error(run.stderr);if(run.error)console.error(run.error.message);if(!process.exitCode)process.exitCode=2;}
 }
