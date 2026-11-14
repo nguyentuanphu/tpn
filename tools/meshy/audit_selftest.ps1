@@ -10,6 +10,7 @@
 # (12 Nov 2026) mouth: the 'o' mood shows the smile's mouth (its piece missing): the mouth's shape per mood.
 # (13 Nov 2026) lid: a pale band under one shut eye (the blink), on Finn, whose shut eyes pass.
 # (14 Nov 2026) stray: a dark dot on the nose in the glance (a mood may change only the eyes and the mouth).
+# (14 Nov 2026) patch: a flat lighter block with hard edges over the second shut eye (the blink), as Sol's and Finn's lid patches.
 # -Out: where the plant rounds go (one folder each, deleted first); sessions sharing this PC each use their own.
 # The page server is tests/harness.mts's SV_URL (default http://localhost:8765/).
 param([string]$Id = 'sol', [string]$Out = 'D:\WorkSpace\meshy\fitted', [string]$Only = '')
@@ -19,7 +20,7 @@ $ok = $true
 New-Item -ItemType Directory -Force $Out | Out-Null
 # name = check, friend ('' = -Id), extra pass
 $plants = [ordered]@{ kit = @('kit', ''); poke = @('poke', ''); fold = @('fold', ''); eyes = @('eyes', ''); bite = @('bite', ''); rag = @('rag', ''); deep = @('poke', 'clara');
-  lightpoke = @('poke', 'finn', 'light', 'poke'); far = @('far', '', 'light'); glow = @('glow', '', 'night'); grip = @('grip', '', 'item'); face = @('face', ''); mouth = @('mouth', ''); lid = @('lid', 'finn'); stray = @('stray', '') }
+  lightpoke = @('poke', 'finn', 'light', 'poke'); far = @('far', '', 'light'); glow = @('glow', '', 'night'); grip = @('grip', '', 'item'); face = @('face', ''); mouth = @('mouth', ''); lid = @('lid', 'finn'); stray = @('stray', ''); patch = @('patch', '') }
 foreach ($f in $plants.Keys) {
   if ($Only -and -not ($Only.Split(',') -contains $f)) { continue }
   $p = $plants[$f]; $check = $p[0]; $who = if ($p[1]) { $p[1] } else { $Id }
