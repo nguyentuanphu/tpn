@@ -301,6 +301,23 @@ bounce at 2x: crop the legs (`pet_film.mts <out> <kind> run,jump,bounce`, then c
 - Keep each file's line endings: Python on Windows writes CRLF in text mode (use `newline=''`), and Git Bash's `sed -i`
   dropped the CRs of the CRLF json files (the whole file then shows as changed).
 
+### Lessons from the gate rounds (14-15 Nov 2026)
+- Pointed or slab-like hooves and paws in any bent-knee pose (lying, sitting, running) came from the weights, not the
+  pose: the hoof is wider than the leg seen from above, so its rim fell outside the leg's radius and kept the body's
+  weight (calf up to 58 %, bunny 29 %, kitty 25 %, panda 17 %). When the knee folded, half the hoof stayed with the body
+  and stretched into a spike. `foot_whole` 0.5: below half the belly's height a point near a leg is all leg. To find
+  this, list the weights of the lowest points (a Blender script on `<kind>-hd.blend`), do not tune the pose.
+- A lying pose that stands on its folded legs: `ground()` lifts every frame where anything is under the ground, so a
+  fold that pushes a hoof down raises the whole body. `fit.log` is UTF-16 (`iconv -f UTF-16LE`); `GROUND sleep lifted
+  121 of 121` means the pose never touched down. Try poses on the `.blend` first (body drop, thigh and knee turns, the
+  lowest point in front and behind) and render a side and three-quarter view, a few seconds a try, before a 25-minute
+  rebuild. On these bones a negative knee turn folds the lower leg back (the code shapes' comment says the opposite).
+  The calf lies with its front legs forward (-1.3, knee -0.2) and its hind legs folded under (-0.9, knee -2.1).
+- A shut lid read as a smooth disc even where its picture is the face's own picture copied: at `lid_px` 128 the copy
+  is blurrier than the face beside it, so the fur's grain stops at the lid's edge. `lid_px` 256 (being tried on the bunny and kitty, 15 Nov).
+- `lid_fade` (the rim's alpha fading out, drawn blended) helped the calf and kitty, but on the bunny the eye's dark
+  outline showed through the faded rim: look before keeping it.
+
 ### Each animal's own skills
 Every pet has special skills of its own (owner, 10 Nov 2026), in `PET_SKILLS` (`js/pets.ts`), each with a chip under the
 name card (at the right edge on a phone) and a case in `tests/pet-skills.mts`. The puppy: fetch, dig for treasure, lead

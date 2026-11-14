@@ -60,5 +60,14 @@ Verdict: all four NOT clean. It opened 52 of 264 pictures. Each line must be fix
   allowances 380/180 with reasons (1-3 px edge slivers at a slant). Not yet re-reviewed by a second reviewer.
 - Full audits (232 cases) before the panda/bunny lid change: panda 0, bunny 0, calf 5 (beg/bounce lid edge, captain hat
   43), kitty 4 (beg lid 200, captain/nón lá hat loose): to look at.
-- Still open: calf sleep/run/sit/beg hooves; kitty surprised side eye disc, beg hind leg block; panda shoulder white
+
+### Progress (15 Nov 2026 morning AEDT)
+- Calf hooves (sleep, sit, run): the cause was the weights, not the pose. The hoof rims kept up to 58 % of the body's
+  weight and stretched into spikes when a knee folded; every pet had some (bunny 29 %, kitty 25 %, panda 17 %).
+  `foot_whole` 0.5 for all four. The calf lay on its folded legs (`ground()` lifted every frame): it now lies with its
+  front legs forward and its hind legs folded under (tried in Blender, lowest point 4 mm over the ground).
+- Bunny `lid_fade` taken out (the eye's dark outline showed through the faded rim). Bunny and kitty lids: `lid_px` 256
+  (at 128 the lid lost the fur's grain and read as a smooth disc).
+- All four being rebuilt; then boards, full audits and a new second reviewer.
+- Still open: calf sleep/run/sit/beg hooves (fix in the rebuild); kitty surprised side eye disc, beg hind leg block; panda shoulder white
   sliver, beg paws in the air; bunny beg ragged bottom, scratch fringe; board body cameras. Then a new second review.
