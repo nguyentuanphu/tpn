@@ -19,12 +19,13 @@ const result=await page.evaluate(async ([mode,baseline,debug])=>{
  const png=(px,flags)=>{const cv=document.createElement('canvas');cv.width=cv.height=S;const c=cv.getContext('2d'),im=c.createImageData(S,S);for(let y=0;y<S;y++)for(let x=0;x<S;x++){const src=((S-1-y)*S+x)*4,dst=(y*S+x)*4,marked=flags&&flags[src/4];im.data[dst]=marked?255:px[src+3]?px[src]:200;im.data[dst+1]=marked?0:px[src+3]?px[src+1]:210;im.data[dst+2]=marked?255:px[src+3]?px[src+2]:220;im.data[dst+3]=255;}c.putImageData(im,0,0);return cv.toDataURL('image/png');};
  for(const tier of mode==='selftest'?['near']:['near','far']){
   const t=await K.loadWorldModel((baseline?'../../docs/meshy-farm-cloud/cow/review/':'')+'creature-cow'+(tier==='near'?'-hd':''));if(!t)throw Error('Model missing');const obj=clone(t.scene);scene.add(obj);obj.traverse(o=>{if(o.isSkinnedMesh)o.frustumCulled=false;});
+  let mouthIds=new Uint8Array(S*S);
   const controls=new Map(),idCache=new Map(),idRead=cam=>{
    const saved=[];
-   const swap=o=>{if(!o.isMesh)return;const original=o.material;saved.push([o,original]);let id=0;const lid=/-(?:shut|joy)([01])$/.exec(original.name||'');if(lid)id=Number(lid[1])+1;
+   const swap=o=>{if(!o.isMesh)return;const original=o.material;saved.push([o,original]);let id=0;const lid=/-(?:shut|joy)([01])$/.exec(original.name||'');if(lid)id=Number(lid[1])+1;else if(/-mouth$/.test(original.name||''))id=3;
     const key=(original.uuid||original.id)+':'+id;let mat=idCache.get(key);
-    if(!mat){mat=new THREE.MeshBasicMaterial({color:0,map:original.map,alphaMap:original.alphaMap,transparent:original.transparent,blending:original.blending,opacity:original.opacity,alphaTest:original.alphaTest,side:original.side,depthWrite:original.depthWrite,depthTest:original.depthTest,polygonOffset:original.polygonOffset,polygonOffsetFactor:original.polygonOffsetFactor,polygonOffsetUnits:original.polygonOffsetUnits});if(id){mat.onBeforeCompile=sh=>{sh.fragmentShader=sh.fragmentShader.replace('#include <map_fragment>','#include <map_fragment>\ndiffuseColor.rgb='+ (id===1?'vec3(1.,0.,0.);':'vec3(0.,1.,0.);'));};mat.customProgramCacheKey=()=>String(id);}idCache.set(key,mat);}o.material=mat;};
-   scene.traverse(swap);const pixels=read(cam);saved.forEach(([o,m])=>o.material=m);const ids=new Uint8Array(S*S);for(let i=0;i<ids.length;i++){if(pixels[i*4]>128&&pixels[i*4+1]<64)ids[i]=1;if(pixels[i*4+1]>128&&pixels[i*4]<64)ids[i]=2;}return ids;
+    if(!mat){mat=new THREE.MeshBasicMaterial({color:0,map:original.map,alphaMap:original.alphaMap,transparent:original.transparent,blending:original.blending,opacity:original.opacity,alphaTest:original.alphaTest,side:original.side,depthWrite:original.depthWrite,depthTest:original.depthTest,polygonOffset:original.polygonOffset,polygonOffsetFactor:original.polygonOffsetFactor,polygonOffsetUnits:original.polygonOffsetUnits});if(id){mat.onBeforeCompile=sh=>{sh.fragmentShader=sh.fragmentShader.replace('#include <map_fragment>','#include <map_fragment>\ndiffuseColor.rgb='+ (id===1?'vec3(1.,0.,0.);':id===2?'vec3(0.,1.,0.);':'vec3(0.,0.,1.);'));};mat.customProgramCacheKey=()=>String(id);}idCache.set(key,mat);}o.material=mat;};
+   scene.traverse(swap);const pixels=read(cam);saved.forEach(([o,m])=>o.material=m);const ids=new Uint8Array(S*S);mouthIds=new Uint8Array(S*S);for(let i=0;i<ids.length;i++){if(pixels[i*4]>128&&pixels[i*4+1]<64)ids[i]=1;if(pixels[i*4+1]>128&&pixels[i*4]<64)ids[i]=2;if(pixels[i*4+2]>128&&pixels[i*4]<64&&pixels[i*4+1]<64)mouthIds[i]=1;}return ids;
   };
   const mixer=new THREE.AnimationMixer(obj),bones=['shut0','shut1','joy0','joy1','retract0','retract1','jaw'].map(n=>obj.getObjectByName(n));
   if(bones.some(o=>!o))throw Error('Missing required cow expression bone');
@@ -49,9 +50,10 @@ const result=await page.evaluate(async ([mode,baseline,debug])=>{
   const restPositions=apertures?cowEyeRestPositions(THREE,body):null;
   const idle=t.clips.find(c=>c.name==='idle');let blinkAt=-1;for(let at=0;at<idle.duration;at+=1/60){mixer.stopAllAction();mixer.clipAction(idle).reset().play();mixer.setTime(at);if(bones[0].scale.x>.9){blinkAt=at;break;}}
   if(blinkAt<0)throw Error('Idle has no actual closed blink');
-  const clips=mode==='selftest'?['sleep']:mode==='quick'?['cheer','sleep','sad']:t.clips.map(c=>c.name).concat('blink');
+  const clips=mode==='selftest'?['sleep','cheer']:mode==='quick'?['cheer','sleep','sad']:t.clips.map(c=>c.name).concat('blink');
   const views=mode==='selftest'?[[0,0]]:mode==='quick'?[[0,0],[.7,0],[-.7,0]]:[[0,0],[.4,0],[-.4,0],[.7,0],[-.7,0],[Math.PI/2,0],[-Math.PI/2,0],[0,.7],[0,-.5]];
-  for(const clip of clips)for(const [yaw,elevation] of views)for(const plant of mode==='selftest'?['none','lid','mouth','stray','rim','flat','eyes','silhouette-add','silhouette-cut']:['none']){
+  for(const clip of clips)for(const [yaw,elevation] of views)for(const plant of mode==='selftest'?['none','lid','mouth','mouth-open','stray','rim','rim-inner','rim-inner-native','flat','eyes','silhouette-add','silhouette-cut']:['none']){
+   if(mode==='selftest'&&((clip==='cheer'&&!['none','mouth-open'].includes(plant))||(clip==='sleep'&&plant==='mouth-open')))continue;
    const c=t.clips.find(c=>c.name===(clip==='blink'?'idle':clip));mixer.stopAllAction();mixer.clipAction(c).reset().play();mixer.setTime(clip==='blink'?blinkAt:c.duration*(clip==='sleep'||clip==='sad'?.5:.3));obj.updateMatrixWorld(true);
    const saved=bones.map(o=>({p:o.position.clone(),s:o.scale.clone(),q:o.quaternion.clone()}));
    const eworld=bones.slice(0,2).map(o=>o.getWorldPosition(new THREE.Vector3())),mid=eworld[0].clone().add(eworld[1]).multiplyScalar(.5);mid.y-=.035;
@@ -75,13 +77,18 @@ const result=await page.evaluate(async ([mode,baseline,debug])=>{
    }
    const jaw=bones[6].getWorldPosition(new THREE.Vector3()),mp=project(jaw),mh=project(jaw.clone().addScaledVector(right,.045)),mv=project(jaw.clone().addScaledVector(up,.025));
    const mouth={...mp,rx:Math.abs(mh.x-mp.x),ry:Math.abs(mv.y-mp.y)},closed=bones[0].scale.x>.1||bones[2].scale.x>.1,mouthOpen=bones[6].scale.x>.05;
+   // A frontal width collapses to zero in profile. Measure the real bounded
+   // mouth surface in the current pose, retaining the anatomical fallback.
+   if(mouthOpen){const ps=[],worldBox=new THREE.Box3();obj.traverse(o=>{if(!o.isSkinnedMesh||!/-mouth$/.test(o.material.name||''))return;for(let i=0;i<o.geometry.attributes.position.count;i++){const p=new THREE.Vector3().fromBufferAttribute(o.geometry.attributes.position,i);o.applyBoneTransform(i,p);p.applyMatrix4(o.matrixWorld);worldBox.expandByPoint(p);ps.push(project(p));}});if(!ps.length||worldBox.getSize(new THREE.Vector3()).length()>.2)throw Error('Missing/oversized actual mouth surface');
+    const x0=Math.min(mp.x-mouth.rx,...ps.map(p=>p.x)),x1=Math.max(mp.x+mouth.rx,...ps.map(p=>p.x)),y0=Math.min(mp.y-mouth.ry,...ps.map(p=>p.y)),y1=Math.max(mp.y+mouth.ry,...ps.map(p=>p.y));mouth.x=(x0+x1)/2;mouth.y=(y0+y1)/2;mouth.rx=(x1-x0)/2;mouth.ry=(y1-y0)/2;
+   }
    // Reference has the exact same head/body pose, only its expression neutral.
    bones.forEach((o,i)=>{if(i===4||i===5)return;o.position.copy(rest[i].p);o.quaternion.copy(rest[i].q);o.scale.setScalar(.001);});obj.updateMatrixWorld(true);const reference=read(cam);
    const referenceEyeIds=apertures?readCowReferenceEyeIds(THREE,scene,body,restPositions,apertures,read,cam):null;
    bones.forEach((o,i)=>{o.position.copy(saved[i].p);o.scale.copy(saved[i].s);o.quaternion.copy(saved[i].q);});obj.updateMatrixWorld(true);
    let fault;
    if(plant!=='none'){
-    let loc=plant==='mouth'?jaw.clone().addScaledVector(right,.023):plant==='stray'?jaw.clone().addScaledVector(up,.068):plant==='eyes'?eworld[1].clone().addScaledVector(up,.015):eworld[plant==='flat'?0:1].clone();
+    let loc=plant==='mouth-open'?jaw.clone():plant==='mouth'?jaw.clone().addScaledVector(right,.023):plant==='stray'?jaw.clone().addScaledVector(up,.068):plant==='eyes'?eworld[1].clone().addScaledVector(up,.015):eworld[plant==='flat'?0:1].clone();
     if(plant==='eyes'){
      const aperture=[];if(referenceEyeIds)for(let i=0;i<referenceEyeIds.length;i++)if(referenceEyeIds[i]===2)aperture.push(i);
      if(!aperture.length)throw Error('No reference aperture for planted eyes');
@@ -98,12 +105,24 @@ const result=await page.evaluate(async ([mode,baseline,debug])=>{
      if(!spot)throw Error('No background space for rendered silhouette plant');
      const depth=eworld[1].clone().project(cam).z;loc=new THREE.Vector3((spot.x/S)*2-1,(spot.y/S)*2-1,depth).unproject(cam);
     }
-    const geo=plant==='rim' ?new THREE.RingGeometry(.045,.049,64):plant==='lid'?new THREE.CircleGeometry(.035,48):plant==='flat'?new THREE.CircleGeometry(.065,64):plant==='eyes'?new THREE.CircleGeometry(.012,32):new THREE.PlaneGeometry(.015,.012);
-    fault=new THREE.Mesh(geo,new THREE.MeshBasicMaterial({color:plant==='eyes'?0xffffff:plant==='flat'?0xe8d6bd:plant==='lid'||plant==='rim'?0xaaaaaa:0x220500,transparent:true,depthTest:false,depthWrite:false,side:THREE.DoubleSide}));if(plant==='silhouette-cut'){fault.material.opacity=0;fault.material.blending=THREE.NoBlending;}
-    if(['lid','rim','flat','eyes'].includes(plant)){const eye=plant==='flat'?0:1;let source;obj.traverse(o=>{if(o.isMesh&&o.material.name?.endsWith('-'+(bones[2].scale.x>.1?'joy':'shut')+eye))source=o.material;});if(!source)throw Error('Missing real lid material name for plant');fault.material.name=source.name;}
+    let innerRadius=0;
+    if(plant.startsWith('rim-inner')){
+     let inside=Uint8Array.from(referenceEyeIds,id=>id===2?1:0),best=-1,layers=0;
+     for(let step=0;step<100;step++){const next=new Uint8Array(S*S);let remaining=0;for(let y=1;y<S-1;y++)for(let x=1;x<S-1;x++){const i=y*S+x;if(inside[i]&&inside[i-1]&&inside[i+1]&&inside[i-S]&&inside[i+S]){next[i]=1;remaining++;best=i;}}if(!remaining)break;inside=next;layers++;}
+     if(best<0||layers<8)throw Error('No actual aperture interior for internal rim plant');
+     const depth=eworld[1].clone().project(cam).z,pixel=new THREE.Vector3(((best%S+.5)/S)*2-1,(((best/S|0)+.5)/S)*2-1,depth);loc=pixel.clone().unproject(cam);
+     innerRadius=pixel.clone().add(new THREE.Vector3(layers*.45/S*2,0,0)).unproject(cam).distanceTo(loc);
+    }
+    const geo=plant.startsWith('rim-inner')?new THREE.RingGeometry(innerRadius*.72,innerRadius,64):plant==='rim' ?new THREE.RingGeometry(.045,.049,64):plant==='lid'?new THREE.CircleGeometry(.035,48):plant==='flat'?new THREE.CircleGeometry(.065,64):plant==='eyes'?new THREE.CircleGeometry(.012,32):new THREE.PlaneGeometry(.015,.012);
+    if(plant==='mouth-open'){const vertices=[];for(const x of [-.035,.035])vertices.push(x-.006,-.006,0,x+.006,-.006,0,x+.006,.006,0,x-.006,.006,0);geo.setAttribute('position',new THREE.Float32BufferAttribute(vertices,3));geo.deleteAttribute('normal');geo.deleteAttribute('uv');geo.setIndex([0,1,2,0,2,3,4,5,6,4,6,7]);geo.computeBoundingSphere();}
+    fault=new THREE.Mesh(geo,new THREE.MeshBasicMaterial({color:plant==='rim-inner-native'?0x333333:plant==='eyes'?0xffffff:plant==='flat'?0xe8d6bd:plant==='lid'||plant.startsWith('rim')?0xaaaaaa:0x220500,transparent:true,depthTest:false,depthWrite:false,side:THREE.DoubleSide}));if(plant==='silhouette-cut'){fault.material.opacity=0;fault.material.blending=THREE.NoBlending;}
+    if(['lid','rim','rim-inner','rim-inner-native','flat','eyes'].includes(plant)){const eye=plant==='flat'?0:1;let source;obj.traverse(o=>{if(o.isMesh&&o.material.name?.endsWith('-'+(bones[2].scale.x>.1?'joy':'shut')+eye))source=o.material;});if(!source)throw Error('Missing real lid material name for plant');fault.material.name=source.name;}
+    if(plant==='mouth-open')fault.material.name='meshy-cow-mouth';
     fault.position.copy(loc).addScaledVector(dir,.025);fault.quaternion.copy(cam.quaternion);fault.renderOrder=999;scene.add(fault);
    }
-   const current=read(cam),ids=idRead(cam),m=cowFaceMetrics(current,reference,S,S,eyes,mouth,closed,mouthOpen,ids,lashMask,referenceEyeIds),cs={tier,clip,yaw,elevation,plant,closed,mouthOpen,...m.counts,textureFlat:m.textureFlat,eyeData:m.eyeData,coverageErrors:m.coverageErrors};cases.push(cs);
+   const current=read(cam),ids=idRead(cam),m=cowFaceMetrics(current,reference,S,S,eyes,mouth,closed,mouthOpen,ids,lashMask,referenceEyeIds,mouthIds);
+   if(mouthOpen&&bones[6].scale.x>.4&&Math.abs(yaw)<=.4&&Math.abs(elevation)<.1&&m.mouthVisiblePixels<4)m.coverageErrors.push('Open mouth missing visible front surface');
+   const cs={tier,clip,yaw,elevation,plant,closed,mouthOpen,...m.counts,textureFlat:m.textureFlat,eyeData:m.eyeData,coverageErrors:m.coverageErrors,mouthVisiblePixels:m.mouthVisiblePixels,mouthOccluded:mouthOpen&&m.mouthVisiblePixels===0};cases.push(cs);
    if(mode==='selftest'){
     const key=JSON.stringify([tier,clip,yaw,elevation]);
     if(plant==='none')controls.set(key,m.flags);
@@ -114,11 +133,12 @@ const result=await page.evaluate(async ([mode,baseline,debug])=>{
      fault.material=mask;obj.visible=false;let footprint;
      try{footprint=read(cam);}finally{obj.visible=true;fault.material=original;mask.dispose();}
      cs.plantedIncrease=Object.fromEntries(Object.keys(m.flags).map(k=>[k,m.flags[k].reduce((n,v,i)=>n+(v&&!control[k][i]&&footprint[i*4+3]?1:0),0)]));
+     if(plant.startsWith('rim-inner')){let total=0,inside=0;for(let i=0;i<S*S;i++)if(footprint[4*i+3]){total++;if(referenceEyeIds[i]===2)inside++;}cs.plantedInsideAperture=inside/total;if(!total||inside/total<.95)throw Error('Internal rim plant not inside actual aperture');}
     }
    }
    for(const k of Object.keys(m.counts))if(m.counts[k]>(k==='eyes'?6:12)||plant===k)pics[`${tier}-${clip}-${yaw}-${elevation}-${plant}-${k}`]=png(current,m.flags[k]);
    if(debug){const name=`${tier}-${clip}-${yaw}-${elevation}-${plant}`;pics[name+'-current']=png(current);pics[name+'-reference']=png(reference);
-    for(const [label,mask]of [['ids',ids],['reference-ids',referenceEyeIds],['lash',lashMask]] as const){if(!mask)continue;const rgba=new Uint8Array(S*S*4);for(let i=0;i<S*S;i++){rgba[4*i]=mask[i]&1?255:0;rgba[4*i+1]=mask[i]&2?255:0;rgba[4*i+3]=255;}pics[name+'-'+label]=png(rgba);}
+    for(const [label,mask]of [['ids',ids],['reference-ids',referenceEyeIds],['lash',lashMask],['mouth-ids',mouthIds]] as const){if(!mask)continue;const rgba=new Uint8Array(S*S*4);for(let i=0;i<S*S;i++){rgba[4*i]=mask[i]&1?255:0;rgba[4*i+1]=mask[i]&2?255:0;rgba[4*i+3]=255;}pics[name+'-'+label]=png(rgba);}
    }
    if(fault){scene.remove(fault);fault.geometry.dispose();fault.material.dispose();}
   }
@@ -134,13 +154,13 @@ const lines=[`Cow face audit: ${real.length} cases; ${fail.length} failing (limi
 for(const k of keys)lines.push(`${k}: worst ${Math.max(0,...real.map(c=>c[k]))}, failing ${real.filter(c=>c[k]>limit(k)).length}`);
 for(const c of real)for(const error of c.coverageErrors)lines.push(`${c.tier}/${c.clip}/${c.yaw}/${c.elevation}: ${error}`);
 if(mode==='selftest'){
- const targets={lid:'lid',mouth:'mouth',stray:'stray',rim:'rim',flat:'textureFlat',eyes:'eyes','silhouette-add':'silhouette','silhouette-cut':'silhouette'};
+ const targets={lid:'lid',mouth:'mouth','mouth-open':'mouth',stray:'stray',rim:'rim','rim-inner':'rim','rim-inner-native':'rim',flat:'textureFlat',eyes:'eyes','silhouette-add':'silhouette','silhouette-cut':'silhouette'};
  const missed=Object.entries(targets).filter(([plant,k])=>!result.cases.some(c=>{
   if(c.plant!==plant)return false;
   const control=real.find(n=>n.tier===c.tier&&n.clip===c.clip&&n.yaw===c.yaw&&n.elevation===c.elevation);
   return control&&Number.isFinite(c[k])&&c[k]-control[k]>limit(k)&&c.plantedIncrease?.[k==='textureFlat'?'rim':k]>limit(k);
  })).map(([plant])=>plant);
- lines.push('selftest: '+(missed.length?'MISSED '+missed.join(', '):'all eight rendered plants increased their metric beyond the same-pose control'));
+ lines.push('selftest: '+(missed.length?'MISSED '+missed.join(', '):'all '+Object.keys(targets).length+' rendered plants increased their metric beyond the same-pose control'));
  if(missed.length)process.exitCode=1;
 }
 if(fail.length)process.exitCode=1;writeFileSync(out+'/summary.txt',lines.join('\n')+'\n');console.log(lines.join('\n'));

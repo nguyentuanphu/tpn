@@ -161,3 +161,23 @@ Runtime thử65: gần777804/xa375796 byte, 38052/14740 tam giác,20bone/10clip;
 Đã sửa fixture lỗ tai theo tam giác tai thật, chọn đĩa bên trong silhouette2D với khoảng hở mép, cắt hữu hạn qua hai mặt, thêm góc cận theo pháp tuyến tai cho cả control và kiểm thật. Selftest63 bắt đủ6lỗi thân và8lỗi mặt, control31ca thân0vượt; controlmặt rim22 nên combinedFAIL. Người soi độc lập xác minh6cặp depth: mỗi lỗ mới372–376pixel đều kín, ca .85 reverse tăngtear21→373, không tính nhầm lỗ vòng chuông. Không tuyên bố mọi góc đều bắt. Ngưỡng/độ sâu/rim-bin/so control giữ nguyên; summary nay in đúng ngưỡng từng con/pose. Cần chạy lại full và selftest trên bản cuối.
 
 Đã xem ảnh game thử63 native1024 cheer/sleep3/4, vẫn thấy vệt sắc ở khóe nên tiếp tục sửa. Chưa có bộ242ảnh cuối/phim mới/ba thiết bị/soát mù cuối. TypeScript đang chạy lại với server8799 (lần khởi động trước dùng nhầm server mặc định8765 nên dừng trước kiểm; không tính là PASS). Không gọi Meshy/API, chi mới0; sheep/chicken vẫn dừng. Push checkpoint theo lịch chủ yêu cầu, không phải approval/ready for Release.
+
+### Đang làm 15/11/2026 00:06 AEDT — chưa đủ cổng R17
+
+Checkpoint `b20eeb42a` đã push23:46AEDT, chưa duyệt. Types chạy lại đúng server8799 và browser cache cloud: PASS360file explicit+108server/Studio/tools (1/1,35giây); hai lần trước dừng vì cấu hình server/browser, không phải kết quả đạt. File catalogue/check-times do suite tự tạo đã khôi phục, không đụng worktree gốc của chủ.
+
+Soát độc lập65 xác nhận phép rim dùng ellipse đi xuyên vào actualaperture: nhiều gradient lông mới thay iris/sclera bị tính là mép vật liệu. Sửa phân biệt ngoài actualM và màu bất thường bên trong; flat-fur giữ riêng. Khớp lông kem ngoài opening dùng pixel nghi vấn với reference±1px, không lấy một nhân chứng trắng bất kỳ gần đó. Thêm kiểm contour đồng màu kín bên trong opening và2plantRingGeometry (xám rõ/xám gần màu lông), không cho mask hàng mi che fault vẽ đè. Selftest65 `face-boundary-selftest3` bắt10/10 plant; người soi độc lập xác nhận cả2ring203pixel flags đúng203pixel thay đổi/footprint,100%trong actualaperture; M/H/ID/coverage không đổi. Kiểm đồng màu kín không được quảng cáo bao phủ mọi viền có texture/shading.
+
+Bản65 sau sửa classifier còn2/18ca rim lỗi (worst19), không phải đạt. Ảnh1024 mới vẫn đang được soát. Thử đổi bias/cull chỉ trong công cụ ảnh không giải quyết vệt; không sửa renderer/js của game. Đã kiểm số UV (không đảo UV) và pose (lớp mi lệch dưới0,2mm), không kết luận từ số không mà bỏ nhìn ảnh.
+
+Thử66 đồng bộ tâm hốc sau dịch mắt: insetcenters từ−.085/.105 về−.068/.093, giữ trường dịch X gốc vì nó chọn điểm trước biến đổi. Kiểm nhanh66 còn3ca mặt vượt (nearcheer+.7rim20,nearsleep+.7lid16,farsleep+.7lid19). Đang chạy parent full120ca thân+198ca mặt, chưa có kết quả. Chưa có bộ242ảnh/phim/phát phim/ba thiết bị/soát mù cuối hay approval. Không Meshy/API/credit mới; sheep/chicken dừng.
+
+### Tiếp tục 15/11/2026 03:58 AEDT — thử67, chưa hỏi duyệt
+
+Tiếp tục sau gián đoạn phiên, fetch xác nhận remote `b20eeb42a`; không reset/tạo nhánh. Chủ hỏi còn bao lâu: đã báo dự kiến1–2giờ nếu vòng kiểm mới không phát hiện lỗi, chưa hứa mốc chắc chắn.
+
+Full66:120ca thân0vượt;198ca mặt45lỗi (lid15,mouth4,stray26,rim2,silhouette3; coverage0). Dùng bbox actualaperture thay riêng các component iris/sclera bất đối xứng giảm còn39ca lỗi, rim0 nhưng chưa đạt. Đã nhìn ảnh: mouth nhìn từ trên đang nhận nhầm **vòng cổ** làm môi; mouth ROI chiếu từ bề rộng mặt thẳng bị co sai ở góc bên. Stray có vùng lông sát mi và mép hình miệng ngoài ROI cũ. Không nâng ngưỡng hay coi full này là đạt.
+
+Thử67: sửa mouth riêng cow bằng Blender — tia cast bắt đầu ngoài toàn model, alpha chỉ giữ hình miệng thay ô da hồng đục, giảm độ nâng về0,15mm tối đa. Đo mouth bằng surface3D pose thật (giới hạn kích thước), thêm ID pass miệng nhìn thấy: vòng cổ bị miệng/mõm che không phải môi. Ghi số pixel miệng/occluded; mặt thẳng có miệng mở lớn mà không thấy phải fail coverage. Vẫn giữ ngưỡng12/6 và mọi kiểm alpha/coverage. Đo màu bên trong eye opening không trộn lông kem bên ngoài vào lông đen.
+
+GLB67 gần778112/xa376188byte,38060/14744tam giác,20bone/10clip, alpha/dung lượng đạt. Quick18ca mặt0lỗi (lidworst6,rim7,các mục khác0). Parent selftest67 **PASS**,6/6plant thân+11/11plant mặt (bổ sung lỗi môi trùng khi miệng mở, có control cheer đúng pose và footprint thật). Full120+198 đang chạy lại trên67, chưa kết quả. Chưa có242ảnh cuối/soát mù cuối/phim/phát phim/ba thiết bị mới. Không credit/API mới; sheep/chicken dừng; không ready for Release/approval.

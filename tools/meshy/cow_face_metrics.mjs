@@ -34,9 +34,9 @@ export function validateCowLashMetadata(strokes,centers){
 // 5f13d4b3b (13–14 Nov). Same HSV lid criterion, 4-connected group floor,
 // 1px neighbourhood colour tolerance and mouth lip/core grouping; coat-aware
 // brightness and the rim residual extend coverage to black/white animal fur.
-export function cowFaceMetrics(current,reference,width,height,eyes,mouth,closed,mouthOpen=false,eyeIds=null,lashMask=null,referenceEyeIds=null){
+export function cowFaceMetrics(current,reference,width,height,eyes,mouth,closed,mouthOpen=false,eyeIds=null,lashMask=null,referenceEyeIds=null,mouthIds=null){
  const N=width*height,flags={lid:new Uint8Array(N),mouth:new Uint8Array(N),stray:new Uint8Array(N),rim:new Uint8Array(N),eyes:new Uint8Array(N),silhouette:new Uint8Array(N)};
- if(!Number.isInteger(width)||!Number.isInteger(height)||width<=0||height<=0||current.length!==N*4||reference.length!==N*4||(eyeIds&&eyeIds.length!==N)||(lashMask&&lashMask.length!==N)||(referenceEyeIds&&referenceEyeIds.length!==N))throw Error('Invalid face render buffers');
+ if(!Number.isInteger(width)||!Number.isInteger(height)||width<=0||height<=0||current.length!==N*4||reference.length!==N*4||(eyeIds&&eyeIds.length!==N)||(lashMask&&lashMask.length!==N)||(referenceEyeIds&&referenceEyeIds.length!==N)||(mouthIds&&(mouthIds.length!==N||mouthIds.some(id=>id!==0&&id!==1))))throw Error('Invalid face render buffers');
  for(const ids of [eyeIds,referenceEyeIds])if(ids&&ids.some(id=>id!==0&&id!==1&&id!==2))throw Error('Invalid actual-eye IDs');
  if(eyes.some(e=>![e.x,e.y,e.rx,e.ry].every(Number.isFinite)||e.rx<=0||e.ry<=0||![0,1].includes(e.index))||![mouth.x,mouth.y,mouth.rx,mouth.ry].every(Number.isFinite))throw Error('Invalid projected face frame');
  const coverageErrors=[];
@@ -51,7 +51,7 @@ export function cowFaceMetrics(current,reference,width,height,eyes,mouth,closed,
  const dist=(a,i,b,j)=>Math.hypot(a[4*i]-b[4*j],a[4*i+1]-b[4*j+1],a[4*i+2]-b[4*j+2])/255;
  // Judge fur pigment over a 3x3 area; individual pale hair texels are not
  // a pale skin patch. Stay within the same visible lid at occlusion boundaries.
- const average=(p,i,id=0,omitLash=0)=>{const x=i%width,y=i/width|0,sum=[0,0,0];let n=0;for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){const u=x+dx,v=y+dy,j=v*width+u;if(u<0||u>=width||v<0||v>=height||!p[4*j+3]||(id&&eyeIds&&eyeIds[j]!==id)||(omitLash&&eyeIds?.[j]===id&&(lashMask?.[j]&omitLash)))continue;for(let k=0;k<3;k++)sum[k]+=p[4*j+k]/255;n++;}return sum.map(v=>v/Math.max(1,n));};
+ const average=(p,i,id=0,omitLash=0,openingOnly=false)=>{const x=i%width,y=i/width|0,sum=[0,0,0];let n=0;for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){const u=x+dx,v=y+dy,j=v*width+u;if(u<0||u>=width||v<0||v>=height||!p[4*j+3]||(id&&eyeIds&&eyeIds[j]!==id)||(openingOnly&&referenceEyeIds?.[j]!==id)||(omitLash&&eyeIds?.[j]===id&&(lashMask?.[j]&omitLash)))continue;for(let k=0;k<3;k++)sum[k]+=p[4*j+k]/255;n++;}return sum.map(v=>v/Math.max(1,n));};
  const colourDistance=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1],a[2]-b[2]);
  const median=a=>{a.sort((x,y)=>x-y);return a[a.length>>1]??0;};
  const groups=mask=>{const seen=new Uint8Array(N),out=[];for(let i=0;i<N;i++)if(mask[i]&&!seen[i]){const g=[],st=[i];seen[i]=1;while(st.length){const j=st.pop();g.push(j);const x=j%width,y=j/width|0;for(const [dx,dy]of[[1,0],[-1,0],[0,1],[0,-1]]){const u=x+dx,v=y+dy,k=v*width+u;if(u>=0&&u<width&&v>=0&&v<height&&mask[k]&&!seen[k]){seen[k]=1;st.push(k);}}}out.push(g);}return out.sort((a,b)=>b.length-a.length);};
@@ -74,19 +74,20 @@ export function cowFaceMetrics(current,reference,width,height,eyes,mouth,closed,
    const mx=xs.reduce((a,b)=>a+b,0)/g.length,my=ys.reduce((a,b)=>a+b,0)/g.length;if(Math.hypot((mx-e.x)/e.rx,(my-e.y)/e.ry)>1.5)continue;
    accepted.push(...g);
   }
-  if(accepted.length){
+  const aperture=[];
+  if(referenceEyeIds)for(let i=0;i<N;i++)if(referenceEyeIds[i]===e.index+1)aperture.push(i);
+  if(accepted.length||aperture.length){
    // Iris and outer lash arc may be disconnected; both bound the actual eye.
-   const xs=accepted.map(i=>i%width),ys=accepted.map(i=>i/width|0),x0=Math.min(...xs),x1=Math.max(...xs),y0=Math.min(...ys),y1=Math.max(...ys),fm=new Uint8Array(N);
+   const bounds=aperture.length?aperture:accepted,xs=bounds.map(i=>i%width),ys=bounds.map(i=>i/width|0),x0=Math.min(...xs),x1=Math.max(...xs),y0=Math.min(...ys),y1=Math.max(...ys),fm=new Uint8Array(N);
    for(const i of accepted)fm[i]=1;eyeFeatures.set(e.index,fm);
-   if(e.coat==='dark'){const rx=Math.max(Math.abs(x0-e.x),Math.abs(x1-e.x)),ry=Math.max(Math.abs(y0-e.y),Math.abs(y1-e.y));return {...e,rx,ry,featurePixels:accepted.length};}
-   return {...e,x:(x0+x1)/2,y:(y0+y1)/2,rx:Math.max(2,(x1-x0)/2),ry:Math.max(2,(y1-y0)/2),featurePixels:accepted.length};
+   return {...e,x:(x0+x1)/2,y:(y0+y1)/2,rx:Math.max(2,(x1-x0)/2),ry:Math.max(2,(y1-y0)/2),featurePixels:accepted.length,aperturePixels:aperture.length};
   }
   return {...e,featurePixels:0};
  };
  for(const seed of eyes){const e=featureBox(seed),vv=[],ss=[],mx=Math.max(6,e.rx*.7),my=Math.max(6,e.ry*.7);
   for(let y=0;y<height;y++)for(let x=0;x<width;x++){
    const i=y*width+x,d=Math.hypot((x-e.x)/e.rx,(y-e.y)/e.ry);
-   if(e.featurePixels>0&&Math.abs(x-e.x)<e.rx+mx&&Math.abs(y-e.y)<e.ry+my)eyeZone[i]=1;
+   if((e.featurePixels>0||e.aperturePixels>0)&&Math.abs(x-e.x)<e.rx+mx&&Math.abs(y-e.y)<e.ry+my)eyeZone[i]=1;
    if(d>1.5&&d<2.05&&current[4*i+3]){const v=val(current,i);if(e.coat==='dark'?v<.32:v>.5){vv.push(v);ss.push(sat(current,i));}}
   }
   let idPixels=0,uncovered=0,referencePixels=0;
@@ -111,11 +112,12 @@ export function cowFaceMetrics(current,reference,width,height,eyes,mouth,closed,
   const i=y*width+x;if(eyeIds&&eyeIds[i]!==e.index+1)continue;const dx=(x-e.x)/e.rx,dy=(y-e.y)/e.ry,d=Math.hypot(dx,dy);if(!current[4*i+3])continue;
   // The narrow lash arc itself may contrast with the coat; a broad patch may not.
   const lash=isLash(i,e);
-  const rgb=average(current,i,eyeIds?eyeIds[i]:0,1<<e.index),cv=Math.max(...rgb),cs=cv?(cv-Math.min(...rgb))/cv:0;
+  const opening=referenceEyeIds?.[i]===e.index+1;
+  const rgb=average(current,i,eyeIds?eyeIds[i]:0,1<<e.index,opening),cv=Math.max(...rgb),cs=cv?(cv-Math.min(...rgb))/cv:0;
   // Native hair identical in both renders is not a new lid patch. Compare
   // exactly the same ID-restricted support; no tolerance for changed seams.
-  const prior=average(reference,i,eyeIds?eyeIds[i]:0,1<<e.index),pv=Math.max(...prior),ps=pv?(pv-Math.min(...prior))/pv:0;
-  const changed=colourDistance(rgb,prior)>1e-8,opening=referenceEyeIds?.[i]===e.index+1;
+  const prior=average(reference,i,eyeIds?eyeIds[i]:0,1<<e.index,opening),pv=Math.max(...prior),ps=pv?(pv-Math.min(...prior))/pv:0;
+  const changed=colourDistance(rgb,prior)>1e-8;
   // Outside the original eye, an existing fur shadow that got lighter is
   // not a newly darkened lid. Within the eye, keep absolute coat checks.
   // Skin's low-saturation criterion is inappropriate for near-black hairs;
@@ -127,8 +129,35 @@ export function cowFaceMetrics(current,reference,width,height,eyes,mouth,closed,
   // Require unchanged warm white fur from the reference beside current dark fur;
   // a grey ring on black, or any new rim on a white coat, still gets counted.
   let coatEdge=false;if(e.coat==='dark'){let black=false,white=false;for(let oy=-2;oy<=2;oy++)for(let ox=-2;ox<=2;ox++){const u=x+ox,vv=y+oy,j=vv*width+u;if(u<0||u>=width||vv<0||vv>=height||!current[4*j+3])continue;if(val(current,j)<.32)black=true;if(val(current,j)>.55&&sat(current,j)>.1&&val(reference,j)>.55&&sat(reference,j)>.1&&dist(current,j,reference,j)<.08)white=true;}coatEdge=black&&white;}
-  if(d>1.15&&d<1.85&&!lash&&!coatEdge){for(const j of [i-2,i+2,i-2*width,i+2*width])if(j>=0&&j<N&&current[4*j+3]&&reference[4*j+3]){const residual=colourDistance(average(current,i),average(current,j))-colourDistance(average(reference,i),average(reference,j));if(residual>.065){flags.rim[i]=1;break;}}}
+  // Actual aperture IDs, rather than an ellipse through the asymmetric iris,
+  // distinguish the outer material edge from ordinary replacement fur.
+  // Inside it, retain anomalous-colour edges and independently detect closed
+  // uniform contours below (including native-range/dark internal rings).
+  const anomalous=e.coat==='dark'?cv>v+.075:cv<v-.18||(cv>v-.1&&cs<s-.12);
+  let nativeMatch=false;
+  if(!opening&&val(current,i)>.55&&sat(current,i)>.1){
+   for(let oy=-1;oy<=1;oy++)for(let ox=-1;ox<=1;ox++){const u=x+ox,w=y+oy,j=w*width+u;if(u<0||u>=width||w<0||w>=height||!reference[4*j+3]||referenceEyeIds?.[j])continue;if(val(reference,j)>.55&&sat(reference,j)>.1&&dist(current,i,reference,j)<.08)nativeMatch=true;}
+  }
+  if(d>1.15&&d<1.85&&(!opening||anomalous)&&!lash&&!coatEdge&&!nativeMatch){for(const j of [i-2,i+2,i-2*width,i+2*width])if(j>=0&&j<N&&current[4*j+3]&&reference[4*j+3]){const residual=colourDistance(average(current,i),average(current,j))-colourDistance(average(reference,i),average(reference,j));if(residual>.065){flags.rim[i]=1;break;}}}
  }}
+ // A hard internal ring can use colours already present in the fur. Find
+ // closed uniform contours inside the measured aperture without relying on
+ // brightness or the old elliptical annulus. Small fur flecks enclose no area.
+ if(closed&&referenceEyeIds&&eyeIds){const seen=new Uint8Array(N);
+  for(let start=0;start<N;start++){
+   const id=referenceEyeIds[start],e=eyes.find(e=>e.index+1===id);if(!id||!e||seen[start]||eyeIds[start]!==id)continue;
+   const group=[],stack=[start];seen[start]=1;let x0=width,x1=0,y0=height,y1=0;
+   while(stack.length){const i=stack.pop(),x=i%width,y=i/width|0;group.push(i);x0=Math.min(x0,x);x1=Math.max(x1,x);y0=Math.min(y0,y);y1=Math.max(y1,y);
+    for(const [dx,dy]of [[1,0],[-1,0],[0,1],[0,-1]]){const u=x+dx,v=y+dy,j=v*width+u;if(u<0||u>=width||v<0||v>=height||seen[j]||referenceEyeIds[j]!==id||eyeIds[j]!==id)continue;if(current[4*j]!==current[4*start]||current[4*j+1]!==current[4*start+1]||current[4*j+2]!==current[4*start+2])continue;seen[j]=1;stack.push(j);}
+   }
+   if(group.length<4||x1-x0<e.rx*.5||y1-y0<e.ry*.5)continue;
+   const w=x1-x0+3,h=y1-y0+3,barrier=new Uint8Array(w*h),outside=new Uint8Array(w*h),todo=[0];
+   for(const i of group)barrier[((i/width|0)-y0+1)*w+i%width-x0+1]=1;outside[0]=1;
+   while(todo.length){const i=todo.pop(),x=i%w,y=i/w|0;for(const [dx,dy]of [[1,0],[-1,0],[0,1],[0,-1]]){const u=x+dx,v=y+dy,j=v*w+u;if(u<0||u>=w||v<0||v>=h||outside[j]||barrier[j])continue;outside[j]=1;todo.push(j);}}
+   let enclosed=0;for(let i=0;i<w*h;i++)if(!outside[i]&&!barrier[i])enclosed++;
+   if(enclosed>=4&&enclosed>group.length*.5)for(const i of group)flags.rim[i]=1;
+  }
+ }
  // A same-colour flat patch can have no strong colour rim. Compare its fur
  // grain with visible native fur, trimming the top 25% so a lash is not texture.
  // This catches the R16 mean-colour fill even when its average RGB matches.
@@ -160,9 +189,10 @@ export function cowFaceMetrics(current,reference,width,height,eyes,mouth,closed,
  for(let i=0;i<N;i++){const x=i%width,y=i/width|0;if(!current[4*i+3]||!reference[4*i+3]||eyeZone[i]||mouthZone(x,y,3))continue;if(!close(i))flags.stray[i]=1;}
  // Closed mouths must agree with the neutral mouth. Open mouths have one main lip
  // core; isolated old lips outside its 3px neighbourhood are faults (audit.mts).
- const lips=new Uint8Array(N),core=new Uint8Array(N);
- for(let i=0;i<N;i++){const x=i%width,y=i/width|0;if(!mouthZone(x,y))continue;const r=current[4*i]/255,g=current[4*i+1]/255,b=current[4*i+2]/255;if(val(current,i)<.32&&r>g*1.1){lips[i]=1;if(val(current,i)<.23)core[i]=1;}if(!mouthOpen&&!close(i))flags.mouth[i]=1;}
+ const lips=new Uint8Array(N),core=new Uint8Array(N),visibleMouth=new Uint8Array(N);
+ if(mouthIds)for(let i=0;i<N;i++)if(mouthIds[i]){const x=i%width,y=i/width|0;for(let dy=-3;dy<=3;dy++)for(let dx=-3;dx<=3;dx++){const u=x+dx,v=y+dy;if(u>=0&&u<width&&v>=0&&v<height)visibleMouth[v*width+u]=1;}}
+ for(let i=0;i<N;i++){const x=i%width,y=i/width|0;if(!mouthZone(x,y)||(mouthOpen&&mouthIds&&!visibleMouth[i]))continue;const r=current[4*i]/255,g=current[4*i+1]/255,b=current[4*i+2]/255;if(val(current,i)<.32&&r>g*1.1){lips[i]=1;if(val(current,i)<.23)core[i]=1;}if(!mouthOpen&&!close(i))flags.mouth[i]=1;}
  if(mouthOpen){const gs=groups(core),main=gs[0]||[],mask=new Uint8Array(N);for(const i of main)mask[i]=1;for(let i=0;i<N;i++)if(lips[i]){const x=i%width,y=i/width|0;let near=false;for(let dy=-3;dy<=3;dy++)for(let dx=-3;dx<=3;dx++){const u=x+dx,v=y+dy;if(u>=0&&u<width&&v>=0&&v<height&&mask[v*width+u])near=true;}if(!near)flags.mouth[i]=1;}}
  const counts=Object.fromEntries(Object.entries(flags).map(([k,v])=>[k,count(v)]));
- return {counts,flags,eyeData,textureFlat,coverageErrors};
+ return {counts,flags,eyeData,textureFlat,coverageErrors,mouthVisiblePixels:mouthIds?mouthIds.reduce((a,b)=>a+(b?1:0),0):null};
 }

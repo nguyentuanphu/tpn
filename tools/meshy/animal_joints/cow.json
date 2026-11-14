@@ -9,6 +9,7 @@
   "leg_top": 1.0,
   "spatial_r": 0.04,
   "mouth_w": 0.8,
+  "mouth_lift": 0.0001,
   "lash_dark": 0.2,
   "lash_spot": 0.06,
   "fill_near": 0.25,
@@ -108,11 +109,11 @@
   "eye_socket_inset": {
     "centers": [
       [
-        -0.085,
+        -0.068,
         1.075
       ],
       [
-        0.105,
+        0.093,
         1.075
       ]
     ],

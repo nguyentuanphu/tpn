@@ -1252,12 +1252,13 @@ def face_pieces(o, arm, J, Fc):
         c = np.array(Fc['mouth']); nrm = np.array(Fc['mouth_n']); nrm = nrm / np.linalg.norm(nrm)
         side = np.cross((0, 0, 1.0), nrm); side /= np.linalg.norm(side); up = np.cross(nrm, side)
         Wm = nr * FIX.get('mouth_w', 1.1); R = Wm * FIX.get('mouth_patch', 1.2); TP = FIX.get('mouth_px', 96); GN = FIX.get('mouth_grid', 18) if not FARLOD else 12   # (a small piece: a wide one reached where the face turns away and showed as a pale square; its own picture size and grid, not the lids')
+        mouth_ray_distance=float(np.max((V-c)@nrm))+.02 if KIND=='cow' else R
         img = np.zeros((TP, TP, 3)); hit = np.zeros((TP, TP), bool)
         from mathutils.geometry import barycentric_transform
         for a in range(TP):
             for b in range(TP):
                 x = (b + .5) / TP * 2 * R - R; y = (a + .5) / TP * 2 * R - R
-                loc, nor_, fi, _ = bvh.ray_cast(Vector(c + side * x + up * y + nrm * R), Vector(-nrm))
+                loc, nor_, fi, _ = bvh.ray_cast(Vector(c + side * x + up * y + nrm * mouth_ray_distance), Vector(-nrm))
                 if loc is None: continue
                 poly = me.polygons[fi]; vs = [me.vertices[k].co for k in poly.vertices[:3]]; uvs3 = [uvl[li].uv for li in poly.loop_indices[:3]]
                 u = barycentric_transform(loc, vs[0], vs[1], vs[2], Vector((*uvs3[0], 0)), Vector((*uvs3[1], 0)), Vector((*uvs3[2], 0)))
@@ -1269,17 +1270,18 @@ def face_pieces(o, arm, J, Fc):
         mouth = np.where(((yy < -ry * .15) & ((xx / (rx * .7)) ** 2 + ((yy + ry * .55) / (ry * .55)) ** 2 < 1))[..., None], np.array((.95, .45, .5)), np.array((.22, .05, .07)))
         img = img * (1 - inside) + mouth * inside
         name = f'meshy-{KIND}-mouth'
-        pim = bpy.data.images.new(name, TP, TP, alpha=True); pim.pixels[:] = np.concatenate([img, np.ones((TP, TP, 1))], 2).astype(np.float32).ravel(); pim.pack()
+        mouth_alpha=inside if KIND=='cow' else np.ones((TP,TP,1))
+        pim = bpy.data.images.new(name, TP, TP, alpha=True); pim.pixels[:] = np.concatenate([img, mouth_alpha], 2).astype(np.float32).ravel(); pim.pack()
         if DEBUG: pim.filepath_raw = os.path.join(OUT, name + '.png'); pim.file_format = 'PNG'; pim.save()
         bm = bmesh.new(); uvL = bm.loops.layers.uv.new('UVMap'); grid = {}; lift = FIX.get('mouth_lift', .0025)
         for a in range(GN + 1):
             for b in range(GN + 1):
                 x = b / GN * 2 * R - R; y = a / GN * 2 * R - R
                 if math.hypot(x, y) > R * 1.02: continue
-                loc, nor_, _, _ = bvh.ray_cast(Vector(c + side * x + up * y + nrm * R), Vector(-nrm))
+                loc, nor_, _, _ = bvh.ray_cast(Vector(c + side * x + up * y + nrm * mouth_ray_distance), Vector(-nrm))
                 if loc is None: continue
                 k = 1 - smooth01((math.hypot(x, y) / R - .82) / .18)
-                grid[a, b] = bm.verts.new(loc + Vector(nrm) * (lift * k + .0004))
+                grid[a, b] = bm.verts.new(loc + Vector(nrm) * (lift * k + (.00005 if KIND=='cow' else .0004)))
         for a in range(GN):
             for b in range(GN):
                 q = [(a, b), (a, b + 1), (a + 1, b + 1), (a + 1, b)]
@@ -1290,6 +1292,8 @@ def face_pieces(o, arm, J, Fc):
         po = bpy.data.objects.new(name, pm); bpy.context.collection.objects.link(po)
         mat = bpy.data.materials.new(name); mat.use_nodes = True; nt = mat.node_tree; tn = nt.nodes.new('ShaderNodeTexImage'); tn.image = pim
         nt.links.new(tn.outputs['Color'], nt.nodes['Principled BSDF'].inputs['Base Color']); pm.materials.append(mat)
+        if KIND=='cow':
+            nt.links.new(tn.outputs['Alpha'],nt.nodes['Principled BSDF'].inputs['Alpha']);mat.surface_render_method='DITHERED'
         g = po.vertex_groups.new(name='jaw'); g.add(list(range(len(pm.vertices))), 1.0, 'REPLACE')
         po.parent = arm; md = po.modifiers.new('rig', 'ARMATURE'); md.object = arm
 
