@@ -79,3 +79,21 @@ Verdict: all four NOT clean. It opened 52 of 264 pictures. Each line must be fix
   1.8 (the eye white showed at the edges). Kept: `lid_px` 256 for bunny and kitty.
 - Still open: calf sleep/run/sit/beg hooves (fix in the rebuild); kitty surprised side eye disc, beg hind leg block; panda shoulder white
   sliver, beg paws in the air; bunny beg ragged bottom, scratch fringe; board body cameras. Then a new second review.
+
+## Gate step 3 again: second reviewer, r17 boards (15 Nov 2026, about 10:30 AEDT)
+Full audits (232 cases): panda 0 failing; calf 69, bunny 74, kitty 68, all `lid`/`stray` on shut and happy eyes, no body
+faults. The reviewer (not told the fixes) opened every shut/happy view and every body view. Verdict: all four NOT clean.
+- Calf: lids still discs with a rim; dark specks on the image-left lid (322,437); stray lash dashes on the far eye; a dark
+  slit inside the left ear (all moods); throat crease from below; collar breaks into red shards from the side; sleep hind
+  hoof a dark block on the hip, front hooves flat-cut cylinders; beg, bounce, dig, scratch read as standing.
+- Bunny (worst): lids bald discs with a ring and a grey-blue crescent under each (eye white); lash stubs and hooks round
+  the lids; white ragged crack under the eye from the right side; eye a blank white sliver from the side; deep neck pinch
+  (head reads as a separate ball); jagged chin edge; beg the same as sit, scratch just sitting.
+- Kitty: lids flat discs, no stripes; dark specks on the lids; eye white sliver along the lid from the left side; stray lash
+  bits; torn fur and white slivers between the front legs (sit, beg, scratch) and along the belly (idle, run, jump);
+  back of head smeared with a ring, jagged silhouette, thin neck; eye blank from the side; beg and scratch read as sitting.
+- Panda (closest): lids read well. Hard seam where the head meets the body (head-back, neck-side); white specks in the ear,
+  on the paws, body and eye patch; tooth-like white slits above the mouth from below; the white back band ends hard at
+  the hip when sitting; beg looks like sit; run front paws together; dig and bounce read as standing.
+- Picture problems: run/jump/bounce/dig body views catch the pet looking at the child, so the face is hidden; neck and
+  head-back views cropped tight (bunny's ears cut); happy views use a different pose from shut.
