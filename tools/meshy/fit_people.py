@@ -541,7 +541,7 @@ def lid(img, b, top=0., bot=1.):   # (original_skin) a closed lid painted over t
         _cb = np.nonzero(_lb.any(0))[0]
         if len(_cb): _bot[_cb] = (_lb.shape[0] - 1 - np.argmax(_lb[::-1, :][:, _cb], axis=0)).astype(np.float32)
         _bp = np.pad(_bot, 3, mode='edge'); _bot = np.max(np.stack([_bp[k:k + W_] for k in range(7)]), 0)
-        hole &= yy <= np.maximum(_bot[None, :] + 5, b[3] - h_ * .3 / 1.55 + h_ / 1.55 * .3)   # (round 28: at least the eye's whole lower rim: Ruby's lower whites showed under the lid)
+        hole &= yy <= np.maximum(_bot[None, :] + 5, b[3] - h_ * .3 / 1.55 + h_ / 1.55 * .15)   # (round 33: .15, was .3: Jack's freckles under the eyes)   # (round 28: at least the eye's whole lower rim: Ruby's lower whites showed under the lid)
     if top > 0: hole &= yy >= y0
     if PART: hole &= yy < lidline(xx)
     # her own skin flows in from all round the eye (a smooth fill, no disc edge): the eye pixels are repeatedly
@@ -661,7 +661,7 @@ def gmouth():   # (12 Nov 2026, owner circled the old smile's corners beside the
     return [max(0, int(mouth[0] - mw_ * .7)), max(0, int(mouth[1] - mh_ * .45)), min(W_, int(mouth[2] + mw_ * .7)), min(H_, int(mouth[3] + mh_ * .5))]   # (round 31: .7 each side, was .3: the old smile line ran on past both sides of the round and sad mouths, Lan, Mai, Mit, Teo, Ti; the mouth box found is the reddest middle of the lips)   # (13 Nov 2026, round 24: .3 and .45/.5, was .18 and .3/.4: the auditor's lips check and the second reviewer still saw the old smile's corners beside Ruby's sad mouth and round Teo's and Ba's o)
 def erase_mouth(img, b):   # (14 Nov 2026, round 32: the old smile line stayed beside the round and sad mouths of Lan, Mai, Mit, Teo and Ti however wide the box: the eyelid fill closes only eye-like pixels, and the faint line is not) a villager's old mouth: the whole oval of the box is filled with the skin round it, softly
     if REFP != 'villager-': return erase(img, b)
-    cx_, cy_ = (b[0] + b[2]) / 2, (b[1] + b[3]) / 2; rx, ry = max(2, (b[2] - b[0]) / 2), max(2, (b[3] - b[1]) / 2)
+    cx_, cy_ = (b[0] + b[2]) / 2, (b[1] + b[3]) / 2; rx, ry = max(2, (b[2] - b[0]) / 2 * 1.3), max(2, (b[3] - b[1]) / 2 * 1.3)   # (round 33: the oval reaches the box's corners: Bac Ba's lower lip curve stayed as a ring)
     ya, yb = max(0, int(cy_ - ry * 1.5) - 3), min(H_, int(cy_ + ry * 1.5) + 4); xa, xb = max(0, int(cx_ - rx * 1.5) - 3), min(W_, int(cx_ + rx * 1.5) + 4)
     d = np.hypot((xx[ya:yb, xa:xb] - cx_) / rx, (yy[ya:yb, xa:xb] - cy_) / ry); hm = d < 1
     sub = img[ya:yb, xa:xb, :3].copy(); _sk = skin_wide(sub) & ~hm

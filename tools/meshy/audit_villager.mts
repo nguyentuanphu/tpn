@@ -173,7 +173,7 @@ const res: any = await P.page.evaluate(async ([LIST, QUICK, LIMIT]) => {
             const fsx = new Uint8Array(N); let ks = 0;
             if (m !== 'smile' && eyeZ && mb0) { for (let i = 0; i < N; i++) { if (eyeZ[i] || !mine(i) || i >= N - W * 10) continue; const x = i % W, y = (i / W) | 0;
                 { const mw_ = mb0[2] - mb0[0], mh_ = Math.max(mb0[3] - mb0[1], mw_ * .3); if (x >= mb0[0] - 3 - mw_ * .3 && x <= mb0[2] + 3 + mw_ * .3 && y >= mb0[1] - 3 - mh_ * 3 && y <= mb0[3] + 3 + mh_) continue; }   // (round 29: Bác Ba's excited mouth is bigger and lower than his smile)   // (the mouth box, a mouth's height more up and down: the round and sad mouths sit lower or taller)
-                let best = 9; for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) { const xx = x + dx, yy = y + dy; if (xx < 0 || yy < 0 || xx >= W || yy >= H) continue; const q = (yy * W + xx) * 4; best = Math.min(best, Math.hypot(C[i * 4] - C0[q], C[i * 4 + 1] - C0[q + 1], C[i * 4 + 2] - C0[q + 2]) / 255); }
+                let best = 9; for (let dy = -2; dy <= 2; dy++) for (let dx = -2; dx <= 2; dx++) { const xx = x + dx, yy = y + dy; if (xx < 0 || yy < 0 || xx >= W || yy >= H) continue; const q = (yy * W + xx) * 4; best = Math.min(best, Math.hypot(C[i * 4] - C0[q], C[i * 4 + 1] - C0[q + 1], C[i * 4 + 2] - C0[q + 2]) / 255); }
                 if (best > .08) { fsx[i] = 1; ks++; } }
               for (const g of groups(fsx)) if (g.length < 4) for (const j of g) { fsx[j] = 0; ks--; } }
             if (ks > LIMIT.stray || QUICK) pics[`${id}${tg}-face-${m}-${s}-stray`] = png(C, fsx);
