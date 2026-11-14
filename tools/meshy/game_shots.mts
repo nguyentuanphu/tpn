@@ -56,6 +56,14 @@ const shots: Record<string, string> = await P.page.evaluate(async ([MODE, LIST, 
   // gate (owner 12 Nov 2026: no approval request before the gate): the standard sheets at 1024 px, high detail. Every mood at
   // -.7, -.4, 0, .4, .7; smile and blink from both sides and from above and below (front and +-.5); the neck and nape from
   // three sides; the whole child in each outfit front, three-quarter and back. Writes <id>-gate-<what>.png
+  // eyes: the closed-eye moods only, high detail, 1024 px, for quick A/B on the face (14 Nov 2026; HIDE=face hides the mood pieces)
+  if (MODE === 'eyes') for (const id of ids) {
+    await A.loadFriendModels(id); await A.loadFriendModels(id + '-hd');
+    const av: any = A.buildAvatar({ set: LOOK[id] || 'girl', friend: id, skin: '#f6c7a5' }, null, { hd: true }), M = av.modelHD; if (!M) continue;
+    A.showHD(av, true); top.add(av.root); av.root.position.set(h.pos.x + 3, h.av.root.position.y, h.pos.z + 3); av.root.rotation.y = 0; A.animate(av, 'idle', 1);
+    for (const m of ['smile', 'blink', 'happy', 'half']) { mood(av, M, m); for (const s of [-.4, 0, .4]) headShot(`${id}-eyes-${m}-y${s}`, av.root, M, 0, s, false, 0, 1024); }
+    top.remove(av.root);
+  }
   if (MODE === 'gate') for (const id of ids) {
     await A.loadFriendModels(id); await A.loadFriendModels(id + '-hd');
     const av: any = A.buildAvatar({ set: LOOK[id] || 'girl', friend: id, skin: '#f6c7a5' }, null, { hd: true }), M = av.modelHD; if (!M) continue;
