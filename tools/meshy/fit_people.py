@@ -955,7 +955,7 @@ for p in me.polygons:
     if not isskin and REFP == 'villager-' and ((not ORIGINAL) or SHIFT) and neckzone and pc.z > L['neck'].z - .03 and bool(skin_mask(avg[None])[0]) and hsv(avg)[1] > .1: isskin = True   # (12 Nov 2026, owner chose to fix Ruby's neck: its pale front, under .2 saturation, was not skin, and the neck showed two-tone triangles; the upper neck, away from the collar line, is skin when skin-coloured)
     if not isskin and REFP == 'villager-' and ((not ORIGINAL) or SHIFT) and pc.z > L['neck'].z - .1 and abs(pc.x) < .08 and pc.z < FB[1].z:   # (round 28: its own throat zone, neckzone stops at .06 and the rule never reached the collar)   # (round 27: to .1, the second reviewer still saw a zigzag at the neck's base)   # (13 Nov 2026, round 24, second reviewer: Ruby's neck still two-tone, a pale left half and a zigzag down to the collar: its pale skin is under .1 saturated and lies lower) skin hue, bright, a little coloured, down to the collar line
         _nh, _ns, _nv = hsv(avg)
-        if ((_nh < .1 or _nh > .94) and _nv > .55 and .06 < _ns < .55) or (_ns < .15 and .55 < _nv < .93): isskin = True   # (round 28: Ruby's pale lilac-streaked neck triangles are hardly coloured; near-white stays cloth, white collars)
+        if (_nh < .1 or _nh > .94) and _nv > .55 and .06 < _ns < .55: isskin = True   # (round 36: the pale clause, Ruby's lilac collar went brown in the game)   # (round 28: Ruby's pale lilac-streaked neck triangles are hardly coloured; near-white stays cloth, white collars)
     p.material_index = 1 if isskin else 0; nskin += isskin
     for li, cv in zip(p.loop_indices, cs):
         if isskin:
@@ -1312,7 +1312,7 @@ if TEX and KEEP and SHIFT:
         _skp = (_skp | _add) & ~_rem
     if REFP == 'villager-' and ID in os.environ.get('FIT_THROAT', 'ruby').split(','):   # (round 28: only where asked: on Ti it took her white embroidered collar for skin)   # (13 Nov 2026, round 28, second reviewer: Ruby's neck two-tone, a patchwork of marked and unmarked triangles: her pale, lilac-streaked throat failed the grow's colour likeness) a villager's throat below the chin is skin when skin-hued or hardly coloured, not near-white (white collars)
         _nh_, _ns_, _nv_ = hsv_np(_mc[:, :3])
-        _thr = (_pc3[:, 2] > L['neck'].z - .08) & (_pc3[:, 2] < fz0) & (np.abs(_pc3[:, 0] - _hcx) < _hw * .55) & ~_face & (_tot > 0)   # (its own zone: the neck zone stops at the neck joint, the upper neck is in the head zone) & ~_hairlike & ((((_nh_ < .1) | (_nh_ > .94)) & (_ns_ > .06) & (_ns_ < .55) & (_nv_ > .55)) | ((_ns_ < .15) & (_nv_ > .55) & (_nv_ < .93)))
+        _thr = (_pc3[:, 2] > L['neck'].z - .08) & (_pc3[:, 2] < fz0) & (np.abs(_pc3[:, 0] - _hcx) < _hw * .55) & ~_face & (_tot > 0) & ~_hairlike & ((_nh_ < .1) | (_nh_ > .94)) & (_ns_ > .06) & (_ns_ < .55) & (_nv_ > .55)   # (its own zone: the neck zone stops at the neck joint; round 36: skin hues only, the colour test had fallen behind a comment and Ruby's lilac collar was marked skin, brown in the game)
         print('FIT throat triangles marked skin', int((_thr & ~_skp).sum()))
         _skp |= _thr
     # (owner 9 Nov 2026, the skin tones: thin unmarked slivers on Sol's arms showed as orange streaks) on a swim body the arms and
@@ -1537,6 +1537,22 @@ if TEX and KEEP and SHIFT:
                     _A = px(colour); _tm = own_texels(_nk, _A.shape[:2]); _nc = np.median(_A[_tm][:, :3], axis=0)
                     _A[_tm, :3] = _A[_tm, :3] * .25 + _nc * .75; colour.pixels.foreach_set(_A.ravel()); colour.update()   # (a quarter of the painted shade kept: not a flat cut-out)
                 print('FIT neck evened', len(_nk), 'triangles')
+                # (15 Nov 2026, round 35, second reviewer: Ruby's, Bom's and Teo's shirt colour is painted up the neck itself by Meshy:
+                # purple, red or brown triangles inside the collar) for the villagers named, the triangles lying on the neck's own
+                # cylinder (not the collar, which stands out from it) between the collar line and the chin become skin
+                if ID in os.environ.get('FIT_NECKSKIN', 'ruby,bom,teo').split(','):
+                    _band_ = (_cc[:, 2] > L['neck'].z - .05) & (_cc[:, 2] < fz0 - (fz1 - fz0) * .02) & (np.abs(_cc[:, 0] - _hcx) < _hw * .6) & ~_ine
+                    _sk_ = _band_ & _mk
+                    if _sk_.sum() > 10:
+                        _ay = float(np.median(_cc[_sk_, 1])); _r = np.hypot(_cc[:, 0] - _hcx, _cc[:, 1] - _ay); _rm = float(np.median(_r[_sk_]))
+                        _cyl = np.nonzero(_band_ & ~_mk & (_r < _rm * 1.12) & (_cc[:, 1] < _ay + _rm * .3))[0]   # (the front and sides: the nape keeps its hair)
+                        if len(_cyl):
+                            _A = px(colour); _tm = own_texels(_cyl, _A.shape[:2]); _sc = np.median(_mc[_sk_][:, :3], axis=0)
+                            _A[_tm, :3] = _sc; colour.pixels.foreach_set(_A.ravel()); colour.update()
+                            _li = np.concatenate([list(me.polygons[int(i)].loop_indices) for i in _cyl]).astype(int); _b4 = np.zeros(len(_cd) * 4, np.float32); _cd.foreach_get('color', _b4)
+                            for _c in range(3): _b4[_li * 4 + _c] = 1.
+                            _cd.foreach_set('color', _b4)
+                        print('FIT neck cylinder triangles made skin', len(_cyl), 'radius', round(_rm, 3))
 if TEX:
     colour.scale(TEX, TEX); colour.file_format = 'JPEG'; colour.save(filepath=jp, quality=int(os.environ.get('FIT_JPGQ') or (88 if TEX >= 1024 else 72)))   # (owner 8 Nov 2026: 62 left speckles on the necks)
     jimg = bpy.data.images.load(jp); jimg.name = ID + '-colour'
