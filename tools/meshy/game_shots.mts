@@ -225,7 +225,7 @@ const shots: Record<string, string> = await P.page.evaluate(async ([MODE, LIST, 
     // hair round a shut eye, the nose and the chin and neck
     if (GATE) for (const m of (ONLY_ || MOODS)) { mood(n.A, n.A.model, m);
       for (const s of (ONLY_ ? [-1.2, -.7, -.4, 0, .4, .7, 1.2] : [-.7, -.4, .4, 1.2, -1.2])) headShot(`v-${id}-${m}-y${s}`, n.A.root, n.A.model, hy, s, true);
-      if (!ONLY_) for (const p of [.45, -.45]) for (const s of [0, .5, -.5]) headShot(`v-${id}-${m}-${p > 0 ? 'above' : 'below'}${s}`, n.A.root, n.A.model, hy, s, true, p); }
+      for (const p of [.45, -.45]) for (const s of [0, .5, -.5]) headShot(`v-${id}-${m}-${p > 0 ? 'above' : 'below'}${s}`, n.A.root, n.A.model, hy, s, true, p); }
     mood(n.A, n.A.model, 'smile');
     if (!ONLY_) for (const s of [Math.PI, 2.2, -2.2]) headShot(`v-${id}-neck-back-${s.toFixed(1)}`, n.A.root, n.A.model, hy, s, true);
     if (!ONLY_) { n.A.root.updateMatrixWorld(true); const box = new THREE.Box3().setFromObject(n.A.model.obj, true), c = box.getCenter(new THREE.Vector3()), Hh = box.max.y - box.min.y;
