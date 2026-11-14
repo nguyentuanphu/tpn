@@ -1,5 +1,5 @@
 {
-  "note": "Meshy kitty (12 Nov 2026 model): first fit with the puppy's pose and face tuning; values tuned below after looking at its pictures. (12 Nov: ears stand up: ear_up, pivots at their roots; the tail curves up, so its root is set at the rump by hand.) (12 Nov: the head stops a quarter of the body behind the neck (head_back), or the tall tail tip moved with the head. Sleep folds the long front legs more, like a loaf.) (15 Nov 2026, second reviewer: begging sat bolt upright, the rump narrowed to a point (bunny), the hind leg a blunt block (kitty), the front paws hung in the air (panda): a lower beg (beg_pitch), hind legs folded less (sit_fold); the bunny's scratching paw forward (scratch_knee).)",
+  "note": "Meshy kitty (12 Nov 2026 model): first fit with the puppy's pose and face tuning; values tuned below after looking at its pictures. (12 Nov: ears stand up: ear_up, pivots at their roots; the tail curves up, so its root is set at the rump by hand.) (12 Nov: the head stops a quarter of the body behind the neck (head_back), or the tall tail tip moved with the head. Sleep folds the long front legs more, like a loaf.) (15 Nov 2026, second reviewer: begging sat bolt upright, the rump narrowed to a point (bunny), the hind leg a blunt block (kitty), the front paws hung in the air (panda): a lower beg (beg_pitch), hind legs folded less (sit_fold); the bunny's scratching paw forward (scratch_knee).) (15 Nov 2026: foot_whole 0.5: its paws kept up to 25% of the body's weight at their rim and stretched when a knee folded.)",
   "lie_drop": 0.95,
   "lie_front": -1.1,
   "lie_front_knee": 0.45,
@@ -9,7 +9,7 @@
   "repack": 0.004,
   "sit_fold": 0.75,
   "beg_pitch": -0.5,
-  "socket_lift": 1.0,
+  "socket_lift": 1,
   "socket_both": true,
   "scratch_knee": 0.6,
   "tex_near": 1280,
@@ -52,5 +52,7 @@
   "lid_on_eye": true,
   "lid_size": 2.3,
   "lid_patch": 2.4,
-  "lid_patch_dir": -1
+  "lid_patch_dir": -1,
+  "socket_both_max": 1.45,
+  "foot_whole": 0.5
 }

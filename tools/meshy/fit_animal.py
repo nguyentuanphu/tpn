@@ -295,6 +295,8 @@ def weights(o, J, M):
     rl = np.array([np.percentile(dist[(near == i) & (V[:, 2] < belly * .6)], 85) * 1.15 if ((near == i) & (V[:, 2] < belly * .6)).any() else .05 for i in range(4)])   # (an upright joey's arms have nothing below the belly: its own weights replace these)
     lt = FIX.get('leg_top', 1.0)   # (how high the leg's own weight reaches, as a fraction of the way from the belly to the hip)
     leg = (1 - smooth01((V[:, 2] - belly * .9) / max(.02, (belly * .1 + (hip - belly) * lt)))) * smooth01((rl[near] - dist) / .025 + .5)
+    fw = FIX.get('foot_whole')   # (15 Nov 2026: the calf's hooves are wider than its leg seen from above, so their rim kept up to 58% of the body's weight; when a knee folded (lying, sitting, running) the hoof stayed half behind with the body and stretched into a long spike. Below this fraction of the belly's height a point near a leg is all leg)
+    if fw: leg = np.maximum(leg, smooth01((belly * fw - V[:, 2]) / .015) * (dist < rl[near] * 2.5))
     knee_z = np.array([J['knee%d' % i][2] for i in range(4)])[near]; band = np.maximum(.02, knee_z * .35)
     lower = smooth01((knee_z + band - V[:, 2]) / (2 * band))
     rest = 1.0
