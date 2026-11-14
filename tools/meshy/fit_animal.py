@@ -969,6 +969,21 @@ def face_pieces(o, arm, J, Fc):
             avg = (np.roll(fill, 1, 0) + np.roll(fill, -1, 0) + np.roll(fill, 1, 1) + np.roll(fill, -1, 1)) / 4
             fill = np.where(src[..., None], img0, avg)
         fill = np.where(known[..., None], img0, fill)
+        if FIX.get('lid_patch', 0):   # (15 Nov 2026, the kitty's shut lid a smooth disc in striped fur: the fine grain of a block of the fur next to the eye, tiled over the filled eye, added to the smooth fill: the lid keeps a fur texture, its colour stays matched. Copying whole patches brought grey streaks from the lashes and cheek; one shifted copy covered only a band)
+            b_ = max(8, TP // 6); best_ = None
+            for r0 in range(0, TP - b_, 2):
+                for c0 in range(0, TP - b_, 2):
+                    if known[r0:r0 + b_, c0:c0 + b_].all():
+                        d_ = math.hypot(r0 + b_ / 2 - TP / 2, c0 + b_ / 2 - TP / 2)
+                        if best_ is None or d_ < best_[0]: best_ = (d_, r0, c0)
+            if best_:
+                _, r0, c0 = best_
+                blf = sum(np.roll(img0, (d0, d1), (0, 1)) for d0 in range(-2, 3) for d1 in range(-2, 3)) / 25   # (blurred over the whole picture, then cut: blurring the block alone wrapped at its edges and drew a grid)
+                gc_ = FIX.get('lid_grain_clip', .04); det_b = np.clip((img0 - blf)[r0:r0 + b_, c0:c0 + b_], -gc_, gc_)   # (.08 let single bright hairs through as white lines)
+                mir = lambda n: np.abs(((n + b_) % (2 * b_)) - b_) % b_   # (tiled mirrored, so no tile edge shows)
+                rows = mir(np.arange(TP))[:, None]; cols = mir(np.arange(TP))[None, :]
+                det = det_b[rows, cols] * FIX.get('lid_grain', 1.0)
+                fill = np.clip(fill + np.where((~known & hit)[..., None], det, 0), 0, 1)
         if FIX.get('socket_lift', 0):   # (14 Nov 2026, owner's gate: "mặt, mắt, hốc mắt": Meshy paints a darker socket round the eye; open, the eye fills it, shut it showed as a dark bruise with a hard edge. Inside the lid, fur darker than the fur at the lid's rim is brought up towards it, fading out at the rim; lighter fur (the calf's cream blaze) is kept)
             ell = np.hypot((xx - gx) / Rx, (yy - gy) / R); Lf = fill @ np.array([.3, .59, .11])
             rim = hit & (ell > .85) & (ell < 1.0); Lt = float(np.median(Lf[rim])) if rim.any() else float(Lf.mean())
