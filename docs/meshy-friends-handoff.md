@@ -49,6 +49,14 @@ The auditor branch (meshy-audit-coverage) is adding a mouth check, then eye sock
 
 ## Where it stands
 
+**15 Nov 2026 (AEDT), morning.** Closed-eye patches worked on (d3648931a, ec0fbb5a7):
+- Cause of the lighter flat patch round closed eyes: `lid()` held every non-skin pixel round the hole (the blush fails the skin test, the outline, lashes) at one light skin colour, so the lid filled flat and light down to the blush. Now those are filled too in the work copy and the blush keeps its own colour: the lid takes the real skin and blush further out. Dark or grey pixels beside the lid below the brows close as well (Sol's inner-corner outline, dark as his hair, was never traced).
+- Lumi's black tick: one column's brow stop found a lash flick and cut the piece low; each column's stop is now its neighbours' median.
+- Light specks on Sol's nose bridge: the shut-eye paint (eye areas and pale texels) reached it; now only round the eye itself (shader).
+- Auditor `patch` check (meshy-audit-coverage 9ce82b20d, copied to `tools/meshy/audit-cov.mts`): Sol front blink 609 -> 54..203 px. Two runs on the same model differ by that much (framing moves with idle), so it cannot rank small A/B steps; judge by eye with `game_shots ... eyes <id>` (new mode: smile, blink, happy, half at -.4/0/.4, 1024 px; `HIDE=face` hides the mood pieces).
+- Still open on Sol: a faint pale arc and grey at the inner corners. With the pieces hidden the body shows a pale ring round the flat shut oval; a debug colour showed those texels are inside the eye areas and saturated orange-red, not pale, so the paleness comes from how the shut paint blends there, not the texture. Tried and dropped: lighter-than-skin texels count as not skin (a light flat area over the lid, patch 242); pale unmarked texels painted (no change); a solid piece over every changed pixel with a wider soft edge (worse, a white line at the inner corner); the piece reaching further towards the nose (no change); only near-skin-colour pixels as fill sources (no change).
+- Finn, Lumi, Clara refitted with this; gate-3 sheets next, then the second reviewer.
+
 **14 Nov 2026 (AEDT), afternoon: stopped on the usage limit.** Nothing running. Models committed with this note.
 
 - Gate pictures: `node ../tools/meshy/game_shots.mts <dir> gate <id>` (new mode, 76 pictures per friend at 1024 px: every mood at yaw -.7..-.7, sides, above, below, neck, bodies in four outfits). Round 1: `D:\WorkSpace\meshy\fitted\gate-1` (taken before the last Lumi/Clara refit), overview sheets `gate-1-sheets` (scratchpad `gate_sheets.py`).
