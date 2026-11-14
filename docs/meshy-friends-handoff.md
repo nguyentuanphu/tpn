@@ -177,3 +177,13 @@ Chạy: server node tools/meshy/serve.mjs "<repo>" 8765 (nền); soi nhanh: cd t
 Luật: không gọi Meshy, không tiêu credit; không merge main, không deploy, không tăng version; hỏi chủ bằng pop-up;
 commit và push nhánh mình mỗi giờ (pull --no-rebase trước), không force-push; không commit content/management-catalogue.json.
 ```
+
+## 15 Nov 2026 (AEDT), afternoon (cut off by usage limit)
+
+- Finn, Lumi and Clara are refitted with the morning lid fill (commit ab4325313). In gate-3, all four still show pale arcs or grey at the inner corners of closed eyes. Lumi has a ring on the far eye and a black tick above the right eye at y-0.4. Clara has white crescents and a brown dot at the inner end of the lash line.
+- Cause 1, fixed in fit_people.py: brown-pink outline pixels passed the blush test and were held as fill sources. Pixels within 4 px of the eye's own dark or white pixels (`_esh`) are now never sources, and they close with the lid. The texture overlay (face-bake with the blink tile) is now clean at Sol's inner corners.
+- Cause 2: with HIDE=face, the body under a shut eye is a flat oval with a pale ring (the eye white's rim). That ring shows where the piece's edge fades.
+  - Tried: widening shader line 95 to 3.6. No change, so it was reverted; the ring texels are not pale.
+  - Tried: moving the eye-area grid out by 1.5 mm. No change, so it was reverted.
+  - Now in use: closed-lid pieces are solid for _g+2 px past the eye (`soften` grow). The ring is fainter, but a pale bar remains at Sol's left inner corner and a grey speck sits under his left eye (eyes-7).
+- Next: measure the piece alpha against the body ring in game coordinates, or make the shader paint the body's eye rim when shut. Then refit Finn, Lumi and Clara, then run the auditor (`tools/meshy/audit.mts` from meshy-audit-coverage 5f11e152c, copied locally as audit-cov.mts).

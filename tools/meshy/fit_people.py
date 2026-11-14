@@ -563,7 +563,12 @@ def lid(img, b, top=0., bot=1.):   # (original_skin) a closed lid painted over t
     # in this work copy only: the lid takes its colours from the real skin and blush further out (blush is kept as it is)
     _bh = hsv_np(img[ya:yb, xa:xb, :3]); _wr = img[ya:yb, xa:xb, :3]
     _blu = (_bh[2] > .55) & (_bh[1] > .25) & ~hm & (_wr[..., 0] > _wr[..., 1] * 1.15) & (_wr[..., 0] > _wr[..., 2] * 1.3)
-    _fix = ((_sm & (_bh[2] > .7)) | _blu) & ~hm   # (15 Nov 2026: brownish outline pixels passed the skin test and drew grey-brown smudges at Sol's inner corners: only bright skin is a source)
+    # (15 Nov 2026, afternoon: grey-brown streaks at Sol's and Finn's inner corners, inside the lid itself) the open eye's
+    # brown-pink outline passed the blush test and was held as a fill source, so its dark colour flowed into the lid: nothing
+    # within 4 px of the eye's own dark or white pixels is a source, and those pixels close with the lid
+    _es_ = _esh[ya:yb, xa:xb] if OWN else np.zeros_like(hm)
+    _blu &= ~_es_
+    _fix = ((_sm & (_bh[2] > .7)) | _blu) & ~hm & ~_es_   # (15 Nov 2026: brownish outline pixels passed the skin test and drew grey-brown smudges at Sol's inner corners: only bright skin is a source)
     if not os.environ.get('FIT_FLAT_LID') and _fix.sum() > 8:
         sub[~hm & _blu] = _wr[~hm & _blu]; _un = ~_fix; sub[_un & ~hm] = np.median(sub[_fix], axis=0)
     else: _un = hm
@@ -572,7 +577,7 @@ def lid(img, b, top=0., bot=1.):   # (original_skin) a closed lid painted over t
         av = (P[:-2, 1:-1] + P[2:, 1:-1] + P[1:-1, :-2] + P[1:-1, 2:]) / 4; sub[_un] = av[_un]
     if OWN and not PART and top == 0 and not os.environ.get('FIT_FLAT_LID'):   # (not on a part-way lid: half took the open iris below its lid line as a grey smudge) (15 Nov 2026, the auditor's patch check: a grey-brown smudge at Sol's inner corners, the open eye's dark outline left just outside the lid (dark as his hair, so never traced): below the brows, dark or grey pixels beside the lid close too)
         _yy_, _xx_ = yy[ya:yb, xa:xb], xx[ya:yb, xa:xb]
-        _gd = (_un & ~hm) & ((_bh[2] < .72) | (_bh[1] < .22)) & ~_blu & (_yy_ >= b[1] + h_ * .24) & (np.hypot((_xx_ - cx_) / (rx * 1.5), (_yy_ - cy_) / (ry * 1.3)) < 1)
+        _gd = (_un & ~hm) & ((_bh[2] < .72) | (_bh[1] < .22) | _es_) & ~_blu & (_yy_ >= b[1] + h_ * .24) & (np.hypot((_xx_ - cx_) / (rx * 1.5), (_yy_ - cy_) / (ry * 1.3)) < 1)
         _g2 = hm.copy()
         for _ in range(10): _g2 = _g2 | (_gd & (np.roll(_g2, 1, 0) | np.roll(_g2, -1, 0) | np.roll(_g2, 1, 1) | np.roll(_g2, -1, 1)))
         hm = _g2
@@ -753,7 +758,7 @@ if OWN:
         # (13 Nov 2026: Clara's real lips showed through her round and sad mouths: they are faint in this front picture, so
         # wiping them changed few pixels, and the piece was see-through there over the 3D lips) the whole wiped mouth is in it
         if k in ('surprised', 'sad', 'excited') and mouth_er: ch = np.maximum(ch, (np.hypot((xx - (mouth_er[0] + mouth_er[2]) / 2) / max(2, (mouth_er[2] - mouth_er[0]) / 2), (yy - (mouth_er[1] + mouth_er[3]) / 2) / max(2, (mouth_er[3] - mouth_er[1]) / 2)) < 1).astype(np.float32))
-        M[k][..., 3] = np.minimum(soften(ch, max(1, _g // 2), _g) * 1.6, 1) * PARTS[k] * NOHAIR   # (a narrow soft edge: less of the cheek redrawn)
+        M[k][..., 3] = np.minimum(soften(ch, (_g + 2) if k in ('blink', 'half', 'happy', 'sad', 'excited') else max(1, _g // 2), _g) * 1.6, 1) * PARTS[k] * NOHAIR   # (15 Nov 2026: a pale arc round Sol's, Lumi's and Clara's closed eyes at the inner corners, the eye white's rim under the piece's fading edge: closed lids are solid a few px past the eye)   # (a narrow soft edge: less of the cheek redrawn)
         # (where see-through it keeps the painted face's own colour in a narrow band round each piece: black there blended
         # into a dark fringe; beyond the band one flat colour, so the picture stays small)
         _band = M[k][..., 3] >= .01
