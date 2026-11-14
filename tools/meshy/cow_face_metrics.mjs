@@ -51,7 +51,7 @@ export function cowFaceMetrics(current,reference,width,height,eyes,mouth,closed,
  const dist=(a,i,b,j)=>Math.hypot(a[4*i]-b[4*j],a[4*i+1]-b[4*j+1],a[4*i+2]-b[4*j+2])/255;
  // Judge fur pigment over a 3x3 area; individual pale hair texels are not
  // a pale skin patch. Stay within the same visible lid at occlusion boundaries.
- const average=(p,i,id=0)=>{const x=i%width,y=i/width|0,sum=[0,0,0];let n=0;for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){const u=x+dx,v=y+dy,j=v*width+u;if(u<0||u>=width||v<0||v>=height||!p[4*j+3]||(id&&eyeIds&&eyeIds[j]!==id))continue;for(let k=0;k<3;k++)sum[k]+=p[4*j+k]/255;n++;}return sum.map(v=>v/Math.max(1,n));};
+ const average=(p,i,id=0,omitLash=0)=>{const x=i%width,y=i/width|0,sum=[0,0,0];let n=0;for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){const u=x+dx,v=y+dy,j=v*width+u;if(u<0||u>=width||v<0||v>=height||!p[4*j+3]||(id&&eyeIds&&eyeIds[j]!==id)||(omitLash&&eyeIds?.[j]===id&&(lashMask?.[j]&omitLash)))continue;for(let k=0;k<3;k++)sum[k]+=p[4*j+k]/255;n++;}return sum.map(v=>v/Math.max(1,n));};
  const colourDistance=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1],a[2]-b[2]);
  const median=a=>{a.sort((x,y)=>x-y);return a[a.length>>1]??0;};
  const groups=mask=>{const seen=new Uint8Array(N),out=[];for(let i=0;i<N;i++)if(mask[i]&&!seen[i]){const g=[],st=[i];seen[i]=1;while(st.length){const j=st.pop();g.push(j);const x=j%width,y=j/width|0;for(const [dx,dy]of[[1,0],[-1,0],[0,1],[0,-1]]){const u=x+dx,v=y+dy,k=v*width+u;if(u>=0&&u<width&&v>=0&&v<height&&mask[k]&&!seen[k]){seen[k]=1;st.push(k);}}}out.push(g);}return out.sort((a,b)=>b.length-a.length);};
@@ -111,8 +111,18 @@ export function cowFaceMetrics(current,reference,width,height,eyes,mouth,closed,
   const i=y*width+x;if(eyeIds&&eyeIds[i]!==e.index+1)continue;const dx=(x-e.x)/e.rx,dy=(y-e.y)/e.ry,d=Math.hypot(dx,dy);if(!current[4*i+3])continue;
   // The narrow lash arc itself may contrast with the coat; a broad patch may not.
   const lash=isLash(i,e);
-  const rgb=average(current,i,eyeIds?eyeIds[i]:0),cv=Math.max(...rgb),cs=cv?(cv-Math.min(...rgb))/cv:0;
-  if(d<1.3&&!lash&&((cv>v-.1&&cs<s-.12)||(e.coat==='dark'?cv>v+.075:cv<v-.18)))flags.lid[i]=1;
+  const rgb=average(current,i,eyeIds?eyeIds[i]:0,1<<e.index),cv=Math.max(...rgb),cs=cv?(cv-Math.min(...rgb))/cv:0;
+  // Native hair identical in both renders is not a new lid patch. Compare
+  // exactly the same ID-restricted support; no tolerance for changed seams.
+  const prior=average(reference,i,eyeIds?eyeIds[i]:0,1<<e.index),pv=Math.max(...prior),ps=pv?(pv-Math.min(...prior))/pv:0;
+  const changed=colourDistance(rgb,prior)>1e-8,opening=referenceEyeIds?.[i]===e.index+1;
+  // Outside the original eye, an existing fur shadow that got lighter is
+  // not a newly darkened lid. Within the eye, keep absolute coat checks.
+  // Skin's low-saturation criterion is inappropriate for near-black hairs;
+  // black-coat pale patches use brightness, plus independent flat-fur/rim.
+  const bad=e.coat==='dark'?(cv>v+.075&&(opening||cv>pv)):
+   ((cv>v-.1&&cs<s-.12&&(opening||(cs<ps&&cv>pv)))||(cv<v-.18&&(opening||cv<pv)));
+  if(d<1.3&&!lash&&changed&&bad)flags.lid[i]=1;
   // A pre-existing cream/black coat boundary is not the rim of a grey lid.
   // Require unchanged warm white fur from the reference beside current dark fur;
   // a grey ring on black, or any new rim on a white coat, still gets counted.

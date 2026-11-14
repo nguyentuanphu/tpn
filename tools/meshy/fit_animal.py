@@ -785,6 +785,17 @@ def tex_of(o):
     return im, px   # (rows from the bottom, as Blender keeps them)
 
 def sample(px, uv):
+    if FIX.get('textured_fur_lids'):
+        # Match the game's LINEAR sRGB sampler at texel centres. Nearest
+        # sampling shifted the painted coat edge in the copied eyelid image.
+        h,w=px.shape[:2];pos=(np.asarray(uv)%1)*np.array((w,h))-.5
+        base=np.floor(pos).astype(int);f=pos-base
+        a=px[base[...,1]%h,base[...,0]%w];b=px[base[...,1]%h,(base[...,0]+1)%w]
+        c=px[(base[...,1]+1)%h,base[...,0]%w];d=px[(base[...,1]+1)%h,(base[...,0]+1)%w]
+        linear=lambda v:np.where(v<=.04045,v/12.92,((v+.055)/1.055)**2.4)
+        fx,fy=f[...,0,None],f[...,1,None]
+        v=(linear(a)*(1-fx)+linear(b)*fx)*(1-fy)+(linear(c)*(1-fx)+linear(d)*fx)*fy
+        return np.where(v<=.0031308,v*12.92,1.055*np.maximum(v,0)**(1/2.4)-.055)
     h, w = px.shape[:2]; x = np.clip((uv[..., 0] % 1) * w, 0, w - 1).astype(int); y = np.clip((uv[..., 1] % 1) * h, 0, h - 1).astype(int)
     return px[y, x]
 
@@ -869,7 +880,7 @@ def surface_lid(o, arm, name, center, side, up, picture, picture_radius, eye_ind
     height,width=alpha.shape;image=bpy.data.images.new(name+'-surface',width,height,alpha=True)
     image.file_format='PNG';image.pixels[:]=rgba.ravel();image.pack()
     if DEBUG:image.filepath_raw=os.path.join(OUT,name+'-surface.png');image.save()
-    bm=bmesh.new();uv_layer=bm.loops.layers.uv.new('UVMap');verts={}
+    bm=bmesh.new();uv_layer=bm.loops.layers.uv.new('UVMap');verts={};corner_normals=[]
     for tri in me.loop_triangles:
         if not close[list(tri.vertices)].any():continue
         projected=np.column_stack(((V[list(tri.vertices)]-c)@side,(V[list(tri.vertices)]-c)@up))
@@ -882,8 +893,13 @@ def surface_lid(o, arm, name, center, side, up, picture, picture_radius, eye_ind
             if group not in verts:verts[group]=bm.verts.new(me.vertices[vi].co+Vector(shared[group])*FIX['surface_lid_forward'])
         face=bm.faces.new([verts[int(groups[vi])] for vi in tri.vertices]);face.smooth=True
         for loop,q in zip(face.loops,uv):loop[uv_layer].uv=tuple(q)
+        corner_normals.extend(tuple(me.corner_normals[li].vector) for li in tri.loops)
     if not verts:raise ValueError('Empty anatomical eyelid surface')
     mesh=bpy.data.meshes.new(name);bm.to_mesh(mesh);bm.free()
+    # A copied subset recomputes different normals at its perimeter. Preserve
+    # each source corner's full-head normal, including original UV seams, so
+    # matching fur RGB is lit identically instead of making a new shading rim.
+    mesh.normals_split_custom_set(corner_normals)
     obj=bpy.data.objects.new(name,mesh);bpy.context.collection.objects.link(obj)
     mat=bpy.data.materials.new(name);mat.use_nodes=True;mat.surface_render_method='DITHERED'
     nodes=mat.node_tree;tex=nodes.nodes.new('ShaderNodeTexImage');tex.image=image;tex.extension='CLIP'
@@ -951,7 +967,21 @@ def fur_lid_fill(img,hit,xx,yy,r,eye):
         hi.append(p)
     hull=lo[:-1]+hi[:-1];mask=np.ones((n,n),bool)
     for a,b in zip(hull,hull[1:]+hull[:1]):mask&=((b[0]-a[0])*(yy-a[1])-(b[1]-a[1])*(xx-a[0]))>=-1e-8
-    if coat=='dark':protected|=hit&~mask&(lum>.4)&(chroma>.1)&(img[...,0]>=img[...,1])&(img[...,0]-img[...,1]<.1)&(img[...,1]>=img[...,2])&(img[...,1]-img[...,2]<.18)
+    native_cream=np.zeros((n,n),bool)
+    if coat=='dark':
+        # Shadowed cream is still cream. Protect the full native transition,
+        # not only bright hairs: blackening its shadows detached pale flecks.
+        cream_candidate=hit&~mask&(lum>.25)&(chroma>.1)&(img[...,0]>=img[...,1])&(img[...,0]-img[...,1]<.18)&(img[...,1]>=img[...,2])&(img[...,1]-img[...,2]<.25)
+        # The cream blaze joins the left edge of this frontal patch. Warm
+        # grey eye fringe can share its RGB but is a separate component.
+        stack=[(int(y),0) for y in np.flatnonzero(cream_candidate[:,0])]
+        for y,x in stack:native_cream[y,x]=True
+        while stack:
+            y,x=stack.pop()
+            for dy,dx in ((1,0),(-1,0),(0,1),(0,-1)):
+                a,b=y+dy,x+dx
+                if 0<=a<n and 0<=b<n and cream_candidate[a,b] and not native_cream[a,b]:native_cream[a,b]=True;stack.append((a,b))
+        protected|=native_cream
     aperture=mask&~protected&hit
     if not aperture[cells[:,0],cells[:,1]].all():raise ValueError('Detected source eye excluded from aperture mask')
     if coat=='dark':
@@ -980,12 +1010,22 @@ def fur_lid_fill(img,hit,xx,yy,r,eye):
     shade=(chroma<.14)&(lum>.35)
     extra=hit&(np.hypot(xx,yy)<r*1.6)&shade&~protected if coat=='light' else np.zeros((n,n),bool)
     for _ in range(round(16*n/128)):mask|=grow(mask)&extra
-    for _ in range(round(5*n/128)):mask=grow(mask)
-    mask&=~protected
+    repair=mask.copy()
+    if coat=='dark':
+        neutral=hit&(chroma<.14)&(lum>.25)&~protected
+        for _ in range(3):repair|=grow(repair)&neutral
+        mask|=repair
+    correction=repair.astype(float);band=repair.copy()
+    steps=round((10 if coat=='light' else 5)*n/128)
+    for step in range(1,steps+1):
+        expanded=grow(band);correction[expanded&~band]=.5+.5*math.cos(math.pi*step/steps);band=expanded
+    for _ in range(steps):mask=grow(mask)
+    alpha_protected=protected
+    mask&=~alpha_protected
     if mask[0].any() or mask[-1].any() or mask[:,0].any() or mask[:,-1].any():raise ValueError('Eye mask reaches picture edge')
     soft=mask.astype(float);ring=mask.copy()
     for value in (.75,.35):
-        nxt=grow(ring)&~protected;soft[nxt&~ring]=value;ring=nxt
+        nxt=grow(ring)&~alpha_protected;soft[nxt&~ring]=value;ring=nxt
     # Cover the full source texel footprint, including bilinear neighbours.
     for dy in (-1,0,1):
         for dx in (-1,0,1):
@@ -993,12 +1033,13 @@ def fur_lid_fill(img,hit,xx,yy,r,eye):
     radius=max(2,round(n/64));window=range(-radius,radius+1)
     blur=sum(np.roll(img,(dy,dx),(0,1)) for dy in window for dx in window)/(2*radius+1)**2
     low_lum=blur@np.array((.3,.59,.11));hp=(lum/np.maximum(low_lum,.025)-1)[...,None];hp=np.repeat(hp,3,axis=-1)
-    def weave(known,seed):
+    def weave(known,seed,boundary=None):
         if known.sum()<20:raise ValueError('Not enough native fur donors')
-        field=img.copy();field[~known]=np.median(img[known],axis=0)
+        pins=known if boundary is None else boundary
+        field=img.copy();field[~pins]=np.median(img[known],axis=0)
         for _ in range(n*3):
             avg=(np.roll(field,1,0)+np.roll(field,-1,0)+np.roll(field,1,1)+np.roll(field,-1,1))/4
-            field=np.where(known[...,None],img,avg)
+            field=np.where(pins[...,None],img,avg)
         patches=[];tile=round(8*n/128)
         for size in (tile,round(4*n/128)):
             for y in range(0,n-size,2):
@@ -1012,15 +1053,31 @@ def fur_lid_fill(img,hit,xx,yy,r,eye):
             for x in range(0,n,step):
                 patch=patches[int(rng.integers(len(patches)))];acc[y:y+tile,x:x+tile]+=patch*win;den[y:y+tile,x:x+tile]+=win
         grain=(acc/np.maximum(den,1e-9))[:n,:n]
-        native=float(np.std(hp[known]));grain*=min(2.,native/max(float(np.std(grain)),1e-6))
+        # Measure real fur donors, excluding the coat/eye boundary pixels
+        # rejected by the patch selector. Their high-pass shadow inflated
+        # contrast and made the reconstructed hairs look like dark wedges.
+        native=float(np.std(np.concatenate([p.ravel() for p in patches])));grain*=min(2.,native/max(float(np.std(grain)),1e-6))
         print('FUR_WEAVE',eye,'seed',seed,'donors',len(patches),'tile',tile,'grain',round(native,4),flush=True)
         return np.clip(field*np.maximum(.25,1+grain),0,1)
     if coat=='dark':
         known=hit&~ring&(lum>.025)&(lum<.25)&(chroma<.45)
         fill=weave(known,1700+eye)
+        # Keep the complete dark eye fringe inpainted; its neutral grey
+        # pixels are not native fur to restore at the RGB boundary.
+        core=repair.copy()
+        for _ in range(round(2*n/128)):core=grow(core)
+        correction=core.astype(float);band=core.copy();fade=round(3*n/128)
+        for step in range(1,fade+1):
+            expanded=grow(band);correction[expanded&~band]=.5+.5*math.cos(math.pi*step/fade);band=expanded
+        fill[native_cream]=img[native_cream]
     else:
         known=hit&~ring&(lum>native_light-.055)&(chroma>.12)
-        fill=weave(known,1700+eye)
+        boundary=hit&~ring&(lum>.35)&(chroma>.12)&cream
+        fill=weave(known,1700+eye,boundary)
+    # Match the source exactly at the repair band's outer boundary. Applying
+    # synthetic grain to known native pixels made a new bright/dark ridge.
+    fill=fill*correction[...,None]+img*(1-correction[...,None])
+    if DEBUG:np.savez_compressed(os.path.join(OUT,f'eye-fur-{eye}-{n}.npz'),source=img,hit=hit,aperture=aperture,native_cream=native_cream,protected=protected,fill=fill,alpha=soft)
     print('FUR_LID',eye,'opening',len(cells),'mask',int(mask.sum()),flush=True)
     return fill,soft,hull,aperture
 
@@ -1048,12 +1105,15 @@ def face_pieces(o, arm, J, Fc):
             # Cow landmarks use the frontal X/Z frame. Sample that frame for
             # lids/probes rather than averaging the old eyeball bulge normals.
             nrm=np.array((0.,-1.,0.));side=np.array((1.,0.,0.));up=np.array((0.,0.,1.))
+        ray_distance=float(np.max((V-c)@nrm))+.02 if FIX.get('textured_fur_lids') else R
         # the picture: the face seen straight on over the eye (rays along -normal), TP x TP texels over 2P x 2P
         img0 = np.zeros((TP, TP, 3)); Pp = np.full((TP, TP, 3), np.nan)
         for a in range(TP):
             for b in range(TP):
                 x = (b + .5) / TP * 2 * P - P; y = (a + .5) / TP * 2 * P - P
-                frm = c + side * x + up * y + nrm * R
+                # Start in front of the entire head. A radius-length ray
+                # started inside the protruding blaze and sampled rear skin.
+                frm = c + side * x + up * y + nrm * ray_distance
                 loc, nor, fi, _ = bvh.ray_cast(Vector(frm), Vector(-nrm))
                 if loc is None: continue
                 poly = me.polygons[fi]; vs = [me.vertices[k].co for k in poly.vertices[:3]]; uvs3 = [uvl[li].uv for li in poly.loop_indices[:3]]
@@ -1145,7 +1205,7 @@ def face_pieces(o, arm, J, Fc):
                 if FIX.get('textured_fur_lids'):
                     stroke=[]
                     for u in np.linspace(-ew*.85,ew*.85,30):
-                        frm=c+side*(u+ecx)+up*(ecy+curve(u))+nrm*R
+                        frm=c+side*(u+ecx)+up*(ecy+curve(u))+nrm*ray_distance
                         loc,normal,_,_=bvh.ray_cast(Vector(frm),Vector(-nrm))
                         if loc is not None:stroke.extend(three(np.array(loc[:])+np.array(normal[:])*FIX['surface_lid_forward']))
                     lid['svLash']=stroke;lid['svLashBone']=f'{kind}{i}';lid['svLashWidth']=round(r*.09+px_*.5,6);lid['svEyeIndex']=i

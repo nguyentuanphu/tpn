@@ -80,11 +80,11 @@ const res: any = await P.page.evaluate(async ([kinds, MODE, LIMIT, EYE_PROBES]) 
   };
   // depth from the camera in mm, in red and green (skinning kept: a basic material, its colour replaced)
   const depthMat = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide });
-  const PLANT = { value: 0 }, PLANTAT = { value: new THREE.Vector3() }, PLANTNORMAL={value:new THREE.Vector3(0,0,1)};
+  const PLANT = { value: 0 }, PLANTAT = { value: new THREE.Vector3() }, PLANTNORMAL={value:new THREE.Vector3(0,0,1)},PLANTSIZE={value:.015},PLANTHALF={value:.06};
   depthMat.onBeforeCompile = (sh: any) => {
-    sh.uniforms.uPlant = PLANT; sh.uniforms.uPlantAt = PLANTAT; sh.uniforms.uPlantNormal=PLANTNORMAL;
+    sh.uniforms.uPlant = PLANT; sh.uniforms.uPlantAt = PLANTAT; sh.uniforms.uPlantNormal=PLANTNORMAL;sh.uniforms.uPlantSize=PLANTSIZE;sh.uniforms.uPlantHalf=PLANTHALF;
     sh.vertexShader = 'varying float vDz;\nvarying vec3 vW;\n' + sh.vertexShader.replace('#include <project_vertex>', '#include <project_vertex>\nvDz = -mvPosition.z;\nvW = (modelMatrix * vec4(transformed, 1.0)).xyz;');
-    sh.fragmentShader = 'varying float vDz;\nvarying vec3 vW;\nuniform float uPlant;\nuniform vec3 uPlantAt;\nuniform vec3 uPlantNormal;\n' + sh.fragmentShader.replace('#include <dithering_fragment>', '#include <dithering_fragment>\nvec3 cut=vW-uPlantAt;cut-=uPlantNormal*dot(cut,uPlantNormal);if (uPlant > .5 && length(cut) < .03) discard;   // (a torn tail: a hole through a thin part)\nfloat mm = clamp(vDz * 1000.0, 0.0, 65000.0);\ngl_FragColor = vec4(floor(mm / 256.0) / 255.0, mod(mm, 256.0) / 255.0, 1.0, 1.0);');
+    sh.fragmentShader = 'varying float vDz;\nvarying vec3 vW;\nuniform float uPlant;\nuniform vec3 uPlantAt;\nuniform vec3 uPlantNormal;\nuniform float uPlantSize;\nuniform float uPlantHalf;\n' + sh.fragmentShader.replace('#include <dithering_fragment>', '#include <dithering_fragment>\nvec3 cut=vW-uPlantAt;cut-=uPlantNormal*dot(cut,uPlantNormal);if (uPlant > .5 && length(cut) < uPlantSize && abs(dot(vW-uPlantAt,uPlantNormal)) < uPlantHalf) discard;   // finite cut through the measured interior ear disk\nfloat mm = clamp(vDz * 1000.0, 0.0, 65000.0);\ngl_FragColor = vec4(floor(mm / 256.0) / 255.0, mod(mm, 256.0) / 255.0, 1.0, 1.0);');
   };
   const DEBUG = { on: false, holes: [] as any[] };
   const depthAt = (px: Uint8Array, i: number) => (px[i * 4] * 256 + px[i * 4 + 1]) / 1000;
@@ -173,7 +173,7 @@ const res: any = await P.page.evaluate(async ([kinds, MODE, LIMIT, EYE_PROBES]) 
         if (plant === 'sink') { bone('body').position.y -= Hh * .08; obj.updateMatrixWorld(true); }
         if (plant === 'mouth' && bone('jaw')) { bone('jaw').scale.multiplyScalar(2.5); bone('jaw').position.z += Hh * .02; obj.updateMatrixWorld(true); }   // (an open mouth too big for the face, standing off it)
         const hidden: any[] = []; if (plant === 'eyes') obj.traverse((o: any) => { if (o.isMesh && /-(shut|joy)\d$/.test(o.material.name)) { o.visible = false; hidden.push(o); } });
-        PLANT.value = plant === 'tear' ? 1 : 0; if (plant === 'tear') {   // (a torn ear: a hole through its flap where it hangs out beyond the cheek, seen from the front)
+        PLANT.value = plant === 'tear' ? 1 : 0; if (kind === 'cow' || plant === 'tear') {   // (a torn ear: a hole through its flap where it hangs out beyond the cheek, seen from the front)
           const e = bone('ear0'); obj.updateMatrixWorld(true); e.getWorldPosition(PLANTAT.value);
           // Put the tear through the actual ear flap, not a guessed point below
           // its root. The old cow plant missed the flap and matched its control.
@@ -186,7 +186,29 @@ const res: any = await P.page.evaluate(async ([kinds, MODE, LIMIT, EYE_PROBES]) 
           if(!samples)throw Error('Tear plant missed the outer ear flap');PLANTAT.value.copy(centre.divideScalar(samples));
           // A real through-hole removes both flap walls; a small sphere could
           // remove only the near wall and leave the intact back wall occluding it.
-          PLANTNORMAL.value.set(0,0,1).applyQuaternion(e.getWorldQuaternion(new THREE.Quaternion())).normalize(); }
+          const earSet=new Set(earVertices),cov=new Float64Array(9),A=new THREE.Vector3(),B=new THREE.Vector3(),C=new THREE.Vector3(),normal=new THREE.Vector3();let patches=0;
+          for(let k=0;k<idx.length;k+=3){const ia=idx[k],ib=idx[k+1],ic=idx[k+2];if(!earSet.has(ia)||!earSet.has(ib)||!earSet.has(ic))continue;
+            A.fromArray(now,ia*3);B.fromArray(now,ib*3);C.fromArray(now,ic*3);if(A.clone().add(B).add(C).multiplyScalar(1/3).distanceTo(PLANTAT.value)>.055)continue;
+            normal.crossVectors(B.sub(A),C.sub(A));const area=normal.length();if(area<1e-9)continue;normal.divideScalar(area);const v=normal.toArray();for(let i=0;i<3;i++)for(let j=0;j<3;j++)cov[i*3+j]+=v[i]*v[j]*area;patches++;
+          }
+          if(!patches)throw Error('Tear fixture needs actual local ear triangles');
+          PLANTNORMAL.value.set(0,1,0);
+          for(let i=0;i<16;i++){const v=PLANTNORMAL.value.toArray();PLANTNORMAL.value.set(cov[0]*v[0]+cov[1]*v[1]+cov[2]*v[2],cov[3]*v[0]+cov[4]*v[1]+cov[5]*v[2],cov[6]*v[0]+cov[7]*v[1]+cov[8]*v[2]).normalize();}
+          // Largest interior disk in the projected ear: a vertex average
+          // can sit on the flap edge and make an unenclosed notch.
+          const N=PLANTNORMAL.value,U=new THREE.Vector3().crossVectors(N,new THREE.Vector3(0,0,1));if(U.length()<.1)U.crossVectors(N,new THREE.Vector3(1,0,0));U.normalize();const V=new THREE.Vector3().crossVectors(N,U).normalize(),projected=new Map();
+          for(const vi of earVertices){const p=new THREE.Vector3().fromArray(now,vi*3);projected.set(vi,[p.dot(U),p.dot(V),p.dot(N)]);}
+          const coords=[...projected.values()],u0=Math.min(...coords.map(p=>p[0])),v0=Math.min(...coords.map(p=>p[1])),pitch=Math.max(Math.max(...coords.map(p=>p[0]))-u0,Math.max(...coords.map(p=>p[1]))-v0)/64,SZ=68,ou=u0-pitch*2,ov=v0-pitch*2,inside=new Uint8Array(SZ*SZ),front=new Float64Array(SZ*SZ).fill(Infinity),back=new Float64Array(SZ*SZ).fill(-Infinity);
+          for(let k=0;k<idx.length;k+=3){const a=projected.get(idx[k]),b=projected.get(idx[k+1]),c=projected.get(idx[k+2]);if(!a||!b||!c)continue;const den=(b[1]-c[1])*(a[0]-c[0])+(c[0]-b[0])*(a[1]-c[1]);if(Math.abs(den)<1e-12)continue;
+            const x0=Math.max(0,Math.floor((Math.min(a[0],b[0],c[0])-ou)/pitch)),x1=Math.min(SZ-1,Math.ceil((Math.max(a[0],b[0],c[0])-ou)/pitch)),y0=Math.max(0,Math.floor((Math.min(a[1],b[1],c[1])-ov)/pitch)),y1=Math.min(SZ-1,Math.ceil((Math.max(a[1],b[1],c[1])-ov)/pitch));
+            for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++){const pu=ou+(x+.5)*pitch,pv=ov+(y+.5)*pitch,f=((b[1]-c[1])*(pu-c[0])+(c[0]-b[0])*(pv-c[1]))/den,g=((c[1]-a[1])*(pu-c[0])+(a[0]-c[0])*(pv-c[1]))/den;if(f<0||g<0||f+g>1)continue;const at=y*SZ+x,z=f*a[2]+g*b[2]+(1-f-g)*c[2];inside[at]=1;front[at]=Math.min(front[at],z);back[at]=Math.max(back[at],z);}
+          }
+          const clearance=Float64Array.from(inside,n=>n?1e6:0);
+          for(let y=1;y<SZ-1;y++)for(let x=1;x<SZ-1;x++){const i=y*SZ+x;clearance[i]=Math.min(clearance[i],clearance[i-1]+1,clearance[i-SZ]+1,clearance[i-SZ-1]+Math.SQRT2,clearance[i-SZ+1]+Math.SQRT2);}
+          for(let y=SZ-2;y>0;y--)for(let x=SZ-2;x>0;x--){const i=y*SZ+x;clearance[i]=Math.min(clearance[i],clearance[i+1]+1,clearance[i+SZ]+1,clearance[i+SZ+1]+Math.SQRT2,clearance[i+SZ-1]+Math.SQRT2);}
+          let best=0;for(let i=1;i<clearance.length;i++)if(clearance[i]>clearance[best])best=i;if(clearance[best]*pitch<.008)throw Error('No enclosed ear disk for tear fixture');
+          PLANTAT.value.copy(U).multiplyScalar(ou+(best%SZ+.5)*pitch).addScaledVector(V,ov+((best/SZ|0)+.5)*pitch).addScaledVector(N,(front[best]+back[best])*.5);PLANTSIZE.value=Math.min(.015,clearance[best]*pitch*.55);PLANTHALF.value=(back[best]-front[best])*.5+.015;
+        }
         const cs: any = { kind, lod, clip, t: +f.toFixed(2), plant, stretch: 0, tear: 0, sink: 0, float: 0, eyes: 0, hat: 0, flicker: 0, mouth: 0, worst: '' };
         // stretch and the ground
         skinned(body, now); let minY = 1e9; const strK: number[] = [];
@@ -203,11 +225,12 @@ const res: any = await P.page.evaluate(async ([kinds, MODE, LIMIT, EYE_PROBES]) 
         // tears from every side (the silhouette in depth colours)
         const box = new THREE.Box3().setFromObject(obj, true), cc = box.getCenter(new THREE.Vector3()), r = box.getSize(new THREE.Vector3()).length();
         let worstPic: any = null;
-        for (const [vn, yaw, up] of views) {
+        for (const [vn, yaw, up] of views.concat(kind==='cow'?[['ear-normal',0,0],['ear-reverse',0,0]]:[])) {
           const cam = new THREE.PerspectiveCamera(30, 1, .02, 50), dir = new THREE.Vector3(Math.sin(yaw), up, Math.cos(yaw)).normalize();
-          cam.position.copy(cc).addScaledVector(dir, r * 1.9); cam.lookAt(cc);
+          if(vn==='ear-normal'||vn==='ear-reverse'){dir.copy(PLANTNORMAL.value).multiplyScalar(vn==='ear-normal'?1:-1);cam.position.copy(PLANTAT.value).addScaledVector(dir,.9);cam.lookAt(PLANTAT.value);}else{cam.position.copy(cc).addScaledVector(dir,r*1.9);cam.lookAt(cc);}
           DEBUG.on = plant === 'tear'; DEBUG.holes = [];
           const d = read(cam, depthMat), tr = tears(d);
+          if(self&&clip==='idle'&&(plant==='none'||plant==='tear')&&(vn==='ear-normal'||vn==='ear-reverse'))out.pics[`${kind}-${lod}-${clip}-${cs.t}-${plant}-${vn}-raw-depth`]=png(d,null);
           if (DEBUG.on) (cs.holes = cs.holes || {})[vn] = DEBUG.holes.slice(0, 4);
           if (DEBUG.on) { cs.plantAt = PLANTAT.value.toArray().map((v: number) => +v.toFixed(3)); cs.c0 = c0.toArray().map((v: number) => +v.toFixed(3)); cs.box = [new THREE.Box3().setFromObject(obj, true).min.toArray().map((v: number) => +v.toFixed(2)), new THREE.Box3().setFromObject(obj, true).max.toArray().map((v: number) => +v.toFixed(2))]; }
           if (tr.count > cs.tear) { cs.tear = tr.count; cs.worst = vn; worstPic = { cam, flags: tr.flags }; }
@@ -387,7 +410,7 @@ const val = (c: any, k: string) => { const O = OWN[c.kind] || {};
 const lim = (c: any, k: string) => (OWN[c.kind] && OWN[c.kind][k] != null) ? OWN[c.kind][k] : k === 'stretch' && FOLDED.includes(c.clip) ? 900 : LIMIT[k];
 const fail = real.filter((c: any) => keys.some(k => val(c, k) > lim(c, k)) || c.missing);
 const lines = [`pets audit ${new Intl.DateTimeFormat('en-AU', {dateStyle:'short', timeStyle:'long', timeZone:'Australia/Sydney'}).format(new Date())} cases ${real.length} failing ${fail.length}`];
-for (const k of keys) lines.push(`${k}: ${real.filter((c: any) => val(c, k) > lim(c, k)).length} cases over ${LIMIT[k]}${k === 'stretch' ? ' (folded poses 900)' : ''}, worst ${Math.max(0, ...real.map((c: any) => c[k] || 0))}`);
+for (const k of keys) { const limits=[...new Set(real.map((c: any)=>lim(c,k)))].sort((a,b)=>a-b);lines.push(`${k}: ${real.filter((c: any) => val(c, k) > lim(c, k)).length} cases over ${limits.join('/')} (actual per-animal/pose limits), worst ${Math.max(0, ...real.map((c: any) => c[k] || 0))}`); }
 for (const kind of kinds) for (const lod of ['near', 'far']) {
   const f = `../models/world/creature-${kind}${lod === 'near' ? '-hd' : ''}.glb`; let kb = 0; try { kb = Math.round(statSync(f).size / 1024); } catch { }
   lines.push(`size ${kind} ${lod}: ${kb} KB (limit ${SIZE[lod]})${kb > SIZE[lod] || !kb ? '  OVER' : ''}`);

@@ -117,7 +117,9 @@ const result=await page.evaluate(async ([mode,baseline,debug])=>{
     }
    }
    for(const k of Object.keys(m.counts))if(m.counts[k]>(k==='eyes'?6:12)||plant===k)pics[`${tier}-${clip}-${yaw}-${elevation}-${plant}-${k}`]=png(current,m.flags[k]);
-   if(debug){const name=`${tier}-${clip}-${yaw}-${elevation}-${plant}`;pics[name+'-current']=png(current);pics[name+'-reference']=png(reference);}
+   if(debug){const name=`${tier}-${clip}-${yaw}-${elevation}-${plant}`;pics[name+'-current']=png(current);pics[name+'-reference']=png(reference);
+    for(const [label,mask]of [['ids',ids],['reference-ids',referenceEyeIds],['lash',lashMask]] as const){if(!mask)continue;const rgba=new Uint8Array(S*S*4);for(let i=0;i<S*S;i++){rgba[4*i]=mask[i]&1?255:0;rgba[4*i+1]=mask[i]&2?255:0;rgba[4*i+3]=255;}pics[name+'-'+label]=png(rgba);}
+   }
    if(fault){scene.remove(fault);fault.geometry.dispose();fault.material.dispose();}
   }
   scene.remove(obj);for(const mat of idCache.values())mat.dispose();
