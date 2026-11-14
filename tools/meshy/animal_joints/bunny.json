@@ -1,5 +1,5 @@
 {
-  "note": "Meshy bunny (12 Nov 2026 model): first fit with the puppy's pose and face tuning; values tuned below after looking at its pictures. (12 Nov: long upright ears: ear_up, pivots at their roots read from the front and side renders.) (12 Nov: its long ears lean back past a quarter-body head: head_back 0.6, or the ears' back halves fell out of the head and stretched in the roll.) (15 Nov 2026, second reviewer: begging sat bolt upright, the rump narrowed to a point (bunny), the hind leg a blunt block (kitty), the front paws hung in the air (panda): a lower beg (beg_pitch), hind legs folded less (sit_fold); the bunny's scratching paw forward (scratch_knee).) (15 Nov 2026: foot_whole 0.5: its paws kept up to 29% of the body's weight at their rim and stretched when a knee folded. lid_fade tried and taken out: through the faded rim the eye's dark outline showed and the lid read as a smooth disc.) (15 Nov 2026: lid_px 256: the lid picture at 128 px lost the fur's grain, so even its rim (the face's own picture, copied) looked smoother than the face beside it and the lid read as a smooth disc.) (15 Nov 2026: at 256 px the shut lid still read as a smooth pink disc with painted lash bits at its rim: the eye's fill smoothed away the fur, so lid_patch tiles the fur's grain over it; lash_dark 0.3 and lash_spot fill the lash bits; lid_on_eye centres it on the painted eye.)",
+  "note": "Meshy bunny (12 Nov 2026 model): first fit with the puppy's pose and face tuning; values tuned below after looking at its pictures. (12 Nov: long upright ears: ear_up, pivots at their roots read from the front and side renders.) (12 Nov: its long ears lean back past a quarter-body head: head_back 0.6, or the ears' back halves fell out of the head and stretched in the roll.) (15 Nov 2026, second reviewer: begging sat bolt upright, the rump narrowed to a point (bunny), the hind leg a blunt block (kitty), the front paws hung in the air (panda): a lower beg (beg_pitch), hind legs folded less (sit_fold); the bunny's scratching paw forward (scratch_knee).) (15 Nov 2026: foot_whole 0.5: its paws kept up to 29% of the body's weight at their rim and stretched when a knee folded. lid_fade tried and taken out: through the faded rim the eye's dark outline showed and the lid read as a smooth disc.) (15 Nov 2026: lid_px 256: the lid picture at 128 px lost the fur's grain, so even its rim (the face's own picture, copied) looked smoother than the face beside it and the lid read as a smooth disc.) (15 Nov 2026: lid_patch with lash_dark 0.3, lash_spot and lid_on_eye tried and taken out: the lid moved off the painted eye, pink blush specks above the eyes were filled as lashes and showed as pink marks, stray up to 854.)",
   "lie_drop": 0.95,
   "lie_front": -1.35,
   "lie_front_knee": 0.1,
@@ -42,9 +42,5 @@
   "beg_pitch": -0.55,
   "scratch_knee": 0.7,
   "foot_whole": 0.5,
-  "lid_px": 256,
-  "lid_patch": true,
-  "lash_dark": 0.3,
-  "lash_spot": 0.06,
-  "lid_on_eye": true
+  "lid_px": 256
 }
