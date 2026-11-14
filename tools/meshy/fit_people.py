@@ -539,8 +539,8 @@ def lid(img, b, top=0., bot=1.):   # (original_skin) a closed lid painted over t
         _tp = np.pad(_top, 3, mode='edge'); _top = np.min(np.stack([_tp[k:k + W_] for k in range(7)]), 0)   # (the lash line's highest point nearby: no notches)
         hole &= yy >= (_top[None, :] - 2)
         _bot = np.full(W_, _cy0, np.float32); _b0 = b[3] - h_ * .3 / 1.55 + h_ * .18   # (and below: the eye's own lower edge, its white or dark rim, column by column: Jack's, Ruby's, Teo's and Su's freckles under the eyes vanished when shut)
-        _b0 = b[3] - h_ * .3 / 1.55 + h_ / 1.55 * .3   # (round 34: the band reaches the lower lash's ends, Ruby's; dark only under .35: freckles are paler)
-        _lb = ((V < .35) | ((V > .78) & (S_ < .22))) & (yy >= _cy0) & (yy <= _b0)
+        _b0 = b[3] - h_ * .3 / 1.55 + h_ / 1.55 * .15   # (round 35: .15 and dark under .45: with .35 the lighter lower rim stayed as a second line under the lid, Mai, Lan, Jack; the band stops short of the freckles)
+        _lb = ((V < .45) | ((V > .78) & (S_ < .22))) & (yy >= _cy0) & (yy <= _b0)
         _cb = np.nonzero(_lb.any(0))[0]; _cb = _cb[_ex[_cb]]
         if len(_cb): _bot[_cb] = (_lb.shape[0] - 1 - np.argmax(_lb[::-1, :][:, _cb], axis=0)).astype(np.float32); _ic = np.nonzero(_ex)[0]; _bot[_ic] = np.interp(_ic, _cb, _bot[_cb])
         _bp = np.pad(_bot, 3, mode='edge'); _bot = np.max(np.stack([_bp[k:k + W_] for k in range(7)]), 0)
