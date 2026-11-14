@@ -533,15 +533,18 @@ def lid(img, b, top=0., bot=1.):   # (original_skin) a closed lid painted over t
         _top = np.full(W_, _cy0, np.float32)
         _lk = (V < .45) & (yy >= _t0) & (yy <= _cy0)   # (round 28: .18 (lashes only) left the upper half of the open eye above the lid on Lan, Jack and Ruby)
         _cols = np.nonzero(_lk.any(0))[0]
-        if len(_cols): _top[_cols] = np.argmax(_lk[:, _cols], axis=0).astype(np.float32)
+        _ex = (np.arange(W_) >= b[0] - w_ * .05) & (np.arange(W_) <= b[2] + w_ * .05)   # (round 34: within the eye's own columns only, and a column with no lash found takes its neighbours' height: from the eye's middle down only, Ba's and Ti's socket outline stayed as a ring at the corners)
+        _cols = _cols[_ex[_cols]]
+        if len(_cols): _top[_cols] = np.argmax(_lk[:, _cols], axis=0).astype(np.float32); _ic = np.nonzero(_ex)[0]; _top[_ic] = np.interp(_ic, _cols, _top[_cols])
         _tp = np.pad(_top, 3, mode='edge'); _top = np.min(np.stack([_tp[k:k + W_] for k in range(7)]), 0)   # (the lash line's highest point nearby: no notches)
         hole &= yy >= (_top[None, :] - 2)
         _bot = np.full(W_, _cy0, np.float32); _b0 = b[3] - h_ * .3 / 1.55 + h_ * .18   # (and below: the eye's own lower edge, its white or dark rim, column by column: Jack's, Ruby's, Teo's and Su's freckles under the eyes vanished when shut)
-        _lb = ((V < .45) | ((V > .78) & (S_ < .22))) & (yy >= _cy0) & (yy <= _b0)
-        _cb = np.nonzero(_lb.any(0))[0]
-        if len(_cb): _bot[_cb] = (_lb.shape[0] - 1 - np.argmax(_lb[::-1, :][:, _cb], axis=0)).astype(np.float32)
+        _b0 = b[3] - h_ * .3 / 1.55 + h_ / 1.55 * .3   # (round 34: the band reaches the lower lash's ends, Ruby's; dark only under .35: freckles are paler)
+        _lb = ((V < .35) | ((V > .78) & (S_ < .22))) & (yy >= _cy0) & (yy <= _b0)
+        _cb = np.nonzero(_lb.any(0))[0]; _cb = _cb[_ex[_cb]]
+        if len(_cb): _bot[_cb] = (_lb.shape[0] - 1 - np.argmax(_lb[::-1, :][:, _cb], axis=0)).astype(np.float32); _ic = np.nonzero(_ex)[0]; _bot[_ic] = np.interp(_ic, _cb, _bot[_cb])
         _bp = np.pad(_bot, 3, mode='edge'); _bot = np.max(np.stack([_bp[k:k + W_] for k in range(7)]), 0)
-        hole &= yy <= np.maximum(_bot[None, :] + 5, b[3] - h_ * .3 / 1.55 + h_ / 1.55 * .15)   # (round 33: .15, was .3: Jack's freckles under the eyes)   # (round 28: at least the eye's whole lower rim: Ruby's lower whites showed under the lid)
+        hole &= yy <= (_bot[None, :] + 4)   # (round 34: the eye's own lower rim, no flat floor: the floor's straight edge cut across the blush and nose, Jack, Teo, Lan, Bom)   #   # (round 33: .15, was .3: Jack's freckles under the eyes)   # (round 28: at least the eye's whole lower rim: Ruby's lower whites showed under the lid)
     if top > 0: hole &= yy >= y0
     if PART: hole &= yy < lidline(xx)
     # her own skin flows in from all round the eye (a smooth fill, no disc edge): the eye pixels are repeatedly
@@ -771,7 +774,7 @@ if OWN:
             for b in eyes.values():
                 w_, h_ = b[2] - b[0], b[3] - b[1]; _l = (b[0] + b[2]) / 2 < W_ / 2
                 cx_ = (b[2] - w_ * .1) if _l else (b[0] + w_ * .1); cy_ = (b[1] + b[3]) / 2 + h_ * .1
-                _ns_ = np.maximum(_ns_, np.clip((1 - np.hypot((xx - cx_) / (w_ * .42), (yy - cy_) / (h_ * .48))) / .35, 0, 1))
+                _ns_ = np.maximum(_ns_, np.clip((1 - np.hypot((xx - cx_) / (w_ * .3), (yy - cy_) / (h_ * .42))) / .35, 0, 1))
                 ox_ = (b[0] - w_ * .04) if _l else (b[2] + w_ * .04); oy_ = b[1] + h_ * .12   # (and the outer upper corner, small and soft, under the brow line: Mít's, Ruby's and Su's red lash flick from three-quarters)
                 _ns_ = np.maximum(_ns_, np.clip((1 - np.hypot((xx - ox_) / (w_ * .34), (yy - oy_) / (h_ * .42))) / .35, 0, 1) * np.clip((yy - (b[1] - h_ * .32)) / (h_ * .22), 0, 1))   # (round 26: larger and further out: Mít's red zigzag and Su's dark dots at the temple stayed past the round 25 cover)
             M[k][..., 3] = np.maximum(M[k][..., 3], _ns_ * NOHAIR)

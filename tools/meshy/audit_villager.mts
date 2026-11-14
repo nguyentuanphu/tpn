@@ -196,7 +196,7 @@ const res: any = await P.page.evaluate(async ([LIST, QUICK, LIMIT]) => {
             const sv: any[] = []; M.obj.traverse((o: any) => { if (o.isMesh) sv.push([o, o.material, o.visible]); });
             sv.forEach(([o, m, v]: any) => { if (bm.includes(o)) o.material = mask(o); else o.visible = false; });
             const MK = read(stage, cam); sv.forEach(([o, m, v]: any) => { o.material = m; o.visible = v; });
-            for (const m of ['blink', 'happy']) {
+            for (const m of ['blink', 'happy', 'excited']) {   // (15 Nov 2026: excited shuts the eyes too, js/friend-model.ts)
               setMood(m); const C = read(stage, cam);
               const vis = sv.map(([o]: any) => o.visible); sv.forEach(([o, mm]: any, j: number) => { o.visible = vis[j] && /^face-/.test(mm.name || ''); }); solo.add(av.root); av.root.updateMatrixWorld(true); const LP = read(solo, cam); par.add(av.root); av.root.updateMatrixWorld(true); sv.forEach(([o]: any, j: number) => { o.visible = vis[j]; });   // (the pieces shown in this mood, not the smile's)
               const lash = new Uint8Array(N); for (let i = 0; i < N; i++) if (LP[i * 4 + 3] > 40 && hsv(LP, i)[0] < .45) { const x = i % W, y = (i / W) | 0; for (let dy = -3; dy <= 3; dy++) for (let dx = -3; dx <= 3; dx++) { const xx = x + dx, yy = y + dy; if (xx >= 0 && yy >= 0 && xx < W && yy < H) lash[yy * W + xx] = 1; } }

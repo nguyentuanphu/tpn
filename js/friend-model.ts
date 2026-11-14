@@ -354,7 +354,8 @@ export function attachFriendModel(A, id: string, skinHex: string, wear: FriendMo
     }
     let f = MOOD[mood] || 'face-smile'; if (!faces[f]) f = NEAR[f] || 'face-smile';
     if (f !== face) { face = f; for (const [k, list] of Object.entries(faces)) list.forEach(o => { o.visible = k === f; });
-      const shut = /^face-(blink|happy)$/.test(f) ? 1 : 0; for (const m of skinMats) if (m.userData.kitU) m.userData.kitU.shut.value = shut; } // (eyes shut: the painted whites hidden, see skinTint)
+      // (owner 15 Nov 2026, Cho sua 1 dong: excited is built on the happy shut eyes; left open, the far eye showed past the lid by the nose)
+      const shut = /^face-(blink|happy|excited)$/.test(f) ? 1 : 0; for (const m of skinMats) if (m.userData.kitU) m.userData.kitU.shut.value = shut; } // (eyes shut: the painted whites hidden, see skinTint)
     if (face3.length) {
       const key = KEY[mood] || mood;
       if (key !== shown) { shown = key; for (const o of face3) { const d = o.morphTargetDictionary, inf = o.morphTargetInfluences; for (const n in d) inf[d[n]] = n === key ? 1 : 0; } }
