@@ -30,10 +30,10 @@ export function validateCowLashMetadata(strokes,centers){
 // 5f13d4b3b (13–14 Nov). Same HSV lid criterion, 4-connected group floor,
 // 1px neighbourhood colour tolerance and mouth lip/core grouping; coat-aware
 // brightness and the rim residual extend coverage to black/white animal fur.
-export function cowFaceMetrics(current,reference,width,height,eyes,mouth,closed,mouthOpen=false,eyeIds=null,lashMask=null){
+export function cowFaceMetrics(current,reference,width,height,eyes,mouth,closed,mouthOpen=false,eyeIds=null,lashMask=null,referenceEyeIds=null){
  const N=width*height,flags={lid:new Uint8Array(N),mouth:new Uint8Array(N),stray:new Uint8Array(N),rim:new Uint8Array(N),eyes:new Uint8Array(N),silhouette:new Uint8Array(N)};
- if(!Number.isInteger(width)||!Number.isInteger(height)||width<=0||height<=0||current.length!==N*4||reference.length!==N*4||(eyeIds&&eyeIds.length!==N)||(lashMask&&lashMask.length!==N))throw Error('Invalid face render buffers');
- if(eyeIds&&eyeIds.some(id=>id!==0&&id!==1&&id!==2))throw Error('Invalid actual-eye IDs');
+ if(!Number.isInteger(width)||!Number.isInteger(height)||width<=0||height<=0||current.length!==N*4||reference.length!==N*4||(eyeIds&&eyeIds.length!==N)||(lashMask&&lashMask.length!==N)||(referenceEyeIds&&referenceEyeIds.length!==N))throw Error('Invalid face render buffers');
+ for(const ids of [eyeIds,referenceEyeIds])if(ids&&ids.some(id=>id!==0&&id!==1&&id!==2))throw Error('Invalid actual-eye IDs');
  if(eyes.some(e=>![e.x,e.y,e.rx,e.ry].every(Number.isFinite)||e.rx<=0||e.ry<=0||![0,1].includes(e.index))||![mouth.x,mouth.y,mouth.rx,mouth.ry].every(Number.isFinite))throw Error('Invalid projected face frame');
  const coverageErrors=[];
  if(closed&&!eyes.length)coverageErrors.push('Missing eye regions');
@@ -41,6 +41,7 @@ export function cowFaceMetrics(current,reference,width,height,eyes,mouth,closed,
  // Alpha deltas are independent of eye/mouth colour allowances, including holes.
  for(let i=0;i<N;i++)if(current[4*i+3]!==reference[4*i+3])flags.silhouette[i]=1;
  if(closed&&!eyeIds)coverageErrors.push('Missing actual-eye ID pass');
+ if(closed&&!referenceEyeIds)coverageErrors.push('Missing reference actual-eye ID pass');
  const val=(p,i)=>Math.max(p[4*i],p[4*i+1],p[4*i+2])/255;
  const sat=(p,i)=>{const a=val(p,i);return a?(a-Math.min(p[4*i],p[4*i+1],p[4*i+2])/255)/a:0;};
  const dist=(a,i,b,j)=>Math.hypot(a[4*i]-b[4*j],a[4*i+1]-b[4*j+1],a[4*i+2]-b[4*j+2])/255;
@@ -59,7 +60,7 @@ export function cowFaceMetrics(current,reference,width,height,eyes,mouth,closed,
  const featureBox=e=>{
   const feature=new Uint8Array(N);
   for(let y=Math.max(0,Math.floor(e.y-e.ry*3.2));y<Math.min(height,e.y+e.ry*3.2);y++)for(let x=Math.max(0,Math.floor(e.x-e.rx*3.2));x<Math.min(width,e.x+e.rx*3.2);x++){
-   const i=y*width+x;if(!reference[4*i+3])continue;const v=val(reference,i),s=sat(reference,i);
+   const i=y*width+x;if(!reference[4*i+3]||referenceEyeIds?.[i]!==e.index+1)continue;const v=val(reference,i),s=sat(reference,i);
    if(e.coat==='dark'?v>.70&&s<.4:v<.45)feature[i]=1;
   }
   for(const g of groups(feature)){
@@ -78,14 +79,21 @@ export function cowFaceMetrics(current,reference,width,height,eyes,mouth,closed,
    if(e.featurePixels>0&&Math.abs(x-e.x)<e.rx+mx&&Math.abs(y-e.y)<e.ry+my)eyeZone[i]=1;
    if(d>1.5&&d<2.05&&current[4*i+3]){const v=val(current,i);if(e.coat==='dark'?v<.32:v>.5){vv.push(v);ss.push(sat(current,i));}}
   }
-  let idPixels=0,uncovered=0;
-  for(let i=0;i<N;i++){const x=i%width,y=i/width|0;if(Math.hypot((x-e.x)/e.rx,(y-e.y)/e.ry)<1.3&&eyeIds?.[i]===e.index+1)idPixels++;if(eyeFeatures.get(e.index)?.[i]&&eyeIds?.[i]!==e.index+1)uncovered++;}
+  let idPixels=0,uncovered=0,referencePixels=0;
+  for(let i=0;i<N;i++){
+   const x=i%width,y=i/width|0;if(Math.hypot((x-e.x)/e.rx,(y-e.y)/e.ry)<1.3&&eyeIds?.[i]===e.index+1)idPixels++;
+   if(referenceEyeIds?.[i]===e.index+1){referencePixels++;if(eyeIds?.[i]!==e.index+1)uncovered++;}
+  }
+  // All visible aperture pixels need a cover, even at oblique views or when
+  // no RGB feature group was found. An occluded eye contributes no aperture.
+  if(closed&&uncovered>6)coverageErrors.push(`Eye ${e.index}: insufficient actual-eye ID coverage (${idPixels} pixels, ${uncovered} uncovered)`);
   if(closed&&seed.requireCoverage){
+   if(referencePixels<4)coverageErrors.push(`Eye ${e.index}: missing rendered reference aperture`);
    if(!e.featurePixels)coverageErrors.push(`Eye ${e.index}: missing rendered reference feature`);
-   if(idPixels<4||uncovered>6)coverageErrors.push(`Eye ${e.index}: insufficient actual-eye ID coverage (${idPixels} pixels, ${uncovered} uncovered)`);
+   if(idPixels<4&&uncovered<=6)coverageErrors.push(`Eye ${e.index}: insufficient actual-eye ID coverage (${idPixels} pixels, ${uncovered} uncovered)`);
    if(vv.length<8)coverageErrors.push(`Eye ${e.index}: insufficient native fur samples`);
   }
-  eyeData.push({e,v:median(vv),s:median(ss),measured:vv.length,idPixels,uncovered});
+  eyeData.push({e,v:median(vv),s:median(ss),measured:vv.length,idPixels,uncovered,referencePixels});
  }
  const mouthZone=(x,y,pad=0)=>Math.abs(x-mouth.x)<=mouth.rx+pad&&Math.abs(y-mouth.y)<=mouth.ry+pad;
  const close=(i)=>{const x=i%width,y=i/width|0;for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){const u=x+dx,v=y+dy;if(u>=0&&u<width&&v>=0&&v<height&&dist(current,i,reference,v*width+u)<.08)return true;}return false;};
@@ -120,12 +128,12 @@ export function cowFaceMetrics(current,reference,width,height,eyes,mouth,closed,
  // Independent rendered-colour eye test: the depth probe can prove coverage
  // but cannot prove an opaque cover did not retain a painted iris or sparkle.
  // The authored 3D stroke is excluded, not a broad eye-coloured rectangle.
- if(closed)for(const {e}of eyeData){if(!e.featurePixels)continue;const feature=eyeFeatures.get(e.index);
-  for(let y=Math.max(0,Math.floor(e.y-e.ry));y<Math.min(height,e.y+e.ry);y++)for(let x=Math.max(0,Math.floor(e.x-e.rx));x<Math.min(width,e.x+e.rx);x++){
-   const i=y*width+x;if(!current[4*i+3]||isLash(i,e)||(eyeIds?.[i]&&eyeIds[i]!==e.index+1))continue;
+ if(closed)for(const {e}of eyeData){const feature=eyeFeatures.get(e.index);
+  for(let i=0;i<N;i++){
+   if(referenceEyeIds?.[i]!==e.index+1||!current[4*i+3]||isLash(i,e))continue;
    const v=val(current,i),s=sat(current,i);
    if(e.coat==='light'){if((v<.35&&feature?.[i])||(v>.9&&s<.08))flags.eyes[i]=1;}
-   else if(v>.8&&s<.16&&(feature?.[i]||val(reference,i)<.35||(val(reference,i)>.8&&sat(reference,i)<.16)))flags.eyes[i]=1;
+   else if(v>.8&&s<.16)flags.eyes[i]=1;
   }
  }
  // A mood may only change the eye zones and mouth (+3px), never nose, fur or fringe.

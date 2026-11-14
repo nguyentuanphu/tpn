@@ -35,8 +35,6 @@ if not COMP: A = dict(A, legs=[dict(l) for l in A['legs']])
 JOINTS = os.path.join(HERE, 'animal_joints', KIND + '.json')
 FIX = json.load(open(JOINTS)) if os.path.exists(JOINTS) else {}
 
-REST_SAMPLE_VERTS=None
-
 def load(path):
     """the Meshy model, one mesh, turned to face -y (three's +z), standing on z 0, as tall as the game's animal"""
     bpy.ops.wm.read_factory_settings(use_empty=True)
@@ -84,8 +82,26 @@ def load(path):
     if FIX.get('shift'): o.data.transform(Matrix.Translation(Vector(FIX['shift'])))   # (the box's middle is not the body's: the joey's tail curls off to one side)
     # Fit the underlying face curvature from fur round the eye. Only reduce the
     # forward bulge; never translate vertices sideways or cut a hard depth band.
-    global REST_SAMPLE_VERTS
-    REST_SAMPLE_VERTS=np.array([v.co[:] for v in o.data.vertices])
+    if FIX.get('eye_subdivide'):
+        bm=bmesh.new();bm.from_mesh(o.data)
+        def socket(v):
+            x,y,z=v.co
+            return y<-.55 and any(math.hypot((x-cx)/.055,(z-cz)/.065)<1.4 for cx,cz,_ in FIX['eye_inward_shift'])
+        edges=[e for e in bm.edges if all(socket(v) for v in e.verts)]
+        bmesh.ops.subdivide_edges(bm,edges=edges,cuts=1,use_grid_fill=True)
+        bmesh.ops.triangulate(bm,faces=list(bm.faces))
+        bm.to_mesh(o.data);bm.free();o.data.update()
+    rest_vertices=np.array([v.co[:] for v in o.data.vertices])
+    if FIX.get('eye_inward_shift'):
+        vertices=rest_vertices.copy();dx=np.zeros(len(vertices))
+        front=1-smooth01((vertices[:,1]+.50)/.15)
+        for cx,cz,amount in FIX['eye_inward_shift']:
+            radius=np.hypot((vertices[:,0]-cx)/.055,(vertices[:,2]-cz)/.065)
+            weight=1-smooth01((radius-.8)/.85)
+            dx-=math.copysign(amount,cx)*weight*front
+        for v,co,shift in zip(o.data.vertices,vertices,dx):v.co=(co[0]+shift,co[1],co[2])
+        o.data.update()
+        print('EYE_VERTEX_SHIFT',float(dx.min()),float(dx.max()),flush=True)
     inset = FIX.get('eye_socket_inset')
     if inset:
         V = np.array([v.co[:] for v in o.data.vertices]); original = V.copy()
@@ -99,100 +115,14 @@ def load(path):
             co=np.linalg.lstsq(design[ring],original[ring,1],rcond=None)[0]
             target=design@co
             t=np.clip((d-.7)/.85,0,1);w=(1-t*t*(3-2*t))
-            t=np.clip((np.abs(original[:,1]-loc.y)-.055)/.025,0,1);w*=1-t*t*(3-2*t)
-            delta=np.clip(target-original[:,1],0,inset['max_depth'])*w
+            t=np.clip((np.abs(original[:,1]-loc.y)-.055)/.06,0,1);w*=1-t*t*(3-2*t)
+            delta=inset['max_depth']*np.tanh(np.maximum(target-original[:,1],0)/max(1e-9,inset['max_depth']))*w
             V[:,1]+=delta
             print('SOCKET',cx,'fit',int(ring.sum()),'max inset',float(delta.max()),flush=True)
         for v,co in zip(o.data.vertices,V):v.co=co
         o.data.update()
     o.name = 'creature-' + KIND
     return o
-
-def inset_eye_atlas(o):
-    """Extend the body atlas with separately padded socket triangles.
-    Original body texels retain their resolution. Artwork moves on the continuous
-    head, not by translating the head vertices or painting across shared UV gutters.
-    """
-    old,source=tex_of(o);h,w=source.shape[:2];me=o.data;me.calc_loop_triangles()
-    uvl=me.uv_layers.active.data;old_uv=np.array([p.uv[:] for p in uvl]);V=np.array([v.co[:] for v in me.vertices]);bvh=bvh_of(o)
-    sample_vertices=[Vector(co) for co in REST_SAMPLE_VERTS]
-    sample_bvh=BVHTree.FromPolygons(sample_vertices,[p.vertices[:] for p in me.polygons])
-    from mathutils.geometry import barycentric_transform
-    density=FIX.get('socket_atlas_density_far',512) if FARLOD else FIX.get('socket_atlas_density',768)
-    moves=FIX['eye_paint_inward'];centers=[]
-    for cx,cz,amount in moves:
-        loc,_,_,_=bvh.ray_cast(Vector((cx,-2,cz)),Vector((0,1,0)));centers.append(np.array(loc[:]))
-    def colour_at(x,z):
-        loc,_,fi,_=sample_bvh.ray_cast(Vector((x,-2,z)),Vector((0,1,0)))
-        if loc is None:return None
-        poly=me.polygons[fi];vs=[sample_vertices[k] for k in poly.vertices[:3]];uvs=[old_uv[k] for k in poly.loop_indices[:3]]
-        q=barycentric_transform(loc,*vs,*[Vector((*a,0)) for a in uvs]);return sample_bilinear(source,np.array((q.x,q.y)))
-    def cream(c):
-        L=float(c@np.array((.3,.59,.11)));S=float((c.max()-c.min())/max(c.max(),1e-6))
-        return L>.45 and S>.12 and 0<=c[0]-c[1]<.10 and 0<=c[1]-c[2]<.18
-    # Flattening the old eyeball geometry leaves its baked AO ring behind.
-    # Correct that fur in the base texture, not only in closed moods. Five local
-    # surface samples estimate the shadow, preserving individual fur strokes.
-    ring_colours=[];c0=centers[0]
-    for angle in np.linspace(0,2*math.pi,48,endpoint=False):
-        c=colour_at(c0[0]+.085*math.cos(angle),c0[2]+.09*math.sin(angle))
-        if c is not None and cream(c):ring_colours.append(float(c@np.array((.3,.59,.11))))
-    cream_target=float(np.percentile(ring_colours,60)) if ring_colours else .82
-    print('COW_NATIVE_CREAM',cream_target,flush=True)
-    tiles=[];pad=4
-    for tri in me.loop_triangles:
-        pts=V[list(tri.vertices)];choices=[]
-        for i,c in enumerate(centers):
-            ds=np.linalg.norm((pts[:,[0,2]]-c[[0,2]])/np.array((.045,.05)),axis=1)
-            if ds.min()<1.8 and np.abs(pts[:,1]-c[1]).min()<.075:choices.append((ds.mean(),i))
-        if not choices:continue
-        _,eye=min(choices);cx,cz,amount=moves[eye];center=centers[eye]
-        ab=pts[1]-pts[0];ac=pts[2]-pts[0];length=np.linalg.norm(ab)
-        if length<1e-9:continue
-        along=float(ac@(ab/length));height=math.sqrt(max(0.,float(ac@ac)-along*along))
-        if height<1e-9:continue
-        xy=np.array(((0,0),(length,0),(along,height)))*density
-        lo=np.floor(xy.min(0)).astype(int)-pad;hi=np.ceil(xy.max(0)).astype(int)+pad+1;tw,th=(hi-lo).tolist()
-        yy,xx=np.mgrid[0:th,0:tw];p=np.stack((xx+lo[0]+.5,yy+lo[1]+.5),-1);a,b,c=xy
-        den=(b[1]-c[1])*(a[0]-c[0])+(c[0]-b[0])*(a[1]-c[1])
-        u=((b[1]-c[1])*(p[...,0]-c[0])+(c[0]-b[0])*(p[...,1]-c[1]))/den
-        v=((c[1]-a[1])*(p[...,0]-c[0])+(a[0]-c[0])*(p[...,1]-c[1]))/den
-        wt=np.maximum(np.stack((u,v,1-u-v),-1),0);wt/=np.maximum(wt.sum(-1,keepdims=True),1e-9)
-        pos=wt@pts;source_pos=pos.copy();uv=wt@old_uv[list(tri.loops)];pixels=sample(source,uv).copy()
-        distance=np.linalg.norm((pos[...,[0,2]]-center[[0,2]])/np.array((.045,.05)),axis=-1)
-        valid=(distance<1.65)&(np.abs(pos[...,1]-center[1])<.07)
-        for y,x in np.argwhere(valid):
-            q=pos[y,x];t=np.clip((distance[y,x]-1.3)/.35,0,1);strength=1-t*t*(3-2*t)
-            loc,_,fi,_=sample_bvh.ray_cast(Vector((q[0]+math.copysign(amount,cx)*strength,-2,q[2])),Vector((0,1,0)))
-            if loc is None:continue
-            poly=me.polygons[fi];vs=[sample_vertices[k] for k in poly.vertices[:3]];uvs=[old_uv[k] for k in poly.loop_indices[:3]]
-            uvq=barycentric_transform(loc,*vs,*[Vector((*a,0)) for a in uvs]);pixels[y,x]=sample_bilinear(source,np.array((uvq.x,uvq.y)));source_pos[y,x]=loc[:]
-        if eye==0:
-            for y in range(th):
-                for x in range(tw):
-                    c=pixels[y,x];q=source_pos[y,x];d=float(np.linalg.norm((q[[0,2]]-center[[0,2]])/np.array((.045,.05))))
-                    if d>=1.8 or not cream(c):continue
-                    values=[float(c@np.array((.3,.59,.11)))]
-                    for dx,dz in ((.006,0),(-.006,0),(0,.006),(0,-.006)):
-                        c1=colour_at(q[0]+dx,q[2]+dz)
-                        if c1 is not None and cream(c1):values.append(float(c1@np.array((.3,.59,.11))))
-                    base=float(np.median(values));gain=min(1.8,max(1.,cream_target/max(base,1e-4)));t=np.clip((d-1.65)/.15,0,1);blend=1-t*t*(3-2*t)
-                    c=c*(1+(gain-1)*blend);pixels[y,x]=c/max(1.,float(c.max()))
-        tiles.append(dict(tri=tri,xy=xy,origin=lo,w=tw,h=th,pixels=pixels))
-    width=2**math.ceil(math.log2(w+max(512,max(t['w']+8 for t in tiles))))
-    x=w+4;y=4;row=0
-    for tile in sorted(tiles,key=lambda t:-t['h']):
-        if x+tile['w']+4>width:x=w+4;y+=row+4;row=0
-        tile['at']=(x,y);x+=tile['w']+4;row=max(row,tile['h'])
-    height=2**math.ceil(math.log2(max(h,y+row+4)));atlas=np.zeros((height,width,4),np.float32);atlas[...,3]=1;atlas[:h,:w,:3]=source
-    for loop,uv in zip(uvl,old_uv):loop.uv=(uv[0]*w/width,uv[1]*h/height)
-    for tile in tiles:
-        x,y=tile['at'];atlas[y:y+tile['h'],x:x+tile['w'],:3]=tile['pixels']
-        for j,li in enumerate(tile['tri'].loops):uvl[li].uv=((tile['xy'][j,0]-tile['origin'][0]+x)/width,(tile['xy'][j,1]-tile['origin'][1]+y)/height)
-    image=bpy.data.images.new('cow-socket-atlas',width,height,alpha=False);image.pixels[:]=atlas.ravel();image.pack()
-    for node in o.data.materials[0].node_tree.nodes:
-        if node.type=='TEX_IMAGE' and node.image==old:node.image=image
-    print('SOCKET_ATLAS',width,height,'triangles',len(tiles),flush=True)
 
 def final_cow_body_texture(o):
     # glTF 4.3 uses export_image_quality, not the legacy export_jpeg_quality.
@@ -522,8 +452,8 @@ def make(path, J, M, out, tex_px):
     arm, size = rig(o, J, M, names)
     A['hip'] = M['hip']
     for i, l in enumerate(A['legs']): l['front'] = J['leg%d' % i][1] < 0
-    if FIX.get('eye_paint_inward'):
-        material(o, tex_px); inset_eye_atlas(o); final_cow_body_texture(o); face_pieces(o, arm, J, Fc)
+    if FIX.get('textured_fur_lids'):
+        material(o, tex_px); final_cow_body_texture(o); face_pieces(o, arm, J, Fc)
     else:
         face_pieces(o, arm, J, Fc); material(o, tex_px)
     moves = wc.animal_moves(KIND, A, arm, names + FACE_BONES, F, size)
@@ -544,8 +474,8 @@ def make(path, J, M, out, tex_px):
 def make_comp(o, J, M, out, tex_px):
     names = comp_weights(o, J, M)
     arm, size = rig(o, J, M, names)
-    if FIX.get('eye_paint_inward'):
-        material(o, tex_px); inset_eye_atlas(o); final_cow_body_texture(o); face_pieces(o, arm, J, Fc)
+    if FIX.get('textured_fur_lids'):
+        material(o, tex_px); final_cow_body_texture(o); face_pieces(o, arm, J, Fc)
     else:
         face_pieces(o, arm, J, Fc); material(o, tex_px)
     moves = wc.companion_moves(KIND, A, arm, names + FACE_BONES, F, size)
@@ -854,10 +784,6 @@ def tex_of(o):
     im = n.image; w, h = im.size; px = np.array(im.pixels[:], dtype=np.float32).reshape(h, w, 4)[:, :, :3]
     return im, px   # (rows from the bottom, as Blender keeps them)
 
-def sample_bilinear(px, uv):
-    h,w=px.shape[:2];q=np.clip(uv*np.array((w,h))-.5,0,np.array((w-1,h-1)));a=np.floor(q).astype(int);b=np.minimum(a+1,np.array((w-1,h-1)));m=q-a
-    return px[a[1],a[0]]*(1-m[0])*(1-m[1])+px[a[1],b[0]]*m[0]*(1-m[1])+px[b[1],a[0]]*(1-m[0])*m[1]+px[b[1],b[0]]*m[0]*m[1]
-
 def sample(px, uv):
     h, w = px.shape[:2]; x = np.clip((uv[..., 0] % 1) * w, 0, w - 1).astype(int); y = np.clip((uv[..., 1] % 1) * h, 0, h - 1).astype(int)
     return px[y, x]
@@ -922,98 +848,41 @@ def find_face(o, J, M):
         if name == 'mouth': out['mouth_n'] = np.array(nor[:])
     return out
 
-def surface_lid(o, arm, name, center, side, up, picture, picture_radius, eye_index, bone_name, mask_picture=None, surface_picture=None):
-    """Face triangles with compact per-triangle UV tiles, painted in surface coordinates.
-    UV-island padding is evaluated from each triangle's edge (not transparent pixels),
-    so even tiny Meshy UV islands remain closed without projecting black fur onto cheeks.
+def surface_lid(o, arm, name, center, side, up, picture, picture_radius, eye_index, bone_name, mask_picture=None):
+    """Copy the actual socket surface with one continuous frontal UV picture.
+    The original eye is not moved in texture space. Shared mesh points prevent
+    seams; a single picture avoids hundreds of padded tiles after eye refinement.
     """
-    me=o.data;uvl=me.uv_layers.active.data;c=np.array(center);side=np.array(side);up=np.array(up)
-    radii=np.array(FIX['surface_eye_radii']);V=np.array([v.co[:] for v in me.vertices])
-    # GLB splits vertices at UV seams. Offsetting each split by its separate
-    # normal opens real cracks. Weld coincident points and use their mean normal;
-    # UVs stay per-face so the atlas remains independent across its tile gutters.
-    _,point_group=np.unique(np.rint(V*1e5).astype(np.int64),axis=0,return_inverse=True)
-    normals=np.array([v.normal[:] for v in me.vertices]);shared=np.zeros((point_group.max()+1,3));np.add.at(shared,point_group,normals)
+    me=o.data;me.calc_loop_triangles();c=np.array(center);side=np.array(side);up=np.array(up)
+    V=np.array([v.co[:] for v in me.vertices]);radii=np.array(FIX['surface_eye_radii'])
+    _,groups=np.unique(np.rint(V*1e5).astype(np.int64),axis=0,return_inverse=True)
+    normals=np.array([v.normal[:] for v in me.vertices]);shared=np.zeros((groups.max()+1,3));np.add.at(shared,groups,normals)
     shared/=np.maximum(np.linalg.norm(shared,axis=1,keepdims=True),1e-9)
     close=((((V[:,[0,2]]-c[[0,2]])/radii)**2).sum(1)<FIX.get('surface_eye_selection',2.6)**2)&(np.abs(V[:,1]-c[1])<.09)
-    selected=[t for t in me.loop_triangles if close[list(t.vertices)].any()]
-    _,source=tex_of(o);density=FIX.get('surface_texels_per_m_far',FIX.get('surface_texels_per_m',512)) if FARLOD else FIX.get('surface_texels_per_m',512);TP=len(picture);tiles=[];padding=4
-    surface_rays=bvh_of(o) if surface_picture is not None else None
-    for t in selected:
-        uv=np.array([uvl[k].uv[:] for k in t.loops])
-        # Support zero-area UV triangles as well. Give every surface
-        # triangle a nondegenerate local map, including those flat-colour triangles.
-        points=V[list(t.vertices)];ab=points[1]-points[0];ac=points[2]-points[0];length=np.linalg.norm(ab)
-        if length<1e-9:continue
-        edge=ab/length;along=float(ac@edge);height3=math.sqrt(max(0.,float(ac@ac)-along*along))
-        if height3<1e-9:continue
-        xy=np.array(((0.,0.),(length,0.),(along,height3)))*density
-        origin=np.floor(xy.min(0)).astype(int)-padding;end=np.ceil(xy.max(0)).astype(int)+padding+1
-        width,height=(end-origin).tolist()
-        yy,xx=np.mgrid[0:height,0:width];at=np.stack((xx+origin[0]+.5,yy+origin[1]+.5),-1)
-        a,b,d=xy;den=(b[1]-d[1])*(a[0]-d[0])+(d[0]-b[0])*(a[1]-d[1])
-        if abs(den)<1e-9:continue
-        w0=((b[1]-d[1])*(at[...,0]-d[0])+(d[0]-b[0])*(at[...,1]-d[1]))/den
-        w1=((d[1]-a[1])*(at[...,0]-d[0])+(a[0]-d[0])*(at[...,1]-d[1]))/den
-        weights=np.maximum(np.stack((w0,w1,1-w0-w1),-1),0)
-        weights/=np.maximum(weights.sum(-1,keepdims=True),1e-9)
-        pos=weights@V[list(t.vertices)];original_uv=weights@uv
-        distance=np.sqrt((((pos[...,[0,2]]-c[[0,2]])/radii)**2).sum(-1))
-        paint=np.clip((1.30-distance)/.15,0,1) if FIX.get('textured_fur_lids') else np.clip((1.4-distance)/.25,0,1)
-        cover_inner,cover_outer=FIX.get('surface_eye_cover',(1.65,2.2))
-        alpha=np.clip((cover_outer-distance)/(cover_outer-cover_inner),0,1)*(np.abs(pos[...,1]-c[1])<.08)
-        if mask_picture is None and not (alpha>0).any():continue
-        projected=np.stack(((pos-c)@side,(pos-c)@up),-1)
-        pixel=np.clip((projected/picture_radius+1)*.5*TP-.5,0,TP-1)
-        ij=np.floor(pixel).astype(int);hi=np.minimum(ij+1,TP-1);mix=pixel-ij
-        fill=(picture[ij[...,1],ij[...,0]]*(1-mix[...,0,None])*(1-mix[...,1,None])+
-              picture[ij[...,1],hi[...,0]]*mix[...,0,None]*(1-mix[...,1,None])+
-              picture[hi[...,1],ij[...,0]]*(1-mix[...,0,None])*mix[...,1,None]+
-              picture[hi[...,1],hi[...,0]]*mix[...,0,None]*mix[...,1,None])
-        original=sample(source,original_uv)
-        rgb=original*(1-paint[...,None])+fill*paint[...,None]
-        if mask_picture is not None:
-            alpha=(mask_picture[ij[...,1],ij[...,0]]*(1-mix[...,0])*(1-mix[...,1])+
-                   mask_picture[ij[...,1],hi[...,0]]*mix[...,0]*(1-mix[...,1])+
-                   mask_picture[hi[...,1],ij[...,0]]*(1-mix[...,0])*mix[...,1]+
-                   mask_picture[hi[...,1],hi[...,0]]*mix[...,0]*mix[...,1])
-            alpha*=np.abs(pos[...,1]-c[1])<.08
-            if surface_picture is not None:
-                # A tangent-plane mask must not paint another head/ear surface
-                # behind the eye that projects into the same square.
-                outward=np.cross(side,up)
-                visible=np.zeros(alpha.shape,bool)
-                for ay,ax in np.argwhere(alpha>0):
-                    point=pos[ay,ax];ray_origin=point+outward*.3
-                    loc,_,_,_=surface_rays.ray_cast(Vector(ray_origin),Vector(-outward))
-                    visible[ay,ax]=loc is not None and abs(float((np.array(loc)-point)@outward))<.0003
-                alpha*=visible
-            if not (alpha>0).any():continue
-            rgb=fill
-        tiles.append(dict(triangle=t,xy=xy,origin=origin,width=width,height=height,pixels=np.concatenate((rgb,alpha[...,None]),-1)))
-    if not tiles:raise ValueError('Empty anatomical eyelid atlas')
-    atlas_width=max(512,2**math.ceil(math.log2(max(t['width']+2 for t in tiles))))
-    x=y=2;row_height=0
-    for tile in sorted(tiles,key=lambda t:-t['height']):
-        if x+tile['width']+2>atlas_width:x=2;y+=row_height+2;row_height=0
-        tile['at']=(x,y);x+=tile['width']+2;row_height=max(row_height,tile['height'])
-    atlas_height=2**math.ceil(math.log2(y+row_height+2))
-    atlas=np.zeros((atlas_height,atlas_width,4),dtype=np.float32)
-    for tile in tiles:
-        x,y=tile['at'];atlas[y:y+tile['height'],x:x+tile['width']]=tile['pixels']
-    image=bpy.data.images.new(name+'-surface',atlas_width,atlas_height,alpha=True)
-    image.file_format='PNG';image.pixels[:]=atlas.ravel();image.pack()
+    alpha=mask_picture if mask_picture is not None else np.ones(picture.shape[:2])
+    rgba=np.concatenate((picture.copy(),alpha[...,None]),axis=-1).astype(np.float32)
+    guard=alpha>0
+    for _ in range(2):guard=guard|np.roll(guard,1,0)|np.roll(guard,-1,0)|np.roll(guard,1,1)|np.roll(guard,-1,1)
+    # Straight-alpha linear filtering needs native RGB just beyond the edge.
+    # Black RGB at alpha zero creates a dark fringe despite invisible texels.
+    rgba[~guard,:3]=0
+    height,width=alpha.shape;image=bpy.data.images.new(name+'-surface',width,height,alpha=True)
+    image.file_format='PNG';image.pixels[:]=rgba.ravel();image.pack()
     if DEBUG:image.filepath_raw=os.path.join(OUT,name+'-surface.png');image.save()
     bm=bmesh.new();uv_layer=bm.loops.layers.uv.new('UVMap');verts={}
-    for tile in tiles:
-        t=tile['triangle']
-        for vi in t.vertices:
-            group=int(point_group[vi])
-            if group not in verts:verts[group]=bm.verts.new(me.vertices[vi].co+(Vector(shared[group])*FIX['surface_lid_forward'] if FIX.get('textured_fur_lids') else Vector((0,-FIX.get('surface_lid_forward',.004),0))))
-        face=bm.faces.new([verts[int(point_group[vi])] for vi in t.vertices]);face.smooth=True
-        for loop,li in zip(face.loops,t.loops):
-            uv=uvl[li].uv;at=tile['at'];origin=tile['origin']
-            loop[uv_layer].uv=((tile['xy'][list(t.loops).index(li),0]-origin[0]+at[0])/atlas_width,(tile['xy'][list(t.loops).index(li),1]-origin[1]+at[1])/atlas_height)
+    for tri in me.loop_triangles:
+        if not close[list(tri.vertices)].any():continue
+        projected=np.column_stack(((V[list(tri.vertices)]-c)@side,(V[list(tri.vertices)]-c)@up))
+        uv=(projected/picture_radius+1)*.5
+        low=np.maximum(0,np.floor(uv.min(0)*np.array((width,height))).astype(int)-1)
+        high=np.minimum(np.array((width,height)),np.ceil(uv.max(0)*np.array((width,height))).astype(int)+1)
+        if (high<=low).any() or not (alpha[low[1]:high[1],low[0]:high[0]]>0).any():continue
+        for vi in tri.vertices:
+            group=int(groups[vi])
+            if group not in verts:verts[group]=bm.verts.new(me.vertices[vi].co+Vector(shared[group])*FIX['surface_lid_forward'])
+        face=bm.faces.new([verts[int(groups[vi])] for vi in tri.vertices]);face.smooth=True
+        for loop,q in zip(face.loops,uv):loop[uv_layer].uv=tuple(q)
+    if not verts:raise ValueError('Empty anatomical eyelid surface')
     mesh=bpy.data.meshes.new(name);bm.to_mesh(mesh);bm.free()
     obj=bpy.data.objects.new(name,mesh);bpy.context.collection.objects.link(obj)
     mat=bpy.data.materials.new(name);mat.use_nodes=True;mat.surface_render_method='DITHERED'
@@ -1052,8 +921,13 @@ def fur_lid_fill(img,hit,xx,yy,r,eye):
         for _ in range(2):eroded=eroded&np.roll(eroded,1,0)&np.roll(eroded,-1,0)&np.roll(eroded,1,1)&np.roll(eroded,-1,1)
         for _ in range(2):eroded=eroded|np.roll(eroded,1,0)|np.roll(eroded,-1,0)|np.roll(eroded,1,1)|np.roll(eroded,-1,1)
         protected=eroded & (np.hypot(xx,yy)>r*1.08)
-    _,cells=max(components,key=lambda x:x[0]);
-    cells=np.concatenate([p for _,p in components if np.hypot(xx[p[:,0],p[:,1]].mean(),yy[p[:,0],p[:,1]].mean())<r*(1.6 if coat=='dark' else 1.4)],axis=0)
+    largest,cells=max(components,key=lambda x:x[0])
+    # Native coat flecks are not extra sclera. The old union of every bright
+    # fleck inflated the black-eye hull down to the cream/black fur boundary.
+    if coat=='light':
+        cells=np.concatenate([p for size,p in components if size>=largest*.06 and np.hypot(xx[p[:,0],p[:,1]].mean(),yy[p[:,0],p[:,1]].mean())<r*1.15],axis=0)
+    if DEBUG:print('EYE_FEATURE_COMPONENTS',eye,[(size,round(float(xx[p[:,0],p[:,1]].mean()/r),2),round(float(yy[p[:,0],p[:,1]].mean()/r),2)) for size,p in components],flush=True)
+
     coords=np.column_stack((xx[cells[:,0],cells[:,1]],yy[cells[:,0],cells[:,1]]))
     # Reflect the isolated crescent about the iris centre to include the dark iris.
     points=np.concatenate((coords,-coords),axis=0) if coat=='dark' else coords
@@ -1068,6 +942,7 @@ def fur_lid_fill(img,hit,xx,yy,r,eye):
         hi.append(p)
     hull=lo[:-1]+hi[:-1];mask=np.ones((n,n),bool)
     for a,b in zip(hull,hull[1:]+hull[:1]):mask&=((b[0]-a[0])*(yy-a[1])-(b[1]-a[1])*(xx-a[0]))>=-1e-8
+    if coat=='dark':protected|=hit&(lum>.5)&(chroma>.12)&~mask
     def grow(a):return a|np.roll(a,1,0)|np.roll(a,-1,0)|np.roll(a,1,1)|np.roll(a,-1,1)
     # Include pale sclera just outside the dark iris on a light coat. It is not
     # native cream fur, and leaving it is what makes a grey closed-eye rim.
@@ -1075,9 +950,13 @@ def fur_lid_fill(img,hit,xx,yy,r,eye):
     native_light=float(np.median(lum[fur_ring])) if fur_ring.any() else .78
     # The baked AO shadow of the open eyeball is not closed-lid fur. Include
     # that connected pale/dark rim, while preserving separate brows and temple.
-    extra=hit&(np.hypot(xx,yy)<r*1.6)&(((chroma<.14)&(lum>.35)) if coat=='light' else (chroma>.35))&~protected
-    for _ in range(16):mask|=grow(mask)&extra
-    for _ in range(3):mask=grow(mask)
+    cream=(img[...,0]>=img[...,1])&(img[...,0]-img[...,1]<.10)&(img[...,1]>=img[...,2])&(img[...,1]-img[...,2]<.18)
+    # The open eyeball's AO shadow may be warm cream as well as neutral grey.
+    # Fill that connected shadow on closure, retaining brows and pink blush.
+    shade=((chroma<.14)&(lum>.35))|(cream&(lum>.35)&(lum<native_light-.045))
+    extra=hit&(np.hypot(xx,yy)<r*1.7)&(shade if coat=='light' else (chroma>.35))&~protected
+    for _ in range(round(16*n/128)):mask|=grow(mask)&extra
+    for _ in range(round(5*n/128)):mask=grow(mask)
     mask&=~protected
     if mask[0].any() or mask[-1].any() or mask[:,0].any() or mask[:,-1].any():raise ValueError('Eye mask reaches picture edge')
     soft=mask.astype(float);ring=mask.copy()
@@ -1116,7 +995,7 @@ def face_pieces(o, arm, J, Fc):
     me = o.data; im, px = tex_of(o); uvl = me.uv_layers.active.data
     me.calc_loop_triangles()
     V = np.array([v.co[:] for v in me.vertices]); N = np.array([v.normal[:] for v in me.vertices])
-    bvh = bvh_of(o); TP = FIX.get('lid_px', 128)
+    bvh = bvh_of(o); TP = FIX.get('lid_px_far', FIX.get('lid_px',128)) if FARLOD else FIX.get('lid_px',128)
     for i in (0, 1):
         c = np.array(Fc['eye%d' % i]); r = Fc['eye%d_r' % i]; R = r * FIX.get('lid_size', 2.4); Rx = R * FIX.get('lid_wide', 1.0)   # (lid_wide: an oval lid, wider than tall, over lashes that flick outwards)
         P = R * FIX.get('lid_pic', 1.0)   # (the picture's half size: bigger when the lid goes on the painted eye's own middle, lid_on_eye)
@@ -1130,8 +1009,8 @@ def face_pieces(o, arm, J, Fc):
         vi_all = sorted({vi for t in frame_tris for vi in t.vertices}); nrm = N[vi_all].mean(0); nrm /= np.linalg.norm(nrm)
         side = np.cross((0, 0, 1.0), nrm); side /= np.linalg.norm(side); up = np.cross(nrm, side)
         if FIX.get('textured_fur_lids'):
-            # Artwork was moved on the frontal X/Z surface. Use that same frame,
-            # not the old bulging eyeball's tilted normals (which sample other fur).
+            # Cow landmarks use the frontal X/Z frame. Sample that frame for
+            # lids/probes rather than averaging the old eyeball bulge normals.
             nrm=np.array((0.,-1.,0.));side=np.array((1.,0.,0.));up=np.array((0.,0.,1.))
         # the picture: the face seen straight on over the eye (rays along -normal), TP x TP texels over 2P x 2P
         img0 = np.zeros((TP, TP, 3)); Pp = np.full((TP, TP, 3), np.nan)
@@ -1219,7 +1098,7 @@ def face_pieces(o, arm, J, Fc):
             pim.pack()
             if DEBUG: pim.filepath_raw = os.path.join(OUT, name + '.png'); pim.file_format = 'PNG'; pim.save()
             if FIX.get('surface_lids'):
-                lid=surface_lid(o, arm, name, c, side, up, img, P, i, f'{kind}{i}', fur_mask, Pp)
+                lid=surface_lid(o, arm, name, c, side, up, img, P, i, f'{kind}{i}', fur_mask)
                 if FIX.get('textured_fur_lids'):
                     stroke=[]
                     for u in np.linspace(-ew*.85,ew*.85,30):

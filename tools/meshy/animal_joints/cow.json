@@ -98,7 +98,6 @@
   ],
   "surface_lid_lift": 0.002,
   "lid_force_fill": 1.6,
-  "surface_texels_per_m": 448,
   "surface_lid_forward": 0.001,
   "eye_retract": 0.0001,
   "surface_eye_cover": [
@@ -121,14 +120,19 @@
       0.043,
       0.05
     ],
-    "max_depth": 0.03
+    "max_depth": 0.02
   },
   "textured_fur_lids": true,
   "lid_coat": [
     "light",
     "dark"
   ],
-  "eye_paint_inward": [
+  "jpeg_near": 75,
+  "jpeg_far": 75,
+  "eye_subdivide": true,
+  "lid_px": 256,
+  "lid_px_far": 192,
+  "eye_inward_shift": [
     [
       -0.085,
       1.075,
@@ -139,10 +143,5 @@
       1.075,
       0.012
     ]
-  ],
-  "socket_atlas_density": 448,
-  "socket_atlas_density_far": 320,
-  "jpeg_near": 62,
-  "jpeg_far": 65,
-  "surface_texels_per_m_far": 384
+  ]
 }

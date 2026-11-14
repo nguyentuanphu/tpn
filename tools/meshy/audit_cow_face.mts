@@ -10,6 +10,7 @@ const page=await b.newPage({viewport:{width:900,height:700}});page.setDefaultTim
 await page.goto((process.env.SV_URL||'http://127.0.0.1:8798')+'/docs/meshy-farm-cloud/model-review.html');await page.waitForSelector('body[data-ready="true"]');
 const result=await page.evaluate(async ([mode,baseline])=>{
  const {cowFaceMetrics,validateCowEyeMetadata,validateCowLashMetadata}=await import(String('/tools/meshy/cow_face_metrics.mjs'));
+ const {cowEyeRestPositions,readCowReferenceEyeIds}=await import(String('/tools/meshy/cow_eye_probe.mjs'));
  const {THREE}=await import(String('/js/gfx.js')),K=await import(String('/js/modelkit.js')),{clone}=await import(String('/vendor/SkeletonUtils.js'));
  const G=(window as any).__sv,R=G.renderer,S=512,rt=new THREE.WebGLRenderTarget(S,S),scene=new THREE.Scene();scene.add(new THREE.HemisphereLight(0xffffff,0x888888,2.2));
  const cases=[],pics={};
@@ -34,15 +35,18 @@ const result=await page.evaluate(async ([mode,baseline])=>{
    if(o.userData?.svEye0C)apertureMetadata.push(o.userData);
    if(o.userData?.svLash){const m=o.userData,bone=obj.getObjectByName(m.svLashBone);
     if(!bone||!bone.matrixWorld.elements.every(Number.isFinite)||!Number.isFinite(bone.matrixWorld.determinant())||bone.matrixWorld.determinant()===0)throw Error('Invalid lash bone transform');
-    strokes.push({data:m,inv:bone.matrixWorld.clone().invert(),bone,materialName:o.material?.name,boneCenter:bone.getWorldPosition(new THREE.Vector3()).toArray()});
+    let materialName; o.traverse(child=>{if(child.isMesh&&child.material?.name?.endsWith('-'+m.svLashBone))materialName=child.material.name;});
+    strokes.push({data:m,inv:bone.matrixWorld.clone().invert(),bone,materialName,boneCenter:bone.getWorldPosition(new THREE.Vector3()).toArray()});
    }
   });
+  let apertures=null;
   if(!baseline||apertureMetadata.length||strokes.length){
    if(apertureMetadata.length!==1)throw Error('Requires one actual-eye aperture annotation');
-   validateCowEyeMetadata(apertureMetadata[0],centers);validateCowLashMetadata(strokes,centers);
+   apertures=validateCowEyeMetadata(apertureMetadata[0],centers);validateCowLashMetadata(strokes,centers);
   }
 
   let body;obj.traverse(o=>{if(o.isSkinnedMesh&&(!body||o.geometry.attributes.position.count>body.geometry.attributes.position.count))body=o;});
+  const restPositions=apertures?cowEyeRestPositions(THREE,body):null;
   const idle=t.clips.find(c=>c.name==='idle');let blinkAt=-1;for(let at=0;at<idle.duration;at+=1/60){mixer.stopAllAction();mixer.clipAction(idle).reset().play();mixer.setTime(at);if(bones[0].scale.x>.9){blinkAt=at;break;}}
   if(blinkAt<0)throw Error('Idle has no actual closed blink');
   const clips=mode==='selftest'?['sleep']:mode==='quick'?['cheer','sleep','sad']:t.clips.map(c=>c.name).concat('blink');
@@ -73,10 +77,17 @@ const result=await page.evaluate(async ([mode,baseline])=>{
    const mouth={...mp,rx:Math.abs(mh.x-mp.x),ry:Math.abs(mv.y-mp.y)},closed=bones[0].scale.x>.1||bones[2].scale.x>.1,mouthOpen=bones[6].scale.x>.05;
    // Reference has the exact same head/body pose, only its expression neutral.
    bones.forEach((o,i)=>{if(i===4||i===5)return;o.position.copy(rest[i].p);o.quaternion.copy(rest[i].q);o.scale.setScalar(.001);});obj.updateMatrixWorld(true);const reference=read(cam);
+   const referenceEyeIds=apertures?readCowReferenceEyeIds(THREE,scene,body,restPositions,apertures,read,cam):null;
    bones.forEach((o,i)=>{o.position.copy(saved[i].p);o.scale.copy(saved[i].s);o.quaternion.copy(saved[i].q);});obj.updateMatrixWorld(true);
    let fault;
    if(plant!=='none'){
     let loc=plant==='mouth'?jaw.clone().addScaledVector(right,.023):plant==='stray'?jaw.clone().addScaledVector(up,.068):plant==='eyes'?eworld[1].clone().addScaledVector(up,.015):eworld[plant==='flat'?0:1].clone();
+    if(plant==='eyes'){
+     const aperture=[];if(referenceEyeIds)for(let i=0;i<referenceEyeIds.length;i++)if(referenceEyeIds[i]===2)aperture.push(i);
+     if(!aperture.length)throw Error('No reference aperture for planted eyes');
+     const pixel=aperture.reduce((best,i)=>Math.hypot(i%S-eyes[1].x,(i/S|0)-eyes[1].y)<Math.hypot(best%S-eyes[1].x,(best/S|0)-eyes[1].y)?i:best);
+     loc=new THREE.Vector3(((pixel%S+.5)/S)*2-1,(((pixel/S|0)+.5)/S)*2-1,eworld[1].clone().project(cam).z).unproject(cam);
+    }
     if(plant==='silhouette-add'){
      let spot=null,best=Infinity;
      for(let y=12;y<S-12;y+=8)for(let x=12;x<S-12;x+=8){
@@ -92,7 +103,7 @@ const result=await page.evaluate(async ([mode,baseline])=>{
     if(['lid','rim','flat','eyes'].includes(plant)){const eye=plant==='flat'?0:1;let source;obj.traverse(o=>{if(o.isMesh&&o.material.name?.endsWith('-'+(bones[2].scale.x>.1?'joy':'shut')+eye))source=o.material;});if(!source)throw Error('Missing real lid material name for plant');fault.material.name=source.name;}
     fault.position.copy(loc).addScaledVector(dir,.025);fault.quaternion.copy(cam.quaternion);fault.renderOrder=999;scene.add(fault);
    }
-   const current=read(cam),ids=idRead(cam),m=cowFaceMetrics(current,reference,S,S,eyes,mouth,closed,mouthOpen,ids,lashMask),cs={tier,clip,yaw,elevation,plant,closed,mouthOpen,...m.counts,textureFlat:m.textureFlat,eyeData:m.eyeData,coverageErrors:m.coverageErrors};cases.push(cs);
+   const current=read(cam),ids=idRead(cam),m=cowFaceMetrics(current,reference,S,S,eyes,mouth,closed,mouthOpen,ids,lashMask,referenceEyeIds),cs={tier,clip,yaw,elevation,plant,closed,mouthOpen,...m.counts,textureFlat:m.textureFlat,eyeData:m.eyeData,coverageErrors:m.coverageErrors};cases.push(cs);
    if(mode==='selftest'){
     const key=JSON.stringify([tier,clip,yaw,elevation]);
     if(plant==='none')controls.set(key,m.flags);

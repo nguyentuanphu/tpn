@@ -62,6 +62,7 @@ for (const k of kinds) { const a = JSON.parse(readFileSync(new URL(`./animal_joi
 const res: any = await P.page.evaluate(async ([kinds, MODE, LIMIT, EYE_PROBES]) => {
   const G = (window as any).__sv, MK = await import(String('/js/modelkit.js')), { THREE } = await import(String('/js/gfx.js'));
   const {validateCowEyeMetadata}=await import(String('/tools/meshy/cow_face_metrics.mjs'));
+  const {createCowEyeProbeMaterial}=await import(String('/tools/meshy/cow_eye_probe.mjs'));
   const { clone } = await import(String('/vendor/SkeletonUtils.js')), PETS = await import(String('/js/pets.js'));
   const { PETS: PET_KINDS } = await import(String('/js/farm.js'));
   const R = G.renderer, out: any = { cases: [], pics: {} }, S = 360;
@@ -79,11 +80,11 @@ const res: any = await P.page.evaluate(async ([kinds, MODE, LIMIT, EYE_PROBES]) 
   };
   // depth from the camera in mm, in red and green (skinning kept: a basic material, its colour replaced)
   const depthMat = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide });
-  const PLANT = { value: 0 }, PLANTAT = { value: new THREE.Vector3() };
+  const PLANT = { value: 0 }, PLANTAT = { value: new THREE.Vector3() }, PLANTNORMAL={value:new THREE.Vector3(0,0,1)};
   depthMat.onBeforeCompile = (sh: any) => {
-    sh.uniforms.uPlant = PLANT; sh.uniforms.uPlantAt = PLANTAT;
+    sh.uniforms.uPlant = PLANT; sh.uniforms.uPlantAt = PLANTAT; sh.uniforms.uPlantNormal=PLANTNORMAL;
     sh.vertexShader = 'varying float vDz;\nvarying vec3 vW;\n' + sh.vertexShader.replace('#include <project_vertex>', '#include <project_vertex>\nvDz = -mvPosition.z;\nvW = (modelMatrix * vec4(transformed, 1.0)).xyz;');
-    sh.fragmentShader = 'varying float vDz;\nvarying vec3 vW;\nuniform float uPlant;\nuniform vec3 uPlantAt;\n' + sh.fragmentShader.replace('#include <dithering_fragment>', '#include <dithering_fragment>\nif (uPlant > .5 && distance(vW, uPlantAt) < .03) discard;   // (a torn tail: a hole through a thin part)\nfloat mm = clamp(vDz * 1000.0, 0.0, 65000.0);\ngl_FragColor = vec4(floor(mm / 256.0) / 255.0, mod(mm, 256.0) / 255.0, 1.0, 1.0);');
+    sh.fragmentShader = 'varying float vDz;\nvarying vec3 vW;\nuniform float uPlant;\nuniform vec3 uPlantAt;\nuniform vec3 uPlantNormal;\n' + sh.fragmentShader.replace('#include <dithering_fragment>', '#include <dithering_fragment>\nvec3 cut=vW-uPlantAt;cut-=uPlantNormal*dot(cut,uPlantNormal);if (uPlant > .5 && length(cut) < .03) discard;   // (a torn tail: a hole through a thin part)\nfloat mm = clamp(vDz * 1000.0, 0.0, 65000.0);\ngl_FragColor = vec4(floor(mm / 256.0) / 255.0, mod(mm, 256.0) / 255.0, 1.0, 1.0);');
   };
   const DEBUG = { on: false, holes: [] as any[] };
   const depthAt = (px: Uint8Array, i: number) => (px[i * 4] * 256 + px[i * 4 + 1]) / 1000;
@@ -141,15 +142,15 @@ const res: any = await P.page.evaluate(async ([kinds, MODE, LIMIT, EYE_PROBES]) 
       }));
     }
 
-    if (probe) {
+    if (probe || APERTURES) {
       const eyes = [bone('shut0'), bone('shut1')].map(e => e.getWorldPosition(new THREE.Vector3()));
       probeCenters = eyes;
       const colors = new Float32Array(nv * 3);
-      for (let i = 0; i < nv; i++) for (const e of eyes) {
+      if(!APERTURES)for (let i = 0; i < nv; i++) for (const e of eyes) {
         const dx = (rest[i * 3] - e.x) / probe[0], dy = (rest[i * 3 + 1] - e.y) / probe[1];
         if (dx * dx + dy * dy <= 1 && Math.abs(rest[i * 3 + 2] - e.z) < probe[2]) colors[i * 3] = 1;
       }
-      if (!colors.some(v => v > 0)) throw new Error('Eye probe misses the anatomical eye');
+      if (!APERTURES && !colors.some(v => v > 0)) throw new Error('Eye probe misses the anatomical eye');
       eyeMask = new THREE.BufferAttribute(rest.slice(), 3);
     }
 
@@ -167,13 +168,25 @@ const res: any = await P.page.evaluate(async ([kinds, MODE, LIMIT, EYE_PROBES]) 
       const c = t.clips.find((x: any) => x.name === clip); mixer.stopAllAction(); const a = mixer.clipAction(c); a.reset().play();
       const moments = quick || self || plant !== 'none' ? [.15, .5, .85] : [0, .17, .33, .5, .67, .83];
       for (const f of moments) {
-        toRest(); mixer.setTime(c.duration * f); obj.position.set(0, 0, 0); obj.updateMatrixWorld(true);
+        mixer.stopAllAction(); toRest(); mixer.uncacheRoot(obj); mixer.clipAction(c).reset().play(); mixer.setTime(c.duration * f); obj.position.set(0, 0, 0); obj.updateMatrixWorld(true);
         if (plant === 'stretch') { bone('knee0').scale.setScalar(2.6); obj.updateMatrixWorld(true); }
         if (plant === 'sink') { bone('body').position.y -= Hh * .08; obj.updateMatrixWorld(true); }
         if (plant === 'mouth' && bone('jaw')) { bone('jaw').scale.multiplyScalar(2.5); bone('jaw').position.z += Hh * .02; obj.updateMatrixWorld(true); }   // (an open mouth too big for the face, standing off it)
         const hidden: any[] = []; if (plant === 'eyes') obj.traverse((o: any) => { if (o.isMesh && /-(shut|joy)\d$/.test(o.material.name)) { o.visible = false; hidden.push(o); } });
         PLANT.value = plant === 'tear' ? 1 : 0; if (plant === 'tear') {   // (a torn ear: a hole through its flap where it hangs out beyond the cheek, seen from the front)
-          const e = bone('ear0'); obj.updateMatrixWorld(true); e.getWorldPosition(PLANTAT.value); PLANTAT.value.x += Math.sign(PLANTAT.value.x || -1) * Hh * .07; PLANTAT.value.y -= Hh * .12; }
+          const e = bone('ear0'); obj.updateMatrixWorld(true); e.getWorldPosition(PLANTAT.value);
+          // Put the tear through the actual ear flap, not a guessed point below
+          // its root. The old cow plant missed the flap and matched its control.
+          const joint=body.skeleton.bones.indexOf(e),joints=body.geometry.getAttribute('skinIndex'),weights=body.geometry.getAttribute('skinWeight');
+          skinned(body,now);const earVertices=[];
+          for(let vi=0;vi<nv;vi++)for(const get of ['getX','getY','getZ','getW'])if(joints[get](vi)===joint&&weights[get](vi)>.7){earVertices.push(vi);break;}
+          if(!earVertices.length)throw Error('Tear selftest needs actual ear vertices');
+          const side=Math.sign(PLANTAT.value.x)||-1,span=earVertices.map(vi=>rest[vi*3]*side),low=Math.min(...span),high=Math.max(...span),centre=new THREE.Vector3();let samples=0;
+          for(const vi of earVertices){const t=(rest[vi*3]*side-low)/Math.max(1e-6,high-low);if(t>.5&&t<.75){centre.add(new THREE.Vector3(now[vi*3],now[vi*3+1],now[vi*3+2]));samples++;}}
+          if(!samples)throw Error('Tear plant missed the outer ear flap');PLANTAT.value.copy(centre.divideScalar(samples));
+          // A real through-hole removes both flap walls; a small sphere could
+          // remove only the near wall and leave the intact back wall occluding it.
+          PLANTNORMAL.value.set(0,0,1).applyQuaternion(e.getWorldQuaternion(new THREE.Quaternion())).normalize(); }
         const cs: any = { kind, lod, clip, t: +f.toFixed(2), plant, stretch: 0, tear: 0, sink: 0, float: 0, eyes: 0, hat: 0, flicker: 0, mouth: 0, worst: '' };
         // stretch and the ground
         skinned(body, now); let minY = 1e9; const strK: number[] = [];
@@ -236,34 +249,12 @@ const res: any = await P.page.evaluate(async ([kinds, MODE, LIMIT, EYE_PROBES]) 
             if (eyeMask) {
               const materials: any[] = [], oldColor = body.geometry.getAttribute('color');
               const black = new THREE.MeshBasicMaterial({color: 0, side: THREE.DoubleSide});
-              const mask = new THREE.MeshBasicMaterial({vertexColors: true, side: THREE.DoubleSide});
+              const mask = APERTURES ? createCowEyeProbeMaterial(THREE,APERTURES) : new THREE.MeshBasicMaterial({vertexColors: true, side: THREE.DoubleSide});
               // Interpolate reference positions, then test the oval per fragment.
               // Boolean vertex colours spill the probe across coarse face triangles.
-              mask.customProgramCacheKey=()=>APERTURES?'cow-real-aperture-v1':'anatomical-ellipse-v1';
-              mask.onBeforeCompile = (sh: any) => {
-                if(APERTURES){
-                  let declarations='',functions='';
-                  for(let eye=0;eye<2;eye++){
-                    const a=APERTURES[eye],count=a.H.length/2;
-                    for(const key of ['C','S','U','N'])sh.uniforms[`svE${eye}${key}`]={value:new THREE.Vector3(...a[key])};
-                    sh.uniforms[`svE${eye}D`]={value:new THREE.Vector2(...a.D)};
-                    sh.uniforms[`svE${eye}Count`]={value:count};
-                    sh.uniforms[`svE${eye}Hull`]={value:Array.from({length:64},(_,j)=>new THREE.Vector2(...a.H.slice((j%count)*2,(j%count)*2+2)))};
-                    declarations+=`uniform vec3 svE${eye}C,svE${eye}S,svE${eye}U,svE${eye}N; uniform vec2 svE${eye}D;
-                      uniform int svE${eye}Count; uniform vec2 svE${eye}Hull[64];\n`;
-                    functions+=`bool svInside${eye}(vec3 p){
-                      vec3 d=p-svE${eye}C;vec2 q=vec2(dot(d,svE${eye}S),dot(d,svE${eye}U));
-                      for(int k=0;k<64;k++){if(k>=svE${eye}Count)break;int j=k+1;if(j>=svE${eye}Count)j=0;
-                        vec2 a=svE${eye}Hull[k],b=svE${eye}Hull[j],edge=b-a;
-                        if(edge.x*(q.y-a.y)-edge.y*(q.x-a.x)<-.001*length(edge))return false;}
-                      float depth=dot(d,svE${eye}N);return depth>svE${eye}D.x&&depth<svE${eye}D.y;}
-                    `;
-                  }
-                  sh.fragmentShader=declarations+functions+sh.fragmentShader;
-                  sh.fragmentShader=sh.fragmentShader.replace('#include <color_fragment>',`#include <color_fragment>
-                    bool svEye=svInside0(vColor.xyz)||svInside1(vColor.xyz);
-                    diffuseColor.rgb=svEye?vec3(1.,0.,0.):vec3(0.);`);
-                }else{
+              if(!APERTURES){
+                mask.customProgramCacheKey=()=> 'anatomical-ellipse-v1';
+                mask.onBeforeCompile = (sh: any) => {
                   sh.uniforms.svProbe0={value:probeCenters[0]};sh.uniforms.svProbe1={value:probeCenters[1]};
                   sh.uniforms.svProbeRadius={value:new THREE.Vector3(...probe)};
                   sh.fragmentShader='uniform vec3 svProbe0;uniform vec3 svProbe1;uniform vec3 svProbeRadius;\n'+sh.fragmentShader;
@@ -271,8 +262,8 @@ const res: any = await P.page.evaluate(async ([kinds, MODE, LIMIT, EYE_PROBES]) 
                     vec3 d0=(vColor.xyz-svProbe0)/svProbeRadius,d1=(vColor.xyz-svProbe1)/svProbeRadius;
                     bool svEye=(dot(d0.xy,d0.xy)<1.&&abs(d0.z)<1.)||(dot(d1.xy,d1.xy)<1.&&abs(d1.z)<1.);
                     diffuseColor.rgb=svEye?vec3(1.,0.,0.):vec3(0.);`);
-                }
-              };
+                };
+              }
 
               const alphaMasks: any[] = [];
               obj.traverse((m: any) => { if (m.isMesh) { materials.push([m,m.material]);
@@ -285,7 +276,9 @@ const res: any = await P.page.evaluate(async ([kinds, MODE, LIMIT, EYE_PROBES]) 
               } });
               body.geometry.setAttribute('color', eyeMask); body.material = mask;
               const visibleEye = read(cam);
-              for (const e of eyes) disc(cam,e,(i,x,y) => { if (visibleEye[i] > 128 && visibleEye[i+1] < 20) { n++; flags[y*S+x]=1; } });
+              if(APERTURES){
+                for(let i=0;i<S*S;i++)if((visibleEye[i*4]>128&&visibleEye[i*4+1]<20)||(visibleEye[i*4+1]>128&&visibleEye[i*4]<20)){n++;flags[i]=1;}
+              }else for (const e of eyes) disc(cam,e,(i,x,y) => { if (visibleEye[i] > 128 && visibleEye[i+1] < 20) { n++; flags[y*S+x]=1; } });
               if (oldColor) body.geometry.setAttribute('color',oldColor); else body.geometry.deleteAttribute('color');
               for (const [m,mat] of materials) m.material=mat;
               black.dispose(); mask.dispose(); alphaMasks.forEach(m => m.dispose());
