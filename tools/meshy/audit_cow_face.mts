@@ -19,13 +19,13 @@ const result=await page.evaluate(async ([mode,baseline,debug])=>{
  const png=(px,flags)=>{const cv=document.createElement('canvas');cv.width=cv.height=S;const c=cv.getContext('2d'),im=c.createImageData(S,S);for(let y=0;y<S;y++)for(let x=0;x<S;x++){const src=((S-1-y)*S+x)*4,dst=(y*S+x)*4,marked=flags&&flags[src/4];im.data[dst]=marked?255:px[src+3]?px[src]:200;im.data[dst+1]=marked?0:px[src+3]?px[src+1]:210;im.data[dst+2]=marked?255:px[src+3]?px[src+2]:220;im.data[dst+3]=255;}c.putImageData(im,0,0);return cv.toDataURL('image/png');};
  for(const tier of mode==='selftest'?['near']:['near','far']){
   const t=await K.loadWorldModel((baseline?'../../docs/meshy-farm-cloud/cow/review/':'')+'creature-cow'+(tier==='near'?'-hd':''));if(!t)throw Error('Model missing');const obj=clone(t.scene);scene.add(obj);obj.traverse(o=>{if(o.isSkinnedMesh)o.frustumCulled=false;});
-  let mouthIds=new Uint8Array(S*S);
+  let mouthIds=new Uint8Array(S*S),mouthSurfaceIds=new Uint8Array(S*S);
   const controls=new Map(),idCache=new Map(),idRead=cam=>{
    const saved=[];
    const swap=o=>{if(!o.isMesh)return;const original=o.material;saved.push([o,original]);let id=0;const lid=/-(?:shut|joy)([01])$/.exec(original.name||'');if(lid)id=Number(lid[1])+1;else if(/-mouth$/.test(original.name||''))id=3;
     const key=(original.uuid||original.id)+':'+id;let mat=idCache.get(key);
-    if(!mat){mat=new THREE.MeshBasicMaterial({color:0,map:original.map,alphaMap:original.alphaMap,transparent:original.transparent,blending:original.blending,opacity:original.opacity,alphaTest:original.alphaTest,side:original.side,depthWrite:original.depthWrite,depthTest:original.depthTest,polygonOffset:original.polygonOffset,polygonOffsetFactor:original.polygonOffsetFactor,polygonOffsetUnits:original.polygonOffsetUnits});if(id){mat.onBeforeCompile=sh=>{sh.fragmentShader=sh.fragmentShader.replace('#include <map_fragment>','#include <map_fragment>\ndiffuseColor.rgb='+ (id===1?'vec3(1.,0.,0.);':id===2?'vec3(0.,1.,0.);':'vec3(0.,0.,1.);'));};mat.customProgramCacheKey=()=>String(id);}idCache.set(key,mat);}o.material=mat;};
-   scene.traverse(swap);const pixels=read(cam);saved.forEach(([o,m])=>o.material=m);const ids=new Uint8Array(S*S);mouthIds=new Uint8Array(S*S);for(let i=0;i<ids.length;i++){if(pixels[i*4]>128&&pixels[i*4+1]<64)ids[i]=1;if(pixels[i*4+1]>128&&pixels[i*4]<64)ids[i]=2;if(pixels[i*4+2]>128&&pixels[i*4]<64&&pixels[i*4+1]<64)mouthIds[i]=1;}return ids;
+    if(!mat){mat=new THREE.MeshBasicMaterial({color:0,map:original.map,alphaMap:original.alphaMap,transparent:original.transparent,blending:original.blending,opacity:original.opacity,alphaTest:original.alphaTest,side:original.side,depthWrite:original.depthWrite,depthTest:original.depthTest,polygonOffset:original.polygonOffset,polygonOffsetFactor:original.polygonOffsetFactor,polygonOffsetUnits:original.polygonOffsetUnits});if(id===3){mat.transparent=true;mat.blending=THREE.NoBlending;mat.alphaTest=0;}if(id){mat.onBeforeCompile=sh=>{sh.fragmentShader=sh.fragmentShader.replace('#include <map_fragment>','#include <map_fragment>\ndiffuseColor.rgb='+ (id===1?'vec3(1.,0.,0.);':id===2?'vec3(0.,1.,0.);':'vec3(diffuseColor.a,0.,1.); diffuseColor.a=1.;'));};mat.customProgramCacheKey=()=>String(id);}idCache.set(key,mat);}o.material=mat;};
+   scene.traverse(swap);const pixels=read(cam);saved.forEach(([o,m])=>o.material=m);const ids=new Uint8Array(S*S);mouthIds=new Uint8Array(S*S);mouthSurfaceIds=new Uint8Array(S*S);for(let i=0;i<ids.length;i++){if(pixels[i*4+2]>128&&pixels[i*4+1]<64){mouthSurfaceIds[i]=1;if(pixels[i*4]>25)mouthIds[i]=1;}else{if(pixels[i*4]>128&&pixels[i*4+1]<64)ids[i]=1;if(pixels[i*4+1]>128&&pixels[i*4]<64)ids[i]=2;}}return ids;
   };
   const mixer=new THREE.AnimationMixer(obj),bones=['shut0','shut1','joy0','joy1','retract0','retract1','jaw'].map(n=>obj.getObjectByName(n));
   if(bones.some(o=>!o))throw Error('Missing required cow expression bone');
@@ -43,7 +43,7 @@ const result=await page.evaluate(async ([mode,baseline,debug])=>{
   let apertures=null;
   if(!baseline||apertureMetadata.length||strokes.length){
    if(apertureMetadata.length!==1)throw Error('Requires one actual-eye aperture annotation');
-   apertures=validateCowEyeMetadata(apertureMetadata[0],centers);validateCowLashMetadata(strokes,centers);
+   apertures=validateCowEyeMetadata(apertureMetadata[0],centers);validateCowLashMetadata(strokes,centers,apertures);
   }
 
   let body;obj.traverse(o=>{if(o.isSkinnedMesh&&(!body||o.geometry.attributes.position.count>body.geometry.attributes.position.count))body=o;});
@@ -69,12 +69,14 @@ const result=await page.evaluate(async ([mode,baseline,debug])=>{
    if(lashMask)for(const stroke of strokes){const {bone,data,inv}=stroke;if(bone.scale.x<.1)continue;const motion=bone.matrixWorld.clone().multiply(inv),pts=[];
     for(let k=0;k<data.svLash.length;k+=3)pts.push(new THREE.Vector3(...data.svLash.slice(k,k+3)).applyMatrix4(motion));
     let length=0;for(let j=1;j<pts.length;j++)length+=pts[j].distanceTo(pts[j-1]);if(!Number.isFinite(length)||length>.12)throw Error('Authored stroke is not an eye-sized curve');
-    const scale=bone.getWorldScale(new THREE.Vector3()),at=project(pts[pts.length>>1]),edge=project(pts[pts.length>>1].clone().addScaledVector(new THREE.Vector3().setFromMatrixColumn(cam.matrixWorld,0),data.svLashWidth*Math.max(scale.x,scale.y,scale.z))),radius=Math.max(1,Math.abs(edge.x-at.x)+1);
-    if(!Number.isFinite(radius))throw Error('Invalid projected lash width');
-    const pp=pts.map(project);if(pp.some(p=>!Number.isFinite(p.x)||!Number.isFinite(p.y)))throw Error('Invalid projected lash curve');for(let j=1;j<pp.length;j++){const a=pp[j-1],b=pp[j],dx=b.x-a.x,dy=b.y-a.y,den=dx*dx+dy*dy;
-     for(let y=Math.max(0,Math.floor(Math.min(a.y,b.y)-radius));y<Math.min(S,Math.ceil(Math.max(a.y,b.y)+radius));y++)for(let x=Math.max(0,Math.floor(Math.min(a.x,b.x)-radius));x<Math.min(S,Math.ceil(Math.max(a.x,b.x)+radius));x++){const u=den?Math.max(0,Math.min(1,((x-a.x)*dx+(y-a.y)*dy)/den)):0;if(Math.hypot(x-a.x-u*dx,y-a.y-u*dy)<=radius)lashMask[y*S+x]|=1<<data.svEyeIndex;}
-    }
+    const pp=[];for(let j=0;j<data.svLashBand.length;j+=3)pp.push(project(new THREE.Vector3(...data.svLashBand.slice(j,j+3)).applyMatrix4(motion)));
+    if(pp.some(p=>!Number.isFinite(p.x)||!Number.isFinite(p.y)))throw Error('Invalid projected surface lash band');
+    const fill=(a,b,c)=>{const edge=(p,q,x,y)=>(q.x-p.x)*(y-p.y)-(q.y-p.y)*(x-p.x),area=edge(a,b,c.x,c.y);if(Math.abs(area)<1e-8)return;
+     for(let y=Math.max(0,Math.floor(Math.min(a.y,b.y,c.y)));y<Math.min(S,Math.ceil(Math.max(a.y,b.y,c.y)));y++)for(let x=Math.max(0,Math.floor(Math.min(a.x,b.x,c.x)));x<Math.min(S,Math.ceil(Math.max(a.x,b.x,c.x)));x++){const e0=edge(a,b,x+.5,y+.5),e1=edge(b,c,x+.5,y+.5),e2=edge(c,a,x+.5,y+.5);if((e0>=0&&e1>=0&&e2>=0)||(e0<=0&&e1<=0&&e2<=0))lashMask[y*S+x]|=1<<data.svEyeIndex;}
+    };
+    for(let j=0;j+3<pp.length;j+=2){fill(pp[j],pp[j+1],pp[j+2]);fill(pp[j+1],pp[j+2],pp[j+3]);}
    }
+   if(lashMask){const source=lashMask.slice();for(let y=0;y<S;y++)for(let x=0;x<S;x++){const bits=source[y*S+x];if(!bits)continue;for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){const u=x+dx,v=y+dy;if(u>=0&&u<S&&v>=0&&v<S)lashMask[v*S+u]|=bits;}}}
    const jaw=bones[6].getWorldPosition(new THREE.Vector3()),mp=project(jaw),mh=project(jaw.clone().addScaledVector(right,.045)),mv=project(jaw.clone().addScaledVector(up,.025));
    const mouth={...mp,rx:Math.abs(mh.x-mp.x),ry:Math.abs(mv.y-mp.y)},closed=bones[0].scale.x>.1||bones[2].scale.x>.1,mouthOpen=bones[6].scale.x>.05;
    // A frontal width collapses to zero in profile. Measure the real bounded
@@ -120,7 +122,7 @@ const result=await page.evaluate(async ([mode,baseline,debug])=>{
     if(plant==='mouth-open')fault.material.name='meshy-cow-mouth';
     fault.position.copy(loc).addScaledVector(dir,.025);fault.quaternion.copy(cam.quaternion);fault.renderOrder=999;scene.add(fault);
    }
-   const current=read(cam),ids=idRead(cam),m=cowFaceMetrics(current,reference,S,S,eyes,mouth,closed,mouthOpen,ids,lashMask,referenceEyeIds,mouthIds);
+   const current=read(cam),ids=idRead(cam),m=cowFaceMetrics(current,reference,S,S,eyes,mouth,closed,mouthOpen,ids,lashMask,referenceEyeIds,mouthIds,mouthSurfaceIds);
    if(mouthOpen&&bones[6].scale.x>.4&&Math.abs(yaw)<=.4&&Math.abs(elevation)<.1&&m.mouthVisiblePixels<4)m.coverageErrors.push('Open mouth missing visible front surface');
    const cs={tier,clip,yaw,elevation,plant,closed,mouthOpen,...m.counts,textureFlat:m.textureFlat,eyeData:m.eyeData,coverageErrors:m.coverageErrors,mouthVisiblePixels:m.mouthVisiblePixels,mouthOccluded:mouthOpen&&m.mouthVisiblePixels===0};cases.push(cs);
    if(mode==='selftest'){
@@ -138,7 +140,7 @@ const result=await page.evaluate(async ([mode,baseline,debug])=>{
    }
    for(const k of Object.keys(m.counts))if(m.counts[k]>(k==='eyes'?6:12)||plant===k)pics[`${tier}-${clip}-${yaw}-${elevation}-${plant}-${k}`]=png(current,m.flags[k]);
    if(debug){const name=`${tier}-${clip}-${yaw}-${elevation}-${plant}`;pics[name+'-current']=png(current);pics[name+'-reference']=png(reference);
-    for(const [label,mask]of [['ids',ids],['reference-ids',referenceEyeIds],['lash',lashMask],['mouth-ids',mouthIds]] as const){if(!mask)continue;const rgba=new Uint8Array(S*S*4);for(let i=0;i<S*S;i++){rgba[4*i]=mask[i]&1?255:0;rgba[4*i+1]=mask[i]&2?255:0;rgba[4*i+3]=255;}pics[name+'-'+label]=png(rgba);}
+    for(const [label,mask]of [['ids',ids],['reference-ids',referenceEyeIds],['lash',lashMask],['mouth-ids',mouthIds],['mouth-surface-ids',mouthSurfaceIds]] as const){if(!mask)continue;const rgba=new Uint8Array(S*S*4);for(let i=0;i<S*S;i++){rgba[4*i]=mask[i]&1?255:0;rgba[4*i+1]=mask[i]&2?255:0;rgba[4*i+3]=255;}pics[name+'-'+label]=png(rgba);}
    }
    if(fault){scene.remove(fault);fault.geometry.dispose();fault.material.dispose();}
   }

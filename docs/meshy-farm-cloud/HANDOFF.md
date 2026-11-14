@@ -181,3 +181,13 @@ Full66:120ca thân0vượt;198ca mặt45lỗi (lid15,mouth4,stray26,rim2,silhoue
 Thử67: sửa mouth riêng cow bằng Blender — tia cast bắt đầu ngoài toàn model, alpha chỉ giữ hình miệng thay ô da hồng đục, giảm độ nâng về0,15mm tối đa. Đo mouth bằng surface3D pose thật (giới hạn kích thước), thêm ID pass miệng nhìn thấy: vòng cổ bị miệng/mõm che không phải môi. Ghi số pixel miệng/occluded; mặt thẳng có miệng mở lớn mà không thấy phải fail coverage. Vẫn giữ ngưỡng12/6 và mọi kiểm alpha/coverage. Đo màu bên trong eye opening không trộn lông kem bên ngoài vào lông đen.
 
 GLB67 gần778112/xa376188byte,38060/14744tam giác,20bone/10clip, alpha/dung lượng đạt. Quick18ca mặt0lỗi (lidworst6,rim7,các mục khác0). Parent selftest67 **PASS**,6/6plant thân+11/11plant mặt (bổ sung lỗi môi trùng khi miệng mở, có control cheer đúng pose và footprint thật). Full120+198 đang chạy lại trên67, chưa kết quả. Chưa có242ảnh cuối/soát mù cuối/phim/phát phim/ba thiết bị mới. Không credit/API mới; sheep/chicken dừng; không ready for Release/approval.
+
+### Checkpoint 15/11/2026 04:47 AEDT — máy soi đầy đủ đạt, còn soát ảnh và phim
+
+Bản thử72 hiện trong runtime: gần747528/xa372112byte,37344/14496tam giác,20bone/10clip; kiểm GLB/alpha/dung lượng đạt. **Parent full PASS120ca thân +198ca mặt,0ca vượt ngưỡng/coverage**. Thânworststretch750 trongngưỡng300/900,tear20 trongngoạilệvòngchuông30; sink/float/flicker/mouth0,eye2. Mặtworstlid8,mouth10,rim11 trongngưỡng12; stray/eyes/silhouette0. Giữ nguyênmọingưỡng.
+
+Các bước chốt: màu lông ngoàiactualopening được khớp reference±1px với cùngtolerance0,08 của stray (đã chứng minhcácdấu dưkhớplôngcũ); bên trongopening vẫn giữ kiểm màu/flat/rim. Dải nét mi được raycast3Dhai mép, kiểmwidth/extent và chỉ loại nét nhìnthấy đúngID; selftest cácvòngtrongmắt vẫn bắt nét vẽđè lênmi. Môi quanhlưỡi theo cùngcomponentliênthông; môi trùngrời vẫn cófixturethật. IDmiệng phânbiệt phầnink và surfacebịbodyche đểkhôngnhận vòngcổ là môi.
+
+Sửa hìnhhọc miệng riêngcow: trụcjaw theo normalmõm, co tangentbằngs và depthbằngs², nângconstant0,4mm để da khôngxuyênqua; khôngthêm bone. Đã xác minhbađỉnhbịbáotrướccóalpha0 vàcắtcellngoàivùngink/unreferencedvertices. Thuphạmvimàumi trắng đểkhônglấnforehead ởprofile. Renderer/js game khôngđổi. Phim đượcchuẩnbị24fps, cótimeline vàSHAmodel; **chưa quayR17** trướcsoátảnh.
+
+Selftest72 đangchạylạicuối; selftest71 đã PASS6plantthân+11plantmặt. TypesPASStrướcthayđổicuối, sẽchạylạicùngcấuhìnhcloud. Còn242ảnhnative1024/tựxem/ngườisoiđộclậpkhôngbiếtnộidungsửa, cácảnhchủkhoanh, phimnear/farphát1×tớiended, bathiếtbịvàmũitênvàngtắt, workingblend/báocáo cuối. Chưaapproval/chưa readyforRelease. KhôngMeshyAPI/creditmới; sheep/chicken dừng. SẽchạyCItoànrepo trênGitHub; khôngbáoCIxanh khi chưa cókếtquả.

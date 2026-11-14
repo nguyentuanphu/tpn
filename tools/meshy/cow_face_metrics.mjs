@@ -18,7 +18,7 @@ export function validateCowEyeMetadata(metadata,centers){
   return a;
  });
 }
-export function validateCowLashMetadata(strokes,centers){
+export function validateCowLashMetadata(strokes,centers,apertures){
  const seen=new Set(),curves=new Set();
  for(const {data:m,materialName,boneCenter} of strokes){
   if(!Number.isInteger(m.svEyeIndex)||m.svEyeIndex<0||m.svEyeIndex>1||!new RegExp(`^(shut|joy)${m.svEyeIndex}$`).test(m.svLashBone)||!materialName?.endsWith('-'+m.svLashBone)||seen.has(m.svLashBone)||!Array.isArray(m.svLash)||m.svLash.length<6||m.svLash.length%3||!m.svLash.every(Number.isFinite)||!Number.isFinite(m.svLashWidth)||m.svLashWidth<.002||m.svLashWidth>.006)throw Error('Invalid/duplicate lash metadata');
@@ -26,6 +26,12 @@ export function validateCowLashMetadata(strokes,centers){
   if(!Array.isArray(boneCenter)||boneCenter.length!==3||!boneCenter.every(Number.isFinite)||Math.hypot(...boneCenter.map((v,j)=>v-center[j]))>.002)throw Error('Lash bone coordinate frame mismatch');
   let length=0;for(let j=0;j<m.svLash.length;j+=3){if(Math.hypot(...m.svLash.slice(j,j+3).map((v,k)=>v-center[k]))>.12)throw Error('Lash curve coordinate frame mismatch');if(j)length+=Math.hypot(...m.svLash.slice(j,j+3).map((v,k)=>v-m.svLash[j-3+k]));}
   const curve=JSON.stringify(m.svLash);if(!Number.isFinite(length)||length<=0||length>.12||curves.has(curve))throw Error('Invalid/duplicate lash curve');
+  if(!Array.isArray(m.svLashBand)||m.svLashBand.length!==m.svLash.length*2||!m.svLashBand.every(Number.isFinite))throw Error('Missing actual surface lash band');
+  const frame=apertures?.[m.svEyeIndex];if(!frame)throw Error('Missing lash band coordinate frame');
+  for(let j=0;j<m.svLashBand.length;j+=6){const a=m.svLashBand.slice(j,j+3),b=m.svLashBand.slice(j+3,j+6),delta=b.map((v,k)=>v-a[k]),dot=v=>v.reduce((s,x,k)=>s+x*delta[k],0);
+   if(Math.abs(Math.abs(dot(frame.U))-2*m.svLashWidth)>.0015||Math.abs(dot(frame.S))>.001||Math.abs(dot(frame.N))>.03||[a,b].some(p=>Math.hypot(...p.map((v,k)=>v-center[k]))>.12))throw Error('Unbounded actual lash band');
+   const c=m.svLash.slice(j/2,j/2+3);if(Math.hypot(...a.map((v,k)=>(v+b[k])/2-c[k]))>.005)throw Error('Lash band detached from authored stroke');
+  }
   seen.add(m.svLashBone);curves.add(curve);
  }
  if(seen.size!==4||!['shut0','shut1','joy0','joy1'].every(k=>seen.has(k)))throw Error('Requires four distinct eye/expression strokes');
@@ -34,9 +40,9 @@ export function validateCowLashMetadata(strokes,centers){
 // 5f13d4b3b (13–14 Nov). Same HSV lid criterion, 4-connected group floor,
 // 1px neighbourhood colour tolerance and mouth lip/core grouping; coat-aware
 // brightness and the rim residual extend coverage to black/white animal fur.
-export function cowFaceMetrics(current,reference,width,height,eyes,mouth,closed,mouthOpen=false,eyeIds=null,lashMask=null,referenceEyeIds=null,mouthIds=null){
+export function cowFaceMetrics(current,reference,width,height,eyes,mouth,closed,mouthOpen=false,eyeIds=null,lashMask=null,referenceEyeIds=null,mouthIds=null,mouthSurfaceIds=null){
  const N=width*height,flags={lid:new Uint8Array(N),mouth:new Uint8Array(N),stray:new Uint8Array(N),rim:new Uint8Array(N),eyes:new Uint8Array(N),silhouette:new Uint8Array(N)};
- if(!Number.isInteger(width)||!Number.isInteger(height)||width<=0||height<=0||current.length!==N*4||reference.length!==N*4||(eyeIds&&eyeIds.length!==N)||(lashMask&&lashMask.length!==N)||(referenceEyeIds&&referenceEyeIds.length!==N)||(mouthIds&&(mouthIds.length!==N||mouthIds.some(id=>id!==0&&id!==1))))throw Error('Invalid face render buffers');
+ if(!Number.isInteger(width)||!Number.isInteger(height)||width<=0||height<=0||current.length!==N*4||reference.length!==N*4||(eyeIds&&eyeIds.length!==N)||(lashMask&&lashMask.length!==N)||(referenceEyeIds&&referenceEyeIds.length!==N)||(mouthIds&&(mouthIds.length!==N||mouthIds.some(id=>id!==0&&id!==1)))||(mouthSurfaceIds&&(mouthSurfaceIds.length!==N||mouthSurfaceIds.some(id=>id!==0&&id!==1))))throw Error('Invalid face render buffers');
  for(const ids of [eyeIds,referenceEyeIds])if(ids&&ids.some(id=>id!==0&&id!==1&&id!==2))throw Error('Invalid actual-eye IDs');
  if(eyes.some(e=>![e.x,e.y,e.rx,e.ry].every(Number.isFinite)||e.rx<=0||e.ry<=0||![0,1].includes(e.index))||![mouth.x,mouth.y,mouth.rx,mouth.ry].every(Number.isFinite))throw Error('Invalid projected face frame');
  const coverageErrors=[];
@@ -124,7 +130,10 @@ export function cowFaceMetrics(current,reference,width,height,eyes,mouth,closed,
   // black-coat pale patches use brightness, plus independent flat-fur/rim.
   const bad=e.coat==='dark'?(cv>v+.075&&(opening||cv>pv)):
    ((cv>v-.1&&cs<s-.12&&(opening||(cs<ps&&cv>pv)))||(cv<v-.18&&(opening||cv<pv)));
-  if(d<1.3&&!lash&&changed&&bad)flags.lid[i]=1;
+  // Outside the actual opening, compare with native fur using the same 1px
+  // registration/.08 colour tolerance as stray. Texture/filter phase shifts
+  // that reproduce an existing fur colour are not a new pale/dark patch.
+  if(d<1.3&&!lash&&changed&&bad&&(opening||!close(i)))flags.lid[i]=1;
   // A pre-existing cream/black coat boundary is not the rim of a grey lid.
   // Require unchanged warm white fur from the reference beside current dark fur;
   // a grey ring on black, or any new rim on a white coat, still gets counted.
@@ -191,8 +200,12 @@ export function cowFaceMetrics(current,reference,width,height,eyes,mouth,closed,
  // core; isolated old lips outside its 3px neighbourhood are faults (audit.mts).
  const lips=new Uint8Array(N),core=new Uint8Array(N),visibleMouth=new Uint8Array(N);
  if(mouthIds)for(let i=0;i<N;i++)if(mouthIds[i]){const x=i%width,y=i/width|0;for(let dy=-3;dy<=3;dy++)for(let dx=-3;dx<=3;dx++){const u=x+dx,v=y+dy;if(u>=0&&u<width&&v>=0&&v<height)visibleMouth[v*width+u]=1;}}
- for(let i=0;i<N;i++){const x=i%width,y=i/width|0;if(!mouthZone(x,y)||(mouthOpen&&mouthIds&&!visibleMouth[i]))continue;const r=current[4*i]/255,g=current[4*i+1]/255,b=current[4*i+2]/255;if(val(current,i)<.32&&r>g*1.1){lips[i]=1;if(val(current,i)<.23)core[i]=1;}if(!mouthOpen&&!close(i))flags.mouth[i]=1;}
- if(mouthOpen){const gs=groups(core),main=gs[0]||[],mask=new Uint8Array(N);for(const i of main)mask[i]=1;for(let i=0;i<N;i++)if(lips[i]){const x=i%width,y=i/width|0;let near=false;for(let dy=-3;dy<=3;dy++)for(let dx=-3;dx<=3;dx++){const u=x+dx,v=y+dy;if(u>=0&&u<width&&v>=0&&v<height&&mask[v*width+u])near=true;}if(!near)flags.mouth[i]=1;}}
+ for(let i=0;i<N;i++){const x=i%width,y=i/width|0;if(!mouthZone(x,y)||(mouthOpen&&(mouthSurfaceIds?!mouthSurfaceIds[i]:mouthIds&&!visibleMouth[i])))continue;const r=current[4*i]/255,g=current[4*i+1]/255,b=current[4*i+2]/255;if(val(current,i)<.32&&r>g*1.1){lips[i]=1;if(val(current,i)<.23)core[i]=1;}if(!mouthOpen&&!close(i))flags.mouth[i]=1;}
+ if(mouthOpen){const gs=groups(core),main=gs[0]||[],mask=new Uint8Array(N);for(const i of main)mask[i]=1;
+  // A tongue can split the darkest core while its lip remains connected.
+  // Keep that one physical lip; disconnected old/duplicate lips still fail.
+  const connected=groups(lips).find(g=>g.some(i=>mask[i]));if(connected)for(const i of connected)mask[i]=1;
+  for(let i=0;i<N;i++)if(lips[i]){const x=i%width,y=i/width|0;let near=false;for(let dy=-3;dy<=3;dy++)for(let dx=-3;dx<=3;dx++){const u=x+dx,v=y+dy;if(u>=0&&u<width&&v>=0&&v<height&&mask[v*width+u])near=true;}if(!near)flags.mouth[i]=1;}}
  const counts=Object.fromEntries(Object.entries(flags).map(([k,v])=>[k,count(v)]));
  return {counts,flags,eyeData,textureFlat,coverageErrors,mouthVisiblePixels:mouthIds?mouthIds.reduce((a,b)=>a+(b?1:0),0):null};
 }

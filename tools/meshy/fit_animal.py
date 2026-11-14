@@ -424,6 +424,9 @@ def rig(o, J, M, names):
     eb = {}
     for b in names + [k for k in J if k not in PARENT]:
         e = ad.edit_bones.new(b); h = Vector(J[b]); e.head = h; e.tail = h + Vector((0, 0, size * .08)); e.roll = 0; eb[b] = e
+    if KIND=='cow' and 'jaw' in eb:
+        normal=Vector(Fc['mouth_n']).normalized();side=Vector((0,0,1)).cross(normal).normalized();up=normal.cross(side).normalized()
+        eb['jaw'].tail=eb['jaw'].head+up*(size*.08);eb['jaw'].align_roll(normal)
     for b, e in eb.items():
         p = PARENT.get(b, 'head')
         if p and p in eb: e.parent = eb[p]
@@ -776,7 +779,11 @@ def face(P, F_, eye=1.0, big=1.0, brow_y=0.0, brow_tilt=0.0, smile=1.0, frown=Fa
         P['joy%d' % i] = ((0, 0, 0), (0, 0, 0), one if happy else tiny)
         if FIX.get('eye_retract'):
             P['retract%d' % i] = ((0,0,0),(0,0,-FIX['eye_retract'] if closed or happy else 0),one)
-    s = max(.001, jaw); P['jaw'] = ((0, 0, 0), (0, 0, 0), (s, s, s) if jaw > .05 else tiny)
+    s = max(.001, jaw)
+    # A curved muzzle is approximately quadratic in its tangent plane. Its
+    # normal depth must scale by s² as the opening scales by s, or skin cuts
+    # through the shrunken mouth. The small normal offset stays constant.
+    P['jaw'] = ((0,0,0),(0,0,.0004) if KIND=='cow' and jaw>.05 else (0,0,0),(s,s,s*s if KIND=='cow' else s) if jaw>.05 else tiny)
 wc.face = face   # (animal_moves calls the module's face)
 
 def tex_of(o):
@@ -1009,14 +1016,14 @@ def fur_lid_fill(img,hit,xx,yy,r,eye):
     # Fill that connected shadow on closure, retaining brows and pink blush.
     shade=(chroma<.14)&(lum>.35)
     extra=hit&(np.hypot(xx,yy)<r*1.6)&shade&~protected if coat=='light' else np.zeros((n,n),bool)
-    for _ in range(round(16*n/128)):mask|=grow(mask)&extra
+    for _ in range(round(4*n/128)):mask|=grow(mask)&extra
     repair=mask.copy()
     if coat=='dark':
         neutral=hit&(chroma<.14)&(lum>.25)&~protected
         for _ in range(3):repair|=grow(repair)&neutral
         mask|=repair
     correction=repair.astype(float);band=repair.copy()
-    steps=round((10 if coat=='light' else 5)*n/128)
+    steps=round((3 if coat=='light' else 5)*n/128)
     for step in range(1,steps+1):
         expanded=grow(band);correction[expanded&~band]=.5+.5*math.cos(math.pi*step/steps);band=expanded
     for _ in range(steps):mask=grow(mask)
@@ -1203,12 +1210,20 @@ def face_pieces(o, arm, J, Fc):
             if FIX.get('surface_lids'):
                 lid=surface_lid(o, arm, name, c, side, up, img, P, i, f'{kind}{i}', fur_mask)
                 if FIX.get('textured_fur_lids'):
-                    stroke=[]
-                    for u in np.linspace(-ew*.85,ew*.85,30):
+                    stroke=[];stroke_band=[]
+                    us=np.linspace(-ew*.85,ew*.85,30);half_width=r*.09+px_*.5
+                    for j,u in enumerate(us):
                         frm=c+side*(u+ecx)+up*(ecy+curve(u))+nrm*ray_distance
                         loc,normal,_,_=bvh.ray_cast(Vector(frm),Vector(-nrm))
-                        if loc is not None:stroke.extend(three(np.array(loc[:])+np.array(normal[:])*FIX['surface_lid_forward']))
-                    lid['svLash']=stroke;lid['svLashBone']=f'{kind}{i}';lid['svLashWidth']=round(r*.09+px_*.5,6);lid['svEyeIndex']=i
+                        if loc is None:raise ValueError('Lash centre misses face')
+                        stroke.extend(three(np.array(loc[:])+np.array(normal[:])*FIX['surface_lid_forward']))
+                        edge_u=u+(-px_*.5 if j==0 else px_*.5 if j==len(us)-1 else 0)
+                        for sign in (-1,1):
+                            frm=c+side*(edge_u+ecx)+up*(ecy+curve(edge_u)+sign*half_width)+nrm*ray_distance
+                            loc,normal,_,_=bvh.ray_cast(Vector(frm),Vector(-nrm))
+                            if loc is None:raise ValueError('Lash band misses face')
+                            stroke_band.extend(three(np.array(loc[:])+np.array(normal[:])*FIX['surface_lid_forward']))
+                    lid['svLash']=stroke;lid['svLashBand']=stroke_band;lid['svLashBone']=f'{kind}{i}';lid['svLashWidth']=round(half_width,6);lid['svEyeIndex']=i
                 continue
             # the piece: a fine grid laid on the head's surface over the eye (rays along -normal), a little in front, its
             # picture straight on; no gaps (the head's own triangles, copied, showed the eye through cracks at their edges)
@@ -1286,8 +1301,15 @@ def face_pieces(o, arm, J, Fc):
             for b in range(GN):
                 q = [(a, b), (a, b + 1), (a + 1, b + 1), (a + 1, b)]
                 if not all(k in grid for k in q): continue
+                if KIND=='cow':
+                    # Keep every cell intersecting the ink (including filtering
+                    # margin), discard unused skin around it before export.
+                    x0=b/GN*2*R-R;x1=(b+1)/GN*2*R-R;y0=a/GN*2*R-R;y1=(a+1)/GN*2*R-R
+                    u=np.clip(0,x0,x1);v=np.clip(0,y0,y1)
+                    if (u/rx)**2+(v/ry)**2>1.1:continue
                 f = bm.faces.new([grid[k] for k in q])
                 for lp, (ga, gb) in zip(f.loops, q): lp[uvL].uv = (gb / GN, ga / GN)
+        if KIND=='cow':bmesh.ops.delete(bm,geom=[v for v in bm.verts if not v.link_faces],context='VERTS')
         pm = bpy.data.meshes.new(name); bm.to_mesh(pm); bm.free()
         po = bpy.data.objects.new(name, pm); bpy.context.collection.objects.link(po)
         mat = bpy.data.materials.new(name); mat.use_nodes = True; nt = mat.node_tree; tn = nt.nodes.new('ShaderNodeTexImage'); tn.image = pim
