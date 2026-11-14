@@ -73,7 +73,7 @@ const res: any = await P.page.evaluate(async ([LIST, QUICK, LIMIT]) => {
     av.life = null; A.animate(av, 'idle', 1); av.root.updateMatrixWorld(true);   // (the idle pose first: it turns the body back, and a front taken before it was three-quarters)
     const fd = new THREE.Vector3(0, 0, 1).applyQuaternion((av.rig || av.root).getWorldQuaternion(new THREE.Quaternion()));
     const faceDir = (M: any, fb: any) => { M.obj.updateMatrixWorld(true); let hb: any = null, fm: any = null; M.obj.traverse((o: any) => { if (o.isBone && o.name === 'head') hb = o; if (o.isMesh && /^face-smile/.test(o.material && o.material.name || '')) fm = o; }); if (!hb || !fm) return fb; const c = new THREE.Box3().setFromObject(fm, true).getCenter(new THREE.Vector3()), h = hb.getWorldPosition(new THREE.Vector3()), d = c.sub(h); d.y = 0; return d.lengthSq() > 1e-6 ? Math.atan2(d.x, d.z) : fb; };   // (11 Nov 2026: the face's own front, from the head to its face pieces: the body and its root turn to the child while the review waits)
-    const yaw = faceDir(av.model, Math.atan2(fd.x, fd.z));
+    const yaw = Math.atan2(fd.x, fd.z);   // (14 Nov 2026: the rig's own forward, the valley paused: the face piece's middle against the head bone put Bom's front 60 degrees off; faceDir is left for reference)
     // (11 Nov 2026) both models: the high-detail one (near, id-hd) and the light one (far, id)
     for (const [tg, M] of ([['', av.model], ['-hd', av.modelHD]] as [string, any][])) { if (!M) continue; A.showHD(av, M === av.modelHD);
       let hb: any = null; M.obj.traverse((o: any) => { if (o.isBone && o.name === 'head') hb = o; });

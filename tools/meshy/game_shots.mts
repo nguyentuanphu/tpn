@@ -17,7 +17,7 @@ const b = await chromium.launch({ args: ['--use-angle=swiftshader', '--enable-un
 // (10 Nov 2026: on a busy machine the page took over 30 s to load: 3 min limits)
 const nc = b.newContext.bind(b); b.newContext = async (o: any) => { const c = await nc(o); c.setDefaultNavigationTimeout(180000); c.setDefaultTimeout(180000); return c; };
 const P = await open(b, { w: 900, h: 700, fast: false }); await clear(P.page);
-const shots: Record<string, string> = await P.page.evaluate(async ([MODE, LIST, BARE, HIDE]) => {
+const shots: Record<string, string> = await P.page.evaluate(async ([MODE, LIST, BARE, HIDE, process_env_yaw]) => {
   const G = (window as any).__sv, A = await import(String('/js/avatar.js')), FM = await import(String('/js/friend-model.js')), { THREE } = await import(String('/js/gfx.js'));
   const h = G.heroes[0], R = G.renderer, out: Record<string, string> = {};
   const w = (ms: number) => { dispatchEvent(new Event('pointermove')); document.querySelectorAll('.storybook, .dialog, .modal, .reward').forEach(e => e.remove()); G.paused = false; G.world.time = .42; return new Promise(res => setTimeout(res, ms)); };
@@ -186,7 +186,7 @@ const shots: Record<string, string> = await P.page.evaluate(async ([MODE, LIST, 
     n.A.life = null; A.animate(n.A, 'idle', 1); n.A.root.updateMatrixWorld(true);   // (standing still first, then its front: the children who host games cheer and wave, Bông's raised arms lay beside her face; and the idle pose turns the body back, so a front taken before it was three-quarters)
     const fq = (n.A.rig || n.A.root).getWorldQuaternion(new THREE.Quaternion()), fd = new THREE.Vector3(0, 0, 1).applyQuaternion(fq);
     const faceDir = (M: any, fb: any) => { M.obj.updateMatrixWorld(true); let hb: any = null, fm: any = null; M.obj.traverse((o: any) => { if (o.isBone && o.name === 'head') hb = o; if (o.isMesh && /^face-smile/.test(o.material && o.material.name || '')) fm = o; }); if (!hb || !fm) return fb; const c = new THREE.Box3().setFromObject(fm, true).getCenter(new THREE.Vector3()), h = hb.getWorldPosition(new THREE.Vector3()), d = c.sub(h); d.y = 0; return d.lengthSq() > 1e-6 ? Math.atan2(d.x, d.z) : fb; };   // (11 Nov 2026: the face's own front, from the head to its face pieces: the body and its root turn to the child while the review waits)
-    const yaw = faceDir(n.A.model, Math.atan2(fd.x, fd.z));
+    const yaw = process_env_yaw === 'rig' ? Math.atan2(fd.x, fd.z) : faceDir(n.A.model, Math.atan2(fd.x, fd.z));   // (14 Nov 2026: SHOT_YAW=rig, the rig's own forward: the face piece's middle against the head bone put Bom's front 60 degrees off)
     // (10 Nov 2026, the 11 villagers on their own Meshy faces) every mood front and three-quarter, the eye moods from both
     // sides, the back from three sides, and the whole villager front, three-quarter and back in the valley's light
     // (11 Nov 2026) the high-detail model (what a child sees near) as v-<id>-*, the light one (far) as v-<id>-light-*
@@ -213,7 +213,7 @@ const shots: Record<string, string> = await P.page.evaluate(async ([MODE, LIST, 
     hidden.forEach((o: any) => { o.visible = true; }); top.background = bg0; SCN = null;
   }
   return out;
-}, [MODE, LIST, !!process.env.BARE, process.env.HIDE || ''] as any);   // (HIDE=shorts: that garment hidden in the poses, to tell which layer shows)
+}, [MODE, LIST, !!process.env.BARE, process.env.HIDE || '', process.env.SHOT_YAW || 'rig'] as any);   // (HIDE=shorts: that garment hidden in the poses, to tell which layer shows)
 if (MODE === 'cover' || MODE === 'skirt') for (const [k, v] of Object.entries(shots)) if (!String(v).startsWith('data:')) console.log(k, v);
 for (const [k, v] of Object.entries(shots)) { if (v) writeFileSync(`${OUT}/${k}.png`, Buffer.from(v.split(',')[1], 'base64')); else console.log('missing', k); }
 console.log('shots', Object.keys(shots).length, 'in', OUT);
