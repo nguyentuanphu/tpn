@@ -8,7 +8,7 @@ const b=await chromium.launch({args:['--use-angle=swiftshader','--enable-unsafe-
 try{
 const page=await b.newPage({viewport:{width:900,height:700}});page.setDefaultTimeout(600000);
 await page.goto((process.env.SV_URL||'http://127.0.0.1:8798')+'/docs/meshy-farm-cloud/model-review.html');await page.waitForSelector('body[data-ready="true"]');
-const result=await page.evaluate(async ([mode,baseline])=>{
+const result=await page.evaluate(async ([mode,baseline,debug])=>{
  const {cowFaceMetrics,validateCowEyeMetadata,validateCowLashMetadata}=await import(String('/tools/meshy/cow_face_metrics.mjs'));
  const {cowEyeRestPositions,readCowReferenceEyeIds}=await import(String('/tools/meshy/cow_eye_probe.mjs'));
  const {THREE}=await import(String('/js/gfx.js')),K=await import(String('/js/modelkit.js')),{clone}=await import(String('/vendor/SkeletonUtils.js'));
@@ -117,12 +117,13 @@ const result=await page.evaluate(async ([mode,baseline])=>{
     }
    }
    for(const k of Object.keys(m.counts))if(m.counts[k]>(k==='eyes'?6:12)||plant===k)pics[`${tier}-${clip}-${yaw}-${elevation}-${plant}-${k}`]=png(current,m.flags[k]);
+   if(debug){const name=`${tier}-${clip}-${yaw}-${elevation}-${plant}`;pics[name+'-current']=png(current);pics[name+'-reference']=png(reference);}
    if(fault){scene.remove(fault);fault.geometry.dispose();fault.material.dispose();}
   }
   scene.remove(obj);for(const mat of idCache.values())mat.dispose();
  }
  rt.dispose();return {cases,pics};
-},[mode,process.env.COW_FACE_BASELINE==='1']);
+},[mode,process.env.COW_FACE_BASELINE==='1',process.env.COW_FACE_DEBUG==='1']);
 for(const [name,data] of Object.entries(result.pics))writeFileSync(out+'/'+name+'.png',Buffer.from(String(data).split(',')[1],'base64'));
 writeFileSync(out+'/cases.json',JSON.stringify(result.cases,null,2)+'\n');
 const keys=['lid','mouth','stray','rim','eyes','silhouette'],limit=k=>k==='eyes'?6:12,real=result.cases.filter(c=>c.plant==='none'),fail=real.filter(c=>c.coverageErrors.length||keys.some(k=>c[k]>limit(k)));

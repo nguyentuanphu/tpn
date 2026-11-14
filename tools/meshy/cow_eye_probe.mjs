@@ -1,7 +1,8 @@
 // Interpolate rest-world positions through geometry.color, independently of skinning.
 // Non-eye fragments remain opaque black so cheek/ear rays occlude the aperture.
 export function createCowEyeProbeMaterial(THREE,apertures){
- const mask=new THREE.MeshBasicMaterial({vertexColors:true,side:THREE.DoubleSide});
+ const mask=new THREE.MeshBasicMaterial({vertexColors:true,side:THREE.DoubleSide}),textures=[];
+ mask.addEventListener('dispose',()=>textures.forEach(t=>t.dispose()));
  mask.customProgramCacheKey=()=> 'cow-real-aperture-ids-v1';
  mask.onBeforeCompile=sh=>{
   let declarations='',functions='';
@@ -9,17 +10,22 @@ export function createCowEyeProbeMaterial(THREE,apertures){
     const a=apertures[eye],count=a.H.length/2;
     for(const key of ['C','S','U','N'])sh.uniforms[`svE${eye}${key}`]={value:new THREE.Vector3(...a[key])};
     sh.uniforms[`svE${eye}D`]={value:new THREE.Vector2(...a.D)};
+    const size=a.M[0],data=new Uint8Array(size*size*4);
+    for(let k=1;k<a.M.length;k+=2)for(let j=a.M[k];j<a.M[k]+a.M[k+1];j++){data[j*4]=255;data[j*4+3]=255;}
+    const texture=new THREE.DataTexture(data,size,size,THREE.RGBAFormat,THREE.UnsignedByteType);texture.magFilter=texture.minFilter=THREE.NearestFilter;texture.generateMipmaps=false;texture.needsUpdate=true;textures.push(texture);
+    sh.uniforms[`svE${eye}Mask`]={value:texture};sh.uniforms[`svE${eye}P`]={value:a.P};
+
     sh.uniforms[`svE${eye}Count`]={value:count};
     sh.uniforms[`svE${eye}Hull`]={value:Array.from({length:64},(_,j)=>new THREE.Vector2(...a.H.slice((j%count)*2,(j%count)*2+2)))};
-    declarations+=`uniform vec3 svE${eye}C,svE${eye}S,svE${eye}U,svE${eye}N; uniform vec2 svE${eye}D;
+    declarations+=`uniform vec3 svE${eye}C,svE${eye}S,svE${eye}U,svE${eye}N; uniform vec2 svE${eye}D; uniform float svE${eye}P; uniform sampler2D svE${eye}Mask;
       uniform int svE${eye}Count; uniform vec2 svE${eye}Hull[64];\n`;
     functions+=`bool svInside${eye}(vec3 p){
       vec3 d=p-svE${eye}C;vec2 q=vec2(dot(d,svE${eye}S),dot(d,svE${eye}U));
       for(int k=0;k<64;k++){if(k>=svE${eye}Count)break;int j=k+1;if(j>=svE${eye}Count)j=0;
         vec2 a=svE${eye}Hull[k],b=svE${eye}Hull[j],edge=b-a;
-        // 50 micrometres covers packed-position rounding, not native fur.
-        if(edge.x*(q.y-a.y)-edge.y*(q.x-a.x)<-.00005*length(edge))return false;}
-      float depth=dot(d,svE${eye}N);return depth>svE${eye}D.x&&depth<svE${eye}D.y;}
+        // 14-bit positions over 1.33m need ~58 micrometres at diagonal edges.
+        if(edge.x*(q.y-a.y)-edge.y*(q.x-a.x)<-.000065*length(edge))return false;}
+      float depth=dot(d,svE${eye}N);vec2 uv=q/(2.*svE${eye}P)+.5;return depth>svE${eye}D.x&&depth<svE${eye}D.y&&all(greaterThanEqual(uv,vec2(0.)))&&all(lessThanEqual(uv,vec2(1.)))&&texture2D(svE${eye}Mask,uv).r>.5;}
     `;
   }
   sh.fragmentShader=declarations+functions+sh.fragmentShader;

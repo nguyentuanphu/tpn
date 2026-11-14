@@ -916,21 +916,30 @@ def fur_lid_fill(img,hit,xx,yy,r,eye):
         if coat=='light' and math.hypot(cx,cy)>=r*1.4:protected[p[:,0],p[:,1]]=True
         if math.hypot(cx,cy)<r*1.8:components.append((len(cells),p))
     if not components:raise ValueError('No isolated eye opening '+str(eye))
-    if coat=='dark':
-        eroded=protected.copy()
-        for _ in range(2):eroded=eroded&np.roll(eroded,1,0)&np.roll(eroded,-1,0)&np.roll(eroded,1,1)&np.roll(eroded,-1,1)
-        for _ in range(2):eroded=eroded|np.roll(eroded,1,0)|np.roll(eroded,-1,0)|np.roll(eroded,1,1)|np.roll(eroded,-1,1)
-        protected=eroded & (np.hypot(xx,yy)>r*1.08)
+    if coat=='dark':protected[:]=False   # the opening crosses a real coat boundary
     largest,cells=max(components,key=lambda x:x[0])
     # Native coat flecks are not extra sclera. The old union of every bright
     # fleck inflated the black-eye hull down to the cream/black fur boundary.
+    if coat=='dark':
+        cells=np.concatenate([p for size,p in components if np.hypot(xx[p[:,0],p[:,1]].mean(),yy[p[:,0],p[:,1]].mean())<r*1.3],axis=0)
     if coat=='light':
         cells=np.concatenate([p for size,p in components if size>=largest*.06 and np.hypot(xx[p[:,0],p[:,1]].mean(),yy[p[:,0],p[:,1]].mean())<r*1.15],axis=0)
     if DEBUG:print('EYE_FEATURE_COMPONENTS',eye,[(size,round(float(xx[p[:,0],p[:,1]].mean()/r),2),round(float(yy[p[:,0],p[:,1]].mean()/r),2)) for size,p in components],flush=True)
 
     coords=np.column_stack((xx[cells[:,0],cells[:,1]],yy[cells[:,0],cells[:,1]]))
-    # Reflect the isolated crescent about the iris centre to include the dark iris.
-    points=np.concatenate((coords,-coords),axis=0) if coat=='dark' else coords
+    # Bound actual sclera, glints and iris pigment; do not mirror the crescent.
+    if coat=='dark':
+        # The crescent is asymmetric. Mirroring it also captured cream cheek
+        # hairs; use the actual brown iris with the actual sclera instead.
+        brown=hit&(np.hypot(xx,yy)<r*1.1)&(lum>.08)&(img[...,0]>img[...,1]*1.35)&(img[...,0]-img[...,1]>.05)&(img[...,0]-img[...,2]>.075)
+        bright=hit&(lum>.6)&(chroma<.12)&(np.hypot(xx,yy)<r*1.3)
+        # Small sclera/glint fragments can connect to the border fur component.
+        # Keep those actual bright pixels too, not only isolated components.
+        points=np.concatenate((coords,np.column_stack((xx[brown],yy[brown])),np.column_stack((xx[bright],yy[bright]))),axis=0)
+    else:points=coords
+    # Source samples represent texel areas, not dimensionless centres.
+    half=float(xx[0,1]-xx[0,0])*.5
+    points=np.concatenate([points+np.array((dx,dy)) for dx in (-half,half) for dy in (-half,half)])
     pts=sorted(set(map(tuple,points.tolist())))
     def cross(o,a,b):return (a[0]-o[0])*(b[1]-o[1])-(a[1]-o[1])*(b[0]-o[0])
     lo=[];hi=[]
@@ -942,7 +951,18 @@ def fur_lid_fill(img,hit,xx,yy,r,eye):
         hi.append(p)
     hull=lo[:-1]+hi[:-1];mask=np.ones((n,n),bool)
     for a,b in zip(hull,hull[1:]+hull[:1]):mask&=((b[0]-a[0])*(yy-a[1])-(b[1]-a[1])*(xx-a[0]))>=-1e-8
-    if coat=='dark':protected|=hit&(lum>.5)&(chroma>.12)&~mask
+    if coat=='dark':protected|=hit&~mask&(lum>.4)&(chroma>.1)&(img[...,0]>=img[...,1])&(img[...,0]-img[...,1]<.1)&(img[...,1]>=img[...,2])&(img[...,1]-img[...,2]<.18)
+    aperture=mask&~protected&hit
+    if not aperture[cells[:,0],cells[:,1]].all():raise ValueError('Detected source eye excluded from aperture mask')
+    if coat=='dark':
+        independent=hit&(lum>.6)&(chroma<.12)&(np.hypot(xx,yy)<r*1.3)
+        if not aperture[independent].all():
+            missing=independent&~aperture;coords_missing=np.argwhere(missing)
+            print('SOURCE_EYE_MISSING',eye,'count',int(missing.sum()),'range',coords_missing.min(0).tolist(),coords_missing.max(0).tolist(),flush=True)
+            if DEBUG:
+                dbg=img.copy();dbg[missing]=(1,0,1)
+                dim=bpy.data.images.new('missing-eye',n,n);dim.pixels[:]=np.concatenate((dbg,np.ones((n,n,1))),-1).astype(np.float32).ravel();dim.filepath_raw=os.path.join(OUT,'missing-eye.png');dim.file_format='PNG';dim.save()
+            raise ValueError('Independent bright-eye pixels missing from aperture')
     def grow(a):return a|np.roll(a,1,0)|np.roll(a,-1,0)|np.roll(a,1,1)|np.roll(a,-1,1)
     # Include pale sclera just outside the dark iris on a light coat. It is not
     # native cream fur, and leaving it is what makes a grey closed-eye rim.
@@ -953,8 +973,8 @@ def fur_lid_fill(img,hit,xx,yy,r,eye):
     cream=(img[...,0]>=img[...,1])&(img[...,0]-img[...,1]<.10)&(img[...,1]>=img[...,2])&(img[...,1]-img[...,2]<.18)
     # The open eyeball's AO shadow may be warm cream as well as neutral grey.
     # Fill that connected shadow on closure, retaining brows and pink blush.
-    shade=((chroma<.14)&(lum>.35))|(cream&(lum>.35)&(lum<native_light-.045))
-    extra=hit&(np.hypot(xx,yy)<r*1.7)&(shade if coat=='light' else (chroma>.35))&~protected
+    shade=(chroma<.14)&(lum>.35)
+    extra=hit&(np.hypot(xx,yy)<r*1.6)&shade&~protected if coat=='light' else np.zeros((n,n),bool)
     for _ in range(round(16*n/128)):mask|=grow(mask)&extra
     for _ in range(round(5*n/128)):mask=grow(mask)
     mask&=~protected
@@ -962,31 +982,39 @@ def fur_lid_fill(img,hit,xx,yy,r,eye):
     soft=mask.astype(float);ring=mask.copy()
     for value in (.75,.35):
         nxt=grow(ring)&~protected;soft[nxt&~ring]=value;ring=nxt
-    known=hit&~ring&(((lum>.035)&(lum<.20)&(chroma<.45)) if coat=='dark' else ((lum>native_light-.055)&(chroma>.12)));field=img.copy();field[~known]=np.median(img[known],axis=0)
-    for _ in range(n*3):
-        avg=(np.roll(field,1,0)+np.roll(field,-1,0)+np.roll(field,1,1)+np.roll(field,-1,1))/4
-        field=np.where(known[...,None],img,avg)
-    # Preserve native high-frequency fur while the diffusion matches its boundary.
-    blur=sum(np.roll(img,(dy,dx),(0,1)) for dy in range(-2,3) for dx in range(-2,3))/25
-    low_lum=blur@np.array((.3,.59,.11));hp=(lum/np.maximum(low_lum,.025)-1)[...,None];hp=np.repeat(hp,3,axis=-1);safe=known&((lum<.20)&(lum>.035) if coat=='dark' else lum>.45)
-    patches=[];tile=8
-    for size in (8,4):
-        for y in range(0,n-size,2):
-            for x in range(0,n-size,2):
-                good=safe[y:y+size,x:x+size]
-                if good.all():patches.append(hp[y:y+size,x:x+size].copy())
-        if patches:tile=size;break
-    if not patches:raise ValueError('No native fur grain '+str(eye))
-    rng=np.random.default_rng(1700+eye);acc=np.zeros((n+tile,n+tile,3));den=np.zeros((n+tile,n+tile,1));step=tile//2
-    win=np.outer(np.hanning(tile+2)[1:-1],np.hanning(tile+2)[1:-1])[...,None]
-    for y in range(0,n,step):
-        for x in range(0,n,step):
-            patch=patches[int(rng.integers(len(patches)))];acc[y:y+tile,x:x+tile]+=patch*win;den[y:y+tile,x:x+tile]+=win
-    grain=(acc/np.maximum(den,1e-9))[:n,:n]
-    native=float(np.std(hp[safe]));got=float(np.std(grain));grain*=min(2.,native/max(got,1e-6))
-    fill=field*np.maximum(.25,1+grain);fill/=np.maximum(1.,fill.max(-1,keepdims=True));fill=np.clip(fill,0,1)
-    print('FUR_LID',eye,'opening',len(cells),'mask',int(mask.sum()),'fur donors',len(patches),'grain',round(native,4),flush=True)
-    return fill,soft,hull
+    radius=max(2,round(n/64));window=range(-radius,radius+1)
+    blur=sum(np.roll(img,(dy,dx),(0,1)) for dy in window for dx in window)/(2*radius+1)**2
+    low_lum=blur@np.array((.3,.59,.11));hp=(lum/np.maximum(low_lum,.025)-1)[...,None];hp=np.repeat(hp,3,axis=-1)
+    def weave(known,seed):
+        if known.sum()<20:raise ValueError('Not enough native fur donors')
+        field=img.copy();field[~known]=np.median(img[known],axis=0)
+        for _ in range(n*3):
+            avg=(np.roll(field,1,0)+np.roll(field,-1,0)+np.roll(field,1,1)+np.roll(field,-1,1))/4
+            field=np.where(known[...,None],img,avg)
+        patches=[];tile=round(8*n/128)
+        for size in (tile,round(4*n/128)):
+            for y in range(0,n-size,2):
+                for x in range(0,n-size,2):
+                    if known[y:y+size,x:x+size].all():patches.append(hp[y:y+size,x:x+size].copy())
+            if patches:tile=size;break
+        if not patches:raise ValueError('No native fur grain '+str(eye))
+        rng=np.random.default_rng(seed);acc=np.zeros((n+tile,n+tile,3));den=np.zeros((n+tile,n+tile,1));step=tile//2
+        win=np.outer(np.hanning(tile+2)[1:-1],np.hanning(tile+2)[1:-1])[...,None]
+        for y in range(0,n,step):
+            for x in range(0,n,step):
+                patch=patches[int(rng.integers(len(patches)))];acc[y:y+tile,x:x+tile]+=patch*win;den[y:y+tile,x:x+tile]+=win
+        grain=(acc/np.maximum(den,1e-9))[:n,:n]
+        native=float(np.std(hp[known]));grain*=min(2.,native/max(float(np.std(grain)),1e-6))
+        print('FUR_WEAVE',eye,'seed',seed,'donors',len(patches),'tile',tile,'grain',round(native,4),flush=True)
+        return np.clip(field*np.maximum(.25,1+grain),0,1)
+    if coat=='dark':
+        known=hit&~ring&(lum>.025)&(lum<.25)&(chroma<.45)
+        fill=weave(known,1700+eye)
+    else:
+        known=hit&~ring&(lum>native_light-.055)&(chroma>.12)
+        fill=weave(known,1700+eye)
+    print('FUR_LID',eye,'opening',len(cells),'mask',int(mask.sum()),flush=True)
+    return fill,soft,hull,aperture
 
 def face_pieces(o, arm, J, Fc):
     """the lids: the head's own surface over each eye (a little in front of it), with its own small picture: the
@@ -1066,7 +1094,7 @@ def face_pieces(o, arm, J, Fc):
         fill = np.where(known[..., None], img0, fill)
         fur_mask=None
         if FIX.get('textured_fur_lids'):
-            fill,fur_mask,eye_hull=fur_lid_fill(img0,hit,xx,yy,r,i)
+            fill,fur_mask,eye_hull,eye_aperture=fur_lid_fill(img0,hit,xx,yy,r,i)
             three=lambda v:[round(float(v[0]),6),round(float(v[2]),6),round(float(-v[1]),6)]
             for key,value in (('C',three(c)),('S',three(side)),('U',three(up)),('N',three(nrm)),('H',[round(float(x),6) for p in eye_hull for x in p])):o[f'svEye{i}{key}']=value
             in_hull=hit.copy()
@@ -1078,9 +1106,16 @@ def face_pieces(o, arm, J, Fc):
             print('APERTURE_DEPTH',i,'vertices',len(eye_hull),'interval',interval,flush=True)
             if len(eye_hull)>64 or interval[1]-interval[0]>.15:raise ValueError('Eye aperture front surface is not trustworthy')
             o[f'svEye{i}D']=[round(x,6) for x in interval]
+            # Exact non-convex opening excludes connected native cream hairs
+            # inside the symmetric hull. Those hairs are not sclera to occlude.
+            changes=np.diff(np.r_[False,eye_aperture.ravel(),False].astype(np.int8))
+            starts=np.flatnonzero(changes==1);ends=np.flatnonzero(changes==-1)
+            o[f'svEye{i}M']=[TP]+[int(value) for start,end in zip(starts,ends) for value in (start,end-start)]
+            o[f'svEye{i}P']=round(P,6)
+
         lash = np.array(FIX.get('lash', (.22, .14, .1)))
         if FIX.get('textured_fur_lids'):
-            lash = np.array((.40,.33,.26) if FIX['lid_coat'][i]=='dark' else (.035,.022,.015))
+            lash = np.array((.58,.50,.40) if FIX['lid_coat'][i]=='dark' else (.035,.022,.015))
             ew=r*.78; ecx=ecy=0.
 
         for kind, curve in (('shut', lambda u: -.1 * r + .3 * r * (u / ew) ** 2), ('joy', lambda u: .1 * r - .45 * r * (u / ew) ** 2)):

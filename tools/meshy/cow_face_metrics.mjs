@@ -4,8 +4,12 @@ export function validateCowEyeMetadata(metadata,centers){
  const dot=(a,b)=>a.reduce((s,v,i)=>s+v*b[i],0);
  if(!metadata)throw Error('Missing actual-eye aperture metadata');
  return [0,1].map(i=>{
-  const a=Object.fromEntries(['C','S','U','N','H','D'].map(k=>[k,metadata[`svEye${i}${k}`]]));
+  const a=Object.fromEntries(['C','S','U','N','H','D','M','P'].map(k=>[k,metadata[`svEye${i}${k}`]]));
   if(!['C','S','U','N'].every(k=>finite(a[k],3))||!finite(a.D,2)||!Array.isArray(a.H)||a.H.length<6||a.H.length>128||a.H.length%2||!a.H.every(Number.isFinite)||a.D[1]<=a.D[0]||a.D[1]-a.D[0]>.15)throw Error('Invalid actual-eye aperture metadata');
+  if(!Number.isFinite(a.P)||a.P<=0||a.P>.2||!Array.isArray(a.M)||a.M.length<3||a.M.length%2!==1||!a.M.every(Number.isInteger)||a.M[0]<64||a.M[0]>512)throw Error('Missing/invalid actual-eye pixel mask');
+  const pixels=a.M[0]**2;let end=0,total=0;
+  for(let k=1;k<a.M.length;k+=2){const start=a.M[k],length=a.M[k+1];if(start<end||length<=0||start+length>pixels)throw Error('Invalid eye mask runs');end=start+length;total+=length;}
+  if(total<64||total>pixels*.6)throw Error('Untrustworthy actual-eye mask area');
   if(!finite(centers[i],3)||Math.hypot(...a.C.map((v,j)=>v-centers[i][j]))>.002)throw Error('Eye aperture coordinate frame mismatch');
   const cross=[a.S[1]*a.U[2]-a.S[2]*a.U[1],a.S[2]*a.U[0]-a.S[0]*a.U[2],a.S[0]*a.U[1]-a.S[1]*a.U[0]];
   if(['S','U','N'].some(k=>Math.abs(dot(a[k],a[k])-1)>.002)||Math.abs(dot(a.S,a.U))>.002||dot(cross,a.N)<.998)throw Error('Invalid actual-eye basis');
@@ -106,7 +110,7 @@ export function cowFaceMetrics(current,reference,width,height,eyes,mouth,closed,
   // A pre-existing cream/black coat boundary is not the rim of a grey lid.
   // Require unchanged warm white fur from the reference beside current dark fur;
   // a grey ring on black, or any new rim on a white coat, still gets counted.
-  let coatEdge=false;if(e.coat==='dark'){let black=false,white=false;for(let oy=-2;oy<=2;oy++)for(let ox=-2;ox<=2;ox++){const u=x+ox,vv=y+oy,j=vv*width+u;if(u<0||u>=width||vv<0||vv>=height||!current[4*j+3])continue;if(val(current,j)<.32)black=true;if(val(current,j)>.75&&sat(current,j)>.08&&val(reference,j)>.75&&sat(reference,j)>.08&&dist(current,j,reference,j)<.08)white=true;}coatEdge=black&&white;}
+  let coatEdge=false;if(e.coat==='dark'){let black=false,white=false;for(let oy=-2;oy<=2;oy++)for(let ox=-2;ox<=2;ox++){const u=x+ox,vv=y+oy,j=vv*width+u;if(u<0||u>=width||vv<0||vv>=height||!current[4*j+3])continue;if(val(current,j)<.32)black=true;if(val(current,j)>.55&&sat(current,j)>.1&&val(reference,j)>.55&&sat(reference,j)>.1&&dist(current,j,reference,j)<.08)white=true;}coatEdge=black&&white;}
   if(d>1.15&&d<1.85&&!lash&&!coatEdge){for(const j of [i-2,i+2,i-2*width,i+2*width])if(j>=0&&j<N&&current[4*j+3]&&reference[4*j+3]){const residual=colourDistance(average(current,i),average(current,j))-colourDistance(average(reference,i),average(reference,j));if(residual>.065){flags.rim[i]=1;break;}}}
  }}
  // A same-colour flat patch can have no strong colour rim. Compare its fur
