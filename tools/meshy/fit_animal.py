@@ -783,7 +783,7 @@ def face(P, F_, eye=1.0, big=1.0, brow_y=0.0, brow_tilt=0.0, smile=1.0, frown=Fa
     # A curved muzzle is approximately quadratic in its tangent plane. Its
     # normal depth must scale by s² as the opening scales by s, or skin cuts
     # through the shrunken mouth. The small normal offset stays constant.
-    P['jaw'] = ((0,0,0),(0,0,.0004) if KIND=='cow' and jaw>.05 else (0,0,0),(s,s,s*s if KIND=='cow' else s) if jaw>.05 else tiny)
+    P['jaw'] = ((0,0,0),(0,0,.0011) if KIND=='cow' and jaw>.05 else (0,0,0),(s,s,s*s if KIND=='cow' else s) if jaw>.05 else tiny)
 wc.face = face   # (animal_moves calls the module's face)
 
 def tex_of(o):
@@ -1014,9 +1014,17 @@ def fur_lid_fill(img,hit,xx,yy,r,eye):
     cream=(img[...,0]>=img[...,1])&(img[...,0]-img[...,1]<.10)&(img[...,1]>=img[...,2])&(img[...,1]-img[...,2]<.18)
     # The open eyeball's AO shadow may be warm cream as well as neutral grey.
     # Fill that connected shadow on closure, retaining brows and pink blush.
-    shade=(chroma<.14)&(lum>.35)
-    extra=hit&(np.hypot(xx,yy)<r*1.6)&shade&~protected if coat=='light' else np.zeros((n,n),bool)
-    for _ in range(round(4*n/128)):mask|=grow(mask)&extra
+    shade=((chroma<.14)|(cream&(lum<native_light-.025)))&(lum>.28)
+    extra=hit&(np.hypot(xx,yy)<r*1.4)&shade&~protected
+    if coat=='light':
+        # Socket repair must not flood into cheek/blush or the muzzle projected
+        # in front of it. Bound it to the actual painted eye plus a short AO band.
+        ay,ax=np.where(aperture);margin=round(3*n/128);gy,gx=np.mgrid[:n,:n]
+        extra&=(gx>=ax.min()-margin)&(gx<=ax.max()+margin)&(gy>=ay.min()-margin)&(gy<=ay.max()+margin) if coat=='light' else np.zeros((n,n),bool)
+    # Grow to convergence over the connected sclera/AO fringe. Four samples
+    # at the 128px reference scale left the far crescent of this actual eye
+    # uncovered, visible as a grey oval despite the iris being fully covered.
+    for _ in range(round(18*n/128)):mask|=grow(mask)&extra
     repair=mask.copy()
     if coat=='dark':
         neutral=hit&(chroma<.14)&(lum>.25)&~protected
@@ -1079,7 +1087,8 @@ def fur_lid_fill(img,hit,xx,yy,r,eye):
         fill[native_cream]=img[native_cream]
     else:
         known=hit&~ring&(lum>native_light-.055)&(chroma>.12)
-        boundary=hit&~ring&(lum>.35)&(chroma>.12)&cream
+        # Baked socket AO is not a native-fur boundary condition on closure.
+        boundary=known.copy()
         fill=weave(known,1700+eye,boundary)
     # Match the source exactly at the repair band's outer boundary. Applying
     # synthetic grain to known native pixels made a new bright/dark ridge.
@@ -1190,7 +1199,7 @@ def face_pieces(o, arm, J, Fc):
 
         lash = np.array(FIX.get('lash', (.22, .14, .1)))
         if FIX.get('textured_fur_lids'):
-            lash = np.array((.58,.50,.40) if FIX['lid_coat'][i]=='dark' else (.035,.022,.015))
+            lash = np.array((.46,.38,.29) if FIX['lid_coat'][i]=='dark' else (.08,.055,.035))
             ew=r*.78; ecx=ecy=0.
 
         for kind, curve in (('shut', lambda u: -.1 * r + .3 * r * (u / ew) ** 2), ('joy', lambda u: .1 * r - .45 * r * (u / ew) ** 2)):
@@ -1198,7 +1207,14 @@ def face_pieces(o, arm, J, Fc):
             if os.environ.get("LID_DEBUG"): img[:] = (1, 0, 1)   # (debug: the lid painted magenta, to see what it covers in the game)
             px_ = 2 * P / TP; dl = np.abs((yy - ecy) - curve(xx - ecx)); de = np.abs(xx - ecx) - ew * .85
             a_ = np.clip((r * .09 - dl) / px_ + .5, 0, 1) * np.clip(-de / px_ + .5, 0, 1)   # (across the whole eye, at its middle; soft edges a texel wide, not stair steps)
-            img = img * (1 - a_[..., None]) + lash * a_[..., None]
+            if FIX.get('textured_fur_lids'):
+                # A tapered, softly filtered hair stroke, not a flat ribbon.
+                u=np.abs((xx-ecx)/(ew*.85));half_width=r*.09*np.sqrt(np.maximum(0,1-u*u))
+                a_=np.clip((half_width-dl)/(px_*1.5)+.5,0,1)*(u<1)
+                grain=np.clip((fill@np.array((.3,.59,.11)))/max(float(np.median(fill[eye_aperture])),.02),.78,1.22)
+                stroke_rgb=lash[None,None,:]*grain[...,None]
+            else:stroke_rgb=lash
+            img = img * (1 - a_[..., None]) + stroke_rgb * a_[..., None]
             name = f'meshy-{KIND}-{kind}{i}'
             alpha = np.ones((TP, TP, 1))
             if FIX.get('lid_feather'):
@@ -1210,20 +1226,22 @@ def face_pieces(o, arm, J, Fc):
             if FIX.get('surface_lids'):
                 lid=surface_lid(o, arm, name, c, side, up, img, P, i, f'{kind}{i}', fur_mask)
                 if FIX.get('textured_fur_lids'):
-                    stroke=[];stroke_band=[]
-                    us=np.linspace(-ew*.85,ew*.85,30);half_width=r*.09+px_*.5
+                    stroke=[];stroke_band=[];stroke_widths=[]
+                    us=np.linspace(-ew*.85,ew*.85,30);half_width=r*.09+px_*.75
                     for j,u in enumerate(us):
                         frm=c+side*(u+ecx)+up*(ecy+curve(u))+nrm*ray_distance
                         loc,normal,_,_=bvh.ray_cast(Vector(frm),Vector(-nrm))
                         if loc is None:raise ValueError('Lash centre misses face')
                         stroke.extend(three(np.array(loc[:])+np.array(normal[:])*FIX['surface_lid_forward']))
                         edge_u=u+(-px_*.5 if j==0 else px_*.5 if j==len(us)-1 else 0)
+                        local_width=r*.09*math.sqrt(max(0,1-(u/(ew*.85))**2))+px_*.75
+                        stroke_widths.append(round(local_width,6))
                         for sign in (-1,1):
-                            frm=c+side*(edge_u+ecx)+up*(ecy+curve(edge_u)+sign*half_width)+nrm*ray_distance
+                            frm=c+side*(edge_u+ecx)+up*(ecy+curve(edge_u)+sign*local_width)+nrm*ray_distance
                             loc,normal,_,_=bvh.ray_cast(Vector(frm),Vector(-nrm))
                             if loc is None:raise ValueError('Lash band misses face')
                             stroke_band.extend(three(np.array(loc[:])+np.array(normal[:])*FIX['surface_lid_forward']))
-                    lid['svLash']=stroke;lid['svLashBand']=stroke_band;lid['svLashBone']=f'{kind}{i}';lid['svLashWidth']=round(half_width,6);lid['svEyeIndex']=i
+                    lid['svLash']=stroke;lid['svLashBand']=stroke_band;lid['svLashWidths']=stroke_widths;lid['svLashBone']=f'{kind}{i}';lid['svLashWidth']=round(half_width,6);lid['svEyeIndex']=i
                 continue
             # the piece: a fine grid laid on the head's surface over the eye (rays along -normal), a little in front, its
             # picture straight on; no gaps (the head's own triangles, copied, showed the eye through cracks at their edges)
@@ -1267,6 +1285,7 @@ def face_pieces(o, arm, J, Fc):
         c = np.array(Fc['mouth']); nrm = np.array(Fc['mouth_n']); nrm = nrm / np.linalg.norm(nrm)
         side = np.cross((0, 0, 1.0), nrm); side /= np.linalg.norm(side); up = np.cross(nrm, side)
         Wm = nr * FIX.get('mouth_w', 1.1); R = Wm * FIX.get('mouth_patch', 1.2); TP = FIX.get('mouth_px', 96); GN = FIX.get('mouth_grid', 18) if not FARLOD else 12   # (a small piece: a wide one reached where the face turns away and showed as a pale square; its own picture size and grid, not the lids')
+        if KIND=='cow':GN=32 if not FARLOD else 24
         mouth_ray_distance=float(np.max((V-c)@nrm))+.02 if KIND=='cow' else R
         img = np.zeros((TP, TP, 3)); hit = np.zeros((TP, TP), bool)
         from mathutils.geometry import barycentric_transform

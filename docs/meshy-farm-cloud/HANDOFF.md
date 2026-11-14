@@ -191,3 +191,25 @@ Các bước chốt: màu lông ngoàiactualopening được khớp reference±1
 Sửa hìnhhọc miệng riêngcow: trụcjaw theo normalmõm, co tangentbằngs và depthbằngs², nângconstant0,4mm để da khôngxuyênqua; khôngthêm bone. Đã xác minhbađỉnhbịbáotrướccóalpha0 vàcắtcellngoàivùngink/unreferencedvertices. Thuphạmvimàumi trắng đểkhônglấnforehead ởprofile. Renderer/js game khôngđổi. Phim đượcchuẩnbị24fps, cótimeline vàSHAmodel; **chưa quayR17** trướcsoátảnh.
 
 Selftest72 đangchạylạicuối; selftest71 đã PASS6plantthân+11plantmặt. TypesPASStrướcthayđổicuối, sẽchạylạicùngcấuhìnhcloud. Còn242ảnhnative1024/tựxem/ngườisoiđộclậpkhôngbiếtnộidungsửa, cácảnhchủkhoanh, phimnear/farphát1×tớiended, bathiếtbịvàmũitênvàngtắt, workingblend/báocáo cuối. Chưaapproval/chưa readyforRelease. KhôngMeshyAPI/creditmới; sheep/chicken dừng. SẽchạyCItoànrepo trênGitHub; khôngbáoCIxanh khi chưa cókếtquả.
+
+### Soát ảnh 15/11/2026 04:59 AEDT — loại thử72 dù máy soi đạt
+
+Selftest72 cuối đã đạt đủ 6 lỗi thân + 11 lỗi mặt cài thật; types và GLB đạt. Đã chụp đủ 242 ảnh native 1024px và 102 ảnh đối chiếu góc R16. Tuy nhiên parent mở ảnh nguyên cỡ phát hiện **vệt bầu dục xám còn quanh mi nhắm bên lông trắng**, rõ ở cheer m04/m07/left. Đã loại thử72, không coi máy soi 0 là đủ, không quay phim R17/hỏi duyệt. Người soi độc lập đang xem bộ72 mà không đọc code hoặc nội dung sửa; kết quả chưa có.
+
+Nguyên nhân texture: mask xóa iris nhưng chưa đi hết sclera/bóng AO ấm quanh mắt; điều kiện màu chỉ nhận xám trung tính và donor boundary còn ghim bóng hốc mắt. Thử73 đang dựng: lấy thêm AO ấm nối trực tiếp với mắt trong giới hạn cũ, tăng bước lan đến hết crescent thật, chỉ ghim màu lông sạch. Giữ ranh bảo vệ lông/mày, hình mắt mở, actual aperture và mọi ngưỡng kiểm. Đang bổ sung phép kiểm vòng mi có texture vì phép kiểm contour đồng màu chưa bắt được lỗi này. Chưa có kết luận đạt cho73.
+
+CI GitHub run43622973936 trên de621628b đang chạy, chưa báo xanh. Không Meshy/API/credit mới; sheep/chicken vẫn dừng. Bản R16 bị từ chối và các file gốc/30k/9k giữ nguyên.
+
+### Soát độc lập 15/11/2026 05:09 AEDT — tiếp tục sửa
+
+Người soi độc lập Boyle xem đủ **242/242 ảnh native1024** của thử72, không đọc nội dung sửa/code/log; kết luận REJECT: nét mi dạng dải cứng và một số khuyết nhỏ ở mép miệng/lưỡi (near cheer/jump below, surprised front; far cheer/jump/run/surprised/wag below). Parent đã mở ảnh xác nhận các khuyết. Báo cáo còn ghi nhận vệt nối oval quanh mắt nhưng phân biệt với style thân có sẵn. Không coi bộ72 là qua cổng.
+
+Thử73/74 hết vệt oval rõ trong ảnh cận đã xem; máy soi nhanh còn stray ở vài điểm má của bản xa. Đang giới hạn vùng sửa theo actual aperture/bóng hốc, tránh flood xuống má hoặc lấy màu mõm chiếu lên má phía sau. Thử75 đang dựng thêm mi mềm, thuôn hai đầu, màu nâu tương phản thay dải be phẳng, và lưới miệng dày hơn/nâng 1,1mm theo normal để bỏ khuyết da xuyên. Bộ kiểm có thêm plant vòng mi mang texture, chưa chốt kết quả. Mọi ngưỡng giữ nguyên. Chưa phim/approval R17; không Meshy/credit mới.
+
+### Tiếp tục 15/11/2026 10:33 AEDT — thử76, chưa đủ cổng duyệt
+
+Fetch/pull nhánh hiện có, remote vẫn de621628b; giữ nguyên mọi thay đổi, không reset. Thử75/76 đã sửa khuyết miệng trong các ảnh native đã xem: tăng lưới cục bộ và nâng jaw theo normal 1,1mm; mi thuôn hai đầu, màu nâu có texture và cạnh mềm, giới hạn vùng AO theo bbox mắt thật để không lấn má. Metadata76 ghi bề rộng từng điểm của nét mi và dải 3D tương ứng, kiểm strict bắt thiếu/sai dữ liệu. Hai runtime GLB hiện là76: 777132/384984 byte, 38094/14906 tam giác, 20 bone/10 clip; GLB/alpha/dung lượng đạt.
+
+**Kiểm nhanh76 chưa đạt: 1/18 ca rim13 vượt ngưỡng12 ở far cheer front**, các ca còn lại đạt (lid/mouth/eyes/silhouette0, stray worst5). Đã mở ảnh đánh dấu: cạnh sáng rất nhỏ ở góc trong mắt trắng, đang sửa màu chuyển tiếp; không tăng ngưỡng. Chưa chạy full/soát242ảnh/soi độc lập/phim/thiết bị cho76; không coi kết quả72 thay cho76. Báo cáo độc lập72 REJECT và danh sách242ảnh đã xem được lưu trong cow/wip-reviews/trial72/.
+
+CI43622973936 trên runtime de621628b đã kết thúc failure ở collect; đang đọc artifact chi tiết, không báo xanh. Không Meshy/API/credit mới; số dư xác nhận cuối vẫn1574 ngày13/11, sheep/chicken dừng. WIP push không phải owner approval, không ready for Release.

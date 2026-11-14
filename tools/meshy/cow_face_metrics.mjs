@@ -18,7 +18,7 @@ export function validateCowEyeMetadata(metadata,centers){
   return a;
  });
 }
-export function validateCowLashMetadata(strokes,centers,apertures){
+export function validateCowLashMetadata(strokes,centers,apertures,{requireWidths=false}={}){
  const seen=new Set(),curves=new Set();
  for(const {data:m,materialName,boneCenter} of strokes){
   if(!Number.isInteger(m.svEyeIndex)||m.svEyeIndex<0||m.svEyeIndex>1||!new RegExp(`^(shut|joy)${m.svEyeIndex}$`).test(m.svLashBone)||!materialName?.endsWith('-'+m.svLashBone)||seen.has(m.svLashBone)||!Array.isArray(m.svLash)||m.svLash.length<6||m.svLash.length%3||!m.svLash.every(Number.isFinite)||!Number.isFinite(m.svLashWidth)||m.svLashWidth<.002||m.svLashWidth>.006)throw Error('Invalid/duplicate lash metadata');
@@ -27,14 +27,40 @@ export function validateCowLashMetadata(strokes,centers,apertures){
   let length=0;for(let j=0;j<m.svLash.length;j+=3){if(Math.hypot(...m.svLash.slice(j,j+3).map((v,k)=>v-center[k]))>.12)throw Error('Lash curve coordinate frame mismatch');if(j)length+=Math.hypot(...m.svLash.slice(j,j+3).map((v,k)=>v-m.svLash[j-3+k]));}
   const curve=JSON.stringify(m.svLash);if(!Number.isFinite(length)||length<=0||length>.12||curves.has(curve))throw Error('Invalid/duplicate lash curve');
   if(!Array.isArray(m.svLashBand)||m.svLashBand.length!==m.svLash.length*2||!m.svLashBand.every(Number.isFinite))throw Error('Missing actual surface lash band');
+  const widths=m.svLashWidths;
+  if(widths===undefined){if(requireWidths)throw Error('Missing per-sample lash widths');}
+  else if(!Array.isArray(widths)||widths.length!==m.svLash.length/3||!widths.every(w=>Number.isFinite(w)&&w>0&&w<=m.svLashWidth))throw Error('Invalid per-sample lash widths');
   const frame=apertures?.[m.svEyeIndex];if(!frame)throw Error('Missing lash band coordinate frame');
   for(let j=0;j<m.svLashBand.length;j+=6){const a=m.svLashBand.slice(j,j+3),b=m.svLashBand.slice(j+3,j+6),delta=b.map((v,k)=>v-a[k]),dot=v=>v.reduce((s,x,k)=>s+x*delta[k],0);
-   if(Math.abs(Math.abs(dot(frame.U))-2*m.svLashWidth)>.0015||Math.abs(dot(frame.S))>.001||Math.abs(dot(frame.N))>.03||[a,b].some(p=>Math.hypot(...p.map((v,k)=>v-center[k]))>.12))throw Error('Unbounded actual lash band');
+   const width=widths===undefined?m.svLashWidth:widths[j/6];
+   if(Math.abs(Math.abs(dot(frame.U))-2*width)>.0015||Math.abs(dot(frame.S))>.001||Math.abs(dot(frame.N))>.03||[a,b].some(p=>Math.hypot(...p.map((v,k)=>v-center[k]))>.12))throw Error('Unbounded actual lash band');
    const c=m.svLash.slice(j/2,j/2+3);if(Math.hypot(...a.map((v,k)=>(v+b[k])/2-c[k]))>.005)throw Error('Lash band detached from authored stroke');
   }
   seen.add(m.svLashBone);curves.add(curve);
  }
  if(seen.size!==4||!['shut0','shut1','joy0','joy1'].every(k=>seen.has(k)))throw Error('Requires four distinct eye/expression strokes');
+}
+// A textured socket shadow can survive unchanged from the open-eye reference.
+// Measure its low-frequency trough, not an RGB delta or an exact-colour ring.
+// The actual visible reference aperture supplies the frame. Native fur grain
+// averages out across angular sectors; both sides of a crease must be lighter.
+export function cowTexturedEyeRim(current,width,height,e,eyeIds,lashMask){
+ const flags=new Uint8Array(width*height),bins=Array.from({length:12},()=>[[],[],[]]);
+ if(e.coat!=='light'||!(e.aperturePixels>=40)||Math.min(e.rx,e.ry)<5)return {flags,sectors:0,contrast:[]};
+ const luma=i=>(.3*current[4*i]+.59*current[4*i+1]+.11*current[4*i+2])/255;
+ for(let y=Math.max(0,Math.floor(e.y-e.ry*1.65));y<Math.min(height,e.y+e.ry*1.65);y++)for(let x=Math.max(0,Math.floor(e.x-e.rx*1.65));x<Math.min(width,e.x+e.rx*1.65);x++){
+  const i=y*width+x;if(!current[4*i+3]||(eyeIds?.[i]===e.index+1&&(lashMask?.[i]&(1<<e.index))))continue;
+  const dx=(x-e.x)/e.rx,dy=(y-e.y)/e.ry,d=Math.hypot(dx,dy),k=Math.floor((Math.atan2(dy,dx)+Math.PI)*6/Math.PI)%12;
+  const band=d>=.55&&d<.8?0:d>=.9&&d<1.3?1:d>=1.4&&d<1.65?2:-1;
+  if(band>=0)bins[k][band].push(i);
+ }
+ const means=bins.map(b=>b.map(p=>p.length>=4?p.reduce((s,i)=>s+luma(i),0)/p.length:null));
+ const contrast=means.map(m=>m.some(v=>v===null)?0:Math.min(m[0],m[2])-m[1]);
+ const sectors=contrast.filter(v=>v>.025).length;
+ // Four angular sectors (120 degrees of support) distinguish a surrounding
+ // crease from a fur fleck. Do not forgive a crease retained in reference.
+ if(sectors>=4)for(let k=0;k<12;k++)if(contrast[k]>.025){const flank=Math.min(means[k][0],means[k][2]);for(const i of bins[k][1])if(luma(i)<flank-.025)flags[i]=1;}
+ return {flags,sectors,contrast};
 }
 // Cow adaptation of lid/mouth/stray face passes in audit.mts, meshy-audit-coverage
 // 5f13d4b3b (13–14 Nov). Same HSV lid criterion, 4-connected group floor,
@@ -149,6 +175,7 @@ export function cowFaceMetrics(current,reference,width,height,eyes,mouth,closed,
   }
   if(d>1.15&&d<1.85&&(!opening||anomalous)&&!lash&&!coatEdge&&!nativeMatch){for(const j of [i-2,i+2,i-2*width,i+2*width])if(j>=0&&j<N&&current[4*j+3]&&reference[4*j+3]){const residual=colourDistance(average(current,i),average(current,j))-colourDistance(average(reference,i),average(reference,j));if(residual>.065){flags.rim[i]=1;break;}}}
  }}
+ if(closed)for(const info of eyeData){const rim=cowTexturedEyeRim(current,width,height,info.e,eyeIds,lashMask);info.texturedRim={sectors:rim.sectors,contrast:rim.contrast};for(let i=0;i<N;i++)if(rim.flags[i])flags.rim[i]=1;}
  // A hard internal ring can use colours already present in the fur. Find
  // closed uniform contours inside the measured aperture without relying on
  // brightness or the old elliptical annulus. Small fur flecks enclose no area.

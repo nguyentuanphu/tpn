@@ -8,7 +8,9 @@ const b=await chromium.launch({args:['--use-angle=swiftshader','--enable-unsafe-
 try{
 const page=await b.newPage({viewport:{width:900,height:700}});page.setDefaultTimeout(600000);
 await page.goto((process.env.SV_URL||'http://127.0.0.1:8798')+'/docs/meshy-farm-cloud/model-review.html');await page.waitForSelector('body[data-ready="true"]');
-const result=await page.evaluate(async ([mode,baseline,debug])=>{
+// Set COW_FACE_REQUIRE_LASH_WIDTHS=1 for current tapered-band acceptance;
+// leave unset only for legacy constant-band diagnostics/regression captures.
+const result=await page.evaluate(async ([mode,baseline,debug,requireWidths])=>{
  const {cowFaceMetrics,validateCowEyeMetadata,validateCowLashMetadata}=await import(String('/tools/meshy/cow_face_metrics.mjs'));
  const {cowEyeRestPositions,readCowReferenceEyeIds}=await import(String('/tools/meshy/cow_eye_probe.mjs'));
  const {THREE}=await import(String('/js/gfx.js')),K=await import(String('/js/modelkit.js')),{clone}=await import(String('/vendor/SkeletonUtils.js'));
@@ -43,7 +45,7 @@ const result=await page.evaluate(async ([mode,baseline,debug])=>{
   let apertures=null;
   if(!baseline||apertureMetadata.length||strokes.length){
    if(apertureMetadata.length!==1)throw Error('Requires one actual-eye aperture annotation');
-   apertures=validateCowEyeMetadata(apertureMetadata[0],centers);validateCowLashMetadata(strokes,centers,apertures);
+   apertures=validateCowEyeMetadata(apertureMetadata[0],centers);validateCowLashMetadata(strokes,centers,apertures,{requireWidths});
   }
 
   let body;obj.traverse(o=>{if(o.isSkinnedMesh&&(!body||o.geometry.attributes.position.count>body.geometry.attributes.position.count))body=o;});
@@ -52,7 +54,7 @@ const result=await page.evaluate(async ([mode,baseline,debug])=>{
   if(blinkAt<0)throw Error('Idle has no actual closed blink');
   const clips=mode==='selftest'?['sleep','cheer']:mode==='quick'?['cheer','sleep','sad']:t.clips.map(c=>c.name).concat('blink');
   const views=mode==='selftest'?[[0,0]]:mode==='quick'?[[0,0],[.7,0],[-.7,0]]:[[0,0],[.4,0],[-.4,0],[.7,0],[-.7,0],[Math.PI/2,0],[-Math.PI/2,0],[0,.7],[0,-.5]];
-  for(const clip of clips)for(const [yaw,elevation] of views)for(const plant of mode==='selftest'?['none','lid','mouth','mouth-open','stray','rim','rim-inner','rim-inner-native','flat','eyes','silhouette-add','silhouette-cut']:['none']){
+  for(const clip of clips)for(const [yaw,elevation] of views)for(const plant of mode==='selftest'?['none','lid','mouth','mouth-open','stray','rim','rim-textured','rim-inner','rim-inner-native','flat','eyes','silhouette-add','silhouette-cut']:['none']){
    if(mode==='selftest'&&((clip==='cheer'&&!['none','mouth-open'].includes(plant))||(clip==='sleep'&&plant==='mouth-open')))continue;
    const c=t.clips.find(c=>c.name===(clip==='blink'?'idle':clip));mixer.stopAllAction();mixer.clipAction(c).reset().play();mixer.setTime(clip==='blink'?blinkAt:c.duration*(clip==='sleep'||clip==='sad'?.5:.3));obj.updateMatrixWorld(true);
    const saved=bones.map(o=>({p:o.position.clone(),s:o.scale.clone(),q:o.quaternion.clone()}));
@@ -107,7 +109,14 @@ const result=await page.evaluate(async ([mode,baseline,debug])=>{
      if(!spot)throw Error('No background space for rendered silhouette plant');
      const depth=eworld[1].clone().project(cam).z;loc=new THREE.Vector3((spot.x/S)*2-1,(spot.y/S)*2-1,depth).unproject(cam);
     }
-    let innerRadius=0;
+    let innerRadius=0,texturedRadii=null;
+    if(plant==='rim-textured'){
+     const aperture=[];for(let i=0;i<S*S;i++)if(referenceEyeIds?.[i]===1)aperture.push(i);
+     if(aperture.length<40)throw Error('No white-eye aperture for textured rim plant');
+     const xs=aperture.map(i=>i%S),ys=aperture.map(i=>i/S|0),x=(Math.min(...xs)+Math.max(...xs))/2,y=(Math.min(...ys)+Math.max(...ys))/2,rx=(Math.max(...xs)-Math.min(...xs))/2,ry=(Math.max(...ys)-Math.min(...ys))/2;
+     const depth=eworld[0].clone().project(cam).z,unproject=(u,v)=>new THREE.Vector3(u/S*2-1,v/S*2-1,depth).unproject(cam);
+     loc=unproject(x,y);texturedRadii=[unproject(x+rx,y).distanceTo(loc),unproject(x,y+ry).distanceTo(loc)];
+    }
     if(plant.startsWith('rim-inner')){
      let inside=Uint8Array.from(referenceEyeIds,id=>id===2?1:0),best=-1,layers=0;
      for(let step=0;step<100;step++){const next=new Uint8Array(S*S);let remaining=0;for(let y=1;y<S-1;y++)for(let x=1;x<S-1;x++){const i=y*S+x;if(inside[i]&&inside[i-1]&&inside[i+1]&&inside[i-S]&&inside[i+S]){next[i]=1;remaining++;best=i;}}if(!remaining)break;inside=next;layers++;}
@@ -115,10 +124,25 @@ const result=await page.evaluate(async ([mode,baseline,debug])=>{
      const depth=eworld[1].clone().project(cam).z,pixel=new THREE.Vector3(((best%S+.5)/S)*2-1,(((best/S|0)+.5)/S)*2-1,depth);loc=pixel.clone().unproject(cam);
      innerRadius=pixel.clone().add(new THREE.Vector3(layers*.45/S*2,0,0)).unproject(cam).distanceTo(loc);
     }
-    const geo=plant.startsWith('rim-inner')?new THREE.RingGeometry(innerRadius*.72,innerRadius,64):plant==='rim' ?new THREE.RingGeometry(.045,.049,64):plant==='lid'?new THREE.CircleGeometry(.035,48):plant==='flat'?new THREE.CircleGeometry(.065,64):plant==='eyes'?new THREE.CircleGeometry(.012,32):new THREE.PlaneGeometry(.015,.012);
+    let geo=plant.startsWith('rim-inner')?new THREE.RingGeometry(innerRadius*.72,innerRadius,64):plant==='rim' ?new THREE.RingGeometry(.045,.049,64):plant==='lid'?new THREE.CircleGeometry(.035,48):plant==='flat'?new THREE.CircleGeometry(.065,64):plant==='eyes'?new THREE.CircleGeometry(.012,32):new THREE.PlaneGeometry(.015,.012);
+    if(plant==='rim-textured'){
+     geo.dispose();const ring=new THREE.RingGeometry(.88,1.24,96),position=ring.attributes.position,uv=ring.attributes.uv;
+     for(let i=0;i<position.count;i++){const x=position.getX(i)*texturedRadii[0],y=position.getY(i)*texturedRadii[1];position.setXYZ(i,x,y,0);uv.setXY(i,.5+x/(2*apertures[0].P),.5+y/(2*apertures[0].P));}
+     geo=ring;geo.computeBoundingSphere();
+    }
     if(plant==='mouth-open'){const vertices=[];for(const x of [-.035,.035])vertices.push(x-.006,-.006,0,x+.006,-.006,0,x+.006,.006,0,x-.006,.006,0);geo.setAttribute('position',new THREE.Float32BufferAttribute(vertices,3));geo.deleteAttribute('normal');geo.deleteAttribute('uv');geo.setIndex([0,1,2,0,2,3,4,5,6,4,6,7]);geo.computeBoundingSphere();}
     fault=new THREE.Mesh(geo,new THREE.MeshBasicMaterial({color:plant==='rim-inner-native'?0x333333:plant==='eyes'?0xffffff:plant==='flat'?0xe8d6bd:plant==='lid'||plant.startsWith('rim')?0xaaaaaa:0x220500,transparent:true,depthTest:false,depthWrite:false,side:THREE.DoubleSide}));if(plant==='silhouette-cut'){fault.material.opacity=0;fault.material.blending=THREE.NoBlending;}
-    if(['lid','rim','rim-inner','rim-inner-native','flat','eyes'].includes(plant)){const eye=plant==='flat'?0:1;let source;obj.traverse(o=>{if(o.isMesh&&o.material.name?.endsWith('-'+(bones[2].scale.x>.1?'joy':'shut')+eye))source=o.material;});if(!source)throw Error('Missing real lid material name for plant');fault.material.name=source.name;}
+    if(['lid','rim','rim-textured','rim-inner','rim-inner-native','flat','eyes'].includes(plant)){const eye=plant==='flat'||plant==='rim-textured'?0:1;let source;obj.traverse(o=>{if(o.isMesh&&o.material.name?.endsWith('-'+(bones[2].scale.x>.1?'joy':'shut')+eye))source=o.material;});if(!source)throw Error('Missing real lid material name for plant');fault.material.name=source.name;
+     if(plant==='rim-textured'){
+      // Retain actual authored fur grain, darkened as a warm baked AO
+      // crease. An exact-RGB uniform-ring detector must not be sufficient.
+      // The ring geometry defines the fault footprint, not the source lid's
+      // alpha cutout (which can exclude precisely the socket fringe we plant).
+      const cv=document.createElement('canvas');cv.width=source.map.image.width;cv.height=source.map.image.height;const ctx=cv.getContext('2d');ctx.drawImage(source.map.image,0,0);const rgba=ctx.getImageData(0,0,cv.width,cv.height);for(let i=3;i<rgba.data.length;i+=4)rgba.data[i]=255;ctx.putImageData(rgba,0,0);
+      const texture=new THREE.CanvasTexture(cv);texture.colorSpace=source.map.colorSpace;texture.flipY=source.map.flipY;
+      fault.material.map=texture;fault.material.color.setRGB(.80,.78,.76);fault.material.needsUpdate=true;
+     }
+    }
     if(plant==='mouth-open')fault.material.name='meshy-cow-mouth';
     fault.position.copy(loc).addScaledVector(dir,.025);fault.quaternion.copy(cam.quaternion);fault.renderOrder=999;scene.add(fault);
    }
@@ -134,6 +158,12 @@ const result=await page.evaluate(async ([mode,baseline,debug])=>{
      const original=fault.material,mask=original.clone();mask.color.set(0xffffff);mask.opacity=1;mask.blending=THREE.NoBlending;
      fault.material=mask;obj.visible=false;let footprint;
      try{footprint=read(cam);}finally{obj.visible=true;fault.material=original;mask.dispose();}
+     cs.plantedFootprintPixels=footprint.reduce((n,v,i)=>n+(i%4===3&&v?1:0),0);
+     if(!cs.plantedFootprintPixels)throw Error('Empty rendered plant footprint: '+plant);
+     if(plant==='rim-textured'){
+      const colors=new Set();for(let i=0;i<S*S;i++)if(footprint[4*i+3])colors.add((current[4*i]<<16)|(current[4*i+1]<<8)|current[4*i+2]);
+      cs.plantedTextureColors=colors.size;if(colors.size<16)throw Error('Textured rim plant lost actual fur grain');
+     }
      cs.plantedIncrease=Object.fromEntries(Object.keys(m.flags).map(k=>[k,m.flags[k].reduce((n,v,i)=>n+(v&&!control[k][i]&&footprint[i*4+3]?1:0),0)]));
      if(plant.startsWith('rim-inner')){let total=0,inside=0;for(let i=0;i<S*S;i++)if(footprint[4*i+3]){total++;if(referenceEyeIds[i]===2)inside++;}cs.plantedInsideAperture=inside/total;if(!total||inside/total<.95)throw Error('Internal rim plant not inside actual aperture');}
     }
@@ -142,12 +172,12 @@ const result=await page.evaluate(async ([mode,baseline,debug])=>{
    if(debug){const name=`${tier}-${clip}-${yaw}-${elevation}-${plant}`;pics[name+'-current']=png(current);pics[name+'-reference']=png(reference);
     for(const [label,mask]of [['ids',ids],['reference-ids',referenceEyeIds],['lash',lashMask],['mouth-ids',mouthIds],['mouth-surface-ids',mouthSurfaceIds]] as const){if(!mask)continue;const rgba=new Uint8Array(S*S*4);for(let i=0;i<S*S;i++){rgba[4*i]=mask[i]&1?255:0;rgba[4*i+1]=mask[i]&2?255:0;rgba[4*i+3]=255;}pics[name+'-'+label]=png(rgba);}
    }
-   if(fault){scene.remove(fault);fault.geometry.dispose();fault.material.dispose();}
+   if(fault){scene.remove(fault);fault.geometry.dispose();if(plant==='rim-textured')fault.material.map.dispose();fault.material.dispose();}
   }
   scene.remove(obj);for(const mat of idCache.values())mat.dispose();
  }
  rt.dispose();return {cases,pics};
-},[mode,process.env.COW_FACE_BASELINE==='1',process.env.COW_FACE_DEBUG==='1']);
+},[mode,process.env.COW_FACE_BASELINE==='1',process.env.COW_FACE_DEBUG==='1',process.env.COW_FACE_REQUIRE_LASH_WIDTHS==='1']);
 for(const [name,data] of Object.entries(result.pics))writeFileSync(out+'/'+name+'.png',Buffer.from(String(data).split(',')[1],'base64'));
 writeFileSync(out+'/cases.json',JSON.stringify(result.cases,null,2)+'\n');
 const keys=['lid','mouth','stray','rim','eyes','silhouette'],limit=k=>k==='eyes'?6:12,real=result.cases.filter(c=>c.plant==='none'),fail=real.filter(c=>c.coverageErrors.length||keys.some(k=>c[k]>limit(k)));
@@ -156,7 +186,7 @@ const lines=[`Cow face audit: ${real.length} cases; ${fail.length} failing (limi
 for(const k of keys)lines.push(`${k}: worst ${Math.max(0,...real.map(c=>c[k]))}, failing ${real.filter(c=>c[k]>limit(k)).length}`);
 for(const c of real)for(const error of c.coverageErrors)lines.push(`${c.tier}/${c.clip}/${c.yaw}/${c.elevation}: ${error}`);
 if(mode==='selftest'){
- const targets={lid:'lid',mouth:'mouth','mouth-open':'mouth',stray:'stray',rim:'rim','rim-inner':'rim','rim-inner-native':'rim',flat:'textureFlat',eyes:'eyes','silhouette-add':'silhouette','silhouette-cut':'silhouette'};
+ const targets={lid:'lid',mouth:'mouth','mouth-open':'mouth','rim-textured':'rim',stray:'stray',rim:'rim','rim-inner':'rim','rim-inner-native':'rim',flat:'textureFlat',eyes:'eyes','silhouette-add':'silhouette','silhouette-cut':'silhouette'};
  const missed=Object.entries(targets).filter(([plant,k])=>!result.cases.some(c=>{
   if(c.plant!==plant)return false;
   const control=real.find(n=>n.tier===c.tier&&n.clip===c.clip&&n.yaw===c.yaw&&n.elevation===c.elevation);
