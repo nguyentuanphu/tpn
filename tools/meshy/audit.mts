@@ -340,7 +340,7 @@ gl_FragColor = vec4(code_ / 255.0, floor(dm_ / 256.0) / 255.0, mod(dm_, 256.0) /
   const head = (M: any) => { let hb: any = null; M.obj.traverse((o: any) => { if (o.isBone && o.name === 'head') hb = o; }); return hb; };
   for (const id of ((PLANT && PLANT !== 'eyes' && PLANT !== 'face' && PLANT !== 'mouth' && PLANT !== 'lid' && PLANT !== 'stray' && PLANT !== 'patch') || MODS.length ? [] : LIST.split(','))) {   // (not in the light, evening, night and item passes alone)
     const av: any = A.buildAvatar({ set: LOOK[id] || 'girl', friend: id, skin: '#f6c7a5' }, null, { hd: true }); A.showHD(av, true);
-    top.add(av.root); av.root.position.set(h.pos.x + 3, h.av.root.position.y, h.pos.z + 3); av.root.rotation.y = 0; A.animate(av, 'idle', 1); av.root.updateMatrixWorld(true);
+    top.add(av.root); av.root.position.set(h.pos.x + 3, h.av.root.position.y, h.pos.z + 3); av.root.rotation.y = 0; A.animate(av, 'idle', 1); av.life.seed = 0; av.life.t = 1; A.animate(av, 'idle', 1, 0); av.root.updateMatrixWorld(true);   // (15 Nov, friends session: Sol's blink 203 px then 54 px on two runs: the idle pose turns the head by a random seed each run; a fixed seed and time give every run the same pose)
     const M = av.modelHD, hb = head(M); if (!hb) { top.remove(av.root); continue; }
     // (11 Nov 2026) the face plant: every mood piece drawn 3 mm behind where it lies, so the head comes through it
     if (PLANT === 'face') M.obj.traverse((o: any) => { if (o.isMesh && /^face-/.test(o.material.name || '')) shaderPlant(o.material, 'face', 'mvPosition.xyz += normalize(mvPosition.xyz) * .003; gl_Position = projectionMatrix * mvPosition; vPlY = 0.0;', ''); });
@@ -363,6 +363,7 @@ gl_FragColor = vec4(code_ / 255.0, floor(dm_ / 256.0) / 255.0, mod(dm_, 256.0) /
       MB.value.set(0, 0, 0, 0);   // (15 Nov: a plant left on from the last view's mood was read into this view's pictures)
       const cam = new THREE.PerspectiveCamera(28, W / H, .05, 100), dir = new THREE.Vector3(Math.sin(s), 0, Math.cos(s));
       cam.position.copy(at).addScaledVector(dir, Hh * .75); cam.lookAt(at); cam.updateMatrixWorld(true);
+      setTime(.42, cam.position);   // (15 Nov: the light at a fixed time of day, as the body passes: with poses:face alone the game's own clock lit the face, and three runs of one Sol model differed at three-quarters, 205, 207 and 223 px)
       // (only on the face: under the face pieces, never the sky, a name label or the clouds)
       const saved = [] as any[]; M.obj.traverse((o: any) => { if (o.isMesh) saved.push([o, o.material, o.visible]); });
       setMood('smile'); saved.forEach(([o, m, v]: any) => { o.visible = v && /^face-/.test(m.name || ''); if (o.visible) o.material = idMat({}, 4, false); });
@@ -496,7 +497,7 @@ gl_FragColor = vec4(code_ / 255.0, floor(dm_ / 256.0) / 255.0, mod(dm_, 256.0) /
                only they are marked. With no core (the smile's faint lips only: the mood piece missing) the whole lips are. */
             const core = new Uint8Array(N); let nc = 0; for (let i = 0; i < N; i++) if (ML.L[i] && (vv(C, i) < skV - .2 || rd(C, i) > skRd + .25 || pk(C, i) > skPk + .2)) { core[i] = 1; nc++; }
             const gs = groups(nc > 12 ? core : ML.L), g0 = gs[0] || []; let bad = !g0.length; why += `[lips ${ML.n} core ${nc} groups ${gs.map(g => g.length).slice(0, 4).join('/')} skin v ${skV.toFixed(2)} rd ${skRd.toFixed(2)} pk ${skPk.toFixed(2)}] `;
-            const in0 = new Uint8Array(N); for (const j of g0) in0[j] = 1;
+            const in0 = new Uint8Array(N); for (const g of gs) if (g.length >= g0.length * .5) for (const j of g) in0[j] = 1;   // (15 Nov: Sol's 'o' at three-quarters in two core pieces, 45 and 43 px: which was the largest flipped from run to run and the other was counted as old lips, 0 to 44 px; every piece half the largest or more is the mouth)
             /* (second run, three-quarters: the cheek's blush lies in the box and was marked as old lips) old lips count only
                where the smile's mouth was: its lowest patch of 10 px or more (the blush is higher, on the cheek) */
             if (!SMm) { SMm = new Uint8Array(N); let best: number[] | null = null, by = 1e9; for (const g of groups(SM.L)) { if (g.length < 10) continue; let sy = 0; for (const j of g) sy += (j / W) | 0; if (sy / g.length < by) { by = sy / g.length; best = g; } } if (best) for (const j of best) SMm[j] = 1; }
@@ -554,7 +555,7 @@ gl_FragColor = vec4(code_ / 255.0, floor(dm_ / 256.0) / 255.0, mod(dm_, 256.0) /
           const sv: number[] = []; for (let i = 0; i < N; i++) if (ring16[i] && !eye8[i] && mine(i)) { const [v] = hsv(C, i); if (v > .35) sv.push(v); } sv.sort((a, b) => a - b); const skv = sv[sv.length >> 1] || 1;
           let S = C0; if (!S) { setMood('smile'); S = read(top, cam); setMood(m); }   // (the smile from the sides too: there is no mouth pass there)
           const Y = (px: Uint8Array, i: number) => (px[i * 4] * .3 + px[i * 4 + 1] * .59 + px[i * 4 + 2] * .11) / 255;
-          const drk = new Uint8Array(N), sdrk = new Uint8Array(N); for (let i = 0; i < N; i++) if (eyeZ[i]) { if (hsv(C, i)[0] < skv - .15) drk[i] = 1; if (hsv(S, i)[0] < skv - .15) sdrk[i] = 1; }
+          const drk = new Uint8Array(N), sdrk = new Uint8Array(N); for (let i = 0; i < N; i++) { if (hsv(C, i)[0] < skv - .15) drk[i] = 1; if (hsv(S, i)[0] < skv - .15) sdrk[i] = 1; }
           const inMouth = (i: number) => { const x = i % W, y = (i / W) | 0; return bx1 > bx0 && x >= bx0 - 3 && x <= bx1 + 3 && y >= by0 - 3 && y <= by1 + 3; };
           const skin = (i: number) => !!eyeZ![i] && !!Pb[i * 4 + 3] && cd(i) === 5 && mine(i) && i < N - W * 10 && !near(drk, i, 2) && !hairEdge(i) && !inMouth(i);
           const sSkin = (i: number) => !grow[i] && !near(sdrk, i, 2);   // (skin in the smile too, not its open eye)
