@@ -360,6 +360,7 @@ gl_FragColor = vec4(code_ / 255.0, floor(dm_ / 256.0) / 255.0, mod(dm_, 256.0) /
       m.customProgramCacheKey = () => (key ? key.call(m) : '') + '-lidplant'; m.needsUpdate = true; });
     let MW: any = null, MHW = 0, MUP = 0, MDN = 0;   // ('mouth': the front view's mouth in 3D, and its box about it in pixels)
     for (const s of [0, .7, -.7, 1.2, -1.2]) {
+      MB.value.set(0, 0, 0, 0);   // (15 Nov: a plant left on from the last view's mood was read into this view's pictures)
       const cam = new THREE.PerspectiveCamera(28, W / H, .05, 100), dir = new THREE.Vector3(Math.sin(s), 0, Math.cos(s));
       cam.position.copy(at).addScaledVector(dir, Hh * .75); cam.lookAt(at); cam.updateMatrixWorld(true);
       // (only on the face: under the face pieces, never the sky, a name label or the clouds)
@@ -443,6 +444,7 @@ gl_FragColor = vec4(code_ / 255.0, floor(dm_ / 256.0) / 255.0, mod(dm_, 256.0) /
       if (s === 0 && bx1 > bx0) { const cx = (bx0 + bx1) / 2, cy = (by0 + by1) / 2, ds: number[] = []; for (let dy = -3; dy <= 3; dy++) for (let dx = -3; dx <= 3; dx++) { const j = (Math.round(cy) + dy) * W + Math.round(cx) + dx; if (j >= 0 && j < N && Pb[j * 4 + 3]) ds.push(dep(Pb, j)); }
         if (ds.length) { ds.sort((a, b) => a - b); const dz = ds[ds.length >> 1], d3 = new THREE.Vector3((cx + .5) / W * 2 - 1, (cy + .5) / H * 2 - 1, -1).unproject(cam).sub(cam.position).normalize();
           MW = cam.position.clone().addScaledVector(d3, dz / d3.dot(cam.getWorldDirection(new THREE.Vector3()))); MHW = (bx1 - bx0) / 2; MUP = by1 - cy; MDN = cy - by0; } } const mArea: Record<string, number> = {}, mCase: Record<string, any> = {};
+      if (ALLPICS && eyeZ) { const z = new Uint8Array(N); for (let i = 0; i < N; i++) if (eyeZ[i] || mbox(i)) z[i] = 1; pics[`${id}-face-${s}-zones`] = png(O, z); }   // (15 Nov: the eye zone and the mouth box, where 'stray' and 'patch' look or do not)
       for (const m of (PLANT === 'eyes' ? ['blink', 'half', 'happy', 'sad'] : PLANT === 'mouth' || PLANT === 'lid' || PLANT === 'patch' ? ['blink'] : PLANT === 'stray' ? ['lookL'] : ['blink', 'half', 'happy', 'sad', 'smile', 'o', 'excited', 'lookL', 'lookR'])) {
         MB.value.set(0, 0, 0, 0); if (PLANT === 'mouth' && m === 'blink') { MB.value.set(mcx - ew * .27, my1 - ew * .62, mcx + ew * .27, my1 - ew * .22); }
         if (PLANT === 'stray' && m === 'lookL' && ew > 8) { const ny = (my1 + by1) / 2; MB.value.set(mcx - 4, ny - 4, mcx + 4, ny + 4); MC.value.set(.25, .12, .08); }   // (the stray plant: a dark dot on the nose in the glance, as Sol's mood mouth on his nostril)
@@ -521,7 +523,7 @@ gl_FragColor = vec4(code_ / 255.0, floor(dm_ / 256.0) / 255.0, mod(dm_, 256.0) /
         if (C0 && m !== 'smile' && eyeZ) { const pn = m === 'o' ? 'face-surprised' : 'face-' + m, pcs: any[] = [];
           setMood('smile'); M.obj.traverse((o: any) => { if (o.isMesh && o.material && o.material.name === pn) pcs.push([o, o.visible, o.material.colorWrite, o.material.depthWrite]); });
           if (pcs.length) { pcs.forEach(([o]: any) => { o.visible = true; o.material.colorWrite = false; o.material.depthWrite = false; });
-            const Nz = read(top, cam); pcs.forEach(([o, v, cw, dw]: any) => { o.visible = v; o.material.colorWrite = cw; o.material.depthWrite = dw; });
+            const mb0 = MB.value.clone(); MB.value.set(0, 0, 0, 0); const Nz = read(top, cam); MB.value.copy(mb0); pcs.forEach(([o, v, cw, dw]: any) => { o.visible = v; o.material.colorWrite = cw; o.material.depthWrite = dw; });
             noise = new Uint8Array(N); for (let i = 0; i < N; i++) if (Math.hypot(Nz[i * 4] - C0[i * 4], Nz[i * 4 + 1] - C0[i * 4 + 1], Nz[i * 4 + 2] - C0[i * 4 + 2]) / 255 > .04) noise[i] = 1; }
           setMood(m); }
         /* (the noise render did not move the count: the hair's edge blends the head under it, which the shut-eye paint
