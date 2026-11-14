@@ -3,7 +3,24 @@
 Branch `meshy-regional-cloud` (never `main`, no deploy, no version bump, draft pull requests only). Written 12 Nov 2026,
 about 16:30 AEDT, when the owner stopped this chat so that another Claude account takes over.
 
-## Where it stands (14 Nov 2026, about 10:00 AEDT; stopped at the usage limit)
+## Where it stands (15 Nov 2026, about 05:30 AEDT)
+
+- Models af8a74e49 (+ r064 71f203a7e), all six: `-EyeSkin -LidClip -SnapCap .006 -SadTilt .15` plus each person's flags
+  (r045 r057 r074 r084 `-EyeDespike`; r057 r074 r084 `-SadBot .42`; r050 r064 `-SadTall`; r064 `-SnapCap .003`).
+- Shader since gate q (`js/friend-model.ts`, villager branch only): outside each eye's box only colours lighter than
+  the skin round the eyes are painted (hair stays); the box reaches 1.6 times further toward the nose and 30% lower;
+  inside an oval round the box (a little above it, soft from half its radius) everything is painted whatever its
+  colour; the wide areas' old colour test is kept only for near-white where the ovals are.
+- Gate u (`D:\WorkSpace\meshyittedegional-gate-20261115u`): auditor eyes 0, lid 2 (r045 at .7, looked at full
+  size: clean), stray 13 and mshape 19 (the red nose and mouths on dark hosts, as before). Second reviewers running.
+  **Not approved; gate not clean; no approval question asked.**
+- Left as known: r050's round shaded dome round shut eyes (the lid piece's own fill, since gate k); r064's thin skin
+  remnant over hair at .4; lids as a V at the near profile (r057 r084); lookL/lookR barely different; Meshy geometry
+  (ears, forehead shards, r045's brow under hair).
+- Build note: on a loaded machine `tools/build.mts` fails in the management-catalogue export (1.5 s limit), unrelated;
+  `node tools/build.mts 'd:\WorkSpace\sv-meshy-regional'` (lower-case drive) skips that step and builds the game.
+
+## Where it stood (14 Nov 2026, about 10:00 AEDT; stopped at the usage limit)
 
 - Gate p (`D:\WorkSpace\meshyittedegional-gate-20261114p`, models 4e116cadd): auditor eyes 4 / lid 3 / mshape 10 /
   stray 13 (r064's eyes = her earring, r074's stray = her own "o" at -.7: false). Second reviewers found r045's fringe and
