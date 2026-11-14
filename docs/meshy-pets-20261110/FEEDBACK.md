@@ -68,6 +68,14 @@ Verdict: all four NOT clean. It opened 52 of 264 pictures. Each line must be fix
   front legs forward and its hind legs folded under (tried in Blender, lowest point 4 mm over the ground).
 - Bunny `lid_fade` taken out (the eye's dark outline showed through the faded rim). Bunny and kitty lids: `lid_px` 256
   (at 128 the lid lost the fur's grain and read as a smooth disc).
-- All four being rebuilt; then boards, full audits and a new second reviewer.
+- Rebuilt (r17, 15 Nov 07:00-08:35 AEDT), looked at on the 1024 px boards: calf lies and sits on the ground, front
+  legs forward, hooves round; calf run and jump hooves compact; bunny begs with both hind feet showing; panda begs with
+  its front paws on the ground; kitty beg tidy. Quick audits: panda 0 failing; calf lid ~400 / stray up to 121; bunny
+  lid up to 121 / stray up to 57; kitty lid ~470 near, ~1100 far.
+- Board body cameras: side views now face the pet's side (they looked at the back of the head). In the run the head
+  turns away because the pet looks at the child in the game, not a model fault.
+- Shut lids still read as discs (calf, bunny, kitty). Tried and taken out on 15 Nov: bunny `lid_fade` (eye outline
+  showed through), bunny fur grain + lash fill + `lid_on_eye` (pink marks above the eyes, stray 854), kitty smaller lid
+  1.8 (the eye white showed at the edges). Kept: `lid_px` 256 for bunny and kitty.
 - Still open: calf sleep/run/sit/beg hooves (fix in the rebuild); kitty surprised side eye disc, beg hind leg block; panda shoulder white
   sliver, beg paws in the air; bunny beg ragged bottom, scratch fringe; board body cameras. Then a new second review.
