@@ -964,6 +964,10 @@ def fur_lid_fill(img,hit,xx,yy,r,eye):
                 dim=bpy.data.images.new('missing-eye',n,n);dim.pixels[:]=np.concatenate((dbg,np.ones((n,n,1))),-1).astype(np.float32).ravel();dim.filepath_raw=os.path.join(OUT,'missing-eye.png');dim.file_format='PNG';dim.save()
             raise ValueError('Independent bright-eye pixels missing from aperture')
     def grow(a):return a|np.roll(a,1,0)|np.roll(a,-1,0)|np.roll(a,1,1)|np.roll(a,-1,1)
+    opaque_guard=aperture.copy()
+    for _ in range(2):opaque_guard=grow(opaque_guard)
+    protected&=~opaque_guard
+
     # Include pale sclera just outside the dark iris on a light coat. It is not
     # native cream fur, and leaving it is what makes a grey closed-eye rim.
     fur_ring=hit&(np.hypot(xx,yy)>r*1.6)&(np.hypot(xx,yy)<r*2.5)&(lum>.55)&(chroma>.12)
@@ -982,6 +986,10 @@ def fur_lid_fill(img,hit,xx,yy,r,eye):
     soft=mask.astype(float);ring=mask.copy()
     for value in (.75,.35):
         nxt=grow(ring)&~protected;soft[nxt&~ring]=value;ring=nxt
+    # Cover the full source texel footprint, including bilinear neighbours.
+    for dy in (-1,0,1):
+        for dx in (-1,0,1):
+            if not (soft[np.roll(aperture,(dy,dx),(0,1))]>.999).all():raise ValueError('Eye opening has translucent filter neighbours')
     radius=max(2,round(n/64));window=range(-radius,radius+1)
     blur=sum(np.roll(img,(dy,dx),(0,1)) for dy in window for dx in window)/(2*radius+1)**2
     low_lum=blur@np.array((.3,.59,.11));hp=(lum/np.maximum(low_lum,.025)-1)[...,None];hp=np.repeat(hp,3,axis=-1)

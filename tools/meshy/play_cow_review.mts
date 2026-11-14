@@ -13,10 +13,11 @@ try{
   await page.goto(base+'/docs/meshy-farm-cloud/model-review.html');
   const result=await page.evaluate(async src=>{
    document.body.replaceChildren();const video=document.createElement('video');video.width=1000;video.height=840;video.muted=true;video.controls=true;video.playsInline=true;document.body.append(video);
-   const times=[],frames=[],events=[],targets=[0,2,4,6,8,10,12,14,16,18,20];let target=0;
+   const times=[],frames=[],events=[],targets=[];let target=0;
    video.addEventListener('seeking',()=>events.push({type:'seeking',at:video.currentTime}));
    video.addEventListener('ratechange',()=>events.push({type:'ratechange',rate:video.playbackRate}));
    video.src=src;await new Promise<void>((resolve,reject)=>{video.onloadedmetadata=()=>resolve();video.onerror=()=>reject(Error('MP4 metadata failed'));});
+   for(let at=0;at<video.duration;at+=1)targets.push(at);
    const began=performance.now();
    const sample=(_now,metadata)=>{times.push(metadata.mediaTime);if(target<targets.length&&metadata.mediaTime>=targets[target]){
     const canvas=document.createElement('canvas');canvas.width=video.videoWidth;canvas.height=video.videoHeight;canvas.getContext('2d').drawImage(video,0,0);frames.push({at:metadata.mediaTime,png:canvas.toDataURL('image/png')});target++;

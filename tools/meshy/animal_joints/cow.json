@@ -98,7 +98,7 @@
   ],
   "surface_lid_lift": 0.002,
   "lid_force_fill": 1.6,
-  "surface_lid_forward": 0.001,
+  "surface_lid_forward": 0.0005,
   "eye_retract": 0.0001,
   "surface_eye_cover": [
     1.25,

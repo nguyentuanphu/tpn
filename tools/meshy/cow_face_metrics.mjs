@@ -67,13 +67,19 @@ export function cowFaceMetrics(current,reference,width,height,eyes,mouth,closed,
    const i=y*width+x;if(!reference[4*i+3]||referenceEyeIds?.[i]!==e.index+1)continue;const v=val(reference,i),s=sat(reference,i);
    if(e.coat==='dark'?v>.70&&s<.4:v<.45)feature[i]=1;
   }
+  const accepted=[];
   for(const g of groups(feature)){
    if(g.length<6)continue;const xs=g.map(i=>i%width),ys=g.map(i=>i/width|0),x0=Math.min(...xs),x1=Math.max(...xs),y0=Math.min(...ys),y1=Math.max(...ys);
    if(x0<=e.x-e.rx*3.1||x1>=e.x+e.rx*3.1||y0<=e.y-e.ry*3.1||y1>=e.y+e.ry*3.1)continue;
    const mx=xs.reduce((a,b)=>a+b,0)/g.length,my=ys.reduce((a,b)=>a+b,0)/g.length;if(Math.hypot((mx-e.x)/e.rx,(my-e.y)/e.ry)>1.5)continue;
-   const fm=new Uint8Array(N);for(const i of g)fm[i]=1;eyeFeatures.set(e.index,fm);
-   if(e.coat==='dark'){const rx=Math.max(Math.abs(x0-e.x),Math.abs(x1-e.x)),ry=Math.max(Math.abs(y0-e.y),Math.abs(y1-e.y));return {...e,rx,ry,featurePixels:g.length};}
-   return {...e,x:(x0+x1)/2,y:(y0+y1)/2,rx:Math.max(2,(x1-x0)/2),ry:Math.max(2,(y1-y0)/2),featurePixels:g.length};
+   accepted.push(...g);
+  }
+  if(accepted.length){
+   // Iris and outer lash arc may be disconnected; both bound the actual eye.
+   const xs=accepted.map(i=>i%width),ys=accepted.map(i=>i/width|0),x0=Math.min(...xs),x1=Math.max(...xs),y0=Math.min(...ys),y1=Math.max(...ys),fm=new Uint8Array(N);
+   for(const i of accepted)fm[i]=1;eyeFeatures.set(e.index,fm);
+   if(e.coat==='dark'){const rx=Math.max(Math.abs(x0-e.x),Math.abs(x1-e.x)),ry=Math.max(Math.abs(y0-e.y),Math.abs(y1-e.y));return {...e,rx,ry,featurePixels:accepted.length};}
+   return {...e,x:(x0+x1)/2,y:(y0+y1)/2,rx:Math.max(2,(x1-x0)/2),ry:Math.max(2,(y1-y0)/2),featurePixels:accepted.length};
   }
   return {...e,featurePixels:0};
  };
