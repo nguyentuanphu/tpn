@@ -118,7 +118,19 @@ if (uShut > .5 && uShutOn > .5 && vKitY > uKitNeck && vKitNz > -.2 && fu_.x > 0.
   // lid, as the eye's painting wraps round the dome further than the front picture shows it) a texel that is itself eye, white or
   // dark, under a piece that closes the eye nearby takes the lid's colour too
   float mx_ = max(tx_.r, max(tx_.g, tx_.b)); float ey_ = max(step(.78, mx_) * (1.0 - step(.22, (mx_ - min(tx_.r, min(tx_.g, tx_.b))) / max(mx_, 1e-4))), 1.0 - step(.35, mx_));
+  // (15 Nov 2026, a debug render of the cover: the light crescent on the side of Sol's near eye dome at three-quarters is covered but
+  // unchanged: the dome's side is painted a paler skin round the open eye, and its front projection falls just outside the lid's hole,
+  // as the front picture squeezes the dome's side into a few pixels) the lid's change reaches 2 % of the face picture further out
+  // (8 samples round the texel), so the whole dome round a shut eye takes the lid
+  float cg_ = 0.0; for (int k = 0; k < 8; k++) { vec2 o_ = vec2(cos(float(k) * .7854), sin(float(k) * .7854)) * .02; vec2 q_ = clamp(fu_ + o_, vec2(0.0), vec2(1.0));
+    vec3 a_ = texture2D(uShutMap, (uShutTile + q_) / 3.0).rgb, b_ = texture2D(uShutMap, q_ / 3.0).rgb; cg_ = max(cg_, max(abs(a_.r - b_.r), max(abs(a_.g - b_.g), abs(a_.b - b_.b)))); }
+  ch_ = max(ch_, smoothstep(.03, .12, cg_) * step(.5, pc_.a));
   ch_ = max(ch_, ey_ * step(.5, pc_.a));
+  // (15 Nov 2026: the light crescent on the side of Sol's near eye dome at three-quarters: the eye's painting wraps round the dome, so a
+  // texel there is pale eye-white-and-skin, while the front picture at its place shows skin; the head is lit almost wholly by its own
+  // painted light (BAKED_EMISSIVE .95), so it was this texel, not the light) inside an eye area under the piece, a texel that differs
+  // from the shut piece's colour takes the piece's colour
+  ch_ = max(ch_, (inEye_ ? 1.0 : 0.0) * step(.5, pc_.a) * smoothstep(.06, .16, max(abs(tx_.r - pc_.r), max(abs(tx_.g - pc_.g), abs(tx_.b - pc_.b)))));
   sc_ = mix(clamp(tx_ + pc_.rgb - po_, 0.0, 1.0), pc_.rgb, ch_); }
 // (15 Nov 2026, Sol at three-quarters: a light crescent on the side of the near eye's dome was left uncovered whatever the facing or depth
 // test: those texels' front projection falls where the piece is clear. Depth gates from face_box[4] at 6 and 12 cm and a facing test

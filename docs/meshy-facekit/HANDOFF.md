@@ -119,3 +119,11 @@ A debug build (scratchpad `dbg.py`, reverted) coloured each head material and th
 - patch 22 to 401: worst `half/up` 401.
 - stray 232 to 490: the hair over her face, to check.
 - mouth 538 and 579 at ±.4 are unchanged by the head-only mouth box, so her shirt is not what was counted. Next: dump the Pb codes of the marked pixels.
+
+### (a) The crescent, later the same afternoon
+- The head is lit almost wholly by its own painted light (BAKED_EMISSIVE .95, diffuse #262524), so the crescent is texture, not light.
+- A debug render showed red = cover weight, green = change from the body's texel. The crescent is covered, but unchanged: the dome's side is painted a paler skin round the open eye, and its front projection falls just outside the lid's hole, because the front picture squeezes the dome's side into a few pixels.
+- **Fix (in the shader):** the lid's change is looked up 2 % of the face picture further out (8 samples), so the dome round a shut eye takes the lid. The crescent is now a thin sliver plus the fold line (the backward-facing texels, uncovered), but not gone.
+- Next: a wider spread for the side views only, or fill the dome's texels in the fit itself. In the body texture's own UV space, the eye dome's triangles are the eye_ovals' triangles, as the regional stream does.
+
+Sol now (`facekit-audit-sol-s22`): eyes, face, mouth, lid 0; patch up to 205; stray up to 219; vlid up to 54. **Not passing.** Steps (b), (c) squares, and (d) are not done.
