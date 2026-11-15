@@ -126,3 +126,39 @@ close-ups, every mood, yaw -1.2 .. 1.2.
 - Animals: the same bake works on any head (it needs only the mesh, its UVs and its picture). Fur needs a texture-aware
   fill (the Laplace fill is smooth: fine for painted skin, flat on fur): copy fur from beside the eye (patch-based) or
   LaMa on a machine with torch. Kitty's separate lid mesh (fit_animal.py face_pieces) would go, as Sol's eye pieces did.
+
+## Next: the coordinator's order (15 Nov 2026, about 4:30 pm AEDT), NOT started
+
+The first agent stopped here because its context was too long to do this well. Nothing below is built yet.
+State at the stop: Sol's HD model is final for the prototype (commit on this branch), sheets in
+`D:\WorkSpace\meshy\fitted\soleyes-sheets` are from the final model, the last face audit is in
+`D:\WorkSpace\meshy\fitted\soleyes-audit-final` (see "Traps" for which of its counts mean anything).
+The server on 8797 and the junction `tests\node_modules` may need to be made again.
+
+1. **Make the step general.** `tools/meshy/soleyes` becomes `tools/meshy/faceuv` and takes any model id.
+   - bake.py CFG from the model, not Sol's numbers: the head bone's world position gives the axis (x, ZC); the body
+     materials' `eye_boxes` (model metres: x0, x1, y0, y1 per eye, read them BEFORE build.py deletes them) give the eye
+     height and width; y range = eye middle -.21 / +.17 m scaled by the eye box height over Sol's (.10 m); radius = the
+     median radius of the outward surface at eye height. Sol's values to reproduce: R .2, TH 1.2, Y0 1.14, Y1 1.52, ZC 0.
+   - Eye finder (eyes.py) on dark irises and darker skin: start from the eye_boxes projected into the face picture
+     instead of "bright colourless blob" (white V > .82, S < .22 fails on small whites); skin = median of the ring round
+     the box; thresholds relative to that skin (now absolute .10 / V < .72).
+   - Hair in the eye hole stays hair: COLOR_0 is the skin mark (red = skin, blue 1 = body point that is not hair, see
+     js/friend-model.ts skinTint and make_clothes.py). Bake the mark into the face picture beside the colour (same
+     barycentric copy) and keep the hole off texels that are hair.
+2. **One command per model**: `make.ps1 <id>` = bake, eye-free skin, moods, build, pack, shots, sheets, through heavy.ps1,
+   writing `report.json` (sizes, eye boxes found, warnings such as "eye not found", "hair over eye"). Today's make.ps1
+   stops after the install; shots.mts and sheets.py have 'sol' written in (setup(), the route, OLD_GLB).
+3. **Gate tool** `gate.ps1 <id...>`: one HTML page per model, `D:\WorkSpace\meshy\fitted\gate\<id>\index.html`, old vs
+   new for every mood: game distance on the three devices, then close-ups at yaw 0, +-.4, +-.7, +-1.2, plus the
+   auditor's face numbers. The auditor must first learn the new layout (its reference hides every `face-` material).
+4. **Prove generality** on Clara (dark irises), Finn (fringe over the eyes), Lumi, one villager, one regional villager.
+   Dressed HD models: `D:\WorkSpace\meshy\fitted\<id>-own\<id>-dressed-hd.glb` for friends; the villagers' are in the
+   other worktrees' fit folders (read only). Write only under `fitted\faceuv-*`. No hand tuning: a needed parameter goes
+   into a small per-model JSON with the reason. Villagers have one model and other material names (`fit_person.ps1
+   -Villager`): bake.py picks primitives by the names `cloth-body` / `skin-tex`, check theirs.
+5. **Sol's leftovers**: lookL / lookR inner-corner rim; half lid length; the light model `sol.glb` with a smaller
+   atlas; a lash colour that is not near black in the game's light; the mouth moods on the same face UV (then the last
+   three old pieces go); a check under the darkest skin tone (`setMeshyTones(true)`, game_shots.mts `tones` mode).
+
+Report to the coordinator after step 4 with the gate page paths. Animals come after humans.
