@@ -57,3 +57,18 @@ The pictures are in `D:\WorkSpace\meshy\fitted\facekit-audit-sol-*` (s1 = the sh
 - **Friends:** merge `meshy-facekit`. Refit with `FIT_FACEKIT=1 FIT_NOGRAIN=1`. Audit with `kitviews`.
 - **11 villagers and regional:** their `fit_people.py` and `friend-model.ts` have diverged. Port the four pieces: `face_box`; `body_offset` before the atlas; the `uShutMap` block, with the gating of the flat paint and the `half` case; the `face_box` copy in the material loop. Then use the auditor's `kitviews`, `vlid` and `patch` in `audit_villager.mts`.
 - **Pets:** see the kitty plan.
+
+## Clara (kit, no grain, `facekit-audit-clara-s3n`)
+
+Friends' last, worst over the closed moods: lid 18, stray 23, patch 266, and mouth 23 at .7.
+
+| case | lid | stray | patch | mouth |
+|---|---|---|---|---|
+| kit, worst | 9 | 34 | 271 | 579 |
+| front blink | | | 57 | |
+| front happy, excited | | | 86 | |
+
+- **New in the picture:** faint square blocks about 8 px across round both shut eyes, lighter and darker. This is with the grain off. Find out whether they come from `body_offset` (G_ cast per pixel against a body texture of lower resolution) or from the body texture itself. Compare G_ with F on their own before changing anything.
+- **Mouth:** 538 to 579 at ±.4 in sad, o and excited. ±.4 had never been audited before `kitviews`, so this is not yet shown to be a regression. Run the friends' own Clara with `kitviews` to tell.
+
+**Verdict 15 Nov:** neither Sol nor Clara passes. The kit fixes the main cause: the flat body under the piece, and the paler piece. Sol's front shut patch went from 33 to 225 down to 0. It is not finished: turned-view patch, the hole rule, the blocks, and Clara's mouth at ±.4. No second reviewer has looked yet. The trial models are in this worktree's `models/` and are not committed.
