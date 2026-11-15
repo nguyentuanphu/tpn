@@ -57,7 +57,7 @@ round runs on the PC any more.
   - `HIDE=face` hides the mood pieces, to tell paint from pieces.
 
 **Only on the PC:**
-- The gate folders with the pictures from gates i to w: `D:\WorkSpace\meshy\fitted\regional-gate-2026111*`.
+- The gate folders with the pictures from every gate (13 to 15 Nov): `D:\WorkSpace\meshy\fitted\regional-gate-2026111*`.
 - The fitted `.blend` and `F.png` files under `D:\WorkSpace\meshy\fitted\<id>`. A refit on the cloud makes them again.
 - The journal `D:\WorkSpace\meshy\meshy-jobs-cloud.sqlite3`. Never commit it; no paid call is planned.
 - The Windows Python `D:\WorkSpace\meshy\tools\pyenv`.
