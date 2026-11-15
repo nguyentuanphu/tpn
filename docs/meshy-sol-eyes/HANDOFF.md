@@ -211,3 +211,34 @@ dark smudge by the temple beside the shut eye; her beauty mark under the eye was
   not touching the eye (a mole, a beauty mark), is kept as painted.
 - A run is stopped partway: check `faceuv-<id>/bake/cfg.json` and `report.json` times; rerun with batch.ps1. The regional
   page server (8794) does not survive a restart of the session: start it again before shooting r045.
+- Second round of the same fix (the first broke Sol and Lumi): Sol's painted lash bits at the inner corners and his
+  outer-corner lash flicks are hair in the fit's mark (the fit marks a ring round each painted eye as hair, joined to his
+  real hair), and Lumi's lash flick was kept by a "beauty mark" rule. So now: inside the eye_boxes every triangle may
+  join the face; there, a texel is hair only if it has the hair's own colour (within .2 of `hair_colour`) AND hangs
+  together with hair outside the box. Finn's black lock and Mai's black temple hair pass; Sol's lash bits do not. The
+  beauty-mark rule is gone (no model has a painted mole: the dark dot under the old Mai's shut eye was a speck the old lid
+  piece left). Hair triangles under the eyes get under-layer cells again (as in the prototype). Any dark texel in the
+  hole takes the fill fully.
+- Trap (cost a round): a `# comment` appended after a closing bracket in the middle of a Python expression swallowed the
+  rest of the line; bake.py failed and the next shots silently used the old model. After an edit, `ast.parse` the file,
+  and check `make.log` for "failed" before looking at pictures.
+- `try.ps1 <id,...>`: close-ups of the new model only (faceuv-<id>\shots-try), one heavy job, for quick looks while tuning.
+
+## Next (after this run)
+
+1. **GPU rendering for shots and audits (coordinator, 15 Nov 2026, the owner saw headless_shell.exe at 66% CPU).**
+   shots.mts, audit.mts and game_shots.mts launch Chromium with `--use-angle=swiftshader --enable-unsafe-swiftshader`:
+   software WebGL, every frame on the CPU. Try hardware rendering: launch args `--use-angle=d3d11` (or `--use-gl=angle`
+   without swiftshader) and `headless: 'new'` / channel chromium. Prove it before switching: render the same pictures
+   both ways (one model's close and device shots, one audit) and compare pixel differences (a per-picture max and mean,
+   and a diff picture); the auditor's counts must not move beyond their usual run-to-run swing. Do not switch mid-proof.
+2. Sol's leftovers (step 5 of the coordinator's order, not started): lookL/lookR inner-corner rim; half lid length; the
+   light model `sol.glb` with a smaller atlas (`FACEUV_ATLAS`); a lash colour that is not near black in game light
+   (`eyes.lash` in models.json, per model, or the default); mouth moods on the same face UV (then the last three old pieces
+   go); a check under the darkest skin tone; the size (+900 KB on friends, villagers over 500 KB: Mai 543, r045 745 KB).
+3. Glances on small eyes: r045's lookR at yaw .7 shows a squared-off white at the near eye's outer corner.
+4. Villagers have no auditor pass (the auditor builds friends): a villager face pass is needed before villagers can be gated
+   by numbers.
+5. Animals: the bake works on any head with a skin mark; blocked by (a) fur needs a texture-aware fill, not the smooth
+   Laplace fill; (b) animals have no `eye_boxes` (the finder and the frame start from them) and no hair/skin mark of this
+   kind; (c) Kitty's separate lid mesh (fit_animal.py face_pieces); (d) no auditor face pass for animals.
