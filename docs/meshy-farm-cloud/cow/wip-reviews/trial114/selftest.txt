@@ -1,0 +1,24 @@
+pets audit 16/11/26, 12:12:50 am AEDT cases 31 failing 0
+stretch: 0 cases over 300/900 (actual per-animal/pose limits), worst 748
+tear: 0 cases over 30 (actual per-animal/pose limits), worst 21
+sink: 0 cases over 0 (actual per-animal/pose limits), worst 0
+float: 0 cases over 0 (actual per-animal/pose limits), worst 0
+eyes: 0 cases over 6 (actual per-animal/pose limits), worst 0
+hat: 0 cases over 0 (actual per-animal/pose limits), worst 0
+flicker: 0 cases over 12 (actual per-animal/pose limits), worst 0
+mouth: 0 cases over 0 (actual per-animal/pose limits), worst 0
+size cow near: 685 KB (limit 800)
+size cow far: 353 KB (limit 400)
+selftest stretch caught, tear caught, eyes caught, sink caught, hat caught, mouth caught
+
+Mandatory cow face phase:
+Cow face audit: 2 cases; 0 failing (limits 12px fur/mouth/silhouette, 6px eyes; four-pixel groups)
+lid: worst 0, failing 0
+mouth: worst 0, failing 0
+stray: worst 0, failing 0
+rim: worst 0, failing 0
+eyes: worst 0, failing 0
+silhouette: worst 0, failing 0
+selftest: all 13 rendered plants increased their metric beyond the same-pose control
+Combined cow gate: PASS
+

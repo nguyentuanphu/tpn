@@ -1,10 +1,12 @@
 // Interpolate rest-world positions through geometry.color, independently of skinning.
 // Non-eye fragments remain opaque black so cheek/ear rays occlude the aperture.
-export function createCowEyeProbeMaterial(THREE,apertures,bodyMap=null,{pigmentOnly=false}={}){
+const sourceRest=new WeakMap();
+export function createCowEyeProbeMaterial(THREE,apertures,bodyMap=null,{pigmentOnly=false,regionTag=false,sourceFrontal=false}={}){
+ if(sourceFrontal){if(apertures.some(a=>!a.T||!a.Q))throw Error('Missing original frontal eye source masks');apertures=apertures.map(a=>({...a,UV:a.T,K:a.Q,F:null}));}
  if(pigmentOnly){if(apertures.some(a=>!a.K))throw Error('Missing original source eye pigment mask');apertures=apertures.map(a=>({...a,UV:a.K}));}
  const mask=new THREE.MeshBasicMaterial({vertexColors:true,side:THREE.DoubleSide,map:bodyMap}),textures=[];
  mask.addEventListener('dispose',()=>textures.forEach(t=>t.dispose()));
- mask.customProgramCacheKey=()=> 'cow-real-aperture-ids-v2-'+apertures.some(a=>a.UV);
+ mask.customProgramCacheKey=()=> 'cow-real-aperture-ids-v2-'+apertures.some(a=>a.UV)+'-'+regionTag;
  if(apertures.some(a=>a.UV)&&!bodyMap)throw Error('Source UV probe requires actual body map transform');
  if(apertures.some(a=>a.UV&&(a.UV[0]!==bodyMap.image.width||a.UV[1]!==bodyMap.image.height)))throw Error('Source UV mask/body image dimensions differ');
  mask.onBeforeCompile=sh=>{
@@ -55,7 +57,8 @@ export function createCowEyeProbeMaterial(THREE,apertures,bodyMap=null,{pigmentO
     #ifdef USE_MAP
     svSourceUV=vMapUv;
     #endif
-    diffuseColor.rgb=svInside0(vColor.xyz,svSourceUV)?vec3(1.,0.,0.):svInside1(vColor.xyz,svSourceUV)?vec3(0.,1.,0.):vec3(0.);`);
+    diffuseColor.rgb=svInside0(vColor.xyz,svSourceUV)?vec3(1.,0.,0.):svInside1(vColor.xyz,svSourceUV)?vec3(0.,1.,0.):vec3(0.);
+    ${regionTag?'diffuseColor.b=(diffuseColor.r+diffuseColor.g>.5)? .1:0.;':''}`);
  };
  return mask;
 }
@@ -63,6 +66,7 @@ export function createCowEyeProbeMaterial(THREE,apertures,bodyMap=null,{pigmentO
 // Call before animation: metadata and these vertices share the loaded rest-world frame.
 export function cowEyeRestPositions(THREE,body){
  let root=body;while(root.parent)root=root.parent;root.updateMatrixWorld(true);
+ if(body.material?.name==='meshy-cow')root.traverse(o=>{if(o.isSkinnedMesh&&/^meshy-cow-open[01]$/.test(o.material?.name||''))sourceRest.set(o,cowEyeRestPositions(THREE,o));});
  body.skeleton.update();
  const pos=body.geometry.getAttribute('position'),rest=new Float32Array(pos.count*3),v=new THREE.Vector3();
  for(let i=0;i<pos.count;i++){
@@ -82,9 +86,11 @@ export function decodeCowEyeIds(pixels){
 
 // Keep every occluder in the depth pass, including alpha-cut lid/lash children.
 export function readCowReferenceEyeIds(THREE,scene,body,restPositions,apertures,read,cam,options={}){
- const saved=[],temporary=[],oldColor=body.geometry.getAttribute('color');
+ const saved=[],temporary=[],oldColor=body.geometry.getAttribute('color'),sources=[],savedColors=[];
+ scene.traverse(o=>{if(o.isSkinnedMesh&&/^meshy-cow-open[01]$/.test(o.material?.name||''))sources.push(o);});
+ if(sources.length&&sources.length!==2)throw Error('Requires both original eye source meshes');
  const black=new THREE.MeshBasicMaterial({color:0,side:THREE.DoubleSide});
- const probe=createCowEyeProbeMaterial(THREE,apertures,body.material.map,options);temporary.push(black,probe);
+ temporary.push(black);
  const occluder=original=>{
   if(!((original.transparent&&original.map)||original.polygonOffset))return black;
   const mat=new THREE.MeshBasicMaterial({color:0,map:original.transparent?original.map:null,alphaMap:original.alphaMap,
@@ -94,10 +100,17 @@ export function readCowReferenceEyeIds(THREE,scene,body,restPositions,apertures,
  };
  try{
   scene.traverse(o=>{if(o.isMesh){saved.push([o,o.material]);o.material=Array.isArray(o.material)?o.material.map(occluder):occluder(o.material);}});
-  body.geometry.setAttribute('color',restPositions);body.material=probe;
+  if(sources.length){
+   for(const source of sources){
+    const rest=sourceRest.get(source);if(!rest)throw Error('Original eye source was not measured at loaded rest');
+    const original=saved.find(([o])=>o===source)[1],probe=createCowEyeProbeMaterial(THREE,apertures,original.map,{...options,sourceFrontal:apertures.every(a=>a.T&&a.Q)});probe.alphaTest=.95;temporary.push(probe);
+    savedColors.push([source,source.geometry.getAttribute('color')]);source.geometry.setAttribute('color',rest);source.material=probe;
+   }
+  }else{const probe=createCowEyeProbeMaterial(THREE,apertures,body.material.map,options);temporary.push(probe);body.geometry.setAttribute('color',restPositions);body.material=probe;}
   return decodeCowEyeIds(read(cam));
  }finally{
   if(oldColor)body.geometry.setAttribute('color',oldColor);else body.geometry.deleteAttribute('color');
+  for(const [o,color]of savedColors){if(color)o.geometry.setAttribute('color',color);else o.geometry.deleteAttribute('color');}
   for(const [o,material]of saved)o.material=material;
   for(const mat of temporary)mat.dispose();
  }

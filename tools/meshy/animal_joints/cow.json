@@ -149,5 +149,6 @@
   "uv_fur_lids": true,
   "closed_native_surface": true,
   "mesh_lash": true,
-  "native_grid_lids": true
+  "native_grid_lids": true,
+  "separate_eye_sources": true
 }

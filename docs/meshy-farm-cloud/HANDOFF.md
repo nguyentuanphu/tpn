@@ -263,3 +263,13 @@ Nguồn apertureUV vẫn giữ đầyđủ để kiểm màu/hình; thêmK là t
 Người soi Lagrange xem12ảnh99:2CLEAN/10REJECT; xemlại24ảnh đốichiếuR16 cùnggóc,18/20vùngcó ởcảhaibộ, riêngN6/F12 dải răngtrắng ngang sátmõm chỉ99. Nhậnxét mắt99 hòa lông/đọc rõhơnR16, khôngthấy vòngdán rõ nhưcũ; khôngxóaREJECT. Báocáo gốc vàđốichiếu lưu cow/wip-reviews/trial99/. Parent xácnhận sourcefar cósẵn nhiều phiến lônggóc ởcổ; vẫn phải xem các mépmới sátmõm trênbản cuối.
 
 Types+emoji đạt2/2 lúc22:37AEDT trước K/coveragefixture/body-eyeplant mới, phải chạylại. Chưa full120+198cuối,242ảnh cuối/tựxem/soátmùcuối/phimphátthật/ba thiếtbị. ChưaCIxanh (run43622973936trên de621628b365/377,12lỗi nhưCI-RESULTS). Không ready forRelease, sheep/chicken dừng, sốdư1574làGET13/11lịch sử. Không merge/deploy/version/force-push.
+
+### Checkpoint 16/11/2026 00:20 AEDT — WIP114, chưa duyệt
+
+Đã thay lớp phủ lông bằng lông trên thân đầu thật; hai mảng mắt nguồn là mesh riêng có thể thu vào trong khi nhắm, bốn nét mi bám đầu. Da đầu không còn bị kéo theo bone thu mắt. Giữ 20 bone, 10 clip. Runtime114 gần701424byte/39318tri, xa361708byte/16640tri, GLB/alpha/800–400KiB đạt. Mắt nguồn dùng ảnh gốc chiếu liên tục lên đầu, không vẽ lại mắt; đóng/mở STEP để tránh chồng hai trạng thái.
+
+**Chưa sạch:** quick114 có2/18ca lỗi rim do lông trắng vùng mắt quá mịn (worst4837); lidworst9 khôngvượt12, mouth/stray/eyes/silhouette0. Đã tự xem sad+cheer+sleep1024px, vùng lông trơn còn rõ. Full thân112 có120/120đạt nhưng không thay kiểm cuối114. Selftest114 đúng cwdtests:31ca thân và2ca mặt đối chứng đều đạt, bắt đủ6plant thân+13plant mặt; không hạ ngưỡng. Fixture vòng trong được đặt đủ lớn để thực sự tạo mép trong aperture; plant coverage gỡ nét mi thật phân biệt với ID vùng da đầu. Kiểm native-fur loại màu hồng mõm khỏi donor, không miễn lỗi bên trong aperture.
+
+Người soi112 từ chối12/12ảnh vì vùng lông quanh mắt trơn/hướng vòng; giữ nguyên báo cáo ở cow/wip-reviews/trial112/. Đang nhờ soi114 riêng. Bản115 đang build: lấy vân lông thật theo hướng mặt, cân biên độ theo donorUV, giữ fade và JPEG85 ở lần bake cuối; chưa có kết quả, chưa phải R17. Phải chạy lại full120+198/selftest/types, 242ảnh1024 tự xem+soát mù, mọi lỗi chủ khoanh; sạch mới phim phát thật và ba thiết bị tắt guides. Chưa hỏi approval.
+
+Không Meshy/API/credit mới; cow40credit lịch sử, sốdư1574làGET13/11. Sheep/chicken dừng. Không merge/deploy/version/force-push. Push WIP theo giờ không phải owner approval. CI chưa xanh: run43622973936 trên de621628b365/377,12lỗi, chưa có CI mới.

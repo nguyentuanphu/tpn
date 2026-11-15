@@ -1,0 +1,709 @@
+{
+  "review_type": "blind_PNG_visual_WIP",
+  "final_approval": false,
+  "decision": "REJECT",
+  "decision_scope": "eye_eyelid_line + periocular_fur + visible_head_outline; not whole-image approval",
+  "summary": {
+    "images_opened": 12,
+    "eye_eyelid_line": {
+      "CLEAN": 12,
+      "REJECT": 0
+    },
+    "periocular_fur": {
+      "CLEAN": 0,
+      "REJECT": 12
+    },
+    "visible_head_outline": {
+      "CLEAN": 12,
+      "REJECT": 0
+    },
+    "basis": "Vùng lông quanh mắt trơn/kéo vòng hoặc chia mặt; không REJECT vì nét cartoon hoặc vì các lỗi má/cổ đã biết."
+  },
+  "opened_images": [
+    {
+      "file": "/workspace/cow-fit/r17-dev112/native-diagnostic/cow-near-cheer-front.png",
+      "opened_with": "view_image",
+      "view": "original_full_image",
+      "native_size": [
+        1024,
+        1024
+      ],
+      "focused_decision": "REJECT",
+      "scores": {
+        "eye_eyelid_line": {
+          "decision": "CLEAN",
+          "observation": "Nét cartoon liền và đọc được; cheer cong lên, sleep cong xuống. Nét xám trên nền đen tương phản vừa, vẫn thấy. Không yêu cầu mí thật hoặc mắt photorealistic."
+        },
+        "periocular_fur": {
+          "decision": "REJECT",
+          "findings": [
+            {
+              "bbox_xyxy": [
+                384,
+                449,
+                473,
+                523
+              ],
+              "observation": "Dưới nét mắt phía mặt trắng có mảng kem trơn dạng bầu, lông quanh đó kéo thành vòng. Đây là thay đổi chất bề mặt trong cùng màu trắng, không phải chỉ pattern đen/trắng.",
+              "severity": "moderate"
+            }
+          ]
+        },
+        "head_outline": {
+          "decision": "CLEAN",
+          "observation": "Trong phần nhìn thấy, biên đầu, trán/sống mũi và hàm liên tục; chưa thấy đứt đường bao hay lỗ xuyên nền chắc chắn. Không chấm chi tiết lông/mảng tối bên trong má thành lỗi silhouette.",
+          "limitation": "Phần tai bị khung ảnh cắt ở một số góc near; không chứng nhận phần ngoài khung."
+        }
+      },
+      "inherited_source_region_notes": [],
+      "separate_cheek_observations_unassigned_origin": [
+        {
+          "bbox_xyxy": [
+            672,
+            632,
+            698,
+            657
+          ],
+          "observation": "Các vết tối nhọn nhỏ trên má phải ảnh, dưới mép mảng đen.",
+          "origin": "UNDETERMINED; do not automatically label inherited",
+          "through_hole_confirmed": false
+        }
+      ],
+      "whole_image_approval": false
+    },
+    {
+      "file": "/workspace/cow-fit/r17-dev112/native-diagnostic/cow-near-cheer-p07.png",
+      "opened_with": "view_image",
+      "view": "original_full_image",
+      "native_size": [
+        1024,
+        1024
+      ],
+      "focused_decision": "REJECT",
+      "scores": {
+        "eye_eyelid_line": {
+          "decision": "CLEAN",
+          "observation": "Nét cartoon liền và đọc được; cheer cong lên, sleep cong xuống. Nét xám trên nền đen tương phản vừa, vẫn thấy. Không yêu cầu mí thật hoặc mắt photorealistic."
+        },
+        "periocular_fur": {
+          "decision": "REJECT",
+          "findings": [
+            {
+              "bbox_xyxy": [
+                515,
+                443,
+                665,
+                542
+              ],
+              "observation": "Quanh và dưới nét mắt gần trên nền đen có vùng bầu với các vệt lông quét cong, dẹt hơn nền bên trên. Hiệu ứng nhẹ hơn phía mặt trắng nhưng vùng mắt vẫn đọc thành một khu riêng.",
+              "severity": "minor"
+            }
+          ]
+        },
+        "head_outline": {
+          "decision": "CLEAN",
+          "observation": "Trong phần nhìn thấy, biên đầu, trán/sống mũi và hàm liên tục; chưa thấy đứt đường bao hay lỗ xuyên nền chắc chắn. Không chấm chi tiết lông/mảng tối bên trong má thành lỗi silhouette.",
+          "limitation": "Phần tai bị khung ảnh cắt ở một số góc near; không chứng nhận phần ngoài khung."
+        }
+      },
+      "inherited_source_region_notes": [
+        {
+          "bbox_xyxy": [
+            553,
+            649,
+            594,
+            709
+          ],
+          "observation": "Mép góc cạnh ở chân mõm hoặc má/cổ còn thấy, ghi riêng với nhóm vùng nguồn đã đối chiếu; không đưa vào điểm chất lông quanh mắt.",
+          "inheritance_status": "source-region carryover context only; not reverified against baseline for dev112"
+        }
+      ],
+      "separate_cheek_observations_unassigned_origin": [
+        {
+          "bbox_xyxy": [
+            621,
+            637,
+            693,
+            676
+          ],
+          "observation": "Chuỗi khe tối hình tam giác và mấu trắng ở giữa má trắng, dưới mắt đen.",
+          "origin": "UNDETERMINED; do not automatically label inherited",
+          "through_hole_confirmed": false
+        }
+      ],
+      "whole_image_approval": false
+    },
+    {
+      "file": "/workspace/cow-fit/r17-dev112/native-diagnostic/cow-near-cheer-m07.png",
+      "opened_with": "view_image",
+      "view": "original_full_image",
+      "native_size": [
+        1024,
+        1024
+      ],
+      "focused_decision": "REJECT",
+      "scores": {
+        "eye_eyelid_line": {
+          "decision": "CLEAN",
+          "observation": "Nét cartoon liền và đọc được; cheer cong lên, sleep cong xuống. Nét xám trên nền đen tương phản vừa, vẫn thấy. Không yêu cầu mí thật hoặc mắt photorealistic."
+        },
+        "periocular_fur": {
+          "decision": "REJECT",
+          "findings": [
+            {
+              "bbox_xyxy": [
+                378,
+                435,
+                522,
+                525
+              ],
+              "observation": "Dưới nét mắt trên mặt trắng có vùng bầu kem ít chi tiết lông, bao bởi vệt lông dài cuộn vòng; tạo cảm giác miếng trơn gắn trên mặt.",
+              "severity": "moderate"
+            }
+          ]
+        },
+        "head_outline": {
+          "decision": "CLEAN",
+          "observation": "Trong phần nhìn thấy, biên đầu, trán/sống mũi và hàm liên tục; chưa thấy đứt đường bao hay lỗ xuyên nền chắc chắn. Không chấm chi tiết lông/mảng tối bên trong má thành lỗi silhouette.",
+          "limitation": "Phần tai bị khung ảnh cắt ở một số góc near; không chứng nhận phần ngoài khung."
+        }
+      },
+      "inherited_source_region_notes": [
+        {
+          "bbox_xyxy": [
+            413,
+            666,
+            457,
+            711
+          ],
+          "observation": "Mép góc cạnh ở chân mõm hoặc má/cổ còn thấy, ghi riêng với nhóm vùng nguồn đã đối chiếu; không đưa vào điểm chất lông quanh mắt.",
+          "inheritance_status": "source-region carryover context only; not reverified against baseline for dev112"
+        }
+      ],
+      "separate_cheek_observations_unassigned_origin": [],
+      "whole_image_approval": false
+    },
+    {
+      "file": "/workspace/cow-fit/r17-dev112/native-diagnostic/cow-near-cheer-left.png",
+      "opened_with": "view_image",
+      "view": "original_full_image",
+      "native_size": [
+        1024,
+        1024
+      ],
+      "focused_decision": "REJECT",
+      "scores": {
+        "eye_eyelid_line": {
+          "decision": "CLEAN",
+          "observation": "Nét cartoon liền và đọc được; cheer cong lên, sleep cong xuống. Nét xám trên nền đen tương phản vừa, vẫn thấy. Không yêu cầu mí thật hoặc mắt photorealistic."
+        },
+        "periocular_fur": {
+          "decision": "REJECT",
+          "findings": [
+            {
+              "bbox_xyxy": [
+                463,
+                439,
+                591,
+                530
+              ],
+              "observation": "Vùng dưới nét mắt trắng trơn, kéo dài về sống mõm; biên được nhận ra nhờ các vệt lông cuộn và đổi hướng, không cần một vòng viền đen.",
+              "severity": "moderate"
+            }
+          ]
+        },
+        "head_outline": {
+          "decision": "CLEAN",
+          "observation": "Trong phần nhìn thấy, biên đầu, trán/sống mũi và hàm liên tục; chưa thấy đứt đường bao hay lỗ xuyên nền chắc chắn. Không chấm chi tiết lông/mảng tối bên trong má thành lỗi silhouette.",
+          "limitation": "Phần tai bị khung ảnh cắt ở một số góc near; không chứng nhận phần ngoài khung."
+        }
+      },
+      "inherited_source_region_notes": [
+        {
+          "bbox_xyxy": [
+            543,
+            661,
+            601,
+            714
+          ],
+          "observation": "Mép góc cạnh ở chân mõm hoặc má/cổ còn thấy, ghi riêng với nhóm vùng nguồn đã đối chiếu; không đưa vào điểm chất lông quanh mắt.",
+          "inheritance_status": "source-region carryover context only; not reverified against baseline for dev112"
+        }
+      ],
+      "separate_cheek_observations_unassigned_origin": [],
+      "whole_image_approval": false
+    },
+    {
+      "file": "/workspace/cow-fit/r17-dev112/native-diagnostic/cow-near-cheer-right.png",
+      "opened_with": "view_image",
+      "view": "original_full_image",
+      "native_size": [
+        1024,
+        1024
+      ],
+      "focused_decision": "REJECT",
+      "scores": {
+        "eye_eyelid_line": {
+          "decision": "CLEAN",
+          "observation": "Nét cartoon liền và đọc được; cheer cong lên, sleep cong xuống. Nét xám trên nền đen tương phản vừa, vẫn thấy. Không yêu cầu mí thật hoặc mắt photorealistic."
+        },
+        "periocular_fur": {
+          "decision": "REJECT",
+          "findings": [
+            {
+              "bbox_xyxy": [
+                461,
+                439,
+                572,
+                540
+              ],
+              "observation": "Vùng bầu quanh nét mắt xám có lông bị quét thành dải cong, độ chi tiết không đồng đều với phần trán đen. Hiệu ứng nhẹ nhưng nhìn được ở ảnh gốc.",
+              "severity": "minor"
+            }
+          ]
+        },
+        "head_outline": {
+          "decision": "CLEAN",
+          "observation": "Trong phần nhìn thấy, biên đầu, trán/sống mũi và hàm liên tục; chưa thấy đứt đường bao hay lỗ xuyên nền chắc chắn. Không chấm chi tiết lông/mảng tối bên trong má thành lỗi silhouette.",
+          "limitation": "Phần tai bị khung ảnh cắt ở một số góc near; không chứng nhận phần ngoài khung."
+        }
+      },
+      "inherited_source_region_notes": [
+        {
+          "bbox_xyxy": [
+            582,
+            602,
+            720,
+            756
+          ],
+          "observation": "Mép góc cạnh ở chân mõm hoặc má/cổ còn thấy, ghi riêng với nhóm vùng nguồn đã đối chiếu; không đưa vào điểm chất lông quanh mắt.",
+          "inheritance_status": "source-region carryover context only; not reverified against baseline for dev112"
+        }
+      ],
+      "separate_cheek_observations_unassigned_origin": [
+        {
+          "bbox_xyxy": [
+            486,
+            644,
+            562,
+            682
+          ],
+          "observation": "Các khe tối và mấu trắng hình tam giác trên má trắng phía dưới mắt.",
+          "origin": "UNDETERMINED; do not automatically label inherited",
+          "through_hole_confirmed": false
+        }
+      ],
+      "whole_image_approval": false
+    },
+    {
+      "file": "/workspace/cow-fit/r17-dev112/native-diagnostic/cow-near-sleep-front.png",
+      "opened_with": "view_image",
+      "view": "original_full_image",
+      "native_size": [
+        1024,
+        1024
+      ],
+      "focused_decision": "REJECT",
+      "scores": {
+        "eye_eyelid_line": {
+          "decision": "CLEAN",
+          "observation": "Nét cartoon liền và đọc được; cheer cong lên, sleep cong xuống. Nét xám trên nền đen tương phản vừa, vẫn thấy. Không yêu cầu mí thật hoặc mắt photorealistic."
+        },
+        "periocular_fur": {
+          "decision": "REJECT",
+          "findings": [
+            {
+              "bbox_xyxy": [
+                380,
+                454,
+                480,
+                546
+              ],
+              "observation": "Dưới nét mắt ngủ phía trắng có mảng kem trơn hình lá/bầu, các vệt lông vòng theo biên và kéo xuống dưới; không hòa đều vào lông má.",
+              "severity": "moderate"
+            }
+          ]
+        },
+        "head_outline": {
+          "decision": "CLEAN",
+          "observation": "Trong phần nhìn thấy, biên đầu, trán/sống mũi và hàm liên tục; chưa thấy đứt đường bao hay lỗ xuyên nền chắc chắn. Không chấm chi tiết lông/mảng tối bên trong má thành lỗi silhouette.",
+          "limitation": "Phần tai bị khung ảnh cắt ở một số góc near; không chứng nhận phần ngoài khung."
+        }
+      },
+      "inherited_source_region_notes": [],
+      "separate_cheek_observations_unassigned_origin": [
+        {
+          "bbox_xyxy": [
+            694,
+            587,
+            713,
+            615
+          ],
+          "observation": "Vết tối nhỏ sát mép má phải ảnh; không đủ chứng cứ xác nhận xuyên nền.",
+          "origin": "UNDETERMINED; do not automatically label inherited",
+          "through_hole_confirmed": false
+        }
+      ],
+      "whole_image_approval": false
+    },
+    {
+      "file": "/workspace/cow-fit/r17-dev112/native-diagnostic/cow-far-cheer-front.png",
+      "opened_with": "view_image",
+      "view": "original_full_image",
+      "native_size": [
+        1024,
+        1024
+      ],
+      "focused_decision": "REJECT",
+      "scores": {
+        "eye_eyelid_line": {
+          "decision": "CLEAN",
+          "observation": "Nét cartoon liền và đọc được; cheer cong lên, sleep cong xuống. Nét xám trên nền đen tương phản vừa, vẫn thấy. Không yêu cầu mí thật hoặc mắt photorealistic."
+        },
+        "periocular_fur": {
+          "decision": "REJECT",
+          "findings": [
+            {
+              "bbox_xyxy": [
+                382,
+                441,
+                480,
+                526
+              ],
+              "observation": "Mảng kem trơn dưới mắt trắng và vòng lông quanh nó hiện rõ. Ở mắt đen còn có các mặt đa giác đổi sáng tối phía trên nét mắt.",
+              "severity": "moderate"
+            }
+          ]
+        },
+        "head_outline": {
+          "decision": "CLEAN",
+          "observation": "Trong phần nhìn thấy, biên đầu, trán/sống mũi và hàm liên tục; chưa thấy đứt đường bao hay lỗ xuyên nền chắc chắn. Không chấm chi tiết lông/mảng tối bên trong má thành lỗi silhouette.",
+          "limitation": "Phần tai bị khung ảnh cắt ở một số góc near; không chứng nhận phần ngoài khung."
+        }
+      },
+      "inherited_source_region_notes": [
+        {
+          "bbox_xyxy": [
+            396,
+            746,
+            569,
+            864
+          ],
+          "observation": "Các phiến lông tam giác và mép sáng/tối ở má/cổ vẫn thấy. Ghi riêng vào nhóm hiện tượng nguồn đã được đối chiếu trước theo phạm vi người dùng; không dùng làm bằng chứng sạch của mắt hay toàn ảnh.",
+          "inheritance_status": "source-region carryover context only; not reverified against baseline for dev112"
+        }
+      ],
+      "separate_cheek_observations_unassigned_origin": [
+        {
+          "bbox_xyxy": [
+            668,
+            625,
+            706,
+            672
+          ],
+          "observation": "Các khe tối nhọn trên má phải ảnh, tách khỏi vùng đánh giá mắt.",
+          "origin": "UNDETERMINED; do not automatically label inherited",
+          "through_hole_confirmed": false
+        }
+      ],
+      "whole_image_approval": false
+    },
+    {
+      "file": "/workspace/cow-fit/r17-dev112/native-diagnostic/cow-far-cheer-p07.png",
+      "opened_with": "view_image",
+      "view": "original_full_image",
+      "native_size": [
+        1024,
+        1024
+      ],
+      "focused_decision": "REJECT",
+      "scores": {
+        "eye_eyelid_line": {
+          "decision": "CLEAN",
+          "observation": "Nét cartoon liền và đọc được; cheer cong lên, sleep cong xuống. Nét xám trên nền đen tương phản vừa, vẫn thấy. Không yêu cầu mí thật hoặc mắt photorealistic."
+        },
+        "periocular_fur": {
+          "decision": "REJECT",
+          "findings": [
+            {
+              "bbox_xyxy": [
+                516,
+                392,
+                687,
+                546
+              ],
+              "observation": "Quanh mắt đen có mảng tối ít chi tiết lông, đường gấp đa giác phía trên nét mắt và các mẩu sáng nhỏ. Không coi nét mắt xám là lỗi; lỗi là độ liền của bề mặt bao quanh.",
+              "severity": "moderate"
+            }
+          ]
+        },
+        "head_outline": {
+          "decision": "CLEAN",
+          "observation": "Trong phần nhìn thấy, biên đầu, trán/sống mũi và hàm liên tục; chưa thấy đứt đường bao hay lỗ xuyên nền chắc chắn. Không chấm chi tiết lông/mảng tối bên trong má thành lỗi silhouette.",
+          "limitation": "Phần tai bị khung ảnh cắt ở một số góc near; không chứng nhận phần ngoài khung."
+        }
+      },
+      "inherited_source_region_notes": [
+        {
+          "bbox_xyxy": [
+            524,
+            711,
+            751,
+            859
+          ],
+          "observation": "Các phiến lông tam giác và mép sáng/tối ở má/cổ vẫn thấy. Ghi riêng vào nhóm hiện tượng nguồn đã được đối chiếu trước theo phạm vi người dùng; không dùng làm bằng chứng sạch của mắt hay toàn ảnh.",
+          "inheritance_status": "source-region carryover context only; not reverified against baseline for dev112"
+        }
+      ],
+      "separate_cheek_observations_unassigned_origin": [
+        {
+          "bbox_xyxy": [
+            610,
+            626,
+            719,
+            687
+          ],
+          "observation": "Khe tối lớn hình tam giác và mấu trắng nhọn ở má dưới mắt đen.",
+          "origin": "UNDETERMINED; do not automatically label inherited",
+          "through_hole_confirmed": false
+        }
+      ],
+      "whole_image_approval": false
+    },
+    {
+      "file": "/workspace/cow-fit/r17-dev112/native-diagnostic/cow-far-cheer-m07.png",
+      "opened_with": "view_image",
+      "view": "original_full_image",
+      "native_size": [
+        1024,
+        1024
+      ],
+      "focused_decision": "REJECT",
+      "scores": {
+        "eye_eyelid_line": {
+          "decision": "CLEAN",
+          "observation": "Nét cartoon liền và đọc được; cheer cong lên, sleep cong xuống. Nét xám trên nền đen tương phản vừa, vẫn thấy. Không yêu cầu mí thật hoặc mắt photorealistic."
+        },
+        "periocular_fur": {
+          "decision": "REJECT",
+          "findings": [
+            {
+              "bbox_xyxy": [
+                374,
+                429,
+                525,
+                532
+              ],
+              "observation": "Vùng bầu kem dưới mắt trắng gần như trơn, có biên lông quét vòng và các mặt sáng tối; cảm giác mảng riêng rõ hơn một vùng lông liên tục.",
+              "severity": "moderate"
+            }
+          ]
+        },
+        "head_outline": {
+          "decision": "CLEAN",
+          "observation": "Trong phần nhìn thấy, biên đầu, trán/sống mũi và hàm liên tục; chưa thấy đứt đường bao hay lỗ xuyên nền chắc chắn. Không chấm chi tiết lông/mảng tối bên trong má thành lỗi silhouette.",
+          "limitation": "Phần tai bị khung ảnh cắt ở một số góc near; không chứng nhận phần ngoài khung."
+        }
+      },
+      "inherited_source_region_notes": [
+        {
+          "bbox_xyxy": [
+            215,
+            632,
+            315,
+            813
+          ],
+          "observation": "Các phiến lông tam giác và mép sáng/tối ở má/cổ vẫn thấy. Ghi riêng vào nhóm hiện tượng nguồn đã được đối chiếu trước theo phạm vi người dùng; không dùng làm bằng chứng sạch của mắt hay toàn ảnh.",
+          "inheritance_status": "source-region carryover context only; not reverified against baseline for dev112"
+        }
+      ],
+      "separate_cheek_observations_unassigned_origin": [],
+      "whole_image_approval": false
+    },
+    {
+      "file": "/workspace/cow-fit/r17-dev112/native-diagnostic/cow-far-cheer-left.png",
+      "opened_with": "view_image",
+      "view": "original_full_image",
+      "native_size": [
+        1024,
+        1024
+      ],
+      "focused_decision": "REJECT",
+      "scores": {
+        "eye_eyelid_line": {
+          "decision": "CLEAN",
+          "observation": "Nét cartoon liền và đọc được; cheer cong lên, sleep cong xuống. Nét xám trên nền đen tương phản vừa, vẫn thấy. Không yêu cầu mí thật hoặc mắt photorealistic."
+        },
+        "periocular_fur": {
+          "decision": "REJECT",
+          "findings": [
+            {
+              "bbox_xyxy": [
+                459,
+                428,
+                598,
+                538
+              ],
+              "observation": "Mảng trơn kem dưới nét mắt kéo về mõm, mép lông vòng quanh và chia mặt phẳng; nhìn như một phiến riêng trong cùng màu lông trắng.",
+              "severity": "moderate"
+            }
+          ]
+        },
+        "head_outline": {
+          "decision": "CLEAN",
+          "observation": "Trong phần nhìn thấy, biên đầu, trán/sống mũi và hàm liên tục; chưa thấy đứt đường bao hay lỗ xuyên nền chắc chắn. Không chấm chi tiết lông/mảng tối bên trong má thành lỗi silhouette.",
+          "limitation": "Phần tai bị khung ảnh cắt ở một số góc near; không chứng nhận phần ngoài khung."
+        }
+      },
+      "inherited_source_region_notes": [
+        {
+          "bbox_xyxy": [
+            165,
+            628,
+            294,
+            840
+          ],
+          "observation": "Các phiến lông tam giác và mép sáng/tối ở má/cổ vẫn thấy. Ghi riêng vào nhóm hiện tượng nguồn đã được đối chiếu trước theo phạm vi người dùng; không dùng làm bằng chứng sạch của mắt hay toàn ảnh.",
+          "inheritance_status": "source-region carryover context only; not reverified against baseline for dev112"
+        }
+      ],
+      "separate_cheek_observations_unassigned_origin": [],
+      "whole_image_approval": false
+    },
+    {
+      "file": "/workspace/cow-fit/r17-dev112/native-diagnostic/cow-far-cheer-right.png",
+      "opened_with": "view_image",
+      "view": "original_full_image",
+      "native_size": [
+        1024,
+        1024
+      ],
+      "focused_decision": "REJECT",
+      "scores": {
+        "eye_eyelid_line": {
+          "decision": "CLEAN",
+          "observation": "Nét cartoon liền và đọc được; cheer cong lên, sleep cong xuống. Nét xám trên nền đen tương phản vừa, vẫn thấy. Không yêu cầu mí thật hoặc mắt photorealistic."
+        },
+        "periocular_fur": {
+          "decision": "REJECT",
+          "findings": [
+            {
+              "bbox_xyxy": [
+                461,
+                393,
+                585,
+                549
+              ],
+              "observation": "Phần trên mắt đen có đường gấp đa giác, đoạn sáng nhỏ ở mép; phía dưới nét mắt là mảng đen trơn khác với lông xung quanh. Không đủ để gọi là lỗ nhưng bề mặt mắt chưa liền.",
+              "severity": "moderate"
+            }
+          ]
+        },
+        "head_outline": {
+          "decision": "CLEAN",
+          "observation": "Trong phần nhìn thấy, biên đầu, trán/sống mũi và hàm liên tục; chưa thấy đứt đường bao hay lỗ xuyên nền chắc chắn. Không chấm chi tiết lông/mảng tối bên trong má thành lỗi silhouette.",
+          "limitation": "Phần tai bị khung ảnh cắt ở một số góc near; không chứng nhận phần ngoài khung."
+        }
+      },
+      "inherited_source_region_notes": [
+        {
+          "bbox_xyxy": [
+            510,
+            635,
+            749,
+            804
+          ],
+          "observation": "Các phiến lông tam giác và mép sáng/tối ở má/cổ vẫn thấy. Ghi riêng vào nhóm hiện tượng nguồn đã được đối chiếu trước theo phạm vi người dùng; không dùng làm bằng chứng sạch của mắt hay toàn ảnh.",
+          "inheritance_status": "source-region carryover context only; not reverified against baseline for dev112"
+        }
+      ],
+      "separate_cheek_observations_unassigned_origin": [
+        {
+          "bbox_xyxy": [
+            476,
+            630,
+            603,
+            695
+          ],
+          "observation": "Các khe tối tam giác lớn giữa má trắng và một mấu trắng nhọn ở giữa.",
+          "origin": "UNDETERMINED; do not automatically label inherited",
+          "through_hole_confirmed": false
+        }
+      ],
+      "whole_image_approval": false
+    },
+    {
+      "file": "/workspace/cow-fit/r17-dev112/native-diagnostic/cow-far-sleep-front.png",
+      "opened_with": "view_image",
+      "view": "original_full_image",
+      "native_size": [
+        1024,
+        1024
+      ],
+      "focused_decision": "REJECT",
+      "scores": {
+        "eye_eyelid_line": {
+          "decision": "CLEAN",
+          "observation": "Nét cartoon liền và đọc được; cheer cong lên, sleep cong xuống. Nét xám trên nền đen tương phản vừa, vẫn thấy. Không yêu cầu mí thật hoặc mắt photorealistic."
+        },
+        "periocular_fur": {
+          "decision": "REJECT",
+          "findings": [
+            {
+              "bbox_xyxy": [
+                377,
+                447,
+                483,
+                549
+              ],
+              "observation": "Dưới mắt ngủ trắng có mảng trơn hình lá và lông kéo vòng; trên mắt đen còn có dải mặt gấp tối với đoạn sáng nhỏ.",
+              "severity": "moderate"
+            }
+          ]
+        },
+        "head_outline": {
+          "decision": "CLEAN",
+          "observation": "Trong phần nhìn thấy, biên đầu, trán/sống mũi và hàm liên tục; chưa thấy đứt đường bao hay lỗ xuyên nền chắc chắn. Không chấm chi tiết lông/mảng tối bên trong má thành lỗi silhouette.",
+          "limitation": "Phần tai bị khung ảnh cắt ở một số góc near; không chứng nhận phần ngoài khung."
+        }
+      },
+      "inherited_source_region_notes": [
+        {
+          "bbox_xyxy": [
+            530,
+            783,
+            668,
+            912
+          ],
+          "observation": "Các phiến lông tam giác và mép sáng/tối ở má/cổ vẫn thấy. Ghi riêng vào nhóm hiện tượng nguồn đã được đối chiếu trước theo phạm vi người dùng; không dùng làm bằng chứng sạch của mắt hay toàn ảnh.",
+          "inheritance_status": "source-region carryover context only; not reverified against baseline for dev112"
+        }
+      ],
+      "separate_cheek_observations_unassigned_origin": [
+        {
+          "bbox_xyxy": [
+            689,
+            585,
+            715,
+            625
+          ],
+          "observation": "Vệt tối nhọn gần mép má phải ảnh; chưa xác nhận xuyên nền.",
+          "origin": "UNDETERMINED; do not automatically label inherited",
+          "through_hole_confirmed": false
+        }
+      ],
+      "whole_image_approval": false
+    }
+  ],
+  "limits": [
+    "Đã mở đúng 12 PNG liệt kê trong JSON bằng view_image, nguyên ảnh native1024. Không mở ảnh bản khác trong lượt này; không crop, resize hoặc montage.",
+    "Không đọc code, log, docs, báo cáo lịch sử hoặc nội dung sửa; không browser/Blender, không sửa model/code. Chỉ ghi hai tệp báo cáo được yêu cầu.",
+    "Đánh giá mù theo ảnh hiện tại đối với mắt/mi, chất lông quanh mắt và đường bao đầu. Không suy luận implementation hoặc nội dung đã sửa.",
+    "Có nhận biết từ hội thoại rằng nhóm má/cổ nguồn đã được đối chiếu trước; các ghi chú kế thừa chỉ dùng để tách phạm vi. Không khẳng định từng chi tiết má của dev112 đã có baseline khi chưa mở lại cặp baseline trong lượt này.",
+    "Các khe tối tam giác trên má được ghi riêng với nguồn gốc chưa xác định, không tự gán kế thừa và không dùng chúng để REJECT phần mắt. Chưa xác nhận khe là lỗ xuyên, bóng hay mặt chồng chỉ từ PNG.",
+    "Tọa độ bbox pixel ước lượng, gốc trên trái, [xmin,ymin,xmax,ymax], có thể lệch vài pixel. Không phải phép đo topology.",
+    "Chấp nhận nét mắt/miệng cartoon và pattern lông đen/trắng. Mảng đen quanh mắt không tự nó là miếng dán. Lỗi được ghi vì có vùng trơn, vệt kéo vòng hoặc mép đa giác trong cùng màu lông; không khẳng định có miếng dán vật lý.",
+    "CLEAN ở từng tiêu chí nghĩa là không thấy lỗi chắc chắn trong phần ảnh nhìn được; không đồng nghĩa toàn ảnh CLEAN. Nguồn má/cổ còn hạn chế và các vùng ngoài khung không được chứng nhận.",
+    "Đây là chẩn đoán WIP, chưa phải approval cuối; ảnh tĩnh không xác minh chuyển động hoặc độ đọc ở kích thước chơi thực tế."
+  ]
+}

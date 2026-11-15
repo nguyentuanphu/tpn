@@ -19,7 +19,9 @@ for path, ceiling in zip(map(Path, sys.argv[1:]), (800*1024, 400*1024)):
     assert max(len(s['joints']) for s in doc['skins']) == 20
     lids = [m for m in doc['materials'] if m['name'].startswith(('meshy-cow-shut', 'meshy-cow-joy'))]
     has_ink=any('-ink-'in m['name']for m in lids)
-    assert len(lids)==(8 if has_ink else 4)
+    has_sources=any(m['name'].startswith('meshy-cow-open')for m in doc['materials'])
+    expected_lids=(4,8) if has_sources else ((8,) if has_ink else (4,))
+    assert len(lids) in expected_lids
     for mat in lids:
         assert mat.get('alphaMode','OPAQUE')==('OPAQUE'if'-ink-'in mat['name']else'BLEND'), 'Incorrect lid/crease alpha mode: '+mat['name']
         tex = doc['textures'][mat['pbrMetallicRoughness']['baseColorTexture']['index']]

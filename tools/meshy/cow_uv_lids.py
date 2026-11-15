@@ -177,7 +177,7 @@ def prepare(o,px,center,r,coat):
     # pixels are not an exposed pupil, lash or neutral sclera.
     pigment=feature&hit&region&~native_cream
     if coat=='light':pigment&=~((lum>.5)&(px[...,0]-px[...,1]>.025)&(px[...,1]-px[...,2]>.035))
-    return dict(fill=fill,alpha=alpha,world=pos,valid=valid,opening=opening,eyeUV=[w,h]+rle(eye),pigmentUV=[w,h]+rle(pigment),nativeUV=[w,h]+rle(native_cream),bounds=bounds,origin=(x0,y0),size=n,bodySize=(w,h),source=img)
+    return dict(fill=fill,repairWeight=correction,alpha=alpha,world=pos,valid=valid,opening=opening,eyeUV=[w,h]+rle(eye),pigmentUV=[w,h]+rle(pigment),nativeUV=[w,h]+rle(native_cream),bounds=bounds,origin=(x0,y0),size=n,bodySize=(w,h),source=img)
 
 
 def supersample(data,factor=3):

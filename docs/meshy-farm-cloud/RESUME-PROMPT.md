@@ -1,14 +1,16 @@
-Trạng thái tiếp quản 15/11/2026 23:09 AEDT: **WIP108 chưa đủ cổng, chủ chưa duyệt cow.**
+Trạng thái tiếp quản 16/11/2026 00:20 AEDT: **WIP114 chưa đủ cổng, chủ chưa duyệt cow.**
 
-Nhánh meshy-farm-cloud hiện có, /workspace/tpn-farm; /workspace/tpn là worktree có sửa của chủ, không đụng. Fetch/pull không reset/tạo lại/merge main. Cloud đã phục hồi sau lỗi executor, server riêng8799.
+### Checkpoint 16/11/2026 00:20 AEDT — WIP114, chưa duyệt
 
-Runtime108:20bone/10clip, GLB/alpha/800–400KiB đạt, far<21000tri. Quick18ca còn5lỗi (lid21,rim24,coverage13pixel; mouth/stray/eyes khôngvượt, silhouette5khôngvượt). Đangchạy /workspace/cow-fit/r17-dev108/selftest/ đúng cwdtests. Selftest1076plantthân+13plantmặt caught, controlthân cònstretch/mắt; khôngdùng làmkếtquả108. Thử103alphaallviewtrongsocket tạo lỗ đãloại;105furtrắng/UVtri-movement regression đãloại. ChưaR17sạch.
+Đã thay lớp phủ lông bằng lông trên thân đầu thật; hai mảng mắt nguồn là mesh riêng có thể thu vào trong khi nhắm, bốn nét mi bám đầu. Da đầu không còn bị kéo theo bone thu mắt. Giữ 20 bone, 10 clip. Runtime114 gần701424byte/39318tri, xa361708byte/16640tri, GLB/alpha/800–400KiB đạt. Mắt nguồn dùng ảnh gốc chiếu liên tục lên đầu, không vẽ lại mắt; đóng/mở STEP để tránh chồng hai trạng thái.
 
-fit_animal.py: da nhắm gridtheonativeheadC1,khôngcopythànhnhãncầu,giữfur/mõm,giới hạn trongsilhouettehead,RGBgutterblackfur;lineopaque,narrowhighlight.108mắtmở vàothêm6–8mm,hướngretractthêmvàotronggiảmstretch. UVfullaperturegiữchoRGBcheck,Kpigmentnguồngốc riêng;coverageproofbodyopaque/currentK+neutralopenK. Khônghạ6/12. SourceEyeKsubsetUV/minpixels đượcvalidate;coveragecóplantgỡmi thật. Cầnchạytypes/full/selftestcuối.
+**Chưa sạch:** quick114 có2/18ca lỗi rim do lông trắng vùng mắt quá mịn (worst4837); lidworst9 khôngvượt12, mouth/stray/eyes/silhouette0. Đã tự xem sad+cheer+sleep1024px, vùng lông trơn còn rõ. Full thân112 có120/120đạt nhưng không thay kiểm cuối114. Selftest114 đúng cwdtests:31ca thân và2ca mặt đối chứng đều đạt, bắt đủ6plant thân+13plant mặt; không hạ ngưỡng. Fixture vòng trong được đặt đủ lớn để thực sự tạo mép trong aperture; plant coverage gỡ nét mi thật phân biệt với ID vùng da đầu. Kiểm native-fur loại màu hồng mõm khỏi donor, không miễn lỗi bên trong aperture.
 
-Báocáo99REJECTvàđốichiếuR16 tạicow/wip-reviews/trial99/:18/20vùngcảhaibộ,N6/F12dảirăngtrắngngangởmõmchỉ99;phảixemlại trênbảncuối. Khôngphảisoátcuối. Cổng:120thân+198mặt,6+13plants,types,242ảnhnative1024tựxem+ngườisoimù,mọilỗichủkhoanh;sạchmớiphimnear/farphát1×tớiended,3thiếtbịtắtguides,đưaảnh/phimtrựctiếprồipopupduyệt.
+Người soi112 từ chối12/12ảnh vì vùng lông quanh mắt trơn/hướng vòng; giữ nguyên báo cáo ở cow/wip-reviews/trial112/. Đang nhờ soi114 riêng. Bản115 đang build: lấy vân lông thật theo hướng mặt, cân biên độ theo donorUV, giữ fade và JPEG85 ở lần bake cuối; chưa có kết quả, chưa phải R17. Phải chạy lại full120+198/selftest/types, 242ảnh1024 tự xem+soát mù, mọi lỗi chủ khoanh; sạch mới phim phát thật và ba thiết bị tắt guides. Chưa hỏi approval.
 
-Chỉcow;khôngMeshy/API/chi thêm.40credit lịch sử;1574làGET13/11.Khôngin/commit/uploadkey/SQLite/accountngoàirepo.Sheep/chickendừng.Khôngmain/deploy/version/force-push.HourlyWIPpushđượcchủcho,khôngphảiapproval.CI43622973936de621628b365/377,12lỗi;khôngbáoCIxanhhayreadyforRelease.
+Không Meshy/API/credit mới; cow40credit lịch sử, sốdư1574làGET13/11. Sheep/chicken dừng. Không merge/deploy/version/force-push. Push WIP theo giờ không phải owner approval. CI chưa xanh: run43622973936 trên de621628b365/377,12lỗi, chưa có CI mới.
+
+Worktree /workspace/tpn-farm, nhánh meshy-farm-cloud hiện có. Không đụng /workspace/tpn của chủ. Server8799. Build /workspace/cow-fit/r17-dev115 đang chạy; đọc fit.log/face-quick.log trước thao tác. Không chạy Blender cạnh browser audit. Sổ tiền/key/account ngoài repo không đụng.
 
 ---
 Nội dung chuyển tiếp cũ dưới đây là lịch sử R16, không phải tình trạng runtime hiện nay:

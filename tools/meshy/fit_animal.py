@@ -124,12 +124,12 @@ def load(path):
     o.name = 'creature-' + KIND
     return o
 
-def final_cow_body_texture(o):
+def final_cow_body_texture(o, quality=None):
     # glTF 4.3 uses export_image_quality, not the legacy export_jpeg_quality.
     # More importantly, construct lids from the exact final body JPEG, so a
     # second body-only encode cannot shift the coat hue under a lossless PNG lid.
     image,_=tex_of(o);path=os.path.join(OUT,'cow-body-'+('far' if FARLOD else 'near')+'.jpg')
-    image.file_format='JPEG';quality=FIX.get('jpeg_far' if FARLOD else 'jpeg_near',65)
+    image.file_format='JPEG';quality=quality if quality is not None else FIX.get('jpeg_far' if FARLOD else 'jpeg_near',65)
     image.save(filepath=path,quality=quality)
     encoded=bpy.data.images.load(path,check_existing=False);encoded.pack()
     for node in o.data.materials[0].node_tree.nodes:
@@ -467,6 +467,11 @@ def make(path, J, M, out, tex_px):
     for name, L, pose in moves: ground(o, arm, wc.clip(arm, name, L, damp(pose)))
     for name, L, pose in extra: ground(o, arm, wc.clip(arm, name, L, pose))
     moves = moves + extra
+    if FIX.get('separate_eye_sources'):
+        for action in bpy.data.actions:
+            for fc in action.fcurves:
+                if any(f'pose.bones["{name}"]'in fc.data_path for name in ('shut0','shut1','joy0','joy1','retract0','retract1'))and(fc.data_path.endswith('.scale')or fc.data_path.endswith('.location')):
+                    for key in fc.keyframe_points:key.interpolation='CONSTANT'
     for pb in arm.pose.bones: pb.rotation_euler = (0, 0, 0); pb.location = (0, 0, 0); pb.scale = (1, 1, 1)
     bpy.ops.export_scene.gltf(filepath=out, export_format='GLB', export_animations=True, export_animation_mode='ACTIONS', export_lights=False,
                               export_cameras=False, export_apply=False, export_extras=bool(FIX.get('textured_fur_lids')), export_skins=True, export_morph=False, use_selection=False,
@@ -483,6 +488,11 @@ def make_comp(o, J, M, out, tex_px):
         face_pieces(o, arm, J, Fc); material(o, tex_px)
     moves = wc.companion_moves(KIND, A, arm, names + FACE_BONES, F, size)
     for name, L, pose in moves: wc.clip(arm, name, L, tail_sway(pose, name))
+    if FIX.get('separate_eye_sources'):
+        for action in bpy.data.actions:
+            for fc in action.fcurves:
+                if any(f'pose.bones["{name}"]'in fc.data_path for name in ('shut0','shut1','joy0','joy1','retract0','retract1'))and(fc.data_path.endswith('.scale')or fc.data_path.endswith('.location')):
+                    for key in fc.keyframe_points:key.interpolation='CONSTANT'
     for pb in arm.pose.bones: pb.rotation_euler = (0, 0, 0); pb.location = (0, 0, 0); pb.scale = (1, 1, 1)
     bpy.ops.export_scene.gltf(filepath=out, export_format='GLB', export_animations=True, export_animation_mode='ACTIONS', export_lights=False,
                               export_cameras=False, export_apply=False, export_extras=bool(FIX.get('textured_fur_lids')), export_skins=True, export_morph=False, use_selection=False,
@@ -778,7 +788,7 @@ def face(P, F_, eye=1.0, big=1.0, brow_y=0.0, brow_tilt=0.0, smile=1.0, frown=Fa
         P['shut%d' % i] = ((0, 0, 0), (0, 0, 0), one if closed else tiny)
         P['joy%d' % i] = ((0, 0, 0), (0, 0, 0), one if happy else tiny)
         if FIX.get('eye_retract'):
-            P['retract%d' % i] = ((0,0,0),((.025 if i==0 else -.025)if FIX.get('native_grid_lids')and(closed or happy)else 0,0,-FIX['eye_retract'] if closed or happy else 0),one)
+            P['retract%d' % i] = ((0,0,0),((.025 if i==0 else -.025)if FIX.get('native_grid_lids')and(closed or happy)else 0,0,-FIX['eye_retract'] if closed or happy else 0),tiny if FIX.get('separate_eye_sources')and(closed or happy)else one)
     s = max(.001, jaw)
     # A curved muzzle is approximately quadratic in its tangent plane. Its
     # normal depth must scale by s² as the opening scales by s, or skin cuts
@@ -987,7 +997,7 @@ def surface_lid(o, arm, name, center, side, up, picture, picture_radius, eye_ind
             # The eye shell closes independently of the protruding muzzle.
             original=o.data.vertices[vi].co
             if original.z<c[2]-.06 or original.y<c[1]-.075:weight=0.
-            if available>0:
+            if available>0 and not FIX.get('separate_eye_sources'):
                 head.add([vi],available-weight,'REPLACE');retract.add([vi],weight,'REPLACE')
 
     if FIX.get('native_grid_lids'):
@@ -1066,6 +1076,99 @@ def surface_lid(o, arm, name, center, side, up, picture, picture_radius, eye_ind
     obj.parent=arm;mod=obj.modifiers.new('rig','ARMATURE');mod.object=arm
     return obj
 
+def cow_finish_fur_head(o,arm,Fc):
+    """Sculpt the unchanging furry head onto its native surrounding curvature.
+    Original eye artwork follows the same surface; only that artwork blinks.
+    """
+    me=o.data;V=np.array([v.co[:]for v in me.vertices]);delta=np.zeros(len(V))
+    old=np.array([n.vector[:]for n in me.corner_normals])
+    for index in (0,1):
+        _,change=closed_eye_shape(o,np.array(Fc[f'eye{index}']));delta+=change
+    for v,d in zip(me.vertices,delta):v.co.y+=float(d)
+    me.update();me.calc_loop_triangles();P=np.array([v.co[:]for v in me.vertices])
+    _,weld=np.unique(np.rint(P*1e5).astype(np.int64),axis=0,return_inverse=True)
+    shared=np.zeros((weld.max()+1,3))
+    for t in me.loop_triangles:
+        a,b,c=P[list(t.vertices)];normal=np.cross(b-a,c-a)
+        if any(abs(delta[k])>1e-6 for k in t.vertices)and normal[1]>0:normal=-normal
+        for k in t.vertices:shared[weld[k]]+=normal
+    shared/=np.maximum(np.linalg.norm(shared,axis=1,keepdims=True),1e-9)
+    normals=[]
+    for loop in me.loops:
+        i=loop.vertex_index;blend=min(1.,abs(delta[i])/.002);n=old[loop.index]*(1-blend)+shared[weld[i]]*blend;n/=max(float(np.linalg.norm(n)),1e-9);normals.append(tuple(n))
+    me.normals_split_custom_set(normals);bvh=bvh_of(o)
+    for index in (0,1):
+        source=bpy.data.objects[f'meshy-cow-open{index}'];normals=[]
+        for v in source.data.vertices:
+            loc,nor,_,_=bvh.ray_cast(Vector((v.co.x,-2,v.co.z)),Vector((0,1,0)))
+            if loc is None:raise ValueError('Original eye source misses sculpted head')
+            if nor.y>0:nor=-nor
+            v.co=loc+nor*.0008;normals.append(tuple(nor))
+        source.data.update();source.data.normals_split_custom_set_from_vertices(normals)
+        # Include both source and base ROI in the common rest-world bounds.
+        b=np.array(o[f'svEye{index}B']);vs=np.array([v.co[:]for v in source.data.vertices]);points=np.column_stack((vs[:,0],vs[:,2],-vs[:,1]))
+        b[:3]=np.minimum(b[:3],points.min(0)-.002);b[3:]=np.maximum(b[3:],points.max(0)+.002);o[f'svEye{index}B']=b.tolist()
+        # The visible crease rides the sculpted head, not the old socket.
+        for kind in ('shut','joy'):
+            ink=bpy.data.objects[f'meshy-cow-{kind}-ink-{kind}{index}'];ns=[]
+            for v in ink.data.vertices:
+                loc,nor,_,_=bvh.ray_cast(Vector((v.co.x,-2,v.co.z)),Vector((0,1,0)))
+                if loc is None:raise ValueError('Crease misses sculpted head')
+                if nor.y>0:nor=-nor
+                v.co=loc+nor*.00025;ns.append(tuple(nor))
+            ink.data.update();ink.data.normals_split_custom_set_from_vertices(ns)
+            for key in ('svLash','svLashBand'):
+                values=np.array(ink[key]).reshape(-1,3)
+                for row in values:
+                    loc,nor,_,_=bvh.ray_cast(Vector((float(row[0]),-2,float(row[1]))),Vector((0,1,0)))
+                    if loc is None:raise ValueError('Crease annotation misses sculpted head')
+                    if nor.y>0:nor=-nor
+                    point=loc+nor*.00025;row[:]=(point.x,point.z,-point.y)
+                ink[key]=values.ravel().tolist()
+    print('SCULPTED_NATIVE_FUR_HEAD',int((np.abs(delta)>1e-6).sum()),'max',float(np.max(np.abs(delta))),flush=True)
+
+
+def cow_open_eye_source(o,arm,data,index,px):
+    """Bake the original front eye onto one continuous head surface.
+    Retain the source painting, without collapsing wrapped eye-wall UVs.
+    """
+    from scipy.ndimage import binary_dilation
+    image_rgb=data['original_front'];mask=data['front_aperture'];TP=len(mask);P=data['front_radius'];c=np.array(data['front_center'])
+    inner=binary_dilation(mask,iterations=2);outer=binary_dilation(inner,iterations=1);alpha=inner.astype(float);alpha[outer&~inner]=.5;guard=binary_dilation(outer,iterations=2)
+    rgba=np.concatenate((image_rgb,alpha[...,None]),axis=-1).astype(np.float32);rgba[~guard,:3]=0
+    lum=image_rgb@np.array((.3,.59,.11));sat=(image_rgb.max(-1)-image_rgb.min(-1))/np.maximum(image_rgb.max(-1),1e-6)
+    yy,xx=(np.mgrid[:TP,:TP]+.5)/TP*2*P-P
+    if index==0:pigment=mask&((lum<.4)|((lum>.65)&(sat<.12)))
+    else:pigment=mask&(((lum>.55)&(sat<.17))|((image_rgb[...,0]>image_rgb[...,1]*1.35)&(image_rgb[...,0]-image_rgb[...,1]>.05))|((lum<.25)&(np.hypot(xx,yy)<.75*.042)))
+    def runs(m):
+        d=np.diff(np.r_[False,m.ravel(),False].astype(np.int8));return [TP,TP]+[int(v)for pair in zip(np.flatnonzero(d==1),np.flatnonzero(d==-1)-np.flatnonzero(d==1))for v in pair]
+    o[f'svEye{index}T']=runs(mask);o[f'svEye{index}Q']=runs(pigment)
+    name=f'meshy-cow-open{index}';image=bpy.data.images.new(name,TP,TP,alpha=True);image.file_format='PNG';image.pixels[:]=rgba.ravel();image.pack()
+    ys,xs=np.where(outer);lo=np.array((xs.min(),ys.min()))/TP-.02;hi=(np.array((xs.max(),ys.max()))+1)/TP+.02
+    GN=24 if FARLOD else 32;vertices=[];normals=[];uvs=[];lookup={};bvh=bvh_of(o)
+    for j in range(GN+1):
+        for i in range(GN+1):
+            u,v=lo+(hi-lo)*np.array((i/GN,j/GN));x=c[0]+(2*u-1)*P;z=c[2]+(2*v-1)*P
+            loc,nor,_,_=bvh.ray_cast(Vector((x,-2,z)),Vector((0,1,0)))
+            if loc is None:continue
+            if nor.y>0:nor=-nor
+            lookup[j,i]=len(vertices);vertices.append(tuple(loc+nor*.0008));normals.append(tuple(nor));uvs.append((float(u),float(v)))
+    faces=[]
+    for j in range(GN):
+        for i in range(GN):
+            keys=((j,i),(j,i+1),(j+1,i+1),(j+1,i))
+            if all(k in lookup for k in keys):
+                a,b,d,e=[lookup[k]for k in keys];faces.extend(((a,b,d),(a,d,e)))
+    mesh=bpy.data.meshes.new(name);mesh.from_pydata(vertices,[],faces);mesh.update();uv=mesh.uv_layers.new(name='UVMap')
+    for poly in mesh.polygons:
+        poly.use_smooth=True
+        for li in poly.loop_indices:uv.data[li].uv=uvs[mesh.loops[li].vertex_index]
+    mesh.normals_split_custom_set_from_vertices(normals)
+    mat=bpy.data.materials.new(name);mat.use_nodes=True;mat.surface_render_method='DITHERED';tex=mat.node_tree.nodes.new('ShaderNodeTexImage');tex.image=image;tex.extension='CLIP';bsdf=mat.node_tree.nodes['Principled BSDF'];mat.node_tree.links.new(tex.outputs['Color'],bsdf.inputs['Base Color']);mat.node_tree.links.new(tex.outputs['Alpha'],bsdf.inputs['Alpha']);mesh.materials.append(mat)
+    obj=bpy.data.objects.new(name,mesh);bpy.context.collection.objects.link(obj);group=obj.vertex_groups.new(name=f'retract{index}');group.add(list(range(len(mesh.vertices))),1.,'REPLACE');obj.parent=arm;mod=obj.modifiers.new('rig','ARMATURE');mod.object=arm;obj['svEyeSourceIndex']=index
+    print('ORIGINAL_EYE_FRONT_SOURCE',index,'vertices',len(mesh.vertices),flush=True)
+
+
 def cow_grid_lid(o,arm,name,c,bone_name,data,P):
     """One anterior skin sheet, without the source eyeball's folded walls.
     Its height continues the native head; its texture is sampled frontally from
@@ -1107,7 +1210,7 @@ def cow_grid_lid(o,arm,name,c,bone_name,data,P):
     alpha[~source_art]*=smooth01((edge_distance[~source_art]-.002)/.003)
     image_rgb[protected]=data['frontal_source'][protected]
     key='_grid_image';image=data.get(key)
-    GN=32 if FARLOD else 40;verts=[];normals=[];uvs=[];indices={}
+    GN=28 if FARLOD else 40;verts=[];normals=[];uvs=[];indices={}
     dx=xx[1]-xx[0];dz=zz[1]-zz[0];gy,gx=np.gradient(field,dz,dx)
     middle=(np.array(Fc['eye0'])+np.array(Fc['eye1']))*.5;middle[2]-=.035
     cameras=[]
@@ -1202,8 +1305,8 @@ def cow_grid_lid(o,arm,name,c,bone_name,data,P):
     return obj
 
 
-def cow_mesh_lash(lid,arm,data,c,r,kind,index,curve):
-    me=lid.data;me.calc_loop_triangles();V=[v.co for v in me.vertices];tris=[list(t.vertices)for t in me.loop_triangles]
+def cow_mesh_lash(lid,arm,data,c,r,kind,index,curve,body=None):
+    me=body.data if body is not None else lid.data;me.calc_loop_triangles();V=[v.co for v in me.vertices];tris=[list(t.vertices)for t in me.loop_triangles]
     bvh=BVHTree.FromPolygons(V,tris,all_triangles=True);uvl=me.uv_layers.active.data
     from mathutils.geometry import barycentric_transform
     ew=r*.78;cols,rows=48,16;pixels=np.zeros((rows,cols,4));vertices=[];normals=[];face_rows=4
@@ -1212,8 +1315,12 @@ def cow_mesh_lash(lid,arm,data,c,r,kind,index,curve):
         loc,nor,fi,_=bvh.ray_cast(Vector((float(c[0])+u,-2,z)),Vector((0,1,0)))
         if loc is None:raise ValueError(f'Crease misses {kind}{index}: u={u:.5f}, v={v:.3f}, x={float(c[0])+u:.5f}, z={z:.5f}')
         tri=me.loop_triangles[fi];a,b,d=[me.vertices[k].co for k in tri.vertices];uv=[uvl[k].uv for k in tri.loops]
-        q=barycentric_transform(loc,a,b,d,*(Vector((*x,0))for x in uv));rgb=sample(data['fill'],np.array(q[:2]))
+        q=barycentric_transform(loc,a,b,d,*(Vector((*x,0))for x in uv))
+        if body is not None:
+            picture_uv=(np.array(q[:2])*np.array(data['bodySize'])-np.array(data['origin']))/data['size'];rgb=sample(data['native_fur_fill'],picture_uv)
+        else:rgb=sample(data['fill'],np.array(q[:2]))
         ns=[me.corner_normals[k].vector for k in tri.loops];normal=barycentric_transform(loc,a,b,d,*ns).normalized()
+        if body is not None and normal.y>0:normal=-normal
         return loc,normal,rgb
     for j,u in enumerate(np.linspace(-ew*.85,ew*.85,cols)):
         for b,v in enumerate(np.linspace(-1,1,rows)):
@@ -1441,7 +1548,7 @@ def face_pieces(o, arm, J, Fc):
     """the lids: the head's own surface over each eye (a little in front of it), with its own small picture: the
     painted fur round the eye filled in over the eye, and a lash line ("◡" shut, "^" happy); the open mouth: a soft
     dark oval with a tongue, just under the nose, sunk into the face while shut"""
-    me = o.data; im, px = tex_of(o); uvl = me.uv_layers.active.data
+    me = o.data; im, px = tex_of(o); base_px=px.copy(); uvl = me.uv_layers.active.data
     me.calc_loop_triangles()
     V = np.array([v.co[:] for v in me.vertices]); N = np.array([v.normal[:] for v in me.vertices])
     uv_helper=None
@@ -1543,10 +1650,41 @@ def face_pieces(o, arm, J, Fc):
         uv_data=None
         if uv_helper is not None:
             uv_data=uv_helper.prepare(o,px,c,r,FIX['lid_coat'][i])
+            if FIX.get('separate_eye_sources'):
+                # Quilt in physical head space, then bake back to native UVs.
+                # Quilting directly in the old eyeball UV island stretched
+                # the grain into a smooth/radial oval after sculpting.
+                changed=np.max(np.abs(uv_data['fill']-uv_data['source']),axis=-1)>1e-7
+                paint=changed&uv_data['valid'];positions=uv_data['world'][paint]
+                coordinates=np.column_stack(((positions-c)@side,(positions-c)@up))/(2*P)+.5
+                physical_fill=uv_data['fill'].copy()
+                physical_fill[paint]=sample(fill,coordinates)
+                if i==0:
+                    # Match the amplitude of the real UV donor fur, preserving
+                    # the physical weave direction instead of the eyeball UV fan.
+                    from scipy.ndimage import uniform_filter, binary_erosion
+                    core=uv_data['opening']&binary_erosion(uv_data['valid'],iterations=2)
+                    smooth=uniform_filter(physical_fill,size=(3,3,1),mode='nearest')
+                    native_smooth=uniform_filter(uv_data['fill'],size=(3,3,1),mode='nearest')
+                    luma=np.array((.2126,.7152,.0722))
+                    measured=np.quantile(np.abs((physical_fill-smooth)@luma)[core],.75)
+                    target_grain=np.quantile(np.abs((uv_data['fill']-native_smooth)@luma)[core],.75)
+                    gain=float(np.clip(target_grain/max(measured,1e-6),1,4))
+                    physical_fill=np.clip(smooth+(physical_fill-smooth)*gain,0,1)
+                    print('NATIVE_FUR_GRAIN',i,'gain',gain,'physical',measured,'native',target_grain,flush=True)
+                weight=uv_data['repairWeight'][...,None]
+                uv_data['fill']=physical_fill*weight+uv_data['source']*(1-weight)
+                uv_data['original_front']=img0.copy();uv_data['front_aperture']=eye_aperture.copy();uv_data['front_radius']=P;uv_data['front_center']=c.copy()
+                cow_open_eye_source(o,arm,uv_data,i,px)
+                x0,y0=uv_data['origin'];n=uv_data['size'];target=base_px[y0:y0+n,x0:x0+n]
+                changed=np.max(np.abs(uv_data['fill']-uv_data['source']),axis=-1)>1e-7
+                target[changed]=uv_data['fill'][changed]
+
             o[f'svEye{i}UV']=uv_data['eyeUV'];o[f'svEye{i}K']=uv_data['pigmentUV'];o[f'svEye{i}F']=uv_data['nativeUV']
             b=uv_data['bounds'];lo=np.array((b[0],b[2],-b[4]));hi=np.array((b[3],b[5],-b[1]));o[f'svEye{i}B']=[round(float(x),6)for x in np.r_[lo,hi]]
             print('EYE_UV',i,'size',uv_data['size'],'opening',int(uv_data['opening'].sum()),'origin',uv_data['origin'],flush=True)
             if DEBUG:np.savez_compressed(os.path.join(OUT,f'eye-uv-{i}-{len(px)}.npz'),**{k:uv_data[k]for k in ('fill','alpha','world','opening','source','valid')})
+            uv_data['native_fur_fill']=uv_data['fill'].copy()
             uv_data['frontal_fill']=fill.copy()
             uv_data['frontal_source']=img0.copy()
             uv_data['frontal_native_cream']=fur_lid_fill.native_cream.copy()
@@ -1597,7 +1735,7 @@ def face_pieces(o, arm, J, Fc):
                         stroke_bvh=BVHTree.FromPolygons([Vector(v)for v in closed_vertices],[list(p.vertices)for p in me.polygons],all_triangles=False)
                     lash_offset=FIX['surface_lid_forward']
                     if FIX.get('mesh_lash'):
-                        stroke_bvh=BVHTree.FromPolygons([v.co for v in lid.data.vertices],[list(p.vertices)for p in lid.data.polygons],all_triangles=False);lash_offset=.00025
+                        stroke_bvh=bvh_of(o)if FIX.get('separate_eye_sources')else BVHTree.FromPolygons([v.co for v in lid.data.vertices],[list(p.vertices)for p in lid.data.polygons],all_triangles=False);lash_offset=.00025
                     us=np.linspace(-ew*.85,ew*.85,30);half_width=r*.09+px_*.75
                     for j,u in enumerate(us):
                         frm=c+side*(u+ecx)+up*(ecy+curve(u))+nrm*(1.5 if FIX.get('closed_native_surface') else ray_distance)
@@ -1613,7 +1751,12 @@ def face_pieces(o, arm, J, Fc):
                             if loc is None:raise ValueError(f'Lash band misses {kind}{i}, u={edge_u:.5f}, width={local_width:.5f}, sign={sign}')
                             stroke_band.extend(three(np.array(loc[:])+np.array(normal[:])*lash_offset))
                     lid['svLash']=stroke;lid['svLashBand']=stroke_band;lid['svLashWidths']=stroke_widths;lid['svLashBone']=f'{kind}{i}';lid['svLashWidth']=round(half_width,6);lid['svEyeIndex']=i
-                    if FIX.get('mesh_lash'):cow_mesh_lash(lid,arm,uv_data,c,r,kind,i,curve)
+                    if FIX.get('mesh_lash'):
+                        ink=cow_mesh_lash(lid,arm,uv_data,c,r,kind,i,curve,o if FIX.get('separate_eye_sources')else None)
+                        if FIX.get('separate_eye_sources'):
+                            for key,value in lid.items():ink[key]=value
+                            bpy.data.objects.remove(lid,do_unlink=True)
+
                 continue
             # the piece: a fine grid laid on the head's surface over the eye (rays along -normal), a little in front, its
             # picture straight on; no gaps (the head's own triangles, copied, showed the eye through cracks at their edges)
@@ -1649,6 +1792,16 @@ def face_pieces(o, arm, J, Fc):
                 mat.surface_render_method = 'DITHERED'
             g = po.vertex_groups.new(name=f'{kind}{i}'); g.add(list(range(len(pm.vertices))), 1.0, 'REPLACE')
             po.parent = arm; md = po.modifiers.new('rig', 'ARMATURE'); md.object = arm
+    if FIX.get('separate_eye_sources'):
+        # Keep every native head vertex fixed to its original head/neck blend.
+        head=o.vertex_groups['head'];retracts=[o.vertex_groups[f'retract{i}']for i in (0,1)]
+        for v in me.vertices:
+            weights={g.group:g.weight for g in v.groups};total=weights.get(head.index,0.)+sum(weights.get(g.index,0.)for g in retracts)
+            if total:head.add([v.index],total,'REPLACE')
+            for g in retracts:g.add([v.index],0.,'REPLACE')
+        cow_finish_fur_head(o,arm,Fc)
+        im.pixels[:]=np.concatenate((base_px,np.ones((*base_px.shape[:2],1))),axis=-1).astype(np.float32).ravel()
+        final_cow_body_texture(o,quality=85);o['svEyeSourceMode']='separate-original-eyes'
     # the open mouth (owner, 11 Nov 2026: "có thử khi há miệng chưa"): a piece laid on the muzzle's own surface, as the
     # lids are, with its own picture: the fur there as painted and an open mouth (dark red, a pink tongue below) in it.
     # Grown from its middle by the jaw bone. (A round piece set into the face stuck out of both cheeks from below.)

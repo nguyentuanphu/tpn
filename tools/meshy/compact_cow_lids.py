@@ -41,7 +41,7 @@ n,kind=struct.unpack('<II',raw[12:20]);doc=json.loads(raw[20:20+n]);binary=raw[2
 assert len(doc['buffers'])==1
 images=set()
 for material in doc['materials']:
-    if material.get('name','').startswith(('meshy-cow-shut','meshy-cow-joy')):
+    if material.get('name','').startswith(('meshy-cow-shut','meshy-cow-joy','meshy-cow-open')):
         texture=doc['textures'][material['pbrMetallicRoughness']['baseColorTexture']['index']]
         samplers=doc.setdefault('samplers',[])
         sampler=dict(samplers[texture['sampler']]) if 'sampler' in texture else {}
@@ -49,7 +49,16 @@ for material in doc['materials']:
         texture['sampler']=len(samplers);samplers.append(sampler)
         images.add(doc['images'][texture['source']]['bufferView'])
 has_ink=any('-ink-'in m.get('name','')for m in doc['materials'])
-assert len(images)==(6 if has_ink else 4)
+has_sources=any(m.get('name','').startswith('meshy-cow-open')for m in doc['materials'])
+has_fur=any(m.get('name','').startswith(('meshy-cow-shut','meshy-cow-joy'))and'-ink-'not in m.get('name','')for m in doc['materials'])
+assert len(images)==((6 if has_ink and has_fur else 4)+(2 if has_sources else 0))
+if has_sources:
+    for animation in doc.get('animations',[]):
+        for channel in animation['channels']:
+            target=channel['target'];name=doc['nodes'][target['node']].get('name','')
+            if name in ('shut0','shut1','joy0','joy1','retract0','retract1')and target['path']in('scale','translation'):
+                sampler=dict(animation['samplers'][channel['sampler']]);sampler['interpolation']='STEP';channel['sampler']=len(animation['samplers']);animation['samplers'].append(sampler)
+
 payload=[];offset=0;before=after=0
 for index,view in enumerate(doc['bufferViews']):
     data=binary[view.get('byteOffset',0):view.get('byteOffset',0)+view['byteLength']]

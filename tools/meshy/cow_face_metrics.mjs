@@ -4,7 +4,7 @@ export function validateCowEyeMetadata(metadata,centers){
  const dot=(a,b)=>a.reduce((s,v,i)=>s+v*b[i],0);
  if(!metadata)throw Error('Missing actual-eye aperture metadata');
  return [0,1].map(i=>{
-  const a=Object.fromEntries(['C','S','U','N','H','D','M','P','UV','B','F','K'].map(k=>[k,metadata[`svEye${i}${k}`]]));
+  const a=Object.fromEntries(['C','S','U','N','H','D','M','P','UV','B','F','K','T','Q'].map(k=>[k,metadata[`svEye${i}${k}`]]));
   if(!['C','S','U','N'].every(k=>finite(a[k],3))||!finite(a.D,2)||!Array.isArray(a.H)||a.H.length<6||a.H.length>128||a.H.length%2||!a.H.every(Number.isFinite)||a.D[1]<=a.D[0]||a.D[1]-a.D[0]>.15)throw Error('Invalid actual-eye aperture metadata');
   if(!Number.isFinite(a.P)||a.P<=0||a.P>.2||!Array.isArray(a.M)||a.M.length<3||a.M.length%2!==1||!a.M.every(Number.isInteger)||a.M[0]<64||a.M[0]>512)throw Error('Missing/invalid actual-eye pixel mask');
   const pixels=a.M[0]**2;let end=0,total=0;
@@ -16,6 +16,15 @@ export function validateCowEyeMetadata(metadata,centers){
   let area=0;for(let j=0;j<a.H.length;j+=2){const k=(j+2)%a.H.length;area+=a.H[j]*a.H[k+1]-a.H[k]*a.H[j+1];}
   if(area<=0)throw Error('Invalid actual-eye hull winding/area');
   if(a.UV!==undefined){
+   if(a.T||a.Q){
+    const valid=m=>Array.isArray(m)&&m.length>=4&&m.length%2===0&&m.every(Number.isInteger)&&m[0]>=64&&m[0]<=512&&m[1]===m[0];
+    if(!valid(a.T)||!valid(a.Q)||a.T[0]!==a.Q[0])throw Error('Invalid original frontal eye masks');
+    const outer=new Uint8Array(a.T[0]*a.T[1]);let total=0,end=0;
+    for(let k=2;k<a.T.length;k+=2){if(a.T[k]<end||a.T[k+1]<=0||a.T[k]+a.T[k+1]>outer.length)throw Error('Invalid frontal eye aperture runs');outer.fill(1,a.T[k],a.T[k]+a.T[k+1]);end=a.T[k]+a.T[k+1];total+=a.T[k+1];}
+    if(total<64||total>outer.length*.6)throw Error('Untrustworthy frontal eye aperture');
+    let count=0;end=0;for(let k=2;k<a.Q.length;k+=2){if(a.Q[k]<end||a.Q[k+1]<=0||a.Q[k]+a.Q[k+1]>outer.length)throw Error('Invalid frontal eye pigment runs');for(let j=a.Q[k];j<a.Q[k]+a.Q[k+1];j++)if(!outer[j])throw Error('Frontal pigment outside original aperture');end=a.Q[k]+a.Q[k+1];count+=a.Q[k+1];}
+    if(count<8||count>total)throw Error('Missing original frontal eye pigment');
+   }
    if(!Array.isArray(a.UV)||a.UV.length<4||a.UV.length%2||!a.UV.every(Number.isInteger)||a.UV[0]<64||a.UV[0]>2048||a.UV[1]<64||a.UV[1]>2048||!finite(a.B,6))throw Error('Invalid source UV eye mask');
    let end=0,total=0;for(let k=2;k<a.UV.length;k+=2){const start=a.UV[k],length=a.UV[k+1];if(start<end||length<=0||start+length>a.UV[0]*a.UV[1])throw Error('Invalid source UV eye runs');end=start+length;total+=length;}
    if(total<8||total>a.UV[0]*a.UV[1]*.1||[0,1,2].some(k=>a.B[k]>=a.B[k+3]||a.B[k+3]-a.B[k]>.2))throw Error('Unbounded source UV eye region');
@@ -83,7 +92,7 @@ export function cowFaceMetrics(current,reference,width,height,eyes,mouth,closed,
  const N=width*height,flags={lid:new Uint8Array(N),mouth:new Uint8Array(N),stray:new Uint8Array(N),rim:new Uint8Array(N),eyes:new Uint8Array(N),silhouette:new Uint8Array(N)};
  if(!Number.isInteger(width)||!Number.isInteger(height)||width<=0||height<=0||current.length!==N*4||reference.length!==N*4||(eyeIds&&eyeIds.length!==N)||(lashMask&&lashMask.length!==N)||(referenceEyeIds&&referenceEyeIds.length!==N)||(mouthIds&&(mouthIds.length!==N||mouthIds.some(id=>id!==0&&id!==1)))||(mouthSurfaceIds&&(mouthSurfaceIds.length!==N||mouthSurfaceIds.some(id=>id!==0&&id!==1))))throw Error('Invalid face render buffers');
  for(const ids of [eyeIds,referenceEyeIds])if(ids&&ids.some(id=>id!==0&&id!==1&&id!==2))throw Error('Invalid actual-eye IDs');
- if(coverageProof&&(!coverageProof.eyeIds||coverageProof.eyeIds.length!==N||coverageProof.eyeIds.some(id=>id!==0&&id!==1&&id!==2)||!coverageProof.sourceIds||coverageProof.sourceIds.length!==N||coverageProof.sourceIds.some(id=>id!==0&&id!==1&&id!==2)||!coverageProof.rgba||coverageProof.rgba.length!==N*4))throw Error('Invalid current-body eye occlusion proof');
+ if(coverageProof&&(!coverageProof.eyeIds||coverageProof.eyeIds.length!==N||coverageProof.eyeIds.some(id=>id!==0&&id!==1&&id!==2)||!coverageProof.coverIds||coverageProof.coverIds.length!==N||coverageProof.coverIds.some(id=>id!==0&&id!==1&&id!==2)||!coverageProof.sourceIds||coverageProof.sourceIds.length!==N||coverageProof.sourceIds.some(id=>id!==0&&id!==1&&id!==2)||!coverageProof.rgba||coverageProof.rgba.length!==N*4))throw Error('Invalid current-body eye occlusion proof');
  if(eyes.some(e=>![e.x,e.y,e.rx,e.ry].every(Number.isFinite)||e.rx<=0||e.ry<=0||![0,1].includes(e.index))||![mouth.x,mouth.y,mouth.rx,mouth.ry].every(Number.isFinite))throw Error('Invalid projected face frame');
  const coverageErrors=[];
  if(closed&&!eyes.length)coverageErrors.push('Missing eye regions');
@@ -100,6 +109,16 @@ export function cowFaceMetrics(current,reference,width,height,eyes,mouth,closed,
  // a pale skin patch. Stay within the same visible lid at occlusion boundaries.
  const average=(p,i,id=0,omitLash=0,openingOnly=false)=>{const x=i%width,y=i/width|0,sum=[0,0,0];let n=0;for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){const u=x+dx,v=y+dy,j=v*width+u;if(u<0||u>=width||v<0||v>=height||!p[4*j+3]||(id&&eyeIds&&eyeIds[j]!==id)||(openingOnly&&referenceEyeIds?.[j]!==id)||(omitLash&&eyeIds?.[j]===id&&(lashMask?.[j]&omitLash)))continue;for(let k=0;k<3;k++)sum[k]+=p[4*j+k]/255;n++;}return sum.map(v=>v/Math.max(1,n));};
  const colourDistance=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1],a[2]-b[2]);
+ // The opaque native head in the same pose is an independent colour witness.
+ // A lid reproducing its actual fur is not a grey patch merely because the
+ // open-eye reference had an iris/sclera at that screen coordinate. Keep the
+ // existing 1px/.08 registration tolerance; never use eye pigment as witness.
+ const nativeBodyMatch=i=>{
+  if(!coverageProof||coverageProof.eyeIds[i]||coverageProof.rgba[4*i+3]<251)return false;
+  const x=i%width,y=i/width|0;
+  for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){const u=x+dx,v=y+dy,j=v*width+u;if(u<0||u>=width||v<0||v>=height||coverageProof.eyeIds[j]||coverageProof.rgba[4*j+3]<251)continue;if(dist(current,i,coverageProof.rgba,j)<.08)return true;}
+  return false;
+ };
  const median=a=>{a.sort((x,y)=>x-y);return a[a.length>>1]??0;};
  const groups=mask=>{const seen=new Uint8Array(N),out=[];for(let i=0;i<N;i++)if(mask[i]&&!seen[i]){const g=[],st=[i];seen[i]=1;while(st.length){const j=st.pop();g.push(j);const x=j%width,y=j/width|0;for(const [dx,dy]of[[1,0],[-1,0],[0,1],[0,-1]]){const u=x+dx,v=y+dy,k=v*width+u;if(u>=0&&u<width&&v>=0&&v<height&&mask[k]&&!seen[k]){seen[k]=1;st.push(k);}}}out.push(g);}return out.sort((a,b)=>b.length-a.length);};
  const count=mask=>{for(const g of groups(mask))if(g.length<4)for(const i of g)mask[i]=0;return mask.reduce((a,b)=>a+b,0);};
@@ -135,12 +154,18 @@ export function cowFaceMetrics(current,reference,width,height,eyes,mouth,closed,
   for(let y=0;y<height;y++)for(let x=0;x<width;x++){
    const i=y*width+x,d=Math.hypot((x-e.x)/e.rx,(y-e.y)/e.ry);
    if((e.featurePixels>0||e.aperturePixels>0)&&Math.abs(x-e.x)<e.rx+mx&&Math.abs(y-e.y)<e.ry+my)eyeZone[i]=1;
-   if(d>1.5&&d<2.05&&current[4*i+3]){const v=val(current,i);if(e.coat==='dark'?v<.32:v>.5){vv.push(v);ss.push(sat(current,i));}}
+   if(d>1.5&&d<2.05&&current[4*i+3]){
+    const v=val(current,i),s=sat(current,i),r=current[4*i]/255,g=current[4*i+1]/255,b=current[4*i+2]/255;
+    // At low/oblique views this ring also crosses the pink muzzle. Its high
+    // saturation is not a native cream-fur reference for the closed eye.
+    const fur=e.coat==='dark'?v<.32&&s<.45:v>.5&&s>.1&&s<.35&&r>=g&&g>=b&&r-g<1.4*(g-b)+.015;
+    if(fur){vv.push(v);ss.push(s);}
+   }
   }
   let idPixels=0,uncovered=0,referencePixels=0,potentialPixels=0,priorUncovered=0,occludedByNativeBody=0,sourcePigmentPixels=0;
   for(let i=0;i<N;i++){
-   const x=i%width,y=i/width|0;if(Math.hypot((x-e.x)/e.rx,(y-e.y)/e.ry)<1.3&&eyeIds?.[i]===e.index+1)idPixels++;
-   const original=referenceEyeIds?.[i]===e.index+1,potential=coverageProof?.eyeIds[i]===e.index+1,covered=eyeIds?.[i]===e.index+1;
+   const x=i%width,y=i/width|0;if(Math.hypot((x-e.x)/e.rx,(y-e.y)/e.ry)<1.3&&(coverageProof?.coverIds||eyeIds)?.[i]===e.index+1)idPixels++;
+   const original=referenceEyeIds?.[i]===e.index+1,potential=coverageProof?.eyeIds[i]===e.index+1,covered=(coverageProof?.coverIds||eyeIds)?.[i]===e.index+1;
    const nativeOpaque=coverageProof&&coverageProof.eyeIds[i]===0&&coverageProof.rgba[4*i+3]>250;
    if(original){referencePixels++;if(!covered){priorUncovered++;if(nativeOpaque)occludedByNativeBody++;}}
    if(potential)potentialPixels++;
@@ -181,7 +206,7 @@ export function cowFaceMetrics(current,reference,width,height,eyes,mouth,closed,
   // Outside the actual opening, compare with native fur using the same 1px
   // registration/.08 colour tolerance as stray. Texture/filter phase shifts
   // that reproduce an existing fur colour are not a new pale/dark patch.
-  if(d<1.3&&!lash&&changed&&bad&&(opening||!close(i)))flags.lid[i]=1;
+  if(d<1.3&&!lash&&changed&&bad&&(opening||!close(i))&&(opening||!nativeBodyMatch(i)))flags.lid[i]=1;
   // A pre-existing cream/black coat boundary is not the rim of a grey lid.
   // Require unchanged warm white fur from the reference beside current dark fur;
   // a grey ring on black, or any new rim on a white coat, still gets counted.
@@ -191,7 +216,7 @@ export function cowFaceMetrics(current,reference,width,height,eyes,mouth,closed,
   // Inside it, retain anomalous-colour edges and independently detect closed
   // uniform contours below (including native-range/dark internal rings).
   const anomalous=e.coat==='dark'?cv>v+.075:cv<v-.18||(cv>v-.1&&cs<s-.12);
-  let nativeMatch=false;
+  let nativeMatch=!opening&&nativeBodyMatch(i);
   if(!opening&&val(current,i)>.55&&sat(current,i)>.1){
    for(let oy=-1;oy<=1;oy++)for(let ox=-1;ox<=1;ox++){const u=x+ox,w=y+oy,j=w*width+u;if(u<0||u>=width||w<0||w>=height||!reference[4*j+3]||referenceEyeIds?.[j])continue;if(val(reference,j)>.55&&sat(reference,j)>.1&&dist(current,i,reference,j)<.08)nativeMatch=true;}
   }

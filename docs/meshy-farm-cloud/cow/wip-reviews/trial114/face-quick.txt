@@ -1,0 +1,7 @@
+Cow face audit: 18 cases; 2 failing (limits 12px fur/mouth/silhouette, 6px eyes; four-pixel groups)
+lid: worst 9, failing 0
+mouth: worst 0, failing 0
+stray: worst 0, failing 0
+rim: worst 4837, failing 2
+eyes: worst 0, failing 0
+silhouette: worst 0, failing 0

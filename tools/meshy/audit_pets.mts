@@ -62,7 +62,7 @@ for (const k of kinds) { const a = JSON.parse(readFileSync(new URL(`./animal_joi
 const res: any = await P.page.evaluate(async ([kinds, MODE, LIMIT, EYE_PROBES]) => {
   const G = (window as any).__sv, MK = await import(String('/js/modelkit.js')), { THREE } = await import(String('/js/gfx.js'));
   const {validateCowEyeMetadata}=await import(String('/tools/meshy/cow_face_metrics.mjs'));
-  const {createCowEyeProbeMaterial}=await import(String('/tools/meshy/cow_eye_probe.mjs'));
+  const {createCowEyeProbeMaterial,cowEyeRestPositions,readCowReferenceEyeIds}=await import(String('/tools/meshy/cow_eye_probe.mjs'));
   const { clone } = await import(String('/vendor/SkeletonUtils.js')), PETS = await import(String('/js/pets.js'));
   const { PETS: PET_KINDS } = await import(String('/js/farm.js'));
   const R = G.renderer, out: any = { cases: [], pics: {} }, S = 360;
@@ -131,6 +131,7 @@ const res: any = await P.page.evaluate(async ([kinds, MODE, LIMIT, EYE_PROBES]) 
     const REST = body.skeleton.bones.map((b: any) => [b.position.clone(), b.quaternion.clone(), b.scale.clone()]);
     const toRest = () => body.skeleton.bones.forEach((b: any, i: number) => { b.position.copy(REST[i][0]); b.quaternion.copy(REST[i][1]); b.scale.copy(REST[i][2]); });
     skinned(body, rest);
+    const cowBodyRest=kind==='cow'?cowEyeRestPositions(THREE,body):null;let separateSources=0;obj.traverse(o=>{if(o.isSkinnedMesh&&/^meshy-cow-open[01]$/.test(o.material?.name||''))separateSources++;});
     // Patterned fur can be as black as a pupil. Probe actual eye-surface visibility instead:
     // closed lid meshes must occlude the original eye surface, independent of coat colour.
     const probe = EYE_PROBES[kind]; let eyeMask: any = null; let probeCenters: any[] = [];
@@ -176,7 +177,7 @@ const res: any = await P.page.evaluate(async ([kinds, MODE, LIMIT, EYE_PROBES]) 
         if(plant==='eyes'&&kind==='cow'){
           // Expose the original eye pigment, not an already buried eye with
           // its cover hidden. This is the actual closed-eye failure we plant.
-          for(const name of ['retract0','retract1']){const b=bone(name),i=body.skeleton.bones.indexOf(b);if(!b||i<0)throw Error('Eye plant missing retract bone');b.position.copy(REST[i][0]);}
+          for(const name of ['retract0','retract1']){const b=bone(name),i=body.skeleton.bones.indexOf(b);if(!b||i<0)throw Error('Eye plant missing retract bone');b.position.copy(REST[i][0]);b.quaternion.copy(REST[i][1]);b.scale.copy(REST[i][2]);}
           obj.updateMatrixWorld(true);
         }
         PLANT.value = plant === 'tear' ? 1 : 0; if (kind === 'cow' || plant === 'tear') {   // (a torn ear: a hole through its flap where it hangs out beyond the cheek, seen from the front)
@@ -275,7 +276,11 @@ const res: any = await P.page.evaluate(async ([kinds, MODE, LIMIT, EYE_PROBES]) 
             cam.position.copy(mid).addScaledVector(dir, er * 9); cam.lookAt(mid); cam.updateMatrixWorld(true);
             const px = read(cam), flags = new Uint8Array(S * S); let n = 0;
             const eyes = yaw === 0 ? [e0, e1] : [e0.distanceTo(cam.position) < e1.distanceTo(cam.position) ? e0 : e1];
-            if (eyeMask) {
+            if(APERTURES&&separateSources){
+              if(separateSources!==2)throw Error('Incomplete original eye sources');
+              const sourceIds=readCowReferenceEyeIds(THREE,scene,body,cowBodyRest,APERTURES,read,cam,{pigmentOnly:true});
+              for(let i=0;i<S*S;i++)if(sourceIds[i]){n++;flags[i]=1;}
+            }else if (eyeMask) {
               const materials: any[] = [], oldColor = body.geometry.getAttribute('color');
               const black = new THREE.MeshBasicMaterial({color: 0, side: THREE.DoubleSide});
               const mask = APERTURES ? createCowEyeProbeMaterial(THREE,APERTURES,body.material.map,{pigmentOnly:APERTURES.every(a=>a.K)}) : new THREE.MeshBasicMaterial({vertexColors: true, side: THREE.DoubleSide});
