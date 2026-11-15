@@ -1541,11 +1541,12 @@ if TEX and KEEP and SHIFT:
                 # purple, red or brown triangles inside the collar) for the villagers named, the triangles lying on the neck's own
                 # cylinder (not the collar, which stands out from it) between the collar line and the chin become skin
                 if ID in os.environ.get('FIT_NECKSKIN', 'ruby,bom,teo').split(','):
-                    _band_ = (_cc[:, 2] > L['neck'].z - .05) & (_cc[:, 2] < fz0 - (fz1 - fz0) * .02) & (np.abs(_cc[:, 0] - _hcx) < _hw * .6) & ~_ine
-                    _sk_ = _band_ & _mk
+                    _up_ = (_cc[:, 2] > L['neck'].z - .05) & (_cc[:, 2] < fz0 - (fz1 - fz0) * .02) & (np.abs(_cc[:, 0] - _hcx) < _hw * .6) & ~_ine
+                    _sk_ = _up_ & _mk
                     if _sk_.sum() > 10:
-                        _ay = float(np.median(_cc[_sk_, 1])); _r = np.hypot(_cc[:, 0] - _hcx, _cc[:, 1] - _ay); _rm = float(np.median(_r[_sk_]))
-                        _cyl = np.nonzero(_band_ & ~_mk & (_r < _rm * 1.12) & (_cc[:, 1] < _ay + _rm * .3))[0]   # (the front and sides: the nape keeps its hair)
+                        _ay = float(np.median(_cc[_sk_, 1])); _r = np.hypot(_cc[:, 0] - _hcx, _cc[:, 1] - _ay); _rm = float(np.median(_r[_sk_]))   # (the neck's radius from its upper part only: round 37 took it from a band reaching the shoulders, .107 for Bom, and painted his shirt front and hair skin)
+                        _lo_ = (_cc[:, 2] > L['neck'].z - float(os.environ.get('FIT_NECKLOW', '.12'))) & (_cc[:, 2] < fz0) & (np.abs(_cc[:, 0] - _hcx) < _rm * 1.05) & ~_ine
+                        _cyl = np.nonzero(((_up_ & (_r < _rm * 1.12) & (_cc[:, 1] < _ay + _rm * .3)) | (_lo_ & (_r < _rm * 1.0) & (_cc[:, 1] < _ay))) & ~_mk & (_Vm > .3))[0]   # (lower: the open collar's V, inside the neck's own radius, at the front; never dark hair)
                         if len(_cyl):
                             _A = px(colour); _tm = own_texels(_cyl, _A.shape[:2]); _sc = np.median(_mc[_sk_][:, :3], axis=0)
                             _A[_tm, :3] = _sc; colour.pixels.foreach_set(_A.ravel()); colour.update()
