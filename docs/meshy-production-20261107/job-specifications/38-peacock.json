@@ -1,0 +1,42 @@
+{
+  "assetId": "peacock",
+  "group": "F",
+  "endpoint": "https://api.meshy.ai/openapi/v1/multi-image-to-3d",
+  "method": "POST",
+  "parameters": {
+    "ai_model": "meshy-6-lite",
+    "geometry_resolution": "standard",
+    "should_texture": true,
+    "texture_resolution": "2k",
+    "enable_pbr": false,
+    "pose_mode": "",
+    "target_formats": [
+      "glb"
+    ]
+  },
+  "inputImages": [
+    {
+      "view": "front",
+      "localPath": "reference-images/38-peacock/front.png",
+      "sha256": "485e1b7e3779c622a0aa2af8fa5c5e3be6beb0074824540fd744f700bf569df1"
+    },
+    {
+      "view": "left-side",
+      "localPath": "reference-images/38-peacock/left-side.png",
+      "sha256": "ea88bdc46f51fb2542c89505760c1458e7179e3f1308c5728881554a2882f258"
+    },
+    {
+      "view": "back",
+      "localPath": "reference-images/38-peacock/back.png",
+      "sha256": "2d0f1188ff56cd85662276260e88b725c744d2d02b69828607f77836e0bb5717"
+    }
+  ],
+  "transportNote": "Runner must populate image_urls with public URLs or data URIs in this order. Local paths are not accepted by the API.",
+  "plannedCredits": 15,
+  "submitted": false,
+  "taskId": null,
+  "accountVerified": false,
+  "privateSettingsVerified": false,
+  "rawDownloadDestination": "raw-models/F/peacock.glb",
+  "runtimeDestinationAfterFittingAndValidation": "models/world/creature-peacock.glb"
+}

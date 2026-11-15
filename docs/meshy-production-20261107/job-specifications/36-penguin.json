@@ -1,0 +1,42 @@
+{
+  "assetId": "penguin",
+  "group": "F",
+  "endpoint": "https://api.meshy.ai/openapi/v1/multi-image-to-3d",
+  "method": "POST",
+  "parameters": {
+    "ai_model": "meshy-6-lite",
+    "geometry_resolution": "standard",
+    "should_texture": true,
+    "texture_resolution": "2k",
+    "enable_pbr": false,
+    "pose_mode": "",
+    "target_formats": [
+      "glb"
+    ]
+  },
+  "inputImages": [
+    {
+      "view": "front",
+      "localPath": "reference-images/36-penguin/front.png",
+      "sha256": "a504782d1e62884a0157c24cb6e43f4da750f0a0fdc45a462fb9899adb93624f"
+    },
+    {
+      "view": "left-side",
+      "localPath": "reference-images/36-penguin/left-side.png",
+      "sha256": "531563843b95795e07eee3968a8496dfd729e6cd4a7e93534b4876d5611a61f4"
+    },
+    {
+      "view": "back",
+      "localPath": "reference-images/36-penguin/back.png",
+      "sha256": "c2afe0d66b90cf0bc2346adb6d1ade26d31d10ae33fc509981f6efce2cf9e055"
+    }
+  ],
+  "transportNote": "Runner must populate image_urls with public URLs or data URIs in this order. Local paths are not accepted by the API.",
+  "plannedCredits": 15,
+  "submitted": false,
+  "taskId": null,
+  "accountVerified": false,
+  "privateSettingsVerified": false,
+  "rawDownloadDestination": "raw-models/F/penguin.glb",
+  "runtimeDestinationAfterFittingAndValidation": "models/world/creature-penguin.glb"
+}

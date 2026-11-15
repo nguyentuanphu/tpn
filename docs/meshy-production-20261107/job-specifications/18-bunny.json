@@ -1,0 +1,43 @@
+{
+  "assetId": "bunny",
+  "group": "C",
+  "endpoint": "https://api.meshy.ai/openapi/v1/multi-image-to-3d",
+  "method": "POST",
+  "parameters": {
+    "ai_model": "meshy-7.1",
+    "geometry_resolution": "standard",
+    "should_texture": true,
+    "texture_resolution": "2k",
+    "enable_pbr": false,
+    "pose_mode": "",
+    "target_formats": [
+      "glb"
+    ],
+    "image_enhancement": false
+  },
+  "inputImages": [
+    {
+      "view": "front",
+      "localPath": "reference-images/18-bunny/front.png",
+      "sha256": "3f656a3baf26671b26d5ed008059f319dd7d67639bec70c4272919fe4b96977a"
+    },
+    {
+      "view": "left-side",
+      "localPath": "reference-images/18-bunny/left-side.png",
+      "sha256": "d3eb54c98847daca74897145f45936cd94c7c31ffa5f25a3db6f7090f5fa1f64"
+    },
+    {
+      "view": "back",
+      "localPath": "reference-images/18-bunny/back.png",
+      "sha256": "e4ac5f33e59743a4bc3ecc8f9239a90ad3193cabca8e194f0dab732f906464af"
+    }
+  ],
+  "transportNote": "Runner must populate image_urls with public URLs or data URIs in this order. Local paths are not accepted by the API.",
+  "plannedCredits": 30,
+  "submitted": false,
+  "taskId": null,
+  "accountVerified": false,
+  "privateSettingsVerified": false,
+  "rawDownloadDestination": "raw-models/C/bunny.glb",
+  "runtimeDestinationAfterFittingAndValidation": "models/world/creature-bunny.glb"
+}

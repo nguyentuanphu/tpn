@@ -1,0 +1,9 @@
+{
+  "pngDecode": "passed: 9/9",
+  "sha256": "passed: 9/9",
+  "markdownLinks": "all local links resolve",
+  "visualReview": "All generated images inspected in chat; final owner selection pending",
+  "browserPreview": "Not rerun for this static Markdown pack",
+  "runtimeChanges": false,
+  "paidCalls": 0
+}

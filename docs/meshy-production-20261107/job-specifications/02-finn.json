@@ -1,0 +1,43 @@
+{
+  "assetId": "finn",
+  "group": "A",
+  "endpoint": "https://api.meshy.ai/openapi/v1/multi-image-to-3d",
+  "method": "POST",
+  "parameters": {
+    "ai_model": "meshy-7.1",
+    "geometry_resolution": "standard",
+    "should_texture": true,
+    "texture_resolution": "2k",
+    "enable_pbr": false,
+    "pose_mode": "",
+    "target_formats": [
+      "glb"
+    ],
+    "image_enhancement": false
+  },
+  "inputImages": [
+    {
+      "view": "front",
+      "localPath": "reference-images/02-finn/front.png",
+      "sha256": "3fd16c236bc2f5cd5f729db05d1b968cf75e3189573da15a2a416125123d6971"
+    },
+    {
+      "view": "left-side",
+      "localPath": "reference-images/02-finn/left-side.png",
+      "sha256": "3faeb1a30697f146208dd69276d2416fcd95a8b41a6995e8d44b673326bd4dd4"
+    },
+    {
+      "view": "back",
+      "localPath": "reference-images/02-finn/back.png",
+      "sha256": "413395ad4332ce42af4a44a751dcedd750e0ec6892096181532b1d3a29ece589"
+    }
+  ],
+  "transportNote": "Runner must populate image_urls with public URLs or data URIs in this order. Local paths are not accepted by the API.",
+  "plannedCredits": 30,
+  "submitted": false,
+  "taskId": null,
+  "accountVerified": false,
+  "privateSettingsVerified": false,
+  "rawDownloadDestination": "raw-models/A/finn.glb",
+  "runtimeDestinationAfterFittingAndValidation": "models/finn.glb"
+}

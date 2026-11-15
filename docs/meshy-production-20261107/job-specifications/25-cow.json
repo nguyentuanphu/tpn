@@ -1,0 +1,42 @@
+{
+  "assetId": "cow",
+  "group": "E",
+  "endpoint": "https://api.meshy.ai/openapi/v1/multi-image-to-3d",
+  "method": "POST",
+  "parameters": {
+    "ai_model": "meshy-6-lite",
+    "geometry_resolution": "standard",
+    "should_texture": true,
+    "texture_resolution": "2k",
+    "enable_pbr": false,
+    "pose_mode": "",
+    "target_formats": [
+      "glb"
+    ]
+  },
+  "inputImages": [
+    {
+      "view": "front",
+      "localPath": "reference-images/25-cow/front.png",
+      "sha256": "0b2a7c3a7d82784222e7bbbd32f3e46e133079b9cc0a23f9ab981fb80761b900"
+    },
+    {
+      "view": "left-side",
+      "localPath": "reference-images/25-cow/left-side.png",
+      "sha256": "7d37b2bfec97d2e9d27ffede734a6ce2630c9cb7de238e67bb3d779274bbcc76"
+    },
+    {
+      "view": "back",
+      "localPath": "reference-images/25-cow/back.png",
+      "sha256": "b5cc61cc5e60845baba2166963ce32d37b99556581e812efaed8d75591e5b426"
+    }
+  ],
+  "transportNote": "Runner must populate image_urls with public URLs or data URIs in this order. Local paths are not accepted by the API.",
+  "plannedCredits": 15,
+  "submitted": false,
+  "taskId": null,
+  "accountVerified": false,
+  "privateSettingsVerified": false,
+  "rawDownloadDestination": "raw-models/E/cow.glb",
+  "runtimeDestinationAfterFittingAndValidation": "models/world/creature-cow.glb"
+}

@@ -1,0 +1,44 @@
+{
+  "recordedAtSydney": "2026-11-07T20:10:45.347324+11:00",
+  "referenceSheetsGenerated": 61,
+  "separateViewCrops": 183,
+  "assetsTechnicallyReviewed": 61,
+  "ownerApprovalsRecorded": 0,
+  "browserChecks": [
+    {
+      "pack": "meshy-regional-40-100",
+      "device": "phone",
+      "width": 393,
+      "height": 852,
+      "cards": 61,
+      "overflow": false,
+      "imageLinksHTTP200": 244
+    },
+    {
+      "pack": "meshy-regional-40-100",
+      "device": "tablet",
+      "width": 820,
+      "height": 1180,
+      "cards": 61,
+      "overflow": false,
+      "imageLinksHTTP200": 0
+    },
+    {
+      "pack": "meshy-regional-40-100",
+      "device": "desktop",
+      "width": 1440,
+      "height": 1000,
+      "cards": 61,
+      "overflow": false,
+      "imageLinksHTTP200": 0
+    }
+  ],
+  "sourceAndCropHashes": "passed",
+  "losslessCropPixelComparison": "311/311 exact comparisons passed across both packs",
+  "runtimeFilesChanged": false,
+  "newMeshyModels": 0,
+  "MeshyCreditsSpent": 0,
+  "paidJobsSubmitted": 0,
+  "MarkdownLocalLinksCheckedAcrossBothPacksAndHandoff": 498,
+  "latestOwnerCorrectionValidation": "../meshy-production-20261107/OWNER-CORRECTIONS-VALIDATION.json"
+}

@@ -1,0 +1,45 @@
+{
+    "assetId":  "finn-body",
+    "bodyOf":  "finn",
+    "bodyReason":  "Owner decision, 8 Nov 2026: friends as a Meshy body (face, hair, skin; plain grey T-shirt and shorts, bare feet) with clothes made in the game from the body\u0027s own surface, so shop outfits fit and the skin tone can change. Views cut from docs/friends-body-sheets-20261108/body-finn.png by tools/meshy/crop_body_sheets.py.",
+    "group":  "A",
+    "endpoint":  "https://api.meshy.ai/openapi/v1/multi-image-to-3d",
+    "method":  "POST",
+    "parameters":  {
+                       "ai_model":  "meshy-7.1",
+                       "geometry_resolution":  "standard",
+                       "should_texture":  true,
+                       "texture_resolution":  "2k",
+                       "enable_pbr":  false,
+                       "pose_mode":  "",
+                       "target_formats":  [
+                                              "glb"
+                                          ],
+                       "image_enhancement":  false
+                   },
+    "inputImages":  [
+                        {
+                            "view":  "front",
+                            "localPath":  "docs/friends-body-sheets-20261108/crops/finn-front.png",
+                            "sha256":  "de0ea9a87ecea8ff33896ff669fac8a98bba576b11efcbdb5f91b4b9f92f8038"
+                        },
+                        {
+                            "view":  "left-side",
+                            "localPath":  "docs/friends-body-sheets-20261108/crops/finn-left-side.png",
+                            "sha256":  "abe03ba58d9dc03ee969eba8654fabe61c8a7e881a2c80358bae9225de9ecf8c"
+                        },
+                        {
+                            "view":  "back",
+                            "localPath":  "docs/friends-body-sheets-20261108/crops/finn-back.png",
+                            "sha256":  "54e177bc5d6b188d638ccf7012601fcec498466fb44fd4cbafc4d779c45ef671"
+                        }
+                    ],
+    "transportNote":  "Runner sends the views as data URIs in this order.",
+    "plannedCredits":  30,
+    "followUps":  "Remesh 30k (5), remesh 9k (5), Meshy rig (5): 45 credits in all",
+    "ownerApproval":  null,
+    "submitted":  false,
+    "taskId":  null,
+    "rawDownloadDestination":  "raw-models/A/finn-body.glb",
+    "runtimeDestinationAfterFittingAndValidation":  "models/finn.glb (after in-game owner review)"
+}

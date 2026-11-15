@@ -1,0 +1,42 @@
+{
+  "assetId": "bull",
+  "group": "E",
+  "endpoint": "https://api.meshy.ai/openapi/v1/multi-image-to-3d",
+  "method": "POST",
+  "parameters": {
+    "ai_model": "meshy-6-lite",
+    "geometry_resolution": "standard",
+    "should_texture": true,
+    "texture_resolution": "2k",
+    "enable_pbr": false,
+    "pose_mode": "",
+    "target_formats": [
+      "glb"
+    ]
+  },
+  "inputImages": [
+    {
+      "view": "front",
+      "localPath": "reference-images/29-bull/front.png",
+      "sha256": "86c4cee475756770d88bf99af86956e4e98f28df7baf4de231ba79662e7af86e"
+    },
+    {
+      "view": "left-side",
+      "localPath": "reference-images/29-bull/left-side.png",
+      "sha256": "0106f64e04f661db4aaa5170fd5259e782f76ce324f4e483415ee8e806c7d595"
+    },
+    {
+      "view": "back",
+      "localPath": "reference-images/29-bull/back.png",
+      "sha256": "a41a772104a4a423f360c28fcc9690ba7f8618ca2ad5e7f5b24a381da5b754a9"
+    }
+  ],
+  "transportNote": "Runner must populate image_urls with public URLs or data URIs in this order. Local paths are not accepted by the API.",
+  "plannedCredits": 15,
+  "submitted": false,
+  "taskId": null,
+  "accountVerified": false,
+  "privateSettingsVerified": false,
+  "rawDownloadDestination": "raw-models/E/bull.glb",
+  "runtimeDestinationAfterFittingAndValidation": "models/world/creature-bull.glb"
+}

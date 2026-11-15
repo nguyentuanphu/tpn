@@ -1,0 +1,45 @@
+{
+    "assetId":  "clara-body",
+    "bodyOf":  "clara",
+    "bodyReason":  "Owner decision, 8 Nov 2026: friends as a Meshy body (face, hair, skin; plain grey T-shirt and shorts, bare feet) with clothes made in the game from the body\u0027s own surface, so shop outfits fit and the skin tone can change. Views cut from docs/friends-body-sheets-20261108/body-clara.png by tools/meshy/crop_body_sheets.py.",
+    "group":  "A",
+    "endpoint":  "https://api.meshy.ai/openapi/v1/multi-image-to-3d",
+    "method":  "POST",
+    "parameters":  {
+                       "ai_model":  "meshy-7.1",
+                       "geometry_resolution":  "standard",
+                       "should_texture":  true,
+                       "texture_resolution":  "2k",
+                       "enable_pbr":  false,
+                       "pose_mode":  "",
+                       "target_formats":  [
+                                              "glb"
+                                          ],
+                       "image_enhancement":  false
+                   },
+    "inputImages":  [
+                        {
+                            "view":  "front",
+                            "localPath":  "docs/friends-body-sheets-20261108/crops/clara-front.png",
+                            "sha256":  "00475e0c2c5412c76a9d9dcab34f2befa6ad47a0b6e0dcff927be01743df3587"
+                        },
+                        {
+                            "view":  "left-side",
+                            "localPath":  "docs/friends-body-sheets-20261108/crops/clara-left-side.png",
+                            "sha256":  "1f4be0a8afedfb4551915aa6ba5cf4940bb83c89234c821864559cd52cf69ff8"
+                        },
+                        {
+                            "view":  "back",
+                            "localPath":  "docs/friends-body-sheets-20261108/crops/clara-back.png",
+                            "sha256":  "835ccd7df294faa49343c2063ea969b5e0d9b9586013ae1f9dfaa6a77c9e25a1"
+                        }
+                    ],
+    "transportNote":  "Runner sends the views as data URIs in this order.",
+    "plannedCredits":  30,
+    "followUps":  "Remesh 30k (5), remesh 9k (5), Meshy rig (5): 45 credits in all",
+    "ownerApproval":  null,
+    "submitted":  false,
+    "taskId":  null,
+    "rawDownloadDestination":  "raw-models/A/clara-body.glb",
+    "runtimeDestinationAfterFittingAndValidation":  "models/clara.glb (after in-game owner review)"
+}

@@ -1,0 +1,18 @@
+{
+  "id": "clara",
+  "reference_prefix": "clara-",
+  "source": "raw Meshy revision task 01a1b58a-d2db-7782-9703-ad4a47802716 (sha256 f8d607dd44aaa560e64036607dbee6b8eb5e56f003df1f34b0e0440f0fd9567a, front + left-side views only), front.png from tools/meshy/render_views.py, marked 7 Nov 2026",
+  "top": [300, 35],
+  "neck": [300, 258],
+  "hip": [300, 540],
+  "shoulderL": [380, 300],
+  "elbowL": [430, 378],
+  "wristL": [468, 455],
+  "hipL": [345, 540],
+  "kneeL": [343, 680],
+  "ankleL": [348, 800],
+  "facebox": [[226, 118], [374, 238]],
+  "trim_back_hair": false,
+  "hair_share": 0.5,
+  "original_skin": true
+}

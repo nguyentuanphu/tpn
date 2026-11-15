@@ -1,0 +1,43 @@
+{
+  "assetId": "dragon",
+  "group": "D",
+  "endpoint": "https://api.meshy.ai/openapi/v1/multi-image-to-3d",
+  "method": "POST",
+  "parameters": {
+    "ai_model": "meshy-7.1",
+    "geometry_resolution": "standard",
+    "should_texture": true,
+    "texture_resolution": "2k",
+    "enable_pbr": false,
+    "pose_mode": "",
+    "target_formats": [
+      "glb"
+    ],
+    "image_enhancement": false
+  },
+  "inputImages": [
+    {
+      "view": "front",
+      "localPath": "reference-images/22-dragon/front.png",
+      "sha256": "bcf2807c2820a2556322c370c3d8d51a0b4d053ee7183ec6592572af2ec2f080"
+    },
+    {
+      "view": "left-side",
+      "localPath": "reference-images/22-dragon/left-side.png",
+      "sha256": "f202fc8e730b141a3a29a5046bb406c545d78147d337ed2b095ded5be1298ee3"
+    },
+    {
+      "view": "back",
+      "localPath": "reference-images/22-dragon/back.png",
+      "sha256": "cff95a8a8deced7125fff9c65fe9578a3509bff62520dd3f62fc08040c00f692"
+    }
+  ],
+  "transportNote": "Runner must populate image_urls with public URLs or data URIs in this order. Local paths are not accepted by the API.",
+  "plannedCredits": 30,
+  "submitted": false,
+  "taskId": null,
+  "accountVerified": false,
+  "privateSettingsVerified": false,
+  "rawDownloadDestination": "raw-models/D/dragon.glb",
+  "runtimeDestinationAfterFittingAndValidation": "models/world/creature-dragon.glb"
+}

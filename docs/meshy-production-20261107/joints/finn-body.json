@@ -1,0 +1,56 @@
+{
+ "id": "finn-body",
+ "reference_prefix": "finn-",
+ "source": "auto_joints.py from Meshy rig finn-body.glb",
+ "top": [
+  300.0,
+  33.3
+ ],
+ "neck": [
+  300.0,
+  297.9
+ ],
+ "hip": [
+  300.0,
+  434.5
+ ],
+ "shoulderL": [
+  366.5,
+  315.2
+ ],
+ "elbowL": [
+  404.3,
+  408.7
+ ],
+ "wristL": [
+  454.6,
+  486.0
+ ],
+ "hipL": [
+  332.3,
+  479.0
+ ],
+ "kneeL": [
+  346.7,
+  656.7
+ ],
+ "ankleL": [
+  355.7,
+  809.6
+ ],
+ "facebox": [
+  [
+   212.7,
+   131.2
+  ],
+  [
+   387.3,
+   274.1
+  ]
+ ],
+ "trim_back_hair": false,
+ "original_skin": true,
+ "keep_meshy_uvs": true,
+ "skin_shift": true,
+ "skin_ref": "#f6c7a5"
+}

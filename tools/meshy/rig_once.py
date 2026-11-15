@@ -1,0 +1,91 @@
+"""Meshy Auto-Rigging of one finished Remesh task (derived from remesh_once.py), with the batch runner's guarantees (7 Nov 2026, owner-approved).
+
+One POST per source task, reserved in the durable journal before sending, never retried; poll and download separately.
+  python tools/meshy/rig_once.py submit   --source-asset clara-r2 --height 1.25 --journal J --approved
+  python tools/meshy/rig_once.py poll     --source-asset clara-r2 --journal J
+  python tools/meshy/rig_once.py download --source-asset clara-r2 --journal J --raw-root R
+Rigging costs 5 credits (docs.meshy.ai/en/api/pricing, checked 7 Nov 2026). The journal and raw files live outside the
+repository. MESHY_API_KEY comes from the environment only.
+"""
+import argparse, hashlib, json, os, re, sqlite3, struct, uuid
+from pathlib import Path
+from urllib.parse import urlparse
+from urllib.request import Request, build_opener, HTTPRedirectHandler
+
+ROOT = Path(__file__).resolve().parents[2]
+ENDPOINT = 'https://api.meshy.ai/openapi/v1/rigging'
+
+class NoRedirect(HTTPRedirectHandler):
+    def redirect_request(self, *a):
+        raise RuntimeError('API redirect refused')
+
+def api(method, suffix='', payload=None):
+    key = os.environ.get('MESHY_API_KEY')
+    if not key: raise ValueError('Bind MESHY_API_KEY securely in environment settings')
+    assert not suffix or re.fullmatch(r'/[A-Za-z0-9-]+', suffix)
+    req = Request(ENDPOINT + suffix, data=None if payload is None else json.dumps(payload).encode(), method=method,
+                  headers={'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json'})
+    with build_opener(NoRedirect).open(req, timeout=60) as r: return json.load(r)
+
+def open_journal(path):
+    path = Path(path).resolve()
+    if path.is_relative_to(ROOT): raise ValueError('Keep the live journal outside the repository')
+    db = sqlite3.connect(path, timeout=10); db.execute('PRAGMA synchronous=FULL')
+    db.execute('CREATE TABLE IF NOT EXISTS rigging (source TEXT PRIMARY KEY, source_task TEXT NOT NULL, cost INTEGER NOT NULL, params TEXT NOT NULL, state TEXT NOT NULL, task_id TEXT UNIQUE, result TEXT)')
+    db.commit(); return db
+
+def main():
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument('command', choices=['submit', 'poll', 'download'])
+    ap.add_argument('--source-asset', required=True); ap.add_argument('--journal', required=True, type=Path)
+    ap.add_argument('--polycount', type=int, default=30000); ap.add_argument('--height', type=float, default=1.25); ap.add_argument('--approved', action='store_true')
+    ap.add_argument('--raw-root', type=Path)
+    a = ap.parse_args(); db = open_journal(a.journal)
+    try:
+        if a.command == 'submit':
+            if not a.approved: raise ValueError('Rigging needs the owner approval flag')
+            if not 100 <= a.polycount <= 300000: raise ValueError('polycount outside 100-300000')
+            src = db.execute("SELECT task_id, state FROM remesh WHERE source=?", (a.source_asset,)).fetchone()
+            if not src or src[1] != 'SUCCEEDED' or not src[0]: raise ValueError('Source asset has no succeeded remesh in this journal')
+            params = {'input_task_id': src[0], 'height_meters': a.height}
+            db.execute('BEGIN IMMEDIATE')
+            if db.execute('SELECT 1 FROM rigging WHERE source=?', (a.source_asset,)).fetchone():
+                db.rollback(); raise ValueError('This source was already rigged or reserved; reconcile, never repeat POST')
+            db.execute('INSERT INTO rigging VALUES (?,?,?,?,?,NULL,NULL)', (a.source_asset, src[0], 5, json.dumps(params), 'ambiguous')); db.commit()
+            res = api('POST', '', params); task = res.get('result')   # any failure leaves the reservation ambiguous
+            if not isinstance(task, str) or not re.fullmatch(r'[A-Za-z0-9-]+', task): raise ValueError('Unrecognized response; reconcile in the dashboard')
+            with db: db.execute("UPDATE rigging SET state='submitted', task_id=? WHERE source=?", (task, a.source_asset))
+            print(json.dumps({'source': a.source_asset, 'taskId': task, 'state': 'submitted'}))
+        elif a.command == 'poll':
+            row = db.execute('SELECT task_id FROM rigging WHERE source=?', (a.source_asset,)).fetchone()
+            if not row or not row[0]: raise ValueError('No rigging task recorded for this source')
+            r = api('GET', '/' + row[0])
+            if r.get('id') != row[0]: raise ValueError('Unrecognized task response')
+            with db: db.execute('UPDATE rigging SET state=?, result=? WHERE source=?', (r.get('status'), json.dumps(r), a.source_asset))
+            print(json.dumps({'source': a.source_asset, 'taskId': row[0], 'state': r.get('status'), 'progress': r.get('progress')}))
+        else:
+            if not a.raw_root or a.raw_root.resolve().is_relative_to(ROOT): raise ValueError('--raw-root outside the repository is required')
+            row = db.execute('SELECT state, result FROM rigging WHERE source=?', (a.source_asset,)).fetchone()
+            if not row or row[0] != 'SUCCEEDED': raise ValueError('Poll a successful rigging first')
+            url = json.loads(row[1])['result']['rigged_character_glb_url']; u = urlparse(url)
+            if u.scheme != 'https' or u.hostname != 'assets.meshy.ai': raise ValueError('Unrecognized asset host')
+            target = a.raw_root.resolve() / 'rigged' / (a.source_asset + '.glb'); target.parent.mkdir(parents=True, exist_ok=True)
+            if target.exists(): raise ValueError('Raw download exists; preserve it')
+            tmp = target.with_suffix('.' + uuid.uuid4().hex + '.partial'); size = 0
+            try:
+                with build_opener(NoRedirect).open(url, timeout=120) as r, tmp.open('xb') as f:
+                    while chunk := r.read(1 << 20):
+                        size += len(chunk); f.write(chunk)
+                with tmp.open('rb') as f: head = f.read(12)
+                if struct.unpack('<4sII', head) != (b'glTF', 2, size): raise ValueError('Not a complete GLB v2')
+                os.link(tmp, target)
+            finally: tmp.unlink(missing_ok=True)
+            print(json.dumps({'source': a.source_asset, 'rawPath': str(target), 'bytes': size, 'sha256': hashlib.sha256(target.read_bytes()).hexdigest()}))
+    except Exception as e:
+        print(json.dumps({'errorType': type(e).__name__, 'message': str(e) if isinstance(e, ValueError) else 'Operation failed; reconcile the journal. No POST retry was attempted.'}))
+        raise SystemExit(1)
+    finally:
+        db.close()
+
+if __name__ == '__main__':
+    main()

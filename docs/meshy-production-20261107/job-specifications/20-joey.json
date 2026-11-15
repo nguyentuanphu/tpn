@@ -1,0 +1,43 @@
+{
+  "assetId": "joey",
+  "group": "C",
+  "endpoint": "https://api.meshy.ai/openapi/v1/multi-image-to-3d",
+  "method": "POST",
+  "parameters": {
+    "ai_model": "meshy-7.1",
+    "geometry_resolution": "standard",
+    "should_texture": true,
+    "texture_resolution": "2k",
+    "enable_pbr": false,
+    "pose_mode": "",
+    "target_formats": [
+      "glb"
+    ],
+    "image_enhancement": false
+  },
+  "inputImages": [
+    {
+      "view": "front",
+      "localPath": "reference-images/20-joey/front.png",
+      "sha256": "cc96f9375297554141c47c8202bcad6fd9dda3b37df6ac6eed6c22c7d5fd7582"
+    },
+    {
+      "view": "left-side",
+      "localPath": "reference-images/20-joey/left-side.png",
+      "sha256": "12ea73c6ff45d6bb2e4c9c8f6cc44de8d28e9be3f8fff8f3c4dc5fb56fbd9e36"
+    },
+    {
+      "view": "back",
+      "localPath": "reference-images/20-joey/back.png",
+      "sha256": "183cb1f386f9ec0411d9ccea41a40beeacfbe2bbbc6b82ba9f5a444de04d7809"
+    }
+  ],
+  "transportNote": "Runner must populate image_urls with public URLs or data URIs in this order. Local paths are not accepted by the API.",
+  "plannedCredits": 30,
+  "submitted": false,
+  "taskId": null,
+  "accountVerified": false,
+  "privateSettingsVerified": false,
+  "rawDownloadDestination": "raw-models/C/joey.glb",
+  "runtimeDestinationAfterFittingAndValidation": "models/world/creature-joey.glb"
+}

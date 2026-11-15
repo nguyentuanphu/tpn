@@ -1,0 +1,42 @@
+{
+  "assetId": "turtle",
+  "group": "F",
+  "endpoint": "https://api.meshy.ai/openapi/v1/multi-image-to-3d",
+  "method": "POST",
+  "parameters": {
+    "ai_model": "meshy-6-lite",
+    "geometry_resolution": "standard",
+    "should_texture": true,
+    "texture_resolution": "2k",
+    "enable_pbr": false,
+    "pose_mode": "",
+    "target_formats": [
+      "glb"
+    ]
+  },
+  "inputImages": [
+    {
+      "view": "front",
+      "localPath": "reference-images/37-turtle/front.png",
+      "sha256": "174a932896bc2d09e79d1eb7b95b92ee12ecb453f614f869c2a9654602075c5e"
+    },
+    {
+      "view": "left-side",
+      "localPath": "reference-images/37-turtle/left-side.png",
+      "sha256": "f181fc1373a62df6c35fa76748db099c9a88ddfb2a32ce451ba98469dc1f5cf8"
+    },
+    {
+      "view": "back",
+      "localPath": "reference-images/37-turtle/back.png",
+      "sha256": "313df258335ed520718f2e8728f9dcee6e2eabc4141862787f00ad2e19eb7fdb"
+    }
+  ],
+  "transportNote": "Runner must populate image_urls with public URLs or data URIs in this order. Local paths are not accepted by the API.",
+  "plannedCredits": 15,
+  "submitted": false,
+  "taskId": null,
+  "accountVerified": false,
+  "privateSettingsVerified": false,
+  "rawDownloadDestination": "raw-models/F/turtle.glb",
+  "runtimeDestinationAfterFittingAndValidation": "models/world/creature-turtle.glb"
+}

@@ -1,0 +1,42 @@
+{
+  "assetId": "buffalo",
+  "group": "E",
+  "endpoint": "https://api.meshy.ai/openapi/v1/multi-image-to-3d",
+  "method": "POST",
+  "parameters": {
+    "ai_model": "meshy-6-lite",
+    "geometry_resolution": "standard",
+    "should_texture": true,
+    "texture_resolution": "2k",
+    "enable_pbr": false,
+    "pose_mode": "",
+    "target_formats": [
+      "glb"
+    ]
+  },
+  "inputImages": [
+    {
+      "view": "front",
+      "localPath": "reference-images/28-buffalo/front.png",
+      "sha256": "a5268832da4deb00f3f5a1bfe089abf07e419038fd7f31c7dd73c86ac565efdb"
+    },
+    {
+      "view": "left-side",
+      "localPath": "reference-images/28-buffalo/left-side.png",
+      "sha256": "04c77c950f5b07cc13d5a0067bb9f9250cdccdbeaeac6b494eeaa0597d06c9d2"
+    },
+    {
+      "view": "back",
+      "localPath": "reference-images/28-buffalo/back.png",
+      "sha256": "be3a121daaeac73b7db186118476c5fa6da503fe4a11e6a0d7e1364a8183b7fe"
+    }
+  ],
+  "transportNote": "Runner must populate image_urls with public URLs or data URIs in this order. Local paths are not accepted by the API.",
+  "plannedCredits": 15,
+  "submitted": false,
+  "taskId": null,
+  "accountVerified": false,
+  "privateSettingsVerified": false,
+  "rawDownloadDestination": "raw-models/E/buffalo.glb",
+  "runtimeDestinationAfterFittingAndValidation": "models/world/creature-buffalo.glb"
+}

@@ -1,0 +1,42 @@
+{
+  "assetId": "platypus",
+  "group": "F",
+  "endpoint": "https://api.meshy.ai/openapi/v1/multi-image-to-3d",
+  "method": "POST",
+  "parameters": {
+    "ai_model": "meshy-6-lite",
+    "geometry_resolution": "standard",
+    "should_texture": true,
+    "texture_resolution": "2k",
+    "enable_pbr": false,
+    "pose_mode": "",
+    "target_formats": [
+      "glb"
+    ]
+  },
+  "inputImages": [
+    {
+      "view": "front",
+      "localPath": "reference-images/34-platypus/front.png",
+      "sha256": "ffc01611bdedc11a78de4482fde845ed805994ef806b5db9e068dbd9917755a4"
+    },
+    {
+      "view": "left-side",
+      "localPath": "reference-images/34-platypus/left-side.png",
+      "sha256": "78795653198f1b3b4606b11e3623d307f091a26a816183664a731b3d0afef2c7"
+    },
+    {
+      "view": "back",
+      "localPath": "reference-images/34-platypus/back.png",
+      "sha256": "171050d8d2924b01b80a20ada41b8a13ddb64dda963bf1beb88803e53e45b7f6"
+    }
+  ],
+  "transportNote": "Runner must populate image_urls with public URLs or data URIs in this order. Local paths are not accepted by the API.",
+  "plannedCredits": 15,
+  "submitted": false,
+  "taskId": null,
+  "accountVerified": false,
+  "privateSettingsVerified": false,
+  "rawDownloadDestination": "raw-models/F/platypus.glb",
+  "runtimeDestinationAfterFittingAndValidation": "models/world/creature-platypus.glb"
+}

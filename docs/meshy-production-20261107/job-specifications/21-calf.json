@@ -1,0 +1,43 @@
+{
+  "assetId": "calf",
+  "group": "C",
+  "endpoint": "https://api.meshy.ai/openapi/v1/multi-image-to-3d",
+  "method": "POST",
+  "parameters": {
+    "ai_model": "meshy-7.1",
+    "geometry_resolution": "standard",
+    "should_texture": true,
+    "texture_resolution": "2k",
+    "enable_pbr": false,
+    "pose_mode": "",
+    "target_formats": [
+      "glb"
+    ],
+    "image_enhancement": false
+  },
+  "inputImages": [
+    {
+      "view": "front",
+      "localPath": "reference-images/21-calf/front.png",
+      "sha256": "775a5d33fe0e06568c113f904889aacf5421f82abf0c3acb7ba3de7b3dd038dc"
+    },
+    {
+      "view": "left-side",
+      "localPath": "reference-images/21-calf/left-side.png",
+      "sha256": "1fc6c3edcece5b5366ca6692ca4bedc2c2a500e2d6de932de12c37378bfa6ef8"
+    },
+    {
+      "view": "back",
+      "localPath": "reference-images/21-calf/back.png",
+      "sha256": "b771aa49e59e762da73f48d47804d87dfe5b34a26cfb2be66b5b219ddc805607"
+    }
+  ],
+  "transportNote": "Runner must populate image_urls with public URLs or data URIs in this order. Local paths are not accepted by the API.",
+  "plannedCredits": 30,
+  "submitted": false,
+  "taskId": null,
+  "accountVerified": false,
+  "privateSettingsVerified": false,
+  "rawDownloadDestination": "raw-models/C/calf.glb",
+  "runtimeDestinationAfterFittingAndValidation": "models/world/creature-calf.glb"
+}

@@ -1,0 +1,56 @@
+{
+ "id": "sol",
+ "reference_prefix": "sol-",
+ "source": "auto_joints.py from Meshy rig sol.glb",
+ "top": [
+  300.0,
+  33.3
+ ],
+ "neck": [
+  300.0,
+  279.6
+ ],
+ "hip": [
+  300.0,
+  439.9
+ ],
+ "shoulderL": [
+  371.9,
+  295.4
+ ],
+ "elbowL": [
+  409.7,
+  392.5
+ ],
+ "wristL": [
+  465.4,
+  473.4
+ ],
+ "hipL": [
+  335.7,
+  482.2
+ ],
+ "kneeL": [
+  353.9,
+  651.4
+ ],
+ "ankleL": [
+  357.5,
+  798.8
+ ],
+ "facebox": [
+  [
+   218.7,
+   124.4
+  ],
+  [
+   381.3,
+   257.4
+  ]
+ ],
+ "trim_back_hair": false,
+ "original_skin": true,
+ "keep_meshy_uvs": true,
+ "skin_shift": true,
+ "skin_ref": "#f6c7a5"
+}

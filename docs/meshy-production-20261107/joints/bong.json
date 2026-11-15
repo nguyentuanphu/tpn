@@ -1,0 +1,56 @@
+{
+ "id": "bong",
+ "reference_prefix": "villager-",
+ "source": "auto_joints.py from Meshy rig bong.glb",
+ "top": [
+  300.0,
+  33.3
+ ],
+ "neck": [
+  300.0,
+  293.2
+ ],
+ "hip": [
+  300.0,
+  407.6
+ ],
+ "shoulderL": [
+  357.7,
+  309.5
+ ],
+ "elbowL": [
+  397.1,
+  399.7
+ ],
+ "wristL": [
+  449.2,
+  473.4
+ ],
+ "hipL": [
+  330.0,
+  455.2
+ ],
+ "kneeL": [
+  343.1,
+  646.0
+ ],
+ "ankleL": [
+  346.1,
+  806.1
+ ],
+ "facebox": [
+  [
+   214.2,
+   129.5
+  ],
+  [
+   385.8,
+   269.8
+  ]
+ ],
+ "trim_back_hair": false,
+ "original_skin": true,
+ "keep_meshy_uvs": true,
+ "skin_shift": true,
+ "skin_ref": "#f6c7a5"
+}

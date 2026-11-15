@@ -1,0 +1,56 @@
+{
+ "id": "lumi",
+ "reference_prefix": "lumi-",
+ "source": "auto_joints.py from Meshy rig lumi.glb",
+ "top": [
+  300.0,
+  33.3
+ ],
+ "neck": [
+  300.0,
+  399.9
+ ],
+ "hip": [
+  300.0,
+  533.4
+ ],
+ "shoulderL": [
+  370.1,
+  417.6
+ ],
+ "elbowL": [
+  411.5,
+  491.3
+ ],
+ "wristL": [
+  463.6,
+  554.3
+ ],
+ "hipL": [
+  336.5,
+  569.2
+ ],
+ "kneeL": [
+  353.9,
+  712.5
+ ],
+ "ankleL": [
+  357.5,
+  813.2
+ ],
+ "facebox": [
+  [
+   179.0,
+   168.9
+  ],
+  [
+   421.0,
+   366.9
+  ]
+ ],
+ "trim_back_hair": false,
+ "original_skin": true,
+ "keep_meshy_uvs": true,
+ "skin_shift": true,
+ "skin_ref": "#f6c7a5"
+}

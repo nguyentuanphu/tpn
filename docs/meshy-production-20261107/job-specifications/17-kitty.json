@@ -1,0 +1,43 @@
+{
+  "assetId": "kitty",
+  "group": "C",
+  "endpoint": "https://api.meshy.ai/openapi/v1/multi-image-to-3d",
+  "method": "POST",
+  "parameters": {
+    "ai_model": "meshy-7.1",
+    "geometry_resolution": "standard",
+    "should_texture": true,
+    "texture_resolution": "2k",
+    "enable_pbr": false,
+    "pose_mode": "",
+    "target_formats": [
+      "glb"
+    ],
+    "image_enhancement": false
+  },
+  "inputImages": [
+    {
+      "view": "front",
+      "localPath": "reference-images/17-kitty/front.png",
+      "sha256": "ff6446ede1df8e08f66fcb182ebfbb1b79f112a5df1d888531f80049db78904c"
+    },
+    {
+      "view": "left-side",
+      "localPath": "reference-images/17-kitty/left-side.png",
+      "sha256": "5984908d079e8360a7ebd17e258b2040d50dea6acff25a03e471b39d29780a4e"
+    },
+    {
+      "view": "back",
+      "localPath": "reference-images/17-kitty/back.png",
+      "sha256": "81b1b4bb0a1d7a9c0a1ad0797b52ba6ff7b611660a89786181251ac6db64dc3b"
+    }
+  ],
+  "transportNote": "Runner must populate image_urls with public URLs or data URIs in this order. Local paths are not accepted by the API.",
+  "plannedCredits": 30,
+  "submitted": false,
+  "taskId": null,
+  "accountVerified": false,
+  "privateSettingsVerified": false,
+  "rawDownloadDestination": "raw-models/C/kitty.glb",
+  "runtimeDestinationAfterFittingAndValidation": "models/world/creature-kitty.glb"
+}

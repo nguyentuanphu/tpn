@@ -1,0 +1,42 @@
+{
+  "assetId": "chicken",
+  "group": "E",
+  "endpoint": "https://api.meshy.ai/openapi/v1/multi-image-to-3d",
+  "method": "POST",
+  "parameters": {
+    "ai_model": "meshy-6-lite",
+    "geometry_resolution": "standard",
+    "should_texture": true,
+    "texture_resolution": "2k",
+    "enable_pbr": false,
+    "pose_mode": "",
+    "target_formats": [
+      "glb"
+    ]
+  },
+  "inputImages": [
+    {
+      "view": "front",
+      "localPath": "reference-images/24-chicken/front.png",
+      "sha256": "f0e63579ce1c19207800d2c78c444ae3cc31990ffd07e50d54d3aafdc9ac8f42"
+    },
+    {
+      "view": "left-side",
+      "localPath": "reference-images/24-chicken/left-side.png",
+      "sha256": "a2bf0e9e2d0eeeaceef40eb76be6807cfef57f0cbc29a64ce59c07bd67e5fb6a"
+    },
+    {
+      "view": "back",
+      "localPath": "reference-images/24-chicken/back.png",
+      "sha256": "a4e877fad277cb50b5e8e2344e505ec690de60bd790b3c1c591d8e22bf331c33"
+    }
+  ],
+  "transportNote": "Runner must populate image_urls with public URLs or data URIs in this order. Local paths are not accepted by the API.",
+  "plannedCredits": 15,
+  "submitted": false,
+  "taskId": null,
+  "accountVerified": false,
+  "privateSettingsVerified": false,
+  "rawDownloadDestination": "raw-models/E/chicken.glb",
+  "runtimeDestinationAfterFittingAndValidation": "models/world/creature-chicken.glb"
+}

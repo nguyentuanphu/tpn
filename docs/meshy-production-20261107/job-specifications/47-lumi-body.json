@@ -1,0 +1,45 @@
+{
+    "assetId":  "lumi-body",
+    "bodyOf":  "lumi",
+    "bodyReason":  "Owner decision, 8 Nov 2026: friends as a Meshy body (face, hair, skin; plain grey T-shirt and shorts, bare feet) with clothes made in the game from the body\u0027s own surface, so shop outfits fit and the skin tone can change. Views cut from docs/friends-body-sheets-20261108/body-lumi.png by tools/meshy/crop_body_sheets.py.",
+    "group":  "A",
+    "endpoint":  "https://api.meshy.ai/openapi/v1/multi-image-to-3d",
+    "method":  "POST",
+    "parameters":  {
+                       "ai_model":  "meshy-7.1",
+                       "geometry_resolution":  "standard",
+                       "should_texture":  true,
+                       "texture_resolution":  "2k",
+                       "enable_pbr":  false,
+                       "pose_mode":  "",
+                       "target_formats":  [
+                                              "glb"
+                                          ],
+                       "image_enhancement":  false
+                   },
+    "inputImages":  [
+                        {
+                            "view":  "front",
+                            "localPath":  "docs/friends-body-sheets-20261108/crops/lumi-front.png",
+                            "sha256":  "7ca7361e66d1a6ebad6e9b396a06839ecc89108a0a07273c54d1a31ab175d981"
+                        },
+                        {
+                            "view":  "left-side",
+                            "localPath":  "docs/friends-body-sheets-20261108/crops/lumi-left-side.png",
+                            "sha256":  "b2cc09e965d96dabb82867d80b5b45eddb8cc538d0350e01710b7d3ffd5e5ff8"
+                        },
+                        {
+                            "view":  "back",
+                            "localPath":  "docs/friends-body-sheets-20261108/crops/lumi-back.png",
+                            "sha256":  "82773497a20244050fd550e7c96e97acdef624d82a84094358c2846edd2fde1b"
+                        }
+                    ],
+    "transportNote":  "Runner sends the views as data URIs in this order.",
+    "plannedCredits":  30,
+    "followUps":  "Remesh 30k (5), remesh 9k (5), Meshy rig (5): 45 credits in all",
+    "ownerApproval":  null,
+    "submitted":  false,
+    "taskId":  null,
+    "rawDownloadDestination":  "raw-models/A/lumi-body.glb",
+    "runtimeDestinationAfterFittingAndValidation":  "models/lumi.glb (after in-game owner review)"
+}

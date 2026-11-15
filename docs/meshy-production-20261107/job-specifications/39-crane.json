@@ -1,0 +1,42 @@
+{
+  "assetId": "crane",
+  "group": "F",
+  "endpoint": "https://api.meshy.ai/openapi/v1/multi-image-to-3d",
+  "method": "POST",
+  "parameters": {
+    "ai_model": "meshy-6-lite",
+    "geometry_resolution": "standard",
+    "should_texture": true,
+    "texture_resolution": "2k",
+    "enable_pbr": false,
+    "pose_mode": "",
+    "target_formats": [
+      "glb"
+    ]
+  },
+  "inputImages": [
+    {
+      "view": "front",
+      "localPath": "reference-images/39-crane/front.png",
+      "sha256": "49b62154bcb9f025f99870871459b87c99d3070b3578b631723b45c7124f9acc"
+    },
+    {
+      "view": "left-side",
+      "localPath": "reference-images/39-crane/left-side.png",
+      "sha256": "3f2d7009e12e913eb50465e9807107c4357ce2ef9485b6319ab3329fe865b1a6"
+    },
+    {
+      "view": "back",
+      "localPath": "reference-images/39-crane/back.png",
+      "sha256": "b50e83a3de20db32e3cde20da60ea2b51cf6f53dcca89b12d0e81a0bb1629a04"
+    }
+  ],
+  "transportNote": "Runner must populate image_urls with public URLs or data URIs in this order. Local paths are not accepted by the API.",
+  "plannedCredits": 15,
+  "submitted": false,
+  "taskId": null,
+  "accountVerified": false,
+  "privateSettingsVerified": false,
+  "rawDownloadDestination": "raw-models/F/crane.glb",
+  "runtimeDestinationAfterFittingAndValidation": "models/world/creature-crane.glb"
+}
