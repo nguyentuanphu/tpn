@@ -546,6 +546,10 @@ def lid(img, b, top=0., bot=1.):   # (original_skin) a closed lid painted over t
             _bot = np.interp(np.arange(W_), _xs, _cols[_xs])   # (beyond the eye's ends: its end rows)
             _k = max(1, int(w_ * .04)); _bot = np.convolve(np.pad(_bot, _k, mode='edge'), np.ones(2 * _k + 1) / (2 * _k + 1), 'valid')
             hole &= yy <= _bot[None, :] + max(3, h_ * .08)
+    if OWN and os.environ.get('FIT_FACEKIT') and not PART and top == 0:   # (15 Nov 2026, the shared face kit: the hole by distance from the eye, tools/meshy/facekit/shut_lid.py grow_hole; Sol's grey inner-corner tick)
+        _gh = _FK.grow_hole(V, S_, skin_mask(F) & ~HAIRISH, HAIRISH, b)
+        hole |= _gh & (yy >= b[1] + h_ * .2)   # (never the brows above)
+        hole |= _FK.upper_lid(V, S_, HAIRISH, b)   # (the upper lash and lid crease, up to the brow: grey arcs above the shut eyes)
     if top > 0: hole &= yy >= y0
     if PART: hole &= yy < lidline(xx)
     # her own skin flows in from all round the eye (a smooth fill, no disc edge): the eye pixels are repeatedly
@@ -716,7 +720,7 @@ if OWN:
     # (14 Nov 2026, the auditor's stray check: a thin line along the lower edge of every brow on closed eyes, Sol's, Clara's,
     # Finn's) the piece never reaches the brow: in each column above the eye's white, past the lash and the skin under the
     # brow, the next dark run is the brow, and the piece ends 2 px below it
-    _dk_ = (V < .55) | HAIRISH
+    _dk_ = ((V < .42) if os.environ.get('FIT_FACEKIT') else (V < .55)) | HAIRISH   # (15 Nov 2026, the shared face kit: Sol's grey lid crease (V .45 to .55) was taken for the brow and the piece ended under it; the brow is darker)
     for b in eyes.values():
         _wh = (yy >= b[1]) & (yy < b[3]) & (xx >= b[0]) & (xx < b[2]) & (V > .78) & (S_ < .22)
         if not _wh.any(): continue
@@ -790,6 +794,9 @@ if OWN and os.environ.get('FIT_FACEKIT'):   # (15 Nov 2026, the shared face kit:
     _ok = _reg & np.isfinite(G_[..., 0]) & skin_mask(F) & (V > .45) & ~HAIRISH & ~(((V < .55) | ((V > .78) & (S_ < .22))))
     _D = _FK.body_offset(F[..., :3], G_, _ok, max(3, int(W_ * .02)))
     print('FIT facekit body offset: measured', int(_ok.sum()), 'px, mean', np.round(_D[_ok].mean(0), 3) if _ok.any() else None)
+    json.dump({'region': int(_reg.sum()), 'cast': int(np.isfinite(G_[..., 0]).sum()), 'measured': int(_ok.sum()), 'mean_offset': [float(x) for x in (_D[_ok].mean(0) if _ok.any() else [0, 0, 0])],
+               'G_mean': [float(x) for x in np.nanmean(G_[_ok], 0)] if _ok.any() else None, 'F_mean': [float(x) for x in F[_ok][:, :3].mean(0)] if _ok.any() else None}, open(os.path.join(RDIR, 'facekit.json'), 'w'))
+    np.save(os.path.join(RDIR, 'facekit-G.npy'), G_); np.save(os.path.join(RDIR, 'facekit-F.npy'), F[..., :3])
     for k in M: M[k][..., :3] = np.clip(M[k][..., :3] + _D, 0, 1)
 atlas = np.zeros((TILE * 3, TILE * 3, 4), np.float32)
 for i, k in enumerate(ORDER):

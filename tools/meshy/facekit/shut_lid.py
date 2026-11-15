@@ -15,6 +15,62 @@ def _blur(a, r):
     c = np.pad(c, ((1, 0), (1, 0), (0, 0)))
     return (c[k:, k:] - c[:-k, k:] - c[k:, :-k] + c[:-k, :-k]) / (k * k)
 
+def grow_hole(V, S, skin, hair, box, reach=.08):
+    """The shut lid's hole by distance, not by colour thresholds alone (15 Nov 2026: Sol's grey tick at the inner corner, the open
+    eye's outline, was neither dark enough nor white enough to be closed). Seeds: the eye's white and its dark iris and lash
+    inside the eye box. From them the hole grows, one pixel a step, through every pixel that is not plain skin (grey, dark,
+    pale and colourless, or far from bright coloured skin), up to `reach` of the eye's width away from the seeds; hair outside
+    the box never. V, S: value and saturation; skin: plain-skin mask; hair: hair mask; box: x0 y0 x1 y1."""
+    h, w = V.shape; x0, y0, x1, y1 = [int(round(v)) for v in box]; bw = max(4, x1 - x0)
+    yy, xx = np.mgrid[0:h, 0:w]
+    inb = (xx >= x0) & (xx < x1) & (yy >= y0) & (yy < y1)
+    seed = inb & (((V > .78) & (S < .22)) | (V < .45))
+    # (first trial on Sol: grown through anything not plain skin, up to .3 of the eye's width, inside a box .6 wider: it reached the
+    # temples' shading and stopped at the box's sides, a filled block with straight edges at the outer corner) only grey or dark
+    # pixels (the outline), a short way (.08 of the eye's width) and close to the eye (.15)
+    plain = skin & (V > .6) & (S > .2)
+    can = ~plain & ((V < .72) | (S < .22)) & ~(hair & ~inb)
+    near = (xx >= x0 - bw * .15) & (xx < x1 + bw * .15) & (yy >= y0 - bw * .1) & (yy < y1 + bw * .15)
+    can &= near
+    out = seed.copy()
+    for _ in range(max(2, int(bw * reach))):
+        n = out | (can & (np.roll(out, 1, 0) | np.roll(out, -1, 0) | np.roll(out, 1, 1) | np.roll(out, -1, 1) |
+                          np.roll(np.roll(out, 1, 0), 1, 1) | np.roll(np.roll(out, 1, 0), -1, 1) | np.roll(np.roll(out, -1, 0), 1, 1) | np.roll(np.roll(out, -1, 0), -1, 1)))
+        if (n == out).all(): break
+        out = n
+    o2 = out | np.roll(out, 1, 0) | np.roll(out, -1, 0) | np.roll(out, 1, 1) | np.roll(out, -1, 1)   # its soft edge
+    return o2 & near
+
+def upper_lid(V, S, hair, box):
+    """(15 Nov 2026, the shared face kit, seen with the piece hidden: the open eye's upper lash and lid crease stayed as grey arcs
+    above Sol's shut eyes, as the hole stopped a fifth of the way down the eye box, which reaches up over the brows) everything
+    between the eye's white and the brow, column by column: from the white's top upwards past the lash and the skin under the
+    brow; the brow (the next dark run) and 2 px under it stay. Columns past the white's ends take the nearest end's height."""
+    h, w = V.shape; x0, y0, x1, y1 = [int(round(v)) for v in box]
+    x0, x1 = max(0, x0), min(w, x1); y0, y1 = max(0, y0), min(h, y1)
+    wh = np.zeros((h, w), bool); wh[y0:y1, x0:x1] = ((V > .78) & (S < .22))[y0:y1, x0:x1]
+    cols = np.nonzero(wh.any(0))[0]
+    out = np.zeros((h, w), bool)
+    if len(cols) < 3: return out
+    dk = (V < .42) | hair   # (the brow; a grey crease, V .45 to .55, is not)
+    top = {}
+    for x in cols:
+        wt = int(np.nonzero(wh[:, x])[0].min()); y = wt; st = 0; cut = max(y0, wt - (y1 - y0))
+        while y > max(0, wt - (y1 - y0)):
+            d = bool(dk[y, x])
+            if st == 0 and d: st = 1
+            elif st == 1 and not d: st = 2
+            elif st == 2 and d: cut = y + 3; break
+            y -= 1
+        top[x] = (cut, wt)
+    xs = np.array(sorted(top)); cut = np.array([top[x][0] for x in xs], float); wt = np.array([top[x][1] for x in xs], float)
+    k = max(1, len(xs) // 8); cut = np.array([np.median(cut[max(0, i - k):i + k + 1]) for i in range(len(xs))])   # (a lash flick taken for the brow in one column)
+    span = xs[-1] - xs[0]; xa, xb = int(xs[0] - span * .12), int(xs[-1] + span * .12)
+    for x in range(max(0, xa), min(w, xb + 1)):
+        c = np.interp(x, xs, cut); t = np.interp(x, xs, wt)
+        out[int(np.ceil(c)):int(t) + 2, x] = True
+    return out
+
 def body_offset(F, G, valid, r):
     """F: (h, w, 3) the front picture the mood pieces are cut from; G: the same front view of the body's own texture (the one
     the game draws), NaN where not cast; valid: where both are plain skin. Returns the broad colour difference G - F, blurred

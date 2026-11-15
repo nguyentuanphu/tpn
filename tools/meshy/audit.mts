@@ -424,7 +424,9 @@ gl_FragColor = vec4(code_ / 255.0, floor(dm_ / 256.0) / 255.0, mod(dm_, 256.0) /
       /* (13 Nov 2026, Sol rebuilt, three-quarters: only the near eye's white is seen, so a box under the eyes' span lay on
          that eye's blush) away from the front, the box is where the front view's mouth lies in 3D, projected into this view */
       if (!F0 && MW) { const p = MW.clone().project(cam), px = (p.x + 1) / 2 * W, py = (p.y + 1) / 2 * H; bx0 = px - MHW; bx1 = px + MHW; by0 = py - MDN; by1 = py + MUP; }
-      const mbox = (i: number) => { const x = i % W, y = (i / W) | 0; return bx1 > bx0 && x >= bx0 && x <= bx1 && y > by0 && y < by1; };
+      // (15 Nov 2026, the shared face kit's ±.4 views: Clara's box, placed from the front's, reached past her jaw onto her red shirt at the
+      // shoulder, counted as lips, 538 and 579 px on the old model as well) only the head's own skin or hair is in the box (body codes 5, 3)
+      const mbox = (i: number) => { const x = i % W, y = (i / W) | 0; return bx1 > bx0 && x >= bx0 && x <= bx1 && y > by0 && y < by1 && (!Pb[i * 4 + 3] || Math.round(Pb[i * 4]) === 5 || Math.round(Pb[i * 4]) === 3); };
       const pk = (px: Uint8Array, i: number) => (px[i * 4 + 2] - px[i * 4 + 1]) / Math.max(1, px[i * 4]), vv = (px: Uint8Array, i: number) => Math.max(px[i * 4], px[i * 4 + 1], px[i * 4 + 2]) / 255;
       let skPk = 0, skV = 0, skRd = 0, dF = 9;   // (13 Nov, Lumi: her short face put the box's foot below the chin, on the dark green hair behind it, taken as her mouth: only the face's own surface counts, no more than 2.5 cm behind the box's median depth; in the front view only, which places the mouth: turned, the face's depth runs across the box and this cut Sol's mouth in two)
       const rd = (px: Uint8Array, i: number) => (px[i * 4] - px[i * 4 + 1]) / Math.max(1, px[i * 4]);   // (second run: Sol's lips are only redder than his skin, green .34 of red against .47)
