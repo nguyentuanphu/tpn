@@ -127,3 +127,87 @@ A debug build (scratchpad `dbg.py`, reverted) coloured each head material and th
 - Next: a wider spread for the side views only, or fill the dome's texels in the fit itself. In the body texture's own UV space, the eye dome's triangles are the eye_ovals' triangles, as the regional stream does.
 
 Sol now (`facekit-audit-sol-s22`): eyes, face, mouth, lid 0; patch up to 205; stray up to 219; vlid up to 54. **Not passing.** Steps (b), (c) squares, and (d) are not done.
+
+## For the next agent (15 Nov 2026 AEDT, evening): what to do, exactly
+
+The coordinator's next order: (1) the UV-space fix; (2) print the Pb codes for Clara's ±.4 mouth pixels; (3) sort Sol's stray and vlid into real faults and noise; (4) two-run stability. The same rules apply:
+- every heavy job goes through `D:\WorkSpace\meshy\tools\heavy.ps1`;
+- no limit is raised;
+- push hourly (`git pull --no-rebase` first, never force);
+- never commit `models/`, `content/management-catalogue.json`, `.agents` or `AGENTS.md`;
+- no Meshy calls.
+
+**Set-up already in place:**
+- worktree `D:\WorkSpace\sv-meshy-facekit`, branch `meshy-facekit`;
+- server `node tools/meshy/serve.mjs "D:\WorkSpace\sv-meshy-facekit" 8796`, which may need restarting;
+- `tests/node_modules` and `node_modules` are junctions to the prod worktree's;
+- build after any `js/*.ts` change: `node tools/build.mts`.
+
+**Commands:**
+- **Fit one friend:**
+  `FIT_FACEKIT=1 FIT_NOGRAIN=1 powershell -File D:\WorkSpace\meshy\tools\heavy.ps1 powershell -File tools/meshy/facekit/fit_trial.ps1 sol`
+  It writes `D:\WorkSpace\meshy\fitted\facekit-<id>-{swim,own}` and copies the result into this worktree's `models/`. A fit takes about 4 minutes per friend.
+- **Audit:**
+  `cd tests; SV_URL=http://localhost:8796/ powershell -File ...heavy.ps1 node ../tools/meshy/audit.mts <out> sol "poses:face,pics,kitviews"`
+- **Self-test:** pass `-Out` and `-Only` quoted, through `-Command`:
+  `powershell -File ...heavy.ps1 powershell -Command "& ../tools/meshy/audit_selftest.ps1 -Id sol -Out 'D:\...\facekit-selftest' -Only 'eyes,face,mouth,lid,stray,patch,vlid'"`
+  Last result: all 7 face plants caught.
+- **Probe:** `node ../tools/meshy/facekit/probe.mts sol blink` lists each material's shut uniforms.
+- **Zoom strips:** the scratchpad `strip.py` (`out zoom x0 y0 x1 y1 files...`). Copy it if needed; it is 15 lines of PIL.
+- **Debug builds:** scratchpad `dbg.py` / `dbg2.py` patch `js/friend-model.ts` to paint the cover (green), the change (red/green) or backward-facing texels (yellow). They copy the file aside first; restore it after the run.
+- **Gotcha:** edit scripts written through a bash heredoc lose backslashes here. Write them with the Write tool and use `chr(92)` for backslash-n in JS strings.
+
+### (1) The UV-space fix: the plan
+**Goal:** close the whole eye dome on the head's own texture (the `colour` image, `CA`, baked onto `body`), so no view depends on the front projection. Store it as a second, shut copy that the game swaps to.
+
+**Fit side** (`fit_people.py`, after `colour` is final, near the `CLEAR_FACE` block about line 990, which already maps faces to texels with `uv_texels`):
+1. Eye-dome triangles: the body's polygons whose centre (x, z) lies inside each eye's ellipse in metres, grown about 25 %. Convert the pixel boxes with `wbox(b, pad)`, or use `eye_disc` in F, mapped to x/z through `fx0..fz1`. Take every such polygon whatever its facing; that closes the backward fold too.
+2. Texels: `uv_texels(polys, A_.shape[:2])`, and grow them 2 to 3 texels against UV seams.
+3. Lid colour per texel: the blink tile's colour at that triangle's front-projected position. The blink piece M['blink'] has the lid painted in F space. Sample it at the texel's 3D point: (x, z) to F's pixel. The pale dome sides then get the lid tone too.
+4. Write a second image, `colour_shut` = `colour` with those texels replaced. Feather 3 to 4 texels by alpha into the original, to avoid a hard UV edge. Save it in the GLB:
+   - easiest: as the `emissiveTexture` of a cloned material with a `_shut` extra;
+   - or: put a small atlas in a free corner of `colour` and store its UV rect in userData.
+
+**Game side** (`js/friend-model.ts`): while shut and `uShutOn`, sample `uShutMap2` (the shut colour image, same UVs as the body) instead of the face-picture path:
+- the body's texel `tx_` becomes `texture2D(uShutMap2, vMapUv)`, inside the eye areas only;
+- keep the projection path as a fallback for models without it;
+- `half` uses its own tile. Either make a half image too, or keep the projection for half.
+
+**Check:** the light crescent and the fold line should both go at ±.4 and ±.7 (`facekit-audit-sol-s22`, blink 0.7, about x 930 to 960 zoomed).
+
+### (2) Clara's ±.4 mouth
+538/579 is on the old and the new model alike, so it is the auditor. The head-only mouth box (body codes 5, 3) did not change it, so the shirt is not the cause. Print what is in the box: in `audit.mts`'s mouth pass, for `s === .4`, log the histogram of `Math.round(Pb[i*4])` and the box `bx0 bx1 by0 by1` against the face's extent. Then look at `clara-face-o-0.4-mouth.png` in `facekit-audit-clara-s17`. In the old run the magenta was on the lower jaw edge and the neck-shirt at the picture's corners.
+
+### (3) Sol's stray and vlid
+| Check | Where | Worst |
+|---|---|---|
+| stray | -.7 | 212 to 219 |
+| stray | from below | about 136 |
+| stray | front | 83 |
+| vlid | ±.7 | 42 to 54 |
+
+Earlier looks:
+- **stray** marks the hairline and brow lower edges (likely hair-edge noise) and a few skin specks.
+- **vlid** marks small dark bits at a hair edge and one beside the far eye.
+
+Zoom 3× (`strip.py`) on `sol-face-blink--0.7-stray.png`, `sol-face-blink-down-stray.png` and `sol-face-blink-0.7-vlid.png`. For noise: widen `hairEdge` in audit.mts, and keep the `stray` plant (dark dot on the nose) caught.
+
+### (4) Two runs
+Run the same audit twice on the final Sol and Clara. Compare `cases.json` per case: they must agree within 5 px.
+
+### State of the shader (`js/friend-model.ts`, in the kit block)
+- `uShutMap`, `uShutTile`, `uFBox`, `uFzf` (the face's front, unused now), `vKitNz`, `vKitZ`, `vFkN_` (forward normal).
+- Shut and `uShutOn`: `sa_` = piece alpha × facing (-.2..1); `sc_` = mix(body texel + (piece - smile tile), piece, ch_). ch_ is the lid's change, spread 2 % (8 samples), plus eye-coloured texels.
+- Eye texels in the eye areas left uncovered take the paint colour.
+- The normal goes forward under the piece.
+- The shut piece mesh is hidden; the body draws the shut eye.
+- The old flat paint runs only when `uShutOn` is 0 (models without `face_box`).
+
+**Fit (`FIT_FACEKIT`):**
+- F is cast from the body's own texture (`FACE_FROM_BODY`).
+- Hole: `grow_hole` + `upper_lid` + `eye_disc`.
+- Brow vs crease at V < .42.
+- Fill sources: skin V > .45.
+- Smile tile kept whole.
+- `face_box` has 5 values.
+- Grain off (`FIT_NOGRAIN=1`): it made specks.
