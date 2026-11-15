@@ -46,6 +46,7 @@ const result=await page.evaluate(async ([mode,baseline,debug,requireWidths])=>{
   if(!baseline||apertureMetadata.length||strokes.length){
    if(apertureMetadata.length!==1)throw Error('Requires one actual-eye aperture annotation');
    apertures=validateCowEyeMetadata(apertureMetadata[0],centers);validateCowLashMetadata(strokes,centers,apertures,{requireWidths});
+   if(requireWidths&&apertures.some(a=>!a.UV))throw Error('Current cow requires source UV eye coverage, including lateral artwork');
   }
 
   let body;obj.traverse(o=>{if(o.isSkinnedMesh&&(!body||o.geometry.attributes.position.count>body.geometry.attributes.position.count))body=o;});
@@ -132,7 +133,7 @@ const result=await page.evaluate(async ([mode,baseline,debug,requireWidths])=>{
     }
     if(plant==='mouth-open'){const vertices=[];for(const x of [-.035,.035])vertices.push(x-.006,-.006,0,x+.006,-.006,0,x+.006,.006,0,x-.006,.006,0);geo.setAttribute('position',new THREE.Float32BufferAttribute(vertices,3));geo.deleteAttribute('normal');geo.deleteAttribute('uv');geo.setIndex([0,1,2,0,2,3,4,5,6,4,6,7]);geo.computeBoundingSphere();}
     fault=new THREE.Mesh(geo,new THREE.MeshBasicMaterial({color:plant==='rim-inner-native'?0x333333:plant==='eyes'?0xffffff:plant==='flat'?0xe8d6bd:plant==='lid'||plant.startsWith('rim')?0xaaaaaa:0x220500,transparent:true,depthTest:false,depthWrite:false,side:THREE.DoubleSide}));if(plant==='silhouette-cut'){fault.material.opacity=0;fault.material.blending=THREE.NoBlending;}
-    if(['lid','rim','rim-textured','rim-inner','rim-inner-native','flat','eyes'].includes(plant)){const eye=plant==='flat'||plant==='rim-textured'?0:1;let source;obj.traverse(o=>{if(o.isMesh&&o.material.name?.endsWith('-'+(bones[2].scale.x>.1?'joy':'shut')+eye))source=o.material;});if(!source)throw Error('Missing real lid material name for plant');fault.material.name=source.name;
+    if(['lid','rim','rim-textured','rim-inner','rim-inner-native','flat','eyes'].includes(plant)){const eye=plant==='flat'||plant==='rim-textured'?0:1;let source;obj.traverse(o=>{if(o.isMesh&&!o.material.name.includes('-ink-')&&o.material.name?.endsWith('-'+(bones[2].scale.x>.1?'joy':'shut')+eye))source=o.material;});if(!source)throw Error('Missing real lid material name for plant');fault.material.name=source.name;
      if(plant==='rim-textured'){
       // Retain actual authored fur grain, darkened as a warm baked AO
       // crease. An exact-RGB uniform-ring detector must not be sufficient.

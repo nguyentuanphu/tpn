@@ -4,7 +4,7 @@ export function validateCowEyeMetadata(metadata,centers){
  const dot=(a,b)=>a.reduce((s,v,i)=>s+v*b[i],0);
  if(!metadata)throw Error('Missing actual-eye aperture metadata');
  return [0,1].map(i=>{
-  const a=Object.fromEntries(['C','S','U','N','H','D','M','P','UV','B'].map(k=>[k,metadata[`svEye${i}${k}`]]));
+  const a=Object.fromEntries(['C','S','U','N','H','D','M','P','UV','B','F'].map(k=>[k,metadata[`svEye${i}${k}`]]));
   if(!['C','S','U','N'].every(k=>finite(a[k],3))||!finite(a.D,2)||!Array.isArray(a.H)||a.H.length<6||a.H.length>128||a.H.length%2||!a.H.every(Number.isFinite)||a.D[1]<=a.D[0]||a.D[1]-a.D[0]>.15)throw Error('Invalid actual-eye aperture metadata');
   if(!Number.isFinite(a.P)||a.P<=0||a.P>.2||!Array.isArray(a.M)||a.M.length<3||a.M.length%2!==1||!a.M.every(Number.isInteger)||a.M[0]<64||a.M[0]>512)throw Error('Missing/invalid actual-eye pixel mask');
   const pixels=a.M[0]**2;let end=0,total=0;
@@ -19,6 +19,7 @@ export function validateCowEyeMetadata(metadata,centers){
    if(!Array.isArray(a.UV)||a.UV.length<4||a.UV.length%2||!a.UV.every(Number.isInteger)||a.UV[0]<64||a.UV[0]>2048||a.UV[1]<64||a.UV[1]>2048||!finite(a.B,6))throw Error('Invalid source UV eye mask');
    let end=0,total=0;for(let k=2;k<a.UV.length;k+=2){const start=a.UV[k],length=a.UV[k+1];if(start<end||length<=0||start+length>a.UV[0]*a.UV[1])throw Error('Invalid source UV eye runs');end=start+length;total+=length;}
    if(total<8||total>a.UV[0]*a.UV[1]*.1||[0,1,2].some(k=>a.B[k]>=a.B[k+3]||a.B[k+3]-a.B[k]>.2))throw Error('Unbounded source UV eye region');
+   if(a.F){if(!Array.isArray(a.F)||a.F.length%2||!a.F.every(Number.isInteger)||a.F[0]!==a.UV[0]||a.F[1]!==a.UV[1])throw Error('Invalid native-coat UV mask');let end=0;for(let k=2;k<a.F.length;k+=2){if(a.F[k]<end||a.F[k+1]<=0||a.F[k]+a.F[k+1]>a.F[0]*a.F[1])throw Error('Invalid native-coat UV runs');end=a.F[k]+a.F[k+1];}}
   }
 
   return a;

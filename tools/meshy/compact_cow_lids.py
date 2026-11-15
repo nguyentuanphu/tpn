@@ -48,7 +48,8 @@ for material in doc['materials']:
         sampler.update(minFilter=9729,magFilter=9729)
         texture['sampler']=len(samplers);samplers.append(sampler)
         images.add(doc['images'][texture['source']]['bufferView'])
-assert len(images)==4
+has_ink=any('-ink-'in m.get('name','')for m in doc['materials'])
+assert len(images)==(6 if has_ink else 4)
 payload=[];offset=0;before=after=0
 for index,view in enumerate(doc['bufferViews']):
     data=binary[view.get('byteOffset',0):view.get('byteOffset',0)+view['byteLength']]

@@ -872,6 +872,33 @@ def closed_eye_shape(o,center):
     original surface just behind this closure, with spatially matched weights.
     """
     V=np.array([v.co[:] for v in o.data.vertices]);c=np.array(center)
+    if FIX.get('closed_native_surface'):
+        bvh=bvh_of(o);im,px=tex_of(o);me=o.data;uvl=me.uv_layers.active.data;points=[]
+        from mathutils.geometry import barycentric_transform
+        coat=FIX['lid_coat'][0 if c[0]<0 else 1]
+        for radius in (1.9,2.2,2.5,2.8):
+            for angle in np.linspace(0,2*math.pi,72,endpoint=False):
+                x=c[0]+.043*radius*math.cos(angle);z=c[2]+.050*radius*math.sin(angle)
+                loc,nor,fi,_=bvh.ray_cast(Vector((x,-2,z)),Vector((0,1,0)))
+                if loc is None or nor.y>-.1:continue
+                poly=me.polygons[fi];vs=[me.vertices[k].co for k in poly.vertices[:3]];us=[uvl[k].uv for k in poly.loop_indices[:3]]
+                uv=barycentric_transform(loc,*vs,*(Vector((*u,0))for u in us));rgb=sample(px,np.array(uv[:2]));lum=float(rgb@np.array((.3,.59,.11)));sat=float((rgb.max()-rgb.min())/max(float(rgb.max()),1e-6))
+                good=(.025<lum<.30 and sat<.45)if coat=='dark'else(lum>.55 and .1<sat<.35 and rgb[0]>=rgb[1]>=rgb[2] and rgb[0]-rgb[1]<1.4*(rgb[1]-rgb[2])+.015)
+                if good:points.append(tuple(loc))
+        points=np.array(points)
+        if len(points)<18:raise ValueError('Missing native fur around socket for closure')
+        def design(p):
+            x=(p[:,0]-c[0])/.043;z=(p[:,2]-c[2])/.050
+            return np.column_stack((np.ones(len(p)),x,z,x*x,x*z,z*z))
+        A=design(points);keep=np.ones(len(points),bool)
+        for _ in range(3):
+            coef=np.linalg.lstsq(A[keep],points[keep,1],rcond=None)[0];res=points[:,1]-A@coef;mad=np.median(np.abs(res[keep]));keep=np.abs(res)<max(.006,3*mad)
+            if keep.sum()<18:raise ValueError('Unstable native socket curvature')
+        target=design(V)@coef;d=np.hypot((V[:,0]-c[0])/.043,(V[:,2]-c[2])/.050)
+        w=1-smooth01((d-1.55)/.50);front=1-smooth01((np.abs(V[:,1]-c[1])-.10)/.08)
+        delta=np.clip(target-V[:,1],-.06,.06)*w*front;closed=V.copy();closed[:,1]+=delta
+        print('NATIVE_CLOSURE',float(c[0]),'samples',int(keep.sum()),'center',round(float(coef[0]),5),'eye',round(float(c[1]),5),'maxDelta',round(float(delta.max()),5),flush=True)
+        return closed,delta
     rx,rz=FIX['eye_socket_inset']['radius'];x=(V[:,0]-c[0])/rx;z=(V[:,2]-c[2])/rz;d=np.hypot(x,z)
     front=np.abs(V[:,1]-c[1])<.075;normals=np.array([v.normal[:] for v in o.data.vertices])
     # UV seams duplicate vertices with different partial-mesh normals. Every
@@ -913,18 +940,26 @@ def surface_lid(o, arm, name, center, side, up, picture, picture_radius, eye_ind
             available=membership.get(head.index,0.)+membership.get(retract.index,0.)
             # Negative target differences need no retraction; such a closure
             # sits just outside the native fur and blends to it at the edge.
-            weight=min(available,max(0.,float(delta)+(.0006 if cover[vi]>0 else 0))/total_distance)
+            physical_radius=math.hypot((V[vi,0]-c[0])/.038,(V[vi,2]-c[2])/.047)
+            safety=.0008*(1-smooth01((physical_radius-1.2)/.6))*(1-smooth01((abs(V[vi,1]-c[1])-.055)/.035))
+            weight=min(available,max(0.,float(delta)+safety)/total_distance)
+            # The eye shell closes independently of the protruding muzzle.
+            original=o.data.vertices[vi].co
+            if original.z<c[2]-.06 or original.y<c[1]-.075:weight=0.
             if available>0:
                 head.add([vi],available-weight,'REPLACE');retract.add([vi],weight,'REPLACE')
 
     _,groups=np.unique(np.rint(V*1e5).astype(np.int64),axis=0,return_inverse=True)
     normals=np.array([v.normal[:] for v in me.vertices])
     if closure_delta is not None:
-        normals=np.zeros_like(V);triangles=np.array([t.vertices[:]for t in me.loop_triangles]);a,b,d=V[triangles[:,0]],V[triangles[:,1]],V[triangles[:,2]];face_normals=np.cross(b-a,d-a)
+        normals=np.zeros_like(V);triangles=np.array([t.vertices[:]for t in me.loop_triangles])
+        if FIX.get('closed_native_surface'):
+            original=np.array([v.co[:]for v in me.vertices]);a,b,d=original[triangles[:,0]],original[triangles[:,1]],original[triangles[:,2]];face=np.cross(b-a,d-a);triangles=triangles[face[:,1]<0]
+        a,b,d=V[triangles[:,0]],V[triangles[:,1]],V[triangles[:,2]];face_normals=np.cross(b-a,d-a)
         for k in range(3):np.add.at(normals,triangles[:,k],face_normals)
     shared=np.zeros((groups.max()+1,3));np.add.at(shared,groups,normals)
     shared/=np.maximum(np.linalg.norm(shared,axis=1,keepdims=True),1e-9)
-    close=((((V[:,[0,2]]-c[[0,2]])/radii)**2).sum(1)<FIX.get('surface_eye_selection',2.6)**2)&(np.abs(V[:,1]-c[1])<.09)
+    close=((((V[:,[0,2]]-c[[0,2]])/radii)**2).sum(1)<FIX.get('surface_eye_selection',2.6)**2)&(np.abs(V[:,1]-c[1])<(.18 if FIX.get('closed_native_surface') else .09))
     alpha=mask_picture if mask_picture is not None else np.ones(picture.shape[:2])
     rgba=np.concatenate((picture.copy(),alpha[...,None]),axis=-1).astype(np.float32)
     guard=alpha>0
@@ -932,12 +967,22 @@ def surface_lid(o, arm, name, center, side, up, picture, picture_radius, eye_ind
     # Straight-alpha linear filtering needs native RGB just beyond the edge.
     # Black RGB at alpha zero creates a dark fringe despite invisible texels.
     rgba[~guard,:3]=0
-    height,width=alpha.shape;image=bpy.data.images.new(name+'-surface',width,height,alpha=True)
-    image.file_format='PNG';image.pixels[:]=rgba.ravel();image.pack()
-    if DEBUG:image.filepath_raw=os.path.join(OUT,name+'-surface.png');image.save()
+    height,width=alpha.shape
+    image=uv_data.get('_fur_image')if uv_data is not None and uv_data.get('share_fur')else None
+    if image is None:
+        image=bpy.data.images.new(name+'-surface',width,height,alpha=True)
+        image.file_format='PNG';image.pixels[:]=rgba.ravel();image.pack()
+        if uv_data is not None and uv_data.get('share_fur'):uv_data['_fur_image']=image
+        if DEBUG:image.filepath_raw=os.path.join(OUT,name+'-surface.png');image.save()
     bm=bmesh.new();uv_layer=bm.loops.layers.uv.new('UVMap');verts={};corner_normals=[]
+    original_V=np.array([v.co[:]for v in me.vertices]);source_bvh=bvh_of(o)if FIX.get('closed_native_surface')else None
     for tri in me.loop_triangles:
         if not close[list(tri.vertices)].any():continue
+        if source_bvh is not None:
+            a,b,d=original_V[list(tri.vertices)];normal=np.cross(b-a,d-a)
+            if normal[1]>=-.03*max(float(np.linalg.norm(normal)),1e-9):continue
+            mid=(a+b+d)/3;loc,_,_,_=source_bvh.ray_cast(Vector((mid[0],-2,mid[2])),Vector((0,1,0)))
+            if loc is not None and loc.y<mid[1]-.001:continue
         projected=np.column_stack(((V[list(tri.vertices)]-c)@side,(V[list(tri.vertices)]-c)@up))
         uv=(projected/picture_radius+1)*.5
         if uv_data is not None:
@@ -950,7 +995,9 @@ def surface_lid(o, arm, name, center, side, up, picture, picture_radius, eye_ind
             if group not in verts:verts[group]=bm.verts.new(Vector(V[vi])+Vector(shared[group])*FIX['surface_lid_forward'])
         face=bm.faces.new([verts[int(groups[vi])] for vi in tri.vertices]);face.smooth=True
         for loop,q in zip(face.loops,uv):loop[uv_layer].uv=tuple(q)
-        corner_normals.extend(tuple(shared[int(groups[vi])])for vi in tri.vertices) if closure_delta is not None else corner_normals.extend(tuple(me.corner_normals[li].vector) for li in tri.loops)
+        for vi,li in zip(tri.vertices,tri.loops):
+            original=np.array(me.corner_normals[li].vector);blend=min(1.,abs(float(closure_delta[vi]))/.006)if closure_delta is not None else 0.
+            normal=original*(1-blend)+shared[int(groups[vi])]*blend;normal/=max(float(np.linalg.norm(normal)),1e-9);corner_normals.append(tuple(normal))
     if not verts:raise ValueError('Empty anatomical eyelid surface')
     mesh=bpy.data.meshes.new(name);bm.to_mesh(mesh);bm.free()
     # A copied subset recomputes different normals at its perimeter. Preserve
@@ -964,6 +1011,42 @@ def surface_lid(o, arm, name, center, side, up, picture, picture_radius, eye_ind
     mesh.materials.append(mat);group=obj.vertex_groups.new(name=bone_name);group.add(list(range(len(mesh.vertices))),1.,'REPLACE')
     obj.parent=arm;mod=obj.modifiers.new('rig','ARMATURE');mod.object=arm
     return obj
+
+def cow_mesh_lash(lid,arm,data,c,r,kind,index,curve):
+    me=lid.data;me.calc_loop_triangles();V=[v.co for v in me.vertices];tris=[list(t.vertices)for t in me.loop_triangles]
+    bvh=BVHTree.FromPolygons(V,tris,all_triangles=True);uvl=me.uv_layers.active.data
+    from mathutils.geometry import barycentric_transform
+    ew=r*.78;cols,rows=64,16;pixels=np.zeros((rows,cols,4));vertices=[];normals=[];face_rows=8
+    def point(u,v):
+        taper=math.sqrt(max(0,1-(u/(ew*.85))**2));z=float(c[2])+curve(u)+v*r*.09*taper
+        loc,nor,fi,_=bvh.ray_cast(Vector((float(c[0])+u,-2,z)),Vector((0,1,0)))
+        if loc is None:raise ValueError(f'Crease misses {kind}{index}: u={u:.5f}, v={v:.3f}, x={float(c[0])+u:.5f}, z={z:.5f}')
+        tri=me.loop_triangles[fi];a,b,d=[me.vertices[k].co for k in tri.vertices];uv=[uvl[k].uv for k in tri.loops]
+        q=barycentric_transform(loc,a,b,d,*(Vector((*x,0))for x in uv));rgb=sample(data['fill'],np.array(q[:2]))
+        ns=[me.corner_normals[k].vector for k in tri.loops];normal=barycentric_transform(loc,a,b,d,*ns).normalized()
+        return loc,normal,rgb
+    for j,u in enumerate(np.linspace(-ew*.85,ew*.85,cols)):
+        for b,v in enumerate(np.linspace(-1,1,rows)):
+            _,_,base=point(float(u),float(v));ink=np.clip((.65-abs(v))/.2,0,1)
+            if FIX['lid_coat'][index]=='dark':
+                hi=.65*math.exp(-((v-.65)/.16)**2);base=base*(1-hi)+np.array((.40,.38,.35))*hi
+            rgb=base*(1-ink)+np.array((.025,.018,.012))*ink;pixels[b,j]=np.r_[rgb,1.]
+        for v in np.linspace(-1,1,face_rows):
+            loc,normal,_=point(float(u),float(v));vertices.append(tuple(loc+normal*.00025));normals.append(tuple(normal))
+    faces=[]
+    for j in range(cols-1):
+        for b in range(face_rows-1):
+            k=j*face_rows+b;faces.extend([(k,k+face_rows,k+1),(k+1,k+face_rows,k+face_rows+1)])
+    name=f'meshy-cow-{kind}-ink-{kind}{index}';mesh=bpy.data.meshes.new(name);mesh.from_pydata(vertices,[],faces);mesh.update();uv=mesh.uv_layers.new(name='UVMap')
+    for poly in mesh.polygons:
+        poly.use_smooth=True
+        for li in poly.loop_indices:
+            vi=mesh.loops[li].vertex_index;j,b=divmod(vi,face_rows);uv.data[li].uv=(j/(cols-1),b/(face_rows-1))
+    mesh.normals_split_custom_set_from_vertices(normals);image=bpy.data.images.new(name,cols,rows,alpha=True);image.file_format='PNG';image.pixels[:]=pixels.ravel();image.pack()
+    mat=bpy.data.materials.new(name);mat.use_nodes=True;tex=mat.node_tree.nodes.new('ShaderNodeTexImage');tex.image=image;mat.node_tree.links.new(tex.outputs['Color'],mat.node_tree.nodes['Principled BSDF'].inputs['Base Color']);mesh.materials.append(mat)
+    obj=bpy.data.objects.new(name,mesh);bpy.context.collection.objects.link(obj);group=obj.vertex_groups.new(name=f'{kind}{index}');group.add(list(range(len(vertices))),1.,'REPLACE');obj.parent=arm;mod=obj.modifiers.new('rig','ARMATURE');mod.object=arm
+    return obj
+
 
 def fur_lid_fill(img,hit,xx,yy,r,eye):
     """Inpaint only the actual eye opening, preserving local fur colour + grain.
@@ -1268,11 +1351,12 @@ def face_pieces(o, arm, J, Fc):
         uv_data=None
         if uv_helper is not None:
             uv_data=uv_helper.prepare(o,px,c,r,FIX['lid_coat'][i])
-            o[f'svEye{i}UV']=uv_data['eyeUV']
+            o[f'svEye{i}UV']=uv_data['eyeUV'];o[f'svEye{i}F']=uv_data['nativeUV']
             b=uv_data['bounds'];lo=np.array((b[0],b[2],-b[4]));hi=np.array((b[3],b[5],-b[1]));o[f'svEye{i}B']=[round(float(x),6)for x in np.r_[lo,hi]]
             print('EYE_UV',i,'size',uv_data['size'],'opening',int(uv_data['opening'].sum()),'origin',uv_data['origin'],flush=True)
             if DEBUG:np.savez_compressed(os.path.join(OUT,f'eye-uv-{i}-{len(px)}.npz'),**{k:uv_data[k]for k in ('fill','alpha','world','opening','source','valid')})
-            uv_data=uv_helper.supersample(uv_data,2)
+            if not FIX.get('mesh_lash'):uv_data=uv_helper.supersample(uv_data,2)
+            else:uv_data['share_fur']=True
 
         lash = np.array(FIX.get('lash', (.22, .14, .1)))
         if FIX.get('textured_fur_lids'):
@@ -1298,7 +1382,7 @@ def face_pieces(o, arm, J, Fc):
             else:stroke_rgb=lash
             img = img * (1 - a_[..., None]) + stroke_rgb * a_[..., None]
             if uv_data is not None:
-                img=uv_helper.expression(uv_data,c,r,kind,FIX['lid_coat'][i]);fur_mask=uv_data['alpha']
+                img=uv_data['fill'] if FIX.get('mesh_lash') else uv_helper.expression(uv_data,c,r,kind,FIX['lid_coat'][i]);fur_mask=uv_data['alpha']
             name = f'meshy-{KIND}-{kind}{i}'
             alpha = np.ones((len(img),len(img),1))
             if FIX.get('lid_feather') and uv_data is None:
@@ -1316,12 +1400,15 @@ def face_pieces(o, arm, J, Fc):
                     if FIX.get('closed_eye_curvature'):
                         closed_vertices,_=closed_eye_shape(o,c)
                         stroke_bvh=BVHTree.FromPolygons([Vector(v)for v in closed_vertices],[list(p.vertices)for p in me.polygons],all_triangles=False)
+                    lash_offset=FIX['surface_lid_forward']
+                    if FIX.get('mesh_lash'):
+                        stroke_bvh=BVHTree.FromPolygons([v.co for v in lid.data.vertices],[list(p.vertices)for p in lid.data.polygons],all_triangles=False);lash_offset=.00025
                     us=np.linspace(-ew*.85,ew*.85,30);half_width=r*.09+px_*.75
                     for j,u in enumerate(us):
                         frm=c+side*(u+ecx)+up*(ecy+curve(u))+nrm*ray_distance
                         loc,normal,_,_=stroke_bvh.ray_cast(Vector(frm),Vector(-nrm))
                         if loc is None:raise ValueError('Lash centre misses face')
-                        stroke.extend(three(np.array(loc[:])+np.array(normal[:])*FIX['surface_lid_forward']))
+                        stroke.extend(three(np.array(loc[:])+np.array(normal[:])*lash_offset))
                         edge_u=u+(-px_*.5 if j==0 else px_*.5 if j==len(us)-1 else 0)
                         local_width=r*.09*math.sqrt(max(0,1-(u/(ew*.85))**2))+px_*.75
                         stroke_widths.append(round(local_width,6))
@@ -1329,8 +1416,9 @@ def face_pieces(o, arm, J, Fc):
                             frm=c+side*(edge_u+ecx)+up*(ecy+curve(edge_u)+sign*local_width)+nrm*ray_distance
                             loc,normal,_,_=stroke_bvh.ray_cast(Vector(frm),Vector(-nrm))
                             if loc is None:raise ValueError('Lash band misses face')
-                            stroke_band.extend(three(np.array(loc[:])+np.array(normal[:])*FIX['surface_lid_forward']))
+                            stroke_band.extend(three(np.array(loc[:])+np.array(normal[:])*lash_offset))
                     lid['svLash']=stroke;lid['svLashBand']=stroke_band;lid['svLashWidths']=stroke_widths;lid['svLashBone']=f'{kind}{i}';lid['svLashWidth']=round(half_width,6);lid['svEyeIndex']=i
+                    if FIX.get('mesh_lash'):cow_mesh_lash(lid,arm,uv_data,c,r,kind,i,curve)
                 continue
             # the piece: a fine grid laid on the head's surface over the eye (rays along -normal), a little in front, its
             # picture straight on; no gaps (the head's own triangles, copied, showed the eye through cracks at their edges)

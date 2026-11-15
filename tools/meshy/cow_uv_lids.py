@@ -22,6 +22,40 @@ def filled(a):
     return ~outside
 
 
+def components(mask):
+    seen=np.zeros_like(mask)
+    for y,x in np.argwhere(mask):
+        if seen[y,x]:continue
+        stack=[(int(y),int(x))];seen[y,x]=True;cells=[]
+        while stack:
+            a,b=stack.pop();cells.append((a,b))
+            for dy,dx in ((1,0),(-1,0),(0,1),(0,-1)):
+                u,v=a+dy,b+dx
+                if 0<=u<mask.shape[0] and 0<=v<mask.shape[1] and mask[u,v] and not seen[u,v]:seen[u,v]=True;stack.append((u,v))
+        yield np.array(cells)
+
+
+def island_eye_hulls(feature,hit):
+    result=feature.copy()
+    for island in components(grow(hit)):
+        y,x=island.T;selected=feature[y,x];points=sorted(set(zip(x[selected].tolist(),y[selected].tolist())))
+        if len(points)<3:continue
+        def cross(o,a,b):return(a[0]-o[0])*(b[1]-o[1])-(a[1]-o[1])*(b[0]-o[0])
+        lo=[];hi=[]
+        for q in points:
+            while len(lo)>=2 and cross(lo[-2],lo[-1],q)<=0:lo.pop()
+            lo.append(q)
+        for q in reversed(points):
+            while len(hi)>=2 and cross(hi[-2],hi[-1],q)<=0:hi.pop()
+            hi.append(q)
+        hull=lo[:-1]+hi[:-1]
+        if len(hull)<3:continue
+        xx0,yy0=np.min(points,axis=0);xx1,yy1=np.max(points,axis=0);yy,xx=np.mgrid[yy0:yy1+1,xx0:xx1+1];inside=np.ones(xx.shape,bool)
+        for a,b in zip(hull,hull[1:]+hull[:1]):inside&=(b[0]-a[0])*(yy-a[1])-(b[1]-a[1])*(xx-a[0])>=-1e-6
+        result[yy0:yy1+1,xx0:xx1+1]|=inside&hit[yy0:yy1+1,xx0:xx1+1]
+    return result
+
+
 def rle(a):
     d=np.diff(np.r_[False,a.ravel(),False].astype(np.int8));lo=np.flatnonzero(d==1);hi=np.flatnonzero(d==-1)
     return [int(v)for pair in zip(lo,hi-lo)for v in pair]
@@ -30,7 +64,7 @@ def rle(a):
 def prepare(o,px,center,r,coat):
     """Rasterize original head UV triangles; every sample has a real 3D source."""
     me=o.data;me.calc_loop_triangles();V=np.array([v.co[:]for v in me.vertices]);h,w=px.shape[:2];c=np.array(center)
-    world=np.zeros((h,w,3));hit=np.zeros((h,w),bool);uvl=me.uv_layers.active.data
+    world=np.zeros((h,w,3));hit=np.zeros((h,w),bool);best=np.full((h,w),-1e9);uvl=me.uv_layers.active.data
     for t in me.loop_triangles:
         v=V[list(t.vertices)];rad=np.linalg.norm(v[:,[0,2]]-c[[0,2]],axis=1)
         if rad.min()>r*2.4 or np.abs(v[:,1]-c[1]).min()>.1:continue
@@ -42,14 +76,19 @@ def prepare(o,px,center,r,coat):
         if abs(den)<1e-8:continue
         u=((q[...,0]-a[0])*(d[1]-a[1])-(q[...,1]-a[1])*(d[0]-a[0]))/den
         z=((b[0]-a[0])*(q[...,1]-a[1])-(b[1]-a[1])*(q[...,0]-a[0]))/den
-        valid=(u>=-1e-5)&(z>=-1e-5)&(u+z<=1+1e-5)
-        pos=v[0]+u[...,None]*(v[1]-v[0])+z[...,None]*(v[2]-v[0])
+        # Conservative source texel footprint: a thin UV triangle can render
+        # even when no texel centre lies strictly inside it.
+        tu=.71*np.linalg.norm(d-a)/abs(den);tz=.71*np.linalg.norm(b-a)/abs(den);ts=.71*np.linalg.norm(d-b)/abs(den)
+        valid=(u>=-tu)&(z>=-tz)&(u+z<=1+ts);quality=np.minimum(np.minimum(u,z),1-u-z)
+        weights=np.maximum(np.stack((1-u-z,u,z),axis=-1),0);weights/=np.maximum(weights.sum(-1,keepdims=True),1e-9)
+        pos=weights@v
         valid&=(np.linalg.norm(pos[...,[0,2]]-c[[0,2]],axis=-1)<r*2.5)&(np.abs(pos[...,1]-c[1])<.1)
-        iy,ix=yy[valid],xx[valid];world[iy,ix]=pos[valid];hit[iy,ix]=True
+        valid&=quality>best[yy,xx]
+        iy,ix=yy[valid],xx[valid];world[iy,ix]=pos[valid];hit[iy,ix]=True;best[iy,ix]=quality[valid]
     lum=px@np.array((.3,.59,.11));sat=(px.max(-1)-px.min(-1))/np.maximum(px.max(-1),1e-6)
     rad=np.linalg.norm(world[...,[0,2]]-c[[0,2]],axis=-1)/r
-    region=hit&(rad<1.55)
-    native_cream=np.zeros((h,w),bool)
+    region=hit&((((world[...,0]-c[0])/.055)**2+((world[...,2]-c[2])/.070)**2)<1.1**2)
+    native_cream=np.zeros((h,w),bool);protected=np.zeros((h,w),bool)
     if coat=='dark':
         cream=hit&(lum>.25)&(sat>.1)&(px[...,0]>=px[...,1])&(px[...,0]-px[...,1]<.18)&(px[...,1]>=px[...,2])&(px[...,1]-px[...,2]<.25)
         native_cream=cream&(rad>1.6);todo=deque(map(tuple,np.argwhere(native_cream)))
@@ -59,11 +98,14 @@ def prepare(o,px,center,r,coat):
                 a,b=y+dy,x+dx
                 if 0<=a<h and 0<=b<w and cream[a,b] and not native_cream[a,b]:native_cream[a,b]=True;todo.append((a,b))
     if coat=='dark':
-        feature=region&(((lum>.55)&(sat<.17))|((lum>.08)&(px[...,0]>px[...,1]*1.35)&(px[...,0]-px[...,1]>.05)&(px[...,0]-px[...,2]>.075)&(rad<1.2)))
+        feature=region&(((lum>.55)&(sat<.17))|((lum>.08)&(lum<.45)&(px[...,0]>px[...,1]*1.35)&(px[...,0]-px[...,1]>.05)&(px[...,0]-px[...,2]>.075)&(rad<1.2)))
         feature|=hit&(rad<.75)&(lum<.25)&(np.abs(world[...,1]-c[1])<.025)
         feature&=~native_cream
     else:
         dark=region&(lum<.38)
+        for cells in components(dark):
+            y,x=cells.T;mean=world[y,x].mean(0)
+            if mean[2]-c[2]>.067 or np.linalg.norm(mean[[0,2]]-c[[0,2]])>r*1.6:dark[y,x]=False;protected[y,x]=True
         pale=region&(lum>.64)&(sat<.17)
         feature=dark.copy();band=grow(dark)&pale
         for _ in range(20):band|=grow(band)&pale
@@ -71,20 +113,26 @@ def prepare(o,px,center,r,coat):
     if feature.sum()<8:raise ValueError('Missing actual UV eye artwork')
     # One texel joins the iris/sclera filtering footprint. Fill the enclosed
     # pupil as eye too, rather than misclassifying a black pupil as black fur.
-    eye=filled(grow(feature))&hit&region&~native_cream
+    eye=filled(grow(island_eye_hulls(feature,hit)))&hit&region&~native_cream
     p=world[eye];bounds=np.r_[p.min(0)-.002,p.max(0)+.002]
-    rows,cols=np.where(eye);margin=24 if w>=1024 else 14
-    x0=max(0,int(cols.min())-margin);y0=max(0,int(rows.min())-margin)
-    n=int(max(cols.max()-x0+margin+1,rows.max()-y0+margin+1));n=min(n,w-x0,h-y0)
-    if n<=0 or not eye[y0:y0+n,x0:x0+n].any():raise ValueError('Invalid UV eye crop')
+    skin_radius=np.hypot((world[...,0]-c[0])/.043,(world[...,2]-c[2])/.050)
+    support=eye|(hit&(skin_radius<2.10))
+    rows,cols=np.where(support);margin=24 if w>=1024 else 14
+    n=min(min(w,h),int(max(cols.max()-cols.min()+1,rows.max()-rows.min()+1))+2*margin)
+    x0=max(0,min(int(cols.min())-margin,w-n));y0=max(0,min(int(rows.min())-margin,h-n))
+    if n<=0 or int(support[y0:y0+n,x0:x0+n].sum())!=int(support.sum()):raise ValueError('UV crop must contain every eye and closure-skin texel')
     crop=(slice(y0,y0+n),slice(x0,x0+n));img=px[crop].copy();valid=hit[crop];opening=eye[crop];pos=world[crop]
     local_lum=lum[crop];local_sat=sat[crop];local_rad=rad[crop]
     # Remove the socket's AO along with its artwork, while preserving brow,
     # blush and coat boundaries. The UV metric is the actual texel spacing.
-    repair=grow(opening);steps=9 if w>=1024 else 5
+    physical=np.hypot((pos[...,0]-c[0])/.043,(pos[...,2]-c[2])/.050)
+    pink=valid&((img[...,0]-img[...,1])>1.5*(img[...,1]-img[...,2])+.02)&((img[...,0]-img[...,1])>.08)&~opening
+    protected=grow(grow(protected))
+    keep_native=native_cream[crop]|protected[crop]|pink
+    repair=grow(opening)|(valid&(physical<1.55)&~keep_native);steps=9 if w>=1024 else 5
     if coat=='light':
         cream=(img[...,0]>=img[...,1])&(img[...,1]>=img[...,2])&(img[...,0]-img[...,1]<.12)&(img[...,1]-img[...,2]<.2)
-        extra=valid&(local_rad<1.7)&cream&(local_lum<.86)
+        extra=valid&(local_rad<2.)&cream&(local_lum>.45)&(local_lum<.88)&~protected[crop]
     else:extra=valid&(local_rad<1.7)&(local_sat<.18)&(local_lum>.20)
     for _ in range(steps):repair|=grow(repair)&extra&~native_cream[crop]
     guard=repair.copy()
@@ -95,12 +143,13 @@ def prepare(o,px,center,r,coat):
     # Local harmonic continuation and real donor grain. Pin untouched RGB;
     # copying native UVs means all exterior fur stays pixel-identical.
     field=img.copy();field[~known]=np.median(img[known],axis=0)
+    yy,xx=np.where(guard&~known);ym=(yy-1)%n;yp=(yy+1)%n;xm=(xx-1)%n;xp=(xx+1)%n
     for _ in range(n*4):
-        avg=(np.roll(field,1,0)+np.roll(field,-1,0)+np.roll(field,1,1)+np.roll(field,-1,1))/4
-        field=np.where(known[...,None],img,avg)
-    blur=sum(np.roll(img,(dy,dx),(0,1))for dy in range(-2,3)for dx in range(-2,3))/25
+        field[yy,xx]=(field[ym,xx]+field[yp,xx]+field[yy,xm]+field[yy,xp])/4
+    radius=6 if w>=1024 else 4
+    blur=sum(np.roll(img,(dy,dx),(0,1))for dy in range(-radius,radius+1)for dx in range(-radius,radius+1))/(2*radius+1)**2
     hp=img-blur;rng=np.random.default_rng(8100+(coat=='dark'));patches=[]
-    for tile in (8,4):
+    for tile in (12,8,4):
         for y in range(0,n-tile,2):
             for x in range(0,n-tile,2):
                 if known[y:y+tile,x:x+tile].all():patches.append(hp[y:y+tile,x:x+tile])
@@ -111,16 +160,19 @@ def prepare(o,px,center,r,coat):
         for x in range(0,n,tile//2):
             patch=patches[int(rng.integers(len(patches)))];accum[y:y+tile,x:x+tile]+=patch*win;den[y:y+tile,x:x+tile]+=win
     grain=(accum/np.maximum(den,1e-9))[:n,:n]
-    field=np.clip(field+grain*.7,0,1)
+    field=np.clip(field+grain,0,1)
     correction=repair.astype(float);band=repair.copy()
     for k in range(1,4):
         nxt=grow(band);correction[nxt&~band]=.5+.5*np.cos(np.pi*k/4);band=nxt
-    correction[native_cream[crop]]=0
+    correction[keep_native&~opening]=0
     fill=img*(1-correction[...,None])+field*correction[...,None]
     alpha=band.astype(float);band2=grow(band);alpha[band2&~band]=.5
+    t=np.clip((physical-1.55)/.50,0,1);skin=(1-t*t*(3-2*t))*valid
+    alpha=np.maximum(alpha,skin);alpha[(protected[crop]|pink)&~opening]=0
+    alpha[grow(opening)&valid]=1.
     # Every original eye/filter texel must be opaque.
     if not (alpha[grow(opening)&valid]>.999).all():raise ValueError('Incomplete UV eye guard')
-    return dict(fill=fill,alpha=alpha,world=pos,valid=valid,opening=opening,eyeUV=[w,h]+rle(eye),bounds=bounds,origin=(x0,y0),size=n,bodySize=(w,h),source=img)
+    return dict(fill=fill,alpha=alpha,world=pos,valid=valid,opening=opening,eyeUV=[w,h]+rle(eye),nativeUV=[w,h]+rle(native_cream),bounds=bounds,origin=(x0,y0),size=n,bodySize=(w,h),source=img)
 
 
 def supersample(data,factor=3):

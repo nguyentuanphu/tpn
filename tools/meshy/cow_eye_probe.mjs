@@ -5,6 +5,7 @@ export function createCowEyeProbeMaterial(THREE,apertures,bodyMap=null){
  mask.addEventListener('dispose',()=>textures.forEach(t=>t.dispose()));
  mask.customProgramCacheKey=()=> 'cow-real-aperture-ids-v2-'+apertures.some(a=>a.UV);
  if(apertures.some(a=>a.UV)&&!bodyMap)throw Error('Source UV probe requires actual body map transform');
+ if(apertures.some(a=>a.UV&&(a.UV[0]!==bodyMap.image.width||a.UV[1]!==bodyMap.image.height)))throw Error('Source UV mask/body image dimensions differ');
  mask.onBeforeCompile=sh=>{
   let declarations='',functions='';
   for(let eye=0;eye<2;eye++){
@@ -17,6 +18,13 @@ export function createCowEyeProbeMaterial(THREE,apertures,bodyMap=null){
      sh.uniforms[`svE${eye}UV`]={value:texture};sh.uniforms[`svE${eye}Min`]={value:new THREE.Vector3(...a.B.slice(0,3))};sh.uniforms[`svE${eye}Max`]={value:new THREE.Vector3(...a.B.slice(3))};
      declarations+=`uniform sampler2D svE${eye}UV;uniform vec3 svE${eye}Min,svE${eye}Max;\n`;
      functions+=`bool svInside${eye}(vec3 p,vec2 uv){return all(greaterThanEqual(p,svE${eye}Min))&&all(lessThanEqual(p,svE${eye}Max))&&texture2D(svE${eye}UV,vec2(uv.x,1.-uv.y)).r>.5;}\n`;
+     if(a.F){
+      const fur=new Uint8Array(w*h*4);for(let k=2;k<a.F.length;k+=2)for(let j=a.F[k];j<a.F[k]+a.F[k+1];j++)fur[j*4]=255;
+      const ftex=new THREE.DataTexture(fur,w,h,THREE.RGBAFormat,THREE.UnsignedByteType);ftex.magFilter=ftex.minFilter=THREE.LinearFilter;ftex.generateMipmaps=false;ftex.needsUpdate=true;textures.push(ftex);sh.uniforms[`svE${eye}F`]={value:ftex};declarations+=`uniform sampler2D svE${eye}F;\n`;
+      // The source component marks real cream blaze hairs, not sclera. Its
+      // mixed edge must not become an absolute black-coat lid colour failure.
+      functions=functions.replace(`texture2D(svE${eye}UV,vec2(uv.x,1.-uv.y)).r>.5;`,`texture2D(svE${eye}UV,vec2(uv.x,1.-uv.y)).r>.5&&texture2D(svE${eye}F,vec2(uv.x,1.-uv.y)).r<.25;`);
+     }
      continue;
     }
 

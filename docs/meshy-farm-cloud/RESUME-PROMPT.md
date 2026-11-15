@@ -1,3 +1,18 @@
+Trạng thái tiếp quản 15/11/2026 12:34 AEDT: **WIP chưa đạt, chủ chưa duyệt cow.**
+
+Nhánh hiện có meshy-farm-cloud, không reset/tạo lại/merge main. Worktree /workspace/tpn-farm; /workspace/tpn là worktree khác có thay đổi của chủ, không đụng. Fetch/pull nhánh trước khi sửa. Đọc các checkpoint cuối HANDOFF.md trước phần R16 lịch sử bên dưới.
+
+Runtime đang là thử87 (795140/390708byte), quick11/18ca lỗi; không phải R17. Thử88–91 chưa xuất được do ray lấy mặt/guard, không cài. Đang chuyển đóng mi sang UVbody thật (cow_uv_lids.py), UVmask nguồn3D+nativefurmask (cow_eye_probe.mjs), da nhắm theo native head curvature và nét opaque riêng để không plate/không lặp texture. Cần sửa ray-band của mặt native, kiểm ảnh xám/chụp thật; đừng chỉ làm số máy0. Body/mouth đã có các sửa trước nhưng phải kiểm full lại vì hình học mắt mới.
+
+Chỉ cow; không gọi Meshy/API, không chi thêm.40credit đã chi, balance1574 là lịch sử GET13/11, không báo là vừa xác nhận. SQLite/key/account ngoài repo tuyệt đối không commit/upload/in; sheep/chicken dừng.
+
+Chưa đủ cổng chủ: full120thân+198mặt/selftest6thân+12mặt, types,242ảnh1024tựxem cỡ thật+người soi độc lập không biết sửa gì+xem lại ảnh chủ; sạch mới phimnear/far phát thật và3thiết bị/tắt mũi tên vàng, đưaảnh/phim trực tiếp rồi popup duyệt. Không coi yêu cầu push là approval. Commit/push nhánh mỗi giờ được cho phép, ghi WIP chưa duyệt.
+
+CI43622973936 trên de621628b:365/377,12lỗi; chi tiết CI-RESULTS.json. Emoji log của nhánh đã đổi thành PASS và checklocal đạt; không gán mọi lỗi khác baseline. Chưa có CI xanh, không ready forRelease.
+
+---
+Nội dung chuyển tiếp cũ dưới đây là lịch sử R16, không phải tình trạng runtime hiện nay:
+
 Tiếp quản repo github.com/nguyentuanphu/tpn, game Sparkle Valley. Trả lời tiếng Việt ngắn, giờ Sydney AEDT.
 
 Làm trên nhánh meshy-farm-cloud hiện có, KHÔNG tạo lại từ meshy-pets hoặc reset. Fetch/pull, kiểm tra thay đổi chưa commit trước khi sửa.
