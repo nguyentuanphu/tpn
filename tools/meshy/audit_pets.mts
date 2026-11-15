@@ -173,6 +173,12 @@ const res: any = await P.page.evaluate(async ([kinds, MODE, LIMIT, EYE_PROBES]) 
         if (plant === 'sink') { bone('body').position.y -= Hh * .08; obj.updateMatrixWorld(true); }
         if (plant === 'mouth' && bone('jaw')) { bone('jaw').scale.multiplyScalar(2.5); bone('jaw').position.z += Hh * .02; obj.updateMatrixWorld(true); }   // (an open mouth too big for the face, standing off it)
         const hidden: any[] = []; if (plant === 'eyes') obj.traverse((o: any) => { if (o.isMesh && /-(shut|joy)\d$/.test(o.material.name)) { o.visible = false; hidden.push(o); } });
+        if(plant==='eyes'&&kind==='cow'){
+          // Expose the original eye pigment, not an already buried eye with
+          // its cover hidden. This is the actual closed-eye failure we plant.
+          for(const name of ['retract0','retract1']){const b=bone(name),i=body.skeleton.bones.indexOf(b);if(!b||i<0)throw Error('Eye plant missing retract bone');b.position.copy(REST[i][0]);}
+          obj.updateMatrixWorld(true);
+        }
         PLANT.value = plant === 'tear' ? 1 : 0; if (kind === 'cow' || plant === 'tear') {   // (a torn ear: a hole through its flap where it hangs out beyond the cheek, seen from the front)
           const e = bone('ear0'); obj.updateMatrixWorld(true); e.getWorldPosition(PLANTAT.value);
           // Put the tear through the actual ear flap, not a guessed point below
@@ -272,7 +278,7 @@ const res: any = await P.page.evaluate(async ([kinds, MODE, LIMIT, EYE_PROBES]) 
             if (eyeMask) {
               const materials: any[] = [], oldColor = body.geometry.getAttribute('color');
               const black = new THREE.MeshBasicMaterial({color: 0, side: THREE.DoubleSide});
-              const mask = APERTURES ? createCowEyeProbeMaterial(THREE,APERTURES,body.material.map) : new THREE.MeshBasicMaterial({vertexColors: true, side: THREE.DoubleSide});
+              const mask = APERTURES ? createCowEyeProbeMaterial(THREE,APERTURES,body.material.map,{pigmentOnly:APERTURES.every(a=>a.K)}) : new THREE.MeshBasicMaterial({vertexColors: true, side: THREE.DoubleSide});
               // Interpolate reference positions, then test the oval per fragment.
               // Boolean vertex colours spill the probe across coarse face triangles.
               if(!APERTURES){

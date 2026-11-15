@@ -778,7 +778,7 @@ def face(P, F_, eye=1.0, big=1.0, brow_y=0.0, brow_tilt=0.0, smile=1.0, frown=Fa
         P['shut%d' % i] = ((0, 0, 0), (0, 0, 0), one if closed else tiny)
         P['joy%d' % i] = ((0, 0, 0), (0, 0, 0), one if happy else tiny)
         if FIX.get('eye_retract'):
-            P['retract%d' % i] = ((0,0,0),(0,0,-FIX['eye_retract'] if closed or happy else 0),one)
+            P['retract%d' % i] = ((0,0,0),((.025 if i==0 else -.025)if FIX.get('native_grid_lids')and(closed or happy)else 0,0,-FIX['eye_retract'] if closed or happy else 0),one)
     s = max(.001, jaw)
     # A curved muzzle is approximately quadratic in its tangent plane. Its
     # normal depth must scale by s² as the opening scales by s, or skin cuts
@@ -955,6 +955,23 @@ def surface_lid(o, arm, name, center, side, up, picture, picture_radius, eye_ind
                 q=((np.array(me.uv_layers.active.data[loop.index].uv)*size-origin)*uv_data.get('scale',1)).astype(int)
                 if (q>=0).all() and (q<n).all():cover[loop.vertex_index]=max(cover[loop.vertex_index],alpha[q[1],q[0]])
         total_distance=FIX['eye_retract'];head=o.vertex_groups['head'];retract=o.vertex_groups['retract%d'%eye_index]
+        artwork=None
+        if FIX.get('native_grid_lids'):
+            from scipy.ndimage import binary_dilation
+            w,h=uv_data['eyeUV'][:2];mask=np.zeros(w*h,bool)
+            for start,length in zip(uv_data['eyeUV'][2::2],uv_data['eyeUV'][3::2]):mask[start:start+length]=True
+            mask=binary_dilation(mask.reshape(h,w),iterations=2)
+            cream=np.zeros(w*h,bool)
+            for start,length in zip(uv_data['nativeUV'][2::2],uv_data['nativeUV'][3::2]):cream[start:start+length]=True
+            mask&=~cream.reshape(h,w)
+            artwork=np.zeros(len(V))
+            for loop in me.loops:
+                q=np.floor(np.array(me.uv_layers.active.data[loop.index].uv)*np.array((w,h))).astype(int)
+                q=np.minimum(np.maximum(q,0),np.array((w-1,h-1)))
+                if mask[q[1],q[0]]:artwork[loop.vertex_index]=1.
+            # A texture seam must never split the motion of one physical point.
+            _,weld=np.unique(np.rint(np.array([v.co[:]for v in me.vertices])*1e5).astype(np.int64),axis=0,return_inverse=True)
+            joined=np.zeros(weld.max()+1);np.maximum.at(joined,weld,artwork);artwork=joined[weld]
         for vi,delta in enumerate(closure_delta):
             membership={g.group:g.weight for g in me.vertices[vi].groups}
             available=membership.get(head.index,0.)+membership.get(retract.index,0.)
@@ -963,6 +980,10 @@ def surface_lid(o, arm, name, center, side, up, picture, picture_radius, eye_ind
             physical_radius=math.hypot((V[vi,0]-c[0])/.038,(V[vi,2]-c[2])/.047)
             safety=.0008*(1-smooth01((physical_radius-1.2)/.6))*(1-smooth01((abs(V[vi,1]-c[1])-.055)/.035))
             weight=min(available,max(0.,float(delta)+safety)/total_distance)
+            if FIX.get('native_grid_lids'):
+                # Only the original painted eye retracts. Native fur, the
+                # blaze boundary and bridge of the nose keep their real shape.
+                weight=available*.55*artwork[vi]
             # The eye shell closes independently of the protruding muzzle.
             original=o.data.vertices[vi].co
             if original.z<c[2]-.06 or original.y<c[1]-.075:weight=0.
@@ -1055,6 +1076,13 @@ def cow_grid_lid(o,arm,name,c,bone_name,data,P):
     xx,zz,field,field_valid=closed_eye_shape.surface
     bvh=bvh_of(o);me=o.data;uvl=me.uv_layers.active.data
     image_rgb=data['frontal_fill'].copy();TP=len(image_rgb);alpha=np.zeros((TP,TP))
+    from scipy.ndimage import distance_transform_edt
+    pink=(image_rgb[...,0]-image_rgb[...,1]>.08)&(image_rgb[...,0]-image_rgb[...,1]>1.5*(image_rgb[...,1]-image_rgb[...,2])+.02)
+    native_cream=np.zeros((TP,TP),bool);source_art=np.zeros((TP,TP),bool);w,h=data['nativeUV'][:2];cream=np.zeros(w*h)
+    for start,length in zip(data['nativeUV'][2::2],data['nativeUV'][3::2]):cream[start:start+length]=1.
+    cream=cream.reshape(h,w);art=np.zeros(w*h)
+    for start,length in zip(data['eyeUV'][2::2],data['eyeUV'][3::2]):art[start:start+length]=1.
+    art=art.reshape(h,w)
     # Coverage is anatomical and continuous in world space, never a UV seam.
     # Preserve original brow/coat/nose colours outside the repaired artwork.
     for j in range(TP):
@@ -1065,18 +1093,34 @@ def cow_grid_lid(o,arm,name,c,bone_name,data,P):
             if rho>2.35:continue
             loc,_,fi,_=bvh.ray_cast(Vector((x,-2,z)),Vector((0,1,0)))
             if loc is None or abs(loc.y-c[1])>.18:continue
-            a=1-smooth01((rho-1.8)/.5)
+            poly=me.polygons[fi];vs=[me.vertices[k].co for k in poly.vertices[:3]];us=[uvl[k].uv for k in poly.loop_indices[:3]]
+            q=barycentric_transform(loc,*vs,*(Vector((*u,0))for u in us))
+            native_cream[j,i]=map_coordinates(cream,np.array([[q.y*h-.5],[q.x*w-.5]]),order=1,mode='nearest')[0]>.25
+            source_art[j,i]=map_coordinates(art,np.array([[q.y*h-.5],[q.x*w-.5]]),order=1,mode='nearest')[0]>.01
+            a=1-smooth01((rho-1.65)/.30)
+            a*=smooth01((z-(data['bounds'][2]-.018))/.010)
+            rgb=image_rgb[j,i]
+            if rgb[0]-rgb[1]>.08 and rgb[0]-rgb[1]>1.5*(rgb[1]-rgb[2])+.02:a=0.
+            if native_cream[j,i]:a=0.
             alpha[j,i]=a
-    rgba=np.concatenate((image_rgb,alpha[...,None]),axis=-1).astype(np.float32)
-    guard=alpha>0
-    for _ in range(2):guard=guard|np.roll(guard,1,0)|np.roll(guard,-1,0)|np.roll(guard,1,1)|np.roll(guard,-1,1)
-    rgba[~guard,:3]=0
+    protected=pink|native_cream;edge_distance=distance_transform_edt(~protected)*(2*P/TP)
+    alpha[~source_art]*=smooth01((edge_distance[~source_art]-.002)/.003)
+    image_rgb[protected]=data['frontal_source'][protected]
     key='_grid_image';image=data.get(key)
-    if image is None:
-        image=bpy.data.images.new(name+'-surface',TP,TP,alpha=True);image.file_format='PNG';image.pixels[:]=rgba.ravel();image.pack();data[key]=image
-        if DEBUG:image.filepath_raw=os.path.join(OUT,name+'-surface.png');image.save()
-    GN=24 if FARLOD else 32;verts=[];normals=[];uvs=[];indices={}
+    GN=32 if FARLOD else 40;verts=[];normals=[];uvs=[];indices={}
     dx=xx[1]-xx[0];dz=zz[1]-zz[0];gy,gx=np.gradient(field,dz,dx)
+    middle=(np.array(Fc['eye0'])+np.array(Fc['eye1']))*.5;middle[2]-=.035
+    cameras=[]
+    for yaw in (-math.pi/2,-.9,-.7,-.4,0,.4,.7,.9,math.pi/2,math.pi):
+        for elevation in (-.7,-.5,-.3,-.15,0,.15,.3,.5,.7,1.):
+            direction=Vector((math.sin(yaw),-math.cos(yaw),elevation)).normalized()
+            cameras.append(Vector(middle)+direction*1.2)
+    def inside_original_silhouettes(p):
+        for camera in cameras:
+            hit,_,_,_=bvh.ray_cast(camera,(p-camera).normalized(),4.)
+            if hit is None:return False
+        return True
+    clipped=0
     for j in range(GN+1):
         z=c[2]+(j/GN*2-1)*P
         for i in range(GN+1):
@@ -1089,10 +1133,28 @@ def cow_grid_lid(o,arm,name,c,bone_name,data,P):
             if not (0<=coords[0,0]<=len(zz)-1 and 0<=coords[1,0]<=len(xx)-1):continue
             if map_coordinates(field_valid.astype(float),coords,order=1)[0]<.99:continue
             y=map_coordinates(field,coords,order=1)[0]
+            texture_coord=np.array([[(z-c[2]+P)/(2*P)*TP-.5],[(x-c[0]+P)/(2*P)*TP-.5]])
+            distance=float(map_coordinates(edge_distance,texture_coord,order=1,mode='nearest')[0])
+            # Stitch the visible sheet to the untouched native fur/muzzle at
+            # its transparent boundary, instead of dragging that boundary.
+            follow=smooth01((distance-.003)/.012)*(1-smooth01((rho-1.4)/.3))
+            y=float(loc.y)+(y-float(loc.y))*follow
             normal=Vector((float(map_coordinates(gx,coords,order=1)[0]),-1.,float(map_coordinates(gy,coords,order=1)[0]))).normalized()
             if nor.y>0:nor=-nor
             blend=1-smooth01((rho-1.4)/.5);normal=(normal*blend+nor*(1-blend)).normalized()
-            indices[j,i]=len(verts);verts.append(tuple(Vector((x,y,z))+normal*FIX['surface_lid_forward']));normals.append(tuple(normal));uvs.append((i/GN,j/GN))
+            point=Vector((x,y-FIX['surface_lid_forward'],z))
+            # Filling a concave socket must not enlarge the face silhouette.
+            # Test the real original head from both sides and above/below;
+            # keep the new sheet inside those projections, including its lift.
+            if not inside_original_silhouettes(point):
+                back=Vector((x,float(loc.y)+.001,z));front=point.copy()
+                if not inside_original_silhouettes(back):back.y+=.003
+                for _ in range(12):
+                    mid=(front+back)*.5
+                    if inside_original_silhouettes(mid):back=mid
+                    else:front=mid
+                point=back;clipped+=1
+            indices[j,i]=len(verts);verts.append(tuple(point));normals.append(tuple(normal));uvs.append((i/GN,j/GN))
     faces=[]
     for j in range(GN):
         for i in range(GN):
@@ -1104,10 +1166,39 @@ def cow_grid_lid(o,arm,name,c,bone_name,data,P):
         poly.use_smooth=True
         for li in poly.loop_indices:uv.data[li].uv=uvs[mesh.loops[li].vertex_index]
     mesh.normals_split_custom_set_from_vertices(normals)
+    if image is None:
+        # A triangle chord can still cross a concave silhouette although its
+        # vertices are inside. Clip the actual interpolated sheet fragments,
+        # rather than accepting a thin new strip along the bridge of the nose.
+        for j,i in np.argwhere(alpha>0):
+            # The original eye must stay fully covered. This fragment trim is
+            # only the lower native-fur hem at the concave nose bridge; using
+            # it inside the socket would cut holes through the closure itself.
+            if c[2]+((j+.5)/TP*2-1)*P>=data['bounds'][2]-.003:continue
+            u=(i+.5)/TP*GN;v=(j+.5)/TP*GN;gi,gj=int(u),int(v);u-=gi;v-=gj
+            keys=((gj,gi),(gj,gi+1),(gj+1,gi+1),(gj+1,gi))
+            if not all(k in indices for k in keys):alpha[j,i]=0.;continue
+            a,b,d,e=[verts[indices[k]][1]for k in keys]
+            y=(1-u)*a+(u-v)*b+v*d if v<=u else (1-v)*a+u*d+(v-u)*e
+            point=Vector((c[0]+((i+.5)/TP*2-1)*P,y,c[2]+((j+.5)/TP*2-1)*P))
+            if not inside_original_silhouettes(point):alpha[j,i]=0.
+        if c[0]>0:
+            # Straight-alpha filtering needs black-fur RGB through the
+            # invisible cream gutter; cream RGB there made a pale halo.
+            _,nearest=distance_transform_edt(alpha<.999,return_indices=True)
+            gutter=(alpha<.999)&(distance_transform_edt(~native_cream)*(2*P/TP)<.008)&~pink
+            image_rgb[gutter]=image_rgb[nearest[0][gutter],nearest[1][gutter]]
+        rgba=np.concatenate((image_rgb,alpha[...,None]),axis=-1).astype(np.float32)
+        guard=alpha>0
+        for _ in range(2):guard=guard|np.roll(guard,1,0)|np.roll(guard,-1,0)|np.roll(guard,1,1)|np.roll(guard,-1,1)
+        rgba[~guard,:3]=0
+        image=bpy.data.images.new(name+'-surface',TP,TP,alpha=True);image.file_format='PNG';image.pixels[:]=rgba.ravel();image.pack();data[key]=image
+        if DEBUG:image.filepath_raw=os.path.join(OUT,name+'-surface.png');image.save()
     mat=bpy.data.materials.new(name);mat.use_nodes=True;mat.surface_render_method='DITHERED';tex=mat.node_tree.nodes.new('ShaderNodeTexImage');tex.image=image;tex.extension='CLIP';bsdf=mat.node_tree.nodes['Principled BSDF'];mat.node_tree.links.new(tex.outputs['Color'],bsdf.inputs['Base Color']);mat.node_tree.links.new(tex.outputs['Alpha'],bsdf.inputs['Alpha']);mesh.materials.append(mat)
     obj=bpy.data.objects.new(name,mesh);bpy.context.collection.objects.link(obj);group=obj.vertex_groups.new(name=bone_name);group.add(list(range(len(verts))),1.,'REPLACE');obj.parent=arm;mod=obj.modifiers.new('rig','ARMATURE');mod.object=arm
     # Crease samples this frontal texture in the new mesh's own UVs.
     data['fill']=image_rgb
+    print('COW_LID_VISUAL_HULL',name,'clipped',clipped,'vertices',len(verts),flush=True)
     return obj
 
 
@@ -1115,7 +1206,7 @@ def cow_mesh_lash(lid,arm,data,c,r,kind,index,curve):
     me=lid.data;me.calc_loop_triangles();V=[v.co for v in me.vertices];tris=[list(t.vertices)for t in me.loop_triangles]
     bvh=BVHTree.FromPolygons(V,tris,all_triangles=True);uvl=me.uv_layers.active.data
     from mathutils.geometry import barycentric_transform
-    ew=r*.78;cols,rows=64,16;pixels=np.zeros((rows,cols,4));vertices=[];normals=[];face_rows=8
+    ew=r*.78;cols,rows=48,16;pixels=np.zeros((rows,cols,4));vertices=[];normals=[];face_rows=4
     def point(u,v):
         taper=math.sqrt(max(0,1-(u/(ew*.85))**2));z=float(c[2])+curve(u)+v*r*.09*taper
         loc,nor,fi,_=bvh.ray_cast(Vector((float(c[0])+u,-2,z)),Vector((0,1,0)))
@@ -1129,7 +1220,8 @@ def cow_mesh_lash(lid,arm,data,c,r,kind,index,curve):
             _,_,base=point(float(u),float(v));ink=np.clip((.65-abs(v))/.2,0,1)
             if FIX['lid_coat'][index]=='dark':
                 hi=.90*math.exp(-((v-.65)/.25)**2);base=base*(1-hi)+np.array((.46,.43,.39))*hi
-            rgb=base*(1-ink)+np.array((.025,.018,.012))*ink;pixels[b,j]=np.r_[rgb,1.]
+            colour=np.array((.37,.35,.32))if FIX['lid_coat'][index]=='dark'else np.array((.025,.018,.012))
+            rgb=base*(1-ink)+colour*ink;pixels[b,j]=np.r_[rgb,1.]
         for v in np.linspace(-1,1,face_rows):
             loc,normal,_=point(float(u),float(v));vertices.append(tuple(loc+normal*.00025));normals.append(tuple(normal))
     faces=[]
@@ -1342,6 +1434,7 @@ def fur_lid_fill(img,hit,xx,yy,r,eye):
     fill=fill*correction[...,None]+img*(1-correction[...,None])
     if DEBUG:np.savez_compressed(os.path.join(OUT,f'eye-fur-{eye}-{n}.npz'),source=img,hit=hit,aperture=aperture,native_cream=native_cream,protected=protected,fill=fill,alpha=soft)
     print('FUR_LID',eye,'opening',len(cells),'mask',int(mask.sum()),flush=True)
+    fur_lid_fill.native_cream=native_cream.copy()
     return fill,soft,hull,aperture
 
 def face_pieces(o, arm, J, Fc):
@@ -1450,11 +1543,13 @@ def face_pieces(o, arm, J, Fc):
         uv_data=None
         if uv_helper is not None:
             uv_data=uv_helper.prepare(o,px,c,r,FIX['lid_coat'][i])
-            o[f'svEye{i}UV']=uv_data['eyeUV'];o[f'svEye{i}F']=uv_data['nativeUV']
+            o[f'svEye{i}UV']=uv_data['eyeUV'];o[f'svEye{i}K']=uv_data['pigmentUV'];o[f'svEye{i}F']=uv_data['nativeUV']
             b=uv_data['bounds'];lo=np.array((b[0],b[2],-b[4]));hi=np.array((b[3],b[5],-b[1]));o[f'svEye{i}B']=[round(float(x),6)for x in np.r_[lo,hi]]
             print('EYE_UV',i,'size',uv_data['size'],'opening',int(uv_data['opening'].sum()),'origin',uv_data['origin'],flush=True)
             if DEBUG:np.savez_compressed(os.path.join(OUT,f'eye-uv-{i}-{len(px)}.npz'),**{k:uv_data[k]for k in ('fill','alpha','world','opening','source','valid')})
             uv_data['frontal_fill']=fill.copy()
+            uv_data['frontal_source']=img0.copy()
+            uv_data['frontal_native_cream']=fur_lid_fill.native_cream.copy()
             if not FIX.get('mesh_lash'):uv_data=uv_helper.supersample(uv_data,2)
             else:uv_data['share_fur']=True
 

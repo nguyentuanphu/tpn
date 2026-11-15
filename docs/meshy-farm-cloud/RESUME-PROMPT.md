@@ -1,16 +1,14 @@
-Trạng thái tiếp quản 15/11/2026 22:07 AEDT: **WIP98 chưa đạt, chủ chưa duyệt cow.**
+Trạng thái tiếp quản 15/11/2026 23:09 AEDT: **WIP108 chưa đủ cổng, chủ chưa duyệt cow.**
 
-Nhánh meshy-farm-cloud hiện có; /workspace/tpn-farm là worktree làm việc, /workspace/tpn có thay đổi của chủ, không đụng. Fetch/pull, không reset/tạo lại nhánh/merge main. Cloud phiên trước lỗi executor; file sửa dở còn nguyên và đã tiếp tục.
+Nhánh meshy-farm-cloud hiện có, /workspace/tpn-farm; /workspace/tpn là worktree có sửa của chủ, không đụng. Fetch/pull không reset/tạo lại/merge main. Cloud đã phục hồi sau lỗi executor, server riêng8799.
 
-Runtime98: gần809092/xa404636byte,44002/20244tam giác,20bone/10clip, GLB/alpha/dung lượng đạt. Quick mặt FAIL12/18ca (lid152,stray680,rim344,eyes73,silhouette142 worst và coverage thiếu). Đang xem /workspace/cow-fit/r17-dev98/native-diagnostic/ và clay-diagnostic/. Chưa R17 hoàn chỉnh. Không dùng PASS72 hoặc body77 làm kết quả cho98.
+Runtime108:20bone/10clip, GLB/alpha/800–400KiB đạt, far<21000tri. Quick18ca còn5lỗi (lid21,rim24,coverage13pixel; mouth/stray/eyes khôngvượt, silhouette5khôngvượt). Đangchạy /workspace/cow-fit/r17-dev108/selftest/ đúng cwdtests. Selftest1076plantthân+13plantmặt caught, controlthân cònstretch/mắt; khôngdùng làmkếtquả108. Thử103alphaallviewtrongsocket tạo lỗ đãloại;105furtrắng/UVtri-movement regression đãloại. ChưaR17sạch.
 
-Sửa trong fit_animal.py: nối hình học mi theo native head curvature bằng giải bending với biên đầu thật; native_grid_lids dùng một lưới phía trước thay các thành nhãn cầu gấp, nét mi opaque và ảnh lông chia sẻ shut/joy. UVsource thực của artwork vẫn là probe độc lập (cow_uv_lids.py/cow_eye_probe.mjs). Chưa sạch: cần xem ảnh, xử lý mắt cũ lộ/viền/alpha/khớp đầu, không tăng ngưỡng để qua. Thử95–97 vượt budget không cài. Types+emoji2/2 lúc13:01 trước thay đổi Python/JSON mới; cần các kiểm cuối phù hợp.
+fit_animal.py: da nhắm gridtheonativeheadC1,khôngcopythànhnhãncầu,giữfur/mõm,giới hạn trongsilhouettehead,RGBgutterblackfur;lineopaque,narrowhighlight.108mắtmở vàothêm6–8mm,hướngretractthêmvàotronggiảmstretch. UVfullaperturegiữchoRGBcheck,Kpigmentnguồngốc riêng;coverageproofbodyopaque/currentK+neutralopenK. Khônghạ6/12. SourceEyeKsubsetUV/minpixels đượcvalidate;coveragecóplantgỡmi thật. Cầnchạytypes/full/selftestcuối.
 
-Cổng cuối: full120thân+198mặt, selftest6thân+12mặt, types;242ảnhnative1024tựxem và người soi mù thứ hai, mọi lỗi chủ khoanh. Sạch mới phimnear/far phát1×tớiended, ảnh ba thiết bị và mũi tên vàng tắt. Đưa ảnh/phim trực tiếp rồi popup duyệt. Người soi92 REJECT11/11ảnh, báo cáo cow/wip-reviews/trial92/; chưa phải soát cuối.
+Báocáo99REJECTvàđốichiếuR16 tạicow/wip-reviews/trial99/:18/20vùngcảhaibộ,N6/F12dảirăngtrắngngangởmõmchỉ99;phảixemlại trênbảncuối. Khôngphảisoátcuối. Cổng:120thân+198mặt,6+13plants,types,242ảnhnative1024tựxem+ngườisoimù,mọilỗichủkhoanh;sạchmớiphimnear/farphát1×tớiended,3thiếtbịtắtguides,đưaảnh/phimtrựctiếprồipopupduyệt.
 
-Chỉcow, sheep/chicken dừng; không gọi Meshy/API/chi thêm.40credit lịch sử,1574 là số dư GET13/11, không phải vừa xác nhận. Key/SQLite/account ngoài repo không in/commit/upload. Không main/deploy/version/force-push. Commit/push WIP nhánh mỗi giờ đã được chủ cho phép, không coi là approval.
-
-CI43622973936 trên de621628b:365/377,12lỗi, CI-RESULTS.json có chi tiết. Không báo CI xanh hoặc gán mọi lỗi baseline; chưa ready for Release.
+Chỉcow;khôngMeshy/API/chi thêm.40credit lịch sử;1574làGET13/11.Khôngin/commit/uploadkey/SQLite/accountngoàirepo.Sheep/chickendừng.Khôngmain/deploy/version/force-push.HourlyWIPpushđượcchủcho,khôngphảiapproval.CI43622973936de621628b365/377,12lỗi;khôngbáoCIxanhhayreadyforRelease.
 
 ---
 Nội dung chuyển tiếp cũ dưới đây là lịch sử R16, không phải tình trạng runtime hiện nay:

@@ -1,0 +1,325 @@
+{
+  "review_type": "independent_visual_WIP_diagnostic",
+  "final_approval": false,
+  "decision": "REJECT",
+  "decision_basis": "Có các tiếp giáp má–mõm và các phiến lông/mép ghép nhìn thấy; không dựa vào nét cartoon hoặc màu mảng lông đen để REJECT.",
+  "coordinate_system": "1024x1024 pixels; origin top-left; approximate bbox xyxy",
+  "opened_images": [
+    {
+      "file": "/workspace/cow-fit/r17-dev99/native-diagnostic/cow-near-cheer-front.png",
+      "opened_with": "view_image",
+      "view": "original_full_image",
+      "decision": "CLEAN",
+      "certain_findings": [],
+      "other_observations": "Mắt cười và miệng mở đọc rõ; đường bao đầu/mõm liền. Mảng đen bên phải ảnh có chuyển tiếp lông, chưa thấy viền miếng dán tách biệt."
+    },
+    {
+      "file": "/workspace/cow-fit/r17-dev99/native-diagnostic/cow-near-cheer-p07.png",
+      "opened_with": "view_image",
+      "view": "original_full_image",
+      "decision": "REJECT",
+      "certain_findings": [
+        {
+          "id": "N1",
+          "bbox_xyxy": [
+            553,
+            649,
+            594,
+            709
+          ],
+          "observation": "Tiếp giáp bên phải mõm trong ảnh có mấu trắng góc cạnh và bóng xám, đọc như mép chồng lên má thay vì hòa liền. Mức nhẹ nhưng thấy ở ảnh gốc."
+        }
+      ],
+      "other_observations": "Mắt gần đọc rõ, mắt phía khuất chỉ còn nét nhỏ do góc nhìn; không tự chấm nét đó là vỡ. Mảng đen lớn là pattern lông; không xác nhận viền dán quanh mắt."
+    },
+    {
+      "file": "/workspace/cow-fit/r17-dev99/native-diagnostic/cow-near-cheer-m07.png",
+      "opened_with": "view_image",
+      "view": "original_full_image",
+      "decision": "REJECT",
+      "certain_findings": [
+        {
+          "id": "N2",
+          "bbox_xyxy": [
+            413,
+            666,
+            457,
+            711
+          ],
+          "observation": "Góc trái dưới mõm trong ảnh có nếp/mấu tam giác trắng-xám tách khỏi bề mặt má, làm tiếp giáp gãy cục bộ."
+        }
+      ],
+      "other_observations": "Mắt cười và miệng còn đọc được. Đầu nhọn đen ở phía mắt khuất gần (606,512) chưa đủ để phân biệt pattern lông với mép nổi: không tính lỗi chắc chắn."
+    },
+    {
+      "file": "/workspace/cow-fit/r17-dev99/native-diagnostic/cow-near-cheer-left.png",
+      "opened_with": "view_image",
+      "view": "original_full_image",
+      "decision": "REJECT",
+      "certain_findings": [
+        {
+          "id": "N3",
+          "bbox_xyxy": [
+            344,
+            527,
+            413,
+            714
+          ],
+          "observation": "Một chuỗi mép xiên/góc tam giác trên má trắng, dưới mảng đen gốc tai, tạo cảm giác các phiến lông không hòa vào mặt."
+        },
+        {
+          "id": "N4",
+          "bbox_xyxy": [
+            544,
+            661,
+            601,
+            713
+          ],
+          "observation": "Chân mõm có mấu tam giác trắng và rãnh xám rõ ở chỗ nối với má."
+        }
+      ],
+      "other_observations": "Nét mắt cười rõ; miệng không thấy ở góc nghiêng này nên không kết luận miệng mất/vỡ. Đường bao đầu và hàm còn liên tục."
+    },
+    {
+      "file": "/workspace/cow-fit/r17-dev99/native-diagnostic/cow-near-cheer-right.png",
+      "opened_with": "view_image",
+      "view": "original_full_image",
+      "decision": "REJECT",
+      "certain_findings": [
+        {
+          "id": "N5",
+          "bbox_xyxy": [
+            582,
+            602,
+            720,
+            756
+          ],
+          "observation": "Trên má trắng dưới mảng đen có mép đa giác xiên, đổi hướng và sáng tối đột ngột thành mảng tách biệt; không chỉ là ranh màu đen/trắng."
+        },
+        {
+          "id": "N6",
+          "bbox_xyxy": [
+            379,
+            530,
+            455,
+            569
+          ],
+          "observation": "Chỗ nối sống mõm–mặt có các răng nhọn trắng ngang chồng lên vùng hồng, làm tiếp giáp lởm chởm."
+        }
+      ],
+      "other_observations": "Mắt màu xám đọc được trên nền lông đen nhưng tương phản thấp hơn phía mặt trắng. Không thấy một vòng viền dán khép kín quanh mắt."
+    },
+    {
+      "file": "/workspace/cow-fit/r17-dev99/native-diagnostic/cow-near-sleep-front.png",
+      "opened_with": "view_image",
+      "view": "original_full_image",
+      "decision": "CLEAN",
+      "certain_findings": [],
+      "other_observations": "Hai nét mắt cong xuống đọc được là ngủ; không có miệng mở vẫn phù hợp biểu cảm. Mép lông trên mõm hơi răng nhỏ, chưa đủ để gọi là vỡ hay miếng dán. Đầu/mõm liền."
+    },
+    {
+      "file": "/workspace/cow-fit/r17-dev99/native-diagnostic/cow-far-cheer-front.png",
+      "opened_with": "view_image",
+      "view": "original_full_image",
+      "decision": "REJECT",
+      "certain_findings": [
+        {
+          "id": "F1",
+          "bbox_xyxy": [
+            443,
+            374,
+            508,
+            522
+          ],
+          "observation": "Giữa mặt trắng, cạnh mắt và sống mũi có các phiến tam giác sáng/xám đổi hướng đột ngột, làm mặt trông ghép mảng."
+        },
+        {
+          "id": "F2",
+          "bbox_xyxy": [
+            397,
+            748,
+            566,
+            862
+          ],
+          "observation": "Phần cổ dưới cằm có các phiến trắng tam giác lớn với mép tối sắc, không hòa vào lông xung quanh."
+        }
+      ],
+      "other_observations": "Nét mắt/miệng vẫn rõ. Các mặt phẳng trên mõm cũng nhìn thấy nhưng không tự coi mọi faceting là lỗi; lý do REJECT là các mép ghép lông nêu trên."
+    },
+    {
+      "file": "/workspace/cow-fit/r17-dev99/native-diagnostic/cow-far-cheer-p07.png",
+      "opened_with": "view_image",
+      "view": "original_full_image",
+      "decision": "REJECT",
+      "certain_findings": [
+        {
+          "id": "F3",
+          "bbox_xyxy": [
+            682,
+            481,
+            790,
+            624
+          ],
+          "observation": "Phần dưới/bên phải mảng lông đen có nhiều phiến nhọn và mép sáng tối rời rạc; đây là sự đứt bề mặt nhìn thấy, vượt quá một đường ranh pattern đen/trắng."
+        },
+        {
+          "id": "F4",
+          "bbox_xyxy": [
+            535,
+            712,
+            748,
+            858
+          ],
+          "observation": "Dưới hàm xuống cổ có các phiến trắng dài, góc nhọn và khe tối giữa các mảng, làm lông giống các lá chồng rời."
+        }
+      ],
+      "other_observations": "Mắt gần và miệng đọc được. Không suy ra nguyên nhân kỹ thuật của các mép tối; không xác nhận lỗ xuyên."
+    },
+    {
+      "file": "/workspace/cow-fit/r17-dev99/native-diagnostic/cow-far-cheer-m07.png",
+      "opened_with": "view_image",
+      "view": "original_full_image",
+      "decision": "REJECT",
+      "certain_findings": [
+        {
+          "id": "F5",
+          "bbox_xyxy": [
+            216,
+            633,
+            312,
+            811
+          ],
+          "observation": "Má/cổ bên trái ảnh có nhiều tam giác trắng dài cạnh các rãnh tối, tiếp giáp gãy rõ."
+        },
+        {
+          "id": "F6",
+          "bbox_xyxy": [
+            290,
+            716,
+            442,
+            787
+          ],
+          "observation": "Dưới má tới hàm có dải mép đa giác ngang/xiên, tạo cảm giác lớp lông chồng riêng trên cổ."
+        }
+      ],
+      "other_observations": "Mắt/miệng rõ; phần đen phía mắt khuất không đủ chứng cứ để gọi là miếng dán. Không thấy lỗ xuyên nền chắc chắn."
+    },
+    {
+      "file": "/workspace/cow-fit/r17-dev99/native-diagnostic/cow-far-cheer-left.png",
+      "opened_with": "view_image",
+      "view": "original_full_image",
+      "decision": "REJECT",
+      "certain_findings": [
+        {
+          "id": "F7",
+          "bbox_xyxy": [
+            333,
+            376,
+            418,
+            694
+          ],
+          "observation": "Từ dưới gốc tai xuống má có đường nối răng cưa lớn với các bậc tam giác trắng/xám; bề mặt mặt không liền."
+        },
+        {
+          "id": "F8",
+          "bbox_xyxy": [
+            166,
+            628,
+            291,
+            839
+          ],
+          "observation": "Cổ trên vòng da có các phiến lông trắng dài tách mảng với rãnh tối sâu."
+        },
+        {
+          "id": "F9",
+          "bbox_xyxy": [
+            542,
+            664,
+            653,
+            722
+          ],
+          "observation": "Chân mõm có các mấu tam giác lớn trắng/hồng nối góc, làm tiếp giáp mõm–má gãy."
+        }
+      ],
+      "other_observations": "Mắt cười đọc rõ; miệng khuất ở góc này. Biên ngoài hàm không có lỗ xuyên nền rõ."
+    },
+    {
+      "file": "/workspace/cow-fit/r17-dev99/native-diagnostic/cow-far-cheer-right.png",
+      "opened_with": "view_image",
+      "view": "original_full_image",
+      "decision": "REJECT",
+      "certain_findings": [
+        {
+          "id": "F10",
+          "bbox_xyxy": [
+            588,
+            491,
+            741,
+            640
+          ],
+          "observation": "Trên má đen dưới mắt và trước tai có các phiến tối đa giác chồng nhau; góc dưới nhô sắc và khác sáng tối, không chỉ đổi màu lông."
+        },
+        {
+          "id": "F11",
+          "bbox_xyxy": [
+            510,
+            635,
+            747,
+            804
+          ],
+          "observation": "Má trắng/cổ có nhiều miếng tam giác mép sắc và rãnh tối, lông không hòa vào bề mặt chung."
+        },
+        {
+          "id": "F12",
+          "bbox_xyxy": [
+            373,
+            528,
+            463,
+            578
+          ],
+          "observation": "Mép trắng trên sống mõm thành răng cưa dài chồng vào vùng hồng."
+        }
+      ],
+      "other_observations": "Mắt xám vẫn đọc được nhưng tương phản thấp. Không xác nhận vòng dán riêng quanh mắt hoặc lỗ xuyên nền."
+    },
+    {
+      "file": "/workspace/cow-fit/r17-dev99/native-diagnostic/cow-far-sleep-front.png",
+      "opened_with": "view_image",
+      "view": "original_full_image",
+      "decision": "REJECT",
+      "certain_findings": [
+        {
+          "id": "F13",
+          "bbox_xyxy": [
+            411,
+            345,
+            508,
+            549
+          ],
+          "observation": "Trán xuống sống mũi trắng có các miếng tam giác sáng/xám cạnh sắc, làm lông mặt bị chia phiến."
+        },
+        {
+          "id": "F14",
+          "bbox_xyxy": [
+            530,
+            783,
+            667,
+            911
+          ],
+          "observation": "Vùng trắng bên phải chuông trong ảnh có các tam giác lớn đổi sáng tối và mép nối rõ, tạo cảm giác lông chắp mảnh."
+        }
+      ],
+      "other_observations": "Hai nét mắt ngủ đọc rõ, không chấm nét cartoon là lỗi. Mép lông trên mõm có răng nhỏ nhưng không dùng riêng điều đó để kết luận vỡ."
+    }
+  ],
+  "limits": [
+    "Chẩn đoán WIP của đúng 12 PNG đã mở; không phải approval cuối, không đại diện cho bản khác mà parent đang sửa/kiểm.",
+    "Chỉ xem nguyên ảnh PNG native 1024×1024 bằng view_image; không montage, resize, crop, browser hoặc Blender.",
+    "Không đọc code, log, docs, báo cáo lịch sử hay nội dung ngữ cảnh dự án; chỉ liệt kê tên PNG để chọn đúng bộ ảnh. Không sửa code/model.",
+    "Tọa độ pixel ước lượng từ quan sát nguyên ảnh, gốc trên trái; bbox theo [x_min,y_min,x_max,y_max], có thể lệch vài pixel.",
+    "Ảnh tĩnh không chứng minh nguyên nhân, độ sâu, topology, chuyển động hay chất lượng ở khoảng cách chơi thật. Tên near/far chỉ dùng để định danh ảnh, không suy ra thay đổi đã thực hiện.",
+    "Không có lỗ xuyên nền được xác nhận chắc chắn. Rãnh tối/mép chồng được mô tả như hiện tượng nhìn thấy, không khẳng định mesh thủng.",
+    "CLEAN nghĩa là chưa thấy lỗi chắc chắn trong ảnh thuộc phạm vi yêu cầu; không có nghĩa chứng nhận không lỗi. REJECT là cần xem lại các tiếp giáp nhìn thấy trong bộ WIP này.",
+    "Chấp nhận phong cách stylized, nét mắt và miệng cartoon; không yêu cầu photorealism. Mảng lông đen/trắng, faceting đơn thuần và việc miệng khuất ở góc nghiêng không tự động là lỗi."
+  ]
+}

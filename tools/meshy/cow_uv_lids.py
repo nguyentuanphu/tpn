@@ -90,7 +90,7 @@ def prepare(o,px,center,r,coat):
     region=hit&((((world[...,0]-c[0])/.055)**2+((world[...,2]-c[2])/.070)**2)<1.1**2)
     native_cream=np.zeros((h,w),bool);protected=np.zeros((h,w),bool)
     if coat=='dark':
-        cream=hit&(lum>.25)&(sat>.1)&(px[...,0]>=px[...,1])&(px[...,0]-px[...,1]<.18)&(px[...,1]>=px[...,2])&(px[...,1]-px[...,2]<.25)
+        cream=hit&(lum>.25)&(sat>.07)&(px[...,0]>=px[...,1])&(px[...,0]-px[...,1]<.18)&(px[...,1]>=px[...,2])&(px[...,1]-px[...,2]<.25)
         native_cream=cream&(rad>1.6);todo=deque(map(tuple,np.argwhere(native_cream)))
         while todo:
             y,x=todo.popleft()
@@ -172,7 +172,12 @@ def prepare(o,px,center,r,coat):
     alpha[grow(opening)&valid]=1.
     # Every original eye/filter texel must be opaque.
     if not (alpha[grow(opening)&valid]>.999).all():raise ValueError('Incomplete UV eye guard')
-    return dict(fill=fill,alpha=alpha,world=pos,valid=valid,opening=opening,eyeUV=[w,h]+rle(eye),nativeUV=[w,h]+rle(native_cream),bounds=bounds,origin=(x0,y0),size=n,bodySize=(w,h),source=img)
+    # Keep the full aperture for colour/shape checks. The pigment probe
+    # excludes warm cream matching the native fur palette: those hull/AA
+    # pixels are not an exposed pupil, lash or neutral sclera.
+    pigment=feature&hit&region&~native_cream
+    if coat=='light':pigment&=~((lum>.5)&(px[...,0]-px[...,1]>.025)&(px[...,1]-px[...,2]>.035))
+    return dict(fill=fill,alpha=alpha,world=pos,valid=valid,opening=opening,eyeUV=[w,h]+rle(eye),pigmentUV=[w,h]+rle(pigment),nativeUV=[w,h]+rle(native_cream),bounds=bounds,origin=(x0,y0),size=n,bodySize=(w,h),source=img)
 
 
 def supersample(data,factor=3):

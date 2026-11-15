@@ -4,7 +4,7 @@ export function validateCowEyeMetadata(metadata,centers){
  const dot=(a,b)=>a.reduce((s,v,i)=>s+v*b[i],0);
  if(!metadata)throw Error('Missing actual-eye aperture metadata');
  return [0,1].map(i=>{
-  const a=Object.fromEntries(['C','S','U','N','H','D','M','P','UV','B','F'].map(k=>[k,metadata[`svEye${i}${k}`]]));
+  const a=Object.fromEntries(['C','S','U','N','H','D','M','P','UV','B','F','K'].map(k=>[k,metadata[`svEye${i}${k}`]]));
   if(!['C','S','U','N'].every(k=>finite(a[k],3))||!finite(a.D,2)||!Array.isArray(a.H)||a.H.length<6||a.H.length>128||a.H.length%2||!a.H.every(Number.isFinite)||a.D[1]<=a.D[0]||a.D[1]-a.D[0]>.15)throw Error('Invalid actual-eye aperture metadata');
   if(!Number.isFinite(a.P)||a.P<=0||a.P>.2||!Array.isArray(a.M)||a.M.length<3||a.M.length%2!==1||!a.M.every(Number.isInteger)||a.M[0]<64||a.M[0]>512)throw Error('Missing/invalid actual-eye pixel mask');
   const pixels=a.M[0]**2;let end=0,total=0;
@@ -19,6 +19,12 @@ export function validateCowEyeMetadata(metadata,centers){
    if(!Array.isArray(a.UV)||a.UV.length<4||a.UV.length%2||!a.UV.every(Number.isInteger)||a.UV[0]<64||a.UV[0]>2048||a.UV[1]<64||a.UV[1]>2048||!finite(a.B,6))throw Error('Invalid source UV eye mask');
    let end=0,total=0;for(let k=2;k<a.UV.length;k+=2){const start=a.UV[k],length=a.UV[k+1];if(start<end||length<=0||start+length>a.UV[0]*a.UV[1])throw Error('Invalid source UV eye runs');end=start+length;total+=length;}
    if(total<8||total>a.UV[0]*a.UV[1]*.1||[0,1,2].some(k=>a.B[k]>=a.B[k+3]||a.B[k+3]-a.B[k]>.2))throw Error('Unbounded source UV eye region');
+   if(a.K){
+    if(!Array.isArray(a.K)||a.K.length%2||!a.K.every(Number.isInteger)||a.K[0]!==a.UV[0]||a.K[1]!==a.UV[1])throw Error('Invalid original eye pigment mask');
+    const aperture=new Uint8Array(a.UV[0]*a.UV[1]);for(let k=2;k<a.UV.length;k+=2)aperture.fill(1,a.UV[k],a.UV[k]+a.UV[k+1]);
+    let end=0,count=0;for(let k=2;k<a.K.length;k+=2){const start=a.K[k],length=a.K[k+1];if(start<end||length<=0||start+length>aperture.length)throw Error('Invalid eye pigment runs');for(let j=start;j<start+length;j++)if(!aperture[j])throw Error('Source pigment outside actual eye aperture');end=start+length;count+=length;}
+    if(count<8||count>total)throw Error('Untrustworthy eye pigment area');
+   }
    if(a.F){if(!Array.isArray(a.F)||a.F.length%2||!a.F.every(Number.isInteger)||a.F[0]!==a.UV[0]||a.F[1]!==a.UV[1])throw Error('Invalid native-coat UV mask');let end=0;for(let k=2;k<a.F.length;k+=2){if(a.F[k]<end||a.F[k+1]<=0||a.F[k]+a.F[k+1]>a.F[0]*a.F[1])throw Error('Invalid native-coat UV runs');end=a.F[k]+a.F[k+1];}}
   }
 
@@ -73,10 +79,11 @@ export function cowTexturedEyeRim(current,width,height,e,eyeIds,lashMask){
 // 5f13d4b3b (13–14 Nov). Same HSV lid criterion, 4-connected group floor,
 // 1px neighbourhood colour tolerance and mouth lip/core grouping; coat-aware
 // brightness and the rim residual extend coverage to black/white animal fur.
-export function cowFaceMetrics(current,reference,width,height,eyes,mouth,closed,mouthOpen=false,eyeIds=null,lashMask=null,referenceEyeIds=null,mouthIds=null,mouthSurfaceIds=null){
+export function cowFaceMetrics(current,reference,width,height,eyes,mouth,closed,mouthOpen=false,eyeIds=null,lashMask=null,referenceEyeIds=null,mouthIds=null,mouthSurfaceIds=null,coverageProof=null){
  const N=width*height,flags={lid:new Uint8Array(N),mouth:new Uint8Array(N),stray:new Uint8Array(N),rim:new Uint8Array(N),eyes:new Uint8Array(N),silhouette:new Uint8Array(N)};
  if(!Number.isInteger(width)||!Number.isInteger(height)||width<=0||height<=0||current.length!==N*4||reference.length!==N*4||(eyeIds&&eyeIds.length!==N)||(lashMask&&lashMask.length!==N)||(referenceEyeIds&&referenceEyeIds.length!==N)||(mouthIds&&(mouthIds.length!==N||mouthIds.some(id=>id!==0&&id!==1)))||(mouthSurfaceIds&&(mouthSurfaceIds.length!==N||mouthSurfaceIds.some(id=>id!==0&&id!==1))))throw Error('Invalid face render buffers');
  for(const ids of [eyeIds,referenceEyeIds])if(ids&&ids.some(id=>id!==0&&id!==1&&id!==2))throw Error('Invalid actual-eye IDs');
+ if(coverageProof&&(!coverageProof.eyeIds||coverageProof.eyeIds.length!==N||coverageProof.eyeIds.some(id=>id!==0&&id!==1&&id!==2)||!coverageProof.sourceIds||coverageProof.sourceIds.length!==N||coverageProof.sourceIds.some(id=>id!==0&&id!==1&&id!==2)||!coverageProof.rgba||coverageProof.rgba.length!==N*4))throw Error('Invalid current-body eye occlusion proof');
  if(eyes.some(e=>![e.x,e.y,e.rx,e.ry].every(Number.isFinite)||e.rx<=0||e.ry<=0||![0,1].includes(e.index))||![mouth.x,mouth.y,mouth.rx,mouth.ry].every(Number.isFinite))throw Error('Invalid projected face frame');
  const coverageErrors=[];
  if(closed&&!eyes.length)coverageErrors.push('Missing eye regions');
@@ -85,6 +92,7 @@ export function cowFaceMetrics(current,reference,width,height,eyes,mouth,closed,
  for(let i=0;i<N;i++)if(current[4*i+3]!==reference[4*i+3])flags.silhouette[i]=1;
  if(closed&&!eyeIds)coverageErrors.push('Missing actual-eye ID pass');
  if(closed&&!referenceEyeIds)coverageErrors.push('Missing reference actual-eye ID pass');
+ if(closed&&!coverageProof)coverageErrors.push('Missing independent current-body eye coverage pass');
  const val=(p,i)=>Math.max(p[4*i],p[4*i+1],p[4*i+2])/255;
  const sat=(p,i)=>{const a=val(p,i);return a?(a-Math.min(p[4*i],p[4*i+1],p[4*i+2])/255)/a:0;};
  const dist=(a,i,b,j)=>Math.hypot(a[4*i]-b[4*j],a[4*i+1]-b[4*j+1],a[4*i+2]-b[4*j+2])/255;
@@ -129,21 +137,28 @@ export function cowFaceMetrics(current,reference,width,height,eyes,mouth,closed,
    if((e.featurePixels>0||e.aperturePixels>0)&&Math.abs(x-e.x)<e.rx+mx&&Math.abs(y-e.y)<e.ry+my)eyeZone[i]=1;
    if(d>1.5&&d<2.05&&current[4*i+3]){const v=val(current,i);if(e.coat==='dark'?v<.32:v>.5){vv.push(v);ss.push(sat(current,i));}}
   }
-  let idPixels=0,uncovered=0,referencePixels=0;
+  let idPixels=0,uncovered=0,referencePixels=0,potentialPixels=0,priorUncovered=0,occludedByNativeBody=0,sourcePigmentPixels=0;
   for(let i=0;i<N;i++){
    const x=i%width,y=i/width|0;if(Math.hypot((x-e.x)/e.rx,(y-e.y)/e.ry)<1.3&&eyeIds?.[i]===e.index+1)idPixels++;
-   if(referenceEyeIds?.[i]===e.index+1){referencePixels++;if(eyeIds?.[i]!==e.index+1)uncovered++;}
+   const original=referenceEyeIds?.[i]===e.index+1,potential=coverageProof?.eyeIds[i]===e.index+1,covered=eyeIds?.[i]===e.index+1;
+   const nativeOpaque=coverageProof&&coverageProof.eyeIds[i]===0&&coverageProof.rgba[4*i+3]>250;
+   if(original){referencePixels++;if(!covered){priorUncovered++;if(nativeOpaque)occludedByNativeBody++;}}
+   if(potential)potentialPixels++;
+   if(coverageProof?.sourceIds[i]===e.index+1)sourcePigmentPixels++;
+   if(!covered&&(potential||(original&&!nativeOpaque)))uncovered++;
   }
-  // All visible aperture pixels need a cover, even at oblique views or when
-  // no RGB feature group was found. An occluded eye contributes no aperture.
+  // Every source eye pixel that can show in the current body pose needs a
+  // cover. An open-reference pixel may be occluded only by independently
+  // measured opaque, non-eye body; a background hole is never an excuse.
   if(closed&&uncovered>6)coverageErrors.push(`Eye ${e.index}: insufficient actual-eye ID coverage (${idPixels} pixels, ${uncovered} uncovered)`);
   if(closed&&seed.requireCoverage){
    if(referencePixels<4)coverageErrors.push(`Eye ${e.index}: missing rendered reference aperture`);
+   if(sourcePigmentPixels<4)coverageErrors.push(`Eye ${e.index}: missing rendered original eye pigment`);
    if(!e.featurePixels)coverageErrors.push(`Eye ${e.index}: missing rendered reference feature`);
    if(idPixels<4&&uncovered<=6)coverageErrors.push(`Eye ${e.index}: insufficient actual-eye ID coverage (${idPixels} pixels, ${uncovered} uncovered)`);
    if(vv.length<8)coverageErrors.push(`Eye ${e.index}: insufficient native fur samples`);
   }
-  eyeData.push({e,v:median(vv),s:median(ss),measured:vv.length,idPixels,uncovered,referencePixels});
+  eyeData.push({e,v:median(vv),s:median(ss),measured:vv.length,idPixels,uncovered,referencePixels,potentialPixels,sourcePigmentPixels,priorUncovered,occludedByNativeBody});
  }
  const mouthZone=(x,y,pad=0)=>Math.abs(x-mouth.x)<=mouth.rx+pad&&Math.abs(y-mouth.y)<=mouth.ry+pad;
  const close=(i)=>{const x=i%width,y=i/width|0;for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){const u=x+dx,v=y+dy;if(u>=0&&u<width&&v>=0&&v<height&&dist(current,i,reference,v*width+u)<.08)return true;}return false;};

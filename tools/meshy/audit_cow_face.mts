@@ -22,7 +22,7 @@ const result=await page.evaluate(async ([mode,baseline,debug,requireWidths])=>{
  for(const tier of mode==='selftest'?['near']:['near','far']){
   const t=await K.loadWorldModel((baseline?'../../docs/meshy-farm-cloud/cow/review/':'')+'creature-cow'+(tier==='near'?'-hd':''));if(!t)throw Error('Model missing');const obj=clone(t.scene);scene.add(obj);obj.traverse(o=>{if(o.isSkinnedMesh)o.frustumCulled=false;});
   let mouthIds=new Uint8Array(S*S),mouthSurfaceIds=new Uint8Array(S*S);
-  const controls=new Map(),idCache=new Map(),idRead=cam=>{
+  const controls=new Map(),controlImages=new Map(),idCache=new Map(),idRead=cam=>{
    const saved=[];
    const swap=o=>{if(!o.isMesh)return;const original=o.material;saved.push([o,original]);let id=0;const lid=/-(?:shut|joy)([01])$/.exec(original.name||'');if(lid)id=Number(lid[1])+1;else if(/-mouth$/.test(original.name||''))id=3;
     const key=(original.uuid||original.id)+':'+id;let mat=idCache.get(key);
@@ -46,7 +46,7 @@ const result=await page.evaluate(async ([mode,baseline,debug,requireWidths])=>{
   if(!baseline||apertureMetadata.length||strokes.length){
    if(apertureMetadata.length!==1)throw Error('Requires one actual-eye aperture annotation');
    apertures=validateCowEyeMetadata(apertureMetadata[0],centers);validateCowLashMetadata(strokes,centers,apertures,{requireWidths});
-   if(requireWidths&&apertures.some(a=>!a.UV))throw Error('Current cow requires source UV eye coverage, including lateral artwork');
+   if(requireWidths&&apertures.some(a=>!a.UV||!a.K))throw Error('Current cow requires source UV eye coverage, including lateral artwork');
   }
 
   let body;obj.traverse(o=>{if(o.isSkinnedMesh&&(!body||o.geometry.attributes.position.count>body.geometry.attributes.position.count))body=o;});
@@ -55,7 +55,7 @@ const result=await page.evaluate(async ([mode,baseline,debug,requireWidths])=>{
   if(blinkAt<0)throw Error('Idle has no actual closed blink');
   const clips=mode==='selftest'?['sleep','cheer']:mode==='quick'?['cheer','sleep','sad']:t.clips.map(c=>c.name).concat('blink');
   const views=mode==='selftest'?[[0,0]]:mode==='quick'?[[0,0],[.7,0],[-.7,0]]:[[0,0],[.4,0],[-.4,0],[.7,0],[-.7,0],[Math.PI/2,0],[-Math.PI/2,0],[0,.7],[0,-.5]];
-  for(const clip of clips)for(const [yaw,elevation] of views)for(const plant of mode==='selftest'?['none','lid','mouth','mouth-open','stray','rim','rim-textured','rim-inner','rim-inner-native','flat','eyes','silhouette-add','silhouette-cut']:['none']){
+  for(const clip of clips)for(const [yaw,elevation] of views)for(const plant of mode==='selftest'?['none','lid','mouth','mouth-open','stray','rim','rim-textured','rim-inner','rim-inner-native','flat','eyes','silhouette-add','silhouette-cut','coverage']:['none']){
    if(mode==='selftest'&&((clip==='cheer'&&!['none','mouth-open'].includes(plant))||(clip==='sleep'&&plant==='mouth-open')))continue;
    const c=t.clips.find(c=>c.name===(clip==='blink'?'idle':clip));mixer.stopAllAction();mixer.clipAction(c).reset().play();mixer.setTime(clip==='blink'?blinkAt:c.duration*(clip==='sleep'||clip==='sad'?.5:.3));obj.updateMatrixWorld(true);
    const saved=bones.map(o=>({p:o.position.clone(),s:o.scale.clone(),q:o.quaternion.clone()}));
@@ -87,12 +87,22 @@ const result=await page.evaluate(async ([mode,baseline,debug,requireWidths])=>{
    if(mouthOpen){const ps=[],worldBox=new THREE.Box3();obj.traverse(o=>{if(!o.isSkinnedMesh||!/-mouth$/.test(o.material.name||''))return;for(let i=0;i<o.geometry.attributes.position.count;i++){const p=new THREE.Vector3().fromBufferAttribute(o.geometry.attributes.position,i);o.applyBoneTransform(i,p);p.applyMatrix4(o.matrixWorld);worldBox.expandByPoint(p);ps.push(project(p));}});if(!ps.length||worldBox.getSize(new THREE.Vector3()).length()>.2)throw Error('Missing/oversized actual mouth surface');
     const x0=Math.min(mp.x-mouth.rx,...ps.map(p=>p.x)),x1=Math.max(mp.x+mouth.rx,...ps.map(p=>p.x)),y0=Math.min(mp.y-mouth.ry,...ps.map(p=>p.y)),y1=Math.max(mp.y+mouth.ry,...ps.map(p=>p.y));mouth.x=(x0+x1)/2;mouth.y=(y0+y1)/2;mouth.rx=(x1-x0)/2;mouth.ry=(y1-y0)/2;
    }
-   // Reference has the exact same head/body pose, only its expression neutral.
-   bones.forEach((o,i)=>{if(i===4||i===5)return;o.position.copy(rest[i].p);o.quaternion.copy(rest[i].q);o.scale.setScalar(.001);});obj.updateMatrixWorld(true);const reference=read(cam);
+   // Independently expose all eye artwork that could show in the current
+   // body pose. Native opaque head/fur may physically occlude a retracted eye;
+   // background and an uncovered surviving eye never count as occlusion.
+   for(const i of [0,1,2,3,6])bones[i].scale.setScalar(.001);
+   obj.updateMatrixWorld(true);
+   const closedBody=read(cam),potentialEyeIds=apertures?readCowReferenceEyeIds(THREE,scene,body,restPositions,apertures,read,cam,{pigmentOnly:!baseline}):null;
+   // Neutral means the original eye is open: keeping the closed retract pose
+   // here hid body changes and could measure an already buried painted eye.
+   // Keep the same animated head/body, restore only all expression bones.
+   bones.forEach((o,i)=>{o.position.copy(rest[i].p);o.quaternion.copy(rest[i].q);if(i===4||i===5)o.scale.copy(rest[i].s);else o.scale.setScalar(.001);});obj.updateMatrixWorld(true);const reference=read(cam);
    const referenceEyeIds=apertures?readCowReferenceEyeIds(THREE,scene,body,restPositions,apertures,read,cam):null;
+   const sourcePigmentIds=apertures?readCowReferenceEyeIds(THREE,scene,body,restPositions,apertures,read,cam,{pigmentOnly:!baseline}):null;
    bones.forEach((o,i)=>{o.position.copy(saved[i].p);o.scale.copy(saved[i].s);o.quaternion.copy(saved[i].q);});obj.updateMatrixWorld(true);
-   let fault;
-   if(plant!=='none'){
+   let fault;const hiddenCoverage=[];
+   if(plant==='coverage')obj.traverse(o=>{if(o.isMesh&&/-(shut|joy)\d$/.test(o.material.name||'')&&o.visible){hiddenCoverage.push(o);o.visible=false;}});
+   if(plant!=='none'&&plant!=='coverage'){
     let loc=plant==='mouth-open'?jaw.clone():plant==='mouth'?jaw.clone().addScaledVector(right,.023):plant==='stray'?jaw.clone().addScaledVector(up,.068):plant==='eyes'?eworld[1].clone().addScaledVector(up,.015):eworld[plant==='flat'?0:1].clone();
     if(plant==='eyes'){
      const aperture=[];if(referenceEyeIds)for(let i=0;i<referenceEyeIds.length;i++)if(referenceEyeIds[i]===2)aperture.push(i);
@@ -151,13 +161,19 @@ const result=await page.evaluate(async ([mode,baseline,debug,requireWidths])=>{
     if(plant==='mouth-open')fault.material.name='meshy-cow-mouth';
     fault.position.copy(loc).addScaledVector(dir,.025);fault.quaternion.copy(cam.quaternion);fault.renderOrder=999;scene.add(fault);
    }
-   const current=read(cam),ids=idRead(cam),m=cowFaceMetrics(current,reference,S,S,eyes,mouth,closed,mouthOpen,ids,lashMask,referenceEyeIds,mouthIds,mouthSurfaceIds);
+   const current=read(cam),ids=idRead(cam),m=cowFaceMetrics(current,reference,S,S,eyes,mouth,closed,mouthOpen,ids,lashMask,referenceEyeIds,mouthIds,mouthSurfaceIds,{eyeIds:potentialEyeIds,sourceIds:sourcePigmentIds,rgba:closedBody});
    if(mouthOpen&&bones[6].scale.x>.4&&Math.abs(yaw)<=.4&&Math.abs(elevation)<.1&&m.mouthVisiblePixels<4)m.coverageErrors.push('Open mouth missing visible front surface');
    const cs={tier,clip,yaw,elevation,plant,closed,mouthOpen,...m.counts,textureFlat:m.textureFlat,eyeData:m.eyeData,coverageErrors:m.coverageErrors,mouthVisiblePixels:m.mouthVisiblePixels,mouthOccluded:mouthOpen&&m.mouthVisiblePixels===0};cases.push(cs);
    if(mode==='selftest'){
     const key=JSON.stringify([tier,clip,yaw,elevation]);
-    if(plant==='none')controls.set(key,m.flags);
-    else{
+    if(plant==='none'){controls.set(key,m.flags);controlImages.set(key,{rgba:current,ids,errors:m.coverageErrors.length});}
+    else if(plant==='coverage'){
+     const control=controlImages.get(key);if(!control)throw Error('Missing coverage selftest control');
+     let changed=0;for(let i=0;i<S*S;i++)if(control.ids[i]&&Math.abs(current[4*i]-control.rgba[4*i])+Math.abs(current[4*i+1]-control.rgba[4*i+1])+Math.abs(current[4*i+2]-control.rgba[4*i+2])>3)changed++;
+     cs.plantedFootprintPixels=changed;cs.plantedCoverageErrorsIncrease=m.coverageErrors.length-control.errors;
+     if(changed<=12)throw Error('Missing-cover plant did not change rendered pixels');
+     pics[`${tier}-${clip}-coverage-control`]=png(control.rgba);pics[`${tier}-${clip}-coverage-missing`]=png(current);
+    }else{
      const control=controls.get(key);if(!control||!fault)throw Error('Missing same-pose selftest control');
      // Render the planted geometry alone to locate its actual pixel footprint.
      const original=fault.material,mask=original.clone();mask.color.set(0xffffff);mask.opacity=1;mask.blending=THREE.NoBlending;
@@ -174,10 +190,11 @@ const result=await page.evaluate(async ([mode,baseline,debug,requireWidths])=>{
     }
    }
    for(const k of Object.keys(m.counts))if(m.counts[k]>(k==='eyes'?6:12)||plant===k)pics[`${tier}-${clip}-${yaw}-${elevation}-${plant}-${k}`]=png(current,m.flags[k]);
-   if(debug){const name=`${tier}-${clip}-${yaw}-${elevation}-${plant}`;pics[name+'-current']=png(current);pics[name+'-reference']=png(reference);
-    for(const [label,mask]of [['ids',ids],['reference-ids',referenceEyeIds],['lash',lashMask],['mouth-ids',mouthIds],['mouth-surface-ids',mouthSurfaceIds]] as const){if(!mask)continue;const rgba=new Uint8Array(S*S*4);for(let i=0;i<S*S;i++){rgba[4*i]=mask[i]&1?255:0;rgba[4*i+1]=mask[i]&2?255:0;rgba[4*i+3]=255;}pics[name+'-'+label]=png(rgba);}
+   if(debug){const name=`${tier}-${clip}-${yaw}-${elevation}-${plant}`;pics[name+'-current']=png(current);pics[name+'-reference']=png(reference);pics[name+'-closed-body']=png(closedBody);
+    for(const [label,mask]of [['ids',ids],['reference-ids',referenceEyeIds],['potential-ids',potentialEyeIds],['source-pigment-ids',sourcePigmentIds],['lash',lashMask],['mouth-ids',mouthIds],['mouth-surface-ids',mouthSurfaceIds]] as const){if(!mask)continue;const rgba=new Uint8Array(S*S*4);for(let i=0;i<S*S;i++){rgba[4*i]=mask[i]&1?255:0;rgba[4*i+1]=mask[i]&2?255:0;rgba[4*i+3]=255;}pics[name+'-'+label]=png(rgba);}
    }
    if(fault){scene.remove(fault);fault.geometry.dispose();if(plant==='rim-textured')fault.material.map.dispose();fault.material.dispose();}
+   for(const o of hiddenCoverage)o.visible=true;
   }
   scene.remove(obj);for(const mat of idCache.values())mat.dispose();
  }
@@ -191,9 +208,10 @@ const lines=[`Cow face audit: ${real.length} cases; ${fail.length} failing (limi
 for(const k of keys)lines.push(`${k}: worst ${Math.max(0,...real.map(c=>c[k]))}, failing ${real.filter(c=>c[k]>limit(k)).length}`);
 for(const c of real)for(const error of c.coverageErrors)lines.push(`${c.tier}/${c.clip}/${c.yaw}/${c.elevation}: ${error}`);
 if(mode==='selftest'){
- const targets={lid:'lid',mouth:'mouth','mouth-open':'mouth','rim-textured':'rim',stray:'stray',rim:'rim','rim-inner':'rim','rim-inner-native':'rim',flat:'textureFlat',eyes:'eyes','silhouette-add':'silhouette','silhouette-cut':'silhouette'};
+ const targets={lid:'lid',mouth:'mouth','mouth-open':'mouth','rim-textured':'rim',stray:'stray',rim:'rim','rim-inner':'rim','rim-inner-native':'rim',flat:'textureFlat',eyes:'eyes','silhouette-add':'silhouette','silhouette-cut':'silhouette',coverage:'coverage'};
  const missed=Object.entries(targets).filter(([plant,k])=>!result.cases.some(c=>{
   if(c.plant!==plant)return false;
+  if(plant==='coverage')return c.plantedCoverageErrorsIncrease>0&&c.plantedFootprintPixels>12;
   const control=real.find(n=>n.tier===c.tier&&n.clip===c.clip&&n.yaw===c.yaw&&n.elevation===c.elevation);
   return control&&Number.isFinite(c[k])&&c[k]-control[k]>limit(k)&&c.plantedIncrease?.[k==='textureFlat'?'rim':k]>limit(k);
  })).map(([plant])=>plant);

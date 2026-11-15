@@ -1,6 +1,7 @@
 // Interpolate rest-world positions through geometry.color, independently of skinning.
 // Non-eye fragments remain opaque black so cheek/ear rays occlude the aperture.
-export function createCowEyeProbeMaterial(THREE,apertures,bodyMap=null){
+export function createCowEyeProbeMaterial(THREE,apertures,bodyMap=null,{pigmentOnly=false}={}){
+ if(pigmentOnly){if(apertures.some(a=>!a.K))throw Error('Missing original source eye pigment mask');apertures=apertures.map(a=>({...a,UV:a.K}));}
  const mask=new THREE.MeshBasicMaterial({vertexColors:true,side:THREE.DoubleSide,map:bodyMap}),textures=[];
  mask.addEventListener('dispose',()=>textures.forEach(t=>t.dispose()));
  mask.customProgramCacheKey=()=> 'cow-real-aperture-ids-v2-'+apertures.some(a=>a.UV);
@@ -80,10 +81,10 @@ export function decodeCowEyeIds(pixels){
 }
 
 // Keep every occluder in the depth pass, including alpha-cut lid/lash children.
-export function readCowReferenceEyeIds(THREE,scene,body,restPositions,apertures,read,cam){
+export function readCowReferenceEyeIds(THREE,scene,body,restPositions,apertures,read,cam,options={}){
  const saved=[],temporary=[],oldColor=body.geometry.getAttribute('color');
  const black=new THREE.MeshBasicMaterial({color:0,side:THREE.DoubleSide});
- const probe=createCowEyeProbeMaterial(THREE,apertures,body.material.map);temporary.push(black,probe);
+ const probe=createCowEyeProbeMaterial(THREE,apertures,body.material.map,options);temporary.push(black,probe);
  const occluder=original=>{
   if(!((original.transparent&&original.map)||original.polygonOffset))return black;
   const mat=new THREE.MeshBasicMaterial({color:0,map:original.transparent?original.map:null,alphaMap:original.alphaMap,

@@ -1,0 +1,755 @@
+{
+  "review_type": "PNG_only_baseline_comparison_WIP",
+  "final_approval": false,
+  "original_dev99_decision": "REJECT",
+  "original_reports_modified": false,
+  "comparison_result": "18 BOTH; 2 ONLY_99_FOR_SPECIFIC_SHAPE (N6,F12); partial baseline occlusion at F1,F13",
+  "opened_images": [
+    {
+      "file": "/workspace/cow-fit/r17-r16-baseline-native/cow-near-cheer-p07.png",
+      "set": "baseline",
+      "opened_with": "view_image",
+      "view": "original_full_image",
+      "native_size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "file": "/workspace/cow-fit/r17-dev99/native-diagnostic/cow-near-cheer-p07.png",
+      "set": "99",
+      "opened_with": "view_image",
+      "view": "original_full_image",
+      "native_size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "file": "/workspace/cow-fit/r17-r16-baseline-native/cow-near-cheer-m07.png",
+      "set": "baseline",
+      "opened_with": "view_image",
+      "view": "original_full_image",
+      "native_size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "file": "/workspace/cow-fit/r17-dev99/native-diagnostic/cow-near-cheer-m07.png",
+      "set": "99",
+      "opened_with": "view_image",
+      "view": "original_full_image",
+      "native_size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "file": "/workspace/cow-fit/r17-r16-baseline-native/cow-near-cheer-left.png",
+      "set": "baseline",
+      "opened_with": "view_image",
+      "view": "original_full_image",
+      "native_size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "file": "/workspace/cow-fit/r17-dev99/native-diagnostic/cow-near-cheer-left.png",
+      "set": "99",
+      "opened_with": "view_image",
+      "view": "original_full_image",
+      "native_size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "file": "/workspace/cow-fit/r17-r16-baseline-native/cow-near-cheer-right.png",
+      "set": "baseline",
+      "opened_with": "view_image",
+      "view": "original_full_image",
+      "native_size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "file": "/workspace/cow-fit/r17-dev99/native-diagnostic/cow-near-cheer-right.png",
+      "set": "99",
+      "opened_with": "view_image",
+      "view": "original_full_image",
+      "native_size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "file": "/workspace/cow-fit/r17-r16-baseline-native/cow-far-cheer-front.png",
+      "set": "baseline",
+      "opened_with": "view_image",
+      "view": "original_full_image",
+      "native_size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "file": "/workspace/cow-fit/r17-dev99/native-diagnostic/cow-far-cheer-front.png",
+      "set": "99",
+      "opened_with": "view_image",
+      "view": "original_full_image",
+      "native_size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "file": "/workspace/cow-fit/r17-r16-baseline-native/cow-far-cheer-p07.png",
+      "set": "baseline",
+      "opened_with": "view_image",
+      "view": "original_full_image",
+      "native_size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "file": "/workspace/cow-fit/r17-dev99/native-diagnostic/cow-far-cheer-p07.png",
+      "set": "99",
+      "opened_with": "view_image",
+      "view": "original_full_image",
+      "native_size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "file": "/workspace/cow-fit/r17-r16-baseline-native/cow-far-cheer-m07.png",
+      "set": "baseline",
+      "opened_with": "view_image",
+      "view": "original_full_image",
+      "native_size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "file": "/workspace/cow-fit/r17-dev99/native-diagnostic/cow-far-cheer-m07.png",
+      "set": "99",
+      "opened_with": "view_image",
+      "view": "original_full_image",
+      "native_size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "file": "/workspace/cow-fit/r17-r16-baseline-native/cow-far-cheer-left.png",
+      "set": "baseline",
+      "opened_with": "view_image",
+      "view": "original_full_image",
+      "native_size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "file": "/workspace/cow-fit/r17-dev99/native-diagnostic/cow-far-cheer-left.png",
+      "set": "99",
+      "opened_with": "view_image",
+      "view": "original_full_image",
+      "native_size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "file": "/workspace/cow-fit/r17-r16-baseline-native/cow-far-cheer-right.png",
+      "set": "baseline",
+      "opened_with": "view_image",
+      "view": "original_full_image",
+      "native_size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "file": "/workspace/cow-fit/r17-dev99/native-diagnostic/cow-far-cheer-right.png",
+      "set": "99",
+      "opened_with": "view_image",
+      "view": "original_full_image",
+      "native_size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "file": "/workspace/cow-fit/r17-r16-baseline-native/cow-far-sleep-front.png",
+      "set": "baseline",
+      "opened_with": "view_image",
+      "view": "original_full_image",
+      "native_size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "file": "/workspace/cow-fit/r17-dev99/native-diagnostic/cow-far-sleep-front.png",
+      "set": "99",
+      "opened_with": "view_image",
+      "view": "original_full_image",
+      "native_size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "file": "/workspace/cow-fit/r17-r16-baseline-native/cow-near-cheer-front.png",
+      "set": "baseline",
+      "opened_with": "view_image",
+      "view": "original_full_image",
+      "native_size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "file": "/workspace/cow-fit/r17-dev99/native-diagnostic/cow-near-cheer-front.png",
+      "set": "99",
+      "opened_with": "view_image",
+      "view": "original_full_image",
+      "native_size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "file": "/workspace/cow-fit/r17-r16-baseline-native/cow-near-sleep-front.png",
+      "set": "baseline",
+      "opened_with": "view_image",
+      "view": "original_full_image",
+      "native_size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "file": "/workspace/cow-fit/r17-dev99/native-diagnostic/cow-near-sleep-front.png",
+      "set": "99",
+      "opened_with": "view_image",
+      "view": "original_full_image",
+      "native_size": [
+        1024,
+        1024
+      ]
+    }
+  ],
+  "bbox_comparisons": [
+    {
+      "id": "N1",
+      "image": "cow-near-cheer-p07.png",
+      "dev99_file": "/workspace/cow-fit/r17-dev99/native-diagnostic/cow-near-cheer-p07.png",
+      "baseline_file": "/workspace/cow-fit/r17-r16-baseline-native/cow-near-cheer-p07.png",
+      "dev99_bbox_xyxy": [
+        553,
+        649,
+        594,
+        709
+      ],
+      "baseline_corresponding_bbox_xyxy_approx": [
+        562,
+        649,
+        605,
+        709
+      ],
+      "classification": "BOTH",
+      "baseline_evidence": "Mấu trắng và bóng xám ở chân phải mõm có ở cả hai bộ, lệch ngang nhẹ.",
+      "remaining_visual_impact": "Tiếp giáp mõm–má vẫn đọc như mép chồng nhỏ; ảnh hưởng nhẹ, không phải bằng chứng lỗi chỉ có ở 99.",
+      "confidence": "high_for_visible_presence; no_implementation_inference",
+      "partial_baseline_occlusion": false
+    },
+    {
+      "id": "N2",
+      "image": "cow-near-cheer-m07.png",
+      "dev99_file": "/workspace/cow-fit/r17-dev99/native-diagnostic/cow-near-cheer-m07.png",
+      "baseline_file": "/workspace/cow-fit/r17-r16-baseline-native/cow-near-cheer-m07.png",
+      "dev99_bbox_xyxy": [
+        413,
+        666,
+        457,
+        711
+      ],
+      "baseline_corresponding_bbox_xyxy_approx": [
+        410,
+        666,
+        454,
+        711
+      ],
+      "classification": "BOTH",
+      "baseline_evidence": "Mấu tam giác trắng-xám tại chân trái mõm có trong baseline và 99.",
+      "remaining_visual_impact": "Cùng làm chỗ nối mõm–má gãy cục bộ.",
+      "confidence": "high_for_visible_presence; no_implementation_inference",
+      "partial_baseline_occlusion": false
+    },
+    {
+      "id": "N3",
+      "image": "cow-near-cheer-left.png",
+      "dev99_file": "/workspace/cow-fit/r17-dev99/native-diagnostic/cow-near-cheer-left.png",
+      "baseline_file": "/workspace/cow-fit/r17-r16-baseline-native/cow-near-cheer-left.png",
+      "dev99_bbox_xyxy": [
+        344,
+        527,
+        413,
+        714
+      ],
+      "baseline_corresponding_bbox_xyxy_approx": [
+        336,
+        527,
+        407,
+        714
+      ],
+      "classification": "BOTH",
+      "baseline_evidence": "Mép xiên và các góc phiến trắng dưới mảng đen gốc tai có ở cả hai; ở near khá nhẹ.",
+      "remaining_visual_impact": "Cảm giác lớp lông trên má chưa liền; không đủ cơ sở quy là phát sinh ở 99.",
+      "confidence": "high_for_visible_presence; no_implementation_inference",
+      "partial_baseline_occlusion": false
+    },
+    {
+      "id": "N4",
+      "image": "cow-near-cheer-left.png",
+      "dev99_file": "/workspace/cow-fit/r17-dev99/native-diagnostic/cow-near-cheer-left.png",
+      "baseline_file": "/workspace/cow-fit/r17-r16-baseline-native/cow-near-cheer-left.png",
+      "dev99_bbox_xyxy": [
+        544,
+        661,
+        601,
+        713
+      ],
+      "baseline_corresponding_bbox_xyxy_approx": [
+        534,
+        661,
+        593,
+        713
+      ],
+      "classification": "BOTH",
+      "baseline_evidence": "Mấu trắng và rãnh xám ở chân mõm hiện diện trong cả hai ảnh.",
+      "remaining_visual_impact": "Vẫn làm tiếp giáp mõm–má gấp góc; baseline không làm lỗi này thành sạch.",
+      "confidence": "high_for_visible_presence; no_implementation_inference",
+      "partial_baseline_occlusion": false
+    },
+    {
+      "id": "N5",
+      "image": "cow-near-cheer-right.png",
+      "dev99_file": "/workspace/cow-fit/r17-dev99/native-diagnostic/cow-near-cheer-right.png",
+      "baseline_file": "/workspace/cow-fit/r17-r16-baseline-native/cow-near-cheer-right.png",
+      "dev99_bbox_xyxy": [
+        582,
+        602,
+        720,
+        756
+      ],
+      "baseline_corresponding_bbox_xyxy_approx": [
+        594,
+        602,
+        735,
+        756
+      ],
+      "classification": "BOTH",
+      "baseline_evidence": "Đường biên đa giác xiên và mảng sáng tối trên má trắng dưới lông đen có cả hai bộ.",
+      "remaining_visual_impact": "Má đọc thành phiến riêng; không chỉ là ranh màu đen/trắng.",
+      "confidence": "high_for_visible_presence; no_implementation_inference",
+      "partial_baseline_occlusion": false
+    },
+    {
+      "id": "N6",
+      "image": "cow-near-cheer-right.png",
+      "dev99_file": "/workspace/cow-fit/r17-dev99/native-diagnostic/cow-near-cheer-right.png",
+      "baseline_file": "/workspace/cow-fit/r17-r16-baseline-native/cow-near-cheer-right.png",
+      "dev99_bbox_xyxy": [
+        379,
+        530,
+        455,
+        569
+      ],
+      "baseline_corresponding_bbox_xyxy_approx": [
+        394,
+        526,
+        469,
+        576
+      ],
+      "classification": "ONLY_99_FOR_SPECIFIC_SHAPE",
+      "baseline_evidence": "99 có các răng trắng dài nằm ngang tiến vào vùng mõm hồng. Baseline có mép trắng ngắn/răng nhỏ theo hướng dọc ở chân sống mũi, nhưng không thấy dải răng ngang dài tương ứng.",
+      "remaining_visual_impact": "Phần nhô dài làm tiếp giáp sống mõm lởm chởm rõ hơn ở 99. Kết luận chỉ-99 áp dụng cho hình răng ngang dài; không có nghĩa baseline hoàn toàn không có lỗi mép nối.",
+      "confidence": "high_for_visible_presence; no_implementation_inference",
+      "partial_baseline_occlusion": false
+    },
+    {
+      "id": "F1",
+      "image": "cow-far-cheer-front.png",
+      "dev99_file": "/workspace/cow-fit/r17-dev99/native-diagnostic/cow-far-cheer-front.png",
+      "baseline_file": "/workspace/cow-fit/r17-r16-baseline-native/cow-far-cheer-front.png",
+      "dev99_bbox_xyxy": [
+        443,
+        374,
+        508,
+        522
+      ],
+      "baseline_corresponding_bbox_xyxy_approx": [
+        443,
+        374,
+        515,
+        522
+      ],
+      "classification": "BOTH",
+      "baseline_evidence": "Các phiến sáng/xám trên phần sống mũi giữa mặt vẫn thấy ở baseline. Phần sát mắt trắng trong bbox bị vùng phẳng quanh mắt baseline che, nên không thể đối chiếu đầy đủ chi tiết con ở đó.",
+      "remaining_visual_impact": "Bề mặt chia phiến có ở cả hai; không khẳng định toàn bộ từng nét trong bbox giống nhau hoặc chỉ có ở 99.",
+      "confidence": "high_for_visible_presence; no_implementation_inference",
+      "partial_baseline_occlusion": true
+    },
+    {
+      "id": "F2",
+      "image": "cow-far-cheer-front.png",
+      "dev99_file": "/workspace/cow-fit/r17-dev99/native-diagnostic/cow-far-cheer-front.png",
+      "baseline_file": "/workspace/cow-fit/r17-r16-baseline-native/cow-far-cheer-front.png",
+      "dev99_bbox_xyxy": [
+        397,
+        748,
+        566,
+        862
+      ],
+      "baseline_corresponding_bbox_xyxy_approx": [
+        397,
+        748,
+        566,
+        862
+      ],
+      "classification": "BOTH",
+      "baseline_evidence": "Các phiến trắng lớn và cạnh tối dưới cằm, trên vòng cổ, có ở cả hai.",
+      "remaining_visual_impact": "Cổ trông như các lá tam giác ghép rời, ảnh hưởng rõ ở native1024.",
+      "confidence": "high_for_visible_presence; no_implementation_inference",
+      "partial_baseline_occlusion": false
+    },
+    {
+      "id": "F3",
+      "image": "cow-far-cheer-p07.png",
+      "dev99_file": "/workspace/cow-fit/r17-dev99/native-diagnostic/cow-far-cheer-p07.png",
+      "baseline_file": "/workspace/cow-fit/r17-r16-baseline-native/cow-far-cheer-p07.png",
+      "dev99_bbox_xyxy": [
+        682,
+        481,
+        790,
+        624
+      ],
+      "baseline_corresponding_bbox_xyxy_approx": [
+        690,
+        481,
+        801,
+        624
+      ],
+      "classification": "BOTH",
+      "baseline_evidence": "Các mép tối/sáng và phiến nhọn ở cạnh dưới-bên phải má đen đã thấy trong baseline.",
+      "remaining_visual_impact": "Lông má đen bị chia mảng; không quy chỉ từ pattern màu và không xác nhận lỗ xuyên.",
+      "confidence": "high_for_visible_presence; no_implementation_inference",
+      "partial_baseline_occlusion": false
+    },
+    {
+      "id": "F4",
+      "image": "cow-far-cheer-p07.png",
+      "dev99_file": "/workspace/cow-fit/r17-dev99/native-diagnostic/cow-far-cheer-p07.png",
+      "baseline_file": "/workspace/cow-fit/r17-r16-baseline-native/cow-far-cheer-p07.png",
+      "dev99_bbox_xyxy": [
+        535,
+        712,
+        748,
+        858
+      ],
+      "baseline_corresponding_bbox_xyxy_approx": [
+        539,
+        712,
+        757,
+        858
+      ],
+      "classification": "BOTH",
+      "baseline_evidence": "Phiến trắng dài và rãnh tối dưới hàm xuống cổ có cả hai bộ.",
+      "remaining_visual_impact": "Tiếp giáp lông cổ gãy rõ, vẫn là hạn chế nhìn thấy của cả hai.",
+      "confidence": "high_for_visible_presence; no_implementation_inference",
+      "partial_baseline_occlusion": false
+    },
+    {
+      "id": "F5",
+      "image": "cow-far-cheer-m07.png",
+      "dev99_file": "/workspace/cow-fit/r17-dev99/native-diagnostic/cow-far-cheer-m07.png",
+      "baseline_file": "/workspace/cow-fit/r17-r16-baseline-native/cow-far-cheer-m07.png",
+      "dev99_bbox_xyxy": [
+        216,
+        633,
+        312,
+        811
+      ],
+      "baseline_corresponding_bbox_xyxy_approx": [
+        212,
+        633,
+        308,
+        811
+      ],
+      "classification": "BOTH",
+      "baseline_evidence": "Các tam giác trắng dài cạnh khe tối ở cổ trái ảnh có trong baseline và 99.",
+      "remaining_visual_impact": "Cảm giác lớp lông tách rời khỏi khối cổ; không thấy bằng chứng riêng cho phát sinh mới.",
+      "confidence": "high_for_visible_presence; no_implementation_inference",
+      "partial_baseline_occlusion": false
+    },
+    {
+      "id": "F6",
+      "image": "cow-far-cheer-m07.png",
+      "dev99_file": "/workspace/cow-fit/r17-dev99/native-diagnostic/cow-far-cheer-m07.png",
+      "baseline_file": "/workspace/cow-fit/r17-r16-baseline-native/cow-far-cheer-m07.png",
+      "dev99_bbox_xyxy": [
+        290,
+        716,
+        442,
+        787
+      ],
+      "baseline_corresponding_bbox_xyxy_approx": [
+        286,
+        716,
+        438,
+        787
+      ],
+      "classification": "BOTH",
+      "baseline_evidence": "Dải mép đa giác dưới má/hàm tương ứng có ở cả hai bộ.",
+      "remaining_visual_impact": "Làm chuyển tiếp hàm–cổ đọc như lớp chồng.",
+      "confidence": "high_for_visible_presence; no_implementation_inference",
+      "partial_baseline_occlusion": false
+    },
+    {
+      "id": "F7",
+      "image": "cow-far-cheer-left.png",
+      "dev99_file": "/workspace/cow-fit/r17-dev99/native-diagnostic/cow-far-cheer-left.png",
+      "baseline_file": "/workspace/cow-fit/r17-r16-baseline-native/cow-far-cheer-left.png",
+      "dev99_bbox_xyxy": [
+        333,
+        376,
+        418,
+        694
+      ],
+      "baseline_corresponding_bbox_xyxy_approx": [
+        325,
+        376,
+        410,
+        694
+      ],
+      "classification": "BOTH",
+      "baseline_evidence": "Chuỗi bậc tam giác lớn từ dưới tai xuống má đã có trong baseline.",
+      "remaining_visual_impact": "Là đường nối lông răng cưa rõ, vẫn ảnh hưởng khối mặt liền lạc.",
+      "confidence": "high_for_visible_presence; no_implementation_inference",
+      "partial_baseline_occlusion": false
+    },
+    {
+      "id": "F8",
+      "image": "cow-far-cheer-left.png",
+      "dev99_file": "/workspace/cow-fit/r17-dev99/native-diagnostic/cow-far-cheer-left.png",
+      "baseline_file": "/workspace/cow-fit/r17-r16-baseline-native/cow-far-cheer-left.png",
+      "dev99_bbox_xyxy": [
+        166,
+        628,
+        291,
+        839
+      ],
+      "baseline_corresponding_bbox_xyxy_approx": [
+        158,
+        628,
+        283,
+        839
+      ],
+      "classification": "BOTH",
+      "baseline_evidence": "Các phiến trắng dài trên vòng da cùng các rãnh tối có ở cả hai ảnh.",
+      "remaining_visual_impact": "Lông cổ trông thành phiến rời; không coi baseline là tiêu chuẩn sạch.",
+      "confidence": "high_for_visible_presence; no_implementation_inference",
+      "partial_baseline_occlusion": false
+    },
+    {
+      "id": "F9",
+      "image": "cow-far-cheer-left.png",
+      "dev99_file": "/workspace/cow-fit/r17-dev99/native-diagnostic/cow-far-cheer-left.png",
+      "baseline_file": "/workspace/cow-fit/r17-r16-baseline-native/cow-far-cheer-left.png",
+      "dev99_bbox_xyxy": [
+        542,
+        664,
+        653,
+        722
+      ],
+      "baseline_corresponding_bbox_xyxy_approx": [
+        533,
+        664,
+        645,
+        722
+      ],
+      "classification": "BOTH",
+      "baseline_evidence": "Các mấu tam giác trắng/hồng ở chân mõm thấy cả trong baseline.",
+      "remaining_visual_impact": "Tiếp giáp mõm–má vẫn gãy góc trong cả hai.",
+      "confidence": "high_for_visible_presence; no_implementation_inference",
+      "partial_baseline_occlusion": false
+    },
+    {
+      "id": "F10",
+      "image": "cow-far-cheer-right.png",
+      "dev99_file": "/workspace/cow-fit/r17-dev99/native-diagnostic/cow-far-cheer-right.png",
+      "baseline_file": "/workspace/cow-fit/r17-r16-baseline-native/cow-far-cheer-right.png",
+      "dev99_bbox_xyxy": [
+        588,
+        491,
+        741,
+        640
+      ],
+      "baseline_corresponding_bbox_xyxy_approx": [
+        601,
+        491,
+        754,
+        640
+      ],
+      "classification": "BOTH",
+      "baseline_evidence": "Các phiến tối đa giác dưới mắt/trước tai và góc nhọn dưới má đen có ở cả hai bộ.",
+      "remaining_visual_impact": "Mảng đen có bậc bề mặt nhìn thấy, khác với chỉ là đổi màu lông; không kết luận cấu tạo hay thủng.",
+      "confidence": "high_for_visible_presence; no_implementation_inference",
+      "partial_baseline_occlusion": false
+    },
+    {
+      "id": "F11",
+      "image": "cow-far-cheer-right.png",
+      "dev99_file": "/workspace/cow-fit/r17-dev99/native-diagnostic/cow-far-cheer-right.png",
+      "baseline_file": "/workspace/cow-fit/r17-r16-baseline-native/cow-far-cheer-right.png",
+      "dev99_bbox_xyxy": [
+        510,
+        635,
+        747,
+        804
+      ],
+      "baseline_corresponding_bbox_xyxy_approx": [
+        522,
+        635,
+        760,
+        804
+      ],
+      "classification": "BOTH",
+      "baseline_evidence": "Mảng trắng tam giác cạnh sắc, rãnh tối trên má/cổ xuất hiện trong cả hai.",
+      "remaining_visual_impact": "Lông vẫn không hòa liền; ảnh hưởng rõ ở native1024.",
+      "confidence": "high_for_visible_presence; no_implementation_inference",
+      "partial_baseline_occlusion": false
+    },
+    {
+      "id": "F12",
+      "image": "cow-far-cheer-right.png",
+      "dev99_file": "/workspace/cow-fit/r17-dev99/native-diagnostic/cow-far-cheer-right.png",
+      "baseline_file": "/workspace/cow-fit/r17-r16-baseline-native/cow-far-cheer-right.png",
+      "dev99_bbox_xyxy": [
+        373,
+        528,
+        463,
+        578
+      ],
+      "baseline_corresponding_bbox_xyxy_approx": [
+        393,
+        526,
+        476,
+        582
+      ],
+      "classification": "ONLY_99_FOR_SPECIFIC_SHAPE",
+      "baseline_evidence": "99 có dải răng trắng dài nằm ngang trên vùng mõm hồng. Baseline có ít mép nhỏ ở chỗ trắng-hồng gần dọc, không có dải nhô ngang dài cùng hình.",
+      "remaining_visual_impact": "Dải răng dài làm chỗ nối sống mõm nổi gắt hơn ở 99. Chỉ-99 chỉ mô tả hình thái này, không chứng minh nguyên nhân hoặc loại bỏ mép nối nhỏ của baseline.",
+      "confidence": "high_for_visible_presence; no_implementation_inference",
+      "partial_baseline_occlusion": false
+    },
+    {
+      "id": "F13",
+      "image": "cow-far-sleep-front.png",
+      "dev99_file": "/workspace/cow-fit/r17-dev99/native-diagnostic/cow-far-sleep-front.png",
+      "baseline_file": "/workspace/cow-fit/r17-r16-baseline-native/cow-far-sleep-front.png",
+      "dev99_bbox_xyxy": [
+        411,
+        345,
+        508,
+        549
+      ],
+      "baseline_corresponding_bbox_xyxy_approx": [
+        411,
+        343,
+        511,
+        546
+      ],
+      "classification": "BOTH",
+      "baseline_evidence": "Các phiến trán/sống mũi trung tâm sáng-xám có trong baseline. Phần sát mắt trắng thấp bên trái bị vùng phẳng baseline che, nên chưa so sánh được mọi chi tiết trong bbox.",
+      "remaining_visual_impact": "Mặt chia phiến vẫn có ở cả hai; không dùng vùng bị che để khẳng định có hay không một lỗi con mới.",
+      "confidence": "high_for_visible_presence; no_implementation_inference",
+      "partial_baseline_occlusion": true
+    },
+    {
+      "id": "F14",
+      "image": "cow-far-sleep-front.png",
+      "dev99_file": "/workspace/cow-fit/r17-dev99/native-diagnostic/cow-far-sleep-front.png",
+      "baseline_file": "/workspace/cow-fit/r17-r16-baseline-native/cow-far-sleep-front.png",
+      "dev99_bbox_xyxy": [
+        530,
+        783,
+        667,
+        911
+      ],
+      "baseline_corresponding_bbox_xyxy_approx": [
+        530,
+        778,
+        667,
+        906
+      ],
+      "classification": "BOTH",
+      "baseline_evidence": "Các tam giác lớn bên phải chuông và mép nối sáng tối tương ứng có ở cả hai.",
+      "remaining_visual_impact": "Lông thân/cổ trông chắp mảnh, ảnh hưởng rõ và vẫn cần được xem xét dù đã có baseline.",
+      "confidence": "high_for_visible_presence; no_implementation_inference",
+      "partial_baseline_occlusion": false
+    }
+  ],
+  "additional_visual_comparison": {
+    "observation": "Ở cả near và far, baseline có vùng phẳng ít/không thấy lông quanh nét mắt: mảng kem ở mắt bên trái ảnh và mảng tối quanh mắt phía đen. Trong 99, các nét mắt nằm trên vùng có chi tiết lông, không thấy vòng phẳng tương tự rõ như baseline.",
+    "examples": [
+      {
+        "image": "cow-near-cheer-front.png",
+        "baseline_bbox_xyxy": [
+          344,
+          398,
+          456,
+          546
+        ]
+      },
+      {
+        "image": "cow-near-cheer-m07.png",
+        "baseline_bbox_xyxy": [
+          333,
+          395,
+          511,
+          547
+        ]
+      },
+      {
+        "image": "cow-near-cheer-right.png",
+        "baseline_bbox_xyxy": [
+          417,
+          397,
+          601,
+          552
+        ]
+      }
+    ],
+    "interpretation": "Đây là khác biệt bề mặt nhìn thấy vượt quá chỉ đổi màu pattern đen/trắng; chỉ gọi là cảm giác miếng phẳng, không kết luận cách tạo. 99 hòa lông quanh mắt tốt hơn trong các cặp này. Điều này không xóa các lỗi nối mõm/má/cổ.",
+    "expression": "Mắt cheer cong lên và sleep cong xuống vẫn đọc được. Nét xám trên lông đen ở 99 dễ thấy hơn nét nâu tối trong baseline; ở góc right, điểm trắng nhỏ gần đầu mắt baseline không còn thấy tương ứng trong 99. Không coi bản thân nét cartoon là lỗi."
+  },
+  "limits": [
+    "Chỉ xem PNG nguyên ảnh qua view_image. Đã mở 24 PNG: 12 baseline và mở lại đủ 12 ảnh 99. Không crop, resize, montage, browser hoặc Blender.",
+    "Không đọc code/log/docs/báo cáo trên đĩa. ID và bbox được lấy từ phần đánh giá đã có trong hội thoại, rồi kiểm lại trực tiếp trên PNG.",
+    "Hai bộ cùng tên camera theo yêu cầu nhưng hình quan sát lệch ngang vài pixel, có chỗ khoảng 10–20 px; đối chiếu theo đặc điểm tương ứng, không giả định pixel trùng tuyệt đối. Bbox baseline chỉ là vùng tương ứng ước lượng bằng mắt.",
+    "BOTH chỉ xác nhận hiện tượng tương ứng đã nhìn thấy trong baseline và 99; không chứng minh nguồn gốc kỹ thuật, cùng dữ liệu, hoặc thứ tự thay đổi.",
+    "ONLY_99_FOR_SPECIFIC_SHAPE chỉ nói dải răng trắng ngang dài của N6/F12 không thấy ở baseline trong các PNG này. Baseline vẫn có mép nhỏ; không suy ra cơ chế hay trách nhiệm implementation.",
+    "F1/F13 chỉ xác nhận phần hiện tượng nhìn được ở cả hai; vùng phẳng quanh mắt baseline che một phần nên các chi tiết con tại đó chưa xác định được.",
+    "Không xác nhận lỗ xuyên nền. Mảng đen/trắng tự nó là pattern; nét mắt/miệng cartoon được chấp nhận. Các mép ghép rõ vẫn có ảnh hưởng dù cùng hiện diện ở baseline.",
+    "Chẩn đoán WIP, không phải approval cuối. Hai báo cáo gốc BLIND-REVIEW.md và blind-reviewed.json cùng kết luận REJECT99 được giữ nguyên; không mở hoặc ghi lại chúng."
+  ]
+}
