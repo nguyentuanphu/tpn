@@ -68,9 +68,14 @@ for k, (mi, pi, p, _) in enumerate(prims):
     n = np.cross(T[:, 1] - T[:, 0], T[:, 2] - T[:, 0]); rad = np.c_[c[:, 0] - XC, np.zeros(len(c)), c[:, 2] - ZC]
     th = np.arctan2(c[:, 0] - XC, c[:, 2] - ZC)
     ok = (abs(th) < TH * .985) & (c[:, 1] > Y0 + .004) & (c[:, 1] < Y1 - .004) & (c[:, 2] > ZC); out_ = (n * rad).sum(1) > 0
+    # (coordinator, 15 Nov 2026, Mai: jagged black triangles of hair cut into her forehead and skin showed in her hair)
+    # a triangle of hair or hat (the skin mark's red 0), or one across the hairline (corners of both kinds), is never the
+    # face: it stays on the body with its own picture, drawn exactly as before. It still counts in the z-buffer below, so
+    # the face under a lock is not taken for the outermost surface.
+    skin3 = (MK[I][..., 0] > .5).all(1)
     S = proj(T)
     ok &= (S[..., 0].min(1) > 3) & (S[..., 0].max(1) < W - 3) & (S[..., 1].min(1) > 3) & (S[..., 1].max(1) < H - 3)   # (every corner inside the picture: a corner outside would look into the next mood tile)
-    for t in np.nonzero(ok)[0]: tris.append((k, int(t), T[t], UV[I[t]], S[t], bool(out_[t]), MK[I[t]]))
+    for t in np.nonzero(ok)[0]: tris.append((k, int(t), T[t], UV[I[t]], S[t], bool(out_[t]), MK[I[t]], bool(skin3[t])))
 print('candidates', len(tris), 'image', W, H)
 def raster(S):   # texel centres inside the (slightly grown) triangle: xs, ys, barycentrics
     x0, y0 = np.floor(S.min(0) - 1).astype(int); x1, y1 = np.ceil(S.max(0) + 1).astype(int)
@@ -84,13 +89,18 @@ def raster(S):   # texel centres inside the (slightly grown) triangle: xs, ys, b
     ins = (l0 >= e) & (l1 >= e) & (l2 >= e)
     return gx[ins], gy[ins], np.stack([l0[ins], l1[ins], l2[ins]], -1)
 ZB = np.full((H, W), -1.0); RS = []
-for i, (k, t, T, UV, S, out_, MK) in enumerate(tris):
+for i, (k, t, T, UV, S, out_, MK, sk3) in enumerate(tris):
     r_ = raster(S) if out_ else None; RS.append(r_)
     if r_ is None: continue
     xs, ys, l = r_; Pp = l @ T; rr = np.hypot(Pp[:, 0] - XC, Pp[:, 2] - ZC); np.maximum.at(ZB, (ys, xs), rr)
 keep = []; COL = np.zeros((H, W, 3)); MRK = np.zeros((H, W, 3)); XM = np.zeros((H, W), np.float32); OWN = np.full((H, W), -1, np.int32)
-for i, (k, t, T, UV, S, out_, MK) in enumerate(tris):
+HCOL = []; HAIRT = set()   # hair, hat and hairline triangles: on the body, and not 'under' either (never given an eye cell)
+for i, (k, t, T, UV, S, out_, MK, sk3) in enumerate(tris):
     r_ = RS[i]
+    if out_ and not sk3:
+        HAIRT.add(i)
+        if not MK[:, 0].any(): u_ = UV.mean(0); HCOL.append(bil(u_[0:1], u_[1:2])[0])   # (wholly hair: its colour, for eyes.py)
+        continue
     if not out_: continue   # (facing inward: never the face's surface; kept in 'under' for the eye region)
     if r_ is None or len(r_[0]) == 0:
         c = T.mean(0); s = np.clip(proj(c[None])[0].astype(int), 0, [W - 1, H - 1])
@@ -99,7 +109,7 @@ for i, (k, t, T, UV, S, out_, MK) in enumerate(tris):
     xs, ys, l = r_
     Pp = l @ T; rr = np.hypot(Pp[:, 0] - XC, Pp[:, 2] - ZC); top = rr >= ZB[ys, xs] - .004
     if top.mean() >= .9: keep.append(i);   # (.5 let a braid's triangle half behind r045's fur collar into the face: it showed the collar's white)
-    if top.mean() >= .9: uv = l @ UV; COL[ys, xs] = bil(uv[:, 0], uv[:, 1]); MRK[ys, xs] = l @ MK; XM[ys, xs] = Pp[:, 0]; OWN[ys, xs] = i
+    if top.mean() >= .9: xs, ys, l, Pp = xs[top], ys[top], l[top], Pp[top]; uv = l @ UV; COL[ys, xs] = bil(uv[:, 0], uv[:, 1]); MRK[ys, xs] = l @ MK; XM[ys, xs] = Pp[:, 0]; OWN[ys, xs] = i   # (only the texels where it is the outermost: a triangle painted over its neighbour in front)
 print('kept', len(keep))
 MASK = OWN >= 0
 # texels just outside the island take their nearest neighbour's colour (mip and bilinear bleed)
@@ -110,9 +120,9 @@ for _ in range(8):
         acc += np.roll(np.roll(C * M[..., None], dy, 0), dx, 1); n += np.roll(np.roll(M, dy, 0), dx, 1)
     grow_ = ~M & (n > 0); C[grow_] = acc[grow_] / n[grow_, None]; M = M | grow_
 save(os.path.join(OUT, 'face-bake.png'), C); save(os.path.join(OUT, 'face-mask.png'), MASK.astype(np.float32)[..., None]); save(os.path.join(OUT, 'face-mark.png'), MRK)
-ks = set(keep); under = np.array([(tris[i][0], tris[i][1], *proj(tris[i][2].mean(0)[None])[0]) for i in range(len(tris)) if i not in ks], np.float64).reshape(-1, 4)
+ks = set(keep); under = np.array([(tris[i][0], tris[i][1], *proj(tris[i][2].mean(0)[None])[0]) for i in range(len(tris)) if i not in ks and i not in HAIRT], np.float64).reshape(-1, 4)
 np.savez_compressed(os.path.join(OUT, 'band.npz'), under=under, keep=np.array([(tris[i][0], tris[i][1]) for i in keep], np.int32), own=OWN, xm=XM, cfg=json.dumps(dict(CFG, H=H)),
                     prims=np.array([(mi, pi) for mi, pi, _, _ in prims], np.int32))
 json.dump(dict(CFG, H=H, eye_boxes=[float(x) for x in EB[:8]], head_bone=[float(x) for x in HB], radius=RM, scale=SC, atlas=[TW_, TH_], src=SRC,
-               px_per_mm=[W / (2 * TH * RM) / 1000, H / (Y1 - Y0) / 1000], face_tris=len(keep), under_tris=len(under)), open(os.path.join(OUT, 'cfg.json'), 'w'), indent=1)
+               px_per_mm=[W / (2 * TH * RM) / 1000, H / (Y1 - Y0) / 1000], face_tris=len(keep), under_tris=len(under), hair_tris_left_on_body=len(HAIRT), hair_colour=[float(x) for x in np.median(np.array(HCOL), 0)] if len(HCOL) > 20 else None), open(os.path.join(OUT, 'cfg.json'), 'w'), indent=1)
 print('wrote', OUT)

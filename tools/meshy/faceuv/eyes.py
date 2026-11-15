@@ -23,12 +23,14 @@ def flood(seed, through):
 S, V = hsv(F)
 YM = CFG['Y1'] - (yy + .5) / H * (CFG['Y1'] - CFG['Y0']); EB = CFG['eye_boxes']
 # hair: the skin mark's hair (red 0); in the mark's mixed border triangles, whatever is nearer the hair's colour than the skin's
-_hm = ISL & (MRK[..., 0] < .5); HAIRC = np.median(F[_hm], 0) if _hm.sum() > 50 else None
+_hm = ISL & (MRK[..., 0] < .5); HAIRC = np.array(CFG['hair_colour']) if CFG.get('hair_colour') else np.median(F[_hm], 0) if _hm.sum() > 50 else None   # (the hair's colour: from the hair triangles bake.py left on the body)
+OUTS = dilate(~ISL, 3)   # beyond the island: hair, hat, or the picture's edge
 # 1. the eyes. Each is looked for inside its eye_box (model metres, from the fit: the painted eye plus a margin, out to
 # the face's middle): the skin is the median colour beside it; "not skin" is measured against that skin; the eye is the
 # not-skin patch in the box with the most eye white (or, with almost no white, the largest dark one that is not at the
 # box's top: a brow), with everything not skin joined to it (white, iris, pupil, lashes, outline).
 EYE = np.zeros((H, W), bool); RAW = np.zeros((H, W), bool); INNER = np.zeros((H, W), bool); white = np.zeros((H, W), bool); HAIR = np.zeros((H, W), bool); COMP = np.zeros((H, W), bool)
+MARKS = []
 INFO = []   # per eye: None, or dict(c, box, skin, Vs, Ss, white_px, hair_px)
 band = ISL & (yy > H * .2) & (yy < H * .72) & (xx > W * .06) & (xx < W * .94)
 for e in (0, 4):
@@ -65,7 +67,7 @@ for e in (0, 4):
                 if w.sum() >= .15 * big: core |= w
         if core.any(): wy_, wx_ = np.nonzero(core); ex_ = .6 * (wy_.max() - wy_.min()); core = (xx >= wx_.min() - ex_) & (xx <= wx_.max() + ex_) & (yy >= wy_.min()) & (yy <= wy_.max()); cyc = (wy_.min() + wy_.max()) / 2.   # (.6 of its height wider at each end: an iris at the eye's corner has no white beyond it)
         zone = ~dilate(core, px(16)) & (yy < cyc); ns = ~hair & ((d > PRM['feat_d']) | (V < PRM['feat_v'] * Vs) | ~ISL) & zone; hc = ns & ((np.abs(F - HAIRC).max(-1) < np.abs(F - skin).max(-1)) | ~ISL)   # (gaps in the island, where a lock folds over itself, do not part it)
-        grown = flood((dilate(_hm, 2) | (yy <= by0 + px(2))) & hc, hc)   # (it comes from the mark's hair, or from above the eye_box)
+        grown = flood((dilate(_hm, 2) | OUTS | (yy <= by0 + px(2))) & hc, hc)   # (it comes from the mark's hair, or from above the eye_box)
         for _ in range(3): grown = flood(grown | (dilate(grown, px(6)) & ns), hc | grown)   # (and the lock's pale highlights, and strands they part from the rest)
         hair |= grown; feat &= ~hair
         if os.environ.get('FACEUV_DEBUG'): save(os.path.join(D, 'dbg-hair-%d.png' % n_), np.stack([core | dilate(_hm, 2) & hc, ns, grown], -1).astype(np.float32))   # red: the eye's core (and seeds), green: not skin, blue: found hair
@@ -82,7 +84,14 @@ for e in (0, 4):
     halo = dilate(m, px(14)) & ~m & band & ((V > Vs + .03) | (S < Ss - .06))
     # stray lash flicks and outline ends near the eye, not joined to it (never above its top: the brows)
     flick = dilate(m, px(20)) & band & (((V < .8 * Vs) & (d > .14) & (yy >= y0 - px(4))) | ((V < .95 * Vs) & (d > .06) & (yy >= y0 - px(22))))   # (and the faint lid crease painted above it: half faded it left a smudge)
-    m = dilate(m | halo | flick, px(4))
+    # (coordinator, 15 Nov 2026: Mai's beauty mark under her eye was wiped as a lash flick) a small round dark mark below the
+    # eye's middle that does not touch the eye is the face's own (a mole, a freckle): kept as painted, like hair
+    mk = band & ~hair & (V < .8 * Vs) & (d > .14) & ~dilate(comp, px(3)) & (yy > cy) & dilate(m, px(26)); keepm = np.zeros_like(mk); left = mk.copy()
+    while left.any():
+        y_, x_ = np.argwhere(left)[0]; one = np.zeros_like(left); one[y_, x_] = True; one = flood(one, mk); left &= ~one; oy, ox = np.nonzero(one)
+        if 4 * K * K <= one.sum() <= 260 * K * K and max(oy.max() - oy.min(), ox.max() - ox.min()) <= 22 * K and (ox.max() - ox.min() + 1) <= 2.2 * (oy.max() - oy.min() + 1): keepm |= dilate(one, px(3))
+    if keepm.any(): MARKS.append(int(keepm.sum())); hair = hair | keepm; flick &= ~keepm; halo &= ~keepm
+    m = dilate(m | halo | flick, px(4)) & ~keepm
     # hair in or over the eye stays hair: it is never part of the hole (a fringe would be wiped to skin)
     hov = int((m & hair).sum())
     if hov > .02 * m.sum(): WARN.append('eye %d: hair over eye (%d%% of the eye area is hair and stays as painted)' % (n_, round(100. * hov / m.sum())))
@@ -102,7 +111,7 @@ save(os.path.join(D, 'eye-hole-full.png'), full.astype(np.float32)); save(os.pat
 DARK = np.zeros((H, W), bool)   # (Mai: hair beside the eye that the mark calls skin gave the lid a dark smear) nothing dark beside the hole is a source either
 for info in INFO:
     if info is not None: DARK |= (V < PRM['feat_v'] * info['Vs'])
-under = harmonic(F.copy(), dilate(hole | ((HAIR | DARK | ~ISL) & dilate(hole, px(30))), 2))
+under = harmonic(F.copy(), dilate(hole | HAIR | _hm | DARK | ~ISL, 2))   # (everywhere, not only near the hole: the black beyond the island, past Mai's hairline, still darkened her lid from 30 and from 90 px away)
 save(os.path.join(D, 'face-underskin.png'), under); fill = under.copy()
 ringm = dilate(hole, px(16)) & ~dilate(hole, px(3)) & ISL & ~HAIR
 hp = F - bl(F, 6); g_std = hp[ringm].std(0) if ringm.sum() > 50 else np.zeros(3)
@@ -212,5 +221,5 @@ r0, r1, c0, c1 = int(H * .28), int(H * .64), int(W * .1), int(W * .9)
 sheet = np.concatenate([np.concatenate([M[k][r0:r1, c0:c1] for k in row], 1) for row in (('smile', 'blink', 'half'), ('happy', 'lookL', 'lookR'), ('sad', 'surprised', 'excited'))], 0)
 save(os.path.join(D, 'moods-sheet.png'), sheet)
 json.dump({'eyes': [None if x is None else dict(x, opening=(None if OPEN[i] is None or OPEN[i]['opening'] is None else OPEN[i]['box']), iris=(None if OPEN[i] is None or OPEN[i]['opening'] is None else [OPEN[i]['icx'], OPEN[i]['icy'], OPEN[i]['r']])) for i, x in enumerate(INFO)],
-           'found': [x is not None for x in INFO], 'hole_px': int(hole.sum()), 'hair_colour': None if HAIRC is None else [float(x) for x in HAIRC], 'warnings': WARN, 'params': PRM}, open(os.path.join(D, 'eyes.json'), 'w'), indent=1)
+           'found': [x is not None for x in INFO], 'hole_px': int(hole.sum()), 'hair_colour': None if HAIRC is None else [float(x) for x in HAIRC], 'warnings': WARN, 'beauty_marks_kept': len(MARKS), 'params': PRM}, open(os.path.join(D, 'eyes.json'), 'w'), indent=1)
 for w_ in WARN: print('WARNING', w_)
