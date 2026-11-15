@@ -73,6 +73,10 @@ for k, (mi, pi, p, _) in enumerate(prims):
     # face: it stays on the body with its own picture, drawn exactly as before. It still counts in the z-buffer below, so
     # the face under a lock is not taken for the outermost surface.
     skin3 = (MK[I][..., 0] > .5).all(1)
+    # (Sol's lash flicks at the outer eye corner are hair in the mark: left on the body they kept the painted open eye, a
+    # dark mark beside the shut eye at turned views) inside the eye_boxes every triangle may join the face; eyes.py keeps
+    # what is hair there as painted. (A colour test, hair-coloured or not, did not tell Sol's flicks from his hair.)
+    for e_ in (0, 4): skin3 |= (c[:, 0] >= EB[e_]) & (c[:, 0] <= EB[e_ + 1]) & (c[:, 1] >= EB[e_ + 2]) & (c[:, 1] <= EB[e_ + 3])
     S = proj(T)
     ok &= (S[..., 0].min(1) > 3) & (S[..., 0].max(1) < W - 3) & (S[..., 1].min(1) > 3) & (S[..., 1].max(1) < H - 3)   # (every corner inside the picture: a corner outside would look into the next mood tile)
     for t in np.nonzero(ok)[0]: tris.append((k, int(t), T[t], UV[I[t]], S[t], bool(out_[t]), MK[I[t]], bool(skin3[t])))
@@ -120,7 +124,7 @@ for _ in range(8):
         acc += np.roll(np.roll(C * M[..., None], dy, 0), dx, 1); n += np.roll(np.roll(M, dy, 0), dx, 1)
     grow_ = ~M & (n > 0); C[grow_] = acc[grow_] / n[grow_, None]; M = M | grow_
 save(os.path.join(OUT, 'face-bake.png'), C); save(os.path.join(OUT, 'face-mask.png'), MASK.astype(np.float32)[..., None]); save(os.path.join(OUT, 'face-mark.png'), MRK)
-ks = set(keep); under = np.array([(tris[i][0], tris[i][1], *proj(tris[i][2].mean(0)[None])[0]) for i in range(len(tris)) if i not in ks and i not in HAIRT], np.float64).reshape(-1, 4)
+ks = set(keep); under = np.array([(tris[i][0], tris[i][1], *proj(tris[i][2].mean(0)[None])[0]) for i in range(len(tris)) if i not in ks], np.float64).reshape(-1, 4)   # (hair triangles too: under the eye they get cells painted with the mood, as in the prototype)
 np.savez_compressed(os.path.join(OUT, 'band.npz'), under=under, keep=np.array([(tris[i][0], tris[i][1]) for i in keep], np.int32), own=OWN, xm=XM, cfg=json.dumps(dict(CFG, H=H)),
                     prims=np.array([(mi, pi) for mi, pi, _, _ in prims], np.int32))
 json.dump(dict(CFG, H=H, eye_boxes=[float(x) for x in EB[:8]], head_bone=[float(x) for x in HB], radius=RM, scale=SC, atlas=[TW_, TH_], src=SRC,
