@@ -187,3 +187,7 @@ commit và push nhánh mình mỗi giờ (pull --no-rebase trước), không for
   - Tried: moving the eye-area grid out by 1.5 mm. No change, so it was reverted.
   - Now in use: closed-lid pieces are solid for _g+2 px past the eye (`soften` grow). The ring is fainter, but a pale bar remains at Sol's left inner corner and a grey speck sits under his left eye (eyes-7).
 - Next: measure the piece alpha against the body ring in game coordinates, or make the shader paint the body's eye rim when shut. Then refit Finn, Lumi and Clara, then run the auditor (`tools/meshy/audit.mts` from meshy-audit-coverage 5f11e152c, copied locally as audit-cov.mts).
+
+## Rule: heavy jobs through the queue (owner, 15 Nov 2026 AEDT, via Release)
+
+Every heavy job (Blender fit or `refit_friends.ps1`, the auditor, picture shoots) runs as `powershell -File D:\WorkSpace\meshy	ools\heavy.ps1 <command> [args]`: one job at a time on the PC, low priority, waiting for other sessions' jobs. Each fix round rebuilds and shoots only the friend just fixed, at the views and moods involved (here: that friend's `eyes` shots). The full set (all views, 1024 px sheets, auditor on all four, second reviewer) runs once, just before the single approval question. The approval gate is unchanged. So the "Next" above becomes: fix and check Sol's eyes only; then Lumi and Clara one at a time; then Finn; then the full set once.

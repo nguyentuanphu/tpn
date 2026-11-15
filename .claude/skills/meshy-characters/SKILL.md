@@ -15,6 +15,12 @@ Owner rules first (from the owner, 7–8 Nov 2026). They override everything bel
 - Friends keep the skin Meshy painted. The skin tone choice is hidden (`SKIN_CHOICE` in `js/ui/friends-ui.ts`, `MESHY_TONES` in `js/friend-model.ts`); the tinting must still work cleanly, because the choice may come back.
 - (8 Nov 2026, owner's decision) **Friends become a Meshy body plus code-made clothes**: ChatGPT draws each friend with only body, face and hair; clothes are made in Blender from the body's own surface so they fit. Villagers have no shop and stay whole Meshy models.
 
+## Keep the PC light (owner, 15 Nov 2026 AEDT)
+
+- **Every heavy job goes through the queue:** `powershell -File D:\WorkSpace\meshy	ools\heavy.ps1 <command> [args]` (Blender fits and `refit_friends.ps1`, the auditor, `game_shots.mts` picture shoots). It runs one job at a time across every stream on the PC, at below-normal priority, and waits by itself while another session's job runs.
+- **Each fix round rebuilds and checks only the model just fixed**, at the views and moods the fix touches (for a closed-eye fix: that friend's `eyes` shots, the moods and turns where the fault was).
+- **The full set** (every view, the 1024 px sheets, the auditor on all friends, the second reviewer) runs **once**, just before asking the owner for approval. The approval gate itself is unchanged.
+
 ## Working at scale (owner, 9 Nov 2026: dozens of outfits, villagers and animals to come)
 
 Plan: `docs/meshy-pipeline-20261109/PLAN.md`. In short:
