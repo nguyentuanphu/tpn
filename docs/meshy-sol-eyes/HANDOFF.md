@@ -197,3 +197,17 @@ say; `face` is always 0; `mouth` and `stray` on sad, surprised, excited judge th
 - An open inner eye corner (no outline) lets any flood from the white run round the outside of the outline: the eye's
   protected core is the box round its large white patches, not a flood.
 
+### Hairline fix (coordinator's review of the first run, 15 Nov 2026 evening AEDT)
+
+The first full run's Mai had new faults at her right hairline: jagged black hair triangles cut into the forehead, and a
+dark smudge by the temple beside the shut eye; her beauty mark under the eye was wiped. Fixed in the general rule:
+- **bake.py**: a triangle of hair or hat (any corner with the skin mark's red under .5), or one across the hairline, never
+  joins the face: it stays on the body with its own picture, drawn as before. It still counts in the z-buffer. A face
+  triangle paints only the texels where it is itself the outermost surface (it had painted over a neighbour in front).
+  The hair triangles' median colour goes to `cfg.json` (`hair_colour`) for eyes.py.
+- **eyes.py**: the lid's fill (`face-underskin.png`) takes skin only: hair, the mark's hair, anything dark and everything
+  beyond the island are never a source, anywhere (limited to 30 or 90 px round the hole, the black beyond Mai's hairline
+  still darkened her lid). Hair seeds also come from beyond the island. A small round dark mark below the eye's middle,
+  not touching the eye (a mole, a beauty mark), is kept as painted.
+- A run is stopped partway: check `faceuv-<id>/bake/cfg.json` and `report.json` times; rerun with batch.ps1. The regional
+  page server (8794) does not survive a restart of the session: start it again before shooting r045.
