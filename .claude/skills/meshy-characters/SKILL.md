@@ -301,6 +301,13 @@ bounce at 2x: crop the legs (`pet_film.mts <out> <kind> run,jump,bounce`, then c
 - Keep each file's line endings: Python on Windows writes CRLF in text mode (use `newline=''`), and Git Bash's `sed -i`
   dropped the CRs of the CRLF json files (the whole file then shows as changed).
 
+### Light PC rule (owner, 15 Nov 2026 AEDT)
+Every heavy job (Blender fit, `make_animal.ps1`, the auditor, board and film shoots) goes through the queue
+`powershell -File D:\WorkSpace\meshy\tools\heavy.ps1 <command> [args]`: one job at a time on the PC, at low priority,
+waiting while another stream's job runs. A fix round rebuilds and checks only the model just changed, at the views and
+moods the fix touches (`-Quick` audit, the few board pictures that matter). The full set (every view, 1024 px boards,
+second reviewer) runs once, just before asking the owner. The approval gate is unchanged.
+
 ### Lessons from the gate rounds (14-15 Nov 2026)
 - Pointed or slab-like hooves and paws in any bent-knee pose (lying, sitting, running) came from the weights, not the
   pose: the hoof is wider than the leg seen from above, so its rim fell outside the leg's radius and kept the body's

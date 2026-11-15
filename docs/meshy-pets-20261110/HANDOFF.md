@@ -1,6 +1,6 @@
 # Handoff: pets and companions with Meshy (kept current every hour)
 
-Last update: 13 Nov 2026 AEDT, early morning (taken over by a new chat; panda, bunny, calf done, joey in progress). Branch `meshy-pets`, worktree `D:\WorkSpace\sv-meshy-pets` (owner's PC). Never merge
+Last update: 15 Nov 2026 AEDT, late morning. Branch `meshy-pets`, worktree `D:/WorkSpace/sv-meshy-pets` (owner's PC). Never merge
 main, deploy or bump the version. Reply to the owner in Vietnamese, short; ask with pop-up questions. Ask before every
 Meshy use (paid), through the journal `D:\WorkSpace\meshy\private\meshy-jobs.sqlite3`, never retry a paid POST, never
 print the key; after a paid run `python tools/meshy/ledger_sync.py`. Back up (commit + push) every hour.
@@ -8,6 +8,20 @@ print the key; after a paid run `python tools/meshy/ledger_sync.py`. Back up (co
 Read first: `.claude/skills/meshy-characters/SKILL.md` (section "Animals"), `docs/meshy-pets-20261110/PLAN.md`.
 
 **Read `docs/meshy-pets-20261110/FEEDBACK.md` first: every owner remark on the pets and its status.**
+
+## Light PC rule (owner, 15 Nov 2026 AEDT, relayed by the Release chat)
+Every heavy job (Blender fit, auditor, board or film shoot) runs through the queue:
+`powershell -File D:\WorkSpace\meshy\tools\heavy.ps1 <command> [args]` (one job at a time on the PC, low priority, waits
+for other streams). Each fix round rebuilds and checks only the model just changed, at the views and moods the fix touches
+(`-Quick` audit, the board pictures that matter). The full set (every view, 1024 px boards, second reviewer) runs once,
+just before asking the owner. The approval gate is unchanged.
+
+## State 15 Nov 2026, late morning AEDT
+- r17 models committed (`39d4dc9d0`): hooves and paws all on their leg (`foot_whole`), calf lies with legs folded,
+  lower begs. Full audits: panda 0; calf 69, bunny 74, kitty 68 (all shut/happy lid and stray). The second reviewer's
+  list is in FEEDBACK.md (all four not clean). Next: shut-lid discs (calf, bunny, kitty; three tries failed, see
+  FEEDBACK), lid specks, panda head seam, board cameras (the pet looks at the child in moving views), weak beg, scratch
+  and dig poses.
 
 ## Approval gate (owner, 12 Nov 2026 evening AEDT, relayed by the Release chat 13 Nov)
 "Tất cả dân làng và thú đều đa số bị ở mặt, mắt, hốc mắt và mũi ... rất nhiều trường hợp hỏi approve trong khi có nhiều
