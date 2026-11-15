@@ -1427,7 +1427,11 @@ if TEX and KEEP and SHIFT:
         for m_ in (clothm, skinm): m_['eye_boxes'] = [float(x) for x in _eb[:8]]
         # (15 Nov 2026, the shared face kit) the face picture's box, so the game can draw the shut piece's own picture on the
         # body under it (js/friend-model.ts, uShutMap): the same front projection as the pieces' uv (x, z here; x, y there)
-        for m_ in (clothm, skinm): m_['face_box'] = [float(fx0), float(fx1), float(fz0), float(fz1)]
+        # (15 Nov 2026) and the face's front: the game's z of the frontmost point in the face box (the nose tip; Blender's -y), so the
+        # shut eye is drawn on the front of the head only, whatever way its surface faces (a fold on the side of Sol's eye dome faces backwards)
+        _fv = np.array([v.co[:] for v in me.vertices]); _fin = (_fv[:, 0] > fx0) & (_fv[:, 0] < fx1) & (_fv[:, 2] > fz0) & (_fv[:, 2] < fz1)
+        _zfront = float(-_fv[_fin, 1].min()) if _fin.any() else 0.
+        for m_ in (clothm, skinm): m_['face_box'] = [float(fx0), float(fx1), float(fz0), float(fz1), _zfront]
         # (auditor 10 Nov 2026: Clara's far eye, three-quarters, kept its open lashes while shut) the eye's own triangles,
         # dark lashes and iris, were not marked skin, so the game never painted them over: every non-hair head triangle in
         # an eye area is marked skin now (open eyes keep their paint: the game's per-texel test keeps dark lines)

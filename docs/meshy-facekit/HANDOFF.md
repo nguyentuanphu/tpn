@@ -97,3 +97,8 @@ Sol now (`facekit-audit-sol-s16`):
 - patch at the turned views and from below: 45 to 204 (the crescent);
 - stray 31 to 212: hair edges and brow edges at -.7 and from below;
 - vlid 42 to 54 at ±.7: small dark bits at a hair edge and beside the far eye.
+
+### (a) The crescent: found
+A debug build (scratchpad `dbg.py`, reverted) coloured each head material and the shut cover: green for covered, yellow for facing backwards, red for outside the face box, blue for a skin material without the kit path. The crescent is **yellow**: a fold on the side of the near eye's dome whose surface normal faces backwards (model z ≤ -.2). The facing test dropped it. There is no second material and no UV seam.
+
+**Fix:** `face_box` gets a 5th value, the face's front (game z of the nose tip). Within 6 cm of it, any facing counts; behind it, the facing test still keeps the back of the head out. This needs a refit, as older models carry only 4 values (`fzf` defaults to 99, so the facing test is unchanged for them).
