@@ -7,6 +7,7 @@ def save(p, a, fmt=oiio.UINT8):
     if a.ndim == 2: a = a[..., None]
     b = oiio.ImageBuf(oiio.ImageSpec(a.shape[1], a.shape[0], a.shape[2], oiio.FLOAT)); b.set_pixels(oiio.ROI(), a)
     if p.lower().endswith(('.jpg', '.jpeg')): b.specmod().attribute('Compression', 'jpeg:94')
+    if p.lower().endswith('.webp'): b.specmod().attribute('Compression', 'webp:88')
     b.write(p, fmt)
 def resize(a, w, h):
     a = np.ascontiguousarray(a.astype(np.float32)); s = oiio.ImageBuf(oiio.ImageSpec(a.shape[1], a.shape[0], a.shape[2], oiio.FLOAT)); s.set_pixels(oiio.ROI(), a)
@@ -47,4 +48,5 @@ def load_ua(p):   # RGBA as stored (not premultiplied): the colour of see-throug
     cfg = oiio.ImageSpec(); cfg.attribute('oiio:UnassociatedAlpha', 1); return oiio.ImageBuf(p, 0, 0, cfg).get_pixels(oiio.FLOAT)
 def save_ua(p, a):
     a = np.ascontiguousarray(np.clip(a, 0, 1).astype(np.float32)); sp = oiio.ImageSpec(a.shape[1], a.shape[0], a.shape[2], oiio.FLOAT); sp.attribute('oiio:UnassociatedAlpha', 1)
+    if p.lower().endswith('.webp'): sp.attribute('Compression', 'webp:90')
     b = oiio.ImageBuf(sp); b.set_pixels(oiio.ROI(), a); b.write(p, oiio.UINT8)

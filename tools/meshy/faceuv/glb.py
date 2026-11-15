@@ -37,3 +37,18 @@ def write(path, J, B):
     while len(js) % 4: js += b' '
     out = struct.pack('<III', 0x46546C67, 2, 28 + len(js) + len(B)) + struct.pack('<II', len(js), 0x4E4F534A) + js + struct.pack('<II', len(B), 0x004E4942) + bytes(B)
     open(path, 'wb').write(out)
+def tex_image(J, ti):   # the image index behind a texture (plain or webp extension)
+    t = J['textures'][ti]
+    return t['source'] if 'source' in t else t['extensions']['EXT_texture_webp']['source']
+def world(J):   # every node's world matrix (row-major 4x4, column vectors)
+    def local(n):
+        if 'matrix' in n: return np.array(n['matrix'], np.float64).reshape(4, 4).T
+        M = np.eye(4); t = n.get('translation', [0, 0, 0]); x, y, z, w = n.get('rotation', [0, 0, 0, 1]); s = n.get('scale', [1, 1, 1])
+        Rm = np.array([[1 - 2 * (y * y + z * z), 2 * (x * y - z * w), 2 * (x * z + y * w)], [2 * (x * y + z * w), 1 - 2 * (x * x + z * z), 2 * (y * z - x * w)], [2 * (x * z - y * w), 2 * (y * z + x * w), 1 - 2 * (x * x + y * y)]])
+        M[:3, :3] = Rm * np.array(s)[None]; M[:3, 3] = t; return M
+    W = {}; par = {c: i for i, n in enumerate(J['nodes']) for c in n.get('children', [])}
+    def get(i):
+        if i not in W: W[i] = (get(par[i]) if i in par else np.eye(4)) @ local(J['nodes'][i])
+        return W[i]
+    for i in range(len(J['nodes'])): get(i)
+    return W
