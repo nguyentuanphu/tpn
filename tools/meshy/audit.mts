@@ -588,11 +588,20 @@ gl_FragColor = vec4(code_ / 255.0, floor(dm_ / 256.0) / 255.0, mod(dm_, 256.0) /
            hair's edge) of 6 px or more that is upright (height 4 px or more and at least half its width) is a V or a tick:
            the regional villagers' lid drawn as a V at the near profile, Lumi's tick */
         let kv = 0; const fv = new Uint8Array(N);
-        if (eyeZ && ['blink', 'half', 'happy', 'excited'].includes(m) && (Math.abs(s) > 1 || pt)) {
+        if (eyeZ && ['blink', 'half', 'happy', 'excited'].includes(m) && Math.abs(s) > 1) {
           const sv2: number[] = []; for (let i = 0; i < N; i++) if (ring16[i] && !eye8[i] && mine(i)) { const [v] = hsv(C, i); if (v > .35) sv2.push(v); } sv2.sort((a, b) => a - b); const skv2 = sv2[sv2.length >> 1] || 1;
           const dv = new Uint8Array(N); for (let i = 0; i < N - W * 10; i++) if (eyeZ[i] && mine(i) && Pb[i * 4 + 3] && !hairEdge(i) && hsv(C, i)[0] < skv2 - .3) dv[i] = 1;
           for (const g of groups(dv)) { if (g.length < 6) continue; let x0 = W, x1 = 0, y0 = H, y1 = 0; for (const j of g) { const x = j % W, y = (j / W) | 0; x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); }
-            const gh = y1 - y0 + 1, gw = x1 - x0 + 1; if (gh >= 4 && gh >= gw * .5) for (const j of g) { fv[j] = 1; kv++; } }
+            const gh = y1 - y0 + 1, gw = x1 - x0 + 1; if (gh < 4 || gh < gw * .5 || gw < 3) continue;
+            /* (first run, Sol: the shut lash's own crescent seen from the side and from above is as tall as half its width and
+               was marked) a V is two straight, steep arms meeting at a corner; an arc's ends turn gently. Each column's middle
+               height; the outer thirds' slopes must be steep (over 1.2) and of opposite sign, and the line thin (3 px a column) */
+            const cy: number[] = new Array(gw).fill(0), cn: number[] = new Array(gw).fill(0); for (const j of g) { const x = j % W - x0; cy[x] += (j / W) | 0; cn[x]++; }
+            const xs: number[] = [], ys: number[] = []; for (let x = 0; x < gw; x++) if (cn[x]) { xs.push(x); ys.push(cy[x] / cn[x]); }
+            const th = g.length / Math.max(1, xs.length), t3 = Math.max(1, Math.floor(xs.length / 3));
+            const sl = (a: number, b: number) => (ys[b] - ys[a]) / Math.max(1, xs[b] - xs[a]);
+            const sL = sl(0, t3), sR = sl(xs.length - 1 - t3, xs.length - 1);
+            if (xs.length >= 3 && th <= 3 && Math.abs(sL) > 1.2 && Math.abs(sR) > 1.2 && sL * sR < 0) for (const j of g) { fv[j] = 1; kv++; } }
           if (PLANT === 'vlid' && MB.value.z > MB.value.x) { const mb = MB.value.clone(); MB.value.set(0, 0, 0, 0); const Cn = read(top, cam); MB.value.copy(mb); let d = 0; for (let i = 0; i < N; i++) { if (fv[i] && hsv(Cn, i)[0] >= skv2 - .3) d++; else fv[i] = 0; } kv = d; }   // (the plant: only what it adds)
         }
         const r: any = { id, kind: 'face', pose: m, view: vn, kit: 0, poke: 0, hairtone: 0, skintone: 0, eyes: k, face: kf, mouth: km, lid: kl, stray: ks, patch: kp, vlid: kv, patchWhy: pwhy, mouthWhy: why.trim() };

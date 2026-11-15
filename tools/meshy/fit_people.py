@@ -14,6 +14,8 @@
 import bpy, bmesh, sys, os, math, colorsys, json
 import numpy as np
 from mathutils import Vector, Matrix
+import importlib.util as _iu   # (15 Nov 2026) the shared face kit, tools/meshy/facekit (FIT_FACEKIT=1)
+_s = _iu.spec_from_file_location('shut_lid', os.path.join(os.path.dirname(os.path.abspath(__file__)), 'facekit', 'shut_lid.py')); _FK = _iu.module_from_spec(_s); _s.loader.exec_module(_FK)
 a = sys.argv[sys.argv.index('--') + 1:]
 MESHY, GAME, OUT, RDIR = a[0], a[1], a[2], a[3]
 TRIS, TEX, HEAD_S, ARM_DEG = int(a[4]), int(a[5]), float(a[6]), float(a[7])
@@ -575,6 +577,9 @@ def lid(img, b, top=0., bot=1.):   # (original_skin) a closed lid painted over t
     for _ in range(700):
         P = np.pad(sub, ((1, 1), (1, 1), (0, 0)), mode='edge')
         av = (P[:-2, 1:-1] + P[2:, 1:-1] + P[1:-1, :-2] + P[1:-1, 2:]) / 4; sub[_un] = av[_un]
+    if os.environ.get('FIT_FACEKIT') and not os.environ.get('FIT_FLAT_LID'):   # (15 Nov 2026, the shared face kit: the skin's own fine grain on the filled lid, tools/meshy/facekit/shut_lid.py)
+        _src = (_fix if _fix.sum() > 8 else (~hm & _sm))
+        sub = _FK.grain(sub, _un & ~(~hm & _fix), _src & ~hm, tile=max(3, int(round(W_ / 512))), r=max(2, int(round(W_ / 512)) + 1))
     if OWN and not PART and top == 0 and not os.environ.get('FIT_FLAT_LID'):   # (not on a part-way lid: half took the open iris below its lid line as a grey smudge) (15 Nov 2026, the auditor's patch check: a grey-brown smudge at Sol's inner corners, the open eye's dark outline left just outside the lid (dark as his hair, so never traced): below the brows, dark or grey pixels beside the lid close too)
         _yy_, _xx_ = yy[ya:yb, xa:xb], xx[ya:yb, xa:xb]
         _gd = (_un & ~hm) & ((_bh[2] < .72) | (_bh[1] < .22) | _es_) & ~_blu & (_yy_ >= b[1] + h_ * .24) & (np.hypot((_xx_ - cx_) / (rx * 1.5), (_yy_ - cy_) / (ry * 1.3)) < 1)
@@ -763,7 +768,7 @@ if OWN:
         # into a dark fringe; beyond the band one flat colour, so the picture stays small)
         _band = M[k][..., 3] >= .01
         for _ in range(4): _band = _band | np.roll(_band, 1, 0) | np.roll(_band, -1, 0) | np.roll(_band, 1, 1) | np.roll(_band, -1, 1)
-        M[k][~_band, :3] = REF[:3]
+        if not (k == 'smile' and os.environ.get('FIT_FACEKIT')): M[k][~_band, :3] = REF[:3]   # (15 Nov 2026, the shared face kit: the smile's tile keeps the painted face whole: the game divides a shut piece by it, js/friend-model.ts)
     print('FIT own face: mood pieces over the eyes', int((EYE_A > .5).sum()), 'and mouth', int((MOUTH_A > .5).sum()), 'pixels')
 else:
     for k in M: M[k][M[k][..., 3] < .02, :3] = 0
