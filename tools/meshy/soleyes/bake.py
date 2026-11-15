@@ -36,10 +36,10 @@ for k, (mi, pi, p, _) in enumerate(prims):
     I = glb.acc(J, B, p['indices']).reshape(-1, 3); T = P[I]; c = T.mean(1)
     n = np.cross(T[:, 1] - T[:, 0], T[:, 2] - T[:, 0]); rad = np.c_[c[:, 0], np.zeros(len(c)), c[:, 2] - ZC]
     th = np.arctan2(c[:, 0], c[:, 2] - ZC)
-    ok = (abs(th) < TH * .985) & (c[:, 1] > Y0 + .004) & (c[:, 1] < Y1 - .004) & ((n * rad).sum(1) > 0)
+    ok = (abs(th) < TH * .985) & (c[:, 1] > Y0 + .004) & (c[:, 1] < Y1 - .004) & (c[:, 2] > ZC); out_ = (n * rad).sum(1) > 0
     S = proj(T)
     ok &= (S[..., 0].min(1) > 3) & (S[..., 0].max(1) < W - 3) & (S[..., 1].min(1) > 3) & (S[..., 1].max(1) < H - 3)   # (every corner inside the picture: a corner outside would look into the next mood tile)
-    for t in np.nonzero(ok)[0]: tris.append((k, int(t), T[t], UV[I[t]], S[t]))
+    for t in np.nonzero(ok)[0]: tris.append((k, int(t), T[t], UV[I[t]], S[t], bool(out_[t])))
 print('candidates', len(tris), 'image', W, H)
 def raster(S):   # texel centres inside the (slightly grown) triangle: xs, ys, barycentrics
     x0, y0 = np.floor(S.min(0) - 1).astype(int); x1, y1 = np.ceil(S.max(0) + 1).astype(int)
@@ -53,13 +53,14 @@ def raster(S):   # texel centres inside the (slightly grown) triangle: xs, ys, b
     ins = (l0 >= e) & (l1 >= e) & (l2 >= e)
     return gx[ins], gy[ins], np.stack([l0[ins], l1[ins], l2[ins]], -1)
 ZB = np.full((H, W), -1.0); RS = []
-for i, (k, t, T, UV, S) in enumerate(tris):
-    r_ = raster(S); RS.append(r_)
+for i, (k, t, T, UV, S, out_) in enumerate(tris):
+    r_ = raster(S) if out_ else None; RS.append(r_)
     if r_ is None: continue
     xs, ys, l = r_; Pp = l @ T; rr = np.hypot(Pp[:, 0], Pp[:, 2] - ZC); np.maximum.at(ZB, (ys, xs), rr)
 keep = []; COL = np.zeros((H, W, 3)); OWN = np.full((H, W), -1, np.int32)
-for i, (k, t, T, UV, S) in enumerate(tris):
+for i, (k, t, T, UV, S, out_) in enumerate(tris):
     r_ = RS[i]
+    if not out_: continue   # (facing inward: never the face's surface; kept in 'under' for the eye region)
     if r_ is None:
         c = T.mean(0); s = proj(c[None])[0].astype(int); s = np.clip(s, 0, [W - 1, H - 1])
         if np.hypot(c[0], c[2] - ZC) >= ZB[s[1], s[0]] - .004: keep.append(i)
@@ -83,6 +84,7 @@ for _ in range(8):
 def save(path, a):
     a = np.ascontiguousarray(np.clip(a, 0, 1).astype(np.float32)); b = oiio.ImageBuf(oiio.ImageSpec(a.shape[1], a.shape[0], a.shape[2] if a.ndim == 3 else 1, oiio.FLOAT)); b.set_pixels(oiio.ROI(), a); b.write(path, oiio.UINT8)
 save(os.path.join(OUT, 'face-bake.png'), C); save(os.path.join(OUT, 'face-mask.png'), MASK.astype(np.float32)[..., None])
-np.savez_compressed(os.path.join(OUT, 'band.npz'), keep=np.array([(tris[i][0], tris[i][1]) for i in keep], np.int32), own=OWN, cfg=json.dumps(dict(CFG, H=H)),
+ks = set(keep); under = np.array([(tris[i][0], tris[i][1], *proj(tris[i][2].mean(0)[None])[0]) for i in range(len(tris)) if i not in ks], np.float64).reshape(-1, 4)
+np.savez_compressed(os.path.join(OUT, 'band.npz'), under=under, keep=np.array([(tris[i][0], tris[i][1]) for i in keep], np.int32), own=OWN, cfg=json.dumps(dict(CFG, H=H)),
                     prims=np.array([(mi, pi) for mi, pi, _, _ in prims], np.int32))
 print('wrote', OUT)

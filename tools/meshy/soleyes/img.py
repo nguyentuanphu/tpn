@@ -43,3 +43,8 @@ def stroke(img, pts, col, r):
         abx, aby = bx - ax, by - ay; t = np.clip(((gx - ax) * abx + (gy - ay) * aby) / max(abx * abx + aby * aby, 1e-6), 0, 1)
         d = np.minimum(d, np.hypot(gx - ax - abx * t, gy - ay - aby * t))
     al = np.clip(r + .5 - d, 0, 1)[..., None]; sub = img[y0:y1, x0:x1]; sub[..., :3] = sub[..., :3] * (1 - al) + np.array(col) * al
+def load_ua(p):   # RGBA as stored (not premultiplied): the colour of see-through texels is kept
+    cfg = oiio.ImageSpec(); cfg.attribute('oiio:UnassociatedAlpha', 1); return oiio.ImageBuf(p, 0, 0, cfg).get_pixels(oiio.FLOAT)
+def save_ua(p, a):
+    a = np.ascontiguousarray(np.clip(a, 0, 1).astype(np.float32)); sp = oiio.ImageSpec(a.shape[1], a.shape[0], a.shape[2], oiio.FLOAT); sp.attribute('oiio:UnassociatedAlpha', 1)
+    b = oiio.ImageBuf(sp); b.set_pixels(oiio.ROI(), a); b.write(p, oiio.UINT8)

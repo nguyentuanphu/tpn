@@ -26,6 +26,8 @@ const pose = async (page: any, m: string, yaw: number, cam: boolean) => page.eva
   const G = (window as any).__sv, av = (window as any).__sol, h = G.heroes[0], { THREE } = await import(String('/js/gfx.js'));
   document.querySelectorAll('.storybook, .dialog, .modal, .reward').forEach(e => e.remove()); G.paused = false; G.world.time = .42;
   h.av.root.visible = false; av.root.position.copy(h.av.root.position);
+  // (the game's own culling and near/far model switch dropped Sol after a few shots: kept drawn, high detail)
+  if (!av.root.parent) G.scene.add(av.root); av.root.visible = true; av.root.traverse((o: any) => o.layers.set(0)); av.modelHD.obj.visible = true; if (av.model) av.model.obj.visible = false; av._hd = true;
   const c = h.cam || G.camera; const dx = c.position.x - av.root.position.x, dz = c.position.z - av.root.position.z;
   av.root.rotation.y = Math.atan2(dx, dz) + yaw;
   if (av.life) { av.life.mood = m; av.life.blink = av.life.t + 60; av.life.glance = av.life.t + 60; av.life.feel = ''; } av.modelHD.follow(m);
@@ -54,7 +56,7 @@ if (WHAT === 'close' || WHAT === 'both') {
   await setup(P.page);
   const shots: Record<string, string> = await P.page.evaluate(async (MOODS: string[]) => {
     const G = (window as any).__sv, av = (window as any).__sol, h = G.heroes[0], R = G.renderer, { THREE } = await import(String('/js/gfx.js')), out: Record<string, string> = {};
-    let top = h.av.root; while (top.parent) top = top.parent; h.av.root.visible = false;
+    const top = G.scene; h.av.root.visible = false; G.paused = false; G.world.time = .42; if (!av.root.parent) G.scene.add(av.root); av.root.visible = true; av.modelHD.obj.visible = true; if (av.model) av.model.obj.visible = false; await new Promise(r => setTimeout(r, 400));
     av.root.position.set(h.pos.x + 3, h.av.root.position.y, h.pos.z + 3); av.root.rotation.y = 0;
     const M = av.modelHD;
     const grab = (name: string, cam: any, W = 1024, H = 1024) => {

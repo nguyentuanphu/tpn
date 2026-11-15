@@ -48,6 +48,7 @@ for cx, cy in eyes:
 # skin's own fine grain; the fill fades into the painted skin over the outer part of the hole, no edge
 hole = blur(EYE.astype(np.float32), 12) > .08
 core = blur(EYE.astype(np.float32), 4) > .5
+save(os.path.join(D, 'eye-hole.png'), hole.astype(np.float32))
 fill = harmonic(F.copy(), hole)
 ringm = dilate(hole, 16) & ~dilate(hole, 3) & ISL
 hp = F - blur(F, 6); g_std = hp[ringm].std(0)
@@ -81,16 +82,27 @@ for i, (cx, cy) in enumerate(eyes):
     ys, xs = np.nonzero(cand); icx, icy = np.median(xs), np.median(ys)
     for _ in range(3):   # re-centre on the pixels within the disc (no lash ends at the sides)
         r_ = np.sqrt(((np.hypot(xs - icx, ys - icy) < 70)).sum() / np.pi); sel = np.hypot(xs - icx, ys - icy) < r_ * 1.05; icx, icy = xs[sel].mean(), ys[sel].mean()
-    # the opening: the white and the iris inside the painted outline (the eye less 6 px), filled row by row and column
-    # by column (no notches)
-    er = INNER & side
-    for _ in range(6): er = er & np.roll(er, 1, 0) & np.roll(er, -1, 0) & np.roll(er, 1, 1) & np.roll(er, -1, 1)
-    pure = wm & (S < .12) & (V > .88)   # (the pale pink halo outside the outline is not the white)
-    seed = (pure | (np.hypot(xx - icx, yy - icy) < r_)) & er; opening = np.zeros_like(seed)
+    # the opening: the white and the iris inside the painted outline, filled row by row and column by column (no
+    # notches). The outline's thickness is measured where the white meets it (beside the iris), above and below, and
+    # taken off the eye in every column: where the iris touches the lash line, the lash stays lash (it turned white when
+    # the iris moved away). The soft pale rim of white at an open corner (no outline there) is white too, or it stayed
+    # behind as a smear beside the new even white.
+    inner = INNER & side
+    pure = wm & (S < .12) & (V > .88)   # (the pale pink halo is not the white)
+    cols = np.nonzero(inner.any(0))[0]; it = np.full(W, 1e9); ib = np.full(W, -1e9)
+    for x in cols: ys_ = np.nonzero(inner[:, x])[0]; it[x], ib[x] = ys_.min(), ys_.max()
+    wc = [x for x in cols if pure[:, x].sum() > 3 and abs(x - icx) > r_ * 1.1]
+    tt = float(np.median([np.nonzero(pure[:, x])[0].min() - it[x] for x in wc])); tb = float(np.median([ib[x] - np.nonzero(pure[:, x])[0].max() for x in wc]))
+    tt, tb = min(max(tt, 4), 14), min(max(tb, 2), 10)
+    er = inner & (yy >= it[None, :] + tt) & (yy <= ib[None, :] - tb)
+    for _ in range(3): er = er & np.roll(er, 1, 1) & np.roll(er, -1, 1)
+    rimw = dilate(pure, 10) & (S < .30) & (V > .8) & inner
+    seed = (pure | rimw | (np.hypot(xx - icx, yy - icy) < r_)) & er; opening = np.zeros_like(seed)
     for y in np.nonzero(seed.any(1))[0]: xs_ = np.nonzero(seed[y])[0]; opening[y, xs_.min():xs_.max() + 1] = True
     o2 = np.zeros_like(seed)
     for x in np.nonzero(opening.any(0))[0]: ys_ = np.nonzero(opening[:, x])[0]; o2[ys_.min():ys_.max() + 1, x] = True
     opening = o2 & er
+    print('outline thickness top', tt, 'bottom', tb)
     pt = pb = None
     wrow = np.array([np.median(F[y][wm[y]], 0) if wm[y].sum() > 2 else ew for y in range(H)])   # the white's own shade per row
     r_ *= 1.12
@@ -104,7 +116,7 @@ def look(dxf):
         sx = np.clip(xx - dx, 0, W - 1); d_ = np.hypot(xx - dx - o['icx'], yy - o['icy'])
         a = np.clip(o['r'] - d_ + .5, 0, 1)[..., None]   # the moved iris, soft edged
         new = o['wrow'][yy] * (1 - a) + F[yy, sx] * a
-        e = blur(op.astype(np.float32), 1)[..., None] * op[..., None]   # soft against the lash line
+        e = blur(op.astype(np.float32), 2)[..., None]   # soft against the lash line and the skin
         im = im * (1 - e) + new * e
     return im
 M['lookL'] = look(.16); M['lookR'] = look(-.16)
@@ -116,15 +128,19 @@ def shut_eyes(bend, yf):
 M['blink'] = shut_eyes(.16, .62)
 M['happy'] = shut_eyes(-.32, .70)
 M['excited'] = M['happy'].copy()
-# half: the upper lid down to the middle of the opening, its edge a lash line; below it the eye as painted
+# half: the upper lid down to the middle of the opening, its edge a lash line from one corner of the eye to the other;
+# below it the eye as painted. Inside the eye the lid ends sharply under the lash line; beside the eye (its pale halo)
+# it fades out over 20 px (a straight cut edge showed there, beyond both corners)
 im = F.copy()
-for o in OPEN:
-    b = o['box']; h_ = b[3] - b[1]; w_ = b[2] - b[0]
+for i, o in enumerate(OPEN):
+    b = o['box']; h_ = b[3] - b[1]; w_ = b[2] - b[0]; side = (xx < W / 2) if i == 0 else (xx >= W / 2); inner = INNER & side
     t = np.clip((xx - b[0]) / max(w_, 1), 0, 1); edge = b[1] + h_ * .5 + .06 * h_ * (1 - (2 * t - 1) ** 2)
-    lid = EYE & (yy < edge + 1) & (xx >= b[0] - 30) & (xx <= b[2] + 30)
-    a = np.clip(edge + 1 - yy, 0, 1)[..., None] * blur(EYE.astype(np.float32), 1)[..., None] * lid[..., None]
+    ins = dilate(inner, 2); sharp = np.clip(edge + 1 - yy, 0, 1); fade = np.clip((edge + 4 - yy) / 20, 0, 1)
+    wgt = blur(ins.astype(np.float32), 3)   # 1 in the eye, 0 beside it
+    a = (sharp * wgt + fade * (1 - wgt))[..., None] * soft * side[..., None]
     im = im * (1 - a) + NO * a
-    stroke(im, arc(b, .5, .06, x0=.1, x1=.9), LASH, LW * .8)
+    row = int(round(b[1] + h_ * .5 + .03 * h_)); xs_ = np.nonzero(inner[row])[0]; xl, xr = xs_.min() + 12, xs_.max() - 12
+    stroke(im, [(xl + (xr - xl) * q, b[1] + h_ * .5 + .06 * h_ * (1 - (2 * np.clip((xl + (xr - xl) * q - b[0]) / max(w_, 1), 0, 1) - 1) ** 2)) for q in np.linspace(0, 1, 32)], LASH, LW * .8)
 M['half'] = im
 for k, v in M.items(): save(os.path.join(D, 'mood-%s.png' % k), v)
 sheet = np.concatenate([np.concatenate([M[k][250:500, 150:880] for k in row], 1) for row in (('smile', 'blink', 'half'), ('happy', 'lookL', 'lookR'), ('sad', 'surprised', 'excited'))], 0)

@@ -78,6 +78,51 @@ close-ups, every mood, yaw -1.2 .. 1.2.
 - A triangle with a corner outside the face picture would look into the next mood tile: bake.py keeps only triangles
   wholly inside.
 
-## Results
+- Meshy's surface is doubled and folded round the eyes. Body triangles under or beside the face's own surface there
+  kept the painted open eye and showed past it at turned views (dark ticks, pale flecks, arcs). Dropping them left holes
+  (a dark ring round the open eye at three-quarters). build.py now gives each such triangle in the eye holes (grown 24 px;
+  163 on Sol) a 32 px cell of its own in a strip under the face picture: its original colour, replaced by the mood
+  picture's colour at its projected place where the mood changed it (and the whole hole on blink, happy, excited).
+- OpenImageIO reads PNG premultiplied: the see-through texels' skin colour became black, and the old mouth pieces got a
+  grey patch round them far away. `img.load_ua` / `save_ua` keep the stored colours.
+- The facekit auditor hides every `face-` material to see the body under the pieces; here that hides the face itself, and
+  its name-tag background counts as "eyes". Its eyes, lid, stray and mouth counts are not meaningful on this model
+  without a change to the auditor (reference = the smile mood, not the hidden pieces). `patch` and `vlid` still read.
+- `make.ps1` runs bake, eyes, build, pack and installs `models/sol-hd.glb` in one heavy job.
 
-(filled in below as rounds finish)
+## Results (15 Nov 2026 AEDT)
+
+- Sheets, old Sol above or left, new Sol below or right, same moods and views: `D:\WorkSpace\meshyitted\soleyes-sheets`
+  (`close-<mood>.png`: 1024 px close-ups at yaw -1.2 .. 1.2; `close-all.jpg`; `game-phone|tablet|computer.png`: the head at
+  the game's own camera, about 11.4 m, 16 to 22 px tall on screen, enlarged). Single pictures: `soleyes-shots-old`,
+  `soleyes-shots-final`. The baked pictures: `soleyes-bake` (`face-bake.png`, `face-noeyes.png`, `moods-sheet.png`,
+  `mood-atlas.jpg`).
+- Shut moods (blink, happy, excited, half): no flat patch, no pale rim, no inner-corner arc, no tick, at any yaw from
+  -1.2 to 1.2, close up and at the game distance. A soft lighter lid tone stays where the eye was (Meshy's own painted
+  socket shading), with no edge.
+- Model size: sol-hd.glb 1651 KB -> about 2540 KB (the 2048 mood atlas jpg, about 600 KB, and 9 face meshes).
+- No game code changed; `node tools/build.mts --check` clean apart from .gitignore upkeep.
+
+## Remaining faults
+
+- lookL / lookR: on the right eye the painted pale rim at the open inner corner stays beside the new even white, and a
+  faint arc of the old iris rim can show at the iris's lower edge. Close up only.
+- half: the lid line runs from corner to corner of the painted outline; a little long at the outer corner.
+- The lash arcs draw near black in the game's light (as the old pieces did).
+- The light model `models/sol.glb` (far away, other children) is unchanged: old pieces. make.ps1 takes the light dressed
+  model as `Src` and `Model = sol`, but the atlas size (2048) should be made smaller for it first (T_ in build.py).
+- Mouth moods still use the old floating pieces (unchanged).
+- Skin tones (MESHY_TONES, hidden now): the face meshes use the same skinTint shader and skin mark as the body, but the
+  lash strokes and eye whites on them were not checked under a dark tone.
+
+## To apply to all humans and to animals
+
+- Humans (Finn, Clara, Lumi, villagers): run make.ps1 on each dressed HD model. Per model: the head axis (ZC, x 0), the
+  y range and radius in bake.py's CFG (now Sol's numbers; derive them from the head bone and the eye_boxes); the eye
+  finder's thresholds in eyes.py (white V > .82, S < .22; skin distance .10) on darker skins and on Clara's dark irises;
+  fringes over the eyes (Finn, Lumi): hair in the eye hole must stay hair (mask by the skin mark's hair bit before filling).
+  Then move the step into the pipeline after dress_own.ps1 (it works on the dressed, unpacked GLB), and teach the auditor
+  the new layout.
+- Animals: the same bake works on any head (it needs only the mesh, its UVs and its picture). Fur needs a texture-aware
+  fill (the Laplace fill is smooth: fine for painted skin, flat on fur): copy fur from beside the eye (patch-based) or
+  LaMa on a machine with torch. Kitty's separate lid mesh (fit_animal.py face_pieces) would go, as Sol's eye pieces did.

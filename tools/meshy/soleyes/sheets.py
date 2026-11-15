@@ -26,7 +26,7 @@ for dev in ('phone', 'tablet', 'computer'):
     for m in MOODS:
         cells = []
         for d in (O, N):
-            ims = [ld(f'{d}/{dev}-{m}-y{y}.png') for y in YD]; s = ims[0].shape[0] * 4
+            ims = [ld(f'{d}/{dev}-{m}-y{y}.png') for y in YD]; s = 192   # (each head crop, about 40 to 50 px on screen, enlarged to 192)
             cells.append(np.concatenate([gap(resize(a, s, s), 4) for a in ims], 1))
         rows.append(gap(np.concatenate([gap(cells[0], 24), cells[1]], 1), 6, 0))
     save(f'{OUT}/game-{dev}.png', np.concatenate(rows, 0))
