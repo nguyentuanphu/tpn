@@ -15,6 +15,6 @@ const r = await P.page.evaluate(async ([ID, MOOD]) => {
   M.follow(MOOD); const out: any = { mood: M.mood, mats: [], faces: [] };
   M.obj.traverse((o: any) => { if (!o.isMesh) return; const m = o.material, u = m.userData && m.userData.kitU;
     if (/^face-/.test(m.name || '')) out.faces.push([m.name, o.visible, !!m.map]);
-    if (u) out.mats.push({ name: m.name, shut: u.shut.value, shutOn: u.shutOn && u.shutOn.value, fbox: u.fbox && u.fbox.value.toArray(), tile: u.shutTile && u.shutTile.value.toArray(), map: !!(u.shutMap && u.shutMap.value), eyeBoxes: !!m.userData.eye_boxes, faceBox: m.userData.face_box }); });
+    if (u) out.mats.push({ name: m.name, shut: u.shut.value, shutOn: u.shutOn && u.shutOn.value, fbox: u.fbox && u.fbox.value.toArray(), tile: u.shutTile && u.shutTile.value.toArray(), map: !!(u.shutMap && u.shutMap.value), eyeBoxes: !!m.userData.eye_boxes, faceBox: m.userData.face_box, fzf: u.fzf && u.fzf.value }); });
   return out; }, [ID, MOOD]);
 console.log(JSON.stringify(r, null, 1)); await b.close();

@@ -102,3 +102,20 @@ Sol now (`facekit-audit-sol-s16`):
 A debug build (scratchpad `dbg.py`, reverted) coloured each head material and the shut cover: green for covered, yellow for facing backwards, red for outside the face box, blue for a skin material without the kit path. The crescent is **yellow**: a fold on the side of the near eye's dome whose surface normal faces backwards (model z ≤ -.2). The facing test dropped it. There is no second material and no UV seam.
 
 **Fix:** `face_box` gets a 5th value, the face's front (game z of the nose tip). Within 6 cm of it, any facing counts; behind it, the facing test still keeps the back of the head out. This needs a refit, as older models carry only 4 values (`fzf` defaults to 99, so the facing test is unchanged for them).
+
+### (a) The crescent: still open (blocked)
+- A second debug render (green where the body takes the piece, yellow where a backward-facing texel is left uncovered) shows a thin yellow line where the fold of the dome is.
+- None of these removed the light crescent; the audit numbers are the same to the pixel:
+  - a depth gate 6 cm and 12 cm behind the face's front (`face_box[4]`, game z of the nose tip, 0.253 on Sol);
+  - the facing test loosened to -.85;
+  - eye-coloured texels in the eye areas closed with the skin colour.
+- So the light crescent is most likely the **lighting of the dome's geometry** (in the smile too, round the open eye), not a texture left open. The flattened normal (`vFkN_`, the regional kit's way) did not change it either. The next things to check:
+  1. Whether the head's baked material is lit at all (BAKED_EMISSIVE against diffuse). A crescent from the light needs diffuse.
+  2. The dome itself. Smooth the eye domes in the fit (Blender: flatten the eye-area vertices towards the face's surface before baking), or check whether `normal_fragment_maps` runs for this material (MeshLambert).
+- Kept in the shader, as they did no harm: the facing test back at -.2..1, the eye-texel rule, and the `face_box[4]` export (`fzf`, unused for now).
+
+### (c) Clara, refit with today's kit (`facekit-audit-clara-s17`)
+- lid 0 (was 18), eyes 0, face 0.
+- patch 22 to 401: worst `half/up` 401.
+- stray 232 to 490: the hair over her face, to check.
+- mouth 538 and 579 at ±.4 are unchanged by the head-only mouth box, so her shirt is not what was counted. Next: dump the Pb codes of the marked pixels.
