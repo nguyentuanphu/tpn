@@ -1546,7 +1546,11 @@ if TEX and KEEP and SHIFT:
                     if _sk_.sum() > 10:
                         _ay = float(np.median(_cc[_sk_, 1])); _r = np.hypot(_cc[:, 0] - _hcx, _cc[:, 1] - _ay); _rm = float(np.median(_r[_sk_]))   # (the neck's radius from its upper part only: round 37 took it from a band reaching the shoulders, .107 for Bom, and painted his shirt front and hair skin)
                         _lo_ = (_cc[:, 2] > L['neck'].z - float(os.environ.get('FIT_NECKLOW', '.12'))) & (_cc[:, 2] < fz0) & (np.abs(_cc[:, 0] - _hcx) < _rm * 1.05) & ~_ine
-                        _cyl = np.nonzero(((_up_ & (_r < _rm * 1.12) & (_cc[:, 1] < _ay + _rm * .3)) | (_lo_ & (_r < _rm * 1.0) & (_cc[:, 1] < _ay))) & ~_mk & (_Vm > .3))[0]   # (lower: the open collar's V, inside the neck's own radius, at the front; never dark hair)
+                        _cyl = np.nonzero(((_up_ & (_r < _rm * 1.12) & (_cc[:, 1] < _ay + _rm * .3)) | (_lo_ & (_r < _rm * 1.0) & (_cc[:, 1] < _ay))) & ~_mk & (_Vm > .3))[0]
+                        _vb = np.nonzero(_lo_ & (_r < _rm * 1.0) & (_cc[:, 1] < _ay) & _mk & (_cc[:, 2] < L['neck'].z - .02) & ~skin_wide(_mc[:, :3]))[0]   # (round 37: the V's brown triangles are skin-marked already: repaint only their colour)
+                        if len(_vb):
+                            _A = px(colour); _tm = own_texels(_vb, _A.shape[:2]); _A[_tm, :3] = np.median(_mc[_sk_][:, :3], axis=0); colour.pixels.foreach_set(_A.ravel()); colour.update()
+                        print('FIT neck V brown triangles repainted', len(_vb))   # (lower: the open collar's V, inside the neck's own radius, at the front; never dark hair)
                         if len(_cyl):
                             _A = px(colour); _tm = own_texels(_cyl, _A.shape[:2]); _sc = np.median(_mc[_sk_][:, :3], axis=0)
                             _A[_tm, :3] = _sc; colour.pixels.foreach_set(_A.ravel()); colour.update()
