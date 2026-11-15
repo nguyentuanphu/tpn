@@ -1450,12 +1450,76 @@ if TEX and KEEP and SHIFT:
                 for _c in range(3): _b2[_li * 4 + _c] = 1.
                 _cd.foreach_set('color', _b2)
             print('FIT eye-area triangles marked skin', int(_add.sum()))
+SHUT_IMG = None
 if TEX:
-    colour.scale(TEX, TEX); colour.file_format = 'JPEG'; colour.save(filepath=jp, quality=88 if TEX >= 1024 else 72)   # (owner 8 Nov 2026: 62 left speckles on the necks)
+    colour.scale(TEX, TEX)
+    if OWN and os.environ.get('FIT_FACEKIT') and eyes and 'blink' in M and not os.environ.get('FIT_NOSHUTTEX'):
+        # (15 Nov 2026, the shared face kit, the UV-space shut eye) Sol at three-quarters: a light crescent on the side of the near eye's
+        # dome and a thin line along its backward-facing fold. Both are the body texture's own texels, which the front projection of the
+        # shut piece cannot reach (the dome's sides squeeze into a few pixels of the front picture). So the whole dome is closed on the
+        # body's own texture: every head triangle round each eye (whatever way it faces, never hair) takes the lid tone at its front
+        # position (tools/meshy/facekit/shut_lid.py dome_field), into a copy of that part of the texture, saved as the body materials'
+        # emissive picture with its place (shut_rect, glTF uv u0 v0 u1 v1); the game draws it while the eyes are shut (js/friend-model.ts)
+        _L, _Lw, _ = _FK.dome_field(F, [M["blink"], M.get("happy")], list(eyes.values()), hair=HAIRISH)
+        _A = px(colour); _hh, _ww = _A.shape[:2]; _uvd = me.uv_layers[0].data
+        _fv = np.array([v.co[:] for v in me.vertices]); _fin = (_fv[:, 0] > fx0) & (_fv[:, 0] < fx1) & (_fv[:, 2] > fz0) & (_fv[:, 2] < fz1)
+        _yf = float(_fv[_fin, 1].min()) if _fin.any() else -1.
+        _ell = []
+        for b in eyes.values():
+            xa, xb, za, zb = wbox(b, 0); _ell.append(((xa + xb) / 2, (za + zb) / 2, (xb - xa) / 2 * 1.7, (zb - za) / 2 * 2.0))
+        _hr = _hreg if ('_hreg' in dir() and len(_hreg) == len(me.polygons)) else np.zeros(len(me.polygons), bool)
+        _new = np.zeros((_hh, _ww, 3), np.float32); _wt = np.zeros((_hh, _ww), np.float32); _np = 0
+        for p in me.polygons:
+            c = p.center
+            if c.y > _yf + .08 or _hr[p.index] or not any(np.hypot((c.x - ex) / rx, (c.z - ez) / rz) < 1.15 for ex, ez, rx, rz in _ell): continue
+            li = list(p.loop_indices)
+            if len(li) != 3: continue
+            uvs = np.array([_uvd[l].uv[:] for l in li], np.float32) * [_ww, _hh]; co = np.array([me.vertices[me.loops[l].vertex_index].co[:] for l in li], np.float32)
+            x0, y0 = np.floor(uvs.min(0)).astype(int) - 1; x1, y1 = np.ceil(uvs.max(0)).astype(int) + 2
+            x0, y0, x1, y1 = max(0, x0), max(0, y0), min(_ww, x1), min(_hh, y1)
+            if x1 <= x0 or y1 <= y0: continue
+            gy, gx = np.mgrid[y0:y1, x0:x1] + .5; (ax, ay), (bx, by), (cx, cy) = uvs
+            den = (by - cy) * (ax - cx) + (cx - bx) * (ay - cy)
+            if abs(den) < 1e-9: continue
+            l1 = ((by - cy) * (gx - cx) + (cx - bx) * (gy - cy)) / den; l2 = ((cy - ay) * (gx - cx) + (ax - cx) * (gy - cy)) / den; l3 = 1 - l1 - l2
+            ins = (l1 >= -.08) & (l2 >= -.08) & (l3 >= -.08)
+            if not ins.any(): continue
+            P3 = l1[..., None] * co[0] + l2[..., None] * co[1] + l3[..., None] * co[2]
+            fc = np.clip(((P3[..., 0] - fx0) / (fx1 - fx0) * W_).astype(int), 0, W_ - 1); fr = np.clip(((fz1 - P3[..., 2]) / (fz1 - fz0) * H_).astype(int), 0, H_ - 1)
+            w_ = np.where(ins, _Lw[fr, fc], 0.); sub = _wt[y0:y1, x0:x1]; take = w_ > sub
+            _new[y0:y1, x0:x1][take] = _L[fr, fc][take]; sub[take] = w_[take]; _np += 1
+        # (seams) the changed texels reach 3 texels further into texels no triangle uses, so a picture's filtering never brings the open eye back
+        _own = uv_texels([p for p in me.polygons if True], (_hh, _ww)) if _wt.any() else None
+        for _ in range(3):
+            if _own is None: break
+            m_ = (_wt <= 0) & ~_own; best = np.zeros_like(_wt); bc = np.zeros_like(_new)
+            for dy, dx in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                rw = np.roll(np.roll(_wt, dy, 0), dx, 1); rc = np.roll(np.roll(_new, dy, 0), dx, 1); t_ = m_ & (rw > best); best[t_] = rw[t_]; bc[t_] = rc[t_]
+            _wt = np.where(m_ & (best > 0), best, _wt); _new = np.where((m_ & (best > 0))[..., None], bc, _new)
+        _ch = _wt > .003
+        if _ch.any():
+            # (first trial: one crop round every changed texel was 1890 x 1820 of 2048, Meshy's islands are scattered) the changed
+            # places are packed as up to 16 boxes into one small atlas; shut_rects holds each box's place in the body's uv and in the atlas
+            _SH = _A.copy(); _SH[..., :3] = _A[..., :3] * (1 - _wt[..., None]) + _new * _wt[..., None]; _SH[..., 3] = 1
+            _bx, _pl, (_aw, _ah) = _FK.pack_rects(_ch)
+            _AT = np.zeros((_ah, _aw, 4), np.float32); _AT[..., 3] = 1; _rects = []
+            for (x0, y0, x1, y1), (ax, ay) in zip(_bx, _pl):
+                _AT[ay:ay + y1 - y0, ax:ax + x1 - x0] = _SH[y0:y1, x0:x1]
+                _rects += [x0 / _ww, 1 - y1 / _hh, x1 / _ww, 1 - y0 / _hh, ax / _aw, 1 - (ay + y1 - y0) / _ah, (ax + x1 - x0) / _aw, 1 - ay / _ah]
+            SHUT_IMG = bpy.data.images.new(ID + '-shut', _aw, _ah, alpha=False); SHUT_IMG.pixels.foreach_set(_AT.ravel())
+            SHUT_IMG.filepath_raw = os.path.join(RDIR, 'shut-atlas.jpg'); SHUT_IMG.file_format = 'JPEG'; bpy.context.scene.render.image_settings.quality = 92; SHUT_IMG.save(); SHUT_IMG.pack()
+            for m_ in (clothm, skinm): m_['shut_rects'] = [float(v) for v in _rects]
+            print('FIT facekit: shut dome texels', int(_ch.sum()), 'from', _np, 'triangles,', len(_bx), 'boxes, atlas', _aw, _ah)
+        else: print('FIT facekit: no shut dome texels')
+    colour.file_format = 'JPEG'; colour.save(filepath=jp, quality=88 if TEX >= 1024 else 72)   # (owner 8 Nov 2026: 62 left speckles on the necks)
     jimg = bpy.data.images.load(jp); jimg.name = ID + '-colour'
     for m_ in (clothm, skinm):
         for n in m_.node_tree.nodes:
             if n.type == 'TEX_IMAGE' and n.image is not SKINMASK: n.image = jimg   # (the skin mask stays the mask)
+    if SHUT_IMG is not None:   # (the shut dome copy, above: the body materials' emissive picture, after the colour picture so make_clothes.py finds that first)
+        for m_ in (clothm, skinm):
+            _sn = m_.node_tree.nodes.new('ShaderNodeTexImage'); _sn.image = SHUT_IMG; _sn.name = 'shutpic'; _bs = m_.node_tree.nodes['Principled BSDF']
+            m_.node_tree.links.new(_sn.outputs['Color'], _bs.inputs['Emission Color']); _bs.inputs['Emission Strength'].default_value = 1.
 print('FIT colour jpg', os.path.exists(jp) and os.path.getsize(jp))
 bpy.ops.object.select_all(action='DESELECT')
 for o in [rigo, body] + moods: o.select_set(True)
@@ -1463,6 +1527,8 @@ bpy.ops.export_scene.gltf(filepath=OUT, export_format='GLB', use_selection=True,
                           export_yup=True, export_image_format='AUTO', export_vertex_color='ACTIVE', export_extras=True)
 print('FIT exported', OUT, os.path.getsize(OUT))
 bpy.ops.wm.save_as_mainfile(filepath=os.path.splitext(OUT)[0] + '.blend')
+if SHUT_IMG is not None:   # (the check renders below: the shut copy is the game's, never lit here)
+    for m_ in (clothm, skinm): m_.node_tree.nodes['Principled BSDF'].inputs['Emission Strength'].default_value = 0.
 
 # ---- check renders: two skin tones, and the face in each mood
 sc.render.engine = 'BLENDER_EEVEE_NEXT'; sc.render.resolution_x, sc.render.resolution_y = 600, 900

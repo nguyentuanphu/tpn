@@ -134,3 +134,97 @@ def grain(sub, hole, src, tile=4, r=3, amount=1.0, seed=7):
     out = sub.copy()
     out[hole] = np.clip(sub[hole] + (add * wgt)[hole], 0, 1)
     return out
+
+def _dil(m, n):
+    for _ in range(n):
+        m = m | np.roll(m, 1, 0) | np.roll(m, -1, 0) | np.roll(m, 1, 1) | np.roll(m, -1, 1)
+    return m
+
+def dome_field(F, pieces, boxes, ring=.025, iters=600, hair=None):
+    """(15 Nov 2026, the UV-space shut eye) The lid tone over each whole eye dome, in the front picture's pixels, for painting the
+    dome's own texels in the body texture (tools/meshy/fit_people.py, the shut copy): the front projection squeezes the dome's
+    sides into a few pixels, and they are painted a paler skin round the open eye (Sol's light crescent at three-quarters).
+    The hole is where the shut pieces (blink, happy: RGBA, alpha the piece) change the face; round it a ring `ring` of the
+    picture's width; the ring and the lash strokes in the hole are filled smoothly (repeated neighbour averaging) from the lid
+    and from the face beyond the ring, so the pale rim goes. Dark pixels (brows, hair) outside the hole are never filled.
+    Returns (L, w): the colour (h, w, 3) and its soft weight (h, w), 0 outside the ring."""
+    h, w_ = F.shape[:2]; yy, xx = np.mgrid[0:h, 0:w_]
+    near = np.zeros((h, w_), bool)
+    for b in boxes:
+        cx, cy, rx, ry = (b[0] + b[2]) / 2, (b[1] + b[3]) / 2, (b[2] - b[0]) / 2, (b[3] - b[1]) / 2
+        near |= np.hypot((xx - cx) / max(rx * 1.7, 1), (yy - cy) / max(ry * 2.0, 1)) < 1
+    hole = np.zeros((h, w_), bool)
+    for P in pieces:
+        if P is None: continue
+        hole |= (P[..., 3] > .5) & (np.abs(P[..., :3] - F[..., :3]).max(-1) > .03)
+    hole &= near
+    hole = ~_dil(~_dil(hole, 2), 2) & near   # (closed: no pinholes where a piece happens to match the face)
+    L = F[..., :3].copy().astype(np.float32)
+    base = pieces[0]
+    L[hole] = base[..., :3][hole]
+    V = F[..., :3].max(-1); Vb = L.max(-1)
+    k = max(3, int(round(w_ * ring)))
+    R2 = _dil(hole, k) & near
+    # (hair hanging over the eye from the front, Sol's lock, and the brows: never painted onto the skin under them, and never a source)
+    keep = ((V < .45) | (hair if hair is not None else False)) & ~hole
+    R = R2 & ~keep
+    unk = (R2 & ~hole) | (hole & _dil(Vb < .6, 2))   # (the lash strokes come from the piece itself in the game)
+    if unk.any():
+        kn = _dil(R2, 1) & ~unk & ~keep
+        L[unk] = np.median(L[kn], axis=0) if kn.any() else L[unk].mean(0)
+        for _ in range(iters):
+            P_ = np.pad(L, ((1, 1), (1, 1), (0, 0)), mode='edge')
+            av = (P_[:-2, 1:-1] + P_[2:, 1:-1] + P_[1:-1, :-2] + P_[1:-1, 2:]) / 4
+            L[unk] = av[unk]
+    wt = R.astype(np.float32)
+    for _ in range(3): wt = (wt + np.roll(wt, 1, 0) + np.roll(wt, -1, 0) + np.roll(wt, 1, 1) + np.roll(wt, -1, 1)) / 5
+    wt = np.where(_dil(hole, max(1, k - 3)), 1., np.clip(wt * 1.5, 0, 1)).astype(np.float32) * R
+    return L, wt, hole
+
+def pack_rects(mask, margin=6, block=8, maxn=16, gap=2):
+    """(15 Nov 2026) Meshy's UV islands are small and scattered: an eye dome's texels lie in many places over the whole texture,
+    so one crop round them is nearly the whole picture. The changed texels are grouped (blocks of `block` px, joined when they
+    touch), each group's box grown by `margin` (unchanged texels round it, so filtering at its edge brings nothing new), at most
+    `maxn` boxes (the nearest merged), and the boxes are shelf-packed into one small atlas.
+    Returns (boxes [(x0, y0, x1, y1)], places [(ax, ay)], (aw, ah)) in pixels of mask's own row order."""
+    h, w = mask.shape; gh, gw = -(-h // block), -(-w // block)
+    pad = np.zeros((gh * block, gw * block), bool); pad[:h, :w] = mask
+    g = pad.reshape(gh, block, gw, block).any(axis=(1, 3))
+    g = g | np.roll(g, 1, 0) | np.roll(g, -1, 0) | np.roll(g, 1, 1) | np.roll(g, -1, 1)
+    lab = -np.ones((gh, gw), int); boxes = []
+    for sy, sx in zip(*np.nonzero(g)):
+        if lab[sy, sx] >= 0: continue
+        n = len(boxes); st = [(sy, sx)]; lab[sy, sx] = n; y0, y1, x0, x1 = sy, sy, sx, sx
+        while st:
+            y, x = st.pop(); y0, y1, x0, x1 = min(y0, y), max(y1, y), min(x0, x), max(x1, x)
+            for dy, dx in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                yy, xx = y + dy, x + dx
+                if 0 <= yy < gh and 0 <= xx < gw and g[yy, xx] and lab[yy, xx] < 0: lab[yy, xx] = n; st.append((yy, xx))
+        boxes.append([x0 * block, y0 * block, (x1 + 1) * block, (y1 + 1) * block])
+    boxes = [[max(0, b[0] - margin), max(0, b[1] - margin), min(w, b[2] + margin), min(h, b[3] + margin)] for b in boxes]
+    def ov(a, b): return not (a[2] <= b[0] or b[2] <= a[0] or a[3] <= b[1] or b[3] <= a[1])
+    def un(a, b): return [min(a[0], b[0]), min(a[1], b[1]), max(a[2], b[2]), max(a[3], b[3])]
+    def area(a): return (a[2] - a[0]) * (a[3] - a[1])
+    ch = True
+    while ch:
+        ch = False
+        for i in range(len(boxes)):
+            for j in range(i + 1, len(boxes)):
+                if ov(boxes[i], boxes[j]): boxes[i] = un(boxes[i], boxes.pop(j)); ch = True; break
+            if ch: break
+        if not ch and len(boxes) > maxn:   # (the pair whose union adds least)
+            best = None
+            for i in range(len(boxes)):
+                for j in range(i + 1, len(boxes)):
+                    c = area(un(boxes[i], boxes[j])) - area(boxes[i]) - area(boxes[j])
+                    if best is None or c < best[0]: best = (c, i, j)
+            _, i, j = best; boxes[i] = un(boxes[i], boxes.pop(j)); ch = True
+    order = sorted(range(len(boxes)), key=lambda i: -(boxes[i][3] - boxes[i][1]))
+    tot = sum(area(b) for b in boxes); aw = max(max((b[2] - b[0]) for b in boxes) + gap, int((tot ** .5) * 1.25)) if boxes else 1
+    places = [None] * len(boxes); x = y = rh = 0
+    for i in order:
+        bw, bh = boxes[i][2] - boxes[i][0], boxes[i][3] - boxes[i][1]
+        if x + bw > aw: x = 0; y += rh + gap; rh = 0
+        places[i] = (x, y); x += bw + gap; rh = max(rh, bh)
+    ah = y + rh
+    return [tuple(b) for b in boxes], places, (aw, max(1, ah))
