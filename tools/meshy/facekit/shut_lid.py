@@ -15,6 +15,18 @@ def _blur(a, r):
     c = np.pad(c, ((1, 0), (1, 0), (0, 0)))
     return (c[k:, k:] - c[:-k, k:] - c[k:, :-k] + c[:-k, :-k]) / (k * k)
 
+def body_offset(F, G, valid, r):
+    """F: (h, w, 3) the front picture the mood pieces are cut from; G: the same front view of the body's own texture (the one
+    the game draws), NaN where not cast; valid: where both are plain skin. Returns the broad colour difference G - F, blurred
+    over r px and spread over the whole picture (zero far from any valid pixel). Added to the pieces, their colours match the
+    body under them (15 Nov 2026: the front picture is paler and softer than the body's texture, so every piece showed as a
+    paler soft box round the shut eyes)."""
+    d = np.where(valid[..., None], np.nan_to_num(G - F), 0).astype(np.float32)
+    wgt = valid.astype(np.float32)[..., None]
+    num = _blur(d, r); den = _blur(wgt, r)
+    out = num / np.maximum(den, 1e-4)
+    return out * np.clip(den / .05, 0, 1)        # fades to nothing where no skin was measured
+
 def grain(sub, hole, src, tile=4, r=3, amount=1.0, seed=7):
     """sub: (h, w, 3) floats, the hole already filled smoothly; hole: (h, w) bool; src: (h, w) bool, the skin to copy from.
     Returns sub with the skin's fine grain added inside the hole (never outside it)."""

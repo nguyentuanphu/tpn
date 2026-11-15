@@ -776,6 +776,21 @@ if SHIFT and not OWN:   # (own face: the pieces take the tone as a whole, like t
     for k in M:
         _hk, _sk, _vk = hsv_np(M[k][..., :3]); _sm = skin_mask(M[k]) & (_vk > .55) & ~(((_hk < .03) | (_hk > .95)) & (_sk > .38))
         M[k][..., 3] = np.where(_sm & (M[k][..., 3] > .5), .75, M[k][..., 3])
+if OWN and os.environ.get('FIT_FACEKIT'):   # (15 Nov 2026, the shared face kit: the pieces' broad colour matched to the body's own texture, tools/meshy/facekit/shut_lid.py body_offset)
+    _bt = _BVH.FromObject(body, bpy.context.evaluated_depsgraph_get()); _bm = body.data; _buv = _bm.uv_layers.active.data
+    G_ = np.full(F.shape[:2] + (3,), np.nan, np.float32); _reg = np.zeros(F.shape[:2], bool)
+    for b in list(eyes.values()) + ([mouth] if mouth else []):
+        w_, h_ = b[2] - b[0], b[3] - b[1]; _reg[max(0, int(b[1] - h_ * 1.5)):min(H_, int(b[3] + h_ * 1.5)), max(0, int(b[0] - w_ * .8)):min(W_, int(b[2] + w_ * .8))] = True
+    for r_, c_ in zip(*np.nonzero(_reg)):
+        z_ = fz1 - (r_ + .5) / H_ * (fz1 - fz0); x_ = fx0 + (c_ + .5) / W_ * (fx1 - fx0)
+        loc, nrm, fi, _d = _bt.ray_cast(Vector((x_, -2, z_)), Vector((0, 1, 0)))
+        if loc is None: continue
+        p = _bm.polygons[fi]; li = list(p.loop_indices)[:3]; vi = [_bm.loops[l].vertex_index for l in li]
+        uvp = _bary(loc, *(_bm.vertices[v].co for v in vi), *(Vector((*_buv[l].uv, 0)) for l in li)); G_[r_, c_] = sample(CA, uvp.x, uvp.y)
+    _ok = _reg & np.isfinite(G_[..., 0]) & skin_mask(F) & (V > .45) & ~HAIRISH & ~(((V < .55) | ((V > .78) & (S_ < .22))))
+    _D = _FK.body_offset(F[..., :3], G_, _ok, max(3, int(W_ * .02)))
+    print('FIT facekit body offset: measured', int(_ok.sum()), 'px, mean', np.round(_D[_ok].mean(0), 3) if _ok.any() else None)
+    for k in M: M[k][..., :3] = np.clip(M[k][..., :3] + _D, 0, 1)
 atlas = np.zeros((TILE * 3, TILE * 3, 4), np.float32)
 for i, k in enumerate(ORDER):
     r, cc = divmod(i, 3); atlas[r * TILE:(r + 1) * TILE, cc * TILE:(cc + 1) * TILE] = M[k]
