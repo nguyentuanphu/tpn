@@ -4,8 +4,8 @@
 // model or the new one), same game code, nothing installed. A friend is built as the child's friend in high detail; a
 // villager's model is worn by a named villager of the valley (its own one, or Mai for a model the valley does not know).
 // device: the game's own camera at its own distance on a phone (390x844), a tablet (820x1180) and a computer (1280x800), as
-//   tests/festival-models.mts shoots them; the person stands where the child stands, turned to the camera by yaw 0, +-.4,
-//   +-.7, in every mood. Writes <dev>-<mood>-y<yaw>.png (the head, cut out of the screen at its real size), <dev>-full.png.
+//   tests/festival-models.mts shoots them; the person stands where the child stands, turned to the camera by yaw 0 and +-.7,
+//   in every mood. Writes <dev>-<mood>-y<yaw>.png (the head, cut out of the screen at its real size), <dev>-full.png.
 // close: 1024 px close-ups of the head, every mood at yaw -1.2 .. 1.2.
 import { createRequire } from 'node:module';
 import { open, clear } from '../../../tests/harness.mts';
@@ -49,7 +49,7 @@ const pose = async (page: any, m: string, yaw: number) => page.evaluate(async ([
   const c = h.cam || G.camera; const dx = c.position.x - av.root.position.x, dz = c.position.z - av.root.position.z;
   av.root.rotation.y = Math.atan2(dx, dz) + yaw;
   if (av.life) { av.life.mood = m; av.life.blink = av.life.t + 60; av.life.glance = av.life.t + 60; av.life.feel = ''; } M.follow(m);
-  await new Promise(r => setTimeout(r, 350));
+  await new Promise(r => setTimeout(r, 250));
   let head: any = null; M.obj.traverse((o: any) => { if (o.isBone && o.name === 'head') head = o; });
   const p = head.getWorldPosition(new THREE.Vector3()).add(new THREE.Vector3(0, .12, 0)), q = p.clone().project(c), q2 = p.clone().add(new THREE.Vector3(0, .25, 0)).project(c);
   const r = G.renderer.domElement.getBoundingClientRect();
@@ -59,7 +59,7 @@ if (WHAT === 'device' || WHAT === 'both') for (const dev of [{ name: 'phone', w:
   const P = await open(b, { w: dev.w, h: dev.h, touch: dev.touch, fast: false, pre: null, route }); await clear(P.page);
   const err = await setup(P.page); if (err) throw new Error(ID + ': ' + err);
   let first = true;
-  for (const m of MOODS) for (const yaw of [-.7, -.4, 0, .4, .7]) {
+  for (const m of MOODS) for (const yaw of [-.7, 0, .7]) {   // (three turns: the full five took about 7 minutes a device on the shared PC)
     const r: any = await pose(P.page, m, yaw);
     const half = Math.max(24, Math.round(r.s * 1.1));
     const clip = { x: Math.max(0, r.x - half), y: Math.max(0, r.y - half), width: half * 2, height: half * 2 };

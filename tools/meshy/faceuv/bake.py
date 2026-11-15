@@ -98,7 +98,8 @@ for i, (k, t, T, UV, S, out_, MK) in enumerate(tris):
         continue
     xs, ys, l = r_
     Pp = l @ T; rr = np.hypot(Pp[:, 0] - XC, Pp[:, 2] - ZC); top = rr >= ZB[ys, xs] - .004
-    if top.mean() >= .5: keep.append(i); uv = l @ UV; COL[ys, xs] = bil(uv[:, 0], uv[:, 1]); MRK[ys, xs] = l @ MK; XM[ys, xs] = Pp[:, 0]; OWN[ys, xs] = i
+    if top.mean() >= .9: keep.append(i);   # (.5 let a braid's triangle half behind r045's fur collar into the face: it showed the collar's white)
+    if top.mean() >= .9: uv = l @ UV; COL[ys, xs] = bil(uv[:, 0], uv[:, 1]); MRK[ys, xs] = l @ MK; XM[ys, xs] = Pp[:, 0]; OWN[ys, xs] = i
 print('kept', len(keep))
 MASK = OWN >= 0
 # texels just outside the island take their nearest neighbour's colour (mip and bilinear bleed)

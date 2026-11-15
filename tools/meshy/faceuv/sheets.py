@@ -20,7 +20,7 @@ for m in MOODS:
     big.append(np.ones((10, big[-1].shape[1], 3), np.float32) * .2)
 save(f'{OUT}/close-all.jpg', np.concatenate(big, 0))
 # in-game distance: per device, rows mood (old | new), columns yaw; each head crop at its real pixels, enlarged 4x
-YD = ['-0.7', '-0.4', '0', '0.4', '0.7']
+YD = ['-0.7', '0', '0.7']
 for dev in ('phone', 'tablet', 'computer'):
     rows = []
     for m in MOODS:

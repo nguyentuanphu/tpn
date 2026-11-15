@@ -127,38 +127,73 @@ close-ups, every mood, yaw -1.2 .. 1.2.
   fill (the Laplace fill is smooth: fine for painted skin, flat on fur): copy fur from beside the eye (patch-based) or
   LaMa on a machine with torch. Kitty's separate lid mesh (fit_animal.py face_pieces) would go, as Sol's eye pieces did.
 
-## Next: the coordinator's order (15 Nov 2026, about 4:30 pm AEDT), NOT started
+## The general tool (second agent, 15 Nov 2026 evening AEDT): steps 1 to 4 of the coordinator's order
 
-The first agent stopped here because its context was too long to do this well. Nothing below is built yet.
-State at the stop: Sol's HD model is final for the prototype (commit on this branch), sheets in
-`D:\WorkSpace\meshy\fitted\soleyes-sheets` are from the final model, the last face audit is in
-`D:\WorkSpace\meshy\fitted\soleyes-audit-final` (see "Traps" for which of its counts mean anything).
-The server on 8797 and the junction `tests\node_modules` may need to be made again.
+Everything above describes the Sol prototype and still holds for how the face is made. `tools/meshy/soleyes` is now
+`tools/meshy/faceuv` and takes any model id. No game code changed. Nothing is installed into `models/` by the tool: the
+pictures answer the model's URL with the old or the new file. (`models/sol-hd.glb` on this branch is still the prototype's.)
 
-1. **Make the step general.** `tools/meshy/soleyes` becomes `tools/meshy/faceuv` and takes any model id.
-   - bake.py CFG from the model, not Sol's numbers: the head bone's world position gives the axis (x, ZC); the body
-     materials' `eye_boxes` (model metres: x0, x1, y0, y1 per eye, read them BEFORE build.py deletes them) give the eye
-     height and width; y range = eye middle -.21 / +.17 m scaled by the eye box height over Sol's (.10 m); radius = the
-     median radius of the outward surface at eye height. Sol's values to reproduce: R .2, TH 1.2, Y0 1.14, Y1 1.52, ZC 0.
-   - Eye finder (eyes.py) on dark irises and darker skin: start from the eye_boxes projected into the face picture
-     instead of "bright colourless blob" (white V > .82, S < .22 fails on small whites); skin = median of the ring round
-     the box; thresholds relative to that skin (now absolute .10 / V < .72).
-   - Hair in the eye hole stays hair: COLOR_0 is the skin mark (red = skin, blue 1 = body point that is not hair, see
-     js/friend-model.ts skinTint and make_clothes.py). Bake the mark into the face picture beside the colour (same
-     barycentric copy) and keep the hole off texels that are hair.
-2. **One command per model**: `make.ps1 <id>` = bake, eye-free skin, moods, build, pack, shots, sheets, through heavy.ps1,
-   writing `report.json` (sizes, eye boxes found, warnings such as "eye not found", "hair over eye"). Today's make.ps1
-   stops after the install; shots.mts and sheets.py have 'sol' written in (setup(), the route, OLD_GLB).
-3. **Gate tool** `gate.ps1 <id...>`: one HTML page per model, `D:\WorkSpace\meshy\fitted\gate\<id>\index.html`, old vs
-   new for every mood: game distance on the three devices, then close-ups at yaw 0, +-.4, +-.7, +-1.2, plus the
-   auditor's face numbers. The auditor must first learn the new layout (its reference hides every `face-` material).
-4. **Prove generality** on Clara (dark irises), Finn (fringe over the eyes), Lumi, one villager, one regional villager.
-   Dressed HD models: `D:\WorkSpace\meshy\fitted\<id>-own\<id>-dressed-hd.glb` for friends; the villagers' are in the
-   other worktrees' fit folders (read only). Write only under `fitted\faceuv-*`. No hand tuning: a needed parameter goes
-   into a small per-model JSON with the reason. Villagers have one model and other material names (`fit_person.ps1
-   -Villager`): bake.py picks primitives by the names `cloth-body` / `skin-tex`, check theirs.
-5. **Sol's leftovers**: lookL / lookR inner-corner rim; half lid length; the light model `sol.glb` with a smaller
-   atlas; a lash colour that is not near black in the game's light; the mouth moods on the same face UV (then the last
-   three old pieces go); a check under the darkest skin tone (`setMeshyTones(true)`, game_shots.mts `tones` mode).
+### Commands (each is ONE heavy job)
 
-Report to the coordinator after step 4 with the gate page paths. Animals come after humans.
+```
+H="powershell -NoProfile -Command \"& 'D:\WorkSpace\meshy\tools\heavy.ps1' powershell -NoProfile -File tools\meshy\faceuv\..."
+make.ps1  <id> [steps]        bake, eyes, build, pack, shots (old and new), sheets, report   (about 12 min a model)
+batch.ps1 <id,id,...> [steps] make.ps1 for several models in one job; log in fitted/faceuv-<id>/make.log
+gate.ps1  <id,id,...> [steps] steps make,audit,page (default audit,page): the auditor on friends (old, new), then the page
+```
+
+- Output: `D:\WorkSpace\meshy\fitted\faceuv-<id>\` (`bake\` pictures, `shots-old\`, `shots-new\`, `sheets\`,
+  `<model>-faceuv[-packed].glb`, `model.json`, `report.json`, `audit-old\`, `audit-new\`).
+- Gate pages: `D:\WorkSpace\meshy\fitted\gate\<id>\index.html` (plain HTML, relative pictures in `img\`, about 11 MB a model).
+- `models.json`: one row per model (source, old model, game file name, kind, the page server that draws it, per-model
+  numbers with their reason). An id not listed is looked up in the usual places (`model.py`).
+- Page servers: this worktree 8797 (friends). Villagers are drawn by the villagers worktree's server (8793, was already
+  running), regional villagers by a read-only server on the regional worktree, port 8794, started by this agent:
+  `node tools/meshy/serve.mjs D:\WorkSpace\sv-meshy-regional 8794`. Reason: this branch's game code cannot wear a Meshy
+  villager at all, old model or new (`dress()` without garments in js/friend-model.ts); their branches' code can.
+
+### What is derived from the model (no hand tuning; no model has a per-model number)
+
+- **Frame (bake.py)**: axis = the head bone's x and z; eye height = the middle of the body materials' `eye_boxes`; head
+  size = the median radius of the outward surface at eye height, s = radius / .15 (Sol's); R = .2 s, y from the eyes'
+  middle - .21 s (never below the head bone) to + .17 s. The eye box's height is NOT a usable size (Lumi's is 1.7 x Sol's,
+  Mai's .8 x). Every face comes out laid alike (eyes and mouth at about the same pixels), so eyes.py's pixel sizes hold
+  for all, times W / 1024. W = 1024 for a 2048 atlas (friends), 512 for 1024 (villagers); the mood atlas is 2 W.
+- A triangle joins the face only if 90% of its texels are the outermost surface (at 50%, a braid's triangle half behind
+  r045's fur collar came in and showed the collar's white).
+- Beside the colour, bake.py bakes the skin mark (`face-mark.png`) and each texel's model x (`band.npz` xm).
+- **Eye finder (eyes.py)**: inside each eye_box (through the model-x picture); skin = the median colour beside it; every
+  test is relative to that skin (white: saturation under half the skin's and brightness over .75 of it; dark: under .45;
+  not skin: .10 from it, or under .72 of its brightness). The eye is the not-skin patch with the most white, grown through
+  what is not skin, never beyond its eye_box.
+- **Hair stays hair**: hair = the mark's hair (red 0), the mark's mixed border triangles by colour, and (Finn) whatever
+  hangs together with the mark's hair or comes down from above the eye_box, above the eye's middle and more than 16 px
+  from the box round the eye's white (widened by .6 of its height at each end: an iris at the eye's corner). Hair is never
+  in the hole and never a source of the fill; nothing dark beside the hole is a source either (Mai). The surface under a
+  lock (build.py's under-layer cells) takes `face-underskin.png`, the skin as it would be without the lock.
+- **Old mouth pieces**: each piece's rows above the eye_box's lower edge are made see-through (found through the piece's
+  own corners), not a fixed .635 of a tile.
+- WebP models (villagers) get their mood atlas and mouth pieces as WebP (Mai's atlas 93 KB against 239 as JPEG); packed
+  with gltfpack 0.24.0 as fit_person.ps1 does.
+- **report.json**: sizes, the frame, eyes found, per-eye numbers, shots count, warnings ("eye not found", "hair over eye",
+  "almost no eye white", "the eye patch is very large", "iris not found", villager over 500 KB, shots missing).
+
+### The auditor (tools/meshy/faceuv/audit.mts)
+
+A copy of sv-meshy-facekit's `tools/meshy/audit.mts` (277acf619) taught the layout: a face-UV mesh (`<id>-face-<mood>`)
+is part of the head wherever the body alone is drawn (it was hidden with the pieces, which hid the whole face); as a
+mood's picture it is read like a piece. `AUDIT_ROUTE="sol-hd=<glb>"` answers a model's URL with a file. Friends only (it
+builds friends with outfits): there is no villager pass. On a face-UV model `eyes`, `lid`, `patch`, `vlid` mean what they
+say; `face` is always 0; `mouth` and `stray` on sad, surprised, excited judge the old mouth piece.
+(`tools/meshy/audit-facekit.mts`, the unpatched local copy, is not committed and no longer used.)
+
+### Traps found
+
+- Git Bash heredocs lose backslashes and choke on some quotes: write PowerShell and edit scripts with the Write tool.
+- The scratchpad may hold another session's `bisect.py`: keep Python scripts in a folder of their own.
+- `"$i: text"` in PowerShell is a parse error (`${i}:`).
+- A full model takes about 12 minutes of heavy job, mostly the device shots (three turns now, not five).
+- Gaps in the island (a lock folded over itself) part a lock in two: floods through hair pass over them.
+- An open inner eye corner (no outline) lets any flood from the white run round the outside of the outline: the eye's
+  protected core is the box round its large white patches, not a flood.
+

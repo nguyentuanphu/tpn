@@ -10,12 +10,12 @@ $py = 'C:\Users\nguye\tools\blender-4.2.23-windows-x64\4.2\python\bin\python.exe
 foreach ($i in $Ids.Split(',')) {
   $O = "$fit\faceuv-$i"; New-Item -ItemType Directory -Force $O | Out-Null
   if (($do -contains 'make') -and -not (Test-Path "$O\report.json")) { & cmd /c "powershell -NoProfile -File `"$t\make.ps1`" $i all > `"$O\make.log`" 2>&1" }
-  if (-not (Test-Path "$O\model.json")) { "$i: not made yet (run make.ps1 $i)"; $bad++; continue }
+  if (-not (Test-Path "$O\model.json")) { "${i}: not made yet (run make.ps1 $i)"; $bad++; continue }
   $row = Get-Content "$O\model.json" -Raw | ConvertFrom-Json; $new = "$O\$($row.model)-faceuv-packed.glb"
   if (($do -contains 'audit') -and $row.kind -eq 'friend') {
     foreach ($w in @(@('old', $row.old), @('new', $new))) {
       for ($try = 1; $try -le 2; $try++) { & cmd /c "powershell -NoProfile -File `"$t\audit.ps1`" `"$O\audit-$($w[0])`" $i `"$($row.model)=$($w[1])`" > `"$O\audit-$($w[0]).log`" 2>&1"; if (Test-Path "$O\audit-$($w[0])\cases.json") { break } }
-      if (-not (Test-Path "$O\audit-$($w[0])\cases.json")) { "$i: the auditor failed on the $($w[0]) model (see $O\audit-$($w[0]).log)"; $bad++ } } }
+      if (-not (Test-Path "$O\audit-$($w[0])\cases.json")) { "${i}: the auditor failed on the $($w[0]) model (see $O\audit-$($w[0]).log)"; $bad++ } } }
   if ($do -contains 'page') { & $py (Join-Path $t 'gate.py') $i; if ($LASTEXITCODE -ne 0) { $bad++ } }
 }
 exit $bad

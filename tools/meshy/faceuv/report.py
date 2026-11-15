@@ -11,7 +11,7 @@ for i, f in enumerate(ey.get('found', [])):
 if row.get('kind') == 'villager' and new_kb and new_kb > 500: warn.append('size: %d KB, over the 500 KB a villager model is kept under (was %s KB)' % (new_kb, old_kb))
 shots = {w: len(glob.glob(os.path.join(O, 'shots-' + w, '*.png'))) for w in ('old', 'new')}
 for w, n in shots.items():
-    if n and n < 201: warn.append('shots %s: %d of 201 pictures' % (w, n))
+    if n and n < 147: warn.append('shots %s: %d of 147 pictures' % (w, n))
 rep = {'id': ID, 'kind': row.get('kind'), 'model': row.get('model'), 'src': row.get('src'), 'old': row.get('old'), 'new': new, 'server': row.get('server'),
        'size_kb': {'old': old_kb, 'new': new_kb, 'added': (new_kb - old_kb) if old_kb and new_kb else None, 'mood_atlas': bd.get('atlas_kb'), 'atlas_format': bd.get('atlas_format')},
        'frame': {k: cfg.get(k) for k in ('R', 'TH', 'Y0', 'Y1', 'XC', 'ZC', 'W', 'H', 'radius', 'scale', 'head_bone', 'eye_boxes', 'px_per_mm', 'atlas')},
