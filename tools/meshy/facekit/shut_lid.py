@@ -41,6 +41,30 @@ def grow_hole(V, S, skin, hair, box, reach=.08):
     o2 = out | np.roll(out, 1, 0) | np.roll(out, -1, 0) | np.roll(out, 1, 1) | np.roll(out, -1, 1)   # its soft edge
     return o2 & near
 
+def eye_disc(V, S, box, grow=.1):
+    """(15 Nov 2026, the shared face kit: a pale grey bit of Sol's lower eye rim stayed inside the filled lid, neither grey nor dark
+    enough for any colour test) the whole painted eye by shape: the ellipse over its white's extent (the white surrounds the iris,
+    so its extent is the eye's), grown by `grow` of the eye's width. Colour does not decide its edge. (A first try joined the
+    dark parts to the white and filled the gaps: Sol's amber iris is not dark, and the fill leaked through it.)"""
+    h, w = V.shape; x0, y0, x1, y1 = [int(round(v)) for v in box]
+    x0, x1 = max(0, x0), min(w, x1); y0, y1 = max(0, y0), min(h, y1)
+    white = np.zeros((h, w), bool); white[y0:y1, x0:x1] = ((V > .78) & (S < .22))[y0:y1, x0:x1]
+    if white.sum() < 6: return np.zeros((h, w), bool)
+    ys, xs = np.nonzero(white)
+    wx0, wx1 = np.percentile(xs, 1), np.percentile(xs, 99); wy0, wy1 = np.percentile(ys, 1), np.percentile(ys, 99)
+    # (Sol: the white lies on one side of the iris only, so its extent missed the other side) with the eye's dark outline and iris
+    # beside the white, in its rows and a little past them, never the brow above
+    eh = wy1 - wy0; dk = np.zeros((h, w), bool); r0 = int(max(y0, wy0 - eh * .25)); r1 = int(min(y1, wy1 + eh * .3))
+    dk[r0:r1, x0:x1] = (V < .45)[r0:r1, x0:x1]
+    dk &= (np.abs(np.arange(w)[None, :] - (wx0 + wx1) / 2) < (wx1 - wx0) * 1.2)
+    if dk.sum() > 6:
+        dy, dx = np.nonzero(dk | white)
+        wx0, wx1 = min(wx0, np.percentile(dx, 1)), max(wx1, np.percentile(dx, 99)); wy0, wy1 = min(wy0, np.percentile(dy, 1)), max(wy1, np.percentile(dy, 99))
+    cx, cy = (wx0 + wx1) / 2, (wy0 + wy1) / 2; g = (wx1 - wx0) * grow
+    rx, ry = (wx1 - wx0) / 2 + g, (wy1 - wy0) / 2 + g
+    yy, xx = np.mgrid[0:h, 0:w]
+    return np.hypot((xx - cx) / max(rx, 1), (yy - cy) / max(ry, 1)) < 1
+
 def upper_lid(V, S, hair, box):
     """(15 Nov 2026, the shared face kit, seen with the piece hidden: the open eye's upper lash and lid crease stayed as grey arcs
     above Sol's shut eyes, as the hole stopped a fifth of the way down the eye box, which reaches up over the brows) everything

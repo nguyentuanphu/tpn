@@ -304,6 +304,19 @@ for r_ in range(_Hn):
             uvp = _bary(loc, a3, b3, c3, ua, ub, uc); acc += _bil(uvp.x, uvp.y); n_ += 1
         if n_: F[r_, c_, :3] = acc / n_; _nr += 1
 print('FIT face picture projected from the front', _nr, 'of', _Hn * _Wn)
+FACE_FROM_BODY = bool(os.environ.get('FIT_FACEKIT'))
+if FACE_FROM_BODY:   # (15 Nov 2026, the shared face kit: the mood pieces cut from the body's own texture, the one the game draws, cast from the front
+    # the same way: every shut lid filled from the original picture came out a lighter disc whose edge showed, as that picture is a little
+    # lighter and softer round the eyes than the body's texture; with the body's own colours the lid meets the face exactly)
+    _bt0 = _BVH.FromObject(body, bpy.context.evaluated_depsgraph_get()); _bm0 = body.data; _buv0 = _bm0.uv_layers.active.data; _nb = 0
+    for r_ in range(_Hn):
+        for c_ in range(_Wn):
+            z_ = fz1 - (r_ + .5) / _Hn * (fz1 - fz0); x_ = fx0 + (c_ + .5) / _Wn * (fx1 - fx0)
+            loc, nrm, fi, _d = _bt0.ray_cast(Vector((x_, -2, z_)), Vector((0, 1, 0)))
+            if loc is None: continue
+            p = _bm0.polygons[fi]; li = list(p.loop_indices)[:3]; vi = [_bm0.loops[l].vertex_index for l in li]
+            uvp = _bary(loc, *(_bm0.vertices[v].co for v in vi), *(Vector((*_buv0[l].uv, 0)) for l in li)); F[r_, c_, :3] = sample(CA, uvp.x, uvp.y); _nb += 1
+    print('FIT facekit: face picture from the body texture', _nb)
 activate(decal); dd = decal.modifiers.new('dec', 'DECIMATE'); dd.ratio = min(1, 1200 / max(1, len(decal.data.polygons))); bpy.ops.object.modifier_apply(modifier='dec')
 # (13 Nov 2026: Clara's sculpted lips came through her round and sad mouths as a pink lens with a straight edge) the reduced
 # layer is flatter than the face: each of its points is put back on the body's surface, 4.5 mm in front of it
@@ -550,6 +563,7 @@ def lid(img, b, top=0., bot=1.):   # (original_skin) a closed lid painted over t
         _gh = _FK.grow_hole(V, S_, skin_mask(F) & ~HAIRISH, HAIRISH, b)
         hole |= _gh & (yy >= b[1] + h_ * .2)   # (never the brows above)
         hole |= _FK.upper_lid(V, S_, HAIRISH, b)   # (the upper lash and lid crease, up to the brow: grey arcs above the shut eyes)
+        hole |= _FK.eye_disc(V, S_, b) & ~(HAIRISH & (yy < b[1] + h_ * .15))   # (the whole painted eye by shape, its lower rim too: a pale grey bit stayed in Sol's lid)
     if top > 0: hole &= yy >= y0
     if PART: hole &= yy < lidline(xx)
     # her own skin flows in from all round the eye (a smooth fill, no disc edge): the eye pixels are repeatedly
@@ -574,7 +588,7 @@ def lid(img, b, top=0., bot=1.):   # (original_skin) a closed lid painted over t
     # within 4 px of the eye's own dark or white pixels is a source, and those pixels close with the lid
     _es_ = _esh[ya:yb, xa:xb] if OWN else np.zeros_like(hm)
     _blu &= ~_es_
-    _fix = ((_sm & (_bh[2] > .7)) | _blu) & ~hm & ~_es_   # (15 Nov 2026: brownish outline pixels passed the skin test and drew grey-brown smudges at Sol's inner corners: only bright skin is a source)
+    _fix = ((_sm & (_bh[2] > (.45 if os.environ.get('FIT_FACEKIT') else .7))) | _blu) & ~hm & ~_es_   # (15 Nov 2026, the shared face kit: with the whole eye and its outline in the hole, every skin pixel round it is a source again; bright skin only made every shut lid a lighter disc) (15 Nov 2026: brownish outline pixels passed the skin test and drew grey-brown smudges at Sol's inner corners: only bright skin is a source)
     if not os.environ.get('FIT_FLAT_LID') and _fix.sum() > 8:
         sub[~hm & _blu] = _wr[~hm & _blu]; _un = ~_fix; sub[_un & ~hm] = np.median(sub[_fix], axis=0)
     else: _un = hm
@@ -780,7 +794,7 @@ if SHIFT and not OWN:   # (own face: the pieces take the tone as a whole, like t
     for k in M:
         _hk, _sk, _vk = hsv_np(M[k][..., :3]); _sm = skin_mask(M[k]) & (_vk > .55) & ~(((_hk < .03) | (_hk > .95)) & (_sk > .38))
         M[k][..., 3] = np.where(_sm & (M[k][..., 3] > .5), .75, M[k][..., 3])
-if OWN and os.environ.get('FIT_FACEKIT'):   # (15 Nov 2026, the shared face kit: the pieces' broad colour matched to the body's own texture, tools/meshy/facekit/shut_lid.py body_offset)
+if OWN and os.environ.get('FIT_FACEKIT') and not FACE_FROM_BODY:   # (15 Nov 2026, the shared face kit: the pieces' broad colour matched to the body's own texture, tools/meshy/facekit/shut_lid.py body_offset)
     _bt = _BVH.FromObject(body, bpy.context.evaluated_depsgraph_get()); _bm = body.data; _buv = _bm.uv_layers.active.data
     G_ = np.full(F.shape[:2] + (3,), np.nan, np.float32); _reg = np.zeros(F.shape[:2], bool)
     for b in list(eyes.values()) + ([mouth] if mouth else []):

@@ -72,3 +72,28 @@ Friends' last, worst over the closed moods: lid 18, stray 23, patch 266, and mou
 - **Mouth:** 538 to 579 at ±.4 in sad, o and excited. ±.4 had never been audited before `kitviews`, so this is not yet shown to be a regression. Run the friends' own Clara with `kitviews` to tell.
 
 **Verdict 15 Nov:** neither Sol nor Clara passes. The kit fixes the main cause: the flat body under the piece, and the paler piece. Sol's front shut patch went from 33 to 225 down to 0. It is not finished: turned-view patch, the hole rule, the blocks, and Clara's mouth at ±.4. No second reviewer has looked yet. The trial models are in this worktree's `models/` and are not committed.
+
+## 15 Nov 2026 AEDT, afternoon: coordinator's list, steps 1 to 4
+
+1. **Hole rule (done).** `shut_lid.py` has three parts:
+   - `grow_hole`: grey outline close by.
+   - `upper_lid`: up to the brow, column by column. The brow is told from Sol's grey crease by darkness, V < .42; the friends used .55 in `EYE_A` too.
+   - `eye_disc`: the whole painted eye as an ellipse over its white, outline and iris, grown by .1.
+
+   Sol's grey tick and the upper-lid arcs are gone. lid is 0 on every view (was up to 53).
+2. **Turned-view band: found and fixed in part.**
+   - The shut piece is a flatter decal lit by its own normals. It is hidden now, and the body draws the shut eye with the head's own light.
+   - The body only takes the piece's colour where the lid really changed (piece minus smile tile). Elsewhere it keeps its own texel.
+   - The pieces are cut from the body's own texture cast from the front (`FACE_FROM_BODY`), not the original picture. F and that texture differ by only 0.0003 on average (`facekit.json`), so the lighter disc was not a colour offset.
+   - The facing test was loosened to -.2..1: the socket's upper part faces down.
+   - **Still open:** a light crescent on the side of the near eye's dome at ±.4 and ±.7. A coverage paint (green = covered, magenta = changed; debug build, reverted) shows this crescent gets no cover at all. It is not the colour rule, not the eye-white test, and not facing alone (-.6 did not remove it). Next: check which material or mesh those texels belong to (`skin-tex` without the cover/kit branch?) and their fu_.
+3. **Clara's squares: not started.**
+4. **Clara's mouth at ±.4: not new.** The old Clara on the friends' server gives the same 538 and 579. It was an auditor fault: the box placed from the front reached her red shirt at the shoulder. The mouth box now keeps to the head's own skin and hair (body codes 5, 3).
+5. **Two-run stability: not run yet.**
+
+Sol now (`facekit-audit-sol-s16`):
+- eyes 0, face 0, mouth 0, lid 0;
+- front patch: blink, happy and excited 0, half 62;
+- patch at the turned views and from below: 45 to 204 (the crescent);
+- stray 31 to 212: hair edges and brow edges at -.7 and from below;
+- vlid 42 to 54 at ±.7: small dark bits at a hair edge and beside the far eye.
