@@ -202,3 +202,15 @@ One friend end to end: `GF_SKIP_REFIT=1 powershell -File tools/meshy/graft_frien
 ## Scaling up
 
 When a method is proven on one person (owner-approved), the rest can be split across chats or accounts: one chat per group (e.g. friends, VN-north villagers, VN-central, VN-south, Australia, animals by skeleton type), each using this skill, the same tools and its own review sheets, never two chats writing the same files. Paid Meshy jobs stay on one account's journal per group; each group syncs its ledger.
+
+## The shared face kit (15 Nov 2026 AEDT, branch `meshy-facekit`, docs/meshy-facekit/HANDOFF.md)
+
+- **Why closed eyes kept failing:** the body under a shut eye was painted one flat skin colour, and the mood pieces are cut from a front picture that is paler and softer than the body's texture. Each mood piece's fading edge showed one or the other. Fix both in one place:
+  - The body under the piece takes the piece's own colour (`uShutMap`, the right tile of the shared 3 x 3 picture, `face_box`).
+  - The pieces' broad colour is matched to the body's texture (`shut_lid.py body_offset`).
+- **Never carry "only the change" from the front picture onto the body's texel,** by ratio or by difference. The two never line up to the pixel, so the open eye's outline stays as a ghost.
+- **The face pieces share one 3 x 3 picture** (fit_people.py ORDER). Any lookup into it needs the mood's tile. With glTF's v flipped, it is `((col, row) + ((x - x0)/(x1 - x0), (z1 - y)/(z1 - z0))) / 3`.
+- **Userdata from the GLB reaches the game's material only if it is copied** in friend-model.ts's material loop (as eye_boxes is). A new extra does nothing until it is copied.
+- **Probe before you guess:** `tools/meshy/facekit/probe.mts <id> <mood>` lists every material's shut uniforms and which face pieces are shown.
+- **heavy.ps1 and parameters:** `-Out` is ambiguous with PowerShell's common parameters. Run such scripts through `powershell -Command "& x.ps1 -Out '...' -Only 'a,b'"`, with comma lists quoted. Otherwise the self-test skips every plant and still says PASSED: always check that each plant has its own "caught" line.
+- **The vlid check:** a V needs two straight, steep arms. "Upright" alone marks every lash crescent seen from the side or from above.

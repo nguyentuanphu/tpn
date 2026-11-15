@@ -577,7 +577,7 @@ def lid(img, b, top=0., bot=1.):   # (original_skin) a closed lid painted over t
     for _ in range(700):
         P = np.pad(sub, ((1, 1), (1, 1), (0, 0)), mode='edge')
         av = (P[:-2, 1:-1] + P[2:, 1:-1] + P[1:-1, :-2] + P[1:-1, 2:]) / 4; sub[_un] = av[_un]
-    if os.environ.get('FIT_FACEKIT') and not os.environ.get('FIT_FLAT_LID'):   # (15 Nov 2026, the shared face kit: the skin's own fine grain on the filled lid, tools/meshy/facekit/shut_lid.py)
+    if os.environ.get('FIT_FACEKIT') and not os.environ.get('FIT_FLAT_LID') and not os.environ.get('FIT_NOGRAIN'):   # (15 Nov 2026, the shared face kit: the skin's own fine grain on the filled lid, tools/meshy/facekit/shut_lid.py)
         _src = (_fix if _fix.sum() > 8 else (~hm & _sm))
         sub = _FK.grain(sub, _un & ~(~hm & _fix), _src & ~hm, tile=max(3, int(round(W_ / 512))), r=max(2, int(round(W_ / 512)) + 1))
     if OWN and not PART and top == 0 and not os.environ.get('FIT_FLAT_LID'):   # (not on a part-way lid: half took the open iris below its lid line as a grey smudge) (15 Nov 2026, the auditor's patch check: a grey-brown smudge at Sol's inner corners, the open eye's dark outline left just outside the lid (dark as his hair, so never traced): below the brows, dark or grey pixels beside the lid close too)

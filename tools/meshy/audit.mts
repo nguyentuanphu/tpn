@@ -451,7 +451,7 @@ gl_FragColor = vec4(code_ / 255.0, floor(dm_ / 256.0) / 255.0, mod(dm_, 256.0) /
         MB.value.set(0, 0, 0, 0); if (PLANT === 'mouth' && m === 'blink') { MB.value.set(mcx - ew * .27, my1 - ew * .62, mcx + ew * .27, my1 - ew * .22); }
         if (PLANT === 'stray' && m === 'lookL' && ew > 8) { const ny = (my1 + by1) / 2; MB.value.set(mcx - 4, ny - 4, mcx + 4, ny + 4); MC.value.set(.25, .12, .08); }   // (the stray plant: a dark dot on the nose in the glance, as Sol's mood mouth on his nostril)
         if (PLANT === 'lid' && m === 'blink') { MB.value.set(mx0 + ew * .05, my1 - 2, mx0 + ew * .3, my1 + 2); MC.value.copy(MCs.value).lerp(new THREE.Vector3(1, 1, 1), .45); }   // (the lid plant: a pale band under the first eye, as Sol's rim)
-        if (PLANT === 'vlid' && m === 'blink' && Math.abs(s) > 1) { let wx0 = W, wx1 = -1, wy = 0, wn = 0; for (let i = 0; i < N; i++) if (white[i]) { const x = i % W; wx0 = Math.min(wx0, x); wx1 = Math.max(wx1, x); wy += (i / W) | 0; wn++; } if (wn > 4) { const cx = (wx0 + wx1) / 2, cy = wy / wn; MB.value.set(cx - 1, cy - 2, cx + 2, cy + 8); MC.value.set(.12, .06, .05); } }   // (15 Nov 2026, the vlid plant: a short dark upright stroke on the shut eye from the side, as the regional villagers' lid line seen edge-on)
+        if (PLANT === 'vlid' && m === 'blink' && Math.abs(s) >= .7 && eyeZ) { let wx0 = W, wx1 = -1, wy0 = H, wy1 = -1; for (let i = 0; i < N; i++) if (eyeZ[i]) { const x = i % W, y = (i / W) | 0; wx0 = Math.min(wx0, x); wx1 = Math.max(wx1, x); wy0 = Math.min(wy0, y); wy1 = Math.max(wy1, y); } if (wx1 > wx0) { const cx = (wx0 + wx1) / 2, cy = (wy0 + wy1) / 2; MB.value.set(cx - 1, cy + 3, cx + 2, cy + 11); MC.value.set(.12, .06, .05); } }   // (15 Nov 2026, the vlid plant: a short dark upright stroke on the shut eye from the side, as the regional villagers' lid line seen edge-on)
         if (PLANT === 'patch' && m === 'blink' && ew > 8) { MB.value.set(mx1 - ew * .32, my1 + 3, mx1 - ew * .06, my1 + 3 + ew * .14); MC.value.copy(MCs.value).lerp(new THREE.Vector3(1, 1, 1), .22); }   // (the patch plant: a flat lighter block with hard edges over the second shut eye, as Sol's and Finn's lid patches)
         setMood(PLANT === 'eyes' ? 'smile' : m); const C = read(top, cam), f = new Uint8Array(N); let k = 0;
         if (['blink', 'half', 'happy', 'sad'].includes(m)) for (let i = 0; i < N; i++) { if (!grow[i]) continue; const [v, sa] = hsv(C, i); if (m !== 'half' && m !== 'sad' ? (v > .8 && sa < .18) : false) { f[i] = 1; k++; } }
@@ -588,7 +588,7 @@ gl_FragColor = vec4(code_ / 255.0, floor(dm_ / 256.0) / 255.0, mod(dm_, 256.0) /
            hair's edge) of 6 px or more that is upright (height 4 px or more and at least half its width) is a V or a tick:
            the regional villagers' lid drawn as a V at the near profile, Lumi's tick */
         let kv = 0; const fv = new Uint8Array(N);
-        if (eyeZ && ['blink', 'half', 'happy', 'excited'].includes(m) && Math.abs(s) > 1) {
+        if (eyeZ && ['blink', 'half', 'happy', 'excited'].includes(m) && Math.abs(s) >= .7) {
           const sv2: number[] = []; for (let i = 0; i < N; i++) if (ring16[i] && !eye8[i] && mine(i)) { const [v] = hsv(C, i); if (v > .35) sv2.push(v); } sv2.sort((a, b) => a - b); const skv2 = sv2[sv2.length >> 1] || 1;
           const dv = new Uint8Array(N); for (let i = 0; i < N - W * 10; i++) if (eyeZ[i] && mine(i) && Pb[i * 4 + 3] && !hairEdge(i) && hsv(C, i)[0] < skv2 - .3) dv[i] = 1;
           for (const g of groups(dv)) { if (g.length < 6) continue; let x0 = W, x1 = 0, y0 = H, y1 = 0; for (const j of g) { const x = j % W, y = (j / W) | 0; x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); }
@@ -601,7 +601,7 @@ gl_FragColor = vec4(code_ / 255.0, floor(dm_ / 256.0) / 255.0, mod(dm_, 256.0) /
             const th = g.length / Math.max(1, xs.length), t3 = Math.max(1, Math.floor(xs.length / 3));
             const sl = (a: number, b: number) => (ys[b] - ys[a]) / Math.max(1, xs[b] - xs[a]);
             const sL = sl(0, t3), sR = sl(xs.length - 1 - t3, xs.length - 1);
-            if (xs.length >= 3 && th <= 3 && Math.abs(sL) > 1.2 && Math.abs(sR) > 1.2 && sL * sR < 0) for (const j of g) { fv[j] = 1; kv++; } }
+            if ((xs.length >= 3 && th <= 3 && Math.abs(sL) > 1.2 && Math.abs(sR) > 1.2 && sL * sR < 0) || (gw <= 4 && gh >= 6)) for (const j of g) { fv[j] = 1; kv++; } }
           if (PLANT === 'vlid' && MB.value.z > MB.value.x) { const mb = MB.value.clone(); MB.value.set(0, 0, 0, 0); const Cn = read(top, cam); MB.value.copy(mb); let d = 0; for (let i = 0; i < N; i++) { if (fv[i] && hsv(Cn, i)[0] >= skv2 - .3) d++; else fv[i] = 0; } kv = d; }   // (the plant: only what it adds)
         }
         const r: any = { id, kind: 'face', pose: m, view: vn, kit: 0, poke: 0, hairtone: 0, skintone: 0, eyes: k, face: kf, mouth: km, lid: kl, stray: ks, patch: kp, vlid: kv, patchWhy: pwhy, mouthWhy: why.trim() };
