@@ -23,6 +23,48 @@ just before asking the owner. The approval gate is unchanged.
   FEEDBACK), lid specks, panda head seam, board cameras (the pet looks at the child in moving views), weak beg, scratch
   and dig poses.
 
+## Shut lids handed to the shared face kit (owner, 15 Nov 2026 AEDT, relayed by the Release chat)
+The owner decided one face-fixing kit for every model, built in the Release chat. This stream stopped work on shut and
+happy eyes. What is here, for whoever builds the kit:
+- **How the lids are made:** `tools/meshy/fit_animal.py` `face_pieces()`.
+  - Picture: per eye, a `lid_px` (128 default) square of the face's own picture, sampled by ray-casting along the eye
+    patch's normal. The painted eye is found by flood fill from its middle (texels unlike the median fur in a ring 1.5-2.1
+    eye radii out, `eye_odd`) and filled by neighbour averaging from the fur round it (`fill_near` keeps only fur like
+    the ring). `lash_dark`/`lash_spot` mark lash bits as eye too.
+  - Tone: `socket_lift` / `socket_both` (`socket_both_max`) / `socket_dark` bring the fill's tone to the rim, inside the
+    eye mask only. `lid_patch` adds a fur grain tiled mirrored over the fill.
+  - Lash line: drawn as a curve, "shut" and "joy" (happy).
+  - Piece: a grid (`lid_grid` 28) laid on the head over the eye, `lid_size` eye radii, `lid_lift` off the face, centred
+    on the painted eye with `lid_on_eye` (`lid_out` moves it outwards). Lit with the head's normals; `lid_fade` fades
+    the rim's vertex alpha, drawn blended (`js/modelkit.ts`).
+  - Shown by the shut/joy bones' scale; the game snaps them to 0 or 1 (`tickWorldModels`).
+- **Each pet's lid settings now:**
+  - calf: socket_lift 1, lid_size 2.1, lid_out .2, lash_dark .2, lash_spot .06, fill_near .25, lid_lift .004,
+    lid_fade .45, lid_on_eye.
+  - bunny: socket_lift 1, socket_both, lid_px 256.
+  - kitty: socket_lift 1, socket_both, socket_both_max 1.45, lash_dark .2, lash_spot .06, fill_near .25,
+    lid_lift .004, lid_fade .45, lid_on_eye, lid_size 2.3, lid_patch, lid_px 256.
+  - panda: fill_near .25, eye_grow .5, socket_dark .35, a pale lash (reads well).
+- **Tried and made worse (15 Nov):**
+  - bunny `lid_fade`: the eye's dark outline showed through.
+  - bunny `lid_patch` + `lash_dark` .3 + `lash_spot` + `lid_on_eye`: pink blush specks filled as lashes, lid off the
+    eye, stray 854.
+  - kitty `lid_size` 1.8 without `socket_both`: the eye white showed at the edges.
+  - earlier: `lid_lift` .002 and `lid_rim` (the eye poked through), `lid_wide`/`lid_up` (brown strips in the calf's
+    blaze), a bigger `socket_both` (the kitty's cream stripe went grey), `socket_lift` on the panda (its black patch went
+    white).
+- **Last numbers** (full audits of the r17 models, 15 Nov, the worst case; near / far model):
+
+  | Pet | lid (near / far) | stray (near / far) |
+  |---|---|---|
+  | calf | 511 / 488 | 269 / 375 |
+  | bunny | 141 / 114 | 149 / 1006 |
+  | kitty | 787 / 1344 | 0 / 0 |
+  | panda | 0 / 0 | 0 / 0 |
+
+  The second reviewer still saw discs with a rim on the calf, bunny and kitty, dark specks on the calf's and kitty's
+  lids, and the eye white along the lid edge (bunny, kitty).
+
 ## Approval gate (owner, 12 Nov 2026 evening AEDT, relayed by the Release chat 13 Nov)
 "Tất cả dân làng và thú đều đa số bị ở mặt, mắt, hốc mắt và mũi ... rất nhiều trường hợp hỏi approve trong khi có nhiều
 vấn đề ở mặt cổ và áo etc nên phải nghiêm túc xem sét ... và chỉ đưa bản tốt nhất". Do NOT ask the owner to approve a pet
