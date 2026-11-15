@@ -138,7 +138,11 @@ const result=await page.evaluate(async ([mode,baseline,debug,requireWidths])=>{
       // crease. An exact-RGB uniform-ring detector must not be sufficient.
       // The ring geometry defines the fault footprint, not the source lid's
       // alpha cutout (which can exclude precisely the socket fringe we plant).
-      const cv=document.createElement('canvas');cv.width=source.map.image.width;cv.height=source.map.image.height;const ctx=cv.getContext('2d');ctx.drawImage(source.map.image,0,0);const rgba=ctx.getImageData(0,0,cv.width,cv.height);for(let i=3;i<rgba.data.length;i+=4)rgba.data[i]=255;ctx.putImageData(rgba,0,0);
+      const full=document.createElement('canvas');full.width=source.map.image.width;full.height=source.map.image.height;const fc=full.getContext('2d');fc.drawImage(source.map.image,0,0);const pixels=fc.getImageData(0,0,full.width,full.height).data;
+      let patch=null;const tile=16;
+      for(let y=0;y+tile<full.height&&!patch;y+=4)for(let x=0;x+tile<full.width&&!patch;x+=4){let good=true;const colors=new Set();for(let v=0;v<tile&&good;v++)for(let u=0;u<tile;u++){const j=((y+v)*full.width+x+u)*4;if(pixels[j+3]<250||pixels[j]<140||pixels[j+1]<120||pixels[j+2]<90){good=false;break;}colors.add((pixels[j]<<16)|(pixels[j+1]<<8)|pixels[j+2]);}if(good&&colors.size>=16)patch={x,y};}
+      if(!patch)throw Error('Missing real opaque fur patch for textured rim plant');
+      const cv=document.createElement('canvas');cv.width=cv.height=tile;cv.getContext('2d').drawImage(full,patch.x,patch.y,tile,tile,0,0,tile,tile);
       const texture=new THREE.CanvasTexture(cv);texture.colorSpace=source.map.colorSpace;texture.flipY=source.map.flipY;
       fault.material.map=texture;fault.material.color.setRGB(.80,.78,.76);fault.material.needsUpdate=true;
      }
@@ -177,7 +181,7 @@ const result=await page.evaluate(async ([mode,baseline,debug,requireWidths])=>{
   scene.remove(obj);for(const mat of idCache.values())mat.dispose();
  }
  rt.dispose();return {cases,pics};
-},[mode,process.env.COW_FACE_BASELINE==='1',process.env.COW_FACE_DEBUG==='1',process.env.COW_FACE_REQUIRE_LASH_WIDTHS==='1']);
+},[mode,process.env.COW_FACE_BASELINE==='1',process.env.COW_FACE_DEBUG==='1',process.env.COW_FACE_BASELINE!=='1']);
 for(const [name,data] of Object.entries(result.pics))writeFileSync(out+'/'+name+'.png',Buffer.from(String(data).split(',')[1],'base64'));
 writeFileSync(out+'/cases.json',JSON.stringify(result.cases,null,2)+'\n');
 const keys=['lid','mouth','stray','rim','eyes','silhouette'],limit=k=>k==='eyes'?6:12,real=result.cases.filter(c=>c.plant==='none'),fail=real.filter(c=>c.coverageErrors.length||keys.some(k=>c[k]>limit(k)));

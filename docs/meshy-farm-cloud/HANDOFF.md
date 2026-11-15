@@ -213,3 +213,21 @@ Fetch/pull nhánh hiện có, remote vẫn de621628b; giữ nguyên mọi thay �
 **Kiểm nhanh76 chưa đạt: 1/18 ca rim13 vượt ngưỡng12 ở far cheer front**, các ca còn lại đạt (lid/mouth/eyes/silhouette0, stray worst5). Đã mở ảnh đánh dấu: cạnh sáng rất nhỏ ở góc trong mắt trắng, đang sửa màu chuyển tiếp; không tăng ngưỡng. Chưa chạy full/soát242ảnh/soi độc lập/phim/thiết bị cho76; không coi kết quả72 thay cho76. Báo cáo độc lập72 REJECT và danh sách242ảnh đã xem được lưu trong cow/wip-reviews/trial72/.
 
 CI43622973936 trên runtime de621628b đã kết thúc failure ở collect; đang đọc artifact chi tiết, không báo xanh. Không Meshy/API/credit mới; số dư xác nhận cuối vẫn1574 ngày13/11, sheep/chicken dừng. WIP push không phải owner approval, không ready for Release.
+
+### Đang sửa 15/11/2026 10:53 AEDT — chưa có R17 đủ cổng
+
+Thử77 full đạt120ca thân nhưng mặt chưa đạt:9ca stray,4ca rim (có ca trùng), chủ yếu profile/trên; quick không thay được full. Người soi độc lập mới Ramanujan xem44/44ảnh1024px của77, vẫn REJECT vùng mắt đọc thành miếng oval/rìa/lông bị kéo, nét hai mắt chưa hòa vào cùng chất liệu. Nhận xét miệng phẳng là về style kế thừa; các khuyết miệng thật đã sửa và xem lại. Chưa hỏi chủ.
+
+Đã phát hiện bộ nhận diện actual aperture mắt trắng chỉ ôm iris/viền đen, bỏ sót sclera. Thử78 thêm đúng sclera sáng trung tính nối với artwork (ảnh đánh dấu từ nguồn xác minh), giữ actual mask/H/depth/probe thật và mọi ngưỡng. Stray quick về0, nhưng kiểm vòng textured còn báo halo thật. Thử79 thử mặt mi nhắm theo đường cong lông quanh đầu và đưa eyeball xuống bằng hai bone retract sẵn, giữ20bone/10clip/mắt mở. Ảnh cho thấy đỡ plate nhưng còn khe nhỏ; nguyên nhân các đỉnh trùng UV bị lọc normal riêng, gây dịch khác nhau. Thử80 đang dựng: normal hàn theo điểm thật, safety depth lớn hơn, bỏ flood xuống má bằng bbox thật, nét mi nâu đen với highlight lông nhỏ để rõ trên mảng đen. Chưa kết luận đạt; cần full/selftest/242ảnh/soi độc lập/phim/thiết bị lại.
+
+Kiểm textured rim mới đã kiểm offline trên PNG thật (lật Y đúng, frame từ cases): phát hiện47/72góc nhắm của72 (lỗi halo từng lọt máy);0/12góc quick73 và0/12góc quick76. Đây chỉ là bằng chứng regression, không thay live selftest/control và soát hình cuối.
+
+CI43622973936 trên de621628b:365/377đạt,12lỗi; chi tiết lưu followUpRuns trong CI-RESULTS.json. Đã sửa ký hiệu checkmark trong log types R16 thành PASS (giữ nguyên kết quả lịch sử), lưu check-map/check-times từ artifact theo CLAUDE.md. Không gán mọi lỗi khác cho baseline; không sửa UI/xe/calf ngoài cow. Không Meshy/API/credit mới, sheep/chicken dừng; các file gốc/30k/9k và ảnh R16 vẫn giữ.
+
+### Checkpoint 15/11/2026 11:34 AEDT — WIP83, chưa duyệt
+
+Đã chuyển sang UV gốc cho mi cow (cow_uv_lids.py) để đối chiếu cả phần mắt vòng sang bên, thêm UV mask/RLE và bounds3D thật cho probe thay vì chỉ hình mặt trước; sửa đổi trục V giữa Blender/glTF đã kiểm. Bản81/83 còn lỗi ảnh, không phải R17. Thử82 texture3× vượt dung lượng nên không cài runtime; thử83 dùng2×, haiGLB771660/372556byte,37756/14948tam giác,20bone/10clip, GLB/alpha/dung lượng đạt. Quick83 **8/18ca lỗi**: lid worst35, rim82,1coverage8pixel; stray/eyes/silhouette/mouth0. Chưa full/selftest/242ảnh cuối; không hỏi approval.
+
+Ảnh nguyên cỡ83 còn mảng mi phẳng, nét răng cưa và viền mắt cũ lộ ởprofile; đang sửa tiếp. Rà atlas cho thấy nguồn donor có thể còn lấy nhầm sclera ấm làm lông vì mask cần khép hết opening theo từng islandUV; sẽ đối chiếu hullUV với artwork thật. Đã đo trọng số đầu quanh mắt: head+retract≈0,998–1,0, không phải lỗi pha neck/head như giả thuyết ban đầu. Đang sửa safety/retract theo vùng vật lý liên tục để tránh phụ thuộc seamUV và giữ pháp tuyến native ở mép. Không đổi ngưỡng máy soi.
+
+Các kiểm mới và shader còn phải chạy types/selftest/full cuối; chưa có phim/thiết bịR17. Sổ tiền/account ngoài repo không đụng tới. Không API/Meshy/credit mới, sheep/chicken dừng, không merge/deploy/version. PushWIP theo giờ không phải duyệt hình thức.

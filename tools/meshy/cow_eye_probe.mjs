@@ -1,13 +1,25 @@
 // Interpolate rest-world positions through geometry.color, independently of skinning.
 // Non-eye fragments remain opaque black so cheek/ear rays occlude the aperture.
-export function createCowEyeProbeMaterial(THREE,apertures){
- const mask=new THREE.MeshBasicMaterial({vertexColors:true,side:THREE.DoubleSide}),textures=[];
+export function createCowEyeProbeMaterial(THREE,apertures,bodyMap=null){
+ const mask=new THREE.MeshBasicMaterial({vertexColors:true,side:THREE.DoubleSide,map:bodyMap}),textures=[];
  mask.addEventListener('dispose',()=>textures.forEach(t=>t.dispose()));
- mask.customProgramCacheKey=()=> 'cow-real-aperture-ids-v1';
+ mask.customProgramCacheKey=()=> 'cow-real-aperture-ids-v2-'+apertures.some(a=>a.UV);
+ if(apertures.some(a=>a.UV)&&!bodyMap)throw Error('Source UV probe requires actual body map transform');
  mask.onBeforeCompile=sh=>{
   let declarations='',functions='';
   for(let eye=0;eye<2;eye++){
     const a=apertures[eye],count=a.H.length/2;
+    // Stored masks use Blender image rows; glTF reverses source UV V.
+    if(a.UV){
+     const [w,h]=a.UV,data=new Uint8Array(w*h*4);
+     for(let k=2;k<a.UV.length;k+=2)for(let j=a.UV[k];j<a.UV[k]+a.UV[k+1];j++){data[j*4]=255;data[j*4+3]=255;}
+     const texture=new THREE.DataTexture(data,w,h,THREE.RGBAFormat,THREE.UnsignedByteType);texture.magFilter=texture.minFilter=THREE.NearestFilter;texture.generateMipmaps=false;texture.needsUpdate=true;textures.push(texture);
+     sh.uniforms[`svE${eye}UV`]={value:texture};sh.uniforms[`svE${eye}Min`]={value:new THREE.Vector3(...a.B.slice(0,3))};sh.uniforms[`svE${eye}Max`]={value:new THREE.Vector3(...a.B.slice(3))};
+     declarations+=`uniform sampler2D svE${eye}UV;uniform vec3 svE${eye}Min,svE${eye}Max;\n`;
+     functions+=`bool svInside${eye}(vec3 p,vec2 uv){return all(greaterThanEqual(p,svE${eye}Min))&&all(lessThanEqual(p,svE${eye}Max))&&texture2D(svE${eye}UV,vec2(uv.x,1.-uv.y)).r>.5;}\n`;
+     continue;
+    }
+
     for(const key of ['C','S','U','N'])sh.uniforms[`svE${eye}${key}`]={value:new THREE.Vector3(...a[key])};
     sh.uniforms[`svE${eye}D`]={value:new THREE.Vector2(...a.D)};
     const size=a.M[0],data=new Uint8Array(size*size*4);
@@ -19,7 +31,7 @@ export function createCowEyeProbeMaterial(THREE,apertures){
     sh.uniforms[`svE${eye}Hull`]={value:Array.from({length:64},(_,j)=>new THREE.Vector2(...a.H.slice((j%count)*2,(j%count)*2+2)))};
     declarations+=`uniform vec3 svE${eye}C,svE${eye}S,svE${eye}U,svE${eye}N; uniform vec2 svE${eye}D; uniform float svE${eye}P; uniform sampler2D svE${eye}Mask;
       uniform int svE${eye}Count; uniform vec2 svE${eye}Hull[64];\n`;
-    functions+=`bool svInside${eye}(vec3 p){
+    functions+=`bool svInside${eye}(vec3 p,vec2 sourceUV){
       vec3 d=p-svE${eye}C;vec2 q=vec2(dot(d,svE${eye}S),dot(d,svE${eye}U));
       for(int k=0;k<64;k++){if(k>=svE${eye}Count)break;int j=k+1;if(j>=svE${eye}Count)j=0;
         vec2 a=svE${eye}Hull[k],b=svE${eye}Hull[j],edge=b-a;
@@ -30,7 +42,11 @@ export function createCowEyeProbeMaterial(THREE,apertures){
   }
   sh.fragmentShader=declarations+functions+sh.fragmentShader;
   sh.fragmentShader=sh.fragmentShader.replace('#include <color_fragment>',`#include <color_fragment>
-    diffuseColor.rgb=svInside0(vColor.xyz)?vec3(1.,0.,0.):svInside1(vColor.xyz)?vec3(0.,1.,0.):vec3(0.);`);
+    vec2 svSourceUV=vec2(0.);
+    #ifdef USE_MAP
+    svSourceUV=vMapUv;
+    #endif
+    diffuseColor.rgb=svInside0(vColor.xyz,svSourceUV)?vec3(1.,0.,0.):svInside1(vColor.xyz,svSourceUV)?vec3(0.,1.,0.):vec3(0.);`);
  };
  return mask;
 }
@@ -59,7 +75,7 @@ export function decodeCowEyeIds(pixels){
 export function readCowReferenceEyeIds(THREE,scene,body,restPositions,apertures,read,cam){
  const saved=[],temporary=[],oldColor=body.geometry.getAttribute('color');
  const black=new THREE.MeshBasicMaterial({color:0,side:THREE.DoubleSide});
- const probe=createCowEyeProbeMaterial(THREE,apertures);temporary.push(black,probe);
+ const probe=createCowEyeProbeMaterial(THREE,apertures,body.material.map);temporary.push(black,probe);
  const occluder=original=>{
   if(!((original.transparent&&original.map)||original.polygonOffset))return black;
   const mat=new THREE.MeshBasicMaterial({color:0,map:original.transparent?original.map:null,alphaMap:original.alphaMap,

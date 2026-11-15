@@ -701,8 +701,9 @@
     },
     {
       "path": "cow/review/types.txt",
-      "bytes": 709,
-      "sha256": "a0673cfedc87ce10401eaba528fbf947e42ec8dc00308713376a854d23bc57a3"
+      "bytes": 710,
+      "sha256": "4f763f2204c3a9fadc24515a9fc3d266fabd80839c4ba371d6fd231961318445"
     }
-  ]
+  ],
+  "historicalLogNormalization": "15 Nov 2026 AEDT: R16 types.txt checkmark changed to PASS for docs no-emoji check; recorded historical test result unchanged."
 }

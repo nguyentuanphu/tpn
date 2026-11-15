@@ -99,8 +99,8 @@
   ],
   "surface_lid_lift": 0.002,
   "lid_force_fill": 1.6,
-  "surface_lid_forward": 0.00005,
-  "eye_retract": 0.000001,
+  "surface_lid_forward": 0.00025,
+  "eye_retract": 0.02,
   "surface_eye_cover": [
     1.25,
     1.65
@@ -144,5 +144,7 @@
       1.075,
       0.012
     ]
-  ]
+  ],
+  "closed_eye_curvature": true,
+  "uv_fur_lids": true
 }

@@ -1,0 +1,709 @@
+{
+  "candidate": "r17-dev77 native-diagnostic (unapproved diagnostic candidate)",
+  "review_type": "independent blind second visual review",
+  "verdict": "REJECT",
+  "summary": "Expressions are readable and the textured/faceted cow style remains apparent, but localized eyelid/eye-area integration and colour inconsistency prevent visual approval; cheer mouth also has a flat applied-graphic appearance.",
+  "scope": {
+    "read_only_inputs": [
+      "/workspace/cow-fit/r17-dev77/native-diagnostic/*.png",
+      "/workspace/cow-fit/r17-dev77/native-diagnostic/views.json"
+    ],
+    "reference_images_used": [],
+    "implementation_code_docs_logs_history_tests_read": false,
+    "contact_sheets_or_resized_substitutes_used": false,
+    "original_pngs_inspected": 44,
+    "tiers": [
+      "near",
+      "far"
+    ],
+    "clips": [
+      "cheer",
+      "sleep"
+    ],
+    "angles_per_clip_per_tier": 11
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "severity": "blocking",
+      "category": "fur eyelids / eye silhouette",
+      "description": "Closed-eye crescents sit on conspicuous oval eye areas. On the white side, the oval has a pale rim and stretched, fan-like fur below/toward the nose; in profile it reads as an applied bulging plate rather than a naturally integrated furry eyelid. The black side also shows a circular/radial fur area around the crescent. This is a localized eye integration defect, not a rejection of general faceting.",
+      "files": [
+        "cow-near-cheer-left.png",
+        "cow-near-sleep-left.png",
+        "cow-near-sleep-above.png",
+        "cow-near-cheer-right.png",
+        "cow-far-sleep-left.png",
+        "cow-far-cheer-p07.png"
+      ]
+    },
+    {
+      "id": "F2",
+      "severity": "blocking",
+      "category": "eye colour / readability",
+      "description": "The crescent on white fur is solid black while the corresponding crescent on the black patch is muted tan/grey-brown. Both are visible, but the tan line reads as a different material or exposed strip, especially beside the dark furry brow. The pair is graphically legible yet visually inconsistent and insufficiently integrated with the fur.",
+      "files": [
+        "cow-near-cheer-front.png",
+        "cow-near-sleep-front.png",
+        "cow-far-cheer-front.png",
+        "cow-far-sleep-front.png",
+        "cow-near-sleep-p04.png"
+      ]
+    },
+    {
+      "id": "F3",
+      "severity": "secondary",
+      "category": "mouth / material integration",
+      "description": "Cheer mouth is a crisp dark burgundy oval with a bright flat pink tongue shape on the lower front of the muzzle. It communicates an open mouth, but looks like a flat graphic applied to the textured three-dimensional muzzle, with no convincing lip/depth transition. The texture and recessed nostrils make the mismatch especially visible. Sleep has no comparable conspicuous open-mouth graphic.",
+      "files": [
+        "cow-near-cheer-front.png",
+        "cow-near-cheer-below.png",
+        "cow-near-cheer-neck.png",
+        "cow-far-cheer-front.png",
+        "cow-far-cheer-below.png"
+      ]
+    },
+    {
+      "id": "F4",
+      "severity": "secondary",
+      "category": "patch boundary",
+      "description": "A pale grey/white rim is visible along the lower/inner black facial patch near the eye and muzzle junction. The broad black/white patch itself remains readable; the concern is the local rim/seam around the eye area, not the existence or overall shape of the patch.",
+      "files": [
+        "cow-near-cheer-above.png",
+        "cow-near-sleep-above.png",
+        "cow-near-cheer-p07.png",
+        "cow-near-sleep-p07.png"
+      ]
+    }
+  ],
+  "positive_observations": [
+    "Cheer upturned crescents and sleep downturned crescents are distinguishable in visible frontal/three-quarter views.",
+    "Head, horns, ears and muzzle retain a recognizable coherent cow silhouette.",
+    "Pink muzzle and ear interiors, cream/black fur, tan horns and brown/gold collar remain coherent; recessed nostrils read clearly.",
+    "General textured/faceted body and muzzle appearance is accepted as inherited style; no smoothing or replacement style is requested.",
+    "No definite background-through hole in visible head, muzzle, jaw or neck was identified in any inspected image. Dark nostrils and cheer mouth are intentional-looking facial features, not evidence of holes."
+  ],
+  "limitations": [
+    "Image-only judgement: apparent eye rims/plates describe visible appearance, not underlying construction.",
+    "Occluded face in back views and frame-cropped portions cannot establish hidden geometry integrity.",
+    "No reference comparison was necessary; no claim of historical change or implementation cause is made."
+  ],
+  "actual_inspected_list": [
+    {
+      "inspection_index": 1,
+      "filename": "cow-near-cheer-front.png",
+      "path": "/workspace/cow-fit/r17-dev77/native-diagnostic/cow-near-cheer-front.png",
+      "method": "view_image on original PNG",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "tier": "near",
+      "clip": "cheer",
+      "view": "front",
+      "observation": "Expression readable; black versus tan eye crescents and oval furry eye areas visible. Flat oval mouth/tongue graphic visible."
+    },
+    {
+      "inspection_index": 2,
+      "filename": "cow-near-cheer-p04.png",
+      "path": "/workspace/cow-fit/r17-dev77/native-diagnostic/cow-near-cheer-p04.png",
+      "method": "view_image on original PNG",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "tier": "near",
+      "clip": "cheer",
+      "view": "p04",
+      "observation": "Expression readable in three-quarter view; black-patch eye area/rim and tan crescent prominent. Flat oval mouth/tongue graphic visible."
+    },
+    {
+      "inspection_index": 3,
+      "filename": "cow-near-cheer-m04.png",
+      "path": "/workspace/cow-fit/r17-dev77/native-diagnostic/cow-near-cheer-m04.png",
+      "method": "view_image on original PNG",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "tier": "near",
+      "clip": "cheer",
+      "view": "m04",
+      "observation": "White-side eye crescent readable; pale oval eye area and contrasting patch-side crescent visible. Flat oval mouth/tongue graphic visible."
+    },
+    {
+      "inspection_index": 4,
+      "filename": "cow-near-cheer-p07.png",
+      "path": "/workspace/cow-fit/r17-dev77/native-diagnostic/cow-near-cheer-p07.png",
+      "method": "view_image on original PNG",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "tier": "near",
+      "clip": "cheer",
+      "view": "p07",
+      "observation": "Black-side oval eye area prominent; far eye naturally foreshortened/partly occluded. Flat oval mouth/tongue graphic visible."
+    },
+    {
+      "inspection_index": 5,
+      "filename": "cow-near-cheer-m07.png",
+      "path": "/workspace/cow-fit/r17-dev77/native-diagnostic/cow-near-cheer-m07.png",
+      "method": "view_image on original PNG",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "tier": "near",
+      "clip": "cheer",
+      "view": "m07",
+      "observation": "White-side eye area and stretched fur visible; far eye foreshortened at face edge. Flat oval mouth/tongue graphic visible."
+    },
+    {
+      "inspection_index": 6,
+      "filename": "cow-near-cheer-right.png",
+      "path": "/workspace/cow-fit/r17-dev77/native-diagnostic/cow-near-cheer-right.png",
+      "method": "view_image on original PNG",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "tier": "near",
+      "clip": "cheer",
+      "view": "right",
+      "observation": "Black-side eye area visible in profile; no definite head/neck through-hole."
+    },
+    {
+      "inspection_index": 7,
+      "filename": "cow-near-cheer-left.png",
+      "path": "/workspace/cow-fit/r17-dev77/native-diagnostic/cow-near-cheer-left.png",
+      "method": "view_image on original PNG",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "tier": "near",
+      "clip": "cheer",
+      "view": "left",
+      "observation": "White-side eye oval projects toward nose with conspicuous pale rim and stretched fur."
+    },
+    {
+      "inspection_index": 8,
+      "filename": "cow-near-cheer-above.png",
+      "path": "/workspace/cow-fit/r17-dev77/native-diagnostic/cow-near-cheer-above.png",
+      "method": "view_image on original PNG",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "tier": "near",
+      "clip": "cheer",
+      "view": "above",
+      "observation": "Both closed eyes readable; oval eye rims and pale lower/inner patch edge conspicuous."
+    },
+    {
+      "inspection_index": 9,
+      "filename": "cow-near-cheer-below.png",
+      "path": "/workspace/cow-fit/r17-dev77/native-diagnostic/cow-near-cheer-below.png",
+      "method": "view_image on original PNG",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "tier": "near",
+      "clip": "cheer",
+      "view": "below",
+      "observation": "Muzzle naturally obscures some eye area, especially cheer; underside of jaw/neck appears continuous. Flat oval mouth/tongue graphic visible."
+    },
+    {
+      "inspection_index": 10,
+      "filename": "cow-near-cheer-neck.png",
+      "path": "/workspace/cow-fit/r17-dev77/native-diagnostic/cow-near-cheer-neck.png",
+      "method": "view_image on original PNG",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "tier": "near",
+      "clip": "cheer",
+      "view": "neck",
+      "observation": "Jaw/neck continuity visible; eye area remains visible at oblique angle. Flat oval mouth/tongue graphic visible."
+    },
+    {
+      "inspection_index": 11,
+      "filename": "cow-near-cheer-back.png",
+      "path": "/workspace/cow-fit/r17-dev77/native-diagnostic/cow-near-cheer-back.png",
+      "method": "view_image on original PNG",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "tier": "near",
+      "clip": "cheer",
+      "view": "back",
+      "observation": "Face occluded by head as expected; rear head, ears and neck appear continuous; no definite through-hole."
+    },
+    {
+      "inspection_index": 12,
+      "filename": "cow-near-sleep-front.png",
+      "path": "/workspace/cow-fit/r17-dev77/native-diagnostic/cow-near-sleep-front.png",
+      "method": "view_image on original PNG",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "tier": "near",
+      "clip": "sleep",
+      "view": "front",
+      "observation": "Expression readable; black versus tan eye crescents and oval furry eye areas visible."
+    },
+    {
+      "inspection_index": 13,
+      "filename": "cow-near-sleep-p04.png",
+      "path": "/workspace/cow-fit/r17-dev77/native-diagnostic/cow-near-sleep-p04.png",
+      "method": "view_image on original PNG",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "tier": "near",
+      "clip": "sleep",
+      "view": "p04",
+      "observation": "Expression readable in three-quarter view; black-patch eye area/rim and tan crescent prominent."
+    },
+    {
+      "inspection_index": 14,
+      "filename": "cow-near-sleep-m04.png",
+      "path": "/workspace/cow-fit/r17-dev77/native-diagnostic/cow-near-sleep-m04.png",
+      "method": "view_image on original PNG",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "tier": "near",
+      "clip": "sleep",
+      "view": "m04",
+      "observation": "White-side eye crescent readable; pale oval eye area and contrasting patch-side crescent visible."
+    },
+    {
+      "inspection_index": 15,
+      "filename": "cow-near-sleep-p07.png",
+      "path": "/workspace/cow-fit/r17-dev77/native-diagnostic/cow-near-sleep-p07.png",
+      "method": "view_image on original PNG",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "tier": "near",
+      "clip": "sleep",
+      "view": "p07",
+      "observation": "Black-side oval eye area prominent; far eye naturally foreshortened/partly occluded."
+    },
+    {
+      "inspection_index": 16,
+      "filename": "cow-near-sleep-m07.png",
+      "path": "/workspace/cow-fit/r17-dev77/native-diagnostic/cow-near-sleep-m07.png",
+      "method": "view_image on original PNG",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "tier": "near",
+      "clip": "sleep",
+      "view": "m07",
+      "observation": "White-side eye area and stretched fur visible; far eye foreshortened at face edge."
+    },
+    {
+      "inspection_index": 17,
+      "filename": "cow-near-sleep-right.png",
+      "path": "/workspace/cow-fit/r17-dev77/native-diagnostic/cow-near-sleep-right.png",
+      "method": "view_image on original PNG",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "tier": "near",
+      "clip": "sleep",
+      "view": "right",
+      "observation": "Black-side eye area visible in profile; no definite head/neck through-hole."
+    },
+    {
+      "inspection_index": 18,
+      "filename": "cow-near-sleep-left.png",
+      "path": "/workspace/cow-fit/r17-dev77/native-diagnostic/cow-near-sleep-left.png",
+      "method": "view_image on original PNG",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "tier": "near",
+      "clip": "sleep",
+      "view": "left",
+      "observation": "White-side eye oval projects toward nose with conspicuous pale rim and stretched fur."
+    },
+    {
+      "inspection_index": 19,
+      "filename": "cow-near-sleep-above.png",
+      "path": "/workspace/cow-fit/r17-dev77/native-diagnostic/cow-near-sleep-above.png",
+      "method": "view_image on original PNG",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "tier": "near",
+      "clip": "sleep",
+      "view": "above",
+      "observation": "Both closed eyes readable; oval eye rims and pale lower/inner patch edge conspicuous."
+    },
+    {
+      "inspection_index": 20,
+      "filename": "cow-near-sleep-below.png",
+      "path": "/workspace/cow-fit/r17-dev77/native-diagnostic/cow-near-sleep-below.png",
+      "method": "view_image on original PNG",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "tier": "near",
+      "clip": "sleep",
+      "view": "below",
+      "observation": "Muzzle naturally obscures some eye area, especially cheer; underside of jaw/neck appears continuous."
+    },
+    {
+      "inspection_index": 21,
+      "filename": "cow-near-sleep-neck.png",
+      "path": "/workspace/cow-fit/r17-dev77/native-diagnostic/cow-near-sleep-neck.png",
+      "method": "view_image on original PNG",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "tier": "near",
+      "clip": "sleep",
+      "view": "neck",
+      "observation": "Jaw/neck continuity visible; eye area remains visible at oblique angle."
+    },
+    {
+      "inspection_index": 22,
+      "filename": "cow-near-sleep-back.png",
+      "path": "/workspace/cow-fit/r17-dev77/native-diagnostic/cow-near-sleep-back.png",
+      "method": "view_image on original PNG",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "tier": "near",
+      "clip": "sleep",
+      "view": "back",
+      "observation": "Face occluded by head as expected; rear head, ears and neck appear continuous; no definite through-hole."
+    },
+    {
+      "inspection_index": 23,
+      "filename": "cow-far-cheer-front.png",
+      "path": "/workspace/cow-fit/r17-dev77/native-diagnostic/cow-far-cheer-front.png",
+      "method": "view_image on original PNG",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "tier": "far",
+      "clip": "cheer",
+      "view": "front",
+      "observation": "Expression readable; black versus tan eye crescents and oval furry eye areas visible. Flat oval mouth/tongue graphic visible. Coarser general faceting retained as style, not counted as a defect."
+    },
+    {
+      "inspection_index": 24,
+      "filename": "cow-far-cheer-p04.png",
+      "path": "/workspace/cow-fit/r17-dev77/native-diagnostic/cow-far-cheer-p04.png",
+      "method": "view_image on original PNG",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "tier": "far",
+      "clip": "cheer",
+      "view": "p04",
+      "observation": "Expression readable in three-quarter view; black-patch eye area/rim and tan crescent prominent. Flat oval mouth/tongue graphic visible. Coarser general faceting retained as style, not counted as a defect."
+    },
+    {
+      "inspection_index": 25,
+      "filename": "cow-far-cheer-m04.png",
+      "path": "/workspace/cow-fit/r17-dev77/native-diagnostic/cow-far-cheer-m04.png",
+      "method": "view_image on original PNG",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "tier": "far",
+      "clip": "cheer",
+      "view": "m04",
+      "observation": "White-side eye crescent readable; pale oval eye area and contrasting patch-side crescent visible. Flat oval mouth/tongue graphic visible. Coarser general faceting retained as style, not counted as a defect."
+    },
+    {
+      "inspection_index": 26,
+      "filename": "cow-far-cheer-p07.png",
+      "path": "/workspace/cow-fit/r17-dev77/native-diagnostic/cow-far-cheer-p07.png",
+      "method": "view_image on original PNG",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "tier": "far",
+      "clip": "cheer",
+      "view": "p07",
+      "observation": "Black-side oval eye area prominent; far eye naturally foreshortened/partly occluded. Flat oval mouth/tongue graphic visible. Coarser general faceting retained as style, not counted as a defect."
+    },
+    {
+      "inspection_index": 27,
+      "filename": "cow-far-cheer-m07.png",
+      "path": "/workspace/cow-fit/r17-dev77/native-diagnostic/cow-far-cheer-m07.png",
+      "method": "view_image on original PNG",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "tier": "far",
+      "clip": "cheer",
+      "view": "m07",
+      "observation": "White-side eye area and stretched fur visible; far eye foreshortened at face edge. Flat oval mouth/tongue graphic visible. Coarser general faceting retained as style, not counted as a defect."
+    },
+    {
+      "inspection_index": 28,
+      "filename": "cow-far-cheer-right.png",
+      "path": "/workspace/cow-fit/r17-dev77/native-diagnostic/cow-far-cheer-right.png",
+      "method": "view_image on original PNG",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "tier": "far",
+      "clip": "cheer",
+      "view": "right",
+      "observation": "Black-side eye area visible in profile; no definite head/neck through-hole. Coarser general faceting retained as style, not counted as a defect."
+    },
+    {
+      "inspection_index": 29,
+      "filename": "cow-far-cheer-left.png",
+      "path": "/workspace/cow-fit/r17-dev77/native-diagnostic/cow-far-cheer-left.png",
+      "method": "view_image on original PNG",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "tier": "far",
+      "clip": "cheer",
+      "view": "left",
+      "observation": "White-side eye oval projects toward nose with conspicuous pale rim and stretched fur. Coarser general faceting retained as style, not counted as a defect."
+    },
+    {
+      "inspection_index": 30,
+      "filename": "cow-far-cheer-above.png",
+      "path": "/workspace/cow-fit/r17-dev77/native-diagnostic/cow-far-cheer-above.png",
+      "method": "view_image on original PNG",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "tier": "far",
+      "clip": "cheer",
+      "view": "above",
+      "observation": "Both closed eyes readable; oval eye rims and pale lower/inner patch edge conspicuous. Coarser general faceting retained as style, not counted as a defect."
+    },
+    {
+      "inspection_index": 31,
+      "filename": "cow-far-cheer-below.png",
+      "path": "/workspace/cow-fit/r17-dev77/native-diagnostic/cow-far-cheer-below.png",
+      "method": "view_image on original PNG",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "tier": "far",
+      "clip": "cheer",
+      "view": "below",
+      "observation": "Muzzle naturally obscures some eye area, especially cheer; underside of jaw/neck appears continuous. Flat oval mouth/tongue graphic visible. Coarser general faceting retained as style, not counted as a defect."
+    },
+    {
+      "inspection_index": 32,
+      "filename": "cow-far-cheer-neck.png",
+      "path": "/workspace/cow-fit/r17-dev77/native-diagnostic/cow-far-cheer-neck.png",
+      "method": "view_image on original PNG",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "tier": "far",
+      "clip": "cheer",
+      "view": "neck",
+      "observation": "Jaw/neck continuity visible; eye area remains visible at oblique angle. Flat oval mouth/tongue graphic visible. Coarser general faceting retained as style, not counted as a defect."
+    },
+    {
+      "inspection_index": 33,
+      "filename": "cow-far-cheer-back.png",
+      "path": "/workspace/cow-fit/r17-dev77/native-diagnostic/cow-far-cheer-back.png",
+      "method": "view_image on original PNG",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "tier": "far",
+      "clip": "cheer",
+      "view": "back",
+      "observation": "Face occluded by head as expected; rear head, ears and neck appear continuous; no definite through-hole. Coarser general faceting retained as style, not counted as a defect."
+    },
+    {
+      "inspection_index": 34,
+      "filename": "cow-far-sleep-front.png",
+      "path": "/workspace/cow-fit/r17-dev77/native-diagnostic/cow-far-sleep-front.png",
+      "method": "view_image on original PNG",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "tier": "far",
+      "clip": "sleep",
+      "view": "front",
+      "observation": "Expression readable; black versus tan eye crescents and oval furry eye areas visible. Coarser general faceting retained as style, not counted as a defect."
+    },
+    {
+      "inspection_index": 35,
+      "filename": "cow-far-sleep-p04.png",
+      "path": "/workspace/cow-fit/r17-dev77/native-diagnostic/cow-far-sleep-p04.png",
+      "method": "view_image on original PNG",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "tier": "far",
+      "clip": "sleep",
+      "view": "p04",
+      "observation": "Expression readable in three-quarter view; black-patch eye area/rim and tan crescent prominent. Coarser general faceting retained as style, not counted as a defect."
+    },
+    {
+      "inspection_index": 36,
+      "filename": "cow-far-sleep-m04.png",
+      "path": "/workspace/cow-fit/r17-dev77/native-diagnostic/cow-far-sleep-m04.png",
+      "method": "view_image on original PNG",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "tier": "far",
+      "clip": "sleep",
+      "view": "m04",
+      "observation": "White-side eye crescent readable; pale oval eye area and contrasting patch-side crescent visible. Coarser general faceting retained as style, not counted as a defect."
+    },
+    {
+      "inspection_index": 37,
+      "filename": "cow-far-sleep-p07.png",
+      "path": "/workspace/cow-fit/r17-dev77/native-diagnostic/cow-far-sleep-p07.png",
+      "method": "view_image on original PNG",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "tier": "far",
+      "clip": "sleep",
+      "view": "p07",
+      "observation": "Black-side oval eye area prominent; far eye naturally foreshortened/partly occluded. Coarser general faceting retained as style, not counted as a defect."
+    },
+    {
+      "inspection_index": 38,
+      "filename": "cow-far-sleep-m07.png",
+      "path": "/workspace/cow-fit/r17-dev77/native-diagnostic/cow-far-sleep-m07.png",
+      "method": "view_image on original PNG",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "tier": "far",
+      "clip": "sleep",
+      "view": "m07",
+      "observation": "White-side eye area and stretched fur visible; far eye foreshortened at face edge. Coarser general faceting retained as style, not counted as a defect."
+    },
+    {
+      "inspection_index": 39,
+      "filename": "cow-far-sleep-right.png",
+      "path": "/workspace/cow-fit/r17-dev77/native-diagnostic/cow-far-sleep-right.png",
+      "method": "view_image on original PNG",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "tier": "far",
+      "clip": "sleep",
+      "view": "right",
+      "observation": "Black-side eye area visible in profile; no definite head/neck through-hole. Coarser general faceting retained as style, not counted as a defect."
+    },
+    {
+      "inspection_index": 40,
+      "filename": "cow-far-sleep-left.png",
+      "path": "/workspace/cow-fit/r17-dev77/native-diagnostic/cow-far-sleep-left.png",
+      "method": "view_image on original PNG",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "tier": "far",
+      "clip": "sleep",
+      "view": "left",
+      "observation": "White-side eye oval projects toward nose with conspicuous pale rim and stretched fur. Coarser general faceting retained as style, not counted as a defect."
+    },
+    {
+      "inspection_index": 41,
+      "filename": "cow-far-sleep-above.png",
+      "path": "/workspace/cow-fit/r17-dev77/native-diagnostic/cow-far-sleep-above.png",
+      "method": "view_image on original PNG",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "tier": "far",
+      "clip": "sleep",
+      "view": "above",
+      "observation": "Both closed eyes readable; oval eye rims and pale lower/inner patch edge conspicuous. Coarser general faceting retained as style, not counted as a defect."
+    },
+    {
+      "inspection_index": 42,
+      "filename": "cow-far-sleep-below.png",
+      "path": "/workspace/cow-fit/r17-dev77/native-diagnostic/cow-far-sleep-below.png",
+      "method": "view_image on original PNG",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "tier": "far",
+      "clip": "sleep",
+      "view": "below",
+      "observation": "Muzzle naturally obscures some eye area, especially cheer; underside of jaw/neck appears continuous. Coarser general faceting retained as style, not counted as a defect."
+    },
+    {
+      "inspection_index": 43,
+      "filename": "cow-far-sleep-neck.png",
+      "path": "/workspace/cow-fit/r17-dev77/native-diagnostic/cow-far-sleep-neck.png",
+      "method": "view_image on original PNG",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "tier": "far",
+      "clip": "sleep",
+      "view": "neck",
+      "observation": "Jaw/neck continuity visible; eye area remains visible at oblique angle. Coarser general faceting retained as style, not counted as a defect."
+    },
+    {
+      "inspection_index": 44,
+      "filename": "cow-far-sleep-back.png",
+      "path": "/workspace/cow-fit/r17-dev77/native-diagnostic/cow-far-sleep-back.png",
+      "method": "view_image on original PNG",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "tier": "far",
+      "clip": "sleep",
+      "view": "back",
+      "observation": "Face occluded by head as expected; rear head, ears and neck appear continuous; no definite through-hole. Coarser general faceting retained as style, not counted as a defect."
+    }
+  ]
+}

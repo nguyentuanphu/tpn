@@ -272,7 +272,7 @@ const res: any = await P.page.evaluate(async ([kinds, MODE, LIMIT, EYE_PROBES]) 
             if (eyeMask) {
               const materials: any[] = [], oldColor = body.geometry.getAttribute('color');
               const black = new THREE.MeshBasicMaterial({color: 0, side: THREE.DoubleSide});
-              const mask = APERTURES ? createCowEyeProbeMaterial(THREE,APERTURES) : new THREE.MeshBasicMaterial({vertexColors: true, side: THREE.DoubleSide});
+              const mask = APERTURES ? createCowEyeProbeMaterial(THREE,APERTURES,body.material.map) : new THREE.MeshBasicMaterial({vertexColors: true, side: THREE.DoubleSide});
               // Interpolate reference positions, then test the oval per fragment.
               // Boolean vertex colours spill the probe across coarse face triangles.
               if(!APERTURES){

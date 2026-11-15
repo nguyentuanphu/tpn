@@ -6,6 +6,6 @@ warning: exhaustive rename detection was skipped due to too many files.
 warning: you may want to set your diff.renameLimit variable to at least 53705 and retry the command.
 only: types
 1 checks: group 1 1 (~1 min)
-[1] ✅ types (35s) 360 explicit files type-checked; detector/outbox/family-backup modules additionally strict-checked; 108 TypeScript files of the server, Studio and
+[1] PASS types (35s) 360 explicit files type-checked; detector/outbox/family-backup modules additionally strict-checked; 108 TypeScript files of the server, Studio and
 
 1/1 checks passed in 1 min (1 at a time)
