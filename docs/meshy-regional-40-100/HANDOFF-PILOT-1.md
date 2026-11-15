@@ -3,6 +3,66 @@
 Branch `meshy-regional-cloud` (never `main`, no deploy, no version bump, draft pull requests only). Written 12 Nov 2026,
 about 16:30 AEDT, when the owner stopped this chat so that another Claude account takes over.
 
+## Tiếp quản trên cloud (15 Nov 2026 AEDT)
+
+The owner moved this stream to a cloud session on 15 Nov so the PC stays light. The PC chat stopped after gate w; no
+round runs on the PC any more.
+
+**Open faults (gate w, not clean, no approval question asked):**
+- V lid at the near profile (r057, r084, r045): open fault, not a known limit. Options and costs are in FINDINGS,
+  "Open fault: the shut lid drawn as a V". Ask the owner only at a clean gate, with full-size pictures.
+- r050: the dark dome round shut eyes, the lid piece's own fill (with `HIDE=face` the body is clean), so a fit change.
+- r064: the skin wedge over the hair at the side (smaller since gate w).
+- r045: the broken ^ seen from above .5 and y1.2.
+- r057: the half lid reads angry from below; the sad lid reads stern from some views.
+- r074, r084: a ghost smile beside the "o".
+- lookL and lookR barely differ; r084's far eye shows two pupils in the look moods at -.7.
+- Faint rims by the far eye; Meshy geometry (ears, forehead shards) for the owner's list.
+
+**Next round (gate x):**
+1. r050's lid fill: try it in `face_moods_preview.py` (`ALPHA=blink`, `ALPHA=happy`), then refit r050.
+2. r064's wedge and r045's ^.
+3. Then gate x for all six: audit, 1024 px shots, own look at full size, second-reviewer subagents, and the owner's
+   old faults (the review gate above).
+
+**Commands on Linux:**
+- Raw Meshy files: the private repo `nguyentuanphu/tpnsv`, release `raw-models`, with `fetch.sh`, into
+  `$SV_MESHY_ROOT/raw-models`.
+- The fit's villager references: `$SV_MESHY_ROOT/work-v108/villager-<ref>-hd.glb` (refs in the table under "Next
+  steps as written 12 Nov"). Check that the release has them; if not, ask Release for them.
+- Environment:
+  `export SV_MESHY_ROOT=/work/meshy SV_BLENDER=/opt/blender-4.2/blender PY_PICS=python3`
+  (Blender 4.2 LTS for Linux; Python 3 with Pillow, numpy and scipy; `pwsh` for the `.ps1` tools;
+  `cd tests && npm ci && npx playwright install chromium`).
+- Fit (two at a time at most):
+  `FIT_SAVE_F=$SV_MESHY_ROOT/fitted/<id>/F.png pwsh -File tools/meshy/fit_person.ps1 -Id <id> -Villager -NoLimbTint -LidMatch -FaceUV 2 -PieceSnap .001 -MouthFind -LookSolid -LidSoft -PieceSink -LidHair -MouthSoft -LidLocal -VTile 256 -EyeSkin -LidClip -SnapCap .006 -SadTilt .15 <own flags> -Ref $SV_MESHY_ROOT/work-v108/villager-<ref>-hd.glb`
+  Own flags:
+  - r045: `-EyeDespike`
+  - r050: `-SadTall`
+  - r057: `-EyeDark -EyeDespike -SadBot .42`
+  - r064: `-SadTall`, and `-SnapCap .003` in place of `.006`
+  - r074: `-EyeDark -SkinSMax .65 -EyeDespike -SadBot .42`
+  - r084: `-SkinSMax .65 -EyeDespike -SadBot .42`
+- Copy the fit into the game: copy `$SV_MESHY_ROOT/fitted/<id>/<id>-mid-packed.glb` to `models/villager-<id>.glb`.
+  Use `tools/meshy/patch_eye_ovals.py` only for a model fitted before the eye extras existed.
+- Build: `node tools/build.mts <repo>`. On Windows the lower-case drive letter skips the slow catalogue export.
+- Server: `tools/meshy/serve.mjs` is not on this branch. It is on `meshy-production-20261107` (2d3f803c1, 14 lines).
+  Run `git show 2d3f803c1:tools/meshy/serve.mjs > /tmp/serve.mjs && node /tmp/serve.mjs <repo> 8794`, with
+  `SV_URL=http://127.0.0.1:8794/`.
+- Audit: `cd tests && node ../tools/meshy/audit_villager.mts <out> r045@vn-schoolgirl,r050@vn-grandma,r057@vn-dad,r064@au-mum,r074@au-grandma,r084@au-boy`.
+- Shots:
+  `SHOT_GATE=1 SHOT_SIZE=1024 SHOT_DIST=.45 SHOT_UP=.06 node ../tools/meshy/game_shots.mts <out> village <id@role>`
+  (one at a time).
+  - `SHOT_ONLY=blink,happy,...` limits the moods; the above and below views are included.
+  - `HIDE=face` hides the mood pieces, to tell paint from pieces.
+
+**Only on the PC:**
+- The gate folders with the pictures from gates i to w: `D:\WorkSpace\meshy\fitted\regional-gate-2026111*`.
+- The fitted `.blend` and `F.png` files under `D:\WorkSpace\meshy\fitted\<id>`. A refit on the cloud makes them again.
+- The journal `D:\WorkSpace\meshy\meshy-jobs-cloud.sqlite3`. Never commit it; no paid call is planned.
+- The Windows Python `D:\WorkSpace\meshy\tools\pyenv`.
+- The models, tools, FINDINGS, this handoff and SKILL.md are all on the branch.
+
 ## Where it stands (15 Nov 2026, about 09:00 AEDT)
 
 - Gate w (`D:\WorkSpace\meshyittedegional-gate-20261115w`, 672f41ddd): auditor eyes 0, lid 4, stray 11. Second
