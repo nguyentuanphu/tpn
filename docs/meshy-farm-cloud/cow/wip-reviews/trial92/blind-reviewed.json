@@ -1,0 +1,208 @@
+{
+  "candidate": "r17-dev92",
+  "review_type": "Independent image-only WIP diagnostic",
+  "verdict": "CÒN LỖI",
+  "final_gate": false,
+  "inspected_count": 11,
+  "actual_inspected_list": [
+    "cow-near-cheer-front.png",
+    "cow-near-cheer-p04.png",
+    "cow-near-cheer-m04.png",
+    "cow-near-cheer-p07.png",
+    "cow-near-cheer-m07.png",
+    "cow-near-cheer-right.png",
+    "cow-near-cheer-left.png",
+    "cow-near-cheer-above.png",
+    "cow-near-cheer-below.png",
+    "cow-near-cheer-neck.png",
+    "cow-near-cheer-back.png"
+  ],
+  "scope": "Chỉ đọc 11 PNG trong native-diagnostic; không đọc views.json/code/log/docs/lịch sử sửa hay báo cáo cũ. Không browser/Blender, không thay model/code. Không dùng ảnh ghép/ảnh resize thay bản gốc.",
+  "coordinate_convention": "Tọa độ x,y ước lượng trên ảnh gốc 1024x1024, gốc ở góc trên trái; không phải phép đo hình học.",
+  "findings": [
+    {
+      "id": "E1",
+      "description": "Nét nhắm mắt đen trên mảng lông đen thiếu tương phản. Nét trên lông trắng rõ hơn nhiều; biểu cảm hai bên không đọc cân bằng.",
+      "evidence": [
+        "cow-near-cheer-front.png",
+        "cow-near-cheer-p04.png",
+        "cow-near-cheer-p07.png",
+        "cow-near-cheer-right.png",
+        "cow-near-cheer-neck.png"
+      ]
+    },
+    {
+      "id": "E2",
+      "description": "Vùng bầu dục nhạt dưới nét mắt bên lông trắng và lông kéo hướng về mũi tạo cảm giác mí tách khỏi lông mặt.",
+      "evidence": [
+        "cow-near-cheer-front.png",
+        "cow-near-cheer-m04.png",
+        "cow-near-cheer-m07.png",
+        "cow-near-cheer-left.png",
+        "cow-near-cheer-above.png"
+      ]
+    },
+    {
+      "id": "E3",
+      "description": "Miệng oval đỏ sẫm/lưỡi hồng có mặt màu phẳng và cạnh sắc, thiếu chuyển tiếp độ sâu với mõm có texture. Miệng vẫn đọc được là mở.",
+      "evidence": [
+        "cow-near-cheer-front.png",
+        "cow-near-cheer-below.png",
+        "cow-near-cheer-neck.png"
+      ]
+    },
+    {
+      "id": "E4",
+      "description": "Đường sáng/xám trắng mảnh tại mép trong/dưới mảng mặt đen, rõ nhất góc above. Đây là nhận xét ngoại quan về viền; ảnh không xác định nguyên nhân.",
+      "evidence": [
+        "cow-near-cheer-above.png",
+        "cow-near-cheer-p04.png",
+        "cow-near-cheer-neck.png"
+      ]
+    }
+  ],
+  "accepted": [
+    "Mặt/mõm nhận ra là bò; màu cream/đen/hồng và texture/faceting chung được giữ làm phong cách, không bị chấm lỗi chỉ vì có facet.",
+    "Không thấy lỗ xuyên nền rõ ở đầu/hàm/cổ trong 11 ảnh; không suy diễn vùng bị khuất là kín.",
+    "Mắt xa bị khuất theo góc nhìn và mặt không thấy ở back là giới hạn quan sát, không tự coi là lỗi."
+  ],
+  "limitations": [
+    "Chỉ near-cheer, không có kết luận sleep/far hay animation từ bộ này.",
+    "Không so sánh lịch sử phiên bản hoặc suy luận implementation.",
+    "Đây là kết quả chẩn đoán WIP, không phải cổng duyệt cuối."
+  ],
+  "images": [
+    {
+      "filename": "cow-near-cheer-front.png",
+      "path": "/workspace/cow-fit/r17-dev92/native-diagnostic/cow-near-cheer-front.png",
+      "actually_viewed": true,
+      "method": "view_image, original native 1024x1024 PNG",
+      "face": "Mặt và dáng đầu đọc rõ, mõm hồng có texture và hai lỗ mũi lõm.",
+      "closed_eyes": "Mắt phía trái ảnh rõ; mắt phía phải ảnh trên mảng đen rất tối, khó đọc. Dưới nét mắt trắng có vùng bầu dục nhạt, lông đổi hướng.",
+      "face_boundary": "Đường bao đầu liền; mép trong/dưới mảng đen có đường sáng mảnh.",
+      "mouth": "Miệng oval đỏ sẫm và lưỡi hồng có cạnh quá sắc, trông phẳng trên mõm.",
+      "location": "Mắt trắng khoảng x380–450,y455–520; mắt đen x570–645,y455–505; miệng x455–530,y675–715.",
+      "decision": "CÒN LỖI"
+    },
+    {
+      "filename": "cow-near-cheer-p04.png",
+      "path": "/workspace/cow-fit/r17-dev92/native-diagnostic/cow-near-cheer-p04.png",
+      "actually_viewed": true,
+      "method": "view_image, original native 1024x1024 PNG",
+      "face": "Mặt ba phần tư đọc rõ, không thấy vỡ dáng đầu.",
+      "closed_eyes": "Mắt trên mảng đen phía phải ảnh có nét tối chìm vào lông; mắt trắng phía trái ảnh bị thu ngắn hợp góc nhìn nhưng vẫn đọc được.",
+      "face_boundary": "Viền sáng mảnh dọc mép trong mảng đen, cạnh sống mũi.",
+      "mouth": "Miệng có mặt màu phẳng, thiếu chuyển tiếp môi/độ sâu.",
+      "location": "Mắt đen khoảng x540–635,y450–495; viền mảng đen x515–545,y470–525; miệng x385–450,y670–715.",
+      "decision": "CÒN LỖI"
+    },
+    {
+      "filename": "cow-near-cheer-m04.png",
+      "path": "/workspace/cow-fit/r17-dev92/native-diagnostic/cow-near-cheer-m04.png",
+      "actually_viewed": true,
+      "method": "view_image, original native 1024x1024 PNG",
+      "face": "Mặt và mõm liên tục, biểu cảm vui có thể nhận ra.",
+      "closed_eyes": "Mắt trắng rõ nhưng nằm trên vùng bầu dục nhạt có vân lông chạy khác hướng. Mắt đen nhỏ và thiếu tương phản.",
+      "face_boundary": "Không thấy lỗ; mép mảng đen sát sống mũi hơi sáng.",
+      "mouth": "Miệng như đồ họa oval dán lên mặt mõm.",
+      "location": "Mắt trắng x390–480,y455–525; mắt đen x595–635,y455–495; miệng x535–600,y675–715.",
+      "decision": "CÒN LỖI"
+    },
+    {
+      "filename": "cow-near-cheer-p07.png",
+      "path": "/workspace/cow-fit/r17-dev92/native-diagnostic/cow-near-cheer-p07.png",
+      "actually_viewed": true,
+      "method": "view_image, original native 1024x1024 PNG",
+      "face": "Đầu nhìn nghiêng ba phần tư liền khối; mắt xa phần lớn khuất là phù hợp góc nhìn.",
+      "closed_eyes": "Nét nhắm mắt trên mảng đen khó tách khỏi nền lông; nhìn được khi chú ý nhưng yếu.",
+      "face_boundary": "Mép trong mảng đen phía sống mũi có gờ/đường sáng mảnh; không thấy xuyên nền.",
+      "mouth": "Miệng vẫn là mảng phẳng rõ cạnh ở đầu mõm.",
+      "location": "Mắt gần x515–615,y450–495; mép mảng x485–505,y470–530; miệng x345–405,y670–710.",
+      "decision": "CÒN LỖI"
+    },
+    {
+      "filename": "cow-near-cheer-m07.png",
+      "path": "/workspace/cow-fit/r17-dev92/native-diagnostic/cow-near-cheer-m07.png",
+      "actually_viewed": true,
+      "method": "view_image, original native 1024x1024 PNG",
+      "face": "Mặt trắng chiếm chính, dáng đầu/mõm rõ.",
+      "closed_eyes": "Mắt trắng có nét nhắm rõ nhưng vùng ngay dưới là bầu dục nhạt và lông xoáy/kéo hướng. Mắt xa bị che gần hết.",
+      "face_boundary": "Đường bao má/hàm liền, không thấy lỗ.",
+      "mouth": "Miệng oval/lưỡi vẫn phẳng.",
+      "location": "Mắt trắng x410–510,y455–525; miệng x590–650,y675–715.",
+      "decision": "CÒN LỖI"
+    },
+    {
+      "filename": "cow-near-cheer-right.png",
+      "path": "/workspace/cow-fit/r17-dev92/native-diagnostic/cow-near-cheer-right.png",
+      "actually_viewed": true,
+      "method": "view_image, original native 1024x1024 PNG",
+      "face": "Profile bên mảng đen, đầu–hàm–cổ liên tục.",
+      "closed_eyes": "Nét mắt đen mảnh, rất ít tương phản; vùng lông quanh mắt khá tối.",
+      "face_boundary": "Ranh đen/trắng dưới mắt có chuyển tiếp sáng; không thấy lỗ hay đứt silhouette.",
+      "mouth": "Miệng phía trước mõm bị che bởi góc profile, không đủ thấy để kết luận ở ảnh này.",
+      "location": "Mắt x430–505,y450–490; mép mảng dưới mắt khoảng x415–700,y535–640.",
+      "decision": "CÒN LỖI"
+    },
+    {
+      "filename": "cow-near-cheer-left.png",
+      "path": "/workspace/cow-fit/r17-dev92/native-diagnostic/cow-near-cheer-left.png",
+      "actually_viewed": true,
+      "method": "view_image, original native 1024x1024 PNG",
+      "face": "Profile bên trắng, mặt/mõm không có lỗ rõ.",
+      "closed_eyes": "Mắt đọc được; ngay dưới nét mắt có vùng hình lá/bầu dục nhạt, vân lông bị kéo về sống mũi, tạo cảm giác mí gắn riêng.",
+      "face_boundary": "Bao má và hàm liền; mảng đen cạnh tai không gây mất dáng đầu.",
+      "mouth": "Miệng không thấy ở góc profile, không chấm sạch phần bị khuất.",
+      "location": "Mắt và vùng mí khoảng x520–610,y450–540, sát sống mũi phía phải ảnh.",
+      "decision": "CÒN LỖI"
+    },
+    {
+      "filename": "cow-near-cheer-above.png",
+      "path": "/workspace/cow-fit/r17-dev92/native-diagnostic/cow-near-cheer-above.png",
+      "actually_viewed": true,
+      "method": "view_image, original native 1024x1024 PNG",
+      "face": "Mặt nhìn từ trên vẫn đọc rõ; mũi che một phần phía dưới mặt.",
+      "closed_eyes": "Nét mắt bên trắng rõ, bên đen tối và yếu; dưới mắt trắng thấy dải bầu dục nhạt/vân lông kéo.",
+      "face_boundary": "Viền xám trắng mảnh lộ ở chân mảng đen phía phải ảnh, sát trên mõm.",
+      "mouth": "Miệng chỉ còn lát mỏng đỏ sẫm ở mép dưới mõm; góc này không đủ đánh giá độ sâu.",
+      "location": "Mí trắng x375–455,y480–565; mắt đen x570–650,y480–540; viền dưới mảng đen x550–655,y555–600; miệng x460–525,y745–765.",
+      "decision": "CÒN LỖI"
+    },
+    {
+      "filename": "cow-near-cheer-below.png",
+      "path": "/workspace/cow-fit/r17-dev92/native-diagnostic/cow-near-cheer-below.png",
+      "actually_viewed": true,
+      "method": "view_image, original native 1024x1024 PNG",
+      "face": "Mặt dưới hàm và cổ liền; mõm che bớt vùng mắt theo góc nhìn.",
+      "closed_eyes": "Mắt trắng thấy cung đen; mắt trên mảng đen khó đọc, một phần do tương phản và mõm che.",
+      "face_boundary": "Không thấy lỗ xuyên nền ở hàm/cổ hoặc đường bao mặt.",
+      "mouth": "Miệng/lưỡi phẳng, cạnh sắc và thiếu tiếp giáp môi so với mõm có texture.",
+      "location": "Mắt x380–450,y440–480 và x560–640,y440–485; miệng x455–530,y565–615.",
+      "decision": "CÒN LỖI"
+    },
+    {
+      "filename": "cow-near-cheer-neck.png",
+      "path": "/workspace/cow-fit/r17-dev92/native-diagnostic/cow-near-cheer-neck.png",
+      "actually_viewed": true,
+      "method": "view_image, original native 1024x1024 PNG",
+      "face": "Góc chếch thấp cho thấy đầu/hàm/cổ liên tục, không thấy lỗ rõ.",
+      "closed_eyes": "Mắt gần trên mảng đen có nét rất tối, yếu; mắt xa chỉ còn đoạn nhỏ do khuất.",
+      "face_boundary": "Có đường sáng mảnh ở mép trong mảng đen cạnh sống mũi; bao hàm liền.",
+      "mouth": "Miệng đỏ/lưỡi hồng trông như đồ họa phẳng trên mõm.",
+      "location": "Mắt gần x505–605,y240–280; mép mảng x480–505,y255–305; miệng x340–405,y435–480.",
+      "decision": "CÒN LỖI"
+    },
+    {
+      "filename": "cow-near-cheer-back.png",
+      "path": "/workspace/cow-fit/r17-dev92/native-diagnostic/cow-near-cheer-back.png",
+      "actually_viewed": true,
+      "method": "view_image, original native 1024x1024 PNG",
+      "face": "Chỉ thấy gáy, tai, sừng và cổ; không thể chấm mặt trước.",
+      "closed_eyes": "Mắt bị che hoàn toàn, không đánh giá.",
+      "face_boundary": "Đường bao gáy/tai/cổ liền ở phần thấy được; không thấy lỗ xuyên nền rõ.",
+      "mouth": "Miệng bị che hoàn toàn, không đánh giá.",
+      "location": "Gáy giữa ảnh, mép tai hai bên và vùng cổ ngay trên vòng cổ.",
+      "decision": "SẠCH Ở PHẦN NHÌN THẤY; MẶT KHÔNG ĐÁNH GIÁ ĐƯỢC"
+    }
+  ]
+}

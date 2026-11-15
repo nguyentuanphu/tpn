@@ -1,14 +1,16 @@
-Trạng thái tiếp quản 15/11/2026 12:34 AEDT: **WIP chưa đạt, chủ chưa duyệt cow.**
+Trạng thái tiếp quản 15/11/2026 22:07 AEDT: **WIP98 chưa đạt, chủ chưa duyệt cow.**
 
-Nhánh hiện có meshy-farm-cloud, không reset/tạo lại/merge main. Worktree /workspace/tpn-farm; /workspace/tpn là worktree khác có thay đổi của chủ, không đụng. Fetch/pull nhánh trước khi sửa. Đọc các checkpoint cuối HANDOFF.md trước phần R16 lịch sử bên dưới.
+Nhánh meshy-farm-cloud hiện có; /workspace/tpn-farm là worktree làm việc, /workspace/tpn có thay đổi của chủ, không đụng. Fetch/pull, không reset/tạo lại nhánh/merge main. Cloud phiên trước lỗi executor; file sửa dở còn nguyên và đã tiếp tục.
 
-Runtime đang là thử87 (795140/390708byte), quick11/18ca lỗi; không phải R17. Thử88–91 chưa xuất được do ray lấy mặt/guard, không cài. Đang chuyển đóng mi sang UVbody thật (cow_uv_lids.py), UVmask nguồn3D+nativefurmask (cow_eye_probe.mjs), da nhắm theo native head curvature và nét opaque riêng để không plate/không lặp texture. Cần sửa ray-band của mặt native, kiểm ảnh xám/chụp thật; đừng chỉ làm số máy0. Body/mouth đã có các sửa trước nhưng phải kiểm full lại vì hình học mắt mới.
+Runtime98: gần809092/xa404636byte,44002/20244tam giác,20bone/10clip, GLB/alpha/dung lượng đạt. Quick mặt FAIL12/18ca (lid152,stray680,rim344,eyes73,silhouette142 worst và coverage thiếu). Đang xem /workspace/cow-fit/r17-dev98/native-diagnostic/ và clay-diagnostic/. Chưa R17 hoàn chỉnh. Không dùng PASS72 hoặc body77 làm kết quả cho98.
 
-Chỉ cow; không gọi Meshy/API, không chi thêm.40credit đã chi, balance1574 là lịch sử GET13/11, không báo là vừa xác nhận. SQLite/key/account ngoài repo tuyệt đối không commit/upload/in; sheep/chicken dừng.
+Sửa trong fit_animal.py: nối hình học mi theo native head curvature bằng giải bending với biên đầu thật; native_grid_lids dùng một lưới phía trước thay các thành nhãn cầu gấp, nét mi opaque và ảnh lông chia sẻ shut/joy. UVsource thực của artwork vẫn là probe độc lập (cow_uv_lids.py/cow_eye_probe.mjs). Chưa sạch: cần xem ảnh, xử lý mắt cũ lộ/viền/alpha/khớp đầu, không tăng ngưỡng để qua. Thử95–97 vượt budget không cài. Types+emoji2/2 lúc13:01 trước thay đổi Python/JSON mới; cần các kiểm cuối phù hợp.
 
-Chưa đủ cổng chủ: full120thân+198mặt/selftest6thân+12mặt, types,242ảnh1024tựxem cỡ thật+người soi độc lập không biết sửa gì+xem lại ảnh chủ; sạch mới phimnear/far phát thật và3thiết bị/tắt mũi tên vàng, đưaảnh/phim trực tiếp rồi popup duyệt. Không coi yêu cầu push là approval. Commit/push nhánh mỗi giờ được cho phép, ghi WIP chưa duyệt.
+Cổng cuối: full120thân+198mặt, selftest6thân+12mặt, types;242ảnhnative1024tựxem và người soi mù thứ hai, mọi lỗi chủ khoanh. Sạch mới phimnear/far phát1×tớiended, ảnh ba thiết bị và mũi tên vàng tắt. Đưa ảnh/phim trực tiếp rồi popup duyệt. Người soi92 REJECT11/11ảnh, báo cáo cow/wip-reviews/trial92/; chưa phải soát cuối.
 
-CI43622973936 trên de621628b:365/377,12lỗi; chi tiết CI-RESULTS.json. Emoji log của nhánh đã đổi thành PASS và checklocal đạt; không gán mọi lỗi khác baseline. Chưa có CI xanh, không ready forRelease.
+Chỉcow, sheep/chicken dừng; không gọi Meshy/API/chi thêm.40credit lịch sử,1574 là số dư GET13/11, không phải vừa xác nhận. Key/SQLite/account ngoài repo không in/commit/upload. Không main/deploy/version/force-push. Commit/push WIP nhánh mỗi giờ đã được chủ cho phép, không coi là approval.
+
+CI43622973936 trên de621628b:365/377,12lỗi, CI-RESULTS.json có chi tiết. Không báo CI xanh hoặc gán mọi lỗi baseline; chưa ready for Release.
 
 ---
 Nội dung chuyển tiếp cũ dưới đây là lịch sử R16, không phải tình trạng runtime hiện nay:

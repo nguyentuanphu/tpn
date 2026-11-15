@@ -131,8 +131,8 @@
   "jpeg_near": 75,
   "jpeg_far": 75,
   "eye_subdivide": true,
-  "lid_px": 432,
-  "lid_px_far": 320,
+  "lid_px": 288,
+  "lid_px_far": 176,
   "eye_inward_shift": [
     [
       -0.085,
@@ -148,5 +148,6 @@
   "closed_eye_curvature": true,
   "uv_fur_lids": true,
   "closed_native_surface": true,
-  "mesh_lash": true
+  "mesh_lash": true,
+  "native_grid_lids": true
 }
