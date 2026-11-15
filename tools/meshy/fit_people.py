@@ -1384,6 +1384,9 @@ if TEX and KEEP and SHIFT:
             if _eb[_k + 1] < 0: _eb[_k + 1] = 0.
             elif _eb[_k] > 0: _eb[_k] = 0.
         for m_ in (clothm, skinm): m_['eye_boxes'] = [float(x) for x in _eb[:8]]
+        # (15 Nov 2026, the shared face kit) the face picture's box, so the game can draw the shut piece's own picture on the
+        # body under it (js/friend-model.ts, uShutMap): the same front projection as the pieces' uv (x, z here; x, y there)
+        for m_ in (clothm, skinm): m_['face_box'] = [float(fx0), float(fx1), float(fz0), float(fz1)]
         # (auditor 10 Nov 2026: Clara's far eye, three-quarters, kept its open lashes while shut) the eye's own triangles,
         # dark lashes and iris, were not marked skin, so the game never painted them over: every non-hair head triangle in
         # an eye area is marked skin now (open eyes keep their paint: the game's per-texel test keeps dark lines)

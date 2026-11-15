@@ -4,12 +4,12 @@
 #   powershell -File tools/meshy/dress_own.ps1 -Id clara
 # In:  D:\WorkSpace\meshy\fitted\<id>-swim\<id>-swim-{hd,light}.blend (fit_person.ps1 -Id <id>-swim)
 # Out: D:\WorkSpace\meshy\fitted\<id>-own\<id>-dressed-{light,hd}-packed.glb (models/<id>.glb, <id>-hd.glb once approved)
-param([string]$Id, [int]$LightTex = 400, [string]$LightBody = '.6')
+param([string]$Id, [int]$LightTex = 400, [string]$LightBody = '.6', [string]$Swim = '', [string]$Out = '')   # (-Swim, -Out: other folders, 15 Nov 2026: the shared face kit's trials)
 $ErrorActionPreference = 'Stop'
 $B = 'C:\Users\nguye\tools\blender-4.2.23-windows-x64\blender.exe'; $npx = 'C:\Program Files\nodejs\node_modules\npm\bin\npx-cli.js'
 $repo = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent; Set-Location $repo
 function Run($script, $argList) { $ErrorActionPreference = 'Continue'; $out = & $B -b -P $script -- @argList 2>&1 | Out-String; if ($LASTEXITCODE -ne 0 -or $out -match 'Traceback|rror: |EXCEPTION_') { throw "$script failed: $($out.Substring([Math]::Max(0,$out.Length-800)))" }; return $out }
-$s = "D:\WorkSpace\meshy\fitted\$Id-swim"; $g = "D:\WorkSpace\meshy\fitted\$Id-own"; New-Item -ItemType Directory -Force $g | Out-Null
+$s = if ($Swim) { $Swim } else { "D:\WorkSpace\meshy\fitted\$Id-swim" }; $g = if ($Out) { $Out } else { "D:\WorkSpace\meshy\fitted\$Id-own" }; New-Item -ItemType Directory -Force $g | Out-Null
 # the light model's pictures at most $LightTex px (500 KB limit), and its body thinned below the neck
 $null = Run 'tools\meshy\tex_max.py' @("$s\$Id-swim-light.blend", "$g\$Id-own-light.blend", "$LightTex")
 $env:CL_OWN_BRAIDS = '1'

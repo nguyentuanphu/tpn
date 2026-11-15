@@ -15,7 +15,7 @@ const { chromium } = createRequire(new URL('../../tests/package.json', import.me
 import { writeFileSync, mkdirSync, readdirSync, readFileSync, copyFileSync, existsSync } from 'node:fs';
 const [OUT, LIST = 'finn,sol,clara,lumi', QUICK = ''] = process.argv.slice(2);
 mkdirSync(OUT, { recursive: true });
-const LIMIT = { kit: 12, poke: 25, hairtone: 30, skintone: 30, eyes: 6, fold: 400, hole: 10, bite: 10, rag: 15, tear: 8, glow: 40, far: 40, face: 20, grip: 6, mouth: 12, lid: 8, stray: 12, patch: 16 };   // (11 Nov 2026: glow, far and face in pixels; grip in cm from the nearer hand)   // (fold: the inside of a top or trousers looks like the outside, same colour and light: only a large inside-out patch shows)   // pixels in a 360 x 480 picture
+const LIMIT = { kit: 12, poke: 25, hairtone: 30, skintone: 30, eyes: 6, fold: 400, hole: 10, bite: 10, rag: 15, tear: 8, glow: 40, far: 40, face: 20, grip: 6, mouth: 12, lid: 8, stray: 12, patch: 16, vlid: 6 };   // (11 Nov 2026: glow, far and face in pixels; grip in cm from the nearer hand)   // (fold: the inside of a top or trousers looks like the outside, same colour and light: only a large inside-out patch shows)   // pixels in a 360 x 480 picture
 // (10 Nov 2026, owner: "chạy và sửa quá chậm") 'merge': the friends audited side by side, one process each, into
 // <out>/part-<id> (tools/meshy/make_character.ps1); this joins their cases and pictures into one summary
 function summarize(cs: any[]) { const keys = Object.keys(LIMIT), fail = cs.filter(c => keys.some(k => c[k] > LIMIT[k]));
@@ -82,6 +82,7 @@ gl_FragColor = vec4(code_ / 255.0, floor(dm_ / 256.0) / 255.0, mod(dm_, 256.0) /
   const TOK = String(QUICK).split(','), PLANT = TOK[0].startsWith('selftest:') ? TOK[0].slice(9) : '';
   let PLANT_KNEE = .3;   // (the bite plant: a band round the knee of the body and the trousers not drawn)
   const ONLY = String(QUICK).startsWith('poses:') ? String(QUICK).slice(6).split(',') : null;
+  const KITVIEWS = String(QUICK).includes('kitviews');   // (15 Nov 2026, the shared face kit: the face pass also from ±.4, above and below)
   const ALLPICS = (!!ONLY && ONLY.includes('pics')) || !!PLANT;   // ('poses:sit,pics': the pictures and layers of every case, faults or not, to look at one by eye)   // ('poses:sit,jump': just those, for a quick look at one fault)
   const poses = PLANT ? POSES.filter(p => ['rest', 'cheer'].includes(p[0])) : ONLY ? POSES.filter(p => ONLY.includes(p[0])) : QUICK ? POSES.filter(p => ['rest', 'walk', 'cheer'].includes(p[0])) : POSES;
   /* (11 Nov 2026, what the auditor did not check yet) passes besides the high-detail model in day light:
@@ -338,7 +339,7 @@ gl_FragColor = vec4(code_ / 255.0, floor(dm_ / 256.0) / 255.0, mod(dm_, 256.0) /
   // (pale, colourless pixels where the open eye's white was) may be left. The open eye's whites are found in the smile.
   const solo = new THREE.Scene();
   const head = (M: any) => { let hb: any = null; M.obj.traverse((o: any) => { if (o.isBone && o.name === 'head') hb = o; }); return hb; };
-  for (const id of ((PLANT && PLANT !== 'eyes' && PLANT !== 'face' && PLANT !== 'mouth' && PLANT !== 'lid' && PLANT !== 'stray' && PLANT !== 'patch') || MODS.length ? [] : LIST.split(','))) {   // (not in the light, evening, night and item passes alone)
+  for (const id of ((PLANT && PLANT !== 'eyes' && PLANT !== 'face' && PLANT !== 'mouth' && PLANT !== 'lid' && PLANT !== 'stray' && PLANT !== 'patch' && PLANT !== 'vlid') || MODS.length ? [] : LIST.split(','))) {   // (not in the light, evening, night and item passes alone)
     const av: any = A.buildAvatar({ set: LOOK[id] || 'girl', friend: id, skin: '#f6c7a5' }, null, { hd: true }); A.showHD(av, true);
     top.add(av.root); av.root.position.set(h.pos.x + 3, h.av.root.position.y, h.pos.z + 3); av.root.rotation.y = 0; A.animate(av, 'idle', 1); av.life.seed = 0; av.life.t = 1; A.animate(av, 'idle', 1, 0); av.root.updateMatrixWorld(true);   // (15 Nov, friends session: Sol's blink 203 px then 54 px on two runs: the idle pose turns the head by a random seed each run; a fixed seed and time give every run the same pose)
     const M = av.modelHD, hb = head(M); if (!hb) { top.remove(av.root); continue; }
@@ -355,13 +356,13 @@ gl_FragColor = vec4(code_ / 255.0, floor(dm_ / 256.0) / 255.0, mod(dm_, 256.0) /
       m.onBeforeCompile = (sh: any, r: any) => { if (prev) prev.call(m, sh, r); sh.uniforms.uPush = PUSH; sh.uniforms.uMB = MB; sh.uniforms.uMC = MC; sh.fragmentShader = 'uniform vec4 uMB;\nuniform vec3 uMC;\n' + sh.fragmentShader.replace('#include <dithering_fragment>', '#include <dithering_fragment>\nif (uMB.z > uMB.x && gl_FragCoord.x > uMB.x && gl_FragCoord.x < uMB.z && gl_FragCoord.y > uMB.y && gl_FragCoord.y < uMB.w) gl_FragColor.rgb = uMC;'); sh.vertexShader = 'uniform float uPush;\n' + sh.vertexShader.replace('#include <project_vertex>', '#include <project_vertex>\nmvPosition.xyz += normalize(mvPosition.xyz) * uPush; gl_Position = projectionMatrix * mvPosition;'); };
       m.customProgramCacheKey = () => (key ? key.call(m) : '') + '-push'; m.needsUpdate = true; });
     // (13 Nov 2026) the lid plant's band must show over the blink piece too: drawn only on the head, the piece covered it and 21 px showed
-    if (PLANT === 'lid' || PLANT === 'patch') M.obj.traverse((o: any) => { if (!o.isMesh || !/^face-/.test(o.material.name || '')) return; const m = o.material, prev = m.onBeforeCompile, key = m.customProgramCacheKey;
+    if (PLANT === 'lid' || PLANT === 'patch' || PLANT === 'vlid') M.obj.traverse((o: any) => { if (!o.isMesh || !/^face-/.test(o.material.name || '')) return; const m = o.material, prev = m.onBeforeCompile, key = m.customProgramCacheKey;
       m.onBeforeCompile = (sh: any, r: any) => { if (prev) prev.call(m, sh, r); sh.uniforms.uMB = MB; sh.uniforms.uMC = MC; sh.fragmentShader = 'uniform vec4 uMB;\nuniform vec3 uMC;\n' + sh.fragmentShader.replace('#include <dithering_fragment>', '#include <dithering_fragment>\nif (uMB.z > uMB.x && gl_FragCoord.x > uMB.x && gl_FragCoord.x < uMB.z && gl_FragCoord.y > uMB.y && gl_FragCoord.y < uMB.w) gl_FragColor = vec4(uMC, 1.0);'); };
       m.customProgramCacheKey = () => (key ? key.call(m) : '') + '-lidplant'; m.needsUpdate = true; });
     let MW: any = null, MHW = 0, MUP = 0, MDN = 0;   // ('mouth': the front view's mouth in 3D, and its box about it in pixels)
-    for (const s of [0, .7, -.7, 1.2, -1.2]) {
+    for (const [s, pt] of (KITVIEWS ? [[0, 0], [.4, 0], [-.4, 0], [.7, 0], [-.7, 0], [1.2, 0], [-1.2, 0], [0, .45], [0, -.35]] : [[0, 0], [.7, 0], [-.7, 0], [1.2, 0], [-1.2, 0]])) { const F0 = s === 0 && pt === 0, vn = pt ? (pt > 0 ? 'up' : 'down') : String(s);   // (15 Nov 2026, the shared face kit: 'kitviews' adds ±.4 and from above and below; F0 is the straight front view)
       MB.value.set(0, 0, 0, 0);   // (15 Nov: a plant left on from the last view's mood was read into this view's pictures)
-      const cam = new THREE.PerspectiveCamera(28, W / H, .05, 100), dir = new THREE.Vector3(Math.sin(s), 0, Math.cos(s));
+      const cam = new THREE.PerspectiveCamera(28, W / H, .05, 100), dir = new THREE.Vector3(Math.sin(s) * Math.cos(pt), Math.sin(pt), Math.cos(s) * Math.cos(pt));
       cam.position.copy(at).addScaledVector(dir, Hh * .75); cam.lookAt(at); cam.updateMatrixWorld(true);
       setTime(.42, cam.position);   // (15 Nov: the light at a fixed time of day, as the body passes: with poses:face alone the game's own clock lit the face, and three runs of one Sol model differed at three-quarters, 205, 207 and 223 px)
       // (only on the face: under the face pieces, never the sky, a name label or the clouds)
@@ -416,19 +417,19 @@ gl_FragColor = vec4(code_ / 255.0, floor(dm_ / 256.0) / 255.0, mod(dm_, 256.0) /
          front, the box's height comes from the face's own shape: down the face's middle column from under the eyes, the nose
          tip is the nearest point and the chin is where the head ends or steps back 2 cm; the mouth lies from a quarter of
          the way from the nose tip to the chin down to just above the chin */
-      if (s === 0 && ew > 8) { const xc = Math.round(mcx); let nz = -1, nd = 1e9;
+      if (F0 && ew > 8) { const xc = Math.round(mcx); let nz = -1, nd = 1e9;
         for (let y = my1 - 2; y > my1 - ew * 1.2 && y > 0; y--) { const j = y * W + xc; if (!Pb[j * 4 + 3]) break; const d = dep(Pb, j); if (d < nd) { nd = d; nz = y; } }
         if (nz > 0) { let cz = -1, prev = nd; for (let y = nz - 1; y > 0; y--) { const j = y * W + xc; if (!Pb[j * 4 + 3] || dep(Pb, j) > prev + .02) { cz = y + 1; break; } prev = dep(Pb, j); }
           if (cz > 0 && nz - cz > 6) { by1 = nz - (nz - cz) * .25; by0 = cz + (nz - cz) * .04; } } }
       /* (13 Nov 2026, Sol rebuilt, three-quarters: only the near eye's white is seen, so a box under the eyes' span lay on
          that eye's blush) away from the front, the box is where the front view's mouth lies in 3D, projected into this view */
-      if (s !== 0 && MW) { const p = MW.clone().project(cam), px = (p.x + 1) / 2 * W, py = (p.y + 1) / 2 * H; bx0 = px - MHW; bx1 = px + MHW; by0 = py - MDN; by1 = py + MUP; }
+      if (!F0 && MW) { const p = MW.clone().project(cam), px = (p.x + 1) / 2 * W, py = (p.y + 1) / 2 * H; bx0 = px - MHW; bx1 = px + MHW; by0 = py - MDN; by1 = py + MUP; }
       const mbox = (i: number) => { const x = i % W, y = (i / W) | 0; return bx1 > bx0 && x >= bx0 && x <= bx1 && y > by0 && y < by1; };
       const pk = (px: Uint8Array, i: number) => (px[i * 4 + 2] - px[i * 4 + 1]) / Math.max(1, px[i * 4]), vv = (px: Uint8Array, i: number) => Math.max(px[i * 4], px[i * 4 + 1], px[i * 4 + 2]) / 255;
       let skPk = 0, skV = 0, skRd = 0, dF = 9;   // (13 Nov, Lumi: her short face put the box's foot below the chin, on the dark green hair behind it, taken as her mouth: only the face's own surface counts, no more than 2.5 cm behind the box's median depth; in the front view only, which places the mouth: turned, the face's depth runs across the box and this cut Sol's mouth in two)
       const rd = (px: Uint8Array, i: number) => (px[i * 4] - px[i * 4 + 1]) / Math.max(1, px[i * 4]);   // (second run: Sol's lips are only redder than his skin, green .34 of red against .47)
       const lips = (px: Uint8Array) => { const L = new Uint8Array(N); let n = 0; if (bx1 <= bx0) return { L, n };
-        for (let i = 0; i < N; i++) { if (!mbox(i) || !mine(i) || (s === 0 && (!Pb[i * 4 + 3] || dep(Pb, i) > dF + .025))) continue; if (pk(px, i) > skPk + .09 || vv(px, i) < skV - .2 || rd(px, i) > skRd + .08) { L[i] = 1; n++; } } return { L, n }; };
+        for (let i = 0; i < N; i++) { if (!mbox(i) || !mine(i) || (F0 && (!Pb[i * 4 + 3] || dep(Pb, i) > dF + .025))) continue; if (pk(px, i) > skPk + .09 || vv(px, i) < skV - .2 || rd(px, i) > skRd + .08) { L[i] = 1; n++; } } return { L, n }; };
       const near = (L: Uint8Array, i: number, d: number) => { const x = i % W, y = (i / W) | 0; for (let dy = -d; dy <= d; dy++) for (let dx = -d; dx <= d; dx++) { const xx = x + dx, yy = y + dy; if (xx >= 0 && yy >= 0 && xx < W && yy < H && L[yy * W + xx]) return true; } return false; };
       const groups = (L: Uint8Array) => { const seen = new Uint8Array(N), out: number[][] = [], st: number[] = [];
         for (let i = 0; i < N; i++) { if (!L[i] || seen[i]) continue; const g: number[] = []; st.push(i); seen[i] = 1;
@@ -436,20 +437,21 @@ gl_FragColor = vec4(code_ / 255.0, floor(dm_ / 256.0) / 255.0, mod(dm_, 256.0) /
           out.push(g); } return out.sort((a, b) => b.length - a.length); };
       setMood('smile'); const C0 = mouthOn ? read(top, cam) : null;
       if (C0) { { const ds: number[] = []; for (let i = 0; i < N; i++) if (mbox(i) && Pb[i * 4 + 3]) ds.push(dep(Pb, i)); ds.sort((a, b) => a - b); dF = ds[ds.length >> 1] ?? 9; }
-        const ps: number[] = [], vs: number[] = [], rs: number[] = []; for (let i = 0; i < N; i++) if (mbox(i) && mine(i) && (s !== 0 || (Pb[i * 4 + 3] && dep(Pb, i) <= dF + .025))) { ps.push(pk(C0, i)); vs.push(vv(C0, i)); rs.push(rd(C0, i)); } const md = (a: number[]) => a.sort((x, y) => x - y)[a.length >> 1] || 0; skPk = md(ps); skV = md(vs); skRd = md(rs);
+        const ps: number[] = [], vs: number[] = [], rs: number[] = []; for (let i = 0; i < N; i++) if (mbox(i) && mine(i) && (!F0 || (Pb[i * 4 + 3] && dep(Pb, i) <= dF + .025))) { ps.push(pk(C0, i)); vs.push(vv(C0, i)); rs.push(rd(C0, i)); } const md = (a: number[]) => a.sort((x, y) => x - y)[a.length >> 1] || 0; skPk = md(ps); skV = md(vs); skRd = md(rs);
         let n = 0, sr = 0, sg = 0, sb = 0; for (let i = 0; i < N; i++) if (mbox(i) && mine(i) && Math.abs(rd(C0, i) - skRd) < .03) { sr += C0[i * 4]; sg += C0[i * 4 + 1]; sb += C0[i * 4 + 2]; n++; } if (n) MC.value.set(sr / n / 255, sg / n / 255, sb / n / 255); MCs.value.copy(MC.value); }   // (the skin: the box's median, mostly skin)
       const SM = C0 ? lips(C0) : { L: new Uint8Array(N), n: 0 }; let SMm: Uint8Array | null = null;
-      if (s === 0 && SM.n) { SMm = new Uint8Array(N); let best: number[] | null = null, by = 1e9; for (const g of groups(SM.L)) { if (g.length < 10) continue; let sy = 0; for (const j of g) sy += (j / W) | 0; if (sy / g.length < by) { by = sy / g.length; best = g; } } if (best) for (const j of best) SMm[j] = 1; }   // (the smile's mouth: its lowest lip patch)
+      if (F0 && SM.n) { SMm = new Uint8Array(N); let best: number[] | null = null, by = 1e9; for (const g of groups(SM.L)) { if (g.length < 10) continue; let sy = 0; for (const j of g) sy += (j / W) | 0; if (sy / g.length < by) { by = sy / g.length; best = g; } } if (best) for (const j of best) SMm[j] = 1; }   // (the smile's mouth: its lowest lip patch)
       /* (13 Nov, Lumi rebuilt: her faint smile's lowest lip patch was hair below her chin, and the box at three-quarters went
          to her cheek) the box itself is placed in 3D: its middle in the front view, at the depth of the head there */
-      if (s === 0 && bx1 > bx0) { const cx = (bx0 + bx1) / 2, cy = (by0 + by1) / 2, ds: number[] = []; for (let dy = -3; dy <= 3; dy++) for (let dx = -3; dx <= 3; dx++) { const j = (Math.round(cy) + dy) * W + Math.round(cx) + dx; if (j >= 0 && j < N && Pb[j * 4 + 3]) ds.push(dep(Pb, j)); }
+      if (F0 && bx1 > bx0) { const cx = (bx0 + bx1) / 2, cy = (by0 + by1) / 2, ds: number[] = []; for (let dy = -3; dy <= 3; dy++) for (let dx = -3; dx <= 3; dx++) { const j = (Math.round(cy) + dy) * W + Math.round(cx) + dx; if (j >= 0 && j < N && Pb[j * 4 + 3]) ds.push(dep(Pb, j)); }
         if (ds.length) { ds.sort((a, b) => a - b); const dz = ds[ds.length >> 1], d3 = new THREE.Vector3((cx + .5) / W * 2 - 1, (cy + .5) / H * 2 - 1, -1).unproject(cam).sub(cam.position).normalize();
           MW = cam.position.clone().addScaledVector(d3, dz / d3.dot(cam.getWorldDirection(new THREE.Vector3()))); MHW = (bx1 - bx0) / 2; MUP = by1 - cy; MDN = cy - by0; } } const mArea: Record<string, number> = {}, mCase: Record<string, any> = {};
-      if (ALLPICS && eyeZ) { const z = new Uint8Array(N); for (let i = 0; i < N; i++) if (eyeZ[i] || mbox(i)) z[i] = 1; pics[`${id}-face-${s}-zones`] = png(O, z); }   // (15 Nov: the eye zone and the mouth box, where 'stray' and 'patch' look or do not)
-      for (const m of (PLANT === 'eyes' ? ['blink', 'half', 'happy', 'sad'] : PLANT === 'mouth' || PLANT === 'lid' || PLANT === 'patch' ? ['blink'] : PLANT === 'stray' ? ['lookL'] : ['blink', 'half', 'happy', 'sad', 'smile', 'o', 'excited', 'lookL', 'lookR'])) {
+      if (ALLPICS && eyeZ) { const z = new Uint8Array(N); for (let i = 0; i < N; i++) if (eyeZ[i] || mbox(i)) z[i] = 1; pics[`${id}-face-${vn}-zones`] = png(O, z); }   // (15 Nov: the eye zone and the mouth box, where 'stray' and 'patch' look or do not)
+      for (const m of (PLANT === 'eyes' ? ['blink', 'half', 'happy', 'sad'] : PLANT === 'mouth' || PLANT === 'lid' || PLANT === 'patch' || PLANT === 'vlid' ? ['blink'] : PLANT === 'stray' ? ['lookL'] : ['blink', 'half', 'happy', 'sad', 'smile', 'o', 'excited', 'lookL', 'lookR'])) {
         MB.value.set(0, 0, 0, 0); if (PLANT === 'mouth' && m === 'blink') { MB.value.set(mcx - ew * .27, my1 - ew * .62, mcx + ew * .27, my1 - ew * .22); }
         if (PLANT === 'stray' && m === 'lookL' && ew > 8) { const ny = (my1 + by1) / 2; MB.value.set(mcx - 4, ny - 4, mcx + 4, ny + 4); MC.value.set(.25, .12, .08); }   // (the stray plant: a dark dot on the nose in the glance, as Sol's mood mouth on his nostril)
         if (PLANT === 'lid' && m === 'blink') { MB.value.set(mx0 + ew * .05, my1 - 2, mx0 + ew * .3, my1 + 2); MC.value.copy(MCs.value).lerp(new THREE.Vector3(1, 1, 1), .45); }   // (the lid plant: a pale band under the first eye, as Sol's rim)
+        if (PLANT === 'vlid' && m === 'blink' && Math.abs(s) > 1) { let wx0 = W, wx1 = -1, wy = 0, wn = 0; for (let i = 0; i < N; i++) if (white[i]) { const x = i % W; wx0 = Math.min(wx0, x); wx1 = Math.max(wx1, x); wy += (i / W) | 0; wn++; } if (wn > 4) { const cx = (wx0 + wx1) / 2, cy = wy / wn; MB.value.set(cx - 1, cy - 2, cx + 2, cy + 8); MC.value.set(.12, .06, .05); } }   // (15 Nov 2026, the vlid plant: a short dark upright stroke on the shut eye from the side, as the regional villagers' lid line seen edge-on)
         if (PLANT === 'patch' && m === 'blink' && ew > 8) { MB.value.set(mx1 - ew * .32, my1 + 3, mx1 - ew * .06, my1 + 3 + ew * .14); MC.value.copy(MCs.value).lerp(new THREE.Vector3(1, 1, 1), .22); }   // (the patch plant: a flat lighter block with hard edges over the second shut eye, as Sol's and Finn's lid patches)
         setMood(PLANT === 'eyes' ? 'smile' : m); const C = read(top, cam), f = new Uint8Array(N); let k = 0;
         if (['blink', 'half', 'happy', 'sad'].includes(m)) for (let i = 0; i < N; i++) { if (!grow[i]) continue; const [v, sa] = hsv(C, i); if (m !== 'half' && m !== 'sad' ? (v > .8 && sa < .18) : false) { f[i] = 1; k++; } }
@@ -506,8 +508,8 @@ gl_FragColor = vec4(code_ / 255.0, floor(dm_ / 256.0) / 255.0, mod(dm_, 256.0) /
             const w = gx1 - gx0 + 1, hh = gy1 - gy0 + 1;   // (13 Nov: no correction for the turn: from three-quarters the mouth on the round face looks as wide as from the front; dividing by the cosine failed Sol's excited, h/w .51)
             if (g0.length && same > g0.length * .85 && Math.abs(g0.length - SM.n) < SM.n * .2) { bad = true; why += 'smile '; }   // (still the smile's mouth: the mood piece is missing)
             // (13 Nov: the shape is judged from the front only: turned, the nostril came into the box and split the mouth's core, and the turn changes the shape; the other views judge old lips left and a mouth that did not change)
-            if (s === 0 && (m === 'o' || m === 'excited')) { if (hh / w < .55 || hh / w > 1.6 || g0.length < Math.PI / 4 * (gx1 - gx0 + 1) * hh * (s ? .5 : .6)) { bad = true; why += `round h/w ${(hh / w).toFixed(2)} fill ${(g0.length / (Math.PI / 4 * (gx1 - gx0 + 1) * hh)).toFixed(2)} `; } mArea[m] = g0.length; }
-            if (s === 0 && m === 'sad' && g0.length) { const col = (a: number, b2: number) => { let sy = 0, c = 0; for (const j of g0) { const x = j % W; if (x >= gx0 + w * a && x <= gx0 + w * b2) { sy += (j / W) | 0; c++; } } return c ? sy / c : 0; };
+            if (F0 && (m === 'o' || m === 'excited')) { if (hh / w < .55 || hh / w > 1.6 || g0.length < Math.PI / 4 * (gx1 - gx0 + 1) * hh * (s ? .5 : .6)) { bad = true; why += `round h/w ${(hh / w).toFixed(2)} fill ${(g0.length / (Math.PI / 4 * (gx1 - gx0 + 1) * hh)).toFixed(2)} `; } mArea[m] = g0.length; }
+            if (F0 && m === 'sad' && g0.length) { const col = (a: number, b2: number) => { let sy = 0, c = 0; for (const j of g0) { const x = j % W; if (x >= gx0 + w * a && x <= gx0 + w * b2) { sy += (j / W) | 0; c++; } } return c ? sy / c : 0; };
               if ((col(0, .2) + col(.8, 1)) / 2 >= col(.4, .6)) { bad = true; why += `sad corners ${col(0, .2).toFixed(1)} ${col(.8, 1).toFixed(1)} middle ${col(.4, .6).toFixed(1)} `; } }   // (the buffer's rows run upwards: a corner lower on screen has the smaller row)
             if (bad) for (const j of g0) { if (!fm[j]) { fm[j] = 1; km++; } } } }
         /* (14 Nov 2026, owner: villagers and pets fail mostly at the face, eyes, sockets and nose) 'stray': a mood may change
@@ -581,16 +583,29 @@ gl_FragColor = vec4(code_ / 255.0, floor(dm_ / 256.0) / 255.0, mod(dm_, 256.0) /
         let { fpt, kp, pwhy } = patchOf(C);
         // (the plant: every friend's blink already has a lid patch (14 Nov), so only what the plant adds counts: the same view without it, and the pixels marked only with it)
         if (PLANT === 'patch' && MB.value.z > MB.value.x) { const mb = MB.value.clone(); MB.value.set(0, 0, 0, 0); const Cn = read(top, cam); MB.value.copy(mb); const u = patchOf(Cn); let d = 0; for (let i = 0; i < N; i++) { if (fpt[i] && !near(u.fpt, i, 1)) d++; else fpt[i] = 0; } kp = d; pwhy += ' planted only'; }
-        const r: any = { id, kind: 'face', pose: m, view: String(s), kit: 0, poke: 0, hairtone: 0, skintone: 0, eyes: k, face: kf, mouth: km, lid: kl, stray: ks, patch: kp, patchWhy: pwhy, mouthWhy: why.trim() };
-        if (kp > LIMIT.patch || (ALLPICS && ['blink', 'half', 'happy', 'excited'].includes(m))) pics[`${id}-face-${m}-${s}-patch${kp > LIMIT.patch ? '' : '-look'}`] = png(C, fpt);
-        if (ks > LIMIT.stray || (ALLPICS && C0 && m !== 'smile')) pics[`${id}-face-${m}-${s}-stray${ks > LIMIT.stray ? '' : '-look'}`] = png(C, fs); cases.push(r); mCase[m] = [r, C, fm, ML.L];
-        if (k > LIMIT.eyes) pics[`${id}-face-${m}-${s}-eyes`] = png(C, f);
-        if (kl > LIMIT.lid || (ALLPICS && (m === 'blink' || m === 'happy' || m === 'excited'))) pics[`${id}-face-${m}-${s}-lid${kl > LIMIT.lid ? '' : '-look'}`] = png(C, fl);
-        if (kf > LIMIT.face || ALLPICS) { pics[`${id}-face-${m}-${s}-${kf > LIMIT.face ? 'face' : 'look'}`] = png(C, fc); }
-        if (km > LIMIT.mouth || (ALLPICS && mouthOn)) pics[`${id}-face-${m}-${s}-mouth${km > LIMIT.mouth ? '' : '-look'}`] = png(C, fm);
+        /* (15 Nov 2026, the shared face kit) 'vlid': from the side (|turn| over 1, and from above and below), a shut eye's lid
+           line seen edge-on must stay a short flat stroke. A dark group in the eye zone (darker than the skin by .3, not at the
+           hair's edge) of 6 px or more that is upright (height 4 px or more and at least half its width) is a V or a tick:
+           the regional villagers' lid drawn as a V at the near profile, Lumi's tick */
+        let kv = 0; const fv = new Uint8Array(N);
+        if (eyeZ && ['blink', 'half', 'happy', 'excited'].includes(m) && (Math.abs(s) > 1 || pt)) {
+          const sv2: number[] = []; for (let i = 0; i < N; i++) if (ring16[i] && !eye8[i] && mine(i)) { const [v] = hsv(C, i); if (v > .35) sv2.push(v); } sv2.sort((a, b) => a - b); const skv2 = sv2[sv2.length >> 1] || 1;
+          const dv = new Uint8Array(N); for (let i = 0; i < N - W * 10; i++) if (eyeZ[i] && mine(i) && Pb[i * 4 + 3] && !hairEdge(i) && hsv(C, i)[0] < skv2 - .3) dv[i] = 1;
+          for (const g of groups(dv)) { if (g.length < 6) continue; let x0 = W, x1 = 0, y0 = H, y1 = 0; for (const j of g) { const x = j % W, y = (j / W) | 0; x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); }
+            const gh = y1 - y0 + 1, gw = x1 - x0 + 1; if (gh >= 4 && gh >= gw * .5) for (const j of g) { fv[j] = 1; kv++; } }
+          if (PLANT === 'vlid' && MB.value.z > MB.value.x) { const mb = MB.value.clone(); MB.value.set(0, 0, 0, 0); const Cn = read(top, cam); MB.value.copy(mb); let d = 0; for (let i = 0; i < N; i++) { if (fv[i] && hsv(Cn, i)[0] >= skv2 - .3) d++; else fv[i] = 0; } kv = d; }   // (the plant: only what it adds)
+        }
+        const r: any = { id, kind: 'face', pose: m, view: vn, kit: 0, poke: 0, hairtone: 0, skintone: 0, eyes: k, face: kf, mouth: km, lid: kl, stray: ks, patch: kp, vlid: kv, patchWhy: pwhy, mouthWhy: why.trim() };
+        if (kp > LIMIT.patch || (ALLPICS && ['blink', 'half', 'happy', 'excited'].includes(m))) pics[`${id}-face-${m}-${vn}-patch${kp > LIMIT.patch ? '' : '-look'}`] = png(C, fpt);
+        if (ks > LIMIT.stray || (ALLPICS && C0 && m !== 'smile')) pics[`${id}-face-${m}-${vn}-stray${ks > LIMIT.stray ? '' : '-look'}`] = png(C, fs); cases.push(r); mCase[m] = [r, C, fm, ML.L];
+        if (k > LIMIT.eyes) pics[`${id}-face-${m}-${vn}-eyes`] = png(C, f);
+        if (kv > LIMIT.vlid) pics[`${id}-face-${m}-${vn}-vlid`] = png(C, fv);
+        if (kl > LIMIT.lid || (ALLPICS && (m === 'blink' || m === 'happy' || m === 'excited'))) pics[`${id}-face-${m}-${vn}-lid${kl > LIMIT.lid ? '' : '-look'}`] = png(C, fl);
+        if (kf > LIMIT.face || ALLPICS) { pics[`${id}-face-${m}-${vn}-${kf > LIMIT.face ? 'face' : 'look'}`] = png(C, fc); }
+        if (km > LIMIT.mouth || (ALLPICS && mouthOn)) pics[`${id}-face-${m}-${vn}-mouth${km > LIMIT.mouth ? '' : '-look'}`] = png(C, fm);
       }
       if (mArea.o && mArea.excited && mArea.excited < mArea.o * 1.15 && mCase.excited) { const [r, C, fm, EL] = mCase.excited; for (let i = 0; i < N; i++) if (EL[i] && !fm[i]) { fm[i] = 1; r.mouth++; }
-        pics[`${id}-face-excited-${s}-mouth`] = png(C, fm); }   // (excited: as open as 'o' or less)
+        pics[`${id}-face-excited-${vn}-mouth`] = png(C, fm); }   // (excited: as open as 'o' or less)
       tags.forEach(o => { o.visible = true; });
     }
     setMood('smile'); top.remove(av.root);
