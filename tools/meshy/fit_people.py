@@ -812,6 +812,14 @@ if OWN and os.environ.get('FIT_FACEKIT') and not FACE_FROM_BODY:   # (15 Nov 202
                'G_mean': [float(x) for x in np.nanmean(G_[_ok], 0)] if _ok.any() else None, 'F_mean': [float(x) for x in F[_ok][:, :3].mean(0)] if _ok.any() else None}, open(os.path.join(RDIR, 'facekit.json'), 'w'))
     np.save(os.path.join(RDIR, 'facekit-G.npy'), G_); np.save(os.path.join(RDIR, 'facekit-F.npy'), F[..., :3])
     for k in M: M[k][..., :3] = np.clip(M[k][..., :3] + _D, 0, 1)
+DOME = None
+if OWN and os.environ.get('FIT_FACEKIT') and eyes and 'blink' in M and not os.environ.get('FIT_NOSHUTTEX'):
+    # (15 Nov 2026, the UV-space shut eye, below at the body texture) the lid tone over each whole eye dome, filled from the face round it;
+    # the shut pieces' lids take it too, keeping their lash strokes, so piece and body texture agree (tools/meshy/facekit/shut_lid.py)
+    DOME = _FK.dome_field(F, [M['blink'], M.get('happy')], list(eyes.values()), hair=HAIRISH)
+    for k in ('blink', 'happy', 'excited'):
+        if k in M: _FK.relid(M[k], DOME[0], DOME[2])
+    print('FIT facekit: dome field', int((DOME[1] > 0).sum()), 'px, hole', int(DOME[2].sum()))
 atlas = np.zeros((TILE * 3, TILE * 3, 4), np.float32)
 for i, k in enumerate(ORDER):
     r, cc = divmod(i, 3); atlas[r * TILE:(r + 1) * TILE, cc * TILE:(cc + 1) * TILE] = M[k]
@@ -1453,25 +1461,34 @@ if TEX and KEEP and SHIFT:
 SHUT_IMG = None
 if TEX:
     colour.scale(TEX, TEX)
-    if OWN and os.environ.get('FIT_FACEKIT') and eyes and 'blink' in M and not os.environ.get('FIT_NOSHUTTEX'):
+    if DOME is not None:
         # (15 Nov 2026, the shared face kit, the UV-space shut eye) Sol at three-quarters: a light crescent on the side of the near eye's
         # dome and a thin line along its backward-facing fold. Both are the body texture's own texels, which the front projection of the
         # shut piece cannot reach (the dome's sides squeeze into a few pixels of the front picture). So the whole dome is closed on the
         # body's own texture: every head triangle round each eye (whatever way it faces, never hair) takes the lid tone at its front
         # position (tools/meshy/facekit/shut_lid.py dome_field), into a copy of that part of the texture, saved as the body materials'
         # emissive picture with its place (shut_rect, glTF uv u0 v0 u1 v1); the game draws it while the eyes are shut (js/friend-model.ts)
-        _L, _Lw, _ = _FK.dome_field(F, [M["blink"], M.get("happy")], list(eyes.values()), hair=HAIRISH)
+        _L, _Lw, _ = DOME
         _A = px(colour); _hh, _ww = _A.shape[:2]; _uvd = me.uv_layers[0].data
         _fv = np.array([v.co[:] for v in me.vertices]); _fin = (_fv[:, 0] > fx0) & (_fv[:, 0] < fx1) & (_fv[:, 2] > fz0) & (_fv[:, 2] < fz1)
         _yf = float(_fv[_fin, 1].min()) if _fin.any() else -1.
         _ell = []
         for b in eyes.values():
             xa, xb, za, zb = wbox(b, 0); _ell.append(((xa + xb) / 2, (za + zb) / 2, (xb - xa) / 2 * 1.7, (zb - za) / 2 * 2.0))
+        # (first trial: 'within 8 cm of the face's frontmost point' kept 284 of 4798 triangles; that point is a curl in front of the face,
+        # 25 cm forward) each eye's own surface: the front fifth of the triangles in its oval's middle; the dome lies within 3.5 cm behind it
+        _hr = _hreg if ('_hreg' in dir() and len(_hreg) == len(me.polygons)) else np.zeros(len(me.polygons), bool)
+        _pcs = np.array([p.center[:] for p in me.polygons]); _ey = []
+        for ex, ez, rx, rz in _ell:   # (the oval's middle also holds the back of the head, same x and height: only the front half, never hair)
+            _cm = (np.hypot((_pcs[:, 0] - ex) / rx, (_pcs[:, 2] - ez) / rz) < .3) & ~_hr & (_pcs[:, 1] < np.median(_pcs[:, 1]))
+            _ey.append(float(np.percentile(_pcs[_cm, 1], 10)) if _cm.sum() > 4 else _yf)
         _hr = _hreg if ('_hreg' in dir() and len(_hreg) == len(me.polygons)) else np.zeros(len(me.polygons), bool)
         _new = np.zeros((_hh, _ww, 3), np.float32); _wt = np.zeros((_hh, _ww), np.float32); _np = 0
+        _dbg_ = [0, 0, 0]
         for p in me.polygons:
             c = p.center
-            if c.y > _yf + .08 or _hr[p.index] or not any(np.hypot((c.x - ex) / rx, (c.z - ez) / rz) < 1.15 for ex, ez, rx, rz in _ell): continue
+            _ine_ = any(np.hypot((c.x - ex) / rx, (c.z - ez) / rz) < 1.15 and c.y < ey_ + .035 for (ex, ez, rx, rz), ey_ in zip(_ell, _ey)); _dbg_[0] += any(np.hypot((c.x - ex) / rx, (c.z - ez) / rz) < 1.15 for ex, ez, rx, rz in _ell); _dbg_[1] += _ine_; _dbg_[2] += _ine_ and bool(_hr[p.index])
+            if not _ine_ or _hr[p.index]: continue
             li = list(p.loop_indices)
             if len(li) != 3: continue
             uvs = np.array([_uvd[l].uv[:] for l in li], np.float32) * [_ww, _hh]; co = np.array([me.vertices[me.loops[l].vertex_index].co[:] for l in li], np.float32)
@@ -1505,11 +1522,14 @@ if TEX:
             _AT = np.zeros((_ah, _aw, 4), np.float32); _AT[..., 3] = 1; _rects = []
             for (x0, y0, x1, y1), (ax, ay) in zip(_bx, _pl):
                 _AT[ay:ay + y1 - y0, ax:ax + x1 - x0] = _SH[y0:y1, x0:x1]
-                _rects += [x0 / _ww, 1 - y1 / _hh, x1 / _ww, 1 - y0 / _hh, ax / _aw, 1 - (ay + y1 - y0) / _ah, (ax + x1 - x0) / _aw, 1 - ay / _ah]
+                _i = 3   # (each place is used 3 texels inside its edge: at the edge the atlas's filtering reached its neighbour, a dark line across Sol's cheeks)
+                _rects += [(x0 + _i) / _ww, 1 - (y1 - _i) / _hh, (x1 - _i) / _ww, 1 - (y0 + _i) / _hh, (ax + _i) / _aw, 1 - (ay + y1 - y0 - _i) / _ah, (ax + x1 - x0 - _i) / _aw, 1 - (ay + _i) / _ah]
             SHUT_IMG = bpy.data.images.new(ID + '-shut', _aw, _ah, alpha=False); SHUT_IMG.pixels.foreach_set(_AT.ravel())
             SHUT_IMG.filepath_raw = os.path.join(RDIR, 'shut-atlas.jpg'); SHUT_IMG.file_format = 'JPEG'; bpy.context.scene.render.image_settings.quality = 92; SHUT_IMG.save(); SHUT_IMG.pack()
             for m_ in (clothm, skinm): m_['shut_rects'] = [float(v) for v in _rects]
             print('FIT facekit: shut dome texels', int(_ch.sum()), 'from', _np, 'triangles,', len(_bx), 'boxes, atlas', _aw, _ah)
+            _msg_ = 'FIT facekit: shut dome texels %d from %d triangles, %d boxes, atlas %d x %d; in the ovals %d, near the eye surface %d, hair %d; yf %.3f ovals %s field px %d' % (int(_ch.sum()), _np, len(_bx), _aw, _ah, _dbg_[0], _dbg_[1], _dbg_[2], _yf, [tuple(round(v, 3) for v in e) for e in _ell] + [round(v, 3) for v in _ey], int((_Lw > 0).sum())); print(_msg_); open(os.path.join(RDIR, 'shut-debug.txt'), 'w').write(_msg_ + chr(10))
+            _dv = np.zeros((_hh, _ww, 4), np.float32); _dv[..., 0] = _wt; _dv[..., 1] = _ch; _dv[..., 3] = 1; _di = bpy.data.images.new('shutdbg', _ww, _hh); _di.pixels.foreach_set(_dv.ravel()); _di.filepath_raw = os.path.join(RDIR, 'shut-weight.png'); _di.file_format = 'PNG'; _di.save(); bpy.data.images.remove(_di)
         else: print('FIT facekit: no shut dome texels')
     colour.file_format = 'JPEG'; colour.save(filepath=jp, quality=88 if TEX >= 1024 else 72)   # (owner 8 Nov 2026: 62 left speckles on the necks)
     jimg = bpy.data.images.load(jp); jimg.name = ID + '-colour'

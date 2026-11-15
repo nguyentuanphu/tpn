@@ -140,7 +140,7 @@ def _dil(m, n):
         m = m | np.roll(m, 1, 0) | np.roll(m, -1, 0) | np.roll(m, 1, 1) | np.roll(m, -1, 1)
     return m
 
-def dome_field(F, pieces, boxes, ring=.025, iters=600, hair=None):
+def dome_field(F, pieces, boxes, ring=.025, iters=1500, hair=None):
     """(15 Nov 2026, the UV-space shut eye) The lid tone over each whole eye dome, in the front picture's pixels, for painting the
     dome's own texels in the body texture (tools/meshy/fit_people.py, the shut copy): the front projection squeezes the dome's
     sides into a few pixels, and they are painted a paler skin round the open eye (Sol's light crescent at three-quarters).
@@ -160,21 +160,25 @@ def dome_field(F, pieces, boxes, ring=.025, iters=600, hair=None):
     hole &= near
     hole = ~_dil(~_dil(hole, 2), 2) & near   # (closed: no pinholes where a piece happens to match the face)
     L = F[..., :3].copy().astype(np.float32)
-    base = pieces[0]
-    L[hole] = base[..., :3][hole]
-    V = F[..., :3].max(-1); Vb = L.max(-1)
+    V = F[..., :3].max(-1)
     k = max(3, int(round(w_ * ring)))
     R2 = _dil(hole, k) & near
-    # (hair hanging over the eye from the front, Sol's lock, and the brows: never painted onto the skin under them, and never a source)
+    # (hair hanging over the eye from the front, Sol's lock, and the brows: never painted onto the skin under them, and never a source:
+    # first trial, the plain average let the lock's brown run in as a soft shadow beside Sol's eye at -.7)
     keep = ((V < .45) | (hair if hair is not None else False)) & ~hole
     R = R2 & ~keep
-    unk = (R2 & ~hole) | (hole & _dil(Vb < .6, 2))   # (the lash strokes come from the piece itself in the game)
+    # (first trial: the hole took the blink piece's own lid, whose fill (from bright skin below) is paler than the shaded skin under the
+    # brow, a pale strip there at -.7) the whole hole and ring are filled from the face round them, so the lid has the face's own shading
+    unk = R2.copy()
     if unk.any():
-        kn = _dil(R2, 1) & ~unk & ~keep
+        ok = (~keep & ~unk).astype(np.float32)
+        kn = _dil(R2, 2) & ~unk & ~keep
         L[unk] = np.median(L[kn], axis=0) if kn.any() else L[unk].mean(0)
         for _ in range(iters):
-            P_ = np.pad(L, ((1, 1), (1, 1), (0, 0)), mode='edge')
-            av = (P_[:-2, 1:-1] + P_[2:, 1:-1] + P_[1:-1, :-2] + P_[1:-1, 2:]) / 4
+            okk = np.maximum(ok, unk.astype(np.float32))
+            Pw = np.pad(L * okk[..., None], ((1, 1), (1, 1), (0, 0))); Pk = np.pad(okk, 1)
+            num = Pw[:-2, 1:-1] + Pw[2:, 1:-1] + Pw[1:-1, :-2] + Pw[1:-1, 2:]; den = Pk[:-2, 1:-1] + Pk[2:, 1:-1] + Pk[1:-1, :-2] + Pk[1:-1, 2:]
+            av = num / np.maximum(den, 1e-6)[..., None]
             L[unk] = av[unk]
     wt = R.astype(np.float32)
     for _ in range(3): wt = (wt + np.roll(wt, 1, 0) + np.roll(wt, -1, 0) + np.roll(wt, 1, 1) + np.roll(wt, -1, 1)) / 5
@@ -228,3 +232,12 @@ def pack_rects(mask, margin=6, block=8, maxn=16, gap=2):
         places[i] = (x, y); x += bw + gap; rh = max(rh, bh)
     ah = y + rh
     return [tuple(b) for b in boxes], places, (aw, max(1, ah))
+
+def relid(P, L, hole):
+    """(15 Nov 2026) A shut piece's lid inside the hole takes the dome's fill L (dome_field), keeping its own darker strokes (the lash
+    line, drawn on the lid): a stroke pixel keeps its share of darkness against L, so its soft edge stays soft. In place."""
+    lp = P[..., :3].mean(-1); ll = L.mean(-1)
+    s = np.clip((ll - lp) / np.maximum(ll - .08, .05), 0, 1)   # 0 lid (or paler), 1 the black stroke
+    m = hole[..., None]
+    P[..., :3] = np.where(m, L * (1 - s[..., None]) + P[..., :3] * s[..., None], P[..., :3])
+    return P
