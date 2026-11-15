@@ -17,7 +17,7 @@ Owner rules first (from the owner, 7–8 Nov 2026). They override everything bel
 
 ## Keep the PC light (owner, 15 Nov 2026 AEDT)
 
-- **Every heavy job goes through the queue:** `powershell -File D:\WorkSpace\meshy	ools\heavy.ps1 <command> [args]` (Blender fits and `refit_friends.ps1`, the auditor, `game_shots.mts` picture shoots). It runs one job at a time across every stream on the PC, at below-normal priority, and waits by itself while another session's job runs.
+- **Every heavy job goes through the queue:** `powershell -File D:\WorkSpace\meshy\tools\heavy.ps1 <command> [args]` (Blender fits and `refit_friends.ps1`, the auditor, `game_shots.mts` picture shoots). It runs one job at a time across every stream on the PC, at below-normal priority, and waits by itself while another session's job runs.
 - **Each fix round rebuilds and checks only the model just fixed**, at the views and moods the fix touches (for a closed-eye fix: that friend's `eyes` shots, the moods and turns where the fault was).
 - **The full set** (every view, the 1024 px sheets, the auditor on all friends, the second reviewer) runs **once**, just before asking the owner for approval. The approval gate itself is unchanged.
 

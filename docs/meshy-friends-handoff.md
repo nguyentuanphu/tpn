@@ -190,4 +190,37 @@ commit và push nhánh mình mỗi giờ (pull --no-rebase trước), không for
 
 ## Rule: heavy jobs through the queue (owner, 15 Nov 2026 AEDT, via Release)
 
-Every heavy job (Blender fit or `refit_friends.ps1`, the auditor, picture shoots) runs as `powershell -File D:\WorkSpace\meshy	ools\heavy.ps1 <command> [args]`: one job at a time on the PC, low priority, waiting for other sessions' jobs. Each fix round rebuilds and shoots only the friend just fixed, at the views and moods involved (here: that friend's `eyes` shots). The full set (all views, 1024 px sheets, auditor on all four, second reviewer) runs once, just before the single approval question. The approval gate is unchanged. So the "Next" above becomes: fix and check Sol's eyes only; then Lumi and Clara one at a time; then Finn; then the full set once.
+Every heavy job (Blender fit or `refit_friends.ps1`, the auditor, picture shoots) runs as `powershell -File D:\WorkSpace\meshy\tools\heavy.ps1 <command> [args]`: one job at a time on the PC, low priority, waiting for other sessions' jobs. Each fix round rebuilds and shoots only the friend just fixed, at the views and moods involved (here: that friend's `eyes` shots). The full set (all views, 1024 px sheets, auditor on all four, second reviewer) runs once, just before the single approval question. The approval gate is unchanged. So the "Next" above becomes: fix and check Sol's eyes only; then Lumi and Clara one at a time; then Finn; then the full set once.
+
+## Closed eyes handed to the shared face fix (owner, 15 Nov 2026 AEDT, via Release)
+
+The owner chose one shared face fix for every model, built by Release. This stream has stopped work on closed eyes, lids and the light patches round the eyes. What it leaves:
+- **How the lids are made now:** `tools/meshy/fit_people.py`, `lid(img, b, top, bot)` (line ~467). The hole is filled by neighbour averaging, with these sources held fixed:
+  - `_fix = ((_sm & (_bh[2] > .7)) | _blu) & ~hm & ~_es_` (bright skin, or blush);
+  - `_blu` is the blush test: V > .55, S > .25, red over green x1.15 and over blue x1.3.
+  - Never sources: `_esh` (line ~528: the eye's own dark pixels, V < .55, and white pixels, V > .78 with S < .22, inside the eye oval x1.2/x1.1, grown 4 px).
+  - `_gd` (line ~580) closes dark or grey pixels beside the lid below the brows.
+  - The column-wise lid bottom follows the eye's lower curve (`_em`).
+  - Each column's brow stop is its neighbours' median.
+- **The closed-mood pieces:** alpha = `min(soften(ch, _g+2, _g) * 1.6, 1) * PARTS[k] * NOHAIR` (line ~761). They are solid for _g+2 px past the eye (other moods use max(1, _g//2)), on a decal 2.5 mm off the face (`Yg - .003`).
+- **The shader** (`js/friend-model.ts` ~87-95) paints shut eyes with `inEye_`, `cA_`/`cB_` (dot < 3.2), `ski_` and `bl_`. Pale texels are painted within dot < 2.6.
+- **Made it worse or changed nothing (all reverted):**
+  - lighter-than-skin texels counted as not skin: a light flat area over the lid, patch 242;
+  - one solid piece over every changed pixel with a wider soft edge: a white line at the inner corner;
+  - painting pale unmarked texels: no change;
+  - the piece reaching further towards the nose: no change;
+  - only near-skin-colour pixels as sources: no change;
+  - shader pale radius 3.6: no change;
+  - eye grid moved out 1.5 mm: no change.
+- **Cause still open:** with HIDE=face, the body under a shut eye is a flat oval with a pale rim (the eye white's edge). It shows where the piece fades: Sol's left inner-corner bar, Lumi's far-eye ring, Clara's white crescents.
+- **Last auditor numbers.** The face pass is `audit-cov.mts` = meshy-audit-coverage 5f11e152c, `poses:face`, run 15 Nov afternoon through heavy.ps1, folder `D:\WorkSpace\meshyittedcov-eyes-final`. Sol has the afternoon fill (f1feff4c7); Finn, Lumi and Clara have the morning fill (ab4325313). Worst px over all closed moods and turns:
+
+| friend | lid | stray | patch | other |
+|---|---|---|---|---|
+| Finn | 22 | 143 | 270 | face 71 (blink/happy/excited at -1.2) |
+| Sol | 52 | 294 | 223 | |
+| Clara | 18 | 23 | 266 | mouth 23 (sad/o/excited at .7) |
+| Lumi | 0 | 455 | 242 | |
+
+All four: eyes 0. Totals: lid 18 cases, stray 40, patch 73, face 3, mouth 3.
+- While the shared fix is built, this stream fixes only faults outside the eyes (neck, clothes, stray marks away from the eyes), through the queue.
